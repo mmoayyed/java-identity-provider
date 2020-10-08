@@ -15,11 +15,30 @@
 	<import resource="${idp.home}/conf/authn/authn-comparison.xml" />
 	<import resource="conditional:${idp.home}/conf/authn/general-authn.xml" />
 
-    <!-- Management bean to collect and expose AuthenticationFlowDescriptors. -->
-    
-    <bean id="shibboleth.AuthenticationFlowDescriptorManager"
-        class="net.shibboleth.idp.authn.impl.AuthenticationFlowDescriptorManager"
-        p:components="#{getObject('shibboleth.AvailableAuthenticationFlows')}" />
+    <!-- A parent bean to default some of the flow boilerplate. -->
+
+    <bean id="shibboleth.AuthenticationFlow" abstract="true"
+            class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
+            p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
+            p:nonBrowserSupported="true"
+            p:passiveAuthenticationSupported="false"
+            p:forcedAuthenticationSupported="false"
+            p:proxyRestrictionsEnforced="%{idp.authn.enforceProxyRestrictions:true}"
+            p:lifetime="%{idp.authn.defaultLifetime:PT60M}"
+            p:inactivityTimeout="%{idp.authn.defaultTimeout:PT30M}"
+            p:principalWeightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap') ?: getObject('shibboleth.DefaultAuthenticationPrincipalWeightMap')}"
+            p:principalServiceManager-ref="shibboleth.PrincipalServiceManager">
+        <property name="supportedPrincipals">
+            <list>
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
+                <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
+                <bean parent="shibboleth.SAML1AuthenticationMethod"
+                    c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
+            </list>
+        </property>
+    </bean>
 
     <!-- Defaulted flows. -->
     
@@ -271,30 +290,11 @@
         </property>
     </bean>
 
-    <!-- A parent bean to default some of the flow boilerplate. -->
-
-    <bean id="shibboleth.AuthenticationFlow" abstract="true"
-            class="net.shibboleth.idp.authn.AuthenticationFlowDescriptor"
-            p:resultSerializer-ref="shibboleth.DefaultAuthenticationResultSerializer"
-            p:nonBrowserSupported="true"
-            p:passiveAuthenticationSupported="false"
-            p:forcedAuthenticationSupported="false"
-            p:proxyRestrictionsEnforced="%{idp.authn.enforceProxyRestrictions:true}"
-            p:lifetime="%{idp.authn.defaultLifetime:PT60M}"
-            p:inactivityTimeout="%{idp.authn.defaultTimeout:PT30M}"
-            p:principalWeightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap') ?: getObject('shibboleth.DefaultAuthenticationPrincipalWeightMap')}"
-            p:principalServiceManager-ref="shibboleth.PrincipalServiceManager">
-        <property name="supportedPrincipals">
-            <list>
-                <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
-                <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
-                <bean parent="shibboleth.SAML1AuthenticationMethod"
-                    c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
-            </list>
-        </property>
-    </bean>
+    <!-- Management bean to collect and expose AuthenticationFlowDescriptors. -->
+    
+    <bean id="shibboleth.AuthenticationFlowDescriptorManager"
+        class="net.shibboleth.idp.authn.impl.AuthenticationFlowDescriptorManager"
+        p:components="#{getObject('shibboleth.AvailableAuthenticationFlows')}" />
 
     <!-- Default weighting if not overridden. -->
     <util:map id="shibboleth.DefaultAuthenticationPrincipalWeightMap">
