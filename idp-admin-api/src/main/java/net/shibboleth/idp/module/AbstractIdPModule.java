@@ -297,7 +297,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                     throw new IOException(e);
                 }
             }
-            return getClass().getResourceAsStream(source);
+            return AbstractIdPModule.this.getClass().getResourceAsStream(source);
         }
 
         /**
