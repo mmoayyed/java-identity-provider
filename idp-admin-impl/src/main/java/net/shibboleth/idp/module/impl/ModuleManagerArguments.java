@@ -53,11 +53,15 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     @Parameter(names= {"-i", "--info"})
     @Nullable @NonnullElements private List<String> infoModuleIds = new ArrayList<>();
 
-    /** ID of module to enable. */
+    /** Detailed info about installed module(s). */
+    @Parameter(names= {"-t", "--test"})
+    @Nullable @NonnullElements private List<String> testModuleIds = new ArrayList<>();
+
+    /** ID of module(s) to enable. */
     @Parameter(names= {"-e", "--enable"})
     @Nullable @NonnullElements private List<String> enableModuleIds = new ArrayList<>();
 
-    /** ID of module to enable. */
+    /** ID of module(s) to enable. */
     @Parameter(names= {"-d", "--disable"})
     @Nullable @NonnullElements private List<String> disableModuleIds = new ArrayList<>();
 
@@ -83,16 +87,25 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     }
 
     /**
-     * Gets the module IDs to report on.
+     * Gets the module ID(s) to report on.
      * 
      * @return {@link #infoModuleIds}
      */
     @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getInfoModuleIds() {
         return List.copyOf(StringSupport.normalizeStringCollection(infoModuleIds));
     }
-    
+
     /**
-     * Gets the module IDs to enable.
+     * Gets the module ID(s) to test.
+     * 
+     * @return {@link #testModuleIds}
+     */
+    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getTestModuleIds() {
+        return List.copyOf(StringSupport.normalizeStringCollection(testModuleIds));
+    }
+
+    /**
+     * Gets the module ID(s) to enable.
      * 
      * @return {@link #enableModuleIds}
      */
@@ -101,7 +114,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     }
     
     /**
-     * Gets the module IDs to disable.
+     * Gets the module ID(s) to disable.
      * 
      * @return {@link #disableModuleIds}
      */
@@ -148,6 +161,8 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
                 "Brief Information on all installed modules"));
         out.println(String.format("  %-22s %s", "-i, --info <id>[,<id>]",
                 "Full details on specific module(s)"));
+        out.println(String.format("  %-22s %s", "-t, --test <id>[,<id>]",
+                "Test specific module(s) for enablement"));
         out.println(String.format("  %-22s %s", "-e, --enable <id>[,<id>]",
                 "Enable module(s)"));
         out.println(String.format("  %-22s %s", "-u, --disable <id>[,<id>]",

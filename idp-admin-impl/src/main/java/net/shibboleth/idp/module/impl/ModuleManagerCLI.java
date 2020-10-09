@@ -100,17 +100,16 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
             moduleContext.setLanguageRanges(args.getLanguageRanges());
             
             if (args.getList() || !args.getInfoModuleIds().isEmpty()) {
-                doList(moduleContext, args);
-            } else {
-                doManage(moduleContext, args);
+                return doList(moduleContext, args);
             }
+            
+            return doManage(moduleContext, args);
         } catch (final ModuleException e) {
             System.out.println(e.getMessage());
             System.out.println(ANSIColors.ANSI_RED + "[FAILED]" + ANSIColors.ANSI_RESET);
             System.out.println();
             return RC_INIT;
         }
-        return ret;
     }
 
     /**
@@ -118,14 +117,25 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
      * 
      * @param moduleContext context
      * @param args arguments
+     * 
+     * @return return code
      */
-    private void doList(@Nonnull final ModuleContext moduleContext, @Nonnull final ModuleManagerArguments args) {
+    private int doList(@Nonnull final ModuleContext moduleContext, @Nonnull final ModuleManagerArguments args) {
+        
+        int ret = RC_OK;
         
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
         
         while (modules.hasNext()) {
             try {
                 final IdPModule module = modules.next();
+                
+                if (args.getTestModuleIds().contains(module.getId())) {
+                    if (!module.isEnabled(moduleContext)) {
+                        ret = RC_UNKNOWN;
+                    }
+                }
+                
                 if (args.getInfoModuleIds().contains(module.getId())) {
                     System.out.println();
                     System.out.println("Module: " + module.getId());
@@ -156,6 +166,8 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                 System.out.println("ServiceConfigurationError: " + e.getMessage());
             }
         }
+        
+        return ret;
     }
 
     /**
@@ -164,11 +176,14 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
      * @param moduleContext context
      * @param args arguments
      * 
+     * @return return code
+     * 
      * @throws ModuleException to report module errors
      */
-    private void doManage(@Nonnull final ModuleContext moduleContext, @Nonnull final ModuleManagerArguments args)
+    private int doManage(@Nonnull final ModuleContext moduleContext, @Nonnull final ModuleManagerArguments args)
             throws ModuleException {
         
+        int ret = RC_OK;
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
         
         while (modules.hasNext()) {
@@ -203,11 +218,15 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                     
                 } catch (final IOException e) {
                     getLogger().error("I/O Error", e);
+                    ret = RC_IO;
                 }
             } catch (final ServiceConfigurationError e) {
                 System.out.println("ServiceConfigurationError: " + e.getMessage());
+                ret = RC_UNKNOWN;
             }
         }
+        
+        return ret;
     }
     
     /**
