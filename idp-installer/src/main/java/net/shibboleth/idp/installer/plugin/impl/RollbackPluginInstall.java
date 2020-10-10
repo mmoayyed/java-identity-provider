@@ -50,16 +50,16 @@ public class RollbackPluginInstall implements AutoCloseable {
     @Nonnull private final Logger log = LoggerFactory.getLogger(RollbackPluginInstall.class);
 
     /** The modules enabled when the {@link IdPPlugin} was installed. */
-    @Nonnull private List<IdPModule> modulesEnabled = new ArrayList<>();
+    @Live @Nonnull private List<IdPModule> modulesEnabled = new ArrayList<>();
 
     /** The modules disabled when the {@link IdPPlugin} was installed. */
-    @Nonnull private List<IdPModule> modulesDisabled = new ArrayList<>();
+    @Live @Nonnull private List<IdPModule> modulesDisabled = new ArrayList<>();
 
     /** The files copied in as the {@link IdPPlugin} was installed. */
-    @Nonnull private List<Path> filesCopied = new ArrayList<>();
+    @Live @Nonnull private List<Path> filesCopied = new ArrayList<>();
    
     /** The files renamed away during the installation. */
-    @Nonnull private List<Pair<Path, Path>> filesRenamedAway = new ArrayList<>();
+    @Live @Nonnull private List<Pair<Path, Path>> filesRenamedAway = new ArrayList<>();
 
     /** The {@link ModuleContext} that the module subsystem needs.*/
     @Nonnull private final ModuleContext moduleContext;
@@ -69,7 +69,7 @@ public class RollbackPluginInstall implements AutoCloseable {
      * @param context The Module Context
      */
     public RollbackPluginInstall(final ModuleContext context) {
-        moduleContext = Constraint.isNotNull(context, "Context should ne non null");
+        moduleContext = Constraint.isNotNull(context, "Module context should ne non null");
     }
 
     /** What was enabled?
@@ -201,7 +201,7 @@ public class RollbackPluginInstall implements AutoCloseable {
     /** Signal that the operation completed and that rollback won't be needed. */
     public void completed() {
         modulesEnabled = Collections.emptyList();
-        modulesDisabled = modulesEnabled;
+        modulesDisabled = Collections.emptyList();
         filesCopied = Collections.emptyList();
         filesRenamedAway = Collections.emptyList();
     }

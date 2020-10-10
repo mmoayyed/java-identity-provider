@@ -128,19 +128,17 @@ public final class PluginInstallerSupport {
         pathsCopied.addAll(visitor.getCopiedList());
     }
     
-    /** Rename Files into the provided tree. 
+    /** Rename Files into the provided tree.
      * @param fromBase The root directory of the from files
      * @param toBase The root directory to rename to
-     * @param fromFiles The list of files (inside fromBase) to rename 
+     * @param fromFiles The list of files (inside fromBase) to rename
      * @param renames All the work as it is done
      * @throws IOException If any of the file operations fail
      */
-    
     public static void renameToTree(@Nonnull final Path fromBase,
             @Nonnull final Path toBase,
             @Nonnull final List<String> fromFiles,
             @Nonnull @Live final List<Pair<Path, Path>> renames) throws IOException {
-
         if (!Files.exists(toBase)) {
             Files.createDirectories(toBase);
         }
