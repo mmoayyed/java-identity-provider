@@ -40,7 +40,9 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 @SuppressWarnings("javadoc")
 public class PluginCLITest extends BasePluginTest {
     
-    private final String RHINO_DISTRO = "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/0.1.3/idp-plugin-rhino-dist-0.1.3.tar.gz";
+    private final String PLUGIN_DISTRO = "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/authn/idp-plugin-totp-dist/0.0.2/idp-plugin-totp-dist-0.0.2.tar.gz";
+    
+    private final String PLUGIN_ID = "net.shibboleth.idp.plugin.authn.totp";
 
     @BeforeSuite public void setUp() throws IOException
     {
@@ -55,36 +57,36 @@ public class PluginCLITest extends BasePluginTest {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-fl", } ), AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false) public void testWrong() {
+    @Test(enabled = true) public void testWrong() {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-i", "a"}), AbstractCommandLine.RC_INIT);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testRhinoLocal"}) public void testRhinoWeb() {
+    @Test(enabled = true, dependsOnMethods = {"testLocal"}) public void testWeb() {
             assertEquals(PluginInstallerCLI.runMain(new String[] { 
-                    "-i", RHINO_DISTRO,
-                    "-p", "net.shibboleth.idp.plugin.rhino"}),
+                    "-i", PLUGIN_DISTRO,
+                    }),
                     AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testRhinoWeb"})
+    @Test(enabled = true, dependsOnMethods = {"testWeb"})
     public void testUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
-                "-u", "net.shibboleth.idp.plugin.rhino"}),
+                "-u", PLUGIN_ID}),
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testUpdate"})
+    @Test(enabled = true, dependsOnMethods = {"testUpdate"})
     public void testForceUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
-                "-u", "net.shibboleth.idp.plugin.rhino",
-                "-fu", "0.1.3" }),
+                "-u", PLUGIN_ID,
+                "-fu", "0.0.2" }),
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testForceUpdate"})
+    @Test(enabled = true, dependsOnMethods = {"testForceUpdate"})
     public void testListContents() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
-                "-cl", "net.shibboleth.idp.plugin.rhino",
+                "-cl", PLUGIN_ID,
                 }),
                 AbstractCommandLine.RC_OK);
     }
@@ -92,29 +94,29 @@ public class PluginCLITest extends BasePluginTest {
     @Test(enabled = true, dependsOnMethods = {"testListContents"}, ignoreMissingDependencies = true)
     public void testUninstall() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
-                "-r", "net.shibboleth.idp.plugin.rhino",
+                "-r", PLUGIN_ID,
                 }),
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false) public void testRhinoLocal() throws Exception {
+    @Test(enabled = true) public void testLocal() throws Exception {
         Path unpack = null;
         try {
             Resource from;
-            unpack = Files.createTempDirectory("rhinoLocal");
+            unpack = Files.createTempDirectory("unpackLocal");
             final HttpClient client = new HttpClientBuilder().buildClient();
-            from = new HTTPResource(client, RHINO_DISTRO);
+            from = new HTTPResource(client, PLUGIN_DISTRO);
             try (final InputStream in = from.getInputStream(); 
-                 final OutputStream out = new ProgressReportingOutputStream(new FileOutputStream(unpack.resolve("rhino.tar.gz").toFile()))) {
+                 final OutputStream out = new ProgressReportingOutputStream(new FileOutputStream(unpack.resolve("local.tar.gz").toFile()))) {
                     in.transferTo(out);
             }
-            from = new HTTPResource(client, RHINO_DISTRO + ".asc");
+            from = new HTTPResource(client, PLUGIN_DISTRO + ".asc");
             try (final InputStream in = from.getInputStream(); 
-                    final OutputStream out = new ProgressReportingOutputStream(new FileOutputStream(unpack.resolve("rhino.tar.gz.asc").toFile()))) {
+                    final OutputStream out = new ProgressReportingOutputStream(new FileOutputStream(unpack.resolve("local.tar.gz.asc").toFile()))) {
                        in.transferTo(out);
                }
 
-            final Path credentials = getIdpHome().resolve("credentials").resolve("net.shibboleth.idp.plugin.rhino");
+            final Path credentials = getIdpHome().resolve("credentials").resolve(PLUGIN_ID);
             Files.createDirectories(credentials);
             //
             // Populate the new key store
@@ -129,8 +131,9 @@ public class PluginCLITest extends BasePluginTest {
             // try again
             //
             assertEquals(PluginInstallerCLI.runMain(new String[] {
-			"-i", unpack.resolve("rhino.tar.gz").toString(),
-                    "-p", "net.shibboleth.idp.plugin.rhino"}),
+                    "-i", unpack.resolve("local.tar.gz").toString(),
+                 // "-p", "net.shibboleth.idp.plugin.authn.totp"
+                    }),
                     AbstractCommandLine.RC_OK);
         } finally {
             if (unpack != null) {
