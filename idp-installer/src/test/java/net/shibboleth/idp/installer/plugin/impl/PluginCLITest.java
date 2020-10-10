@@ -49,33 +49,33 @@ public class PluginCLITest extends BasePluginTest {
         System.setProperty("idp.home",getIdpHome().toString());
     }
 
-    @Test(enabled = true) public void testLicense() {
+    @Test(enabled = false) public void testLicense() {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "--license", "net.shibboleth.plugin.test"} ), AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testList() throws IOException {
+    @Test(enabled = false) public void testList() throws IOException {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-fl", } ), AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testWrong() {
+    @Test(enabled = false) public void testWrong() {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-i", "a"}), AbstractCommandLine.RC_INIT);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testLocal"}) public void testWeb() {
+    @Test(enabled = false, dependsOnMethods = {"testLocal"}) public void testWeb() {
             assertEquals(PluginInstallerCLI.runMain(new String[] { 
                     "-i", PLUGIN_DISTRO,
                     }),
                     AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testWeb"})
+    @Test(enabled = false, dependsOnMethods = {"testWeb"})
     public void testUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", PLUGIN_ID}),
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testUpdate"})
+    @Test(enabled = false, dependsOnMethods = {"testUpdate"})
     public void testForceUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", PLUGIN_ID,
@@ -83,7 +83,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testForceUpdate"})
+    @Test(enabled = false, dependsOnMethods = {"testForceUpdate"})
     public void testListContents() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-cl", PLUGIN_ID,
@@ -91,7 +91,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testListContents"}, ignoreMissingDependencies = true)
+    @Test(enabled = false, dependsOnMethods = {"testListContents"}, ignoreMissingDependencies = true)
     public void testUninstall() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-r", PLUGIN_ID,
@@ -99,7 +99,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testLocal() throws Exception {
+    @Test(enabled = false) public void testLocal() throws Exception {
         Path unpack = null;
         try {
             Resource from;
