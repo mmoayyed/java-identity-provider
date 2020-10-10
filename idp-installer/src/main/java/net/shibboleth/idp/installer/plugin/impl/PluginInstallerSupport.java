@@ -41,7 +41,9 @@ import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.utilities.java.support.collection.Pair;
 
 /**
  * Support for copying files during plugin manipulation.
@@ -73,6 +75,7 @@ public final class PluginInstallerSupport {
             return;
         }
         LOG.debug("Deleting directory {}", directory);
+        InstallerSupport.setReadOnly(directory, false);
         try {
             Files.walkFileTree(directory, new DeletingVisitor());
         } catch (final IOException e) {
@@ -125,6 +128,37 @@ public final class PluginInstallerSupport {
         pathsCopied.addAll(visitor.getCopiedList());
     }
     
+    /** Rename Files into the provided tree. 
+     * @param fromBase The root directory of the from files
+     * @param toBase The root directory to rename to
+     * @param fromFiles The list of files (inside fromBase) to rename 
+     * @param renames All the work as it is done
+     * @throws IOException If any of the file operations fail
+     */
+    
+    public static void renameToTree(@Nonnull final Path fromBase,
+            @Nonnull final Path toBase,
+            @Nonnull final List<String> fromFiles,
+            @Nonnull @Live final List<Pair<Path, Path>> renames) throws IOException {
+
+        if (!Files.exists(toBase)) {
+            Files.createDirectories(toBase);
+        }
+        for (final String file : fromFiles) {
+            final Path path = Path.of(file);
+            if (!Files.exists(path)) {
+                LOG.info("File {} was not renamed away because it does not exist", file);
+                continue;
+            }
+            final Path relName = fromBase.relativize(path);
+            LOG.trace("Relative name {}", relName);
+            final Path to = toBase.resolve(relName);
+            Files.createDirectories(to.getParent());
+            Files.move(path,to);
+            renames.add(new Pair<>(path, to));
+        }
+    }
+
     /**
      * A @{link {@link FileVisitor} which detects (and logs) whether a copy would overwrite.
      */

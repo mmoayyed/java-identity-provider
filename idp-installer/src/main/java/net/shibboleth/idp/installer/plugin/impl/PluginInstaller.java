@@ -122,8 +122,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** What to use to download things. */
     private HttpClient httpClient;
  
-    /** Files that were copied - to handle rollback. */
-    @Nonnull private List<Path> copiedFiles = new ArrayList<>();
+    /** Dumping space for renamed files. */
+    @Nonnull private Path renamePath;
 
     /** What was installed - this is setup by {@link #loadCopiedFiles()}. */
     @Nullable private List<String> installedContents;
@@ -133,6 +133,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** The Module Context. */
     @NonnullAfterInit private ModuleContext moduleContext;
+
+    /** The "plugins" classpath loader. AutoClosed. */
+    private URLClassLoader installedPluginLoader;
+
+    /** The "plugin under construction" classpath loader. AutoClosed. */
+    private URLClassLoader installingPluginLoader;
 
     /** The securiotyParams for the module context. */
     private HttpClientSecurityParameters securityParams;
@@ -222,18 +228,21 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         unpack(base, fileName);
         setupPluginId();
         checkSignature(base, fileName);
-        getDescription();
+        setupDescriptionFromDistribution();
         LOG.info("Installing Plugin {} version {}.{}.{}", pluginId,
                 description.getMajorVersion(),description.getMinorVersion(), description.getPatchVersion());
 
-        checkRequiredModules();
-        
         final Path myWebApp = idpHome.resolve("dist").resolve("edit-webapp-" + pluginId);
 
-        uninstallOld(myWebApp);
-        installWebapp(myWebApp);
-        InstallerSupport.setReadOnly(myWebApp, true);
-        saveCopiedFiles();
+        try (final RollbackPluginInstall rollBack = new RollbackPluginInstall(moduleContext)) {
+            uninstallOld(rollBack, myWebApp);
+
+            checkRequiredModules();
+            installNew(rollBack, myWebApp);
+
+            saveCopiedFiles(rollBack.getFilesCopied());
+            rollBack.completed();
+        }
 
         final BuildWar builder = new BuildWar(idpHome);
         try {
@@ -266,65 +275,61 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 throw new BuildException(e);
             }
         }
-        for (final String content: getInstalledContents()) {
-            final Path p = Path.of(content);
-            if (!Files.exists(p)) {
-                continue;
+        if (getVersionFromContents() == null) {
+            LOG.warn("Installed contents for {} not found", pluginId);
+        } else {
+            for (final String content: getInstalledContents()) {
+                final Path p = Path.of(content);
+                if (!Files.exists(p)) {
+                    continue;
+                }
+                try {
+                    InstallerSupport.setReadOnly(p, false);
+                    Files.deleteIfExists(p);
+                } catch (final IOException e) {
+                    LOG.warn("Could not delete {}, deferring the delete", content, e);
+                    p.toFile().deleteOnExit();
+                }
             }
-            try {
-                InstallerSupport.setReadOnly(p, false);
-                Files.deleteIfExists(p);
-            } catch (final IOException e) {
-                LOG.warn("Could not delete {}, deferring the delete", content, e);
-                p.toFile().deleteOnExit();
-            }
-        }
 
-        final BuildWar builder = new BuildWar(idpHome);
-        try {
-            builder.initialize();
-        } catch (final ComponentInitializationException e) {
-            throw new BuildException(e);
+            final BuildWar builder = new BuildWar(idpHome);
+            try {
+                builder.initialize();
+            } catch (final ComponentInitializationException e) {
+                throw new BuildException(e);
+            }
+            builder.execute();
+            LOG.info("Removed resources for {} from the war", pluginId);
         }
-        builder.execute();
-        LOG.info("Removed resources for {} from the war", pluginId);
     }
 
     /** Get hold of the {@link IdPPlugin} for this plugin.
      * @throws BuildException if badness is happens.
      */
-    private void getDescription() throws BuildException {
-        final List<URL> urls = new ArrayList<>();
-        final Path libDir = distribution.resolve("edit-webapp").resolve("WEB-INF").resolve("lib");
-
-        try (final DirectoryStream<Path> libDirPaths = Files.newDirectoryStream(libDir)){
-            for (final Path jar : libDirPaths) {
-                urls.add(jar.toUri().toURL());
-            }
-           try (final URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new))){
-
-               final ServiceLoader<IdPPlugin> plugins = ServiceLoader.load(IdPPlugin.class, loader);
-               final Optional<IdPPlugin> first = plugins.findFirst();
-               if (first.isEmpty()) {
-                   LOG.error("No Plugin services found in plugin distribution");
-                   throw new BuildException("No Plugin services found in plugin distribution");
-               }
-               for (final IdPPlugin plugin:plugins) {
-                   LOG.debug("Found Service announcing itself as {}", plugin.getPluginId() );
-                   if (pluginId.equals(plugin.getPluginId())) {
-                       description = plugin;
-                       return;
-                   }
-                   LOG.trace("Did not match {}", pluginId);
-               }
-               LOG.error("Looking in plugin distibution for a plugin called {}, but found a plugin called {}.", 
-                      pluginId, first.get().getPluginId());
+    private void setupDescriptionFromDistribution() throws BuildException {
+       final ServiceLoader<IdPPlugin> plugins;
+       try {
+           plugins = ServiceLoader.load(IdPPlugin.class, getDistributionLoader());
+       } catch (final IOException e) {
+           LOG.error("Error loading descritpion");
+           throw new BuildException(e);
+       }
+       final Optional<IdPPlugin> first = plugins.findFirst();
+       if (first.isEmpty()) {
+           LOG.error("No Plugin services found in plugin distribution");
+           throw new BuildException("No Plugin services found in plugin distribution");
+       }
+       for (final IdPPlugin plugin:plugins) {
+           LOG.debug("Found Service announcing itself as {}", plugin.getPluginId() );
+           if (pluginId.equals(plugin.getPluginId())) {
+               description = plugin;
+               return;
            }
-           throw new BuildException("Could not locate PluginDescription");
-        } catch (final IOException e) {
-            LOG.error("Could not get description of {} from {}", pluginId, libDir, e);
-            throw new BuildException(e);
-        }
+           LOG.trace("Did not match {}", pluginId);
+       }
+       LOG.error("Looking in plugin distibution for a plugin called {}, but found a plugin called {}.",
+              pluginId, first.get().getPluginId());
+       throw new BuildException("Could not locate PluginDescription");
     }
 
     /** What files were installed to webapp for this plugin?
@@ -350,25 +355,25 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @throws BuildException if any required modules are missing or disabled
      */
     private void checkRequiredModules() throws BuildException {
-        
-        // TODO: maybe this belongs in the CLI rather than the utility class?
-        // OTOH if the update process is recoverable then a failed update
-        // should rollback the uninstall of the original...
-        
         final Set<String> requiredModules = new HashSet<>(description.getRequiredModules());
         
-        final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
-        while (modules.hasNext() && !requiredModules.isEmpty()) {
-            try {
-                final IdPModule module = modules.next();
-                if (requiredModules.contains(module.getId())) {
-                    if (module.isEnabled(moduleContext)) {
-                        requiredModules.remove(module.getId());
+        try (final URLClassLoader loader = getInstalledPluginLoader()) {
+            final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
+            while (modules.hasNext() && !requiredModules.isEmpty()) {
+                try {
+                    final IdPModule module = modules.next();
+                    if (requiredModules.contains(module.getId())) {
+                        if (module.isEnabled(moduleContext)) {
+                            requiredModules.remove(module.getId());
+                        }
                     }
+                } catch (final ServiceConfigurationError e) {
+                    LOG.error("Unable to instantiate IdPModule", e);
                 }
-            } catch (final ServiceConfigurationError e) {
-                LOG.error("Unable to instantiate IdPModule", e);
             }
+        } catch (final IOException e) {
+            LOG.error("Error looking for required modules");
+            throw new BuildException(e);
         }
         
         if (!requiredModules.isEmpty()) {
@@ -379,28 +384,77 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** Copy the webapp folder from the distribution to the per plugin
      * location inside dist.
+     * @param rollBack Roll Back Context
      * @param myWebApp Where to put it.
      * @throws BuildException if badness is detected.
      */
-    private void installWebapp(final Path myWebApp) throws BuildException {
+    private void installNew(final RollbackPluginInstall rollBack, final Path myWebApp) throws BuildException {
         final Path from = distribution.resolve("edit-webapp");
         if (PluginInstallerSupport.detectDuplicates(from, myWebApp)) {
             throw new BuildException("Install would overwrite filess");
         }
-        PluginInstallerSupport.copyWithLogging(from, myWebApp, copiedFiles);
+        PluginInstallerSupport.copyWithLogging(from, myWebApp, rollBack.getFilesCopied());
+        InstallerSupport.setReadOnly(myWebApp, true);
+
+        String moduleId = null;
+        try {
+            for (final IdPModule module: description.getDisableOnRemoval()) {
+                moduleId = module.getId();
+                if (!module.isEnabled(moduleContext)) {
+                    module.enable(moduleContext);
+                    rollBack.getModulesEnabled().add(module);
+                }
+            }
+        } catch (final ModuleException e) {
+            LOG.error("Error enabling {}", moduleId);
+            throw new BuildException(e);
+        }
     }
 
     /** Uninstall the old version of the plugin.
-     * @param myWebApp where to delete */
-    private void uninstallOld(final Path myWebApp) {
-        InstallerSupport.setReadOnly(myWebApp, false);
-        PluginInstallerSupport.deleteTree(myWebApp);
+     * @param rollback Rollback Context
+     * @param myWebApp where to delete 
+     * @throws BuildException on IO or module errors */
+    private void uninstallOld(final RollbackPluginInstall rollback, final Path myWebApp) throws BuildException {
+        final IdPPlugin oldPlugin = getInstalledPlugin(pluginId);
+        if (oldPlugin == null) {
+            LOG.debug("{} not installed. No modules disabled", pluginId);
+        } else {
+            String moduleId = null;
+            try {
+                for (final IdPModule module: oldPlugin.getDisableOnRemoval()) {
+                    moduleId = module.getId();
+                    if (module.isEnabled(moduleContext)) {
+                        module.disable(moduleContext, true);
+                        rollback.getModulesDisabled().add(module);
+                    }
+                }
+            } catch (final ModuleException e) {
+                LOG.error("Error disabling {}", moduleId);
+                throw new BuildException(e);
+            }
+        }
+
+        if (getVersionFromContents() == null) {
+            LOG.debug("{} not installed. files renamed", pluginId);
+        } else {
+            InstallerSupport.setReadOnly(myWebApp, false);
+            try {
+                PluginInstallerSupport.renameToTree(myWebApp, renamePath,
+                        getInstalledContents(),
+                        rollback.getFilesRenamedAway());
+            } catch (final IOException e) {
+                LOG.error("Error uninstalling plugin");
+                throw new BuildException(e);
+            }
+        }
     }
 
     /** Stream the copy list to a property file and empty it.
+     * @param copiedFiles The copied files
      * @throws BuildException If we hit an IO exception
      */
-    private void saveCopiedFiles() throws BuildException {
+    private void saveCopiedFiles(final List<Path> copiedFiles) throws BuildException {
         try {
             final Path parent = idpHome.resolve("dist").resolve("plugin-contents");
             Files.createDirectories(parent);
@@ -416,7 +470,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             try (final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
                 props.store(out, "Files Copied "  + Instant.now());
             }
-            copiedFiles = new ArrayList<>();
         } catch (final IOException e) {
             LOG.error("Error saving list of copied files.", e);
             throw new BuildException(e);
@@ -435,7 +488,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         final Properties props = new Properties();
         final File inFile = parent.resolve(pluginId).toFile();
         if (!inFile.exists()) {
-            LOG.error("Contents file for plugin {} ({}) does not exist", pluginId, inFile.getAbsolutePath());
+            LOG.debug("Contents file for plugin {} ({}) does not exist", pluginId, inFile.getAbsolutePath());
             installedContents = Collections.emptyList();
             return;
         }
@@ -597,7 +650,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @throws BuildException if badness is detected.
      */
     private void setupPluginId() throws BuildException {
-        final File propertyFile = distribution.resolve("bootstrap").resolve("id.property").toFile();
+        final File propertyFile = distribution.resolve("bootstrap").resolve("plugin.properties").toFile();
         if (!propertyFile.exists()) {
             LOG.error("Could not locate identity of plugin. "
                     + "Identity file 'bootstrap/id.property' not present in plugin distribution.");
@@ -606,7 +659,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         try (final InputStream inStream = new BufferedInputStream(new FileInputStream(propertyFile))) {
             final Properties idProperties = new Properties();
             idProperties.load(inStream);
-            final String id = StringSupport.trimOrNull(idProperties.getProperty("pluginid"));
+            final String id = StringSupport.trimOrNull(idProperties.getProperty("plugin.id"));
             if (id == null) {
                 LOG.error("Identity property file 'bootstrap/id.property' did not contain 'pluginid' property");
                 throw new BuildException("No property in ID file");
@@ -681,6 +734,53 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         moduleContext = new ModuleContext(idpHome);
         moduleContext.setHttpClientSecurityParameters(securityParams);
         moduleContext.setHttpClient(httpClient);
+        renamePath = idpHome.resolve("dist").resolve("plugin-rollback");
+    }
+
+    /** Generate a {@link URLClassLoader} which looks at the
+     * installed WEB-INF/lib in addition to the dist webapp and bin/lib directories.
+     * @return an appropriate loader
+     * @throws IOException if a directory traversal fails.
+     */
+    private synchronized URLClassLoader getInstalledPluginLoader() throws IOException {
+        if (installedPluginLoader != null) {
+            return installedPluginLoader;
+        }
+        final List<URL> urls = new ArrayList<>();
+        try (final DirectoryStream<Path> webAppList =
+                Files.newDirectoryStream(idpHome.resolve("dist"), "edit-webapp-*")) {
+            for (final Path webApp : webAppList) {
+                try (final DirectoryStream<Path> webInfLibs =
+                        Files.newDirectoryStream(webApp.resolve("WEB-INF").resolve("lib"))) {
+                    for (final Path jar : webInfLibs) {
+                        urls.add(jar.toUri().toURL());
+                    }
+                }
+            }
+        }
+        installedPluginLoader = new URLClassLoader(urls.toArray(URL[]::new));
+        return installedPluginLoader;        
+    }
+
+    
+    /** Generate a {@link URLClassLoader} which looks at the
+     * installing WEB-INF.
+     * @return an appropriate loader
+     * @throws IOException if a directory traversal fails.
+     */
+    private synchronized URLClassLoader getDistributionLoader() throws IOException {
+        if (installingPluginLoader!= null) {
+            return installingPluginLoader;
+        }
+        final List<URL> urls = new ArrayList<>();
+        final Path libDir = distribution.resolve("edit-webapp").resolve("WEB-INF").resolve("lib");
+        try (final DirectoryStream<Path> libDirPaths = Files.newDirectoryStream(libDir)){
+            for (final Path jar : libDirPaths) {
+                urls.add(jar.toUri().toURL());
+            }
+            installingPluginLoader  = new URLClassLoader(urls.toArray(URL[]::new));
+            return installingPluginLoader;
+        }
     }
 
     /**
@@ -689,20 +789,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     public List<IdPPlugin> getInstalledPlugins() {
         try {
-            final List<URL> urls = new ArrayList<>();
-
-            try (final DirectoryStream<Path> webAppList = 
-                    Files.newDirectoryStream(idpHome.resolve("dist"), "edit-webapp-*")) {
-                for (final Path webApp : webAppList) {
-                    try (final DirectoryStream<Path> webInfLibs =
-                            Files.newDirectoryStream(webApp.resolve("WEB-INF").resolve("lib"))) {
-                        for (final Path jar : webInfLibs) {
-                            urls.add(jar.toUri().toURL());
-                        }
-                    }
-                }
-            }
-            try (final URLClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new))){
+            try (final URLClassLoader loader = getInstalledPluginLoader()){
                try (final Stream<Provider<IdPPlugin>> loaderStream =
                        ServiceLoader.load(IdPPlugin.class, loader).stream()) {
                    return loaderStream.map(ServiceLoader.Provider::get).collect(Collectors.toList());
@@ -728,21 +815,27 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         return null;
     }
 
+    /** close, ignoring errors.
+     * @param what what to close
+     */
+    private void closeSilently(final AutoCloseable what) {
+        if (what == null) {
+            return;
+        }
+        try {
+            what.close();
+        } catch (final Exception e) {
+            LOG.error("Autoclose of {} failed", what, e);
+        }
+    }
+
     /** {@inheritDoc} */
     public void close() {
+        closeSilently(installedPluginLoader);
+        closeSilently(installingPluginLoader);
         PluginInstallerSupport.deleteTree(downloadDirectory);
         PluginInstallerSupport.deleteTree(unpackDirectory);
-        for (final Path p : copiedFiles) {
-            try {
-                if (Files.exists(p)) {
-                    InstallerSupport.setReadOnly(p, false);
-                    Files.delete(p);
-                }
-            } catch (final IOException e) {
-                p.toFile().deleteOnExit();
-                LOG.warn("Failed to delete {}", p, e);
-            }
-        }
+        PluginInstallerSupport.deleteTree(renamePath);
     }
     
 }

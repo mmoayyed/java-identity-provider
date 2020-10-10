@@ -80,7 +80,7 @@ public class RollbackTester {
             assertFalse(disabled2.isEnabled(null));
             
             try (final RollbackPluginInstall rp = new RollbackPluginInstall(new ModuleContext(parent))) {
-                rp.getFilesCopied().add(copied.toString());
+                rp.getFilesCopied().add(copied);
                 rp.getFilesRenamedAway().add(renamed);
                 rp.getModulesDisabled().add(disabled1);
                 rp.getModulesDisabled().add(disabled2);

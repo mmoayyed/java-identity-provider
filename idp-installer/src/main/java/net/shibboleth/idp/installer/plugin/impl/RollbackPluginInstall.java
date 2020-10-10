@@ -19,7 +19,6 @@ package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -57,7 +56,7 @@ public class RollbackPluginInstall implements AutoCloseable {
     @Nonnull private List<IdPModule> modulesDisabled = new ArrayList<>();
 
     /** The files copied in as the {@link IdPPlugin} was installed. */
-    @Nonnull private List<String> filesCopied = new ArrayList<>();
+    @Nonnull private List<Path> filesCopied = new ArrayList<>();
    
     /** The files renamed away during the installation. */
     @Nonnull private List<Pair<Path, Path>> filesRenamedAway = new ArrayList<>();
@@ -90,7 +89,7 @@ public class RollbackPluginInstall implements AutoCloseable {
     /** What was copied?
      * @return Returns the files copied as part of the install
      */
-    @Live @Nonnull public List<String> getFilesCopied() {
+    @Live @Nonnull public List<Path> getFilesCopied() {
         return filesCopied;
     }
 
@@ -147,13 +146,13 @@ public class RollbackPluginInstall implements AutoCloseable {
             return false;
         }
         for (int i = filesCopied.size()-1; i >=0; i--) {
-            final String file = filesCopied.get(i);
+            final Path path = filesCopied.get(i);
             try {
-                log.trace("Deleting {}", file);
-                Files.delete(Path.of(file));
+                log.trace("Deleting {}", path);
+                Files.delete(path);
             } catch (final Throwable t) {
-                log.error("Could not delete {}, continuing ", file, t);
-                new File(file).deleteOnExit();
+                log.error("Could not delete {}, continuing ", path, t);
+                path.toFile().deleteOnExit();
             }
         }
         return true;
