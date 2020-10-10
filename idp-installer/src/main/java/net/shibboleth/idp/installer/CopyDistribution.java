@@ -91,7 +91,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      */
     protected void deleteOld() {
         delete(installerProps.getTargetDir().resolve("bin").resolve("lib"), null);
-        delete(installerProps.getTargetDir().resolve("dist"), "edit-webapp-*/** plugin-contents/**");
+        delete(installerProps.getTargetDir().resolve("dist"), "plugin-webapp/** plugin-contents/**");
         delete(installerProps.getTargetDir().resolve("doc"), null);
         final Path system = installerProps.getTargetDir().resolve("system");
         if (Files.exists(system)) {

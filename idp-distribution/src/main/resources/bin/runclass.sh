@@ -36,7 +36,11 @@ if [ -z "$IDP_BASE_URL" ] ; then
 fi
 
 # add in the dependency .jar files
+
 LOCALCLASSPATH="$LOCATION/../dist/webapp/WEB-INF/lib/*":$LOCALCLASSPATH
+if [ -z "$NO_PLUGIN_WEBAPP" ] ; then
+  LOCALCLASSPATH="$LOCATION/../plugin-webapp/WEB-INF/lib/*":$LOCALCLASSPATH
+fi
 LOCALCLASSPATH="$LOCATION/../edit-webapp/WEB-INF/lib/*":$LOCALCLASSPATH
 LOCALCLASSPATH="$LOCATION/lib/*":$LOCALCLASSPATH
 

@@ -21,8 +21,14 @@ if not exist %JAVACMD% (
   exit /b
 )
 
+if defined NO_PLUGIN_WEBAPP (
+   set WEBAPPCP=%~dp0..\edit-webapp\WEB-INF\lib\*
+) else (
+   set WEBAPPCP=%~dp0..\edit-webapp\WEB-INF\lib\*;%~dp0..\plugin-webapp\WEB-INF\lib\*
+)
+
 REM add in the dependency .jar files
-set LOCALCLASSPATH=%~dp0lib\*;%~dp0..\edit-webapp\WEB-INF\lib\*;%~dp0..\dist\webapp\WEB-INF\lib\*;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
+set LOCALCLASSPATH=%~dp0lib\*;%WEBAPPCP%;%~dp0..\dist\webapp\WEB-INF\lib\*;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
 
 REM Go to it !
 

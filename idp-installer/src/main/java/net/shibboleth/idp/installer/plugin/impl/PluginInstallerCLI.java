@@ -19,6 +19,7 @@ package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.security.Security;
@@ -245,20 +246,21 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         final String location = plugin.getLicenseFileLocation();
         if (location == null) {
-            log.error("Plugin {} has no license", pluginId);
+            log.info("Plugin {} has no license", pluginId);
             return;
         }
-        final Resource loc = new ClassPathResource(location);
-        if (!loc.exists()) {
-            log.error("Plugin {} license could not be found at {}", pluginId, location);
-            return;
-        }
-        outOrLog(String.format("License for %s", plugin));
-        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(loc.getInputStream()))) {
-            String line = reader.readLine();
-            while (line != null) {
-                outOrLog(line);
-                line = reader.readLine();
+        try (final InputStream is = plugin.getClass().getResourceAsStream(location)) {
+            if (is == null) {
+                log.error("Plugin {} license could not be found at {}", pluginId, location);
+                return;
+            }
+            outOrLog(String.format("License for %s", plugin));
+            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                String line = reader.readLine();
+                while (line != null) {
+                    outOrLog(line);
+                    line = reader.readLine();
+                }
             }
         } catch (final IOException e) {
             log.error("Failed to output license", e);

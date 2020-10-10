@@ -18,12 +18,8 @@
 package net.shibboleth.idp.installer;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 
@@ -85,6 +81,9 @@ public final class BuildWar extends AbstractInitializableComponent {
      * @throws BuildException if unexpected badness occurs.
      */
     private void overlayWebapp(final Path from, final Path webAppTo) throws BuildException {
+        if (!Files.exists(from)) {
+            return;
+        }
         final Copy overlay = InstallerSupport.getCopyTask(from, webAppTo);
         overlay.setOverwrite(true);
         overlay.setPreserveLastModified(true);
@@ -92,23 +91,6 @@ public final class BuildWar extends AbstractInitializableComponent {
         overlay.setVerbose(log.isDebugEnabled());
         log.info("Overlay from {} to {}", from, webAppTo);
         overlay.execute();
-    }
-
-    /** Enumerate all the plugin webapps and deal with them.
-     * @param parent the 'dist' folder
-     * @param to target
-     * @throws BuildException as badness occurrs
-     */
-    private void overlayPluginWebapps(final Path parent, final Path to) throws BuildException {
-        final FileSystem fs = parent.getFileSystem();
-        final PathMatcher folderMatcher = fs.getPathMatcher("glob:edit-webapp-*");
-        try (final Stream<Path> list = Files.list(parent)){
-            list.filter(Files::isDirectory).
-                filter(e -> folderMatcher.matches(e.getFileName())).
-                forEach(e -> overlayWebapp(e, to));
-        } catch (final IOException e) {
-            throw new BuildException(e);
-        }
     }
 
     /** Method to do the work of building the war.
@@ -131,7 +113,7 @@ public final class BuildWar extends AbstractInitializableComponent {
         log.info("Initial populate from {} to {}", distWebApp, webAppTmp);
         initial.execute();
 
-        overlayPluginWebapps(dist, webAppTmp);
+        overlayWebapp(targetDir.resolve("dist").resolve("plugin-webapp"), webAppTmp);
         overlayWebapp(targetDir.resolve("edit-webapp"), webAppTmp);
 
         final File warFileFile = warFile.toFile();
