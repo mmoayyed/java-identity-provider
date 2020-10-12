@@ -47,6 +47,12 @@ public final class PluginSupport {
     /** Property Name for support level inside inside {@link IdPPlugin#getUpdateURLs()}. */
     @Nonnull public static final String SUPPORT_LEVEL_INTERFIX = ".supportLevel.";
 
+    /** Used for specifying templated keynames. */
+    @Nonnull public static final String VERSION_PATTERN = "%{version}";
+
+    /** Used for specifying templated results. */
+    @Nonnull public static final String VERSION_PATTERN_REGEX = "\\%\\{version\\}";
+
     /** Value for support level pointed to by {@link #SUPPORT_LEVEL_INTERFIX}.*/
     public static enum SupportLevel {
         /** The current release. */
@@ -62,7 +68,7 @@ public final class PluginSupport {
         /** Nothing published. */
         Unknown
     }
-    
+
     /** Class logger. */
     @Nonnull private static Logger log = LoggerFactory.getLogger(PluginSupport.class);
     

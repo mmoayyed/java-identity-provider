@@ -1,24 +1,25 @@
 net.shibboleth.plugin.test.versions=1.2.3 1.2.4 2.0.0
+
+net.shibboleth.plugin.test.baseName.%{version}=base-%{version}-%{version}
+net.shibboleth.plugin.test.downloadURL.%{version}=https://example.org/plugins
+
 #
 # 1.2.3
 #
-net.shibboleth.plugin.test.downloadURL.1.2.3=https://example.org/plugins
-net.shibboleth.plugin.test.baseName.1.2.3=base-1-2-3
 net.shibboleth.plugin.test.idpVersionMax.1.2.3=5.0.0
 net.shibboleth.plugin.test.idpVersionMin.1.2.3=4.1.0
 net.shibboleth.plugin.test.supportLevel.1.2.3 = Current
 #
 # 1.2.4
 #
-net.shibboleth.plugin.test.downloadURL.1.2.4=https://example.org/plugins
-net.shibboleth.plugin.test.baseName.1.2.4=base-1-2-4
+net.shibboleth.plugin.test.downloadURL.1.2.4=https://example.org/plugins4
 net.shibboleth.plugin.test.idpVersionMax.1.2.4=5.0.0
 net.shibboleth.plugin.test.idpVersionMin.1.2.4=4.2.0
 net.shibboleth.plugin.test.supportLevel.1.2.4 = OutOfDate
 #
 # 2.0.0.
 #
-net.shibboleth.plugin.test.downloadURL.2.0.0=https://example.org/plugins
+net.shibboleth.plugin.test.downloadURL.2.0.0=https://example.org/plugins2
 net.shibboleth.plugin.test.baseName.2.0.0=base-1-2-4
 net.shibboleth.plugin.test.idpVersionMax.2.0.0=8.0.0
 net.shibboleth.plugin.test.idpVersionMin.2.0.0=4.99.1

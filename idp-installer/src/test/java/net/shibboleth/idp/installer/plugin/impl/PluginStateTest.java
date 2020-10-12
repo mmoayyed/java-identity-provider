@@ -82,9 +82,25 @@ public class PluginStateTest {
         assertTrue(testSupportState(v2, state, "6.0.0"));
         assertTrue(testSupportState(v2, state, "7.0.0"));
         assertFalse(testSupportState(v2, state, "8"));
-        
     }
-    
+
+    @Test
+    public void testTemplating() throws ComponentInitializationException, MalformedURLException {
+        final PluginState state = new PluginState(new TestPlugin());
+        state.initialize();
+        final PluginVersion v123 = new PluginVersion(1,2,3);
+        final PluginVersion v124 = new PluginVersion(1,2,4);
+        final PluginVersion v2 = new PluginVersion(2,0,0);
+
+        assertEquals(state.getUpdateURL(v123), new URL("https://example.org/plugins/"));
+        assertEquals(state.getUpdateURL(v124), new URL("https://example.org/plugins4/"));
+        assertEquals(state.getUpdateURL(v2), new URL("https://example.org/plugins2/"));
+
+        assertEquals(state.getUpdateBaseName(v123), "base-1.2.3-1.2.3");
+        assertEquals(state.getUpdateBaseName(v124), "base-1.2.4-1.2.4");
+        assertEquals(state.getUpdateBaseName(v2), "base-1-2-4");
+    }
+
     @Test
     public void testMulti() throws IOException, Exception {
 

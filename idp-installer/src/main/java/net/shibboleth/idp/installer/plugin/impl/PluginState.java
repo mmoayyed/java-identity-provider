@@ -121,6 +121,26 @@ public class PluginState extends AbstractInitializableComponent {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         httpClient = Constraint.isNotNull(what, "HttpClient must be non null");
     }
+    
+    /** look up the key derived from the pluginId, the interfix and the version, but if that
+     * fails look for a templated definition. 
+     * @param props what to look in
+     * @param interfix the interface (between the ID and the version)
+     * @param version the version.
+     * @return the suitable value
+     */
+    @Nullable private String getDefaultedValue(final Properties props, final String interfix, final String version) {
+        
+        String result = props.getProperty(plugin.getPluginId() + interfix + version);
+        if (result != null) {
+            return result;
+        }
+        result = props.getProperty(plugin.getPluginId() + interfix + PluginSupport.VERSION_PATTERN);
+        if (result == null) {
+            return result;
+        }
+        return result.replaceAll(PluginSupport.VERSION_PATTERN_REGEX, version);
+    }
 
     /** Given a version find out more.
      * @param props the property files for this plugin we are looking at
@@ -128,7 +148,7 @@ public class PluginState extends AbstractInitializableComponent {
      * @return true if we processed everything OK.
      */
     // Checkstyle: CyclomaticComplexity OFF
-    private boolean handleAvailableVersion(final  Properties props, final String version) {
+    private boolean handleAvailableVersion(final Properties props, final String version) {
         final PluginVersion theVersion = new PluginVersion(version);
         if (theVersion.getMajor() == 0 && theVersion.getMinor() == 0 && theVersion.getPatch() == 0) {
             log.warn("Plugin {}: improbable version {}", plugin.getPluginId(), version);
@@ -176,9 +196,9 @@ public class PluginState extends AbstractInitializableComponent {
             myVersionInfo = info;
         }
         String downloadURL =  StringSupport.trimOrNull(
-                props.getProperty(plugin.getPluginId() + PluginSupport.DOWNLOAD_URL_INTERFIX + version));
+                getDefaultedValue(props, PluginSupport.DOWNLOAD_URL_INTERFIX, version));
         final String baseName =  StringSupport.trimOrNull(
-                props.getProperty(plugin.getPluginId() + PluginSupport.BASE_NAME_INTERFIX + version));
+                getDefaultedValue(props, PluginSupport.BASE_NAME_INTERFIX, version));
         if (baseName != null && downloadURL != null) {
             try {
                 if (!downloadURL.endsWith("/")) {
