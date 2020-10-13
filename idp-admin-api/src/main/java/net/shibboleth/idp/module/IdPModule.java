@@ -148,7 +148,14 @@ public interface IdPModule extends IdentifiedComponent {
          * @return true iff the resource should be replaced with the original preserved
          */
         public boolean isReplace();
-    }
+
+        /**
+         * Gets whether the resource, if missing, should not act as a module-disabled signal.
+         * 
+         * @return true iff the resource may be removed by a deployer without disabling the module
+         */
+        public boolean isOptional();
+}
  
     /** Resource management outcome. */
     public enum ResourceResult {

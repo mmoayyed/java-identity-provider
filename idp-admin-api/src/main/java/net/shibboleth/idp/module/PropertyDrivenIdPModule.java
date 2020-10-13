@@ -70,6 +70,9 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** Suffix of property for resource replacement. */
     @Nonnull @NotEmpty public static final String MODULE_REPLACE_PROPERTY = ".replace";
 
+    /** Suffix of property for resource optionality. */
+    @Nonnull @NotEmpty public static final String MODULE_OPTIONAL_PROPERTY = ".optional";
+
     /** Suffix of property for module post-enable message. */
     @Nonnull @NotEmpty public static final String MODULE_POSTENABLE_PROPERTY = ".postenable";
 
@@ -171,6 +174,9 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
                 final Boolean replace = Boolean.valueOf(
                         moduleProperties.getProperty(getId() + renumstr + MODULE_REPLACE_PROPERTY, "false"));
                 
+                final Boolean optional = Boolean.valueOf(
+                        moduleProperties.getProperty(getId() + renumstr + MODULE_OPTIONAL_PROPERTY, "false"));
+                
                 final Path destPath = Path.of(dest);
                 if (dest.contains("..") || destPath.isAbsolute() || destPath.startsWith("/")) {
                     throw new ModuleException("Module contained a suspect resource destination");
@@ -180,7 +186,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
                     requireHttpClient = src.startsWith("https://") || src.startsWith("http://");
                 }
                 
-                resources.add(new BasicModuleResource(src, destPath, replace));
+                resources.add(new BasicModuleResource(src, destPath, replace, optional));
             }
             
             setResources(resources);

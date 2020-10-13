@@ -101,6 +101,11 @@ public abstract class AbstractIdPModule implements IdPModule {
         }
 
         for (final ModuleResource resource : moduleResources) {
+            
+            if (resource.isOptional()) {
+                continue;
+            }
+
             final Path resolved = moduleContext.getIdPHome().resolve(resource.getDestination());
             log.debug("Module {}: resolved resource destination {}", getId(), resolved);
             if (!resolved.toFile().exists()) {
@@ -190,19 +195,24 @@ public abstract class AbstractIdPModule implements IdPModule {
         
         /** Replacement criteria. */
         private final boolean replace;
-        
+
+        /** Optional criteria. */
+        private final boolean optional;
+
         /**
          * Constructor.
          *
          * @param src source
          * @param dest destination
          * @param shouldReplace whether to replace when enabling
+         * @param isOptional whether the resource is optional
          */
         public BasicModuleResource(@Nonnull @NotEmpty final String src, @Nonnull final Path dest,
-                final boolean shouldReplace) {
+                final boolean shouldReplace, final boolean isOptional) {
             source = Constraint.isNotNull(StringSupport.trimOrNull(src), "Source cannot be null");
             destination = Constraint.isNotNull(dest, "Destination cannot be null");
             replace = shouldReplace;
+            optional = isOptional;
         }
 
         /** {@inheritDoc} */
@@ -233,7 +243,12 @@ public abstract class AbstractIdPModule implements IdPModule {
         public boolean isReplace() {
             return replace;
         }
-        
+
+        /** {@inheritDoc} */
+        public boolean isOptional() {
+            return optional;
+        }
+
         /**
          * Gets whether the resource has been altered at its destination from the source material.
          * 
