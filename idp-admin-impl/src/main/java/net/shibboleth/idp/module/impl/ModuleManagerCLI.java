@@ -99,19 +99,20 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
             moduleContext.setHttpClientSecurityParameters(getHttpClientSecurityParameters());
             moduleContext.setLanguageRanges(args.getLanguageRanges());
             
-            if (args.getList() || !args.getInfoModuleIds().isEmpty()) {
+            if (args.getList() || !args.getInfoModuleIds().isEmpty() || !args.getTestModuleIds().isEmpty()) {
                 return doList(moduleContext, args);
             }
             
             return doManage(moduleContext, args);
         } catch (final ModuleException e) {
             System.out.println(e.getMessage());
-            System.out.println(ANSIColors.ANSI_RED + "[FAILED]" + ANSIColors.ANSI_RESET);
+            System.out.println(TerminalCodes.RED.code(args) + "[FAILED]" + TerminalCodes.RESET.code(args));
             System.out.println();
             return RC_INIT;
         }
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * List/report on modules.
      * 
@@ -143,9 +144,11 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                     System.out.println("\tDesc: " + module.getDescription(moduleContext));
                     System.out.println("\tHelp: " + module.getURL());
                     if (module.isEnabled(moduleContext)) {
-                        System.out.println("\tStatus: " + ANSIColors.ANSI_GREEN + "ENABLED" + ANSIColors.ANSI_RESET);
+                        System.out.println("\tStatus: " +
+                                TerminalCodes.GREEN.code(args) + "ENABLED" + TerminalCodes.RESET.code(args));
                     } else {
-                        System.out.println("\tStatus: " + ANSIColors.ANSI_RED + "DISABLED" + ANSIColors.ANSI_RESET);
+                        System.out.println("\tStatus: " +
+                                TerminalCodes.RED.code(args) + "DISABLED" + TerminalCodes.RESET.code(args));
                     }
                     final Collection<ModuleResource> resources = module.getResources();
                     resources.forEach(r -> {
@@ -153,13 +156,15 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                                 r.getDestination());
                     });
                     System.out.println();
-                } else if (args.getInfoModuleIds().isEmpty()) {
+                }
+                
+                if (args.getInfoModuleIds().isEmpty() && args.getTestModuleIds().isEmpty()) {
                     if (module.isEnabled(moduleContext)) {
                         System.out.println("Module: " + module.getId() +
-                                ANSIColors.ANSI_GREEN + " [ENABLED]" + ANSIColors.ANSI_RESET);
+                                TerminalCodes.GREEN.code(args) + " [ENABLED]" + TerminalCodes.RESET.code(args));
                     } else {
                         System.out.println("Module: " + module.getId() +
-                                ANSIColors.ANSI_RED + " [DISABLED]" + ANSIColors.ANSI_RESET);
+                                TerminalCodes.RED.code(args) + " [DISABLED]" + TerminalCodes.RESET.code(args));
                     }
                 }
             } catch (final ServiceConfigurationError e) {
@@ -169,7 +174,8 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
         
         return ret;
     }
-
+// Checkstyle: CyclomaticComplexity ON
+    
     /**
      * Manage modules as directed.
      * 
@@ -206,7 +212,7 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                         module.disable(moduleContext, args.getClean());
                     results.forEach(this::doReportOperation);
                     
-                    System.out.println(ANSIColors.ANSI_GREEN + "[OK]" + ANSIColors.ANSI_RESET);
+                    System.out.println(TerminalCodes.GREEN.code(args) + "[OK]" + TerminalCodes.RESET.code(args));
                     System.out.println();
                     
                     final String msg = sink.toString(Charset.forName("UTF-8"));

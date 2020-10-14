@@ -137,10 +137,10 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
         super.validate();
 
         if (getEnableModuleIds().isEmpty() && getDisableModuleIds().isEmpty()) {
-            if (getInfoModuleIds().isEmpty()) {
+            if (getInfoModuleIds().isEmpty() && getTestModuleIds().isEmpty()) {
                 list = true;
             }
-        } else if (list || !getInfoModuleIds().isEmpty()) {
+        } else if (list || !getInfoModuleIds().isEmpty() || !getTestModuleIds().isEmpty()) {
             getLog().error("Cannot query and enable/disable in the same operation");
             throw new IllegalArgumentException("Cannot query and enable/disable in the same operation.");
         }
