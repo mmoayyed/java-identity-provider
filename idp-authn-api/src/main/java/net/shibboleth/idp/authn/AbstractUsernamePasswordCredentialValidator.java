@@ -168,7 +168,11 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
     public void setMatchExpression(@Nullable final Pattern expression) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        matchExpression = expression;
+        if (expression != null && !expression.pattern().isEmpty()) {
+            matchExpression = expression;
+        } else {
+            matchExpression = null;
+        }
     }
     
     /**
@@ -176,7 +180,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * 
      * @param newTransforms collection of replacement transforms
      */
-    public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String, String>> newTransforms) {
+    public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String,String>> newTransforms) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         if (newTransforms != null) {
