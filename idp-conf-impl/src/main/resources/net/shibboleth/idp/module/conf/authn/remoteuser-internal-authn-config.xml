@@ -21,10 +21,4 @@
         -->
     </util:list>
     
-    <!-- Define if you want to apply a filtering expression. -->
-    <!--
-    <bean id="shibboleth.authn.RemoteUser.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
-        c:_0="^(.+)@example\.org$" />
-    -->
-    
 </beans>

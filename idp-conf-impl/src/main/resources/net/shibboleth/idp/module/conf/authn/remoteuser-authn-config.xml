@@ -12,16 +12,12 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <!-- Most settings are controlled with authn.properties -->
+
     <!--
     The idp.authn.RemoteUser.externalAuthnPath property controls the default location to use.
     For advanced cases, define a bean called "shibboleth.authn.RemoteUser.externalAuthnPathStrategy"
     of type Function<ProfileRequestContext,String> that returns the path to use.
-    -->
-
-    <!-- Define if you want to apply a filtering expression. -->
-    <!--
-    <bean id="shibboleth.authn.RemoteUser.matchExpression" class="java.util.regex.Pattern" factory-method="compile"
-        c:_0="^(.+)@example\.org$" />
     -->
 
     <!--

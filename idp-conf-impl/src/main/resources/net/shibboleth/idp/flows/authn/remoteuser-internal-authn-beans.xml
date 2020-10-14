@@ -56,7 +56,7 @@
         c:_0="#{'%{idp.authn.RemoteUserInternal.deniedUsernames:}'.trim()}" />
         
     <bean id="ValidateRemoteUser" class="net.shibboleth.idp.authn.impl.ValidateRemoteUser" scope="prototype"
-        p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression')}"
+        p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression') ?: '%{idp.authn.RemoteUserInternal.matchExpression:}'}"
         p:allowedUsernames="#{getObject('shibboleth.authn.RemoteUser.allowedUsernames') ?: (getObject('shibboleth.authn.RemoteUser.whitelistedUsernames') ?: getObject('PropertyDrivenAllowList'))}"
         p:deniedUsernames="#{getObject('shibboleth.authn.RemoteUser.deniedUsernames') ?: (getObject('shibboleth.authn.RemoteUser.blacklistedUsernames') ?: getObject('PropertyDrivenDenyList'))}"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') ?: %{idp.authn.RemoteUserInternal.addDefaultPrincipals:true}}"
