@@ -138,7 +138,7 @@
     
     <bean p:id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow"
             p:order="%{idp.authn.RemoteUserInternal.order:1000}"
-            p:nonBrowserSupported="%{idp.authn.RemoteUserInternal.nonBrowserSupported:false}"
+            p:nonBrowserSupported="%{idp.authn.RemoteUserInternal.nonBrowserSupported:true}"
             p:passiveAuthenticationSupported="%{idp.authn.RemoteUserInternal.passiveAuthenticationSupported:false}"
             p:forcedAuthenticationSupported="%{idp.authn.RemoteUserInternal.forcedAuthenticationSupported:false}"
             p:proxyRestrictionsEnforced="%{idp.authn.RemoteUserInternal.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
