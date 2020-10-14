@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.DirectoryStream;
@@ -123,7 +124,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private HttpClient httpClient;
 
     /** Dumping space for renamed files. */
-    @NonnullAfterInit private Path renamePath;
+    @NonnullAfterInit private Path workspacePath;
 
     /** DistDir. */
     @NonnullAfterInit private Path distPath;
@@ -141,7 +142,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     @NonnullAfterInit private ModuleContext moduleContext;
 
     /** The "plugins" classpath loader. AutoClosed. */
-    private URLClassLoader installedPluginLoader;
+    private URLClassLoader installedPluginsLoader;
 
     /** The "plugin under construction" classpath loader. AutoClosed. */
     private URLClassLoader installingPluginLoader;
@@ -360,7 +361,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void checkRequiredModules() throws BuildException {
         final Set<String> requiredModules = new HashSet<>(description.getRequiredModules());
-        final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class, getInstalledPluginLoader()).iterator();
+        final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class, getInstalledPluginsLoader()).iterator();
         while (modules.hasNext() && !requiredModules.isEmpty()) {
             try {
                 final IdPModule module = modules.next();
@@ -434,7 +435,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.debug("{} not installed. files renamed", pluginId);
         } else {
             try {
-                PluginInstallerSupport.renameToTree(pluginsWebapp, renamePath,
+                PluginInstallerSupport.renameToTree(pluginsWebapp,
+                        workspacePath.resolve("rollback"),
                         getInstalledContents(),
                         rollback.getFilesRenamedAway());
             } catch (final IOException e) {
@@ -729,7 +731,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         moduleContext.setHttpClientSecurityParameters(securityParams);
         moduleContext.setHttpClient(httpClient);
         distPath = idpHome.resolve("dist");
-        renamePath = distPath.resolve("plugin-rollback");
+        workspacePath = distPath.resolve("plugin-workspace");
         pluginsWebapp = distPath.resolve("plugin-webapp");
         InstallerSupport.setReadOnly(distPath, false);
     }
@@ -739,27 +741,47 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return an appropriate loader
      * @throws BuildException if a directory traversal fails.
      */
-    private synchronized URLClassLoader getInstalledPluginLoader() throws BuildException {
-        if (installedPluginLoader != null) {
-            return installedPluginLoader;
+    private synchronized URLClassLoader getInstalledPluginsLoader() throws BuildException {
+
+        if (installedPluginsLoader != null) {
+            return installedPluginsLoader;
         }
-        final List<URL> urls = new ArrayList<>();
+        final URL[] urls;
         final Path libs = pluginsWebapp.resolve("WEB-INF").resolve("lib");
         if (Files.exists(libs)) {
-            try (final DirectoryStream<Path> webInfLibs = Files.newDirectoryStream(libs)) {
-                for (final Path jar : webInfLibs) {
-                    urls.add(jar.toUri().toURL());
+            try {
+                if (!Files.exists(workspacePath)) {
+                    Files.createDirectories(workspacePath);
                 }
+                final Path pathToDir = Files.createTempDirectory(workspacePath, "classpath");
+                final LoggingVisitor visitor = new LoggingVisitor(libs, pathToDir);
+                try (final DirectoryStream<Path> webInfLibs = Files.newDirectoryStream(libs)) {
+                    for (final Path jar : webInfLibs) {
+                        visitor.visitFile(jar, null);
+                    }
+                }
+                urls = visitor.
+                        getCopiedList().
+                        stream().
+                        map( path -> {
+                            try {
+                                return path.toUri().toURL();
+                            } catch (final MalformedURLException e1) {
+                                throw new BuildException(e1);
+                            }
+                        }).
+                        toArray(URL[]::new);
             } catch (final IOException e) {
                 LOG.error("Error finding Plugins' classpath");
                 throw new BuildException(e);
             }
+        } else {
+            urls = new URL[0];
         }
-        installedPluginLoader = new URLClassLoader(urls.toArray(URL[]::new));
-        return installedPluginLoader;        
+        installedPluginsLoader = new URLClassLoader(urls);
+        return installedPluginsLoader;        
     }
 
-    
     /** Generate a {@link URLClassLoader} which looks at the
      * installing WEB-INF.
      * @return an appropriate loader
@@ -787,7 +809,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     public List<IdPPlugin> getInstalledPlugins() throws BuildException {
        final Stream<Provider<IdPPlugin>> loaderStream =
-               ServiceLoader.load(IdPPlugin.class, getInstalledPluginLoader()).stream();
+               ServiceLoader.load(IdPPlugin.class, getInstalledPluginsLoader()).stream();
        return loaderStream.map(ServiceLoader.Provider::get).collect(Collectors.toList());
     }
 
@@ -822,11 +844,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** {@inheritDoc} */
     public void close() {
-        closeSilently(installedPluginLoader);
+        closeSilently(installedPluginsLoader);
         closeSilently(installingPluginLoader);
         PluginInstallerSupport.deleteTree(downloadDirectory);
         PluginInstallerSupport.deleteTree(unpackDirectory);
-        PluginInstallerSupport.deleteTree(renamePath);
+        PluginInstallerSupport.deleteTree(workspacePath);
         InstallerSupport.setReadOnly(distPath, true);
     }
     

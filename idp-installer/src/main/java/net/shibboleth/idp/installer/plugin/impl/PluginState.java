@@ -121,16 +121,15 @@ public class PluginState extends AbstractInitializableComponent {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         httpClient = Constraint.isNotNull(what, "HttpClient must be non null");
     }
-    
-    /** look up the key derived from the pluginId, the interfix and the version, but if that
-     * fails look for a templated definition. 
+
+    /** Look up the key derived from the pluginId, the interfix and the version, but if that
+     * fails look for a templated definition.
      * @param props what to look in
      * @param interfix the interface (between the ID and the version)
      * @param version the version.
      * @return the suitable value
      */
     @Nullable private String getDefaultedValue(final Properties props, final String interfix, final String version) {
-        
         String result = props.getProperty(plugin.getPluginId() + interfix + version);
         if (result != null) {
             return result;

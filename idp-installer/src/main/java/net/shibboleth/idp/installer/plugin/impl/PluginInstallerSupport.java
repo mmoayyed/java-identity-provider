@@ -17,21 +17,14 @@
 
 package net.shibboleth.idp.installer.plugin.impl;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -199,60 +192,6 @@ public final class PluginInstallerSupport {
         }
     }
     
-    /**
-     * A @{link {@link FileVisitor} which detects (and logs) whether a copy would overwrite.
-     */
-    private static final class LoggingVisitor extends SimpleFileVisitor<Path> {
-        /** How what files have we copied? */
-        private final List<Path> copiedFiles = new ArrayList<>();
-
-        /** Path we are traversing. */
-        private final Path from;
-        
-        /** Path where we check for Duplicates. */
-        private final Path to;
-        /**
-         * Constructor.
-         *
-         * @param fromDir Path we are traversing
-         * @param toDir Path where we check for Duplicates
-         */
-        public LoggingVisitor(final Path fromDir, final Path toDir) {
-            from = fromDir;
-            to = toDir;
-        }
-
-        @Override
-        public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
-            final Path relDir = from.relativize(dir);
-            final Path toDir = to.resolve(relDir);
-            if (!Files.exists(toDir)) {
-                LOG.trace("Creating directory {}", toDir);
-                Files.createDirectory(toDir);
-            }
-            return FileVisitResult.CONTINUE;
-        };
-
-        @Override
-        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-            final Path relFile = from.relativize(file);
-            final Path toFile = to.resolve(relFile);
-            copiedFiles.add(toFile);
-            try(final InputStream in = new BufferedInputStream(new FileInputStream(file.toFile()));
-                final OutputStream out = new BufferedOutputStream(new FileOutputStream(toFile.toFile()))) {
-                in.transferTo(out);
-            }
-            return FileVisitResult.CONTINUE;
-        }
-        
-        /** did we find a name clash?
-         * @return whether we found a name clash.
-         */
-        public List<Path> getCopiedList() {
-            return copiedFiles;
-        }
-    }
-
     /**
      * A @{link {@link FileVisitor} which deletes files.
      */
