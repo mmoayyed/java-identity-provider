@@ -112,7 +112,11 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     public void setMatchExpression(@Nullable final Pattern expression) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        matchExpression = expression;
+        if (expression != null && !expression.pattern().isEmpty()) {
+            matchExpression = expression;
+        } else {
+            matchExpression = null;
+        }
     }
 
     /** {@inheritDoc} */
