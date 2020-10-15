@@ -49,7 +49,7 @@
     <bean id="ValidateExternalAuthentication"
             class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
             p:metricName="net.shibboleth.idp.authn.spnego"
-            p:matchExpression="#{getObject('shibboleth.authn.SPNEGO.matchExpression')}"
+            p:matchExpression="#{getObject('shibboleth.authn.SPNEGO.matchExpression') ?: '%{idp.authn.SPNEGO.matchExpression:}'}"
             p:addDefaultPrincipals="#{getObject('shibboleth.authn.SPNEGO.addDefaultPrincipals') ?: %{idp.authn.SPNEGO.addDefaultPrincipals:true}}"
             p:classifiedMessages="#{getObject('shibboleth.authn.SPNEGO.ClassifiedMessageMap')}" />
             
