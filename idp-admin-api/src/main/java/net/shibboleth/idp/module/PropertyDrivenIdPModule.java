@@ -61,6 +61,9 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** Suffix of property for module URL. */
     @Nonnull @NotEmpty public static final String MODULE_URL_PROPERTY = ".url";
 
+    /** Suffix of property for module plugin owner. */
+    @Nonnull @NotEmpty public static final String MODULE_PLUGIN_PROPERTY = ".plugin";
+
     /** Suffix of property for resource source. */
     @Nonnull @NotEmpty public static final String MODULE_SRC_PROPERTY = ".src";
 
@@ -96,6 +99,9 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
 
     /** Module URL. */
     @Nullable @NotEmpty private String moduleURL;
+    
+    /** Plugin ID. */
+    @Nullable @NotEmpty private String pluginId;
     
     /** Available message locales. */
     @Nonnull @NonnullElements private List<String> locales;
@@ -155,6 +161,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
                     StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_NAME_PROPERTY)),
                     "Module name missing from properties");
             moduleURL = StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_URL_PROPERTY));
+            pluginId = StringSupport.trimOrNull(moduleProperties.getProperty(getId() + MODULE_PLUGIN_PROPERTY));
             
             locales = StringSupport.stringToList(
                     moduleProperties.getProperty(getId() + MODULE_LANGS_PROPERTY, ""), ", ");
@@ -246,6 +253,11 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
      */
     public void setURL(@Nullable @NotEmpty final String url) {
         moduleURL = StringSupport.trimOrNull(url);
+    }
+    
+    /** {@inheritDoc} */
+    @Nullable @NotEmpty public String getOwnerId() {
+        return pluginId;
     }
     
     /** {@inheritDoc} */

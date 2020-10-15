@@ -65,6 +65,13 @@ public interface IdPModule extends IdentifiedComponent {
     @Nullable @NotEmpty String getURL();
     
     /**
+     * Gets the plugin name of the module's owner, if the module is provided by a plugin.
+     * 
+     * @return plugin ID, if any
+     */
+    @Nullable @NotEmpty String getOwnerId();
+    
+    /**
      * Gets whether module enablement requires access to an {@link HttpClient}.
      * 
      * @return true iff enabling the module requires HTTP client
