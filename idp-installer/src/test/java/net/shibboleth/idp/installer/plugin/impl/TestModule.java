@@ -59,6 +59,11 @@ public class TestModule implements IdPModule {
     public String getURL() {
         return null;
     }
+    
+    /** {@inheritDoc} */
+    public String getOwnerId() {
+        return null;
+    }
 
     /** {@inheritDoc} */
     public boolean isHttpClientRequired() {
