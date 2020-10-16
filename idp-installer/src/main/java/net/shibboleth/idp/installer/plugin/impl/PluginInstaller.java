@@ -306,6 +306,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             builder.execute();
             LOG.info("Removed resources for {} from the war", pluginId);
         }
+        distPath.resolve("plugin-contents").resolve(pluginId).toFile().deleteOnExit();
     }
 
     /** Get hold of the {@link IdPPlugin} for this plugin.
