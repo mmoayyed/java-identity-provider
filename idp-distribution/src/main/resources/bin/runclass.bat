@@ -24,7 +24,7 @@ if not exist %JAVACMD% (
 if defined NO_PLUGIN_WEBAPP (
    set WEBAPPCP=%~dp0..\edit-webapp\WEB-INF\lib\*
 ) else (
-   set WEBAPPCP=%~dp0..\edit-webapp\WEB-INF\lib\*;%~dp0..\plugin-webapp\WEB-INF\lib\*
+   set WEBAPPCP=%~dp0..\edit-webapp\WEB-INF\lib\*;%~dp0..\dist\plugin-webapp\WEB-INF\lib\*
 )
 
 REM add in the dependency .jar files
