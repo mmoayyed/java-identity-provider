@@ -239,11 +239,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         LOG.info("Installing Plugin {} version {}.{}.{}", pluginId,
                 description.getMajorVersion(),description.getMinorVersion(), description.getPatchVersion());
 
+        final Set<String> loadedModules = getLoadedModules();
         try (final RollbackPluginInstall rollBack = new RollbackPluginInstall(moduleContext)) {
             uninstallOld(rollBack);
 
-            checkRequiredModules();
+            checkRequiredModules(loadedModules);
             installNew(rollBack);
+            reEnableModules(loadedModules);
 
             saveCopiedFiles(rollBack.getFilesCopied());
             rollBack.completed();
@@ -314,12 +316,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void setupDescriptionFromDistribution() throws BuildException {
        final ServiceLoader<IdPPlugin> plugins;
-       try {
            plugins = ServiceLoader.load(IdPPlugin.class, getDistributionLoader());
-       } catch (final IOException e) {
-           LOG.error("Error loading descritpion");
-           throw new BuildException(e);
-       }
        final Optional<IdPPlugin> first = plugins.findFirst();
        if (first.isEmpty()) {
            LOG.error("No Plugin services found in plugin distribution");
@@ -355,30 +352,60 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         return installedVersionFromContents;
     }
 
-    /**
-     * Police that required modules for plugin installation are enabled.
-     * 
-     * @throws BuildException if any required modules are missing or disabled or loading the module fails
+    /** What modules (on the installed plugins Classpath) are currently loaded?
+     * @return a set of the names of the currently enabled Modules.
+     * @throws BuildException on loading a module
      */
-    private void checkRequiredModules() throws BuildException {
-        final Set<String> requiredModules = new HashSet<>(description.getRequiredModules());
+    private Set<String> getLoadedModules() throws BuildException {
+        final Set<String> enablededModules = new HashSet<>();
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class, getInstalledPluginsLoader()).iterator();
-        while (modules.hasNext() && !requiredModules.isEmpty()) {
+        while (modules.hasNext()) {
             try {
                 final IdPModule module = modules.next();
-                if (requiredModules.contains(module.getId())) {
-                    if (module.isEnabled(moduleContext)) {
-                        requiredModules.remove(module.getId());
-                    }
+                if (module.isEnabled(moduleContext)) {
+                    enablededModules.add(module.getId());
                 }
             } catch (final ServiceConfigurationError e) {
                 LOG.error("Unable to instantiate IdPModule", e);
+                throw new BuildException(e);
             }
         }
-        
-        if (!requiredModules.isEmpty()) {
-            LOG.warn("Required modules are missing or disabled: {}", requiredModules);
-            throw new BuildException("One or more required modules are not enabled");
+        return enablededModules;
+    }
+
+    /**
+     * Police that required modules for plugin installation are enabled.
+     * @param loadedModules the modules we know to be enabled
+     * @throws BuildException if any required modules are missing or disabled
+     */
+    private void checkRequiredModules(final Set<String> loadedModules) throws BuildException  {
+        for (final String moduleId: description.getRequiredModules()) {
+            if (!loadedModules.contains(moduleId)) {
+                LOG.warn("Required modules {} is missing on not enabled ", moduleId);
+                throw new BuildException("One or more required modules are not enabled");
+            }
+        }
+    }
+
+    /** Re-enabled the listed modules iff then are implemented by the plugin we just installed.
+     * @param loadedModules the modules to enable
+     * @throws BuildException on errors finding or enabling the modules
+     */
+    private void reEnableModules(final Set<String> loadedModules) throws BuildException  {
+        try {
+            final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class, getDistributionLoader()).iterator();
+            while (modules.hasNext()) {
+                final IdPModule module = modules.next();
+                if (pluginId.equals(module.getOwnerId()) && loadedModules.contains(module.getId())) {
+                    LOG.debug("Re-enabling module {}", module.getId());
+                    module.enable(moduleContext);
+                } else {
+                    LOG.debug("Not re-enabling module {}, not provided by this plugin", module.getId());
+                }
+            }
+        } catch (final ServiceConfigurationError | ModuleException e) {
+            LOG.error("Unable to instantiate IdPModule", e);
+            throw new BuildException(e);
         }
     }
 
@@ -786,21 +813,27 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Generate a {@link URLClassLoader} which looks at the
      * installing WEB-INF.
      * @return an appropriate loader
-     * @throws IOException if a directory traversal fails.
+     * @throws BuildException if a directory traversal fails.
      */
-    private synchronized URLClassLoader getDistributionLoader() throws IOException {
+    private synchronized URLClassLoader getDistributionLoader() throws BuildException {
         if (installingPluginLoader!= null) {
             return installingPluginLoader;
         }
-        final List<URL> urls = new ArrayList<>();
-        final Path libDir = distribution.resolve("webapp").resolve("WEB-INF").resolve("lib");
-        try (final DirectoryStream<Path> libDirPaths = Files.newDirectoryStream(libDir)){
-            for (final Path jar : libDirPaths) {
-                urls.add(jar.toUri().toURL());
+        try {
+            final List<URL> urls = new ArrayList<>();
+            final Path libDir = distribution.resolve("webapp").resolve("WEB-INF").resolve("lib");
+            try (final DirectoryStream<Path> libDirPaths = Files.newDirectoryStream(libDir)){
+                for (final Path jar : libDirPaths) {
+                    urls.add(jar.toUri().toURL());
+                }
+                installingPluginLoader  = new URLClassLoader(urls.toArray(URL[]::new));
+                return installingPluginLoader;
             }
-            installingPluginLoader  = new URLClassLoader(urls.toArray(URL[]::new));
-            return installingPluginLoader;
+        } catch (final IOException e) {
+            LOG.error("Error building Plugin Installation ClassPathLoader");
+            throw new BuildException(e);
         }
+
     }
 
     /**
