@@ -32,7 +32,7 @@
         
     <bean id="TransitionMultiFactorAuthentication" scope="prototype"
         class="net.shibboleth.idp.authn.impl.TransitionMultiFactorAuthentication"
-        p:validateLoginTransitions="#{getObject('shibboleth.authn.MFA.validateLoginTransitions') ?: true}" />
+        p:validateLoginTransitions="#{getObject('shibboleth.authn.MFA.validateLoginTransitions') ?: %{idp.authn.MFA.validateLoginTransitions:true}}" />
 
     <bean id="FinalizeMultiFactorAuthentication" scope="prototype"
         class="net.shibboleth.idp.authn.impl.FinalizeMultiFactorAuthentication"
