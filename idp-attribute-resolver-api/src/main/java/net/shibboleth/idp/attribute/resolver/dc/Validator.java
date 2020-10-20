@@ -32,12 +32,12 @@ public interface Validator {
      *
      * @param what whether {@link #validate()} should throw or log errors
      */
-    public void setThrowValidateError(final boolean what);
+    void setThrowValidateError(final boolean what);
 
     /**
      * Returns whether {@link #validate()} should throw or log errors.
      *
      * @return whether {@link #validate()} should throw or log errors
      */
-    public boolean isThrowValidateError();
+    boolean isThrowValidateError();
 }

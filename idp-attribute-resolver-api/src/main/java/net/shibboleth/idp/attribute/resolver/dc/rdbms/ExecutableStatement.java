@@ -38,5 +38,5 @@ public interface ExecutableStatement extends ExecutableSearch {
      * 
      * @throws SQLException thrown if there is a problem executing the statement
      */
-    @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException;
+    @Nonnull ResultSet execute(@Nonnull Connection connection) throws SQLException;
 }

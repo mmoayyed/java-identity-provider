@@ -29,5 +29,5 @@ public interface ExecutableSearch {
      * 
      * @return the result cache key
      */
-    @Nullable public String getResultCacheKey();
+    @Nullable String getResultCacheKey();
 }

@@ -38,7 +38,7 @@ public interface ScriptedIdPAttribute {
      * @return a modifiable collection of the string attributes
      * @throws ResolutionException if the script has called {@link #getNativeAttribute()}
      */
-    @Nullable public Collection<Object> getValues() throws ResolutionException;
+    @Nullable Collection<Object> getValues() throws ResolutionException;
 
     /**
      * return the underlying attribute.
@@ -46,14 +46,14 @@ public interface ScriptedIdPAttribute {
      * @return the attribute
      * @throws ResolutionException if the script has called getValues.
      */
-    @Nonnull public IdPAttribute getNativeAttribute() throws ResolutionException;
+    @Nonnull IdPAttribute getNativeAttribute() throws ResolutionException;
 
     /**
      * Get the encapsulated attributeId.
      * 
      * @return the id
      */
-    @Nonnull @NotEmpty public String getId();
+    @Nonnull @NotEmpty String getId();
 
     /**
      * Add the provided object to the attribute values, policing for type.
@@ -61,6 +61,6 @@ public interface ScriptedIdPAttribute {
      * @param what a {@link String} or a {@link net.shibboleth.idp.attribute.IdPAttributeValue} to add.
      * @throws ResolutionException if the provided value is of the wrong type
      */
-    public void addValue(@Nullable final Object what) throws ResolutionException;
+    void addValue(@Nullable final Object what) throws ResolutionException;
 
 }
