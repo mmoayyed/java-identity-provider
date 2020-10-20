@@ -37,6 +37,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 import org.slf4j.Logger;
@@ -242,7 +243,7 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
         /** {@inheritDoc} */
         @Nullable public String apply(@Nullable final ProfileRequestContext t) {
             if (getHttpServletRequest() != null) {
-                return getHttpServletRequest().getRemoteAddr();
+                return HttpServletSupport.getRemoteAddr(getHttpServletRequest());
             }
             
             return null;

@@ -51,6 +51,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.CookieManager;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -521,7 +522,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             throw new SessionException("No HttpServletRequest available, can't bind to client address");
         }
         
-        final String remoteAddr = StringSupport.trimOrNull(httpRequest.getRemoteAddr());
+        final String remoteAddr = StringSupport.trimOrNull(HttpServletSupport.getRemoteAddr(httpRequest));
         if (remoteAddr == null) {
             throw new SessionException("No client address to bind");
         }

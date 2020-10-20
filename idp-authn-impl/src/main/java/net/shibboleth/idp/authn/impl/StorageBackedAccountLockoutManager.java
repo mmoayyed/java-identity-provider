@@ -46,6 +46,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 /**
  * Implementation of {@link AccountLockoutManager} interface that relies on a {@link StorageService}
@@ -428,7 +429,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             }
             
             final String username = upContext.getUsername();
-            final String ipAddr = httpRequest.getRemoteAddr();
+            final String ipAddr = HttpServletSupport.getRemoteAddr(httpRequest);
             if (username == null || username.isEmpty() || ipAddr == null || ipAddr.isEmpty()) {
                 return null;
             }

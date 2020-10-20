@@ -43,6 +43,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -254,7 +255,7 @@ public class WriteAuditLog extends AbstractProfileAction {
                         } else if (IdPAuditFields.PROFILE.equals(field)) {
                             record.append(profileRequestContext.getProfileId());
                         } else if (IdPAuditFields.REMOTE_ADDR.equals(field) && httpRequest != null) {
-                            record.append(httpRequest.getRemoteAddr());
+                            record.append(HttpServletSupport.getRemoteAddr(httpRequest));
                         } else if (IdPAuditFields.URI.equals(field) && httpRequest != null) {
                             record.append(httpRequest.getRequestURI());
                         } else if (IdPAuditFields.URL.equals(field) && httpRequest != null) {

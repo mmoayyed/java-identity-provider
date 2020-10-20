@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 import org.slf4j.MDC;
 
@@ -59,7 +60,7 @@ public class SLF4JMDCServletFilter implements Filter {
             throws IOException, ServletException {
         try {
             MDC.put(Version.MDC_ATTRIBUTE, Version.getVersion());
-            MDC.put(CLIENT_ADDRESS_MDC_ATTRIBUTE, request.getRemoteAddr());
+            MDC.put(CLIENT_ADDRESS_MDC_ATTRIBUTE, HttpServletSupport.getRemoteAddr(request));
             MDC.put(SERVER_ADDRESS_MDC_ATTRIBUTE, request.getServerName());
             MDC.put(SERVER_PORT_MDC_ATTRIBUTE, Integer.toString(request.getServerPort()));
             if (request instanceof HttpServletRequest) {

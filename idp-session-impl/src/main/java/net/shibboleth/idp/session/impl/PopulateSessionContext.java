@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -119,7 +120,6 @@ public class PopulateSessionContext extends AbstractProfileAction {
         }
     }
 
- // Checkstyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -135,13 +135,14 @@ public class PopulateSessionContext extends AbstractProfileAction {
             }
             
             final HttpServletRequest request = getHttpServletRequest();
-            if (request != null && request.getRemoteAddr() != null) {
-                if (!session.checkAddress(request.getRemoteAddr())) {
+            final String addr = request != null ? HttpServletSupport.getRemoteAddr(request) : null;
+            if (addr != null) {
+                if (!session.checkAddress(addr)) {
                     return;
                 }
             } else {
-                log.info("{} No servlet request or client address available, skipping address check for session {}",
-                        getLogPrefix(), session.getId());
+                log.info("{} No client address available, skipping address check for session {}", getLogPrefix(),
+                        session.getId());
             }
             
             final SessionContext sessionCtx = sessionContextCreationStrategy.apply(profileRequestContext);
@@ -159,6 +160,5 @@ public class PopulateSessionContext extends AbstractProfileAction {
             log.error("{} Error during timeout or address checking for session {}",getLogPrefix(), session.getId(), e);
         }
     }
- // Checkstyle: ReturnCount ON
 
 }

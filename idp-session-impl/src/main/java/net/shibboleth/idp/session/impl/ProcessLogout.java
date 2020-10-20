@@ -35,6 +35,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -176,9 +177,10 @@ public class ProcessLogout extends AbstractProfileAction {
             }
             
             final HttpServletRequest request = getHttpServletRequest();
-            if (request != null && request.getRemoteAddr() != null) {
+            final String addr = request != null ? HttpServletSupport.getRemoteAddr(request) : null;
+            if (addr != null) {
                 try {
-                    if (!session.checkAddress(request.getRemoteAddr())) {
+                    if (!session.checkAddress(addr)) {
                         return;
                     }
                 } catch (final SessionException e) {
@@ -187,7 +189,7 @@ public class ProcessLogout extends AbstractProfileAction {
                     return;
                 } 
             } else {
-                log.info("{} No servlet request or client address available, skipping address check for sessions",
+                log.info("{} No client address available, skipping address check for sessions",
                         getLogPrefix());
             }
 

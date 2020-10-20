@@ -24,6 +24,7 @@ import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -48,7 +49,6 @@ public class ExtractUserAgentAddress extends AbstractExtractionAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUserAgentAddress.class);
     
     /** {@inheritDoc} */
-    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -60,7 +60,7 @@ public class ExtractUserAgentAddress extends AbstractExtractionAction {
             return;
         }
         
-        final String addressString = applyTransforms(request.getRemoteAddr());
+        final String addressString = applyTransforms(HttpServletSupport.getRemoteAddr(request));
         if (addressString == null || !InetAddresses.isInetAddress(addressString)) {
             log.debug("{} User agent's address, {}, is not a valid IP address", getLogPrefix(), addressString);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
@@ -70,5 +70,5 @@ public class ExtractUserAgentAddress extends AbstractExtractionAction {
         authenticationContext.getSubcontext(UserAgentContext.class, true).setAddress(
                 InetAddresses.forString(addressString));
     }
-    // CheckStyle: ReturnCount ON
+    
 }

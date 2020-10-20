@@ -38,6 +38,7 @@ import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -250,7 +251,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
         }
         
         if (clientAddressTrusted) {
-            context.setClientAddress(httpRequest.getRemoteAddr());
+            context.setClientAddress(HttpServletSupport.getRemoteAddr(httpRequest));
         }
         
         final String factor = httpRequest.getHeader(factorHeaderName);
