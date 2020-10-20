@@ -110,5 +110,7 @@ public class StoredIdDataConnectorParserTest extends BaseAttributeDefinitionPars
         final ResolverAttributeDefinitionDependency attrib = connector.getAttributeDependencies().iterator().next();
         assertEquals(attrib.getDependencyPluginId(), "theSourceRemainsTheSame");
         testIt(connector);
+        final JDBCPairwiseIdStore store = (JDBCPairwiseIdStore) connector.getPairwiseIdStore();
+        assertEquals(store.getTableName(), "testtable");
     }
 }

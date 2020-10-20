@@ -269,6 +269,17 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         
         verifyDatabase = flag;
     }
+    
+    /**
+     * Gets the table name.
+     * 
+     * @return table name
+     * 
+     * @since 4.1.0
+     */
+    @Nonnull @NotEmpty public String getTableName() {
+        return tableName;
+    }
 
     /**
      * Set the table name.

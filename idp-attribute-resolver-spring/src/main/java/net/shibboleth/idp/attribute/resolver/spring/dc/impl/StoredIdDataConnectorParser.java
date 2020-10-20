@@ -84,6 +84,11 @@ public class StoredIdDataConnectorParser extends ComputedIdDataConnectorParser {
             builder.addPropertyValue("transactionRetries",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "transactionRetries")));
         }
+        
+        if (config.hasAttributeNS(null, "tableName")) {
+            builder.addPropertyValue("tableName",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "tableName")));
+        }
 
         if (config.hasAttributeNS(null, "failFast")) {
             // V4 Deprecation

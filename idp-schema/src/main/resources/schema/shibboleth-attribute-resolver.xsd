@@ -1486,7 +1486,7 @@
     <complexType name="StoredId">
         <annotation>
             <documentation>
-                A connector that either generates a persistent ID by hashing or by looking it up in a database.
+                A connector that retrieves a pairwise ID from a database.
             </documentation>
         </annotation>
         <complexContent>
@@ -1527,10 +1527,17 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="tableName" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Overrides name of database table to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="failFast" type="resolver:string">
                     <annotation>
                         <documentation>
-			  Deprecated, use failFastInitialize
+       	                    Deprecated, use failFastInitialize
                         </documentation>
                     </annotation>
                 </attribute>

@@ -5,8 +5,9 @@
 	
     failFast="false"
     queryTimeout="PT5S"
-    transactionRetries="5"
+    transactionRetries="5"    
     retryableErrors="25000 25001"
+    tableName="testtable"
 	generatedAttributeID="jenny"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 	<InputAttributeDefinition ref="theSourceRemainsTheSame"/>
