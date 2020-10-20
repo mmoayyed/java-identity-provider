@@ -85,8 +85,7 @@
     </bean>    
     
     <!-- Parent bean for users to configure a custom ID store rather than a data source only. -->
-    <bean id="shibboleth.JDBCPersistentIdStore" abstract="true"
-        class="net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore"
+    <bean id="shibboleth.JDBCPersistentIdStore" parent="shibboleth.JDBCPairwiseIdStore" abstract="true"
         p:initialValueStore="#{getObject('%{idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}'.trim())}" />
     
     <!--

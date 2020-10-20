@@ -54,4 +54,8 @@
     <bean id="shibboleth.Metadata.Index.Endpoint.Predicate.ByRoleAndEndpoint" lazy-init="true"
         class="org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex.DefaultEndpointSelectionPredicate" />
 
+    <!-- Parent bean for users to configure a custom ID store rather than a data source only. -->
+    <bean id="shibboleth.JDBCPairwiseIdStore" abstract="true"
+        class="net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore" />
+
 </beans>
