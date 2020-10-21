@@ -82,7 +82,7 @@ public class StorageServiceDataConnectorTest {
         builder.initialize();
         
         connector.setExecutableSearchBuilder(builder);
-        connector.setGeneratedAttributeId("foobar");
+        connector.setGeneratedAttributeID("foobar");
         connector.initialize();
         
         final AttributeResolutionContext context =
@@ -104,7 +104,7 @@ public class StorageServiceDataConnectorTest {
         builder.initialize();
         
         connector.setExecutableSearchBuilder(builder);
-        connector.setGeneratedAttributeId("foobar");
+        connector.setGeneratedAttributeID("foobar");
         connector.setNoResultAnError(true);
         connector.initialize();
         
@@ -123,7 +123,7 @@ public class StorageServiceDataConnectorTest {
         builder.initialize();
         
         connector.setExecutableSearchBuilder(builder);
-        connector.setGeneratedAttributeId("foobar");
+        connector.setGeneratedAttributeID("foobar");
         connector.initialize();
         
         storage.create("foo", "bar", "test", null);
@@ -148,7 +148,7 @@ public class StorageServiceDataConnectorTest {
         builder.initialize();
         
         connector.setExecutableSearchBuilder(builder);
-        connector.setGeneratedAttributeId("foobar");
+        connector.setGeneratedAttributeID("foobar");
         
         final TestCache cache = new TestCache();
         connector.setResultsCache(cache);

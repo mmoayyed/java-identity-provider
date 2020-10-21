@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeResolver 
+            xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <DataConnector id="myStorage" xsi:type="StorageService"
+            storageServiceRef="myStorageService"
+            customObjectRef="CustomObject"
+            noResultIsError="%{missingerror:false}">
+            
+        <ContextTemplate >%{context}</ContextTemplate>
+        <KeyTemplate>%{key}</KeyTemplate>
+        
+        <RecordMapping>
+            <ScriptFile>%{scriptPath}</ScriptFile>
+        </RecordMapping>
+        
+        <ResultCache expireAfterWrite="PT10S" />
+        
+    </DataConnector>
+    
+</AttributeResolver>

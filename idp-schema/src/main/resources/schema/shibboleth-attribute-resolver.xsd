@@ -1483,6 +1483,101 @@
         </complexContent>
     </complexType>
 
+    <complexType name="StorageService">
+        <annotation>
+            <documentation>
+                A data connector definition that queries for a record via the IdP's StorageService API.
+                Simple and scripted handling of records, typically in JSON, is the primary use case.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <choice maxOccurs="unbounded">
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>                                        
+                    <element ref="resolver:FailoverDataConnector"/>
+                    <element name="ContextTemplate" type="resolver:string">
+                        <annotation>
+                            <documentation>
+                                A template that will be used to create the context to query.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="KeyTemplate" type="resolver:string">
+                        <annotation>
+                            <documentation>
+                                A template that will be used to create the key to query.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="RecordMapping" type="resolver:ScriptType">
+                        <annotation>
+                            <documentation>
+                                Maps the record into attributes by means of scripting.
+                                Mutually exclusive with generatedAttributeID attribute.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="ResultCache" type="resolver:CacheConfigType"/>
+                    <element name="ResultCacheBean" type="resolver:string"/>
+                </choice>
+                <attribute name="storageServiceRef" type="resolver:string" use="required">
+                    <annotation>
+                        <documentation>
+                            Reference to Spring bean of the StorageService to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="customObjectRef" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                        Injected object into Context/Key template building process.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="generatedAttributeID" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute produced by this data connector if simple
+                            record mapping is used. Mutually exclusive with ResponseMapping element.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="noResultIsError" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a search returning no record should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="templateEngine" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Name of the template engine defined within the application.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="executableSearchBuilderRef" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the ExecutableSearchBuilder implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mappingStrategyRef" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the MappingStrategy implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="StoredId">
         <annotation>
             <documentation>
