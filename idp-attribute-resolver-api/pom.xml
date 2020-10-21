@@ -40,6 +40,10 @@
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-security-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-storage-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>net.shibboleth.utilities</groupId>
