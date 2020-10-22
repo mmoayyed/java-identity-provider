@@ -50,7 +50,8 @@
     <MetadataProvider id="HTTPMetadata"
                       xsi:type="FileBackedHTTPMetadataProvider"
                       backingFile="%{idp.home}/metadata/localCopyFromXYZHTTP.xml"
-                      metadataURL="http://WHATEVER"> 
+                      metadataURL="http://WHATEVER"
+                      failFastInitialization="false">
         
         <MetadataFilter xsi:type="SignatureValidation" certificateFile="%{idp.home}/credentials/metaroot.pem" />
         <MetadataFilter xsi:type="RequiredValidUntil" maxValidityInterval="P30D"/>
