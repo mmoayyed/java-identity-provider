@@ -44,7 +44,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 /**
- * Tests for {@link HTTPDataConnector}
+ * Tests for {@link StorageServiceDataConnector}
  */
 @SuppressWarnings("javadoc")
 public class StorageServiceDataConnectorTest {
