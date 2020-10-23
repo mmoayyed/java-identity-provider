@@ -43,6 +43,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.NoResultAnErrorResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.storage.impl.StorageServiceDataConnector;
+import net.shibboleth.idp.attribute.resolver.spring.dc.storage.impl.StorageServiceDataConnectorParser;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 
 /** Test for {@link StorageServiceDataConnectorParser}. */
