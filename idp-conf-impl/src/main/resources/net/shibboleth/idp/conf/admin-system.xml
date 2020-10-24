@@ -98,11 +98,11 @@
 
     <bean parent="shibboleth.OneTimeAdminFlow"
         c:id="http://shibboleth.net/ns/profiles/unlock-keys"
-        p:loggingId="%{idp.unlock.logging:UnlockKeys}"
-        p:policyName="%{idp.unlock.accessPolicy:AccessDenied}"
-        p:nonBrowserSupported="%{idp.unlock.nonBrowserSupported:false}"
-        p:authenticated="%{idp.unlock.authenticated:true}"
-        p:resolveAttributes="%{idp.unlock.resolveAttributes:false}" />
+        p:loggingId="%{idp.unlock-keys.logging:UnlockKeys}"
+        p:policyName="%{idp.unlock-keys.accessPolicy:AccessDenied}"
+        p:nonBrowserSupported="%{idp.unlock-keys.nonBrowserSupported:false}"
+        p:authenticated="%{idp.unlock-keys.authenticated:true}"
+        p:resolveAttributes="%{idp.unlock-keys.resolveAttributes:false}" />
 
     <!-- Parent beans to default some of the flow boilerplate. -->
 
