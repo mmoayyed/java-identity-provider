@@ -72,10 +72,6 @@
             p:inactivityTimeout="%{idp.authn.IPAddress.inactivityTimeout:PT60S}"
             p:reuseCondition-ref="#{'%{idp.authn.IPAddress.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
             p:activationCondition-ref="#{'%{idp.authn.IPAddress.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
-        <property name="supportedPrincipals">
-            <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" />
-        </property>
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.IPAddress.supportedPrincipals:}'.trim()}" />
@@ -184,14 +180,6 @@
             p:inactivityTimeout="%{idp.authn.SPNEGO.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.SPNEGO.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
             p:activationCondition-ref="#{'%{idp.authn.SPNEGO.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
-        <property name="supportedPrincipals">
-            <list>
-                <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Kerberos" />
-                <bean parent="shibboleth.SAML1AuthenticationMethod"
-                    c:method="urn:ietf:rfc:1510" />
-            </list>
-        </property>
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.SPNEGO.supportedPrincipals:}'.trim()}" />
@@ -210,16 +198,6 @@
             p:inactivityTimeout="%{idp.authn.X509.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.X509.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
             p:activationCondition-ref="#{'%{idp.authn.X509.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
-        <property name="supportedPrincipals">
-            <list>
-                <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:X509" />
-                <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient" />
-                <bean parent="shibboleth.SAML1AuthenticationMethod"
-                    c:method="urn:ietf:rfc:2246" />
-            </list>
-        </property>
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.X509.supportedPrincipals:}'.trim()}" />
@@ -238,16 +216,6 @@
             p:inactivityTimeout="%{idp.authn.X509Internal.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.X509Internal.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
             p:activationCondition-ref="#{'%{idp.authn.X509Internal.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
-        <property name="supportedPrincipals">
-            <list>
-                <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:X509" />
-                <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient" />
-                <bean parent="shibboleth.SAML1AuthenticationMethod"
-                    c:method="urn:ietf:rfc:2246" />
-            </list>
-        </property>
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.X509Internal.supportedPrincipals:}'.trim()}" />
