@@ -74,7 +74,7 @@
     </bean>
 
     <!-- Attribute release flow for attribute queries -->
-    <bean id="intercept/attribute-release-query" parent="shibboleth.consent.AttributeReleaseFlow" />
+    <bean p:id="intercept/attribute-release-query" parent="shibboleth.consent.AttributeReleaseFlow" />
 
     <!-- Parent bean for terms of use consent flows. -->
     <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
