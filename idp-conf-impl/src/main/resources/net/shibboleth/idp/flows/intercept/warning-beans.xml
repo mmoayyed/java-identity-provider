@@ -21,14 +21,14 @@
     <!-- Empty map to override in config file. -->
     <util:map id="shibboleth.warning.ConditionMap" />
 
-    <!-- Prefix of cookie name to track when user was last warned. -->
-    <bean id="shibboleth.warning.NotifyCookiePrefix" class="java.lang.String" c:_0="shib_idp_warn_" />
-
     <import resource="conditional:%{idp.home}/conf/intercept/warning-intercept-config.xml" />
+
+    <!-- Prefix of cookie name to track when user was last warned. -->
+    <bean id="WarningCookiePrefix" class="java.lang.String"
+        c:_0="#{'%{idp.warning.notifyCookiePrefix:shib_idp_warn_}'.trim()}" />
 
     <!-- Simplifies flow definition expressions. -->
     <alias name="shibboleth.warning.ConditionMap" alias="WarningConditionMap" />
-    <alias name="shibboleth.warning.NotifyCookiePrefix" alias="WarningCookiePrefix" />
     <alias name="shibboleth.PersistentCookieManager" alias="WarningCookieManager" />
-    
+
 </beans>
