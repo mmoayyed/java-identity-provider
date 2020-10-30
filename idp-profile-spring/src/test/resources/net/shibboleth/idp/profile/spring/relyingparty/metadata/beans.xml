@@ -94,4 +94,12 @@
     
     <bean id="metadata.classpathRef" class="org.springframework.core.io.ClassPathResource" c:_0="/net/shibboleth/idp/profile/spring/relyingparty/metadata/entity.xml"/>
             
+    <bean id="metadata.IntermediateDirectoryStrategy" class="org.opensaml.core.xml.persist.impl.SegmentingIntermediateDirectoryStrategy" >
+        <constructor-arg value="2" />
+        <constructor-arg value="2" />
+        <constructor-arg>
+            <bean class="org.opensaml.core.xml.persist.impl.PassthroughSourceStrategy" />
+        </constructor-arg> 
+    </bean>
+    
 </beans>

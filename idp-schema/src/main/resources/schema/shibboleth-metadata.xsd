@@ -515,6 +515,65 @@
                        </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="sourceDirectoryIntermediateSegmentNumber" type="shibmd:string">
+                    <annotation>
+                        <documentation>
+                        Convenience mechanism for specifying the number of intermediate directory segments
+                        underneath the 'sourceDirectory', when a hashed directory approach is desired.
+                        If this is supplied, then 'sourceDirectoryIntermediateSegmentLength' MUST also be supplied.
+                        
+                        This attribute will be ignored if 'sourceManagerRef' is also specified.
+                        
+                        This attribute will be ignored if 'sourceDirectoryIntermediateStrategyRef' is also specified.
+                        
+                        This attribute will be ignored if 'sourceKeyGeneratorRef' is also specified. In that case
+                        if an intermediate directory strategy is desired, 'sourceDirectoryIntermediateStrategyRef'
+                        should be supplied instead.
+                        
+                        Example: When segment number = 2, and segment length = 2, the metadata for the entity with
+                        entityID "urn:test:foobar" in file "d278c9975472a6b4827b1a8723192b4e99aa969c.xml"
+                        will be resolved from:
+                        
+                            {sourceDirectory}/d2/78/d278c9975472a6b4827b1a8723192b4e99aa969c.xml
+                       </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sourceDirectoryIntermediateSegmentLength" type="shibmd:string">
+                    <annotation>
+                        <documentation>
+                        Convenience mechanism for specifying the number of intermediate directory segments
+                        underneath the 'sourceDirectory', when a hashed directory approach is desired.
+                        If this is supplied, then 'sourceDirectoryIntermediateSegmentNumber' MUST also be supplied.
+                        
+                        This attribute will be ignored if 'sourceManagerRef' is also specified.
+                        
+                        This attribute will be ignored if 'sourceDirectoryIntermediateStrategyRef' is also specified.
+                        
+                        This attribute will be ignored if 'sourceKeyGeneratorRef' is also specified. In that case
+                        if an intermediate directory strategy is desired, 'sourceDirectoryIntermediateStrategyRef'
+                        should be supplied instead.
+                        
+                        Example: When segment number = 2, and segment length = 2, the metadata for the entity with
+                        entityID "urn:test:foobar" in file "d278c9975472a6b4827b1a8723192b4e99aa969c.xml"
+                        will be resolved from:
+                        
+                            {sourceDirectory}/d2/78/d278c9975472a6b4827b1a8723192b4e99aa969c.xml
+                       </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sourceDirectoryIntermediateStrategyRef" type="shibmd:string">
+                    <annotation>
+                        <documentation>
+                        Bean reference to the strategy for computing intermediate directories underneath the
+                        'sourceDirectory'.
+                        
+                        This attribute overrides 'sourceDirectoryIntermediateSegmentNumber' and
+                        'sourceDirectoryIntermediateSegmentLength'.
+                        
+                        This attribute will be ignored if 'sourceManagerRef' is also specified.
+                       </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

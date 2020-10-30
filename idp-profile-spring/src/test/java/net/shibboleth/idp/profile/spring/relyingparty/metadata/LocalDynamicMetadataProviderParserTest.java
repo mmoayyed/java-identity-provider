@@ -19,7 +19,11 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -30,6 +34,7 @@ import org.opensaml.saml.metadata.resolver.impl.AbstractDynamicMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.security.crypto.JCAConstants;
+import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
 import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
@@ -53,18 +58,14 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
     private final int TIME_GRANULARITY_MS = 25; // Dither for Windows clocks
     
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws IOException {
         sourceDirectory = new File(System.getProperty("java.io.tmpdir"), "localDynamicMD");
+        resetSourceDirectory();
     }
     
     @AfterMethod
-    public void tearDown() {
-        if (sourceDirectory.exists()) {
-            for (File child : sourceDirectory.listFiles()) {
-                child.delete();
-            }
-            sourceDirectory.delete();
-        }
+    public void tearDown() throws IOException {
+        resetSourceDirectory();
     }
     
     @Test
@@ -176,5 +177,122 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertEquals(resolved.getEntityID(), entityID);
     }
     
+    @Test
+    public void testSourceDirectoryWithIntermediateNumberAndLength() throws Exception {
+        // Test that can correctly resolve when sourceDirectory is supplied with intermediate dir segment number and length
+        // SHA-1 hashes to: 9339685fdddbf8e45faac94340a3260468aa65bd
+        String entityID = "urn:test:entity1";
+        EntityDescriptor entity = (EntityDescriptor) XMLObjectSupport.buildXMLObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
+        entity.setEntityID(entityID);
+        
+        if (!sourceDirectory.exists()) {
+            Assert.assertTrue(sourceDirectory.mkdirs());
+        }
+        StringDigester digester = new StringDigester(JCAConstants.DIGEST_SHA1, OutputFormat.HEX_LOWER);
+        String sourceKey = digester.apply(entityID) + ".xml";
+        // Using segment number=1 and length=2
+        File sourceFile = Path.of(sourceDirectory.getAbsolutePath(), "93", sourceKey).toFile();
+        
+        // First clear anything from previous test, and sanity check the setup
+        if (sourceFile.exists()) {
+            sourceFile.delete();
+            Assert.assertFalse(sourceFile.exists());
+        }
+        
+        LocalDynamicMetadataResolver resolver = getBean(LocalDynamicMetadataResolver.class, 
+                "localDynamicWithSourceDirectoryAndIntermediateNumberAndLength.xml", "beans.xml");
+        
+        CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(entityID));
+        
+        Assert.assertNull(resolver.resolveSingle(criteria));
+        
+        sourceFile.getParentFile().mkdirs();
+        XMLObjectSupport.marshallToOutputStream(entity, new FileOutputStream(sourceFile));
+        Assert.assertTrue(sourceFile.exists());
+        
+        // Configured negative lookup cache should still be in effect
+        Assert.assertNull(resolver.resolveSingle(criteria));
+        
+        // Sleep past the negative lookup cache expiration
+        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration().toMillis()+TIME_GRANULARITY_MS, TimeUnit.MILLISECONDS);
+        
+        EntityDescriptor resolved = resolver.resolveSingle(criteria);
+        Assert.assertNotNull(resolved);
+        Assert.assertEquals(resolved.getEntityID(), entityID);
+    }
+    
+    @Test
+    public void testSourceDirectoryWithIntermediateStrategyRef() throws Exception {
+        // Test that can correctly resolve when sourceDirectory is supplied with intermediate dir strategy ref
+        // SHA-1 hashes to: 9339685fdddbf8e45faac94340a3260468aa65bd
+        String entityID = "urn:test:entity1";
+        EntityDescriptor entity = (EntityDescriptor) XMLObjectSupport.buildXMLObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
+        entity.setEntityID(entityID);
+        
+        if (!sourceDirectory.exists()) {
+            Assert.assertTrue(sourceDirectory.mkdirs());
+        }
+        StringDigester digester = new StringDigester(JCAConstants.DIGEST_SHA1, OutputFormat.HEX_LOWER);
+        String sourceKey = digester.apply(entityID) + ".xml";
+        // Using segment number=2 and length=2
+        File sourceFile = Path.of(sourceDirectory.getAbsolutePath(), "93", "39", sourceKey).toFile();
+        
+        // First clear anything from previous test, and sanity check the setup
+        if (sourceFile.exists()) {
+            sourceFile.delete();
+            Assert.assertFalse(sourceFile.exists());
+        }
+        
+        LocalDynamicMetadataResolver resolver = getBean(LocalDynamicMetadataResolver.class, 
+                "localDynamicWithSourceDirectoryAndIntermediateStrategyRef.xml", "beans.xml");
+        
+        CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(entityID));
+        
+        Assert.assertNull(resolver.resolveSingle(criteria));
+        
+        sourceFile.getParentFile().mkdirs();
+        XMLObjectSupport.marshallToOutputStream(entity, new FileOutputStream(sourceFile));
+        Assert.assertTrue(sourceFile.exists());
+        
+        // Configured negative lookup cache should still be in effect
+        Assert.assertNull(resolver.resolveSingle(criteria));
+        
+        // Sleep past the negative lookup cache expiration
+        Uninterruptibles.sleepUninterruptibly(resolver.getNegativeLookupCacheDuration().toMillis()+TIME_GRANULARITY_MS, TimeUnit.MILLISECONDS);
+        
+        EntityDescriptor resolved = resolver.resolveSingle(criteria);
+        Assert.assertNotNull(resolved);
+        Assert.assertEquals(resolved.getEntityID(), entityID);
+    }
+    
+    @Test(expectedExceptions=BeanDefinitionParsingException.class)
+    public void testSourceDirectoryIntermediateNumberWithoutLength() throws Exception {
+        getBean(LocalDynamicMetadataResolver.class, "localDynamicWithSourceDirectoryAndIntermediateNumberWithoutLength.xml", "beans.xml");
+    }
+    
+    @Test(expectedExceptions=BeanDefinitionParsingException.class)
+    public void testSourceDirectoryIntermediateLengthWithoutNumber() throws Exception {
+        getBean(LocalDynamicMetadataResolver.class, "localDynamicWithSourceDirectoryAndIntermediateLengthWithoutNumber.xml", "beans.xml");
+    }
+    
+    @Test(expectedExceptions=BeanDefinitionParsingException.class)
+    public void testMissingSourceDirectoryAndSourceManager() throws Exception {
+        getBean(LocalDynamicMetadataResolver.class, "localDynamicMissingSourceManagerAndSourceDirectory.xml", "beans.xml");
+    }
+    
+    // Helpers
 
+    private void resetSourceDirectory() throws IOException {
+        if (sourceDirectory.exists()) {
+            if (sourceDirectory.isDirectory()) {
+                Files.walk(sourceDirectory.toPath())
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
+            } else {
+                sourceDirectory.delete();
+            }
+        }
+    }
+    
 }
