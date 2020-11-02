@@ -76,16 +76,8 @@
     </bean>
 
     <bean id="PopulateConsentInterceptContext"
-        class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype">
-        <property name="availableFlows">
-            <bean class="org.springframework.beans.factory.config.ListFactoryBean">
-                <property name="sourceList">
-                    <list>
-                        <ref bean="intercept/attribute-release-query" />
-                    </list>
-                </property>
-            </bean>
-        </property>
+            class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}">
         <property name="activeFlowsLookupStrategy">
             <bean parent="shibboleth.Functions.Constant" c:target="#{ {'attribute-release-query' } }" />
         </property>

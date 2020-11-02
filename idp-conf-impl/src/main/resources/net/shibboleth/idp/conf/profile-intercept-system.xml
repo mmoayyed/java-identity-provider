@@ -85,15 +85,15 @@
 
     <!-- Parent bean for terms of use consent flows. -->
     <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
-        class="net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor"
-        p:storageService-ref="#{'%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}'.trim()}"
-        p:compareValues="%{idp.consent.compareValues:false}"
-        p:lifetime="%{idp.consent.storageRecordLifetime:P1Y}"
-        p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"
-        p:expandedNumberOfStoredRecords="%{idp.consent.expandedMaxStoredRecords:0}"
-        p:expandedStorageThreshold="%{idp.consent.expandedStorageThreshold:1048576}"
-        p:nonBrowserSupported="false"
-        p:activationCondition-ref="#{'%{idp.consent.terms-of-use.activationCondition:shibboleth.Conditions.TRUE}'.trim()}" />
+            class="net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor"
+            p:storageService-ref="#{'%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}'.trim()}"
+            p:compareValues="%{idp.consent.compareValues:false}"
+            p:lifetime="%{idp.consent.storageRecordLifetime:P1Y}"
+            p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"
+            p:expandedNumberOfStoredRecords="%{idp.consent.expandedMaxStoredRecords:0}"
+            p:expandedStorageThreshold="%{idp.consent.expandedStorageThreshold:1048576}"
+            p:nonBrowserSupported="false"
+            p:activationCondition-ref="#{'%{idp.consent.terms-of-use.activationCondition:shibboleth.Conditions.TRUE}'.trim()}" />
 
     <!-- Function to lookup consent-specific audit context as a child of the consent context. -->
     <bean id="shibboleth.consent.ChildLookup.ConsentAuditContext" parent="shibboleth.Functions.Compose">

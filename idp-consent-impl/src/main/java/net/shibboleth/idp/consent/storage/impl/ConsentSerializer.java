@@ -100,8 +100,6 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Symbolic mappings cannot be null"));
-        
-        log.debug("symbolics '{}'", symbolics);
     }
 
     /**

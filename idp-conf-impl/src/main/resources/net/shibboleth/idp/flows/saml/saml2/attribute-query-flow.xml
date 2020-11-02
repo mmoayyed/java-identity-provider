@@ -30,7 +30,7 @@
 
     <action-state id="ConsentSetup">
         <evaluate expression="PopulateConsentInterceptContext" />
-        <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).setAttemptedFlow(flowRequestContext.getActiveFlow().getApplicationContext().getBean('intercept/attribute-release-query'))" />
+        <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).setAttemptedFlow(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.ProfileInterceptorFlowDescriptorManager').getComponents().?[id matches 'intercept/attribute-release-query'])" />
         <transition on="success" to="ConsentFlow" />
     </action-state>
 
