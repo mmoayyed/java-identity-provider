@@ -168,7 +168,7 @@
         </property>
     </bean>
             
-    <bean id="authn/SPNEGO" parent="shibboleth.AuthenticationFlow"
+    <bean p:id="authn/SPNEGO" parent="shibboleth.AuthenticationFlow"
             p:order="%{idp.authn.SPNEGO.order:1000}"
             p:nonBrowserSupported="%{idp.authn.SPNEGO.nonBrowserSupported:false}"
             p:passiveAuthenticationSupported="%{idp.authn.SPNEGO.passiveAuthenticationSupported:false}"
@@ -186,7 +186,7 @@
         </property>
     </bean>
 
-    <bean id="authn/X509" parent="shibboleth.AuthenticationFlow"
+    <bean p:id="authn/X509" parent="shibboleth.AuthenticationFlow"
             p:order="%{idp.authn.X509.order:1000}"
             p:nonBrowserSupported="%{idp.authn.X509.nonBrowserSupported:false}"
             p:passiveAuthenticationSupported="%{idp.authn.X509.passiveAuthenticationSupported:false}"
@@ -204,7 +204,7 @@
         </property>
     </bean>
 
-    <bean id="authn/X509Internal" parent="shibboleth.AuthenticationFlow"
+    <bean p:id="authn/X509Internal" parent="shibboleth.AuthenticationFlow"
             p:order="%{idp.authn.X509Internal.order:1000}"
             p:nonBrowserSupported="%{idp.authn.X509Internal.nonBrowserSupported:false}"
             p:passiveAuthenticationSupported="%{idp.authn.X509Internal.passiveAuthenticationSupported:false}"
@@ -222,7 +222,7 @@
         </property>
     </bean>
 
-    <bean id="authn/Duo" parent="shibboleth.AuthenticationFlow"
+    <bean p:id="authn/Duo" parent="shibboleth.AuthenticationFlow"
             p:order="%{idp.authn.Duo.order:1000}"
             p:nonBrowserSupported="%{idp.authn.Duo.nonBrowserSupported:false}"
             p:passiveAuthenticationSupported="%{idp.authn.Duo.passiveAuthenticationSupported:false}"
@@ -240,7 +240,7 @@
         </property>
     </bean>
 
-    <bean id="authn/MFA" parent="shibboleth.AuthenticationFlow"
+    <bean p:id="authn/MFA" parent="shibboleth.AuthenticationFlow"
             p:order="%{idp.authn.MFA.order:1000}"
             p:nonBrowserSupported="%{idp.authn.MFA.nonBrowserSupported:true}"
             p:passiveAuthenticationSupported="%{idp.authn.MFA.passiveAuthenticationSupported:true}"
