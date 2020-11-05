@@ -479,31 +479,31 @@
 
     <!-- Boilerplate objects needed to key the installation of matching rules in the comparison registry. -->
 
-    <bean id="shibboleth.SAMLAuthnMethodExact" class="net.shibboleth.utilities.java.support.collection.Pair"
+    <bean id="shibboleth.SAMLAuthnMethodExact" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal) }" p:second="exact"/>
     
-    <bean id="shibboleth.SAMLACClassRefExact" class="net.shibboleth.utilities.java.support.collection.Pair"
+    <bean id="shibboleth.SAMLACClassRefExact" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal) }" p:second="exact"/>
 
-    <bean id="shibboleth.SAMLACDeclRefExact" class="net.shibboleth.utilities.java.support.collection.Pair"
+    <bean id="shibboleth.SAMLACDeclRefExact" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="exact"/>
 
-    <bean id="shibboleth.SAMLACClassRefMinimum" class="net.shibboleth.utilities.java.support.collection.Pair"
+    <bean id="shibboleth.SAMLACClassRefMinimum" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal) }" p:second="minimum"/>
 
-    <bean id="shibboleth.SAMLACDeclRefMinimum" class="net.shibboleth.utilities.java.support.collection.Pair"
+    <bean id="shibboleth.SAMLACDeclRefMinimum" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="minimum"/>
 
-    <bean id="shibboleth.SAMLACClassRefMaximum" class="net.shibboleth.utilities.java.support.collection.Pair"
+    <bean id="shibboleth.SAMLACClassRefMaximum" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal) }" p:second="maximum"/>
 
-    <bean id="shibboleth.SAMLACDeclRefMaximum" class="net.shibboleth.utilities.java.support.collection.Pair"
+    <bean id="shibboleth.SAMLACDeclRefMaximum" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="maximum"/>
 
-    <bean id="shibboleth.SAMLACClassRefBetter" class="net.shibboleth.utilities.java.support.collection.Pair"
+    <bean id="shibboleth.SAMLACClassRefBetter" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal) }" p:second="better"/>
 
-    <bean id="shibboleth.SAMLACDeclRefBetter" class="net.shibboleth.utilities.java.support.collection.Pair"
+    <bean id="shibboleth.SAMLACDeclRefBetter" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="better"/>
     
 </beans>
