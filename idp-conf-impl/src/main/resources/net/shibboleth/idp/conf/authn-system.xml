@@ -434,12 +434,44 @@
     
     <!-- Registry of comparison rules configured by deployer and injected into authentication flow. -->
     <bean id="shibboleth.AuthnComparisonRegistry"
-            class="net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry"
-            c:fromMap-ref="shibboleth.AuthnComparisonRules" />
+        class="net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry"
+        p:registrations="#{getObject('shibboleth.AuthnComparisonRules')}" />
+
+    <!-- Parent bean for auto-registration of rules. -->
+    <bean id="shibboleth.AuthnComparisonRegistration" abstract="true"
+        class="net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistration" />
+
+    <!-- Exact matching rules. -->
+    <bean parent="shibboleth.AuthnComparisonRegistration"
+        c:key-ref="shibboleth.SAMLAuthnMethodExact" c:value-ref="shibboleth.ExactMatchFactory" />
+    <bean parent="shibboleth.AuthnComparisonRegistration"
+        c:key-ref="shibboleth.SAMLACClassRefExact" c:value-ref="shibboleth.ExactMatchFactory" />
+    <bean parent="shibboleth.AuthnComparisonRegistration"
+        c:key-ref="shibboleth.SAMLACDeclRefExact" c:value-ref="shibboleth.ExactMatchFactory" />
+
+    <!-- Min/max rules degenerating by default into exact matching. -->
+    <bean parent="shibboleth.AuthnComparisonRegistration"
+        c:key-ref="shibboleth.SAMLACClassRefMinimum" c:value-ref="shibboleth.ExactMatchFactory" />
+    <bean parent="shibboleth.AuthnComparisonRegistration"
+        c:key-ref="shibboleth.SAMLACDeclRefMinimum" c:value-ref="shibboleth.ExactMatchFactory" />
+    <bean parent="shibboleth.AuthnComparisonRegistration"
+        c:key-ref="shibboleth.SAMLACClassRefMaximum" c:value-ref="shibboleth.ExactMatchFactory" />
+    <bean parent="shibboleth.AuthnComparisonRegistration"
+        c:key-ref="shibboleth.SAMLACDeclRefMaximum" c:value-ref="shibboleth.ExactMatchFactory" />
+
+    <!-- Empty default matching rules for "better" operator. -->
+    <bean id="shibboleth.DefaultBetterClassRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
+    <bean id="shibboleth.DefaultBetterDeclRefMatchFactory" parent="shibboleth.InexactMatchFactory" />
+    
+    <!-- "better" rules that default to failure. -->
+    <bean parent="shibboleth.AuthnComparisonRegistration"
+        c:key-ref="shibboleth.SAMLACClassRefBetter" c:value-ref="shibboleth.DefaultBetterClassRefMatchFactory" />
+    <bean parent="shibboleth.AuthnComparisonRegistration"
+        c:key-ref="shibboleth.SAMLACDeclRefBetter" c:value-ref="shibboleth.DefaultBetterDeclRefMatchFactory" />
 
     <!-- Exact matching for SAML AC Classes and Declarations (or anything else really). -->
     <bean id="shibboleth.ExactMatchFactory"
-        class="net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory"/>
+        class="net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory" />
 
     <!-- Parent bean for inexact matching factories defined by deployer. -->
     <bean id="shibboleth.InexactMatchFactory" abstract="true"

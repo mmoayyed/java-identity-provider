@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.principal;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,6 +34,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A registry of mappings between a custom {@link Principal} subtype with a matching operator
@@ -56,11 +58,53 @@ public final class PrincipalEvalPredicateFactoryRegistry {
     /**
      * Constructor.
      * 
-     * @param fromMap  map to populate registry with
+     * <p>Used to auto-wire {@link PrincipalEvalPredicateFactoryRegistration} wrappers.</p>
+     *
+     * @param registrations wrapped registration information
+     * 
+     * @since 4.1.0
      */
+    @Autowired
+    public PrincipalEvalPredicateFactoryRegistry(@Nullable @NonnullElements @ParameterName(name="registrations")
+            final Collection<PrincipalEvalPredicateFactoryRegistration> registrations) {
+        registry = new ConcurrentHashMap<>();
+        if (registrations != null) {
+            log.debug("Auto-wiring {} registration(s)", registrations.size());
+            registrations.forEach(r -> registry.put(r.getTypeAndOperator(), r.getPredicateFactory()));
+        }
+    }
+    
+    /**
+     * Constructor.
+     * 
+     * @param fromMap  map to populate registry with
+     * 
+     * @deprecated
+     */
+    @Deprecated(since="4.1.0", forRemoval=true)
     public PrincipalEvalPredicateFactoryRegistry(@Nonnull @NonnullElements @ParameterName(name="fromMap") final
             Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> fromMap) {
         registry = new ConcurrentHashMap<>(Constraint.isNotNull(fromMap, "Source map cannot be null"));
+    }
+    
+    /**
+     * Add registrations from a map, overwriting any previously matching entries.
+     * 
+     * @param fromMap map entries to add
+     * 
+     * @since 4.1.0
+     */
+    public void setRegistrations(@Nullable @NonnullElements
+            final Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> fromMap) {
+        if (fromMap != null) {
+            fromMap.entrySet().forEach(entry -> {
+                if (registry.containsKey(entry.getKey())) {
+                    log.info("Replacing auto-wired entry for principal type '{}' and operator '{}'",
+                            entry.getKey().getFirst().getName(), entry.getKey().getSecond());
+                }
+                registry.put(entry.getKey(), entry.getValue());
+            });
+        }
     }
     
     /**
