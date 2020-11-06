@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.factory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Security;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
@@ -37,6 +38,7 @@ import org.opensaml.security.x509.X509Support;
 import org.opensaml.security.x509.impl.BasicPKIXValidationInformation;
 import org.opensaml.security.x509.impl.BasicX509CredentialNameEvaluator;
 import org.opensaml.security.x509.impl.CertPathPKIXTrustEvaluator;
+import org.opensaml.security.x509.impl.CertPathPKIXValidationOptions;
 import org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine;
 import org.opensaml.security.x509.impl.StaticPKIXValidationInformationResolver;
 import org.opensaml.security.x509.impl.X509CredentialNameEvaluator;
@@ -48,6 +50,7 @@ import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * File system specific bean for PKIXX509CredentialTrustEngine.
@@ -238,7 +241,37 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
                 credentialNameEvaluator != null ? credentialNameEvaluator :
                     (checkNames ? new BasicX509CredentialNameEvaluator() : null);
 
+        validateConfiguration(pkixTrustEvaluator);
+
         return new PKIXX509CredentialTrustEngine(resolver, pkixTrustEvaluator, credNameEvaluator);
     }
-    
+
+    /**
+     * Validate the configuration of the effective {@link PKIXTrustEvaluator}.
+     *
+     * @param pkixTrustEvaluator the instance whose configuration is to be evaluated
+     *
+     * @throws Exception if configuration issues are encountered
+     */
+    protected void validateConfiguration(@Nonnull final PKIXTrustEvaluator pkixTrustEvaluator) throws Exception {
+        if (CertPathPKIXTrustEvaluator.class.isInstance(pkixTrustEvaluator)
+                && CertPathPKIXValidationOptions.class.isInstance(pkixTrustEvaluator.getPKIXValidationOptions())) {
+            
+            final CertPathPKIXValidationOptions certPathOptions =
+                    CertPathPKIXValidationOptions.class.cast(pkixTrustEvaluator.getPKIXValidationOptions());
+
+           if (certPathOptions.isForceRevocationEnabled() && certPathOptions.isRevocationEnabled()
+                   && getCRLs().isEmpty()
+                   && ! Boolean.getBoolean("com.sun.security.enableCRLDP")
+                   && ! "true".equalsIgnoreCase(StringSupport.trimOrNull(Security.getProperty("oscp.enable"))) ) {
+
+               log.error("Certificate revocation checking was force enabled, "
+                       + "but no static CRLs were supplied and both CRLDP and OCSP processing is disabled");
+
+               throw new FatalBeanException("Certificate revocation checking was force enabled, "
+                       + "but no static CRLs were supplied and both CRLDP and OCSP processing is disabled");
+           }
+        }
+    }
+
 }
