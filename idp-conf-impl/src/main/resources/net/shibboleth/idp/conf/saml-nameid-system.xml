@@ -103,5 +103,8 @@
                 p:generators-ref="shibboleth.SAML2NameIDGenerators" />    
         </property>
     </bean>
+
+    <!-- Wildcard import hook for plugins. -->
+    <import resource="classpath*:/META-INF/net/shibboleth/idp/service/saml/nameid/postconfig.xml" />
         
 </beans>

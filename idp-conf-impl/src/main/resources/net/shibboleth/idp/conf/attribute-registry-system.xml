@@ -51,4 +51,7 @@
         </property>
     </bean>
     
+    <!-- Wildcard import hook for plugins. -->
+    <import resource="classpath*:/META-INF/net/shibboleth/idp/service/attribute/registry/postconfig.xml" />
+    
 </beans>

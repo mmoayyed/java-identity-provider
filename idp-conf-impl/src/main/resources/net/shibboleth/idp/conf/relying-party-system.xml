@@ -388,4 +388,7 @@
         </constructor-arg>
     </bean>
 
+    <!-- Wildcard import hook for plugins. -->
+    <import resource="classpath*:/META-INF/net/shibboleth/idp/service/relying-party/postconfig.xml" />
+
 </beans>

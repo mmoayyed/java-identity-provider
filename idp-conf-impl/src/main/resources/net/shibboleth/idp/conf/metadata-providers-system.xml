@@ -50,4 +50,7 @@
     <bean id="shibboleth.Metadata.MDQ.URLBuilder.SAMLArtifact" lazy-init="true"
         class="org.opensaml.saml.metadata.resolver.impl.SAMLArtifactURLBuilder" />
     
+    <!-- Wildcard import hook for plugins. -->
+    <import resource="classpath*:/META-INF/net/shibboleth/idp/service/saml/metadata/postconfig.xml" />
+    
 </beans>

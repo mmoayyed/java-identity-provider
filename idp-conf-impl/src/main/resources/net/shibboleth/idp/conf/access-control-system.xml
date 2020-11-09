@@ -26,4 +26,7 @@
     <bean id="shibboleth.PredicateAccessControl" abstract="true"
         class="org.opensaml.profile.logic.PredicateAccessControl" />
 
+    <!-- Wildcard import hook for plugins. -->
+    <import resource="classpath*:/META-INF/net/shibboleth/idp/service/access-control/postconfig.xml" />
+
 </beans>
