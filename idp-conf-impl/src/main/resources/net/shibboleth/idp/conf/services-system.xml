@@ -27,7 +27,7 @@
     
     <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
             depends-on="shibboleth.VelocityEngine"
-            p:serviceConfigurations-ref="#{'%{idp.service.attribute.filter.resources:shibboleth.AttributeFilterResources}'.trim()}"
+            p:serviceConfigurations-ref="ExtendedAttributeFilterResources"
             p:failFast="%{idp.service.attribute.filter.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.attribute.filter.checkInterval:PT0S}"
             p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
@@ -38,10 +38,19 @@
                 id="ShibbolethAttributeFilter"/>
         </constructor-arg>
     </bean>
+    <!-- Auto-append system config file to resource set. -->
+    <bean id ="ExtendedAttributeFilterResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+          p:firstList="#{getObject('%{idp.service.attribute.filter.resources:shibboleth.AttributeFilterResources}'.trim())}" >
+        <property name="secondList">
+            <util:list >
+                <value>classpath:/net/shibboleth/idp/conf/attribute-filter-system.xml</value>
+            </util:list>
+        </property>
+    </bean>
 
     <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
             depends-on="shibboleth.VelocityEngine"
-            p:serviceConfigurations-ref="#{'%{idp.service.attribute.resolver.resources:shibboleth.AttributeResolverResources}'.trim()}"
+            p:serviceConfigurations-ref="ExtendedAttributeResolverResources"
             p:failFast="%{idp.service.attribute.resolver.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.attribute.resolver.checkInterval:PT0S}"
             p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
@@ -52,6 +61,15 @@
                 p:stripNulls="%{idp.service.attribute.resolver.stripNulls:false}"
                 id="ShibbolethAttributeResolver"/>
         </constructor-arg>
+    </bean>
+    <!-- Auto-append system config file to resource set. -->
+    <bean id ="ExtendedAttributeResolverResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+          p:firstList="#{getObject('%{idp.service.attribute.resolver.resources:shibboleth.AttributeResolverResources}'.trim())}" >
+        <property name="secondList">
+            <util:list >
+                <value>classpath:/net/shibboleth/idp/conf/attribute-resolver-system.xml</value>
+            </util:list>
+        </property>
     </bean>
 
     <bean id="shibboleth.AttributeRegistryService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
