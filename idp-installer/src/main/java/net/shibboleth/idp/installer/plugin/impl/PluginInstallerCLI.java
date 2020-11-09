@@ -359,7 +359,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             }
             final VersionInfo versionInfo = state.getAvailableVersions().get(version);
             if (versionInfo.getSupportLevel() != SupportLevel.Current) {
-                log.debug("Version {} has suppprt level {}, ignoring", version, versionInfo.getSupportLevel());
+                log.debug("Version {} has support level {}, ignoring", version, versionInfo.getSupportLevel());
                 continue;
             }
             if (!state.isSupportedWithIdPVersion(version, idPVersion)) {

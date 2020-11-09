@@ -67,7 +67,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Parameter(names= {"-i", "--input"})
     @Nullable private String input;
 
-    /** Truststore to use for sining. */
+    /** Truststore to use for signing. */
     @Parameter(names= {"--truststore"})
     @Nullable private String truststore;
 
