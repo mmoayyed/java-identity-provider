@@ -186,9 +186,9 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
      * 
      * @return the certificates
      */
-    @Nullable @NonnullElements protected List<X509Certificate> getCertificates() {
+    @Nonnull @NonnullElements protected List<X509Certificate> getCertificates() {
         if (certificateResources == null) {
-            return null;
+            return Collections.emptyList();
         }
         
         final List<X509Certificate> certificates = new ArrayList<>(certificateResources.size());
@@ -210,7 +210,7 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
      */
     @Nonnull @NonnullElements protected List<X509CRL> getCRLs() {
         if (crlResources == null) {
-            return null;
+            return Collections.emptyList();
         }
         
         final List<X509CRL> crls = new ArrayList<>(crlResources.size());
