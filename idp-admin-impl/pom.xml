@@ -130,8 +130,14 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <!--  Only used in a command line --> 
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <scope>provided</scope>
+         </dependency>
 
         <!-- Runtime Dependencies -->
         <!--
