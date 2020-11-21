@@ -278,10 +278,11 @@ public class PluginState extends AbstractInitializableComponent {
             for (final URL url: urls) {
                 final Resource propertyResource;
                 if ("file".equals(url.getProtocol())) {
-                    // Kludge to allow classpath backed files
                     propertyResource = new FileSystemResource(url.getPath());
-                } else {
+                } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
                     propertyResource = new HTTPResource(httpClient, url);
+                } else {
+                    throw new ComponentInitializationException("Only file and http[s] URLs are allowed");
                 }
 
                 log.debug("Plugin {}: Looking for update at {}", plugin.getPluginId(),
