@@ -99,7 +99,7 @@ public class PluginInstallerTest extends BasePluginTest {
         }
     }
     
-    @Test(enabled = true) public void testUnpackZipFile() throws ComponentInitializationException, IOException {
+    @Test(enabled = false) public void testUnpackZipFile() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(getIdpHome());
             inst.setAcceptCert(loggingAcceptCert);
