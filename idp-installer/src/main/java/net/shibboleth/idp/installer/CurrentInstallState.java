@@ -18,6 +18,8 @@
 package net.shibboleth.idp.installer;
 
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -73,5 +75,12 @@ public interface CurrentInstallState extends InitializableComponent {
      */
     default boolean isSystemPresent() {
         return true;
+    }
+
+    /** Which modules (by ID) are enabled for this release.
+     * @return those modules enabled.
+     */
+    default @Nonnull Collection<String> getEnabledModules() {
+        return Collections.emptySet();
     }
 }

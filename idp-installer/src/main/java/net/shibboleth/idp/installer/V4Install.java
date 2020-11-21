@@ -28,7 +28,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -45,6 +48,9 @@ import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.Version;
+import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.module.ModuleContext;
+import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -106,6 +112,7 @@ public class V4Install extends AbstractInitializableComponent {
         populatePropertyFiles(keyManager.isCreatedSealer());
         handleEditWebApp();
         populateUserDirectories();
+        reEnableModules();
         deleteSpuriousFiles();
         generateMetadata();
         reprotect();
@@ -388,6 +395,32 @@ public class V4Install extends AbstractInitializableComponent {
         InstallerSupport.createDirectory(targetBase.resolve("logs"));
     }
     
+    /** ReEnable modules which were already enabled.
+     * @throws BuildException if badness occurs
+     */
+    protected void reEnableModules() throws BuildException {
+        final ModuleContext moduleContext = new ModuleContext(installerProps.getTargetDir());
+        final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
+
+        while (modules.hasNext()) {
+            try {
+                final IdPModule module = modules.next();
+                final String id = module.getId();
+                if (currentState.getEnabledModules().contains(id)) {
+                    log.debug("Re-enabling Module {}", id);
+                    try {
+                        module.enable(moduleContext);
+                    } catch (final ModuleException e) {
+                        log.error("Error re-enabling module {}", id, e);
+                        throw new BuildException(e);
+                    }
+                }
+            } catch (final ServiceConfigurationError e) {
+                log.error("Error loading modules", e);
+            }
+        }
+    }
+
     /** Delete those files which were created but not needed.
      * @throws BuildException if badness occurs
      */

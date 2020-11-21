@@ -24,9 +24,15 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.ServiceConfigurationError;
+import java.util.ServiceLoader;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,6 +43,8 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.installer.CurrentInstallState;
 import net.shibboleth.idp.installer.InstallerProperties;
 import net.shibboleth.idp.installer.InstallerSupport;
+import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -53,8 +61,10 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     private final Path targetDir;
     
     /** The files we will delete if they created on upgrade. */
-    private final String[][] deleteAfterUpgrades = { { "credentials", "secrets.properties", },
-                                                   }; 
+    private final String[][] deleteAfterUpgrades = { { "credentials", "secrets.properties", }, };
+
+    /** The module IDs which are enabled. */
+    private Set<String> enabledModules = Collections.emptySet();
 
     /** Whether the IdP properties file exists.*/
     private boolean idpPropertiesPresent;
@@ -118,8 +128,9 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
 
     /** Populate {{@link #props} from idp.properties and other files pointed to by
      * {@value IdPPropertiesApplicationContextInitializer#IDP_ADDITIONAL_PROPERTY}.
+     * @throws ComponentInitializationException
      */
-    private void setupPreviousProps() {
+    private void setupPreviousProps() throws ComponentInitializationException {
         if (!isIdPPropertiesPresent()) {
             return ;
         }
@@ -147,7 +158,34 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
                     props.load(stream);
                 } catch (final IOException e) {
                     log.error("Error loading {}", path, e);
+                    throw new ComponentInitializationException(e);
                 }
+            }
+        }
+    }
+
+    /**
+     * Populate {{@link #enabledModules} from the current classpath and the new IdP home.
+     */
+    private void findEnabledModules() {
+        if (getInstalledVersion()==null) {
+            return;
+        }
+        final ModuleContext moduleContext = new ModuleContext(targetDir);
+        enabledModules = new HashSet<>();
+        final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
+
+        while (modules.hasNext()) {
+            try {
+                final IdPModule module = modules.next();
+                if (module.isEnabled(moduleContext)) {
+                    log.debug("Detected enabled Module {}", module.getId());
+                    enabledModules.add(module.getId());
+                } else {
+                    log.debug("Detected disabled Module {}", module.getId());
+                }
+            } catch (final ServiceConfigurationError e) {
+                log.error("Error loading modules", e);
             }
         }
     }
@@ -160,6 +198,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
         systemPresent = Files.exists(targetDir.resolve("system"));
         findPreviousVersion();
         setupPreviousProps();
+        findEnabledModules();
 
         if (null == getInstalledVersion()) {
             // New install.  We need all files
@@ -208,5 +247,10 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** {@inheritDoc} */
     public boolean isSystemPresent() {
         return systemPresent;
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull public Collection<String> getEnabledModules() {
+        return enabledModules;
     }
 }
