@@ -55,6 +55,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Parameter(names= {"-l", "--list"})
     @Nullable private boolean list;
 
+    /** Override version check. */
+    @Parameter(names= {"--noCheck"})
+    @Nullable private boolean noCheck;
+
     /** Detailed info about installed plugins. */
     @Parameter(names= {"-fl", "--full-list"})
     @Nullable private boolean fullList;
@@ -188,6 +192,13 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         return list;
     }
 
+    /** Are we checking the version or not?
+     * @return noCheck.
+     */
+    public boolean isNoCheck() {
+        return noCheck;
+    }
+
     /** Are we doing an unattended install?
      * @return {@link #list}
      */
@@ -319,6 +330,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println(String.format("  %-22s %s", "-fl, --full-list", "Full details of all installed plugins"));
         out.println(String.format("  %-22s %s", "-cl, --contents-list", "Details of what was installed"));
         out.println(String.format("  %-22s %s", "-i, --input <what>", "Install (file name or web address)"));
+        out.println(String.format("  %-22s %s", "--noCheck", "Do not check the version"));
         out.println(String.format("  %-22s %s", "-u, --update <PluginId>", "update"));
         out.println(String.format("  %-22s %s", "-fu, --force-update <version>",
                 "force version to update to (requires -u)"));

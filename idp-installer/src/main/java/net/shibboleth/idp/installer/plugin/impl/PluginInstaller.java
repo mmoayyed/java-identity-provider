@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.ext.spring.resource.HTTPResource;
+import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.ProgressReportingOutputStream;
@@ -202,15 +203,17 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     }
 
     /** Install the plugin from the provided URL.  Involves downloading
-     *  the file and then doing a {@link #installPlugin(Path, String)}.
+     *  the file and then doing a {@link #installPlugin(Path, String, boolean)}.
      * @param baseURL where we get the files from
      * @param fileName the name
+     * @param checkVersion do we want to check vs the IdP Version?
      * @throws BuildException if badness is detected.
      */
     public void installPlugin(@Nonnull final URL baseURL,
-                              @Nonnull @NotEmpty final String fileName) throws BuildException {
+                              @Nonnull @NotEmpty final String fileName,
+                              final boolean checkVersion) throws BuildException {
         download(baseURL, fileName);
-        installPlugin(downloadDirectory, fileName);
+        installPlugin(downloadDirectory, fileName, checkVersion);
     }
 
     /** Install the plugin from a local path.
@@ -219,10 +222,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * <li>Install from the folder</li></ul>
      * @param base the directory where the files are
      * @param fileName the name
+     * @param checkVersion do we want to check vs the IdP Version?
      * @throws BuildException if badness is detected.
      */
     public void installPlugin(@Nonnull final Path base,
-                              @Nonnull @NotEmpty final String fileName) throws BuildException {
+                              @Nonnull @NotEmpty final String fileName,
+                              final boolean checkVersion) throws BuildException {
         if (!Files.exists(base.resolve(fileName))) {
             LOG.error("Could not find distribution {}", base.resolve(fileName));
             throw new BuildException("Could not find distribution");
@@ -236,6 +241,21 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         setupPluginId();
         checkSignature(base, fileName);
         setupDescriptionFromDistribution();
+        if (checkVersion) {
+            final PluginState state = new PluginState(description);
+            try {
+                state.initialize();
+            } catch (final ComponentInitializationException e) {
+               throw new BuildException(e);
+            }
+            final PluginVersion pluginVersion = new PluginVersion(description);
+            final PluginVersion idpVersion = new PluginVersion(Version.getVersion());
+            if (!state.isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
+                LOG.error("Plugin {} version {} is not supported with IdP Version {}",
+                        pluginId, pluginVersion, idpVersion);
+                throw new BuildException("Version Mismatch");
+            }
+        }
         LOG.info("Installing Plugin {} version {}.{}.{}", pluginId,
                 description.getMajorVersion(),description.getMinorVersion(), description.getPatchVersion());
 

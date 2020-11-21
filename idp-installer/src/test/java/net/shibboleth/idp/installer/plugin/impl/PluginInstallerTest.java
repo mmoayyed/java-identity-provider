@@ -95,7 +95,7 @@ public class PluginInstallerTest extends BasePluginTest {
             inst.initialize();
             final URL where = new URL("https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-nashorn-dist/0.1.0/");
             inst.setPluginId("net.shibboleth.idp.plugin.nashorn");
-            inst.installPlugin(where,"idp-plugin-nashorn-dist-0.1.0.zip");
+            inst.installPlugin(where,"idp-plugin-nashorn-dist-0.1.0.zip", false);
         }
     }
     
@@ -106,7 +106,7 @@ public class PluginInstallerTest extends BasePluginTest {
             inst.setAcceptDownload(loggingAcceptDownLoad);
             inst.initialize();
             final Path dir = Path.of("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\rhino-dist\\target");
-            inst.installPlugin(dir,"shibboleth-idp-plugin-rhino-0.1.0-SNAPSHOT.zip");
+            inst.installPlugin(dir,"shibboleth-idp-plugin-rhino-0.1.4-SNAPSHOT.zip", true);
         }
     }
 
@@ -119,7 +119,7 @@ public class PluginInstallerTest extends BasePluginTest {
             inst.setAcceptDownload(loggingAcceptDownLoad);
             inst.initialize();
             final URL where = new URL("https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/0.1.0/");
-            inst.installPlugin(where,"idp-plugin-rhino-dist-0.1.0.zip");
+            inst.installPlugin(where,"idp-plugin-rhino-dist-0.1.0.zip", true);
         }
     }
 

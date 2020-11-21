@@ -125,18 +125,18 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                     if (args.getPluginId() != null) {
                         installer.setPluginId(args.getPluginId());
                     }
-                    installer.installPlugin(args.getInputDirectory(), args.getInputFileName());
+                    installer.installPlugin(args.getInputDirectory(), args.getInputFileName(), !args.isNoCheck());
                     break;
 
                 case INSTALLREMOTE:
                     if (args.getPluginId() != null) {
                         installer.setPluginId(args.getPluginId());
                     }
-                    installer.installPlugin(args.getInputURL(), args.getInputFileName());
+                    installer.installPlugin(args.getInputURL(), args.getInputFileName(), !args.isNoCheck());
                     break;
 
                 case UPDATE:
-                    doUpdate(args.getPluginId() , args.getUpdateVersion());
+                    doUpdate(args.getPluginId() , args.getUpdateVersion(), !args.isNoCheck());
                     break;
 
                 case UNINSTALL:
@@ -329,7 +329,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     }
 
 
-    /** Find the best update version.  Helper function for {@linkplain #doUpdate(String, PluginVersion)}.
+    /** Find the best update version.  Helper function for {@linkplain #doUpdate(String, PluginVersion, boolean)}.
      * @param plugin The Plugin
      * @param state all about the plugin
      * @return the best version (or null)
@@ -379,8 +379,11 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     /** Update the plugin.
      * @param pluginId the pluginId or null.
      * @param pluginVersion (optionally) the version to update to.
+     * @param checkVersion are we checking the version. 
      */
-    private void doUpdate(@Nonnull final String pluginId, @Nullable final PluginVersion pluginVersion) {
+    private void doUpdate(@Nonnull final String pluginId, 
+            @Nullable final PluginVersion pluginVersion,
+            final boolean checkVersion) {
         final IdPPlugin plugin = installer.getInstalledPlugin(pluginId);
         if (plugin == null) {
             log.error("Plugin {} was not installed", pluginId);
@@ -415,7 +418,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         // just use the tgz version - its an update so it should be jar files only
         installer.installPlugin(state.getUpdateURL(installVersion),
-                state.getUpdateBaseName(installVersion) + ".tar.gz");
+                state.getUpdateBaseName(installVersion) + ".tar.gz",
+                checkVersion);
     }
 
     /** Shim for CLI entry point: Allows the code to be run from a test.
