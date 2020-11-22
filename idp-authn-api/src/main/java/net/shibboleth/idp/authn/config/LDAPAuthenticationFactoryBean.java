@@ -27,6 +27,7 @@ import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.apache.velocity.app.VelocityEngine;
+import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.BindRequest;
 import org.ldaptive.ConnectionConfig;
@@ -34,6 +35,8 @@ import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapURL;
+import org.ldaptive.RandomConnectionStrategy;
+import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
@@ -152,11 +155,41 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     }
   }
 
+  /** Enum that defines LDAP connection strategy. Labels maps to values in ldap.properties. */
+  public enum ConnectionStrategyType {
+    ACTIVE_PASSIVE("ACTIVE_PASSIVE"),
+    ROUND_ROBIN("ROUND_ROBIN"),
+    RANDOM("RANDOM");
+
+    /** Label for this type. */
+    private final String label;
+
+    ConnectionStrategyType(final String s) {
+      label = s;
+    }
+
+    public String label() {
+      return label;
+    }
+
+    public static ConnectionStrategyType fromLabel(final String s) {
+      for (ConnectionStrategyType cst : ConnectionStrategyType.values()) {
+        if (cst.label().equals(s)) {
+          return cst;
+        }
+      }
+      return null;
+    }
+  }
+
   /** Type of authenticator to configure. */
   private AuthenticatorType authenticatorType;
 
   /** Type of trust model to configure. */
   private TrustType trustType;
+
+  /** Type of connection strategy to configure. */
+  private ConnectionStrategyType connectionStrategyType;
 
   /** LDAP URL. */
   private String ldapUrl;
@@ -266,6 +299,10 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   public void setTrustType(@Nonnull @NotEmpty final String type) {
     trustType = TrustType.fromLabel(type);
+  }
+
+  public void setConnectionStrategyType(@Nonnull @NotEmpty final String type) {
+    connectionStrategyType = ConnectionStrategyType.fromLabel(type);
   }
 
   public void setLdapUrl(@Nullable @NotEmpty final String url) {
@@ -452,6 +489,18 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     config.setUseStartTLS(useStartTLS);
     config.setConnectTimeout(connectTimeout);
     config.setResponseTimeout(responseTimeout);
+    switch (connectionStrategyType) {
+    case ROUND_ROBIN:
+      config.setConnectionStrategy(new RoundRobinConnectionStrategy());
+      break;
+    case RANDOM:
+      config.setConnectionStrategy(new RandomConnectionStrategy());
+      break;
+    case ACTIVE_PASSIVE:
+    default:
+      config.setConnectionStrategy(new ActivePassiveConnectionStrategy());
+      break;
+    }
     config.setSslConfig(createSslConfig());
     if (initializer != null) {
       config.setConnectionInitializer(initializer);

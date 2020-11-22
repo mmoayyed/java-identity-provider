@@ -62,6 +62,7 @@
         connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
         trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}"
         responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}"
+        connectionStrategy="%{idp.attribute.resolver.LDAP.connectionStrategy}"
         noResultIsError="true"
         multipleResultsIsError="true"
         excludeResolutionPhases="c14n/attribute"
