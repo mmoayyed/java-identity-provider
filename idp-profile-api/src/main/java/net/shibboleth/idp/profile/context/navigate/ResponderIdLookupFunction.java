@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.context.navigate;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.config.OverriddenIssuerProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -28,9 +29,10 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * available from a {@link RelyingPartyContext} obtained via a lookup function, by default a child of the
  * {@link ProfileRequestContext}.
  * 
- * <p>
- * If a specific setting is unavailable, a null value is returned.
- * </p>
+ * <p>A special case applies if an active {@link OverriddenIssuerProfileConfiguration} is in effect, allowing the
+ * profile to override the usual value.</p>
+ * 
+ * <p>If a specific setting is unavailable, a null value is returned.</p>
  */
 public class ResponderIdLookupFunction extends AbstractRelyingPartyLookupFunction<String> {
 
@@ -38,8 +40,19 @@ public class ResponderIdLookupFunction extends AbstractRelyingPartyLookupFunctio
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-            if (rpc != null && rpc.getConfiguration() != null) {
-                return rpc.getConfiguration().getResponderId(input);
+            if (rpc != null) {
+                
+                if (rpc.getProfileConfig() instanceof OverriddenIssuerProfileConfiguration) {
+                    final String issuer =
+                            ((OverriddenIssuerProfileConfiguration) rpc.getProfileConfig()).getIssuer(input);
+                    if (issuer != null) {
+                        return issuer;
+                    }
+                }
+                
+                if (rpc.getConfiguration() != null) {
+                    return rpc.getConfiguration().getResponderId(input);
+                }
             }
         }
 
