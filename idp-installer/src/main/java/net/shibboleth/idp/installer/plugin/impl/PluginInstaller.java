@@ -109,11 +109,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** The plugin's story about itself. */
     private IdPPlugin description;
 
-    /** The callback before we install a certificate into the TrustStore. */
-    @Nonnull private Predicate<String> acceptCert = Predicates.alwaysFalse();
-
-    /** The callback before we download a file. */
-    @Nonnull private Predicate<String> acceptDownload = Predicates.alwaysFalse();
+    /** The callback before we install a key into the TrustStore. */
+    @Nonnull private Predicate<String> acceptKey = Predicates.alwaysFalse();
 
     /** The actual distribution. */
     private Path distribution;
@@ -173,18 +170,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         truststore = StringSupport.trimOrNull(loc);
     }
 
-    /** Set the acceptCert predicate.
+    /** Set the acceptKey predicate.
      * @param what what to set.
      */
-    public void setAcceptCert(@Nonnull final Predicate<String> what) {
-        acceptCert = Constraint.isNotNull(what, "Accept Certificate Predicate should be non-null");
-    }
-
-    /** Set the acceptCert predicate.
-     * @param what what to set.
-     */
-    public void setAcceptDownload(@Nonnull final Predicate<String> what) {
-        acceptDownload  = Constraint.isNotNull(what, "Accept Download Predicate should be non-null");
+    public void setAcceptKey(@Nonnull final Predicate<String> what) {
+        acceptKey = Constraint.isNotNull(what, "Accept Key Predicate should be non-null");
     }
 
     /** Set the httpClient.
@@ -735,17 +725,17 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             final Signature sig = TrustStore.signatureOf(sigStream);
             if (!trust.contains(sig)) {
                 LOG.info("TrustStore does not contain signature {}", sig);
-                final File certs = distribution.resolve("bootstrap").resolve("keys.txt").toFile();
-                if (!certs.exists()) {
+                final File keys = distribution.resolve("bootstrap").resolve("keys.txt").toFile();
+                if (!keys.exists()) {
                     LOG.info("No embedded keys file, signature check fails");
-                    throw new BuildException("No Certificate found to check signiture o distribution");
+                    throw new BuildException("No key found to check signiture of distribution");
                 }
                 try (final InputStream keysStream = new BufferedInputStream(
-                        new FileInputStream(certs))) {
-                    trust.importCertificateFromStream(sig, keysStream, acceptCert);
+                        new FileInputStream(keys))) {
+                    trust.importKeyFromStream(sig, keysStream, acceptKey);
                 }
                 if (!trust.contains(sig)) {
-                    LOG.info("Certificate not added to Trust Store");
+                    LOG.info("Key not added to Trust Store");
                     throw new BuildException("Could not check signature of distribution");
                 }
             }

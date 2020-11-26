@@ -202,46 +202,46 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
         }
     }
     
-    /** Load up the provided store and if the certificate is found and the
+    /** Load up the provided store and if the key is found and the
      * Predicate allows it add it to the store which we will then save.
      *
-     * @param sigForCert the signature we are looking for a cert for.
-     * @param certStream where to load the cert from
-     * @param accept whether we actually want to install this certificate
+     * @param sigForKey the signature we are looking for a key for.
+     * @param keyStream where to load the key from
+     * @param accept whether we actually want to install this key
      * @throws IOException if the load or save fails
      */
-    public void importCertificateFromStream(final Signature sigForCert,
-                            final InputStream certStream,
+    public void importKeyFromStream(final Signature sigForKey,
+                            final InputStream keyStream,
                             final Predicate<String> accept) throws IOException {
-        final PGPPublicKeyRingCollection providedStore = loadStoreFrom(certStream);
+        final PGPPublicKeyRingCollection providedStore = loadStoreFrom(keyStream);
 
         try {
-            final PGPPublicKey cert = providedStore.getPublicKey(sigForCert.getSignature().getKeyID());
-            if (cert == null) {
-                log.info("Provided certificate stream did not contain a certificate for {}", sigForCert);
+            final PGPPublicKey key = providedStore.getPublicKey(sigForKey.getSignature().getKeyID());
+            if (key == null) {
+                log.info("Provided key stream did not contain a key for {}", sigForKey);
                 return;
             }
             final StringBuilder builder = new StringBuilder("Signature:\t").
-                    append(sigForCert.toString()).
+                    append(sigForKey.toString()).
                     append("\nFingerPrint:\t").
-                    append((new String(Hex.encode(cert.getFingerprint()))).toUpperCase());
-            final Iterator<String> namesIterator = cert.getUserIDs();
+                    append((new String(Hex.encode(key.getFingerprint()))).toUpperCase());
+            final Iterator<String> namesIterator = key.getUserIDs();
             while (namesIterator.hasNext()) {
                 builder.append("\nUsername:\t").append(namesIterator.next());
             }
             builder.append('\n');
-            final String certInfo = builder.toString();
-            log.debug("Asking to import certificate\n{}", certInfo);
-            if (!accept.test(certInfo)) {
-                log.info("Certificate import barred by user");
+            final String keyInfo = builder.toString();
+            log.debug("Asking to import key\n{}", keyInfo);
+            if (!accept.test(keyInfo)) {
+                log.info("Key import barred by user");
                 return;
             }
             keyRings = PGPPublicKeyRingCollection.addPublicKeyRing(
                     keyRings,
-                    new PGPPublicKeyRing(Collections.singletonList(cert)));
+                    new PGPPublicKeyRing(Collections.singletonList(key)));
             saveStoreInternal();
         } catch (final PGPException e) {
-            log.warn("Couldn't locate certificate", e);
+            log.warn("Couldn't locate key", e);
         }
     }
 

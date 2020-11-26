@@ -178,8 +178,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             final PluginInstallerArguments args) throws ComponentInitializationException {
         inst.setIdpHome(Path.of(getApplicationContext().getEnvironment().getProperty("idp.home")));
         if (!args.isUnattended()) {
-            inst.setAcceptCert(new InstallerQuery("Accept this Certificate"));
-            inst.setAcceptDownload(new InstallerQuery("Download from"));
+            inst.setAcceptKey(new InstallerQuery("Accept this Key"));
         }
         inst.setTrustore(args.getTruststore());
         if (getHttpClient()!= null) {
@@ -460,8 +459,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
 
         /** {@inheritDoc} */
-        public boolean test(final String certString) {
-            System.console().printf("%s:\n%s [yN] ", promptText, certString);
+        public boolean test(final String keyString) {
+            System.console().printf("%s:\n%s [yN] ", promptText, keyString);
             System.console().flush();
             final String result  = StringSupport.trimOrNull(System.console().readLine());
             return result != null && "y".equalsIgnoreCase(result.substring(0, 1));

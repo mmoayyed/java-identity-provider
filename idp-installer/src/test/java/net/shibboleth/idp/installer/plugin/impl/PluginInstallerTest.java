@@ -51,13 +51,6 @@ public class PluginInstallerTest extends BasePluginTest {
         }
     };
 
-    private final Predicate<String> loggingAcceptDownLoad = new  Predicate<>() {
-        public boolean test(String what) {
-            log.debug("Accepting the download from {} ", what);
-            return true;
-        }
-    };
-
     @BeforeClass public void setup() throws IOException {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
@@ -90,8 +83,7 @@ public class PluginInstallerTest extends BasePluginTest {
     @Test(enabled = false) public void testUnpackZip() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(getIdpHome());
-            inst.setAcceptCert(loggingAcceptCert);
-            inst.setAcceptDownload(loggingAcceptDownLoad);
+            inst.setAcceptKey(loggingAcceptCert);
             inst.initialize();
             final URL where = new URL("https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-nashorn-dist/0.1.0/");
             inst.setPluginId("net.shibboleth.idp.plugin.nashorn");
@@ -102,8 +94,7 @@ public class PluginInstallerTest extends BasePluginTest {
     @Test(enabled = false) public void testUnpackZipFile() throws ComponentInitializationException, IOException {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setIdpHome(getIdpHome());
-            inst.setAcceptCert(loggingAcceptCert);
-            inst.setAcceptDownload(loggingAcceptDownLoad);
+            inst.setAcceptKey(loggingAcceptCert);
             inst.initialize();
             final Path dir = Path.of("H:\\Perforce\\Juno\\New\\plugins\\java-idp-plugin-scripting\\rhino-dist\\target");
             inst.installPlugin(dir,"shibboleth-idp-plugin-rhino-0.1.4-SNAPSHOT.zip", true);
@@ -115,8 +106,7 @@ public class PluginInstallerTest extends BasePluginTest {
         try (final PluginInstaller inst = new PluginInstaller()) {
             inst.setPluginId("net.shibboleth.idp.plugin.rhino");
             inst.setIdpHome(getIdpHome());
-            inst.setAcceptCert(loggingAcceptCert);
-            inst.setAcceptDownload(loggingAcceptDownLoad);
+            inst.setAcceptKey(loggingAcceptCert);
             inst.initialize();
             final URL where = new URL("https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/0.1.0/");
             inst.installPlugin(where,"idp-plugin-rhino-dist-0.1.0.zip", true);
