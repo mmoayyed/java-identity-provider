@@ -40,42 +40,56 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 @SuppressWarnings("javadoc")
 public class PluginCLITest extends BasePluginTest {
     
-    private final String PLUGIN_DISTRO = "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/authn/idp-plugin-totp-dist/0.0.2/idp-plugin-totp-dist-0.0.2.tar.gz";
+    private final String PLUGIN_DISTRO = "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/0.1.4/idp-plugin-rhino-dist-0.1.4.tar.gz";
     
-    private final String PLUGIN_ID = "net.shibboleth.idp.plugin.authn.totp";
+    private final String PLUGIN_ID = "net.shibboleth.idp.plugin.rhino";
 
     @BeforeSuite public void setUp() throws IOException
     {
         System.setProperty("idp.home",getIdpHome().toString());
+        final Path credentials = getIdpHome().resolve("credentials").resolve(PLUGIN_ID);
+        Files.createDirectories(credentials);
+        //
+        // Populate the new key store
+        //
+        final Path trustStorePath = credentials.resolve("truststore.asc");
+        final Resource from = new ClassPathResource("credentials/truststore.asc");
+        try (final InputStream in = from.getInputStream();
+             final OutputStream out = new ProgressReportingOutputStream(new FileOutputStream(trustStorePath.toFile(), true))) {
+            in.transferTo(out);
+        }
     }
 
-    @Test(enabled = false) public void testLicense() {
+    @Test(enabled = true) public void testLicense() {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "--license", "net.shibboleth.plugin.test"} ), AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false) public void testList() throws IOException {
+    @Test(enabled = true) public void testList() throws IOException {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-fl", } ), AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false) public void testWrong() {
+    @Test(enabled = true) public void testWrong() {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-i", "a"}), AbstractCommandLine.RC_INIT);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testLocal"}) public void testWeb() {
+    @Test(enabled = true) public void testWeb() {
             assertEquals(PluginInstallerCLI.runMain(new String[] { 
                     "-i", PLUGIN_DISTRO,
+                    "--noCheck",
                     }),
                     AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testWeb"})
+    @Test(enabled = true, dependsOnMethods = {"testWeb"})
     public void testUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
-                "-u", PLUGIN_ID}),
+                "-u", PLUGIN_ID,
+                "--noCheck",
+                }),
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testUpdate"})
+    @Test(enabled = true, dependsOnMethods = {"testUpdate"})
     public void testForceUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", PLUGIN_ID,
@@ -83,7 +97,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testForceUpdate"})
+    @Test(enabled = true, dependsOnMethods = {"testForceUpdate"})
     public void testListContents() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-cl", PLUGIN_ID,
@@ -91,7 +105,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false, dependsOnMethods = {"testListContents"}, ignoreMissingDependencies = true)
+    @Test(enabled = true, dependsOnMethods = {"testListContents"}, ignoreMissingDependencies = true)
     public void testUninstall() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-r", PLUGIN_ID,
@@ -99,7 +113,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false) public void testLocal() throws Exception {
+    @Test(enabled = true) public void testLocal() throws Exception {
         Path unpack = null;
         try {
             Resource from;
@@ -116,23 +130,9 @@ public class PluginCLITest extends BasePluginTest {
                        in.transferTo(out);
                }
 
-            final Path credentials = getIdpHome().resolve("credentials").resolve(PLUGIN_ID);
-            Files.createDirectories(credentials);
-            //
-            // Populate the new key store
-            //
-            final Path trustStorePath = credentials.resolve("truststore.asc");
-            from = new ClassPathResource("credentials/truststore.asc");
-            try (final InputStream in = from.getInputStream(); 
-                 final OutputStream out = new ProgressReportingOutputStream(new FileOutputStream(trustStorePath.toFile(), true))) {
-                in.transferTo(out);
-            }
-            //
-            // try again
-            //
             assertEquals(PluginInstallerCLI.runMain(new String[] {
                     "-i", unpack.resolve("local.tar.gz").toString(),
-                 // "-p", "net.shibboleth.idp.plugin.authn.totp"
+                    "--noCheck",
                     }),
                     AbstractCommandLine.RC_OK);
         } finally {
