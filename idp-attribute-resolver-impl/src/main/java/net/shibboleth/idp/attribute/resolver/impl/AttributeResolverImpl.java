@@ -140,7 +140,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      */
     public void setDataConnectors(@Nonnull @NonnullElements  final Collection<DataConnector> connectors){
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(connectors, "Attribute Defintions should be non-null");
+        Constraint.isNotNull(connectors, "Data Connectors should be non-null");
         
         final Map<String, DataConnector> checkedConnectors = new HashMap<>(connectors.size());
         for (final DataConnector connector : connectors) {

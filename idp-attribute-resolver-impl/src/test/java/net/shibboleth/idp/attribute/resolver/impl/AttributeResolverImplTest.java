@@ -219,7 +219,18 @@ public class AttributeResolverImplTest {
         connector3.setId("dc3");
         connector3.setValues(List.of(attribute4));
 
-        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", null, List.of(connector1, connector2, connector3));
+        // IDP-1623 Connector 4 contributes nullness
+        final StaticDataConnector connector4 = new StaticDataConnector() {
+            public java.util.Map<String,IdPAttribute> doDataConnectorResolve(@Nonnull final AttributeResolutionContext resolutionContext,
+                    @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+                return null;
+            }
+        };
+        connector4.setId("dc4");
+        connector4.setValues(List.of(attribute4));
+        connector4.setExportAttributes(List.of(attribute4.getId()));
+
+        final AttributeResolverImpl resolver = newAttributeResolverImpl("foo", null, List.of(connector1, connector2, connector3, connector4));
         for (DataConnector connector : resolver.getDataConnectors().values()) {
             connector.initialize();
         }
