@@ -284,6 +284,14 @@
         c:_0-ref="shibboleth.PrincipalServiceManager"
         c:_1-ref="shibboleth.GenericPrincipalSerializer" />
 
+    <!-- Dummy bean for compatibility, this is no longer a support extensions point. -->
+    <bean id="shibboleth.DefaultPrincipalSerializers" class="org.springframework.beans.factory.config.ListFactoryBean"
+            lazy-init="true">
+        <property name="sourceList">
+            <list/>
+        </property>
+    </bean>
+
     <!-- PrincipalServiceManager for auto-registration of PrincipalService beans. -->
     <bean id="shibboleth.PrincipalServiceManager" class="net.shibboleth.idp.authn.principal.PrincipalServiceManager" />
     
