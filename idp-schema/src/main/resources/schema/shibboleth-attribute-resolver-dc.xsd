@@ -568,7 +568,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="connectionStrategy" type="dc:ConnectionStrategyType">
+                <attribute name="connectionStrategy" type="string">
                     <annotation>
                         <documentation>
                             The LDAP connection strategy. Acceptable values are DEFAULT, ACTIVE_PASSIVE, ROUND_ROBIN, and RANDOM.
@@ -595,7 +595,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="authenticationType" type="dc:AuthenticationType">
+                <attribute name="authenticationType" type="string">
                     <annotation>
                         <documentation>
                             The LDAP authentication type. Acceptable values are ANONYMOUS, SIMPLE, STRONG, EXTERNAL, DIGEST_MD5, CRAM_MD5, GSSAPI.
@@ -603,7 +603,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="searchScope" type="dc:SearchScopeType">
+                <attribute name="searchScope" type="string">
                     <annotation>
                         <documentation>
                             The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTREE.
@@ -735,44 +735,6 @@
         </complexContent>
     </complexType>
     
-    <simpleType name="ConnectionStrategyType">
-        <annotation>
-            <documentation>Supported connection strategies.</documentation>
-        </annotation>
-        <restriction base="string">
-            <enumeration value="DEFAULT"/>
-            <enumeration value="ACTIVE_PASSIVE"/>
-            <enumeration value="ROUND_ROBIN"/>
-            <enumeration value="RANDOM"/>
-        </restriction>
-    </simpleType>
-
-    <simpleType name="AuthenticationType">
-        <annotation>
-            <documentation>Supported authentication types.</documentation>
-        </annotation>
-        <restriction base="string">
-            <enumeration value="ANONYMOUS"/>
-            <enumeration value="SIMPLE"/>
-            <enumeration value="STRONG"/>
-            <enumeration value="EXTERNAL"/>
-            <enumeration value="DIGEST_MD5"/>
-            <enumeration value="CRAM_MD5"/>
-            <enumeration value="GSSAPI"/>
-        </restriction>
-    </simpleType>
-
-    <simpleType name="SearchScopeType">
-        <annotation>
-            <documentation>Supported search scopes.</documentation>
-        </annotation>
-        <restriction base="string">
-            <enumeration value="SUBTREE"/>
-            <enumeration value="ONELEVEL"/>
-            <enumeration value="OBJECT"/>
-        </restriction>
-    </simpleType>
-
     <complexType name="LdapPoolConfigType">
         <attribute name="minPoolSize" type="string">
             <annotation>
