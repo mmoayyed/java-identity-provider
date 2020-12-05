@@ -867,7 +867,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="connectionStrategy" type="resolver:ConnectionStrategyType">
+                <attribute name="connectionStrategy" type="resolver:string">
                     <annotation>
                         <documentation>
                             The LDAP connection strategy. Acceptable values are ACTIVE_PASSIVE, ROUND_ROBIN and RANDOM.
@@ -894,7 +894,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="authenticationType" type="resolver:AuthenticationType">
+                <attribute name="authenticationType" type="resolver:string">
                     <annotation>
                         <documentation>
                             DEPRECATED
@@ -903,7 +903,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="searchScope" type="resolver:SearchScopeType">
+                <attribute name="searchScope" type="resolver:string">
                     <annotation>
                         <documentation>
                             The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTREE.
@@ -911,7 +911,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="derefAliases" type="resolver:DerefAliasesType">
+                <attribute name="derefAliases" type="resolver:string">
                     <annotation>
                         <documentation>
                             The LDAP alias dereference behavior. Acceptable values are NEVER, SEARCHING, FINDING, ALWAYS.
@@ -1755,33 +1755,6 @@
         </attribute>
     </complexType>
 
-    <simpleType name="ConnectionStrategyType">
-        <annotation>
-            <documentation>Supported connection strategies.</documentation>
-        </annotation>
-        <restriction base="string">
-            <enumeration value="DEFAULT"/> <!-- Deprecated, remove in V5. -->
-            <enumeration value="ACTIVE_PASSIVE"/>
-            <enumeration value="ROUND_ROBIN"/>
-            <enumeration value="RANDOM"/>
-        </restriction>
-    </simpleType>
-
-    <simpleType name="AuthenticationType"><!-- Deprecated, remove in V5. -->
-        <annotation>
-            <documentation>Supported authentication types.</documentation>
-        </annotation>
-        <restriction base="string">
-            <enumeration value="ANONYMOUS"/>
-            <enumeration value="SIMPLE"/>
-            <enumeration value="STRONG"/>
-            <enumeration value="EXTERNAL"/>
-            <enumeration value="DIGEST_MD5"/>
-            <enumeration value="CRAM_MD5"/>
-            <enumeration value="GSSAPI"/>
-        </restriction>
-    </simpleType>
-
     <complexType name="SaslConfigType">
         <choice maxOccurs="unbounded" minOccurs="0">
             <element name="SASLProperty" type="resolver:PropertyType">
@@ -1811,29 +1784,6 @@
             </annotation>
         </attribute>
     </complexType>
-
-    <simpleType name="SearchScopeType">
-        <annotation>
-            <documentation>Supported search scopes.</documentation>
-        </annotation>
-        <restriction base="string">
-            <enumeration value="SUBTREE"/>
-            <enumeration value="ONELEVEL"/>
-            <enumeration value="OBJECT"/>
-        </restriction>
-    </simpleType>
-
-    <simpleType name="DerefAliasesType">
-        <annotation>
-            <documentation>How to dereference aliases.</documentation>
-        </annotation>
-        <restriction base="string">
-            <enumeration value="NEVER"/>
-            <enumeration value="SEARCHING"/>
-            <enumeration value="FINDING"/>
-            <enumeration value="ALWAYS"/>
-        </restriction>
-    </simpleType>
 
     <complexType name="LdapPoolConfigType">
         <attribute name="minPoolSize" type="resolver:string">
