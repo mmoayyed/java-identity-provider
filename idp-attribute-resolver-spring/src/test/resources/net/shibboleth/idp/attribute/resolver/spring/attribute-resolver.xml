@@ -233,8 +233,9 @@
 
     <!-- Example LDAP Connector -->
     <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
-        ldapURL="ldap://localhost:10391" 
+        ldapURL="ldap://localhost:10391"
         baseDN="dc=shibboleth,dc=net"
+        failFastInitialize="false"
         connectTimeout="PT6S"
         responseTimeout="PT6S"
         principal="cn=Directory Manager"

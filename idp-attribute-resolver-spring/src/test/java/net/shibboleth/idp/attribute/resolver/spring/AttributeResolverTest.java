@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -158,11 +159,31 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void service() throws ComponentInitializationException, ServiceException, ResolutionException {
-        helper(true);
+        helper(false);
     }
     
     @Test public void serviceNullStrip() throws ComponentInitializationException, ServiceException, ResolutionException {
-        helper(false);
+        helper(true);
+    }
+
+    @Test public void serviceLDAPRecover() throws ComponentInitializationException, ServiceException, ResolutionException, LDAPException {
+        teardownDataConnectors();
+        boolean dataConnectorOff = true;
+        try {
+            try {
+                helper(false);
+                fail("Expected to throw an exception");
+            } catch (final ResolutionException e) {
+                log.debug("The expected exception");
+            }
+            setupDataConnectors();
+            dataConnectorOff = false;
+            helper(true);
+        } finally {
+            if (dataConnectorOff) {
+                setupDataConnectors();
+            }
+        }
     }
 
     /**
