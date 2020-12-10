@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
+import static org.testng.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
+import net.shibboleth.idp.consent.impl.ConsentTestingSupport.MapType;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -37,6 +40,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AttributeReleaseConsentFunction} unit test. */
+@SuppressWarnings("javadoc")
 public class AttributeReleaseConsentFunctionTest {
 
     private RequestContext src;
@@ -211,6 +215,44 @@ public class AttributeReleaseConsentFunctionTest {
 
         Assert.assertEquals(function.apply(prc), expected);
     }
+    
+    @Test public void testSorting () throws Exception {
+        // Setup unsorted previous
+        final Consent previousConsent = new Consent();
+        previousConsent.setId("attribute1");
+        previousConsent.setValue(attributeValuesHashFunction.apply(ConsentTestingSupport.newAttributeMap(MapType.ORDER1)
+                .get("attribute1").getValues()));
+        previousConsent.setApproved(true);
+        ConsentContext consentCtx = new ConsentContext();
+        consentCtx.getPreviousConsents().put(previousConsent.getId(), previousConsent);
+        prc.addSubcontext(consentCtx);
+        
+        // Test that we accept it
+        AttributeReleaseContext arc = new AttributeReleaseContext();
+        arc.getConsentableAttributes().putAll(ConsentTestingSupport.newAttributeMap(MapType.ORDER1));
+        prc.addSubcontext(arc);
+        setUpDescriptor(true);
+
+        final Map<String, Consent> firstResult = function.apply(prc);
+        final Consent firstConsent = firstResult.get("attribute1");
+        assertTrue(firstConsent.isApproved());
+
+        // Now test  in a different order
+        setUp();
+        consentCtx = new ConsentContext();
+        // first consent is now the previous consent
+        consentCtx.getPreviousConsents().put(firstConsent.getId(), firstConsent);
+        prc.addSubcontext(consentCtx);
+        arc = new AttributeReleaseContext();
+        arc.getConsentableAttributes().putAll(ConsentTestingSupport.newAttributeMap(MapType.ORDER2));
+        prc.addSubcontext(arc);
+        setUpDescriptor(true);
+
+        final Map<String, Consent> secondResult = function.apply(prc);
+        final Consent secondConsent = secondResult.get("attribute1");
+        assertTrue(secondConsent.isApproved());
+    }
+    
 
     @Test public void testRememberPreviousConsentsDifferentValueCompareValues() {
         final Consent previousConsent = new Consent();

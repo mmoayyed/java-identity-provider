@@ -79,7 +79,7 @@ public class AttributeValueLookupFunctionTest {
 
     @Test public void testAttributeValue() {
         function = new AttributeValueLookupFunction("attribute1");
-        Assert.assertEquals(function.apply(prc), "value1");
+        Assert.assertEquals(function.apply(prc), "Avalue1");
     }
 
     @Test public void testAttributeNotFound() {

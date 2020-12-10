@@ -117,7 +117,7 @@ public class ConsentSerializerTest {
         final String serialized = serializer.serialize(consents);
         Assert.assertEquals(
                 serialized,
-                "[{\"id\":\"attribute1\",\"v\":\"yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=\"},{\"id\":\"attribute2\",\"v\":\"xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=\",\"appr\":false}]");
+                "[{\"id\":\"attribute1\",\"v\":\"qY1Ely22YLjD7hy4/HFSlErfjWNtVNJTZDral2Bs3Q8=\"},{\"id\":\"attribute2\",\"v\":\"w4A7kgpy8PAiMfNkM8yR68zLF9ngILQDWDy+n2l59zk=\",\"appr\":false}]");
 
         final Map<String, Consent> deserialized = serializer.deserialize(1, CONTEXT, KEY, serialized, null);
 
@@ -132,7 +132,7 @@ public class ConsentSerializerTest {
         final String serialized = serializer.serialize(consents);
         Assert.assertEquals(
                 serialized,
-                "[{\"id\":201,\"v\":\"yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=\"},{\"id\":202,\"v\":\"xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=\",\"appr\":false}]");
+                "[{\"id\":201,\"v\":\"qY1Ely22YLjD7hy4/HFSlErfjWNtVNJTZDral2Bs3Q8=\"},{\"id\":202,\"v\":\"w4A7kgpy8PAiMfNkM8yR68zLF9ngILQDWDy+n2l59zk=\",\"appr\":false}]");
 
         final Map<String, Consent> deserialized = serializer.deserialize(1, CONTEXT, KEY, serialized, null);
 
@@ -150,7 +150,7 @@ public class ConsentSerializerTest {
         final String serialized = serializer.serialize(consents);
         Assert.assertEquals(
                 serialized,
-                "[{\"id\":\"attribute1\",\"v\":\"yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=\"},{\"id\":\"attribute2\",\"v\":\"xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=\",\"appr\":false}]");
+                "[{\"id\":\"attribute1\",\"v\":\"qY1Ely22YLjD7hy4/HFSlErfjWNtVNJTZDral2Bs3Q8=\"},{\"id\":\"attribute2\",\"v\":\"w4A7kgpy8PAiMfNkM8yR68zLF9ngILQDWDy+n2l59zk=\",\"appr\":false}]");
 
         final Map<String, Consent> deserialized = serializer.deserialize(1, CONTEXT, KEY, serialized, null);
 

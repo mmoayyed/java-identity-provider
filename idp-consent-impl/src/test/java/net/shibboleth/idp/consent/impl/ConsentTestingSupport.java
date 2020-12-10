@@ -33,6 +33,7 @@ import net.shibboleth.idp.consent.storage.impl.ConsentResult;
 /**
  * Helper methods for creating test objects for consent action tests.
  */
+@SuppressWarnings("javadoc")
 public class ConsentTestingSupport {
 
     public static Map<String, Consent> newConsentMap() {
@@ -49,17 +50,44 @@ public class ConsentTestingSupport {
         map.put(consent2.getId(), consent2);
         return map;
     }
-
+    
+    public static enum MapType {
+        SORTED,
+        ORDER1,
+        ORDER2,
+    }
     public static final Map<String, IdPAttribute> newAttributeMap() {
-        final IdPAttributeValue value1 = new StringAttributeValue("value1");
+        return newAttributeMap(MapType.SORTED);
+    }
+
+    public static final Map<String, IdPAttribute> newAttributeMap(final MapType order) {
+        final IdPAttributeValue value1a = new StringAttributeValue("Avalue1");
+        final IdPAttributeValue value1b = new StringAttributeValue("Bvalue1");
+        final IdPAttributeValue value1c = new StringAttributeValue("Cvalue1");
         final IdPAttributeValue value2 = new StringAttributeValue("value2");
         final IdPAttributeValue value3 = new StringAttributeValue("value3");
 
         final IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Collections.singletonList(value1));
+        List<IdPAttributeValue> values;
+        switch (order) {
+            case SORTED:
+            default:
+                values = List.of(value1a, value1b, value1c);
+                break;
+                
+            case ORDER1:
+
+                values = List.of(value1b, value1a, value1c);
+                break;
+                
+            case ORDER2:
+                values = List.of(value1c, value1a, value1b);
+                break;
+        }
+        attribute1.setValues(values);
 
         final IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Arrays.asList(value1, value2));
+        attribute2.setValues(Arrays.asList(value1a, value2));
 
         final IdPAttribute attribute3 = new IdPAttribute("attribute3");
         attribute3.setValues(Collections.singletonList(value3));

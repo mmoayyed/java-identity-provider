@@ -67,12 +67,12 @@ public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
     @Test public void testSingleValue() {
         // NOTE Any change is an ODS drift
         final String hash = function.apply(ConsentTestingSupport.newAttributeMap().get("attribute1").getValues());
-        assertEquals(hash, "yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=");
+        assertEquals(hash, "qY1Ely22YLjD7hy4/HFSlErfjWNtVNJTZDral2Bs3Q8=");
     }
 
     @Test public void testMultipleValues() {
         final String hash = function.apply(ConsentTestingSupport.newAttributeMap().get("attribute2").getValues());
-        assertEquals(hash, "xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=");
+        assertEquals(hash, "w4A7kgpy8PAiMfNkM8yR68zLF9ngILQDWDy+n2l59zk=");
     }
 
     @Test public void testScoped() {
