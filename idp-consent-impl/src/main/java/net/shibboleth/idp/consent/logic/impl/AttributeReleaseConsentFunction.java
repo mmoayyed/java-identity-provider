@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -108,6 +111,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
     }
 
     /** {@inheritDoc} */
+    /// CheckStyle: CyclomaticComplexity OFF
     @Override @Nullable public Map<String, Consent> apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
@@ -134,10 +138,14 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
         for (final IdPAttribute attribute : consentableAttributes.values()) {
 
             final Consent consent = new Consent();
+            final Consent unsortedConsent = new Consent();
             consent.setId(attribute.getId());
 
             if (consentFlowDescriptor.compareValues()) {
-                consent.setValue(attributeValuesHashFunction.apply(attribute.getValues()));
+                unsortedConsent.setValue(attributeValuesHashFunction.apply(attribute.getValues()));
+                final List<IdPAttributeValue> sorted = new ArrayList<>(attribute.getValues());
+                Collections.sort(sorted);
+                consent.setValue(attributeValuesHashFunction.apply(sorted));
             }
 
             // Remember previous choice.
@@ -146,7 +154,9 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
                 if (consentFlowDescriptor.compareValues()) {
                     if (Objects.equals(consent.getValue(), previousConsent.getValue())) {
                         consent.setApproved(previousConsent.isApproved());
-                    }
+                    } else if (Objects.equals(unsortedConsent.getValue(), previousConsent.getValue())) {
+                        consent.setApproved(previousConsent.isApproved());
+                    }  
                 } else {
                     consent.setApproved(previousConsent.isApproved());
                 }
@@ -157,5 +167,5 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
 
         return currentConsents;
     }
-
+    // CheckStyle: CyclomaticComplexity ON
 }
