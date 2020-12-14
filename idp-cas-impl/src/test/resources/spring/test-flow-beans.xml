@@ -127,15 +127,8 @@
           p:coalescing="true"
           p:ignoreComments="true"
           p:ignoreElementContentWhitespace="true"
-          p:namespaceAware="true">
-        <property name="builderAttributes">
-            <map>
-                <!-- Sun/Oracle is the default, for Xerces, set property to org.apache.xerces.util.SecurityManager -->
-                <entry key="http://apache.org/xml/properties/security-manager">
-                    <bean class="com.sun.org.apache.xerces.internal.util.SecurityManager" />
-                </entry>
-            </map>
-        </property>
+          p:namespaceAware="true"
+          p:securityManagerAttributeName="http://apache.org/xml/properties/security-manager">
         <property name="builderFeatures">
             <map>
                 <entry key="http://apache.org/xml/features/disallow-doctype-decl">
