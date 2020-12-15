@@ -31,6 +31,6 @@
     <bean id="shibboleth.DataSealer" name="shibboleth.TransientIDDataSealer" lazy-init="true"
         class="net.shibboleth.utilities.java.support.security.DataSealer"
         p:keyStrategy-ref="#{ '%{idp.sealer.keyStrategy:shibboleth.DataSealerKeyStrategy}'.trim() }"
-        p:lockedAtStartup="#{!systemProperties.contains('idp.sealer.keyStrategy') and (!systemProperties.contains('idp.sealer.storePassword') or !systemProperties.contains('idp.sealer.keyPassword')) }" />
+        p:lockedAtStartup="#{!environment.containsProperty('idp.sealer.keyStrategy') and (!environment.containsProperty('idp.sealer.storePassword') or !environment.containsProperty('idp.sealer.keyPassword')) }" />
 
  </beans>
