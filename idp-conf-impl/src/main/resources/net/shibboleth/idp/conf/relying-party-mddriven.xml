@@ -50,6 +50,11 @@
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
         c:resolver-ref="shibboleth.MetadataResolver" />
 
+    <bean id="RelyingPartyByEntitiesDescriptor.MDDriven" abstract="true" parent="RelyingParty.MDDriven"
+            class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup">
+        <constructor-arg name="resolver"><null /></constructor-arg>
+    </bean>
+
     <bean id="RelyingPartyByTag.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"
         c:trim="false" c:matchAll="false" />

@@ -33,10 +33,16 @@
     <bean id="RelyingPartyByName" abstract="true" parent="RelyingParty"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byName" />
 
-    <!-- Parent bean for RelyingParty overrides based on activation by group. -->
+    <!-- Parent bean for RelyingParty overrides based on activation by group or SAML affiliation. -->
     <bean id="RelyingPartyByGroup" abstract="true" parent="RelyingParty"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
         c:resolver-ref="shibboleth.MetadataResolver" />
+
+    <!-- Parent bean for RelyingParty overrides based on activation by local containment only. -->
+    <bean id="RelyingPartyByEntitiesDescriptor" abstract="true" parent="RelyingParty"
+            class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup">
+        <constructor-arg name="resolver"><null /></constructor-arg>
+    </bean>
 
     <!-- Parent bean for RelyingParty overrides based on activation by tag. -->
     <bean id="RelyingPartyByTag" abstract="true" parent="RelyingParty"
