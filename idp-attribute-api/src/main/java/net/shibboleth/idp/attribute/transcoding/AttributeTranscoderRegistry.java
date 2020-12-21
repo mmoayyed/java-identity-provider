@@ -58,7 +58,13 @@ public interface AttributeTranscoderRegistry extends IdentifiedComponent {
 
     /** Property prefix for language-specific description of attribute. */
     @Nonnull @NotEmpty static final String PROP_DESCRIPTION = "description";
-    
+
+    /** Property prefix for indicating whether a rule applies to encoding. */
+    @Nonnull @NotEmpty static final String PROP_ENCODER = "encoder";
+
+    /** Property prefix for indicating whether a rule applies to decoding. */
+    @Nonnull @NotEmpty static final String PROP_DECODER = "decoder";
+
     /**
      * Get the localized display names for an {@link IdPAttribute}.
      * 

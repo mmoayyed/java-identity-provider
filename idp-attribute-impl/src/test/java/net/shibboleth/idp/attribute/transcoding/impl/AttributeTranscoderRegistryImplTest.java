@@ -102,13 +102,21 @@ public class AttributeTranscoderRegistryImplTest {
         ruleset5.put(AttributeTranscoderRegistry.PROP_ID, "foo bar");
         ruleset5.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
         ruleset5.put("name", "baz");
-        
+
+        final Map<String,Object> ruleset6 = new HashMap<>();
+        ruleset6.put(AttributeTranscoderRegistry.PROP_ID, "frobnitz");
+        ruleset6.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        ruleset6.put(AttributeTranscoderRegistry.PROP_ENCODER, "false");
+        ruleset6.put(AttributeTranscoderRegistry.PROP_DECODER, "false");
+        ruleset6.put("name", "foo");
+
         registry.setTranscoderRegistry(List.of(
                 new TranscodingRule(ruleset1),
                 new TranscodingRule(ruleset2),
                 new TranscodingRule(ruleset3),
                 new TranscodingRule(ruleset4),
-                new TranscodingRule(ruleset5)));
+                new TranscodingRule(ruleset5),
+                new TranscodingRule(ruleset6)));
         registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
         

@@ -265,6 +265,7 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
         return transcoders;
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Add a mapping between an {@link IdPAttribute} name and a set of transcoding rules.
      * 
@@ -274,7 +275,6 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
      */
     private void addMapping(@Nonnull @NotEmpty final String id, @Nonnull final AttributeTranscoder<?> transcoder,
             @Nonnull final Map<String,Object> ruleset) {
-
         
         final TranscodingRule copy = new TranscodingRule(ruleset);
         copy.getMap().put(PROP_TRANSCODER, transcoder);
@@ -283,26 +283,37 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
         final String targetName = transcoder.getEncodedName(copy);
         if (targetName != null) {
             
-            log.debug("Attribute mapping: {} <-> {} via {}", id, targetName, transcoder.getClass().getSimpleName());
+            final boolean encoder = copy.getOrDefault(PROP_ENCODER, Boolean.class, true);
+            final boolean decoder = copy.getOrDefault(PROP_DECODER, Boolean.class, true);
+            if (!encoder && !decoder) {
+                log.warn("Transcoding rule for {} and type {} was disabled in both directions, ignoring",
+                        id, type.getName());
+                return;
+            }
+            
+            log.debug("Attribute mapping: {} {}-{} {} via {}", id, targetName,
+                    decoder ? "<" : "", encoder ? ">" : "", transcoder.getClass().getSimpleName());
             
             // Install mapping back to IdPAttribute's trimmed name.
             copy.getMap().put(PROP_ID, id);
-            
-            Multimap<Class<?>,TranscodingRule> rulesetsForIdPName = transcodingRegistry.get(id);
-            if (rulesetsForIdPName == null) {
-                rulesetsForIdPName = ArrayListMultimap.create();
-                transcodingRegistry.put(id, rulesetsForIdPName);
-            }
-            
-            rulesetsForIdPName.put(type, copy);
 
-            Multimap<Class<?>,TranscodingRule> rulesetsForEncodedName = transcodingRegistry.get(targetName);
-            if (rulesetsForEncodedName == null) {
-                rulesetsForEncodedName = ArrayListMultimap.create();
-                transcodingRegistry.put(targetName, rulesetsForEncodedName);
+            if (encoder) {
+                Multimap<Class<?>,TranscodingRule> rulesetsForIdPName = transcodingRegistry.get(id);
+                if (rulesetsForIdPName == null) {
+                    rulesetsForIdPName = ArrayListMultimap.create();
+                    transcodingRegistry.put(id, rulesetsForIdPName);
+                }
+                rulesetsForIdPName.put(type, copy);
             }
             
-            rulesetsForEncodedName.put(type, copy);
+            if (decoder) {
+                Multimap<Class<?>,TranscodingRule> rulesetsForEncodedName = transcodingRegistry.get(targetName);
+                if (rulesetsForEncodedName == null) {
+                    rulesetsForEncodedName = ArrayListMultimap.create();
+                    transcodingRegistry.put(targetName, rulesetsForEncodedName);
+                }
+                rulesetsForEncodedName.put(type, copy);
+            }
             
             if (displayNameRegistry.containsKey(id)) {
                 displayNameRegistry.get(id).putAll(copy.getDisplayNames());
@@ -317,9 +328,10 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
             }
             
         } else {
-            log.warn("Transcoding rule for {} into type {} did not produce an encoded name", id, type.getName());
+            log.warn("Transcoding rule for {} and type {} did not produce an encoded name", id, type.getName());
         }
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Build an appropriate {@link Predicate} to use as an activation condition within the ruleset.
