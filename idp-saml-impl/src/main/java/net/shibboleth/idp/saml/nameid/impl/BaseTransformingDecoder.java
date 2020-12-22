@@ -38,7 +38,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Regular expression transform of an identifier. */
+/** Regular expression, etc. transform of an identifier. */
 public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitializableComponent {
 
     /** Class logger. */
@@ -47,9 +47,41 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
     /** Match patterns and replacement strings to apply. */
     @Nonnull @NonnullElements private List<Pair<Pattern,String>> transforms;
     
+    /** Convert to uppercase prior to transforms? */
+    private boolean uppercase;
+    
+    /** Convert to lowercase prior to transforms? */
+    private boolean lowercase;
+    
     /** Constructor. */
     public BaseTransformingDecoder() {
         transforms = Collections.emptyList();
+    }
+    
+    /**
+     * Controls conversion to uppercase prior to applying any transforms.
+     * 
+     * @param flag  uppercase flag
+     * 
+     * @since 4.1.0
+     */
+    public void setUppercase(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        uppercase = flag;
+    }
+
+    /**
+     * Controls conversion to lowercase prior to applying any transforms.
+     * 
+     * @param flag lowercase flag
+     * 
+     * @since 4.1.0
+     */
+    public void setLowercase(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        lowercase = flag;
     }
     
     /**
@@ -79,6 +111,18 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         String s = id;
+        
+        if (lowercase) {
+            log.debug("Converting input string '{}' to lowercase", s);
+            s = s.toLowerCase();
+        } else if (uppercase) {
+            log.debug("Converting input string '{}' to uppercase", s);
+            s = s.toUpperCase();
+        }
+        
+        if (transforms.isEmpty()) {
+            return s;
+        }
         
         for (final Pair<Pattern,String> p : transforms) {            
             final Matcher m = p.getFirst().matcher(s);
