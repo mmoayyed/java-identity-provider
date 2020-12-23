@@ -40,25 +40,24 @@
         </property>
     </bean>
 
+    <bean id="TransformingNameIDDecoder" lazy-init="true"
+        class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder"
+        p:lowercase="%{idp.c14n.saml.lowercase:false}"
+        p:uppercase="%{idp.c14n.saml.uppercase:false}"
+        p:transforms-ref="shibboleth.NameTransforms" />
+
     <bean id="Shibboleth.C14N.SAML2Transform"
-            class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization" scope="prototype">
-        <property name="decoder">
-            <bean class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder"
-                p:lowercase="%{idp.c14n.saml.lowercase:false}"
-                p:uppercase="%{idp.c14n.saml.uppercase:false}"
-                p:transforms-ref="shibboleth.NameTransforms" />
-        </property>
-    </bean>
+        class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization" scope="prototype"
+        p:decoder="#{getObject('shibboleth.SAML2Transform.NameIDDecoder') ?: getObject('TransformingNameIDDecoder')}" />
+
+    <bean class="ProxyTransformingNameIDDecoder" lazy-init="true"
+        p:lowercase="%{idp.c14n.saml.proxy.lowercase:false}"
+        p:uppercase="%{idp.c14n.saml.proxy.uppercase:false}"
+        p:transforms-ref="shibboleth.ProxyNameTransforms" />
 
     <bean id="Shibboleth.C14N.SAML2ProxyTransform"
-            class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization" scope="prototype">
-        <property name="decoder">
-            <bean class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder"
-                p:lowercase="%{idp.c14n.saml.lowercase:false}"
-                p:uppercase="%{idp.c14n.saml.uppercase:false}"
-                p:transforms-ref="shibboleth.ProxyNameTransforms" />
-        </property>
-    </bean>
+        class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization" scope="prototype"
+        p:decoder="#{getObject('shibboleth.SAML2ProxyTransform.NameIDDecoder') ?: getObject('ProxyTransformingNameIDDecoder')}" />
 
     <bean id="Shibboleth.C14N.SAML1Transient"
             class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization" scope="prototype">
@@ -76,14 +75,14 @@
         </property>
     </bean>
 
+    <bean id="TransformingNameIdentifierDecoder" lazy-init="true"
+        class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIdentifierDecoder"
+        p:lowercase="%{idp.c14n.saml.lowercase:false}"
+        p:uppercase="%{idp.c14n.saml.uppercase:false}"
+        p:transforms-ref="shibboleth.NameTransforms" />
+
     <bean id="Shibboleth.C14N.SAML1Transform"
-            class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization" scope="prototype">
-        <property name="decoder">
-            <bean class="net.shibboleth.idp.saml.nameid.impl.TransformingNameIdentifierDecoder"
-                p:lowercase="%{idp.c14n.saml.lowercase:false}"
-                p:uppercase="%{idp.c14n.saml.uppercase:false}"
-                p:transforms-ref="shibboleth.NameTransforms" />
-        </property>
-    </bean>
+        class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization" scope="prototype"
+        p:decoder="#{getObject('shibboleth.SAML1Transform.NameIdentifierDecoder') ?: getObject('TransformingNameIdentifierDecoder')}" />
 
 </beans>
