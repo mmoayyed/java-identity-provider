@@ -18,7 +18,10 @@
 package net.shibboleth.idp.admin.impl;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,8 +52,11 @@ import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -71,9 +77,6 @@ public class OutputMetrics extends AbstractProfileAction {
     /** Flow variable indicating ID of metric or group of metrics to output. */
     @Nonnull @NotEmpty public static final String METRIC_ID = "metricId";
     
-    /** Default date/time format string. */
-    @Nonnull @NotEmpty public static final String DEFAULT_DT_FORMAT = "YYYY-MM-dd'T'HH:mm:ss.SSSZZ";
-    
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(OutputMetrics.class);
     
@@ -89,8 +92,11 @@ public class OutputMetrics extends AbstractProfileAction {
     /** Name of JSONP callback function, if any. */
     @Nullable private String jsonpCallbackName;
 
-    /** Formatting string for {@link SimpleDateFormat} fields. */
-    @Nullable private String dateTimeFormat;
+    /** Formatter for date/time fields. */
+    @Nonnull private DateTimeFormatter dateTimeFormatter;
+
+    /** Convert date/time fields to default time zone. */
+    private boolean useDefaultTimeZone;
 
     /** Map of custom metric groups to filters. */
     @Nonnull @NonnullElements private Map<String,MetricFilter> metricFilterMap;
@@ -101,6 +107,7 @@ public class OutputMetrics extends AbstractProfileAction {
     /** Constructor. */
     public OutputMetrics() {
         metricFilterMap = Collections.emptyMap();
+        dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
     }
 
     /**
@@ -148,14 +155,29 @@ public class OutputMetrics extends AbstractProfileAction {
     }
     
     /**
-     * Set the formatting string to apply when writing date/time fields.
+     * Set the formatting string to apply when extracting date/time fields.
      * 
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        dateTimeFormat = StringSupport.trimOrNull(format);
+        if (format != null) {
+            dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
+        }
+    }
+    
+    /**
+     * Convert date/time fields to default time zone.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.1.0
+     */
+    public void setUseDefaultTimeZone(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        useDefaultTimeZone = flag;
     }
     
     /**
@@ -183,6 +205,12 @@ public class OutputMetrics extends AbstractProfileAction {
         
         if (metricRegistry == null) {
             throw new ComponentInitializationException("MetricRegistry cannot be null");
+        }
+        
+        if (useDefaultTimeZone) {
+            dateTimeFormatter = dateTimeFormatter.withZone(ZoneId.systemDefault());
+        } else {
+            dateTimeFormatter = dateTimeFormatter.withZone(ZoneOffset.UTC);
         }
     }
 
@@ -254,8 +282,20 @@ public class OutputMetrics extends AbstractProfileAction {
             
             final ObjectMapper mapper = new ObjectMapper().registerModule(
                     new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, true, filter));
-            mapper.registerModule(new JavaTimeModule());
-            mapper.setDateFormat(new SimpleDateFormat(dateTimeFormat != null ? dateTimeFormat : DEFAULT_DT_FORMAT));
+
+            // The default Instant serializer cannot leverage a custom formatter. Seriously.
+            final JavaTimeModule javatime = new JavaTimeModule();
+            javatime.addSerializer(Instant.class, new JsonSerializer<Instant>() {
+                public void serialize(final Instant value, final JsonGenerator gen,
+                        final SerializerProvider serializers) throws IOException {
+                    gen.writeString(dateTimeFormatter.format(value));
+                }
+            });
+            
+            mapper.registerModule(javatime);
+            // These don't do much of anything, except the first one I think.
+            mapper.configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false);
+            mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
             mapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
             
             if (jsonpCallbackName != null) {
