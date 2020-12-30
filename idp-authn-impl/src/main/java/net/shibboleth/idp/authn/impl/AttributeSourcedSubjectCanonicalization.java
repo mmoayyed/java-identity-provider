@@ -19,11 +19,15 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -34,6 +38,7 @@ import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -70,6 +75,12 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
     /** Delimiter to use for scoped attribute serialization. */
     private char delimiter;
     
+    /** Whether to also check the original Subject for {@link IdPAttributePrincipal}s. */
+    private boolean resolveFromSubject;
+    
+    /** Indexed attributes pulled from subject. */
+    @Nonnull @NonnullElements private Map<String,IdPAttribute> subjectSourcedAttributes;
+    
     /** Ordered list of attributes to look for and read from. */
     @Nonnull @NonnullElements private List<String> attributeSourceIds;
         
@@ -83,6 +94,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
     public AttributeSourcedSubjectCanonicalization() {
         delimiter = '@';
         attributeSourceIds = Collections.emptyList();
+        subjectSourcedAttributes = Collections.emptyMap();
         
         attributeContextLookupStrategy =
                 new ChildContextLookup<>(AttributeContext.class).compose(
@@ -98,6 +110,20 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         delimiter = ch;
+    }
+    
+    /**
+     * Whether to include any {@link IdPAttributePrincipal} objects found in the input {@link Subject}
+     * when searching for a matching attribute ID.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.1.0
+     */
+    public void setResolveFromSubject(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        resolveFromSubject = flag;
     }
     
     /**
@@ -139,48 +165,52 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
+        if (!super.doPreExecute(profileRequestContext, c14nContext)) {
+            return false;
+        }
+        
+        if (resolveFromSubject) {
+            final Set<IdPAttributePrincipal> subjectSourced =
+                    c14nContext.getSubject().getPrincipals(IdPAttributePrincipal.class);
+            if (subjectSourced != null && !subjectSourced.isEmpty()) {
+                subjectSourcedAttributes = new HashMap<>(subjectSourced.size());
+                subjectSourced.forEach(a -> subjectSourcedAttributes.put(a.getAttribute().getId(), a.getAttribute()));
+            }
+        }
+        
         attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
-        if (attributeCtx == null || attributeCtx.getIdPAttributes().isEmpty()) {
+        if (subjectSourcedAttributes.isEmpty() && (attributeCtx == null || attributeCtx.getIdPAttributes().isEmpty())) {
             log.warn("{} No attributes found, canonicalization not possible", getLogPrefix());
             c14nContext.setException(new SubjectCanonicalizationException("No attributes were found"));
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
             return false;
         }
         
-        return super.doPreExecute(profileRequestContext, c14nContext);
+        return true;
     }
     
     /** {@inheritDoc} */
-    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
         
         for (final String id : attributeSourceIds) {
-            final IdPAttribute attr = attributeCtx.getIdPAttributes().get(id);
-            if (attr == null) {
-                continue;
-            }
-            for (final IdPAttributeValue val : attr.getValues()) {
-                if (val instanceof StringAttributeValue) {
-                    final StringAttributeValue stringVal = (StringAttributeValue) val;
-                    if (stringVal.getValue() == null || stringVal.getValue().isEmpty()) {
-                        log.debug("{} Ignoring null/empty string value", getLogPrefix());
-                        continue;
+            
+            IdPAttribute attr = subjectSourcedAttributes.get(id);
+            if (attr != null) {
+                final String result = findValue(attr);
+                if (result != null) {
+                    c14nContext.setPrincipalName(result);
+                    return;
+                }
+            } else if (attributeCtx != null) {
+                attr = attributeCtx.getIdPAttributes().get(id);
+                if (attr != null) {
+                    final String result = findValue(attr);
+                    if (result != null) {
+                        c14nContext.setPrincipalName(result);
+                        return;
                     }
-                    log.debug("{} Using attribute {} string value {} as input to transforms", getLogPrefix(), id,
-                            stringVal.getValue());
-                    c14nContext.setPrincipalName(applyTransforms(stringVal.getValue()));
-                    return;
-                } else if (val instanceof ScopedStringAttributeValue) {
-                    final ScopedStringAttributeValue scoped = (ScopedStringAttributeValue) val;
-                    final String withScope = scoped.getValue() + delimiter + scoped.getScope();
-                    log.debug("{} Using attribute {} scoped value {} as input to transforms", getLogPrefix(), id,
-                            withScope);
-                    c14nContext.setPrincipalName(applyTransforms(withScope));
-                    return;
-                } else {
-                    log.warn("{} Unsupported attribute value type: {}", getLogPrefix(), val.getClass().getName());
                 }
             }
         }
@@ -189,6 +219,38 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
         c14nContext.setException(new SubjectCanonicalizationException("No usable attribute values were found"));
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
     }
-    // CheckStyle: ReturnCount ON
 
+    /**
+     * Check for a compatible value in the input attribute.
+     * 
+     * @param attribute input attribute
+     * 
+     * @return value to use for result, or null
+     */
+    @Nullable private String findValue(@Nonnull final IdPAttribute attribute) {
+        
+        for (final IdPAttributeValue val : attribute.getValues()) {
+            if (val instanceof StringAttributeValue) {
+                final StringAttributeValue stringVal = (StringAttributeValue) val;
+                if (stringVal.getValue() == null || stringVal.getValue().isEmpty()) {
+                    log.debug("{} Ignoring null/empty string value", getLogPrefix());
+                    continue;
+                }
+                log.debug("{} Using attribute {} string value {} as input to transforms", getLogPrefix(),
+                        attribute.getId(), stringVal.getValue());
+                return applyTransforms(stringVal.getValue());
+            } else if (val instanceof ScopedStringAttributeValue) {
+                final ScopedStringAttributeValue scoped = (ScopedStringAttributeValue) val;
+                final String withScope = scoped.getValue() + delimiter + scoped.getScope();
+                log.debug("{} Using attribute {} scoped value {} as input to transforms", getLogPrefix(),
+                        attribute.getId(), withScope);
+                return applyTransforms(withScope);
+            } else {
+                log.warn("{} Unsupported attribute value type: {}", getLogPrefix(), val.getClass().getName());
+            }
+        }
+        
+        return null;
+    }
+    
 }

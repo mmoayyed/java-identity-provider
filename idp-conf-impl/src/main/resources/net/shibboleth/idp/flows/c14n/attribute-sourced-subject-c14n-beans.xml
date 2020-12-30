@@ -28,6 +28,7 @@
     
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
             c:resolverService-ref="shibboleth.AttributeResolverService"
+            p:activationCondition="#{getObject('shibboleth.c14n.attribute.ResolutionCondition') ?: getObject('shibboleth.Conditions.TRUE')}"
             p:attributesToResolve-ref="shibboleth.c14n.attribute.AttributesToResolve"
             p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
             p:principalNameLookupStrategy="#{getObject('shibboleth.c14n.attribute.PrincipalNameLookupStrategy')}">
@@ -41,6 +42,7 @@
     <bean id="AttributeSourcedSubjectCanonicalization"
         class="net.shibboleth.idp.authn.impl.AttributeSourcedSubjectCanonicalization" scope="prototype"
         p:attributeSourceIds-ref="shibboleth.c14n.attribute.AttributeSourceIds"
+        p:resolveFromSubject="%{idp.c14n.attribute.resolveFromSubject:false}"
         p:lowercase="#{getObject('shibboleth.c14n.attribute.Lowercase') ?: %{idp.c14n.attribute.lowercase:false}}"
         p:uppercase="#{getObject('shibboleth.c14n.attribute.Uppercase') ?: %{idp.c14n.attribute.uppercase:false}}"
         p:trim="#{getObject('shibboleth.c14n.attribute.Trim') ?: %{idp.c14n.attribute.trim:true}}"
