@@ -187,6 +187,11 @@
         c:metricName="nameid"
         p:service-ref="shibboleth.NameIdentifierGenerationService" />
 
+    <bean id="shibboleth.metrics.AttributeRegistryGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="attribute.registry"
+        p:service-ref="shibboleth.AttributeRegistryService" />
+
     <bean id="shibboleth.metrics.AttributeResolverGaugeSet"
         class="net.shibboleth.idp.attribute.resolver.impl.AttributeResolverServiceGaugeSet" lazy-init="true"
         c:metricName="attribute.resolver"
