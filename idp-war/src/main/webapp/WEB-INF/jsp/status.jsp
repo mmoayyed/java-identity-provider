@@ -9,6 +9,7 @@
 <%@ page import="java.util.Optional" %>
 <%@ page import="java.util.ServiceLoader" %>
 <%@ page import="java.util.ServiceLoader.Provider" %>
+<%@ page import="java.time.Duration" %>
 <%@ page import="java.time.Instant" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="org.springframework.core.env.Environment" %>
@@ -44,9 +45,11 @@ maximum_memory: <%= Runtime.getRuntime().maxMemory() / 1048576 %> MB
 idp_version: <%= Version.getVersion() %>
 start_time: <%= dateTimeFormatter.format(startupTime) %>
 current_time: <%= dateTimeFormatter.format(now) %>
-uptime: <%= now.toEpochMilli() - startupTime.toEpochMilli() %> ms
+uptime: <%= Duration.ofMillis(now.toEpochMilli() - startupTime.toEpochMilli()).toString() %>
 
 <%
+out.println();
+out.println();
 out.println("enabled modules: ");
 final ModuleContext moduleContext =
     new ModuleContext(((Environment) request.getAttribute("environment")).getProperty("idp.home"));
