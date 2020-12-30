@@ -44,6 +44,19 @@ public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>>
      @Nonnull Duration getNoRetryDelay();
 
      /**
+      * Get the time when this connector last succeeded.
+      *
+      * TODO: Remove default in V5.
+      *
+      * @return when it last succeeded
+      * 
+      * @since 4.1.0
+      */
+     @Nullable default Instant getLastSuccess() {
+         return Instant.now();
+     }
+
+     /**
       * Get the time when this connector last failed. This will be set for any exception regardless of the setting of
       * {@link #isPropagateResolutionExceptions()}
       *

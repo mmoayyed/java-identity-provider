@@ -137,19 +137,30 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
     		out.println("No Attribute Resolver Gauge Set Found");
     		continue;
     	}
-    	final Gauge<Map<String,Instant>> gauge = (Gauge<Map<String,Instant>>) metrics.getMetrics().get("net.shibboleth.idp.attribute.resolver.failure");
-    	Set<Entry<String, Instant>> entrySet = gauge.getValue().entrySet();
-    	if (entrySet.isEmpty()) {
+    	final Gauge<Map<String,Instant>> failGauge =
+    	        (Gauge<Map<String,Instant>>) metrics.getMetrics().get("net.shibboleth.idp.attribute.resolver.failure");
+    	final Set<Entry<String,Instant>> failSet = failGauge.getValue().entrySet();
+    	if (failSet.isEmpty()) {
 	    	out.println("\tNo Data Connector has ever failed");
 			out.println();
 			continue;
 		}
-    	for (final Entry<String, Instant> en : entrySet) {
-			final Instant lastFail = en.getValue();
+        final Gauge<Map<String,Instant>> successGauge =
+                (Gauge<Map<String,Instant>>) metrics.getMetrics().get("net.shibboleth.idp.attribute.resolver.success");
+        final Map<String,Instant> successMap = successGauge.getValue();
+        final ArrayList<String> failingConnectors = new ArrayList<>();
+    	for (final Entry<String, Instant> en : failSet) {
 			final String connectorId = en.getKey();
+            final Instant lastFail = en.getValue();
 			out.println("\tDataConnector " +  connectorId + ": last failed at " + dateTimeFormatter.format(lastFail));
             out.println();
-        }   
-    }    
+            final Instant lastSuccess = successMap.get(connectorId);
+            if (lastSuccess == null || lastSuccess.isBefore(lastFail)) {
+                failingConnectors.add(connectorId);
+            }
+        }
+        out.println("\tCurrently failing: " + failingConnectors);
+        out.println();
+    }
 }
 %>

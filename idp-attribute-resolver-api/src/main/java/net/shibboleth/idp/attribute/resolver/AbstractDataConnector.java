@@ -55,6 +55,9 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /** cache for the log prefix - to save multiple recalculations. */
     @Nullable private String logPrefix;
 
+    /** When did this connector last work? */
+    @Nullable private Instant lastSuccess;
+
     /** When did this connector last fail? */
     @Nullable private Instant lastFail;
 
@@ -81,7 +84,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * @return ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
-    @Override @Nullable public String getFailoverDataConnectorId() {
+    @Nullable public String getFailoverDataConnectorId() {
         return failoverDataConnectorId;
     }
 
@@ -100,6 +103,24 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     }
 
     /**
+     * Set the time when this connector last worked.
+     *
+     * @param time what to set
+     * 
+     * @since 4.1.0
+     */
+    public void setLastSuccess(@Nullable final Instant time) {
+        lastSuccess = time;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Nullable public Instant getLastSuccess() {
+        return lastSuccess;
+    }
+
+    /**
      * Set the time when this connector last failed.
      *
      * @param time what to set
@@ -111,7 +132,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /**
      * {@inheritDoc}
      */
-    @Override @Nullable public Instant getLastFail() {
+    @Nullable public Instant getLastFail() {
         return lastFail;
     }
 
@@ -121,11 +142,13 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      * @param delay what to set
      */
     public void setNoRetryDelay(@Nonnull final Duration delay) {
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         noRetryDelay = delay;
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Duration getNoRetryDelay() {
+    @Nonnull public Duration getNoRetryDelay() {
         return noRetryDelay;
     }
 
@@ -141,11 +164,9 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         exportAllAttributes = what;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Deprecated(since = "4.1.0", forRemoval = true)
-    @Override public boolean isExportAllAttributes() {
+    public boolean isExportAllAttributes() {
         return exportAllAttributes;
     }
 
@@ -160,11 +181,17 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         exportAttributes = Set.copyOf(what);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override @Nonnull @NonnullElements @Unmodifiable public Collection<String> getExportAttributes() {
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements @Unmodifiable public Collection<String> getExportAttributes() {
         return exportAttributes;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
+        logPrefix = null;
     }
 
     /**
@@ -182,6 +209,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         final Map<String, IdPAttribute> result;
         try {
             result = doDataConnectorResolve(resolutionContext, workContext);
+            setLastSuccess(Instant.now());
         } catch (final NoResultAnErrorResolutionException | MultipleResultAnErrorResolutionException e) {
             // Do not record these failures, they are 'expected'
             throw e;
@@ -202,15 +230,6 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         }
 
         return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-
-        super.doInitialize();
-
-        // The Id is now definitive. Just in case it was used prior to that, reset the getPrefixCache
-        logPrefix = null;
     }
 
     /**

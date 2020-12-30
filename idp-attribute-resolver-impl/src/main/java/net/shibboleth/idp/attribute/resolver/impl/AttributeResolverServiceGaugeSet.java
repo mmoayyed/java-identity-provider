@@ -53,11 +53,45 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet<
      * 
      * @param metricName name to include in metric names produced by this set
      */
+// Checkstyle: AnonInnerLength|MethodLength OFF
     public AttributeResolverServiceGaugeSet(
             @Nonnull @NotEmpty @ParameterName(name="metricName") final String metricName) {
         super(metricName);
         
-// Checkstyle: AnonInnerLength OFF
+        getMetricMap().put(
+                MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "success"),
+                new Gauge<Map<String,Instant>>() {
+                    public Map<String,Instant> getValue() {
+                        final Map<String,Instant> mapBuilder = new HashMap<>();
+                        final ServiceableComponent<AttributeResolver> component =
+                                getService().getServiceableComponent();
+                        if (component != null) {
+                            try {                                
+                                final Object resolver = component.getComponent();
+                                if (resolver instanceof AttributeResolverImpl) {
+                                    final Collection<DataConnector> connectors =
+                                            ((AttributeResolverImpl) resolver).getDataConnectors().values();
+                                    for (final DataConnector connector: connectors) {
+                                        if (connector.getLastSuccess() != null) {
+                                            mapBuilder.put(connector.getId(), connector.getLastSuccess());
+                                        }
+                                    }
+                                } else if (resolver instanceof AttributeResolver) {
+                                   log.debug("{}: Cannot get Data Connector success " +
+                                           " information from unsupported class type {}",
+                                           getLogPrefix(), resolver.getClass());
+                                } else {
+                                    log.warn("{}: Injected Service was not for an AttributeResolver ({})",
+                                            getLogPrefix(), resolver.getClass());
+                                }
+                            } finally {
+                                component.unpinComponent();
+                            }
+                        }
+                        return Map.copyOf(mapBuilder);
+                    }
+                });
+
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "failure"),
                 new Gauge<Map<String,Instant>>() {
@@ -77,11 +111,11 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet<
                                         }
                                     }
                                 } else if (resolver instanceof AttributeResolver) {
-                                   log.debug("{} : Cannot get Data Connector failure " +
+                                   log.debug("{}: Cannot get Data Connector failure " +
                                            " information from unsupported class type {}",
                                            getLogPrefix(), resolver.getClass());
                                 } else {
-                                    log.warn("{} : Injected Service was not for an AttributeResolver ({})",
+                                    log.warn("{}: Injected Service was not for an AttributeResolver ({})",
                                             getLogPrefix(), resolver.getClass());
                                 }
                             } finally {
@@ -91,9 +125,9 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet<
                         return Map.copyOf(mapBuilder);
                     }
                 });
-// Checkstyle: AnonInnerLength ON
         
     }
+// Checkstyle: AnonInnerLength|MethodLength ON
 
     /** {@inheritDoc} */
     @Override
@@ -106,7 +140,7 @@ public class AttributeResolverServiceGaugeSet extends ReloadableServiceGaugeSet<
                 if (component.getComponent() instanceof AttributeResolver) {
                     return;
                 }
-                log.error("{} : Injected service was not for an AttributeResolver ({})",
+                log.error("{}: Injected service was not for an AttributeResolver ({})",
                         getLogPrefix(), component.getClass());
                 throw new ComponentInitializationException("Injected service was not for an AttributeResolver");
             } finally {
