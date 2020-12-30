@@ -28,7 +28,7 @@
     
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
             c:resolverService-ref="shibboleth.AttributeResolverService"
-            p:activationCondition="#{getObject('shibboleth.c14n.attribute.ResolutionCondition') ?: getObject('shibboleth.Conditions.TRUE')}"
+            p:activationCondition-ref="#{'%{idp.c14n.attribute.resolutionCondition:shibboleth.Conditions.TRUE}'.trim()}"
             p:attributesToResolve-ref="shibboleth.c14n.attribute.AttributesToResolve"
             p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
             p:principalNameLookupStrategy="#{getObject('shibboleth.c14n.attribute.PrincipalNameLookupStrategy')}">
