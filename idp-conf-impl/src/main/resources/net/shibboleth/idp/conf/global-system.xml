@@ -310,7 +310,7 @@
             p:targetObject-ref="shibboleth.JSONObjectMapper"
             p:targetMethod="setDateFormat">
         <property name="arguments">
-            <bean class="java.text.SimpleDateFormat" c:_0="YYYY-MM-dd'T'HH:mm:ss.SSSZZ" />
+            <bean class="java.text.SimpleDateFormat" c:_0="yyyy-MM-dd'T'HH:mm:ss.SSSZZ" />
         </property>
     </bean>
     

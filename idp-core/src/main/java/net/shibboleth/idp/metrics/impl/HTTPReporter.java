@@ -70,7 +70,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class HTTPReporter extends ScheduledReporter implements InitializableComponent {
 
     /** Default date/time format string. */
-    @Nonnull @NotEmpty public static final String DEFAULT_DT_FORMAT = "YYYY-MM-dd'T'HH:mm:ss.SSSZZ";
+    @Nonnull @NotEmpty public static final String DEFAULT_DT_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZZ";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(HTTPReporter.class);
