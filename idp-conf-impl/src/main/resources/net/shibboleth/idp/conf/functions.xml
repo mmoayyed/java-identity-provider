@@ -17,6 +17,9 @@
     <bean id="shibboleth.Functions.Compose"
         class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="compose" abstract="true" />
 
+    <bean id="shibboleth.Functions.PredicateDriven"
+        class="net.shibboleth.utilities.java.support.logic.PredicateDrivenFunction" abstract="true" />
+
     <bean id="shibboleth.BiFunctions.Constant"
         class="net.shibboleth.utilities.java.support.logic.BiFunctionSupport" factory-method="constant" abstract="true" />
     <bean id="shibboleth.BiFunctions.Compose"
