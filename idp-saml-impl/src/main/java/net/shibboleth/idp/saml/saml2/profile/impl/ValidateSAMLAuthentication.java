@@ -127,6 +127,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     /** Incoming context translation function. */
     @Nullable private Function<AuthnContext,Collection<Principal>> authnContextTranslator;
 
+    /** Incoming context extended translation function. */
+    @Nullable private Function<ProfileRequestContext,Collection<Principal>> authnContextTranslatorEx;
+
     /** Context for externally supplied inbound attributes. */
     @Nullable private AttributeContext attributeContext;
         
@@ -269,6 +272,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         }
         
         authnContextTranslator = profileConfiguration.getAuthnContextTranslationStrategy(profileRequestContext);
+        authnContextTranslatorEx = profileConfiguration.getAuthnContextTranslationStrategyEx(profileRequestContext);
         
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         
@@ -294,7 +298,18 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
 
         final AuthnContext authnContext = samlAuthnContext.getAuthnStatement().getAuthnContext();
         
-        if (authnContextTranslator != null) {
+        if (authnContextTranslatorEx != null) {
+            // PRC is two levels above SAMLAuthnContext.
+            final Collection<Principal> translated = authnContextTranslatorEx.apply(
+                    (ProfileRequestContext) samlAuthnContext.getParent().getParent());
+            if (translated != null) {
+                subject.getPrincipals().addAll(translated);
+                if (log.isDebugEnabled()) {
+                    log.debug("{} Added translated Principals: {}", getLogPrefix(),
+                            translated.stream().map(Principal::getName).collect(Collectors.toUnmodifiableList()));
+                }
+            }
+        } else if (authnContextTranslator != null) {
             final Collection<Principal> translated = authnContextTranslator.apply(authnContext);
             if (translated != null) {
                 subject.getPrincipals().addAll(translated);

@@ -430,6 +430,11 @@
                 </property>
             </bean>
         </property>
+        <property name="authnContextTranslationStrategyExLookupStrategy">
+            <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="authnContextTranslationStrategyEx"
+                    p:propertyType="#{T(java.util.function.Function)}">
+            </bean>
+        </property>
         <property name="authnContextComparisonLookupStrategy">
             <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="authnContextComparison">
                 <property name="defaultValueStrategy">

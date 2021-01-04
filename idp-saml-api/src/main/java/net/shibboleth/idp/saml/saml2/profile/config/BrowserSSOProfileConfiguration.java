@@ -104,7 +104,11 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     /** Lookup function to supply the strategy function for translating SAML 2.0 AuthnContext data. */
     @Nonnull private Function<ProfileRequestContext,Function<AuthnContext,Collection<Principal>>>
         authnContextTranslationStrategyLookupStrategy;
-    
+
+    /** Lookup function to supply the strategy function for translating fully-generic data. */
+    @Nonnull private Function<ProfileRequestContext,Function<ProfileRequestContext,Collection<Principal>>>
+        authnContextTranslationStrategyExLookupStrategy;
+
     /** Lookup function for requested AC operator. */
     @Nonnull private Function<ProfileRequestContext,String> authnContextComparisonLookupStrategy;
     
@@ -149,6 +153,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         authnContextTranslationStrategyLookupStrategy = FunctionSupport.constant(null);
+        authnContextTranslationStrategyExLookupStrategy = FunctionSupport.constant(null);
         authnContextComparisonLookupStrategy = new ProxyAwareAuthnContextComparisonLookupFunction();
         defaultAuthenticationContextsLookupStrategy = new ProxyAwareDefaultAuthenticationMethodsLookupFunction();
         nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
@@ -587,8 +592,60 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @since 4.0.0
      */
     public void setAuthnContextTranslationStrategyLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,Function<AuthnContext,Collection<Principal>>> strategy) {
+            @Nonnull final Function<ProfileRequestContext,Function<AuthnContext,Collection<Principal>>> strategy) {
         authnContextTranslationStrategyLookupStrategy =
+                Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+
+    /**
+     * Get the function to use to translate an inbound proxied response into the appropriate
+     * set of custom {@link Principal} objects to populate into the subject.
+     * 
+     * <p>This differs from the original in that the input is the entire {@link ProfileRequestContext}
+     * of the proxied authentication state rather than the SAML {@link AuthnContext} directly.</p>
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return translation function
+     * 
+     * @since 4.1.0
+     */
+    @Nullable public Function<ProfileRequestContext,Collection<Principal>> getAuthnContextTranslationStrategyEx(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        return authnContextTranslationStrategyExLookupStrategy.apply(profileRequestContext);
+    }
+
+    /**
+     * Set the function to use to translate an inbound proxied response into the appropriate
+     * set of custom {@link Principal} objects to populate into the subject.
+     * 
+     * <p>This differs from the original in that the input is the entire {@link ProfileRequestContext}
+     * of the proxied authentication state rather than the SAML {@link AuthnContext} directly.</p>
+     * 
+     * @param strategy translation function
+     * 
+     * @since 4.1.0
+     */
+    public void setAuthnContextTranslationStrategyEx(
+            @Nullable final Function<ProfileRequestContext,Collection<Principal>> strategy) {
+        authnContextTranslationStrategyExLookupStrategy = FunctionSupport.constant(strategy);
+    }
+
+    /**
+     * Set a lookup strategy for the function to use to translate an inbound proxied response
+     * into the appropriate set of custom {@link Principal} objects to populate into the subject.
+     * 
+     * <p>This differs from the original in that the input is the entire {@link ProfileRequestContext}
+     * of the proxied authentication state rather than the SAML {@link AuthnContext} directly.</p>
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.1.0
+     */
+    public void setAuthnContextTranslationStrategyExLookupStrategy(
+            @Nonnull
+            final Function<ProfileRequestContext,Function<ProfileRequestContext,Collection<Principal>>> strategy) {
+        authnContextTranslationStrategyExLookupStrategy =
                 Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
