@@ -18,6 +18,10 @@
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -28,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -42,6 +47,7 @@ import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLMessageReceivedEndpointContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -75,6 +81,9 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
     /** Lookup strategy to locate the SAML context. */
     @Nonnull private Function<ProfileRequestContext,SAMLAuthnContext> samlContextLookupStrategy;
     
+    /** Map of binding short names to deduce inbound binding constant. */
+    @Nonnull @NonnullElements private Map<String,BindingDescriptor> bindingMap;
+    
     /** Constructor. */
     public SAMLAuthnController() {
         // PRC -> AC -> nested PRC
@@ -84,6 +93,8 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
         // PRC -> AC -> SAMLAuthnContext
         samlContextLookupStrategy = new ChildContextLookup<>(SAMLAuthnContext.class).compose(
                 new ChildContextLookup<>(AuthenticationContext.class));
+        
+        bindingMap = Collections.emptyMap();
     }
     
     /**
@@ -110,7 +121,24 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
         
         samlContextLookupStrategy = Constraint.isNotNull(strategy, "SAMLAuthnContext lookup strategy cannot be null");
     }
+    
+    /**
+     * Set inbound bindings to use to deduce ProtocolBinding attribute.
+     * 
+     * @param bindings
+     */
+    public void setInboundBindings(@Nullable @NonnullElements final Collection<BindingDescriptor> bindings) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        if (bindings != null) {
+            bindingMap = new HashMap<>(bindings.size());
+            bindings.forEach(b -> bindingMap.put(b.getShortName(), b));
+        } else {
+            bindingMap = Collections.emptyMap();
+        }
+    }
 
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Outbound initiation of the process, triggered with a fixed addition to the path.
      * 
@@ -152,6 +180,10 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
             final StringBuffer url = httpRequest.getRequestURL();
             ((AuthnRequest) nestedPRC.getOutboundMessageContext().getMessage()).setAssertionConsumerServiceURL(
                     url.substring(0, url.lastIndexOf("/start")));
+            final BindingDescriptor bd = bindingMap.get(binding);
+            if (bd != null) {
+                ((AuthnRequest) nestedPRC.getOutboundMessageContext().getMessage()).setProtocolBinding(bd.getId());
+            }
         } else {
             log.error("Outbound AuthnContext message not found");
             httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATION_ERROR_KEY, EventIds.INVALID_MESSAGE);
@@ -180,7 +212,8 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
             ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
         }
     }
-
+// Checkstyle: CyclomaticComplexity ON
+    
     /**
      * Inbound completion of the process, triggered by default for any methods.
      * 
