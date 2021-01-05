@@ -31,6 +31,7 @@ import java.util.Properties;
 
 import javax.annotation.Nonnull;
 
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
@@ -298,9 +299,9 @@ public class LDAPDataConnectorTest {
         builder.setTemplateText("(uid=${resolutionContext.AttributeRecipientID.toString().substring(99, 106)})");
         final Properties props = new Properties();
         // TODO, should expose a way to set the strict prop underneath
-        props.setProperty("runtime.references.strict", "true");
-        props.setProperty("string.resource.loader.class", "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
-        props.setProperty("resource.loader", "classpath, string");
+        props.setProperty(RuntimeConstants.RUNTIME_REFERENCES_STRICT, "true");
+        props.setProperty("resource.loader.string.class", "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
+        props.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath, string");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine(props));
         builder.initialize();
         resolve(builder);

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
@@ -80,11 +81,11 @@ public class TemplateAttributeTest {
         if (null == engineSingleton) {
             engineSingleton = new VelocityEngine();
             try {
-                engineSingleton.addProperty("string.resource.loader.class",
+                engineSingleton.addProperty("resource.loader.string.class",
                         "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
-                engineSingleton.addProperty("classpath.resource.loader.class",
+                engineSingleton.addProperty("resource.loader.classpath.class",
                         "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-                engineSingleton.addProperty("resource.loader", "classpath, string");
+                engineSingleton.addProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath, string");
                 engineSingleton.init();
             } catch (final Exception e) {
                 fail("couldn't create engine", e);

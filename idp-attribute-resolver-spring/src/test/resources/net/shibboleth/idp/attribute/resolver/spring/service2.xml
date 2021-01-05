@@ -9,13 +9,13 @@
 		class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean">
 		<property name="velocityProperties">
 			<props>
-				<prop key="resource.loader">classpath, string</prop>
-				<prop key="classpath.resource.loader.class">
-					org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-				</prop>
-				<prop key="string.resource.loader.class">
-					org.apache.velocity.runtime.resource.loader.StringResourceLoader
-				</prop>
+                <prop key="resource.loaders">classpath, string</prop>
+                <prop key="resource.loader.classpath.class">
+                    org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+                </prop>
+                <prop key="resource.loader.string.class">
+                    org.apache.velocity.runtime.resource.loader.StringResourceLoader
+                </prop>
 			</props>
 		</property>
 	</bean>
