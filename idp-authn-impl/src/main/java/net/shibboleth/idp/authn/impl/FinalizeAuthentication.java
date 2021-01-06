@@ -39,7 +39,6 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
-import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.context.SessionContext;
 
@@ -74,13 +73,12 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>Any {@link SubjectCanonicalizationContext} found will be removed.</p>
  * 
- * <p>If a {@link SubjectContext} already exists, then this action will validate that
- * the same principal name is represented by it, and signal a mismatch otherwise. This
- * is used in protocols that indicate normatively what the authenticated identity is
- * required to be.</p>
+ * <p>If {@link AuthenticationContext#getRequiredName()} is set, then this action will validate that
+ * the same principal name is represented by it, and signal a mismatch otherwise. This is used in
+ * protocols that indicate normatively what the authenticated identity is required to be.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link IdPEventIds#INVALID_SUBJECT_CTX}
+ * @event {@link AuthnEventIds#INVALID_SUBJECT}
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * 
@@ -186,16 +184,15 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
     
         if (canonicalPrincipalName != null) {
-            final SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, true);
-            
-            // Check for an existing value.
-            if (sc.getPrincipalName() != null && !canonicalPrincipalName.equals(sc.getPrincipalName())) {
+            if (authenticationContext.getRequiredName() != null &&
+                    !canonicalPrincipalName.equals(authenticationContext.getRequiredName())) {
                 log.warn("{} Result of authentication ({}) does not match existing subject in context ({})",
-                        getLogPrefix(), canonicalPrincipalName, sc.getPrincipalName());
-                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_SUBJECT_CTX);
+                        getLogPrefix(), canonicalPrincipalName, authenticationContext.getRequiredName());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                 return;
             }
             
+            final SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, true);
             sc.setPrincipalName(canonicalPrincipalName);
     
             final Map<String,AuthenticationResult> scResults = sc.getAuthenticationResults();

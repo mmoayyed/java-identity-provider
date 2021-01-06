@@ -78,9 +78,12 @@ public final class AuthenticationContext extends BaseContext {
     /** Whether authentication must not involve subject interaction. */
     private boolean isPassive;
     
+    /** A normative hint some protocols support to indicate who the subject MUST be. */
+    @Nullable private String requiredName;
+
     /** A non-normative hint some protocols support to indicate who the subject might be. */
     @Nullable private String hintedName;
-    
+
     /** Allowed time since an {@link AuthenticationResult} was created that it can be reused for this request. */
     @Nullable private Duration maxAge;
     
@@ -316,6 +319,35 @@ public final class AuthenticationContext extends BaseContext {
      */
     @Nonnull public AuthenticationContext setForceAuthn(final boolean force) {
         forceAuthn = force;
+        return this;
+    }
+    
+    /**
+     * Get a normative hint provided by the request about the user's identity.
+     * 
+     * <p>This <strong>MUST BE</strong> a trustworthy value, and can only be set through some
+     * normative protocol machinery or with the understanding that it is subsequently a governing
+     * constraint on the canonical result of every flow.</p>
+     * 
+     * @return  the mandatory username
+     */
+    @Nullable @NotEmpty public String getRequiredName() {
+        return requiredName;
+    }
+    
+    /**
+     * Set a normative hint provided by the request about the user's identity.
+     * 
+     * <p>This <strong>MUST BE</strong> a trustworthy value, and can only be set through some
+     * normative protocol machinery or with the understanding that it is subsequently a governing
+     * constraint on the canonical result of every flow.</p>
+     * 
+     * @param name the required username
+     * 
+     * @return this authentication context
+     */
+    @Nonnull public AuthenticationContext setRequiredName(@Nullable final String name) {
+        requiredName = name;
         return this;
     }
     
@@ -774,6 +806,7 @@ public final class AuthenticationContext extends BaseContext {
                 .add("initiationInstant", initiationInstant)
                 .add("isPassive", isPassive)
                 .add("forceAuthn", forceAuthn)
+                .add("requiredName", requiredName)
                 .add("hintedName", hintedName)
                 .add("maxAge", maxAge)
                 .add("potentialFlows", potentialFlows.keySet())

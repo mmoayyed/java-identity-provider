@@ -26,6 +26,7 @@
     <end-state id="InvalidProfileConfiguration" />
     <end-state id="InvalidRelyingPartyConfiguration" />
     <end-state id="InvalidRelyingPartyContext" />
+    <end-state id="InvalidSubject" />
     <end-state id="InvalidSubjectContext" />
     <end-state id="InvalidSubjectCanonicalizationContext" />
     <end-state id="NoCredentials" />
@@ -73,6 +74,7 @@
         <transition on="InvalidProfileConfiguration" to="InvalidProfileConfiguration" />
         <transition on="InvalidRelyingPartyConfiguration" to="InvalidRelyingPartyConfiguration" />
         <transition on="InvalidRelyingPartyContext" to="InvalidRelyingPartyContext" />
+        <transition on="InvalidSubject" to="InvalidSubject" />
         <transition on="InvalidSubjectContext" to="InvalidSubjectContext" />
         <transition on="InvalidSubjectCanonicalizationContext" to="InvalidSubjectCanonicalizationContext" />
         <transition on="NoCredentials" to="NoCredentials" />

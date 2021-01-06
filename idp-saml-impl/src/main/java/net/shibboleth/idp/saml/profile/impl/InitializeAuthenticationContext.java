@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.config.navigate.ForceAuthnProfileConfigPredicate;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
@@ -169,6 +170,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         return true;
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -181,6 +183,16 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
             }
             authnCtx.setForceAuthn(authnRequest.isForceAuthn());
             authnCtx.setIsPassive(authnRequest.isPassive());
+            
+            // On an inbound Subject, migrate the populated SubjectContext into the required name
+            // field in the new AuthenticationContext.
+            if (authnRequest.getSubject() != null && authnRequest.getSubject().getNameID() != null) {
+                final SubjectContext subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class);
+                if (subjectCtx != null && subjectCtx.getPrincipalName() != null) {
+                    authnCtx.setRequiredName(subjectCtx.getPrincipalName());
+                    profileRequestContext.removeSubcontext(subjectCtx);
+                }
+            }
         }
 
         if (!authnCtx.isForceAuthn()) {
@@ -209,6 +221,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
 
         log.debug("{} Created authentication context: {}", getLogPrefix(), authnCtx);
     }
+// Checkstyle: CyclomaticComplexity OFF    
     
     /**
      * Check an inbound {@link AuthnRequest} for a {@link Scoping} element.

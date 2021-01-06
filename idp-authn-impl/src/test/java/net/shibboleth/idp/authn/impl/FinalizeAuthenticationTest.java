@@ -33,7 +33,6 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
-import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
@@ -65,18 +64,18 @@ public class FinalizeAuthenticationTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testMismatch() {
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("bar");
-
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setRequiredName("foo");
+        
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("bar2"));
         
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setAuthenticationResult(active);
-        
+
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("bar");
+
         final Event event = action.execute(src);
-        
-        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_SUBJECT_CTX);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
     }
 
     @Test public void testRequestUnsupported() {
