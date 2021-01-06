@@ -330,6 +330,8 @@ public final class AuthenticationContext extends BaseContext {
      * constraint on the canonical result of every flow.</p>
      * 
      * @return  the mandatory username
+     * 
+     * @since 4.1.0
      */
     @Nullable @NotEmpty public String getRequiredName() {
         return requiredName;
@@ -345,6 +347,8 @@ public final class AuthenticationContext extends BaseContext {
      * @param name the required username
      * 
      * @return this authentication context
+     * 
+     * @since 4.1.0
      */
     @Nonnull public AuthenticationContext setRequiredName(@Nullable final String name) {
         requiredName = name;
