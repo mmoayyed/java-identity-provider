@@ -181,7 +181,7 @@
                 <bean class="org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler" scope="prototype"/>
                 <bean class="org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler" scope="prototype"/>
                 <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype"
-                    p:function="#{getObject('%{idp.authn.SAML.messageHandlerFunction:}'.trim())}" />
+                    p:function="#{getObject('%{idp.authn.SAML.outboundMessageHandlerFunction:}'.trim())}" />
                 <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler" scope="prototype"
                         p:signErrorResponses="%{idp.errors.signed:true}">
                     <property name="activationCondition">
@@ -323,6 +323,8 @@
                         <bean class="org.opensaml.messaging.handler.impl.CheckExpectedIssuer" scope="prototype"
                             p:issuerLookupStrategy-ref="InboundEntityIDLookup"
                             p:expectedIssuerLookupStrategy-ref="OutboundEntityIDLookup" />
+                        <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype"
+                            p:function="#{getObject('%{idp.authn.SAML.inboundMessageHandlerFunction:}'.trim())}" />
                     </list>
                 </property>
 		     </bean>
@@ -380,6 +382,7 @@
     </bean>
 
     <bean id="AssertionValidationContextBuilder" class="org.opensaml.saml.saml2.profile.impl.DefaultAssertionValidationContextBuilder">
+        <property name="clockSkew" value="%{idp.policy.clockSkew:PT3M}" />
         <property name="checkAddress">
             <bean class="net.shibboleth.idp.saml.saml2.profile.config.logic.CheckAddressPredicate" />
         </property>
