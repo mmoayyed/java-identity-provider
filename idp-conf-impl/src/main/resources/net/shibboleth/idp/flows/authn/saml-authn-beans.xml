@@ -374,9 +374,10 @@
                 <bean class="org.opensaml.saml.saml2.assertion.impl.AuthnStatementValidator" />
             </util:list>
         </constructor-arg>
+        <constructor-arg index="3" value="#{getObject('%{idp.authn.SAML.assertionValidator:}'.trim())}" />
         <!-- This is null b/c in this case we use a dynamically-resolved engine in the ValidationContext -->
-        <constructor-arg index="3" value="#{null}" />
-        <constructor-arg index="4">
+        <constructor-arg index="4" value="#{null}" />
+        <constructor-arg index="5">
             <bean class="org.opensaml.saml.security.impl.SAMLSignatureProfileValidator" />
         </constructor-arg>
     </bean>
