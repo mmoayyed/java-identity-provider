@@ -48,8 +48,6 @@ public class MessageSourceConsentFunctionTest {
 
     private MessageSource messageSource;
 
-    private HashFunction hashFunction;
-
     private MessageSourceConsentFunction function;
 
     @BeforeMethod public void setUp() throws Exception {
@@ -57,8 +55,6 @@ public class MessageSourceConsentFunctionTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
         messageSource = new MockMessageSource();
-
-        hashFunction = new HashFunction();
 
         function = new MessageSourceConsentFunction();
         function.setMessageSource(messageSource);
@@ -109,24 +105,24 @@ public class MessageSourceConsentFunctionTest {
 
     @Test(expectedExceptions = UnmodifiableComponentException.class) public void testInstantiationIdMessageCode()
             throws Exception {
-        function.setConsentKeyLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant("consentIdMessageCode"));
+        function.setConsentKeyLookupStrategy(FunctionSupport.constant("consentIdMessageCode"));
         function.initialize();
 
-        function.setConsentKeyLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant("consentIdMessageCode"));
+        function.setConsentKeyLookupStrategy(FunctionSupport.constant("consentIdMessageCode"));
     }
 
     @Test public void testMessageSourceConsent() throws Exception {
 
         setUpDescriptor(false);
 
+        function.setConsentKeyLookupStrategy(FunctionSupport.constant("key"));
+        function.initialize();
+
         final Consent consent = new Consent();
         consent.setId("id");
 
         final Map<String, Consent> expected = new HashMap<>();
         expected.put(consent.getId(), consent);
-
-        function.setConsentKeyLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant("key"));
-        function.initialize();
 
         Assert.assertEquals(function.apply(prc), expected);
     }
@@ -135,15 +131,15 @@ public class MessageSourceConsentFunctionTest {
 
         setUpDescriptor(true);
 
+        function.setConsentKeyLookupStrategy(FunctionSupport.constant("key"));
+        function.initialize();
+
         final Consent consent = new Consent();
         consent.setId("id");
-        consent.setValue(hashFunction.apply("value"));
+        consent.setValue(function.getHashFunction().apply("value"));
 
         final Map<String, Consent> expected = new HashMap<>();
         expected.put(consent.getId(), consent);
-
-        function.setConsentKeyLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant("key"));
-        function.initialize();
 
         Assert.assertEquals(function.apply(prc), expected);
     }

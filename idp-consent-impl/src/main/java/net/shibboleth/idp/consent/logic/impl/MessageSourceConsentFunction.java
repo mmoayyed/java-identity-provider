@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -28,8 +29,12 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.codec.StringDigester;
+import net.shibboleth.utilities.java.support.codec.StringDigester.OutputFormat;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -59,7 +64,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
     @Nonnull private Function<ProfileRequestContext,ConsentFlowDescriptor> consentFlowDescriptorLookupStrategy;
 
     /** Function used to create a hash of the consent value. */
-    @Nonnull private Function<String,String> hashFunction;
+    @NonnullAfterInit private Function<String,String> hashFunction;
 
     /** Locale lookup strategy. */
     @Nonnull private Function<ProfileRequestContext,Locale> localeLookupStrategy;
@@ -73,7 +78,6 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
         consentValueMessageCodeSuffix = ".text";
         consentFlowDescriptorLookupStrategy =
                 new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
-        hashFunction = new HashFunction();
         localeLookupStrategy = new LocaleLookupFunction();
     }
 
@@ -119,6 +123,17 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
         consentFlowDescriptorLookupStrategy =
                 Constraint.isNotNull(strategy, "Consent flow descriptor lookup strategy cannot be null");
     }
+    
+    /**
+     * Get the hash function.
+     * 
+     * @return hash function
+     * 
+     * @since 4.1.0
+     */
+    @NonnullAfterInit Function<String,String> getHashFunction() {
+        return hashFunction;
+    }
 
     /**
      * Set the hash function.
@@ -138,6 +153,20 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      */
     public void setLocaleLookupStrategy(@Nonnull final Function<ProfileRequestContext,Locale> strategy) {
         localeLookupStrategy = Constraint.isNotNull(strategy, "Locale lookup strategy cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (hashFunction == null) {
+            try {
+                hashFunction = new StringDigester("SHA-256", OutputFormat.BASE64);
+            } catch (final NoSuchAlgorithmException e) {
+                throw new ComponentInitializationException(e); 
+            }
+        }
     }
 
     /** {@inheritDoc} */

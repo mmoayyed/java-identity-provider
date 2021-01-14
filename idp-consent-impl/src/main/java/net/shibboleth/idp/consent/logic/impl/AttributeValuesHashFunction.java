@@ -20,6 +20,8 @@ package net.shibboleth.idp.consent.logic.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -27,8 +29,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.cryptacular.util.CodecUtil;
-import org.cryptacular.util.HashUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -43,6 +43,8 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 /**
@@ -71,7 +73,7 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
         if (filteredInput.isEmpty()) {
             return null;
         }
-
+        
         try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
 
@@ -117,9 +119,12 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
             }
 
             objectOutputStream.flush();
-            return CodecUtil.b64(HashUtil.sha256(byteArrayOutputStream.toByteArray()));
 
-        } catch (final IOException e) {
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            final byte[] digestedBytes = digest.digest(byteArrayOutputStream.toByteArray());
+            return Base64Support.encode(digestedBytes, false);
+
+        } catch (final IOException | NoSuchAlgorithmException | EncodingException e) {
             log.error("Error while converting attribute values into a byte array", e);
             return null;
         }
