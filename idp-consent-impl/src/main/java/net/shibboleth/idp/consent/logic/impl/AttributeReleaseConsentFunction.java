@@ -18,7 +18,6 @@
 package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,6 +33,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.idp.consent.flow.ar.impl.AttributeReleaseFlowDescriptor;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -57,15 +57,11 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
     /** Strategy used to find the {@link AttributeReleaseContext} from the {@link ProfileRequestContext}. */
     @Nonnull private Function<ProfileRequestContext,AttributeReleaseContext> attributeReleaseContextLookupStrategy;
 
-    /** Function used to compute the hash of an attribute's values. */
-    @Nonnull private Function<Collection<IdPAttributeValue>, String> attributeValuesHashFunction;
-
     /** Constructor. */
     public AttributeReleaseConsentFunction() {
         consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class);
         consentFlowDescriptorLookupStrategy = new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
         attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class);
-        attributeValuesHashFunction = new AttributeValuesHashFunction();
     }
 
     /**
@@ -100,16 +96,6 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
                 Constraint.isNotNull(strategy, "Attribute release context lookup strategy cannot be null");
     }
 
-    /**
-     * Set the function used to compute the hash of an attribute's values.
-     * 
-     * @param function the function used to compute the hash of an attribute's values
-     */
-    public void setAttributeValuesHashFunction(
-            @Nonnull final Function<Collection<IdPAttributeValue>, String> function) {
-        attributeValuesHashFunction = Constraint.isNotNull(function, "Hash function cannot be null");
-    }
-
     /** {@inheritDoc} */
     /// CheckStyle: CyclomaticComplexity OFF
     @Override @Nullable public Map<String, Consent> apply(@Nullable final ProfileRequestContext input) {
@@ -118,7 +104,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
         }
 
         final ConsentFlowDescriptor consentFlowDescriptor = consentFlowDescriptorLookupStrategy.apply(input);
-        if (consentFlowDescriptor == null) {
+        if (consentFlowDescriptor == null || !(consentFlowDescriptor instanceof AttributeReleaseFlowDescriptor)) {
             return null;
         }
 
@@ -142,10 +128,14 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
             consent.setId(attribute.getId());
 
             if (consentFlowDescriptor.compareValues()) {
-                unsortedConsent.setValue(attributeValuesHashFunction.apply(attribute.getValues()));
+                unsortedConsent.setValue(
+                        ((AttributeReleaseFlowDescriptor) consentFlowDescriptor).getAttributeValuesHashFunction().apply(
+                                attribute.getValues()));
                 final List<IdPAttributeValue> sorted = new ArrayList<>(attribute.getValues());
                 Collections.sort(sorted);
-                consent.setValue(attributeValuesHashFunction.apply(sorted));
+                consent.setValue(
+                        ((AttributeReleaseFlowDescriptor) consentFlowDescriptor).getAttributeValuesHashFunction().apply(
+                                sorted));
             }
 
             // Remember previous choice.
@@ -168,4 +158,5 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
         return currentConsents;
     }
     // CheckStyle: CyclomaticComplexity ON
+
 }

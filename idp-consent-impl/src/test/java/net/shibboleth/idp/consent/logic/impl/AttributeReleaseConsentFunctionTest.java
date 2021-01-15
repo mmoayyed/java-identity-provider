@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.idp.consent.flow.ar.impl.AttributeReleaseFlowDescriptor;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport.MapType;
@@ -47,15 +48,13 @@ public class AttributeReleaseConsentFunctionTest {
 
     private ProfileRequestContext prc;
 
-    private AttributeValuesHashFunction attributeValuesHashFunction;
-
+    private AttributeReleaseFlowDescriptor flowDescriptor;
+    
     private AttributeReleaseConsentFunction function;
 
     @BeforeMethod public void setUp() throws Exception {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-
-        attributeValuesHashFunction = new AttributeValuesHashFunction();
 
         function = new AttributeReleaseConsentFunction();
     }
@@ -66,12 +65,12 @@ public class AttributeReleaseConsentFunctionTest {
      * @param compareValues whether consent equality includes comparing consent values
      */
     private void setUpDescriptor(final boolean compareValues) {
-        final ConsentFlowDescriptor descriptor = new ConsentFlowDescriptor();
-        descriptor.setId("test");
-        descriptor.setCompareValues(compareValues);
+        flowDescriptor = new AttributeReleaseFlowDescriptor();
+        flowDescriptor.setId("test");
+        flowDescriptor.setCompareValues(compareValues);
 
         final ProfileInterceptorContext pic = new ProfileInterceptorContext();
-        pic.setAttemptedFlow(descriptor);
+        pic.setAttemptedFlow(flowDescriptor);
         prc.addSubcontext(pic);
 
         Assert.assertNotNull(prc.getSubcontext(ProfileInterceptorContext.class));
@@ -150,7 +149,7 @@ public class AttributeReleaseConsentFunctionTest {
         for (final IdPAttribute attr : ConsentTestingSupport.newAttributeMap().values()) {
             final Consent consent = new Consent();
             consent.setId(attr.getId());
-            consent.setValue(attributeValuesHashFunction.apply(attr.getValues()));
+            consent.setValue(flowDescriptor.getAttributeValuesHashFunction().apply(attr.getValues()));
             expected.put(consent.getId(), consent);
         }
 
@@ -188,7 +187,7 @@ public class AttributeReleaseConsentFunctionTest {
     @Test public void testRememberPreviousConsentsCompareValues() {
         final Consent previousConsent = new Consent();
         previousConsent.setId("attribute1");
-        previousConsent.setValue(attributeValuesHashFunction.apply(ConsentTestingSupport.newAttributeMap()
+        previousConsent.setValue(flowDescriptor.getAttributeValuesHashFunction().apply(ConsentTestingSupport.newAttributeMap()
                 .get("attribute1").getValues()));
         previousConsent.setApproved(true);
         final ConsentContext consentCtx = new ConsentContext();
@@ -206,7 +205,7 @@ public class AttributeReleaseConsentFunctionTest {
         for (final IdPAttribute attr : ConsentTestingSupport.newAttributeMap().values()) {
             final Consent consent = new Consent();
             consent.setId(attr.getId());
-            consent.setValue(attributeValuesHashFunction.apply(attr.getValues()));
+            consent.setValue(flowDescriptor.getAttributeValuesHashFunction().apply(attr.getValues()));
             if (attr.getId().equals("attribute1")) {
                 consent.setApproved(true);
             }
@@ -220,7 +219,7 @@ public class AttributeReleaseConsentFunctionTest {
         // Setup unsorted previous
         final Consent previousConsent = new Consent();
         previousConsent.setId("attribute1");
-        previousConsent.setValue(attributeValuesHashFunction.apply(ConsentTestingSupport.newAttributeMap(MapType.ORDER1)
+        previousConsent.setValue(flowDescriptor.getAttributeValuesHashFunction().apply(ConsentTestingSupport.newAttributeMap(MapType.ORDER1)
                 .get("attribute1").getValues()));
         previousConsent.setApproved(true);
         ConsentContext consentCtx = new ConsentContext();
@@ -274,7 +273,7 @@ public class AttributeReleaseConsentFunctionTest {
         for (final IdPAttribute attr : ConsentTestingSupport.newAttributeMap().values()) {
             final Consent consent = new Consent();
             consent.setId(attr.getId());
-            consent.setValue(attributeValuesHashFunction.apply(attr.getValues()));
+            consent.setValue(flowDescriptor.getAttributeValuesHashFunction().apply(attr.getValues()));
             expected.put(consent.getId(), consent);
         }
 
