@@ -105,15 +105,29 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @param srcDist the source distribution.
      * @param dist the dist directory
      * @param to the subfolder name
+     * @param overwrite whether we want to overwrite
      * @throws BuildException if badness occurs
      */
-    private void distCopy(final Path srcDist, final Path dist, final String to) throws BuildException {
+    private void distCopy(final Path srcDist, final Path dist, final String to, final boolean overwrite) throws BuildException {
         final Path toPath =  dist.resolve(to);
         final Path fromPath = srcDist.resolve(to);
         log.debug("Copying distribution from {} to {}", fromPath, toPath);
         final Copy copy = InstallerSupport.getCopyTask(fromPath, toPath);
+        copy.setOverwrite(overwrite);
         copy.execute();
     }
+    
+    /** Helper for the {@link #copyDist()} and
+     *  {@link #copyBinDocSystem()} methods.
+     * @param srcDist the source distribution.
+     * @param dist the dist directory
+     * @param to the subfolder name
+     * @throws BuildException if badness occurs
+     */
+    private void distCopy(final Path srcDist, final Path dist, final String to) throws BuildException {
+        distCopy(srcDist, dist, to, false);
+    }
+
 
     /** Populate the dist folder.
      * @throws BuildException if badness occurs
@@ -137,7 +151,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     protected void copyBinDocSystem() {
-        distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "bin");
+        distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "bin", true);
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "doc");
         if (installState.isSystemPresent()) {
             distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "system");
