@@ -37,6 +37,17 @@
             <artifactId>logback-core</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Logging bridges for third-party extensions. -->
+        <dependency>
+            <groupId>${slf4j.groupId}</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${slf4j.groupId}</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- Support for logback SMTP appender. -->
         <dependency>
             <groupId>com.sun.mail</groupId>
