@@ -368,6 +368,13 @@
             <bean class="net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer" />
         </constructor-arg>
     </bean>
+
+    <bean p:id="x500" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
+            c:claz="javax.security.auth.x500.X500Principal">
+        <constructor-arg name="serializer">
+            <bean class="net.shibboleth.idp.authn.principal.impl.X500PrincipalSerializer" />
+        </constructor-arg>
+    </bean>
     
     <!--
     Defining this allows us to specify symbolic text replacements that shrink the size of results
