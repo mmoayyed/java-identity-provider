@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.Principal;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,11 +57,14 @@ import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.authn.principal.impl.AuthenticationResultPrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.security.x509.X509Support;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +87,9 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
 
     /** Field name of public credentials array. */
     @Nonnull @NotEmpty private static final String PUB_CREDS_ARRAY_FIELD = "pub";
+
+    /** Field name of X.509 certificates array. */
+    @Nonnull @NotEmpty private static final String X509_CREDS_ARRAY_FIELD = "x509";
 
     /** Field name of private credentials array. */
     @Nonnull @NotEmpty private static final String PRIV_CREDS_ARRAY_FIELD = "priv";
@@ -181,6 +190,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
         }
     }
 
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -222,7 +232,21 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
                 gen.writeEnd();
             }
             
-            // TODO handle custom creds
+            final Set<X509Certificate> x509Creds = instance.getSubject().getPublicCredentials(X509Certificate.class);
+            if (x509Creds != null && !x509Creds.isEmpty()) {
+                gen.writeStartArray(X509_CREDS_ARRAY_FIELD);
+                for (final X509Certificate x : x509Creds) {
+                    try {
+                        gen.write(Base64Support.encode(x.getEncoded(), false));
+                    } catch (final CertificateEncodingException|EncodingException e) {
+                        log.warn("Unable to serialize X.509 certificate with subject: {}",
+                                x.getSubjectDN().toString());
+                    }
+                }
+                gen.writeEnd();
+            }
+            
+            // TODO handle other creds
 
             gen.writeEnd().close();
 
@@ -231,8 +255,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             throw new IOException("Exception while serializing AuthenticationResult", e);
         }
     }
-    
-    // Checkstyle: CyclomaticComplexity OFF
+
     /** {@inheritDoc} */
     @Nonnull public AuthenticationResult deserialize(final long version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
@@ -294,8 +317,22 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
                     }
                 }
             }
+            
+            final JsonArray x509Creds = obj.getJsonArray(X509_CREDS_ARRAY_FIELD);
+            if (x509Creds != null) {
+                for (final JsonValue val : x509Creds) {
+                    if (val.getValueType() == ValueType.STRING) {
+                        try {
+                            final X509Certificate cert = X509Support.decodeCertificate(val.toString());
+                            result.getSubject().getPublicCredentials().add(cert);
+                        } catch (final CertificateException e) {
+                            log.warn("Unable to parse certificate", e);
+                        }
+                    }
+                }
+            }
 
-            // TODO handle custom creds
+            // TODO handle other creds
 
             return result;
 
@@ -303,7 +340,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             throw new IOException("Found invalid data structure while parsing AuthenticationResult", e);
         }
     }
- // Checkstyle: CyclomaticComplexity ON
+ // Checkstyle: CyclomaticComplexity|MethodLength ON
 
     /**
      * Attempt to serialize a principal with the registered and default serializers.

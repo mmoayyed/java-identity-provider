@@ -62,6 +62,7 @@ import org.ldaptive.SortBehavior;
 import org.ldaptive.jaas.LdapPrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.testing.RequestContextBuilder;
+import org.opensaml.security.x509.X509Support;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -80,7 +81,28 @@ public class DefaultAuthenticationResultSerializerTest {
     private static final Instant INSTANT = Instant.ofEpochMilli(1378827849463L);
     
     private static final long ACTIVITY = 1378827556778L;
-    
+
+    private static final String entityCertBase64 = 
+            "MIIDjDCCAnSgAwIBAgIBKjANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +
+            "cm5ldDIxFzAVBgNVBAMTDmNhLmV4YW1wbGUub3JnMB4XDTA3MDQwOTA2MTIwOVoX" +
+            "DTE3MDQwNjA2MTIwOVowMTESMBAGA1UEChMJSW50ZXJuZXQyMRswGQYDVQQDExJm" +
+            "b29iYXIuZXhhbXBsZS5vcmcwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB" +
+            "AQDNWnkFmhy1vYa6gN/xBRKkZxFy3sUq2V0LsYb6Q3pe9Qlb6+BzaM5DrN8uIqqr" +
+            "oBE3Wp0LtrgKuQTpDpNFBdS2p5afiUtOYLWBDtizTOzs3Z36MGMjIPUYQ4s03IP3" +
+            "yPh2ud6EKpDPiYqzNbkRaiIwmYSit5r+RMYvd6fuKvTOn6h7PZI5AD7Rda7VWh5O" +
+            "VSoZXlRx3qxFho+mZhW0q4fUfTi5lWwf4EhkfBlzgw/k5gf4cOi6rrGpRS1zxmbt" +
+            "X1RAg+I20z6d04g0N2WsK5stszgYKoIROJCiXwjraa8/SoFcILolWQpttVHBIUYl" +
+            "yDlm8mIFleZf4ReFpfm+nUYxAgMBAAGjgbIwga8wCQYDVR0TBAIwADAsBglghkgB" +
+            "hvhCAQ0EHxYdT3BlblNTTCBHZW5lcmF0ZWQgQ2VydGlmaWNhdGUwHQYDVR0OBBYE" +
+            "FDgRgTkjaKoK6DoZfUZ4g9LDJUWuMFUGA1UdIwROMEyAFNXuZVPeUdqHrULqQW7y" +
+            "r9buRpQLoTGkLzAtMRIwEAYDVQQKEwlJbnRlcm5ldDIxFzAVBgNVBAMTDmNhLmV4" +
+            "YW1wbGUub3JnggEBMA0GCSqGSIb3DQEBBQUAA4IBAQCPj3Si4Eiw9abNgPBUhBXW" +
+            "d6eRYlIHaHcnez6j6g7foAOyuVIUso9Q5c6pvL87lmasK55l09YPXw1qmiH+bHMc" +
+            "rwEPODpLx7xd3snlOCi7FyxahxwSs8yfTu8Pq95rWt0LNcfHxQK938Cpnav6jgDo" +
+            "2uH/ywAOFFSnoBzGHAfScHMfj8asZ6THosYsklII7FSU8j49GV2utkvGB3mcu4ST" +
+            "uLdeRCZmi93vq1D4JVGsXC4UaHjg114+a+9q0XZdz6a1UW4pt1ryXIPotCS62M71" +
+            "pkJf5neHUinKAqgoRfPXowudZg1Zl8DjzoOBn+MNHRrR5KYbVGvdHcxoJLCwVB/v";
+
     private PrincipalServiceManager manager;
     
     private DefaultAuthenticationResultSerializer serializer;
@@ -117,7 +139,7 @@ public class DefaultAuthenticationResultSerializerTest {
                 new GenericPrincipalService<>(ProxyAuthenticationPrincipal.class, proxySerializer);
         proxyService.setId("proxy");
         proxyService.initialize();
-
+        
         final ClassPathResource keystoreResource = new ClassPathResource("/net/shibboleth/idp/authn/impl/SealerKeyStore.jks");
         final ClassPathResource versionResource = new ClassPathResource("/net/shibboleth/idp/authn/impl/SealerKeyStore.kver");
 
@@ -255,6 +277,7 @@ public class DefaultAuthenticationResultSerializerTest {
         
         final AuthenticationResult result = createResult(flowDescriptor, new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
+        result.getSubject().getPublicCredentials().add(X509Support.decodeCertificate(entityCertBase64));
         result.getSubject().getPrivateCredentials().add(new PasswordPrincipal("bar"));
 
         final ProfileRequestContext prc = getProfileRequestContext(Collections.singletonList(flowDescriptor));
