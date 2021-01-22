@@ -58,6 +58,9 @@ public class X509AuthServlet extends HttpServlet {
     /** Init parameter identifying optional {@link TrustEngine} bean name. */
     @Nonnull @NotEmpty private static final String TRUST_ENGINE_PARAM = "trustEngine";
 
+    /** Init parameter controlling certificate preservation. */
+    @Nonnull @NotEmpty private static final String SAVECERT_ENGINE_PARAM = "saveCertificateToCredentialSet";
+
     /** Parameter/cookie for bypassing prompt page. */
     @Nonnull @NotEmpty private static final String PASSTHROUGH_PARAM = "x509passthrough";
     
@@ -66,7 +69,15 @@ public class X509AuthServlet extends HttpServlet {
 
     /** Trust engine. */
     @Nullable private TrustEngine<? super X509Credential> trustEngine;
+    
+    /** Whether to save the certificate to the Java Subject's public credentials. */
+    private boolean saveCertificateToCredentialSet;
 
+    /** Constructor. */
+    public X509AuthServlet() {
+        saveCertificateToCredentialSet = true;
+    }
+    
     /**
      * Set the {@link TrustEngine} to use.
      * 
@@ -75,7 +86,20 @@ public class X509AuthServlet extends HttpServlet {
     public void setTrustEngine(@Nullable final TrustEngine<? super X509Credential> tm) {
         trustEngine = tm;
     }
-    
+
+    /**
+     * Set whether to save the certificate in the Java Subject's public credentials.
+     * 
+     * <p>Defaults to true</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.1.0
+     */
+    public void setSaveCertificateToCredentialSet(final boolean flag) {
+        saveCertificateToCredentialSet = flag;
+    }
+
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
@@ -85,7 +109,7 @@ public class X509AuthServlet extends HttpServlet {
         final WebApplicationContext springContext =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
         
-        final String param = config.getInitParameter(TRUST_ENGINE_PARAM);
+        String param = config.getInitParameter(TRUST_ENGINE_PARAM);
         if (param != null) {
             log.debug("Looking up TrustEngine bean: {}", param);
             final Object bean = springContext.getBean(param);
@@ -95,9 +119,14 @@ public class X509AuthServlet extends HttpServlet {
                 throw new ServletException("Bean " + param + " was missing, or not a TrustManager");
             }
         }
+        
+        param = config.getInitParameter(SAVECERT_ENGINE_PARAM);
+        if (param != null) {
+            setSaveCertificateToCredentialSet(Boolean.valueOf(param));
+        }
     }
 
-// Checkstyle: CyclomaticComplexity|ReturnCount OFF
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override
     protected void service(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
@@ -153,7 +182,9 @@ public class X509AuthServlet extends HttpServlet {
             }
             
             final Subject subject = new Subject();
-            subject.getPublicCredentials().add(cert);
+            if (saveCertificateToCredentialSet) {
+                subject.getPublicCredentials().add(cert);
+            }
             subject.getPrincipals().add(cert.getSubjectX500Principal());
 
             httpRequest.setAttribute(ExternalAuthentication.SUBJECT_KEY, subject);
@@ -170,6 +201,6 @@ public class X509AuthServlet extends HttpServlet {
             throw new ServletException("Error processing external authentication request", e);
         }
     }
-// Checkstyle: CyclomaticComplexity|ReturnCount ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
     
 }

@@ -71,9 +71,13 @@ public class ValidateX509Certificate extends AbstractValidationAction {
     /** CertificateContext containing the credentials to validate. */
     @Nullable private CertificateContext certContext;
     
+    /** Whether to save the certificate in the Java Subject's public credentials. */
+    private boolean saveCertificateToCredentialSet;
+    
     /** Constructor. */
     public ValidateX509Certificate() {
         setMetricName(DEFAULT_METRIC_NAME);
+        saveCertificateToCredentialSet = true;
     }
     
     /**
@@ -85,6 +89,21 @@ public class ValidateX509Certificate extends AbstractValidationAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         trustEngine = tm;
+    }
+    
+    /**
+     * Set whether to save the certificate in the Java Subject's public credentials.
+     * 
+     * <p>Defaults to true</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.1.0
+     */
+    public void setSaveCertificateToCredentialSet(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        saveCertificateToCredentialSet = flag;
     }
     
     /** {@inheritDoc} */
@@ -113,7 +132,6 @@ public class ValidateX509Certificate extends AbstractValidationAction {
     }
 
     /** {@inheritDoc} */
- // Checkstyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -156,13 +174,14 @@ public class ValidateX509Certificate extends AbstractValidationAction {
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         ActionSupport.buildProceedEvent(profileRequestContext);
     }
- // Checkstyle: ReturnCount ON
 
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         subject.getPrincipals().add(((X509Certificate) certContext.getCertificate()).getSubjectX500Principal());
-        subject.getPublicCredentials().add(certContext.getCertificate());
+        if (saveCertificateToCredentialSet) {
+            subject.getPublicCredentials().add(certContext.getCertificate());
+        }
         return subject;
     }
 
