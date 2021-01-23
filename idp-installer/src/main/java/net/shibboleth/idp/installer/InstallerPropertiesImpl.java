@@ -47,9 +47,13 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
-/** Class implement {@link InstallerProperties} with properties/UI driven values. */
-public class InstallerPropertiesImpl extends AbstractInitializableComponent implements InstallerProperties {
+/** Class implement {@link InstallerProperties} with properties/UI driven values.
 
+ NOTE Updated to this properties should be reflected in the "PropertyDriverInstallation" wiki page."/
+
+*/
+public class InstallerPropertiesImpl extends AbstractInitializableComponent implements InstallerProperties {
+    
     /** The base directory, inherited and shared with ant. */
     public static final String ANT_BASE_DIR = Launcher.ANTHOME_PROPERTY;
 
