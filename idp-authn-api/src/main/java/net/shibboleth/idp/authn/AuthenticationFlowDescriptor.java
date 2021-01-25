@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -127,6 +128,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     
     /** Access to principal services. */
     @Nullable private PrincipalServiceManager principalServiceManager;
+    
+    /** Customizes subject prior to triggering subject canonicalization. */
+    @Nullable private BiConsumer<ProfileRequestContext,Subject> subjectDecorator;
 
     /** Constructor. */
     public AuthenticationFlowDescriptor() {
@@ -316,6 +320,32 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         reuseCondition = PredicateSupport.and(new ProxyCountPredicate(),
                 Constraint.isNotNull(condition, "Predicate cannot be null"));
     }
+
+    /**
+     * Gets a subject decorating component called prior to completing authentication and passing
+     * control to subject canonicalization.
+     * 
+     * @return subject decorator
+     * 
+     * @since 4.1.0
+     */
+    @Nullable public BiConsumer<ProfileRequestContext,Subject> getSubjectDecorator() {
+        return subjectDecorator;
+    }
+    
+    /**
+     * Sets a subject decorating component called prior to completing authentication and passing
+     * control to subject canonicalization.
+     * 
+     * @param decorator
+     * 
+     * @since 4.1.0
+     */
+    public void setSubjectDecorator(@Nullable final BiConsumer<ProfileRequestContext,Subject> decorator) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        subjectDecorator = decorator;
+    }    
 
     /**
      * Get the maximum amount of time, since first usage, a flow should be considered active. A null

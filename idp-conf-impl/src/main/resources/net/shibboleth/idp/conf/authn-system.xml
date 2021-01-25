@@ -53,7 +53,8 @@
             p:lifetime="%{idp.authn.Password.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.Password.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.Password.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.Password.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.Password.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.Password.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.Password.supportedPrincipals:}'.trim()}" />
@@ -71,7 +72,8 @@
             p:lifetime="%{idp.authn.IPAddress.lifetime:PT60S}"
             p:inactivityTimeout="%{idp.authn.IPAddress.inactivityTimeout:PT60S}"
             p:reuseCondition-ref="#{'%{idp.authn.IPAddress.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.IPAddress.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.IPAddress.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.IPAddress.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.IPAddress.supportedPrincipals:}'.trim()}" />
@@ -89,7 +91,8 @@
             p:lifetime="%{idp.authn.Function.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.Function.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.Function.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.Function.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.Function.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.Function.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.Function.supportedPrincipals:}'.trim()}" />
@@ -107,7 +110,8 @@
             p:lifetime="%{idp.authn.External.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.External.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.External.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.External.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.External.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.External.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.External.supportedPrincipals:}'.trim()}" />
@@ -125,7 +129,8 @@
             p:lifetime="%{idp.authn.RemoteUser.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.RemoteUser.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.RemoteUser.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.RemoteUser.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.RemoteUser.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.RemoteUser.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.RemoteUser.supportedPrincipals:}'.trim()}" />
@@ -143,7 +148,8 @@
             p:lifetime="%{idp.authn.RemoteUserInternal.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.RemoteUserInternal.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.RemoteUserInternal.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.RemoteUserInternal.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.RemoteUserInternal.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.RemoteUserInternal.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.RemoteUserInternal.supportedPrincipals:}'.trim()}" />
@@ -161,7 +167,8 @@
             p:lifetime="%{idp.authn.SAML.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.SAML.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.SAML.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.SAML.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.SAML.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.SAML.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.SAML.supportedPrincipals:}'.trim()}" />
@@ -179,7 +186,8 @@
             p:lifetime="%{idp.authn.SPNEGO.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.SPNEGO.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.SPNEGO.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.SPNEGO.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.SPNEGO.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.SPNEGO.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.SPNEGO.supportedPrincipals:}'.trim()}" />
@@ -197,7 +205,8 @@
             p:lifetime="%{idp.authn.X509.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.X509.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.X509.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.X509.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.X509.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.X509.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.X509.supportedPrincipals:}'.trim()}" />
@@ -215,7 +224,8 @@
             p:lifetime="%{idp.authn.X509Internal.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.X509Internal.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.X509Internal.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.X509Internal.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.X509Internal.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.X509Internal.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.X509Internal.supportedPrincipals:}'.trim()}" />
@@ -233,7 +243,8 @@
             p:lifetime="%{idp.authn.Duo.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.Duo.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.Duo.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.Duo.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.Duo.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.Duo.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.Duo.supportedPrincipals:}'.trim()}" />
@@ -251,7 +262,8 @@
             p:lifetime="%{idp.authn.MFA.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
             p:inactivityTimeout="%{idp.authn.MFA.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
             p:reuseCondition-ref="#{'%{idp.authn.MFA.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.MFA.activationCondition:shibboleth.Conditions.TRUE}'.trim()}">
+            p:activationCondition-ref="#{'%{idp.authn.MFA.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
+            p:subjectDecorator="#{getObject('%{idp.authn.MFA.subjectDecorator}'.trim())}">
         <property name="supportedPrincipalsByString">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.authn.MFA.supportedPrincipals:}'.trim()}" />

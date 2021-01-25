@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -407,6 +408,12 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             authenticationContext.setResultCacheable(resultCachingPredicate.test(profileRequestContext));
             log.info("{} Predicate indicates authentication result {} be cacheable in a session", getLogPrefix(),
                     authenticationContext.isResultCacheable() ? "will" : "will not");
+        }
+        
+        final BiConsumer<ProfileRequestContext,Subject> decorator =
+                authenticationContext.getAttemptedFlow().getSubjectDecorator();
+        if (decorator != null) {
+            decorator.accept(profileRequestContext, result.getSubject());
         }
         
         // Transfer the subject to a new c14n context.
