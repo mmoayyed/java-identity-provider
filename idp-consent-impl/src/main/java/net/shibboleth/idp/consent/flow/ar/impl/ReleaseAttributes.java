@@ -64,36 +64,37 @@ public class ReleaseAttributes extends AbstractAttributeReleaseAction {
         log.debug("{} Consents '{}'", getLogPrefix(), consents);
 
         final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
-        log.debug("{} Attributes before release '{}'", getLogPrefix(), attributes);
+        log.debug("{} Attributes before release '{}'", getLogPrefix(), attributes.keySet());
 
         final Map<String, IdPAttribute> releasedAttributes = new HashMap<>(attributes.size());
 
         for (final IdPAttribute attribute : attributes.values()) {
             if (!getAttributeReleaseContext().getConsentableAttributes().containsKey(attribute.getId())) {
                 log.debug("{} Attribute '{}' will be released because it is excluded from consent", getLogPrefix(),
-                        attribute);
+                        attribute.getId());
                 releasedAttributes.put(attribute.getId(), attribute);
                 continue;
             }
             if (!consents.containsKey(attribute.getId())) {
                 log.debug("{} Attribute '{}' will not be released because consent for it does not exist",
-                        getLogPrefix(), attribute);
+                        getLogPrefix(), attribute.getId());
                 continue;
             }
             final Consent consent = consents.get(attribute.getId());
             if (consent.isApproved()) {
-                log.debug("{} Attribute '{}' will be released because consent is approved", getLogPrefix(), attribute);
+                log.debug("{} Attribute '{}' will be released because consent is approved", getLogPrefix(),
+                        attribute.getId());
                 releasedAttributes.put(attribute.getId(), attribute);
             } else {
                 log.debug("{} Attribute '{}' will not be released because consent is not approved", getLogPrefix(),
-                        attribute);
+                        attribute.getId());
             }
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("{} Releasing attributes '{}'", getLogPrefix(), releasedAttributes);
+            log.debug("{} Releasing attributes: {}", getLogPrefix(), releasedAttributes.keySet());
             final MapDifference<String, IdPAttribute> diff = Maps.difference(attributes, releasedAttributes);
-            log.debug("{} Not releasing attributes '{}'", getLogPrefix(), diff.entriesOnlyOnLeft());
+            log.debug("{} Not releasing attributes: {}", getLogPrefix(), diff.entriesOnlyOnLeft().keySet());
         }
 
         getAttributeContext().setIdPAttributes(releasedAttributes.values());
