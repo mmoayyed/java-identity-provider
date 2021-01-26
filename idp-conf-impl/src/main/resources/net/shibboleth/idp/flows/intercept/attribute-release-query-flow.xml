@@ -35,7 +35,7 @@
 
     <decision-state id="TestForReadGlobalAttributeConsentFromStorage">
         <if test="attributeReleaseFlowDescriptor.globalConsentAllowed"
-            then="ReadGlobalAttributeConsentFromStorage" else="CheckPreviousConsents" />
+            then="ReadGlobalAttributeConsentFromStorage" else="ReleaseAttributes" />
     </decision-state>
 
     <action-state id="ReadGlobalAttributeConsentFromStorage">
@@ -49,17 +49,9 @@
     
     <decision-state id="TestForGlobalAttributeConsent">
         <if test="GlobalAttributeConsentPredicate.test(opensamlProfileRequestContext)"
-            then="proceed" else="CheckPreviousConsents" />
+            then="proceed" else="ReleaseAttributes" />
     </decision-state>
     
-    <!-- If neither consent nor global consent was given previously, return an error -->
-    <decision-state id="CheckPreviousConsents">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext)).getPreviousConsents().isEmpty()"
-            then="InvalidProfileContext"
-            else="ReleaseAttributes" />
-    </decision-state>
-
-
     <!-- Release attributes consented to as well as non-consentable attributes from attribute context. -->
 
     <action-state id="ReleaseAttributes">
