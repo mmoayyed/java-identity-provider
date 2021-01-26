@@ -64,7 +64,7 @@ public class ReleaseAttributes extends AbstractAttributeReleaseAction {
         log.debug("{} Consents '{}'", getLogPrefix(), consents);
 
         final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
-        log.debug("{} Attributes before release '{}'", getLogPrefix(), attributes.keySet());
+        log.debug("{} Attributes before release: {}", getLogPrefix(), attributes.keySet());
 
         final Map<String, IdPAttribute> releasedAttributes = new HashMap<>(attributes.size());
 
