@@ -20,7 +20,8 @@
 
     <bean id="encodedTicketSealer" lazy-init="true"
           class="net.shibboleth.utilities.java.support.security.DataSealer"
-          p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy"
+          p:keyStrategy-ref="#{ '%{idp.sealer.keyStrategy:shibboleth.DataSealerKeyStrategy}'.trim() }"
+          p:lockedAtStartup="#{!environment.containsProperty('idp.sealer.keyStrategy') and (!environment.containsProperty('idp.sealer.storePassword') or !environment.containsProperty('idp.sealer.keyPassword')) }"
           p:encoder-ref="codec"
           p:decoder-ref="codec" />
 
