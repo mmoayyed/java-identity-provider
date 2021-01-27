@@ -81,4 +81,4 @@ if $cygwin; then
   LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
 fi
 
-$JAVACMD -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" -Dlogback.configurationFile=$INSTALL_LOG_FILE $ANT_OPTS org.apache.tools.ant.Main -e -f "${ANT_HOME}/build.xml" "$@"
+"$JAVACMD" -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" -Dlogback.configurationFile=$INSTALL_LOG_FILE $ANT_OPTS org.apache.tools.ant.Main -e -f "${ANT_HOME}/build.xml" "$@"
