@@ -25,9 +25,12 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
@@ -46,6 +49,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Class implement {@link InstallerProperties} with properties/UI driven values.
 
@@ -116,6 +120,10 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
 
     /** Whether to tidy up after ourselves. */
     public static final String NO_TIDY = "idp.no.tidy";
+
+    /** Which modules to enable on initial install.
+     * @since 4.1.0 */
+    public static final String INITIAL_INSTALL_MODULES = "idp.initial.modules";
 
     /** Whether to tidy up after ourselves. */
     public static final int DEFAULT_KEY_SIZE = 3072;
@@ -505,6 +513,26 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             sealerPassword = getPassword(SEALER_PASSWORD, "Cookie Encryption Key Password:");
         }
         return sealerPassword;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull public Set<String> getModulesToEnable() {
+        String prop = StringSupport.trimOrNull(installerProperties.getProperty(INITIAL_INSTALL_MODULES));
+        if (prop == null) {
+            return InstallerProperties.DEFAULT_MODULES;
+        }
+        final boolean additive = prop.startsWith("+");
+        if (additive) {
+            prop = prop.substring(1);
+        }
+        final String[] modules = prop.split(",");
+        if (!additive) {
+            return Set.copyOf(Arrays.asList(modules));
+        }
+        final Set<String> result = new HashSet<>(modules.length + InstallerProperties.DEFAULT_MODULES.size());
+        result.addAll(InstallerProperties.DEFAULT_MODULES);
+        result.addAll(Arrays.asList(modules));
+        return result;
     }
 
     /** {@inheritDoc}. */

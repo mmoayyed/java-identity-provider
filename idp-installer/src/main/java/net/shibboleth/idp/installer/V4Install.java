@@ -112,7 +112,7 @@ public class V4Install extends AbstractInitializableComponent {
         populatePropertyFiles(keyManager.isCreatedSealer());
         handleEditWebApp();
         populateUserDirectories();
-        reEnableModules();
+        enableModules();
         deleteSpuriousFiles();
         generateMetadata();
         reprotect();
@@ -398,7 +398,7 @@ public class V4Install extends AbstractInitializableComponent {
     /** ReEnable modules which were already enabled.
      * @throws BuildException if badness occurs
      */
-    protected void reEnableModules() throws BuildException {
+    protected void enableModules() throws BuildException {
         final ModuleContext moduleContext = new ModuleContext(installerProps.getTargetDir());
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
 
@@ -412,6 +412,14 @@ public class V4Install extends AbstractInitializableComponent {
                         module.enable(moduleContext);
                     } catch (final ModuleException e) {
                         log.error("Error re-enabling module {}", id, e);
+                        throw new BuildException(e);
+                    }
+                }
+                if (currentState.getInstalledVersion() == null && installerProps.getModulesToEnable().contains(id)) {
+                    try {
+                        module.enable(moduleContext);
+                    } catch (final ModuleException e) {
+                        log.error("Error {erforming initial enable on module {}", id, e);
                         throw new BuildException(e);
                     }
                 }

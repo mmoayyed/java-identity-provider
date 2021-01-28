@@ -18,6 +18,7 @@
 package net.shibboleth.idp.installer;
 
 import java.nio.file.Path;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +30,10 @@ import net.shibboleth.utilities.java.support.component.InitializableComponent;
 /** Interface to describe simply parameterization and status of the installation.
  */
 public interface InstallerProperties extends InitializableComponent {
+
+    /** Those modules enabled by default. */
+    public static final Set<String> DEFAULT_MODULES = Set.of("idp.authn.Password",
+            "idp.intercept.Consent", "idp.admin.Hello");
 
     /** Get where we are installing/updating/building the war.
      * @return the target directory
@@ -133,4 +138,10 @@ public interface InstallerProperties extends InitializableComponent {
      * @throws BuildException  if badness happens
      */
     @Nullable public Path getInitialEditWeb() throws BuildException;
+    /** Get the modules to enable after first install.
+     * @return the modules
+     */
+    @Nonnull public default Set<String> getModulesToEnable() {
+        return DEFAULT_MODULES;
+    }
 }
