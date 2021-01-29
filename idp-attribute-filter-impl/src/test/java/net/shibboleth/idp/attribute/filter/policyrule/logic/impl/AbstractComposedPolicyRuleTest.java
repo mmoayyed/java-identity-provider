@@ -21,7 +21,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -126,7 +125,7 @@ public class AbstractComposedPolicyRuleTest {
          *
          * @param composedMatchers ...
          */
-        public ComposedPolicyRule(final Collection<PolicyRequirementRule> composedMatchers) {
+        public ComposedPolicyRule(final List<PolicyRequirementRule> composedMatchers) {
             super();
             setSubsidiaries(composedMatchers);
         }

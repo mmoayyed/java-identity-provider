@@ -26,8 +26,8 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -185,7 +185,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
     }
     
-    static public OrMatcher newOrMatcher(final Collection<Matcher> what) {
+    static public OrMatcher newOrMatcher(final List<Matcher> what) {
         final OrMatcher matcher = new OrMatcher();
         matcher.setSubsidiaries(what);
         return matcher;

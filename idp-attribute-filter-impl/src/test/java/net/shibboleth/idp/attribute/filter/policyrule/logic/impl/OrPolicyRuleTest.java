@@ -21,8 +21,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -112,7 +112,7 @@ public class OrPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
     }
 
-    public static OrPolicyRule newOrPolicyRule(@Nullable final Collection<PolicyRequirementRule> composedRules) {
+    public static OrPolicyRule newOrPolicyRule(@Nullable final List<PolicyRequirementRule> composedRules) {
         final OrPolicyRule  rule = new OrPolicyRule();
         rule.setSubsidiaries(composedRules);
         return rule;

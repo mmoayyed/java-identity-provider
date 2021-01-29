@@ -26,8 +26,8 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -160,7 +160,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
     }
     
-    static public AndMatcher newAndMatcher(final @Nonnull @NonnullElements Collection<Matcher> what) {
+    static public AndMatcher newAndMatcher(final @Nonnull @NonnullElements List<Matcher> what) {
         final AndMatcher matcher = new AndMatcher();
         matcher.setSubsidiaries(what);
         return matcher;

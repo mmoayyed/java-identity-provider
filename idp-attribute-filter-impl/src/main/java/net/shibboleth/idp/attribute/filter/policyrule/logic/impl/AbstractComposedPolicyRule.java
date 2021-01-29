@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.logic.impl;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +48,7 @@ public abstract class AbstractComposedPolicyRule extends AbstractIdentifiableIni
      * Called "subsidiaries" to allow easier parsing.
      * @param theRules the rules to be composed.
      */
-    public void setSubsidiaries(@Nullable @NonnullElements final Collection<PolicyRequirementRule> theRules) {
+    public void setSubsidiaries(@Nullable @NonnullElements final List<PolicyRequirementRule> theRules) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (theRules != null) {

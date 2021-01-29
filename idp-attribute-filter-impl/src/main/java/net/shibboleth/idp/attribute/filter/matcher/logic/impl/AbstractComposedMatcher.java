@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +46,7 @@ public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitia
      * Called "subsidiaries" to allow easier parsing.
      * @param composedMatchers the matchers to be composed.
      */
-    public void setSubsidiaries(@Nullable @NonnullElements final Collection<Matcher> composedMatchers) {
+    public void setSubsidiaries(@Nullable @NonnullElements final List<Matcher> composedMatchers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (composedMatchers != null) {

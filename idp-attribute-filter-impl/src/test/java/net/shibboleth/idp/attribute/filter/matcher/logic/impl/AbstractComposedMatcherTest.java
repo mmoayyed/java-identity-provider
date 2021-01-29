@@ -21,7 +21,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -122,7 +121,7 @@ public class AbstractComposedMatcherTest {
          * 
          * @param composedMatchers ...
          */
-        public ComposedMatcher(final Collection<Matcher> composedMatchers) {
+        public ComposedMatcher(final List<Matcher> composedMatchers) {
             super();
             setSubsidiaries(composedMatchers);
         }
