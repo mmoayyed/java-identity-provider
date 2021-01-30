@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
@@ -46,6 +47,14 @@ public class AndTest extends BaseAttributeFilterParserTest {
         assertEquals(children.size(), 2);
         assertEquals(children.get(0).getClass(), NotMatcher.class);
         assertEquals(children.get(1).getClass(), Matcher.MATCHES_ALL.getClass());
+    }
+
+    @Test public void multiNameTest() throws ComponentInitializationException {
+        AndMatcher what = (AndMatcher) getMatcher("andMulti.xml");
+        assertTrue(what.getId().endsWith("multi"));
+        final List<Matcher> children = what.getComposedMatchers();
+
+        assertEquals(children.size(), 5);
     }
 
     @Test public void policy() throws ComponentInitializationException {
