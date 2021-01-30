@@ -93,7 +93,7 @@ public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        final String myId = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
+        final String myId = builder.getBeanDefinition().getAttribute(BaseFilterParser.QUALIFIED_ID).toString();
 
         builder.addPropertyValue("id", myId);
 

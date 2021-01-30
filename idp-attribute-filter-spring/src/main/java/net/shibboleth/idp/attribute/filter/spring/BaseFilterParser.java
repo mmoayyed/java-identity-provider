@@ -17,11 +17,17 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.impl.RandomIdentifierGenerationStrategy;
@@ -32,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -65,13 +72,15 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
 
     /** DenyValueRule. */
     public static final QName DENY_VALUE_RULE = new QName(NAMESPACE, "DenyValueRule");
+    
+    /** The attribute name for the qualified id.*/
+    public static final String QUALIFIED_ID = "qualifiedId";
 
     /** Generator of unique IDs. */
     private static IdentifierGenerationStrategy idGen = new RandomIdentifierGenerationStrategy();
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseFilterParser.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(BaseFilterParser.class);
 
     /**
      * Generates an ID for a filter engine component. If the given localId is null a random one will be generated.
@@ -156,21 +165,21 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
         final String generatedId = getQualifiedId(element, element.getLocalName(), suppliedId);
 
         if (suppliedId == null) {
-            log.trace("Element '{}' did not contain an 'id' attribute.  Generated id '{}' will be used",
+            LOG.trace("Element '{}' did not contain an 'id' attribute.  Generated id '{}' will be used",
                     element.getLocalName(), generatedId);
 
         } else {
-            log.debug("Element '{}' 'id' attribute '{}' is mapped to '{}'", element.getLocalName(), suppliedId,
+            LOG.debug("Element '{}' 'id' attribute '{}' is mapped to '{}'", element.getLocalName(), suppliedId,
                     generatedId);
         }
 
-        builder.getBeanDefinition().setAttribute("qualifiedId", generatedId);
+        builder.getBeanDefinition().setAttribute(BaseFilterParser.QUALIFIED_ID, generatedId);
     }
 
     /** {@inheritDoc} */
     @Override @Nonnull @NotEmpty protected String resolveId(@Nonnull final Element configElement,
             @Nonnull final AbstractBeanDefinition beanDefinition, @Nonnull final ParserContext parserContext) {
-        return beanDefinition.getAttribute("qualifiedId").toString();
+        return beanDefinition.getAttribute(BaseFilterParser.QUALIFIED_ID).toString();
     }
 
     /**
@@ -196,7 +205,72 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
             }
             elem = ElementSupport.getElementAncestor(elem);
         } while (elem != null);
-        log.warn("Element '{}' : could not find schema defined parent");
+        LOG.warn("Element '{}' : could not find schema defined parent");
         return false;
     }
+    
+    /**
+     * Parse list of elements into bean definitions which are inserted into the parent context.
+     * This is like {{@link SpringSupport#parseCustomElements(Collection, ParserContext)} but with
+     * qualifiedName warnings (and none of the parent bena stuff - which we do not need)
+     *
+     * @param elements list of elements to parse
+     * @param parserContext current parsing context
+     *
+     */
+    @Nullable public static void parseCustomElements(
+            @Nullable @NonnullElements final Collection<Element> elements, @Nonnull final ParserContext parserContext) {
+        if (elements == null) {
+            return;
+        }
+        
+        final HashSet<String> beanNames = new HashSet<>(elements.size());
+        for (final Element e : elements) {
+            if (e != null) {
+                final BeanDefinition def = parserContext.getDelegate().parseCustomElement(e, null);
+                final Object name = def.getAttribute(QUALIFIED_ID);
+                if (name != null && !beanNames.add(name.toString())) {
+                   LOG.warn("Duplicate filter element id '{}' found", name);
+               }
+            }
+        }
+    }
+
+    /**
+     * Parse list of elements into bean definitions.
+     * This is like {{@link SpringSupport#parseCustomElements(Collection, ParserContext, BeanDefinitionBuilder)}
+     * but with qualifiedName warnings.
+     * 
+     * @param elements list of elements to parse
+     * @param parserContext current parsing context
+     * @param parentBuilder the builder we are going to insert into
+     * 
+     * @return list of bean definitions
+     */
+    @Nullable public static ManagedList<BeanDefinition> parseCustomElements(
+            @Nullable @NonnullElements final Collection<Element> elements,
+            @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder parentBuilder) {
+
+        if (elements == null) {
+            return null;
+        }
+        Constraint.isNotNull(parentBuilder, "parentBuilder must not be null");
+
+        final ManagedList<BeanDefinition> definitions = new ManagedList<>(elements.size());
+        final HashSet<String> beanNames = new HashSet<>(elements.size());
+        for (final Element e : elements) {
+            if (e != null) {
+                final BeanDefinition def = SpringSupport.parseCustomElement(e, parserContext, parentBuilder, false);
+                definitions.add(def);
+                final Object name = def.getAttribute(QUALIFIED_ID);
+                if (name != null && !beanNames.add(name.toString())) {
+                    LOG.warn("Duplicate filter element name {} found", name);
+                }
+            }
+        }
+
+        return definitions;
+    }
+
 }

@@ -26,7 +26,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.AndMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.AndPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
@@ -58,7 +57,7 @@ public class AndMatcherParser extends BaseFilterParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
 
-        final String myId = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
+        final String myId = builder.getBeanDefinition().getAttribute(BaseFilterParser.QUALIFIED_ID).toString();
 
         builder.addPropertyValue("id", myId);
 
@@ -66,7 +65,7 @@ public class AndMatcherParser extends BaseFilterParser {
                 ElementSupport.getChildElementsByTagNameNS(configElement, BaseFilterParser.NAMESPACE, "Rule");
 
         builder.addPropertyValue("subsidiaries",
-                SpringSupport.parseCustomElements(ruleElements, parserContext, builder));
+                BaseFilterParser.parseCustomElements(ruleElements, parserContext, builder));
 
     }
 }

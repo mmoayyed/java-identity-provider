@@ -66,7 +66,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
 
         String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         if (null == policyId) {
-            policyId =  builder.getBeanDefinition().getAttribute("qualifiedId").toString();
+            policyId =  builder.getBeanDefinition().getAttribute(BaseFilterParser.QUALIFIED_ID).toString();
         }
         log.debug("Parsing configuration for attribute filter policy: {}", policyId);
         builder.addConstructorArgValue(policyId);
@@ -76,7 +76,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
                 BaseFilterParser.POLICY_REQUIREMENT_RULE);
         if (policyRequirements != null && policyRequirements.size() > 0) {
             final ManagedList<BeanDefinition> requirements =
-                    SpringSupport.parseCustomElements(policyRequirements, parserContext, builder);
+                    BaseFilterParser.parseCustomElements(policyRequirements, parserContext, builder);
             builder.addConstructorArgValue(requirements.get(0));
         }
 

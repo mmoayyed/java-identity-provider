@@ -22,17 +22,16 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Bean definition parser for &lt;afp:AttributeFilterPolicyGroup&gt;, top top level of the filter "stack".
@@ -75,23 +74,23 @@ public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
         //
 
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "PolicyRequirementRule"));
-        SpringSupport.parseCustomElements(children, context);
+        BaseFilterParser.parseCustomElements(children, context);
 
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "AttributeRule"));
-        SpringSupport.parseCustomElements(children, context);
+        BaseFilterParser.parseCustomElements(children, context);
 
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "PermitValueRule"));
-        SpringSupport.parseCustomElements(children, context);
+        BaseFilterParser.parseCustomElements(children, context);
 
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "DenyValueRule"));
-        SpringSupport.parseCustomElements(children, context);
+        BaseFilterParser.parseCustomElements(children, context);
 
         //
         // The actual policies
         //
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "AttributeFilterPolicy"));
 
-        SpringSupport.parseCustomElements(children, context);
+        BaseFilterParser.parseCustomElements(children, context);
         return null;
     }
 }

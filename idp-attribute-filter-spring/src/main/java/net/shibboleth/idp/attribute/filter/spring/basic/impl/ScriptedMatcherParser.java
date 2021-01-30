@@ -69,7 +69,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        final String myId = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
+        final String myId = builder.getBeanDefinition().getAttribute(BaseFilterParser.QUALIFIED_ID).toString();
         final String logPrefix = new StringBuilder("Scipted Filter '").append(myId).append("' :").toString();
 
         final BeanDefinitionBuilder scriptBuilder =

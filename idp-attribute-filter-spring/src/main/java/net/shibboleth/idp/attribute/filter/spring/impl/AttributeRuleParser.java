@@ -65,7 +65,7 @@ public class AttributeRuleParser extends BaseFilterParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        final String id = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
+        final String id = builder.getBeanDefinition().getAttribute(BaseFilterParser.QUALIFIED_ID).toString();
 
         builder.addPropertyValue("id", id);
 

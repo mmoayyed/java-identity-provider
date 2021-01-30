@@ -53,7 +53,7 @@ public class NotMatcherParser extends BaseFilterParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
 
-        final String myId = builder.getBeanDefinition().getAttribute("qualifiedId").toString();
+        final String myId = builder.getBeanDefinition().getAttribute(BaseFilterParser.QUALIFIED_ID).toString();
 
         builder.addPropertyValue("id", myId);
 
