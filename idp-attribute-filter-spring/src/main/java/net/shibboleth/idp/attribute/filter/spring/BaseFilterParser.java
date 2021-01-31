@@ -159,8 +159,6 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
         // method above will NOT be called for any bean parsed by this class.
         builder.setScope(BeanDefinition.SCOPE_PROTOTYPE);
 
-        super.doParse(element, parserContext, builder);
-
         final String suppliedId = StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
         final String generatedId = getQualifiedId(element, element.getLocalName(), suppliedId);
 
