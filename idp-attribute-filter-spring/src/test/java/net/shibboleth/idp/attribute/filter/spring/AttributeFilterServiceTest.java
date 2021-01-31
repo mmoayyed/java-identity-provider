@@ -75,9 +75,9 @@ public class AttributeFilterServiceTest {
      * @throws ServiceException if an error occurs loading the service
      * @throws ComponentInitializationException ...
      */
-    private AttributeFilter getFilter(String name, boolean nativeSpring) throws ServiceException,
+    private AttributeFilter getFilter(String name) throws ServiceException,
             ComponentInitializationException {
-        final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + (nativeSpring ? "native/" : "") + name);
+        final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name);
         if (null != testContext) {
             tearDownTestContext();
         }
@@ -120,13 +120,7 @@ public class AttributeFilterServiceTest {
     }
 
     @Test public void testPolicy2() throws ServiceException, AttributeFilterException, ComponentInitializationException {
-        testPolicy2(true);
-        testPolicy2(false);
-    }
-
-    public void testPolicy2(boolean nativeSpring) throws ServiceException, AttributeFilterException,
-            ComponentInitializationException {
-        final AttributeFilter filter = getFilter("policy2.xml", nativeSpring);
+        final AttributeFilter filter = getFilter("policy2.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -153,14 +147,7 @@ public class AttributeFilterServiceTest {
     }
 
     @Test public void testPolicy3() throws ServiceException, AttributeFilterException, ComponentInitializationException {
-        testPolicy3(true);
-        testPolicy3(false);
-    }
-
-    public void testPolicy3(boolean nativeSpring) throws ServiceException, AttributeFilterException,
-            ComponentInitializationException {
-
-        final AttributeFilter filter = getFilter("policy3.xml", nativeSpring);
+        final AttributeFilter filter = getFilter("policy3.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -187,18 +174,16 @@ public class AttributeFilterServiceTest {
 
     @Test public void testPolicy4() throws ServiceException, AttributeFilterException, ComponentInitializationException {
 
-        common45("policy4.xml", true);
-        common45("policy4.xml", false);
+        common45("policy4.xml");
     }
 
     @Test public void testPolicy5() throws ServiceException, AttributeFilterException, ComponentInitializationException {
 
-        common45("policy5.xml", true);
-        common45("policy5.xml", false);
+        common45("policy5.xml");
     }
 
     @Test public void testAll() throws ServiceException, AttributeFilterException, ComponentInitializationException {
-        final AttributeFilter filter = getFilter("policyAll.xml", false);
+        final AttributeFilter filter = getFilter("policyAll.xml");
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -223,10 +208,10 @@ public class AttributeFilterServiceTest {
         assertNull(filteredAttributes.get("affiliation"));
     }
 
-    private void common45(String file, boolean nativeSpring) throws ServiceException, AttributeFilterException,
+    private void common45(String file) throws ServiceException, AttributeFilterException,
             ComponentInitializationException {
 
-        final AttributeFilter filter = getFilter(file, nativeSpring);
+        final AttributeFilter filter = getFilter(file);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -253,18 +238,16 @@ public class AttributeFilterServiceTest {
     }
 
     @Test public void deny1() throws ServiceException, AttributeFilterException, ComponentInitializationException {
-        denyTest("deny1.xml", true);
-        denyTest("deny1.xml", false);
+        denyTest("deny1.xml");
     }
 
     @Test public void deny2() throws ServiceException, AttributeFilterException, ComponentInitializationException {
-        denyTest("deny2.xml", false);
-        denyTest("deny2.xml", true);
+        denyTest("deny2.xml");
     }
 
-    private void denyTest(String file, boolean nativeSpring) throws ServiceException, AttributeFilterException,
+    private void denyTest(String file) throws ServiceException, AttributeFilterException,
             ComponentInitializationException {
-        final AttributeFilter filter = getFilter(file, nativeSpring);
+        final AttributeFilter filter = getFilter(file);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
