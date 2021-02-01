@@ -135,6 +135,12 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
      */
     private boolean saml2LogoutCommented = true;
 
+    /** Whether SAML1 is commented out. */
+    private boolean saml1Commented = true;
+
+    /** Comment depth. */
+    private int commentDepth;
+
     /**
      * Where to write to - as {@link BufferedWriter}.
      */
@@ -216,6 +222,25 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
     }
 
     /**
+     * Returns whether to comment SAML1 endpoints.
+     *
+     * @return whether to comment SAML1 endpoints
+     */
+    public boolean isSAML1Commented() {
+        return saml1Commented;
+    }
+
+    /**
+     * Sets whether to comment the comment SAML1 endpoints.
+     *
+     * @param asComment whether to comment or not.
+     */
+    public void setSAML1Commented(final boolean asComment) {
+        saml1Commented= asComment;
+    }
+
+
+    /**
      * Returns whether to comment the SAML2 Logout endpoints.
      *
      * @return whether to comment the SAML2 Logout endpoints
@@ -259,7 +284,6 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
             writer.newLine();
 
 
-
             writeIDPSSO();
             writer.newLine();
             writer.newLine();
@@ -285,7 +309,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
      * @throws IOException if badness occurs in the writer
      */
     protected void writeComments() throws IOException {
-        writer.write("<!--");
+        openComment();
         writer.newLine();
         writer.write("     This is example metadata only. Do *NOT* supply it as is without review,");
         writer.newLine();
@@ -294,7 +318,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         writer.newLine();
         writer.write("     This metadata is not dynamic - it will not change as your configuration changes.");
         writer.newLine();
-        writer.write("-->");
+        closeComment();
         writer.newLine();
     }
 
@@ -322,9 +346,14 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
      * @throws IOException if badness happens
      */
     protected void writeIDPSSO() throws IOException {
+        final List<String> protocols;
+        if (isSAML1Commented()) {
+            protocols = Collections.singletonList(SAMLConstants.SAML20P_NS);
+        } else {
+            protocols = Arrays.asList(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS, "urn:mace:shibboleth:1.0");
+        }
 
-        writeRoleDescriptor(IDPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME,
-                Arrays.asList(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS, "urn:mace:shibboleth:1.0"));
+        writeRoleDescriptor(IDPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME, protocols); 
         writer.newLine();
         openExtensions();
         writeScope();
@@ -339,7 +368,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         }
         writer.newLine();
         if (isSAML2LogoutCommented()) {
-            writer.write("        <!--");
+            openComment();
             writer.newLine();
         }
         for (final Endpoints endpoint : SLO_ENDPOINTS) {
@@ -348,7 +377,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
             }
         }
         if (isSAML2LogoutCommented()) {
-            writer.write("        -->");
+            closeComment();
             writer.newLine();
         }
 
@@ -371,6 +400,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
      * @throws IOException if badness happens
      */
     private void writeAttributeAuthorityDescriptor() throws IOException {
+        if (isSAML2AttributeQueryCommented() && isSAML1Commented()) {
+            openComment();
+        }
         final List<String> protocols;
         if (isSAML2AttributeQueryCommented()) {
             protocols = Collections.singletonList(SAMLConstants.SAML11P_NS);
@@ -393,6 +425,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         writer.write("    </");
         writer.write(AttributeAuthorityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
+        if (isSAML2AttributeQueryCommented() && isSAML1Commented()) {
+            closeComment();
+        }
         writer.newLine();
     }
 
@@ -471,7 +506,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
      * @throws IOException if badness happens
      */
     protected void writeMDUI() throws IOException {
-        writer.write("<!--");
+        openComment();
         writer.newLine();
         writer.write("    Fill in the details for your IdP here ");
         writer.newLine();
@@ -525,7 +560,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         writer.write('>');
         writer.newLine();
 
-        writer.write("-->");
+        closeComment();
         writer.newLine();
     }
 
@@ -550,7 +585,10 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
     protected void writeKeyDescriptors() throws IOException {
         final List<List<String>> signing = new ArrayList<>(2);
         if (params.getBackchannelCert() != null && !params.getBackchannelCert().isEmpty()) {
-            writer.write("        <!-- First signing certificate is BackChannel, the Second is FrontChannel -->");
+            writer.write("        ");
+            openComment();
+            writer.write(" First signing certificate is BackChannel, the Second is FrontChannel");
+            closeComment();
             writer.newLine();
             signing.add(params.getBackchannelCert());
         }
@@ -629,6 +667,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         switch (endpoint) {
             case SAML1Artifact:
                 writer.write("        ");
+                if (isSAML1Commented()) {
+                    openComment();
+                }
                 writer.write("<");
                 writer.write(ArtifactResolutionService.DEFAULT_ELEMENT_LOCAL_NAME);
                 writer.write(" Binding=\"");
@@ -638,6 +679,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
                 writer.write(":8443/idp/profile/SAML1/SOAP/ArtifactResolution\"");
                 writer.write(" index=\"1\"/>");
                 writer.newLine();
+                if (isSAML1Commented()) {
+                    closeComment();
+                }
                 break;
 
             case SAML2Artifact:
@@ -703,6 +747,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
 
             case ShibbolethSSO:
                 writer.write("        ");
+                if (isSAML1Commented()) {
+                    openComment();
+                }
                 writer.write("<");
                 writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
                 writer.write(" Binding=\"urn:mace:shibboleth:1.0:profiles:AuthnRequest\"");
@@ -710,6 +757,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
                 writer.write(params.getDnsName());
                 writer.write("/idp/profile/Shibboleth/SSO\"/>");
                 writer.newLine();
+                if (isSAML1Commented()) {
+                    closeComment();
+                }
                 break;
 
             case POSTSSO:
@@ -759,6 +809,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
 
             case SAML1Query:
                 writer.write("        ");
+                if (isSAML1Commented()) {
+                    openComment();
+                }
                 writer.write("<");
                 writer.write(AttributeService.DEFAULT_ELEMENT_LOCAL_NAME);
                 writer.write(" Binding=\"");
@@ -766,13 +819,16 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
                 writer.write("\" Location=\"https://");
                 writer.write(params.getDnsName());
                 writer.write(":8443/idp/profile/SAML1/SOAP/AttributeQuery\"/>");
+                if (isSAML1Commented()) {
+                    closeComment();
+                }
                 writer.newLine();
                 break;
 
             case SAML2Query:
                 writer.write("        ");
                 if (isSAML2AttributeQueryCommented()) {
-                    writer.write("<!-- ");
+                    openComment();
                 }
                 writer.write("<");
                 writer.write(AttributeService.DEFAULT_ELEMENT_LOCAL_NAME);
@@ -782,11 +838,13 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
                 writer.write(params.getDnsName());
                 writer.write(":8443/idp/profile/SAML2/SOAP/AttributeQuery\"/>");
                 if (isSAML2AttributeQueryCommented()) {
-                    writer.write(" -->");
+                    closeComment();
                     writer.newLine();
                     writer.write("        ");
-                    writer.write("<!-- If you uncomment the above you should add " + SAMLConstants.SAML20P_NS
-                            + " to the protocolSupportEnumeration above -->");
+                    openComment();
+                    writer.write(" If you uncomment the above you should add " + SAMLConstants.SAML20P_NS
+                            + " to the protocolSupportEnumeration above");
+                    closeComment();
                 }
                 writer.newLine();
                 break;
@@ -809,4 +867,25 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         writer.write(what);
     }
 
+    /** Add an open comment.  If we are nested closes the previous one.
+     * @throws IOException if badness happens
+     */
+    private synchronized void openComment() throws IOException {
+        if (commentDepth > 0) {
+            writer.write("--> ");
+        }
+        writer.write("<!--");
+        commentDepth++;
+    }
+
+    /** Add a close  comment.  If we are nested reopens the previous one.
+     * @throws IOException if badness happens
+     */
+    private synchronized void closeComment() throws IOException {
+        writer.write("--> ");
+        commentDepth--;
+        if (commentDepth > 0) {
+            writer.write(" <!--");
+        }
+    }
 }
