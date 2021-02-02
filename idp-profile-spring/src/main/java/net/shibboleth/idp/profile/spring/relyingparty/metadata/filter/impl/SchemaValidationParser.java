@@ -24,17 +24,17 @@ import org.opensaml.saml.metadata.resolver.filter.impl.SchemaValidationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Parser for a &lt;SchemaValidation&gt; filter.
  */
-public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
+public class SchemaValidationParser extends AbstractCustomBeanDefinitionParser {
 
     /** Element name. */
     @Nonnull public static final QName TYPE_NAME =

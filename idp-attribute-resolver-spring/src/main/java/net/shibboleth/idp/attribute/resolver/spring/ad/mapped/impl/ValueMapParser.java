@@ -29,10 +29,10 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
@@ -40,7 +40,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /** Bean definition parser for a {@link ValueMap}. */
-public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
+public class ValueMapParser extends AbstractCustomBeanDefinitionParser {
 
     /** Schema type name - resolver: . */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =

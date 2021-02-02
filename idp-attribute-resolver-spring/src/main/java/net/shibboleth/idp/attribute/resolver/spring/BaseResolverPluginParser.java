@@ -22,6 +22,14 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.logic.ResolutionLabelPredicate;
 import net.shibboleth.idp.attribute.resolver.spring.impl.InputAttributeDefinitionParser;
@@ -32,16 +40,8 @@ import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 /** Bean definition parser for a {@link net.shibboleth.idp.attribute.resolver.ResolverPlugin}. */
-public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinitionParser {
+public abstract class BaseResolverPluginParser extends AbstractCustomBeanDefinitionParser {
 
     /** An Id for the definition, used for debugging messages and creating names of children. */
     @Nonnull @NotEmpty private String defnId = "<Unnamed Attribute or Connector>";

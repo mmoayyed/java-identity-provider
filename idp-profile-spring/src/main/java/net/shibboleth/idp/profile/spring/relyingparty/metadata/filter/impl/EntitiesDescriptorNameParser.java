@@ -20,18 +20,18 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-
 import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 
 /**
  * Parser for a &lt;EntitiesDescriptorName&gt; node processor.
  */
-public class EntitiesDescriptorNameParser extends AbstractSingleBeanDefinitionParser {
+public class EntitiesDescriptorNameParser extends AbstractCustomBeanDefinitionParser {
 
     /** Element name. */
     @Nonnull public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,

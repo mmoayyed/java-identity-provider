@@ -22,17 +22,17 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Bean definition parser for {@link ResolverAttributeDefinitionDependency} and 
  * for {@link ResolverDataConnectorDependency}. */
-public abstract class BaseResolverPluginDependencyParser extends AbstractSingleBeanDefinitionParser {
+public abstract class BaseResolverPluginDependencyParser extends AbstractCustomBeanDefinitionParser {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseResolverPluginDependencyParser.class);

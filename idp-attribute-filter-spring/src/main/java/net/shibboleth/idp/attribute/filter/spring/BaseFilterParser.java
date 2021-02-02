@@ -39,11 +39,20 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Strings;
+
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.impl.RandomIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Base class for Spring bean definition parsers within the filter engine configuration.
@@ -53,7 +62,7 @@ import com.google.common.base.Strings;
  * components loaded. This in turn underpins our implementation of referencing in the language.
  * </p>
  */
-public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParser {
+public abstract class BaseFilterParser extends AbstractCustomBeanDefinitionParser {
 
     /** Namespace The Top level filters. */
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:afp";

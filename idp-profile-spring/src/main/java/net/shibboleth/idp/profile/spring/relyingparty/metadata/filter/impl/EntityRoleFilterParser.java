@@ -23,20 +23,20 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import org.opensaml.saml.metadata.resolver.filter.impl.EntityRoleFilter;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.opensaml.saml.metadata.resolver.filter.impl.EntityRoleFilter;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 /**
  * Parser for a &lt;EntityRolet&gt; filter.
  */
-public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
+public class EntityRoleFilterParser extends AbstractCustomBeanDefinitionParser {
 
     /** Element name. */
     @Nonnull public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,

@@ -23,15 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
-import net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate;
-import net.shibboleth.utilities.java.support.logic.PredicateSupport;
-import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
 import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
@@ -43,14 +34,23 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
+import net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate;
+import net.shibboleth.utilities.java.support.logic.PredicateSupport;
+import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Parser for a &lt;Predicate&gt; filter.
  */
-public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
+public class PredicateFilterParser extends AbstractCustomBeanDefinitionParser {
 
     /** Element name. */
     @Nonnull public static final QName TYPE_NAME =

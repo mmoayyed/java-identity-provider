@@ -32,6 +32,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -44,7 +45,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
  *  If we are the top most element then we need to summon up a
  * {@link MetadataProviderContainer} and inject what we would usually create into that.
  */
-public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanDefinitionParser {
+public abstract class AbstractMetadataProviderParser extends AbstractCustomBeanDefinitionParser {
 
     /** Namespace for Security. */
     @Nonnull @NotEmpty public static final String SECURITY_NAMESPACE = "urn:mace:shibboleth:2.0:security";

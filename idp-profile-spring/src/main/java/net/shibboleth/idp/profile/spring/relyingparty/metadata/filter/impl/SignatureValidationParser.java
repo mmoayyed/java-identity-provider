@@ -37,10 +37,10 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.factory.BasicInlineCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
@@ -51,7 +51,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 /**
  * Parser for xsi:type="SignatureValidation".
  */
-public class SignatureValidationParser extends AbstractSingleBeanDefinitionParser {
+public class SignatureValidationParser extends AbstractCustomBeanDefinitionParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME =

@@ -23,6 +23,17 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanReference;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedMap;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
@@ -33,21 +44,10 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanReference;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedMap;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 /**
  * Base class for Spring bean definition parser for attribute encoders.
  */
-public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefinitionParser {
+public abstract class BaseAttributeEncoderParser extends AbstractCustomBeanDefinitionParser {
 
     /** Local name of name attribute. */
     @Nonnull @NotEmpty public static final String NAME_ATTRIBUTE_NAME = "name";

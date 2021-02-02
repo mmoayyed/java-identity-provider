@@ -23,12 +23,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
-import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.opensaml.saml.common.profile.logic.EntityIdPredicate;
 import org.opensaml.saml.metadata.resolver.filter.impl.NameIDFormatFilter;
 import org.slf4j.Logger;
@@ -38,12 +32,18 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.support.ManagedSet;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
+import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /** Parser for a &lt;NameIDFormat&gt; filter. */
-public class NameIDFormatFilterParser extends AbstractSingleBeanDefinitionParser {
+public class NameIDFormatFilterParser extends AbstractCustomBeanDefinitionParser {
 
     /** Element name. */
     @Nonnull public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,

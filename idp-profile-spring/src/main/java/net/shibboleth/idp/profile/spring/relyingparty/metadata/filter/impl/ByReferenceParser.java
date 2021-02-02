@@ -22,24 +22,24 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.ByReferenceMetadataFilter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.ManagedMap;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Parser for a &lt;ByReference&gt; filter.
  */
-public class ByReferenceParser extends AbstractSingleBeanDefinitionParser {
+public class ByReferenceParser extends AbstractCustomBeanDefinitionParser {
 
     /** Element name. */
     @Nonnull public static final QName TYPE_NAME =
