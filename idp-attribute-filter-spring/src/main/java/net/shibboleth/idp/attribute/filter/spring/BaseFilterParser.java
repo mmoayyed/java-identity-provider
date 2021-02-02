@@ -24,15 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.impl.RandomIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -217,33 +208,6 @@ public abstract class BaseFilterParser extends AbstractCustomBeanDefinitionParse
     }
     
     /**
-     * Parse list of elements into bean definitions which are inserted into the parent context.
-     * This is like {{@link SpringSupport#parseCustomElements(Collection, ParserContext)} but with
-     * qualifiedName warnings (and none of the parent bena stuff - which we do not need)
-     *
-     * @param elements list of elements to parse
-     * @param parserContext current parsing context
-     *
-     */
-    @Nullable public static void parseCustomElements(
-            @Nullable @NonnullElements final Collection<Element> elements, @Nonnull final ParserContext parserContext) {
-        if (elements == null) {
-            return;
-        }
-        
-        final HashSet<String> beanNames = new HashSet<>(elements.size());
-        for (final Element e : elements) {
-            if (e != null) {
-                final BeanDefinition def = parserContext.getDelegate().parseCustomElement(e, null);
-                final Object name = def.getAttribute(QUALIFIED_ID);
-                if (name != null && !beanNames.add(name.toString())) {
-                   LOG.warn("Duplicate filter element id '{}' found", name);
-               }
-            }
-        }
-    }
-
-    /**
      * Parse list of elements into bean definitions.
      * This is like {{@link SpringSupport#parseCustomElements(Collection, ParserContext, BeanDefinitionBuilder)}
      * but with qualifiedName warnings.
@@ -279,5 +243,4 @@ public abstract class BaseFilterParser extends AbstractCustomBeanDefinitionParse
 
         return definitions;
     }
-
 }

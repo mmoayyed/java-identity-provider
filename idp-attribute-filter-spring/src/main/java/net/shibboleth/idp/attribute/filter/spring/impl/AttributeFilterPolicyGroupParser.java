@@ -29,6 +29,7 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -74,23 +75,23 @@ public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
         //
 
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "PolicyRequirementRule"));
-        BaseFilterParser.parseCustomElements(children, context);
+        SpringSupport.parseCustomElements(children, context);
 
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "AttributeRule"));
-        BaseFilterParser.parseCustomElements(children, context);
+        SpringSupport.parseCustomElements(children, context);
 
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "PermitValueRule"));
-        BaseFilterParser.parseCustomElements(children, context);
+        SpringSupport.parseCustomElements(children, context);
 
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "DenyValueRule"));
-        BaseFilterParser.parseCustomElements(children, context);
+        SpringSupport.parseCustomElements(children, context);
 
         //
         // The actual policies
         //
         children = childrenMap.get(new QName(BaseFilterParser.NAMESPACE, "AttributeFilterPolicy"));
 
-        BaseFilterParser.parseCustomElements(children, context);
+        SpringSupport.parseCustomElements(children, context);
         return null;
     }
 }
