@@ -17,6 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
+
+import org.springframework.beans.factory.BeanCreationException;
+
 import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
@@ -24,16 +29,38 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScopedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML1NameIdentifierAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * Test for {@link SAML1NameIdentifierAttributeDefinitionParser}.
  */
+@SuppressWarnings("javadoc")
 public class ScopedAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
-    @SuppressWarnings("javadoc") @Test public void defaultCase() {
+    @Test public void scope() {
         ScopedAttributeDefinition attrDef = getAttributeDefn("resolver/scoped.xml", ScopedAttributeDefinition.class);
 
         assertEquals(attrDef.getId(), "scoped");
         assertEquals(attrDef.getScope(), "mYsCoPe");
+        assertNull(attrDef.getScopeSource());
     }
+
+    @Test public void source() {
+        ScopedAttributeDefinition attrDef = getAttributeDefn("resolver/scopedSource.xml", ScopedAttributeDefinition.class);
+
+        assertEquals(attrDef.getId(), "scopedSource");
+        assertEquals(attrDef.getScopeSource(), "TheScopeSourceAttribute");
+        assertNull(attrDef.getScope());
+    }
+
+    @Test public void both() {
+        try {
+            getAttributeDefn("resolver/scopedBoth.xml", ScopedAttributeDefinition.class);
+        } catch (final BeanCreationException e) {
+            assertEquals(e.getRootCause().getClass(), ComponentInitializationException.class);
+            return;
+        }
+        fail("Did not catch impossible setup");
+    }
+
 }

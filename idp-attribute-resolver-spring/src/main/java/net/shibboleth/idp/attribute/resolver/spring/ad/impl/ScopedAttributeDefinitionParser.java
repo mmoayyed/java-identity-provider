@@ -55,7 +55,15 @@ public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionPars
         super.doParse(config, parserContext, builder);
 
         final String scope = StringSupport.trimOrNull(config.getAttributeNS(null, "scope"));
-        log.debug("{} Setting scope to '{}'.", getLogPrefix(), scope);
-        builder.addPropertyValue("scope", scope);
+        if (scope != null) {
+            log.debug("{} Setting scope to '{}'.", getLogPrefix(), scope);
+            builder.addPropertyValue("scope", scope);
+        }
+        
+        final String scopeSource = StringSupport.trimOrNull(config.getAttributeNS(null, "scopeFromDependency"));
+        if (scopeSource != null) {
+            log.debug("{} Setting scope source to '{}'.", getLogPrefix(), scopeSource);
+            builder.addPropertyValue("scopeSource", scopeSource);
+        }
     }
 }

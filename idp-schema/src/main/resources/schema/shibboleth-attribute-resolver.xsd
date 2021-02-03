@@ -561,9 +561,14 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="scope" type="resolver:string" use="required">
+                <attribute name="scope" type="resolver:string">
                     <annotation>
                         <documentation>Value to use for scoping the attribute.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="scopeFromDependency" type="resolver:string">
+                    <annotation>
+                        <documentation>Attribute whose values will be used for scoping the attribute.</documentation>
                     </annotation>
                 </attribute>
             </extension>
