@@ -134,7 +134,7 @@ del *.wixobj *.wixpdb
 
 REM compile Jetty and procrun contents as well as the merge module for x64
 
-"%WIX%/BIN/CANDLE" -nologo -dJettySrc=jetty-extract\%Jex% -dJettyClass=%JETTY_CLASS% -dProcrunSrc=procrun-extract -dPlatform=x86 -arch x86 jetty_contents.wxs MergeModule.wxs procrun.wxs -dmsitype=x64  -ext WixFirewallExtension
+"%WIX%/BIN/CANDLE" -nologo -dJettySrc=jetty-extract\%Jex% -dJettyClass=%JETTY_CLASS% -dProcrunSrc=procrun-extract -dPlatform=x86 -arch x86 jetty_contents.wxs MergeModule.wxs procrun.wxs -ext WixFirewallExtension
 if ERRORLEVEL 1 goto done
 
 REM link for x64

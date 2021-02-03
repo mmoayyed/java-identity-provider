@@ -20,15 +20,13 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Product Id="*" Name="Shibboleth IdP V4" Language="1033" Version="4.1.0.0" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
-        <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="$(var.msitype)" Description="Shibboleth IdP V4.1.0" Manufacturer="The Shibboleth Consortium" />
+        <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="x64" Description="Shibboleth IdP V4.1.0" Manufacturer="The Shibboleth Consortium" />
 
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" Schedule="afterInstallInitialize" />
         <MediaTemplate EmbedCab="yes" />
 
         <Condition Message="Shibboleth requires a Windows NT-based operating system.">NOT Version9X</Condition>
-        <?if $(var.msitype) = "x86" ?>
-        <Condition Message="Do not install the 32 bit installer on a 64 bit machine.">NOT VersionNT64</Condition>
-        <?endif ?>
+	<Condition 
 
         <!-- Information for the properties page of the msi -->
 
@@ -53,7 +51,7 @@
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="ProgramFilesFolder">
                 <Directory Id="SHIBBOLETHDIR" Name="Shibboleth">
-                    <Merge Id="jetty" Language="1033" SourceFile="$(var.ProjectDir)\jetty-$(var.msitype).msm" DiskId="1" />
+                    <Merge Id="jetty" Language="1033" SourceFile="$(var.ProjectDir)\jetty-x64.msm" DiskId="1" />
                     <Directory Id="INSTALLDIR" Name="IdP">
                         <Directory Id="CredsFolder" Name="credentials" />
                         <Directory Id="ConfFolder" Name="conf" />
@@ -127,11 +125,7 @@
         <CustomAction Id="RunJettyAnt" Directory="INSTALLDIR" ExeCommand="[QtJettyAnt]" Execute="deferred" Impersonate="no" />
         <CustomAction Id="QtJettyAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 
-        <?if $(var.msitype) = "x86" ?>
-        <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#1500" />
-        <?else ?>
         <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#2048" />
-        <?endif ?>
 
         <InstallUISequence>
 

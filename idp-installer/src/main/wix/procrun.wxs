@@ -49,9 +49,6 @@
 	    -->
             <Component Id="procrun_32_service" Directory="PROCRUNROOT" Guid="{544A5D33-CF99-4384-A74D-79FB29DE904D}">
                 <File Id="file_procrun_32_service" KeyPath="yes" Source="$(var.ProcrunSrc)\prunsrv.exe" Name="$(var.ServiceName).exe" />
-                <?if $(var.msitype) = "x86" ?>
-                <ServiceInstall Id="Service32" Name="$(var.ServiceName)" DisplayName="Shibboleth IdP Daemon" Description="Runs the Jetty Container" Arguments="service $(var.ServiceName)" Type="ownProcess" Start="$(var.ServiceStart)" ErrorControl="ignore" />
-                <?endif ?>
             </Component>
             <Component Id="procrun_32_Firewall" Directory="PROCRUNROOT" Guid="{F93B8D9F-7BBA-4D79-995D-4AC20FF158E4}" KeyPath="yes">
                  <Condition>Not NO_FIREWALL</Condition>
@@ -61,9 +58,6 @@
             <Component Id="procrun_AMD64_service" Directory="dir64" Guid="{2673BCBE-3659-4AC6-B39C-DF1EEDF72C0E}">
                 <Condition>VersionNT64 And Not Intel64</Condition>
                 <File Id="file_procrun_AMD64_service" KeyPath="yes" Source="$(var.ProcrunSrc)\amd64\prunsrv.exe" Name="$(var.ServiceName).exe" />
-                <?if $(var.msitype) != "x86" ?>
-                <ServiceInstall Id="ServiceX64" Name="$(var.ServiceName)" DisplayName="Shibboleth IdP Daemon" Description="Runs the Jetty Container" Arguments="service $(var.ServiceName)" Type="ownProcess" Start="$(var.ServiceStart)" ErrorControl="ignore" />
-                <?endif ?>
             </Component>
             <Component Id="procrun_AMD64_Firewall" Directory="dir64" Guid="{BC605FF4-0233-4332-BC90-0C2E5FEC37D2}" KeyPath="yes">
                  <Condition>NOT NO_FIREWALL And VersionNT64 And Not Intel64</Condition>
