@@ -30,8 +30,10 @@ import net.shibboleth.utilities.java.support.security.DataSealer;
 
 /**
  * Arguments for DataSealer CLI.
+ * 
+ * @since 4.1.0
  */
-public class DataSealerArguments extends net.shibboleth.ext.spring.cli.AbstractCommandLineArguments {
+public class DataSealerArguments extends AbstractIdPHomeAwareCommandLineArguments {
 
     /**
      * Name of a specific {@link DataSealer}, if one has been requested.
@@ -101,7 +103,7 @@ public class DataSealerArguments extends net.shibboleth.ext.spring.cli.AbstractC
         out.println("DataSealerCLI");
         out.println("Provides a command line interface for DataSealer wrap/unwrap operations.");
         out.println();
-        out.println("   DataSealerCLI [options] springConfiguration encrypt|decrypt string");
+        out.println("   DataSealerCLI [options] springConfiguration enc|dec string");
         out.println();
         out.println("      springConfiguration      name of Spring configuration resource to use");
         out.println("      enc|dec                  encrypt or decrypt operation");
@@ -111,4 +113,5 @@ public class DataSealerArguments extends net.shibboleth.ext.spring.cli.AbstractC
         out.println(String.format("  --%-20s %s", "dataSealer", "Specifies a non-default DataSealer bean to use."));
         out.println();
     }
+
 }
