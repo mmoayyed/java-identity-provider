@@ -67,17 +67,17 @@ public class ScopedAttributeTest {
     private static final String TEST_SCOPE = "scope";
 
     /**
-     * Test resolution of the scoped attribute resolver.
-     * 
+     * Test resolution of the scoped attribute resolver (static scope).
+     *
      * @throws ResolutionException if resolution failed.
      * @throws ComponentInitializationException if any of our initializations failed (which it shouldn't)
      */
     @Test public void scopes() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
-        final Set<ResolverDataConnectorDependency> dependencySet = new LazySet<>();
-        dependencySet.add(TestSources.makeDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
+        final Set<ResolverDataConnectorDependency> dependencySet = Set.of(
+                TestSources.makeDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME,
+                                                        TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
 
         final ScopedAttributeDefinition scoped = new ScopedAttributeDefinition();
         scoped.setScope(TEST_SCOPE);
@@ -86,8 +86,7 @@ public class ScopedAttributeTest {
         scoped.initialize();
 
         // And resolve
-        final Set<DataConnector> connectorSet = new LazySet<>();
-        connectorSet.add(TestSources.populatedStaticConnector());
+        final Set<DataConnector> connectorSet = Set.of(TestSources.populatedStaticConnector());
 
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(scoped);
@@ -108,7 +107,48 @@ public class ScopedAttributeTest {
         assertTrue(
                 f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TEST_SCOPE)),
                 "looking for CONNECTOR_ATTRIBUTE_VALUE");
+    }
 
+    /**
+     * Test resolution of the scoped attribute resolver (dynamic scope)
+     *
+     * @throws ResolutionException if resolution failed.
+     * @throws ComponentInitializationException if any of our initializations failed (which it shouldn't)
+     */
+    @Test public void scopeSource() throws ResolutionException, ComponentInitializationException {
+
+        // Set the dependency on the data connector
+        final Set<ResolverDataConnectorDependency> dependencySet =Set.of(
+                TestSources.makeDataConnectorDependency(TestSources.STATIC_CONNECTOR_NAME,
+                                                        TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
+
+        final ScopedAttributeDefinition scoped = new ScopedAttributeDefinition();
+        scoped.setScopeSource("ScopeSource");
+        scoped.setId(TEST_ATTRIBUTE_NAME);
+        scoped.setDataConnectorDependencies(dependencySet);
+        scoped.setAttributeDependencies(Set.of(TestSources.makeAttributeDefinitionDependency("ScopeSource")));
+        scoped.initialize();
+
+        // And resolve
+        final Set<DataConnector> connectorSet = Set.of(TestSources.populatedStaticConnector());
+        final Set<AttributeDefinition> attributeSet = Set.of(scoped, TestSources.populatedStaticAttribute("ScopeSource", 1));
+
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet);
+        resolver.initialize();
+
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        // Now test that we got exactly what we expected - two scoped attributes
+        final Collection<?> f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+
+        assertEquals(f.size(), 2);
+        assertTrue(
+                f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TestSources.COMMON_ATTRIBUTE_VALUE_STRING)),
+                "looking for COMMON_ATTRIBUTE_VALUE");
+        assertTrue(
+                f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TestSources.COMMON_ATTRIBUTE_VALUE_STRING)),
+                "looking for CONNECTOR_ATTRIBUTE_VALUE");
     }
 
     @Test public void invalidValueType() throws ComponentInitializationException {
