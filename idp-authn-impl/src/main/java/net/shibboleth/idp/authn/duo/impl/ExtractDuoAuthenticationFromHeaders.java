@@ -196,10 +196,6 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
                 return;
             }
-        } else if (DuoAuthAPI.DUO_FACTOR_SMS.equals(duoCtx.getFactor())) {
-            log.warn("{} Request for SMS codes unsupported", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
-            return;
         }
         
         // Check for missing passcode.
