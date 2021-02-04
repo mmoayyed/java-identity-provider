@@ -162,6 +162,13 @@ public interface IdPModule extends IdentifiedComponent {
          * @return true iff the resource may be removed by a deployer without disabling the module
          */
         public boolean isOptional();
+
+        /**
+         * Gets whether the resource should be marked executable where applicable.
+         * 
+         * @return true iff the resource should be marked executable
+         */
+        public boolean isExecutable();
 }
  
     /** Resource management outcome. */

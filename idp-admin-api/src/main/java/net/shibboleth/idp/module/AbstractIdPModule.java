@@ -199,6 +199,9 @@ public abstract class AbstractIdPModule implements IdPModule {
         /** Optional criteria. */
         private final boolean optional;
 
+        /** Executable criteria. */
+        private final boolean executable;
+
         /**
          * Constructor.
          *
@@ -206,13 +209,15 @@ public abstract class AbstractIdPModule implements IdPModule {
          * @param dest destination
          * @param shouldReplace whether to replace when enabling
          * @param isOptional whether the resource is optional
+         * @param isExecutable whether the resource is executable
          */
         public BasicModuleResource(@Nonnull @NotEmpty final String src, @Nonnull final Path dest,
-                final boolean shouldReplace, final boolean isOptional) {
+                final boolean shouldReplace, final boolean isOptional, final boolean isExecutable) {
             source = Constraint.isNotNull(StringSupport.trimOrNull(src), "Source cannot be null");
             destination = Constraint.isNotNull(dest, "Destination cannot be null");
             replace = shouldReplace;
             optional = isOptional;
+            executable = isExecutable;
         }
 
         /** {@inheritDoc} */
@@ -247,6 +252,11 @@ public abstract class AbstractIdPModule implements IdPModule {
         /** {@inheritDoc} */
         public boolean isOptional() {
             return optional;
+        }
+
+        /** {@inheritDoc} */
+        public boolean isExecutable() {
+            return executable;
         }
 
         /**
@@ -430,6 +440,9 @@ public abstract class AbstractIdPModule implements IdPModule {
 
                 Files.createDirectories(destPath.getParent());
                 Files.copy(srcStream, destPath, StandardCopyOption.REPLACE_EXISTING);
+                if (isExecutable()) {
+                    destPath.toFile().setExecutable(true);
+                }
                 log.debug("Module {} created {}", getId(), destPath);
                 return result;
             } catch (final IOException e) {
