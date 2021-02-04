@@ -25,8 +25,7 @@
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" Schedule="afterInstallInitialize" />
         <MediaTemplate EmbedCab="yes" />
 
-        <Condition Message="Shibboleth requires a Windows NT-based operating system.">NOT Version9X</Condition>
-	<Condition 
+        <Condition Message="C run time libraray not installed">UCRTBASE_DLL</Condition>
 
         <!-- Information for the properties page of the msi -->
 
@@ -89,6 +88,13 @@
                 <FileSearch Id="JavaBinSearch" Name="java.exe" />
             </DirectorySearch>
         </Property>
+
+	<Property Id="UCRTBASE_DLL" Secure="yes">
+            <DirectorySearch Id="UcrtBaseSearch" Depth="0" Path="[System64Folder]">
+                <FileSearch Id="UcrtnSearch" Name="ucrtbase.dll" />
+            </DirectorySearch>
+        </Property>
+
 
         <CustomAction Id="NoJavaBin" Error="Could not locate Java.exe.  Please check the value for JAVA_HOME." />
 
