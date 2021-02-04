@@ -49,7 +49,6 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Tells the installers about the current install state. */
 public final class CurrentInstallStateImpl extends AbstractInitializableComponent implements CurrentInstallState {
@@ -143,23 +142,16 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
             log.error("Error loading idp.properties", e);
             return;
         }
-        final String additionalSources =
-                props.getProperty(IdPPropertiesApplicationContextInitializer.IDP_ADDITIONAL_PROPERTY);
-        if (additionalSources != null) {
-            final String[] sources = additionalSources.split(",");
-            for (final String source : sources) {
-                final String trimmedSource = StringSupport.trimOrNull(source);
-                if (trimmedSource == null) {
-                    continue;
-                }
-                final Path path = Path.of(targetDir + trimmedSource);
-                try {
-                    final InputStream stream = new FileInputStream(path.toFile());
-                    props.load(stream);
-                } catch (final IOException e) {
-                    log.error("Error loading {}", path, e);
-                    throw new ComponentInitializationException(e);
-                }
+        final Collection<String> additionalSources = IdPPropertiesApplicationContextInitializer.getAdditionalSources(
+                targetDir.toString(), props);
+        for (final String source : additionalSources) {
+            final Path path = Path.of(source);
+            try {
+                final InputStream stream = new FileInputStream(path.toFile());
+                props.load(stream);
+            } catch (final IOException e) {
+                log.error("Error loading {}", path, e);
+                throw new ComponentInitializationException(e);
             }
         }
     }

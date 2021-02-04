@@ -87,11 +87,12 @@ public class IdPPropertiesApplicationContextInitializer
     @Nonnull public static final String FAILFAST_PROPERTY = "idp.initializer.failFast";
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
+    @Nonnull private static final Logger LOG =
+            LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
 
     /** {@inheritDoc} */
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
-        log.debug("Initializing application context '{}'", applicationContext);
+        LOG.debug("Initializing application context '{}'", applicationContext);
 
         // TODO: Override default property replacement syntax.
         // We can't do this now because it would break web.xml's use of ${idp.home}
@@ -101,23 +102,23 @@ public class IdPPropertiesApplicationContextInitializer
         // applicationContext.getEnvironment().setPlaceholderSuffix("}");
         
         final String searchLocation = selectSearchLocation(applicationContext);
-        log.debug("Attempting to find '{}' at search location '{}'", getSearchTarget(), searchLocation);
+        LOG.debug("Attempting to find '{}' at search location '{}'", getSearchTarget(), searchLocation);
 
         final String searchPath = searchLocation + getSearchTarget();
 
-        log.debug("Attempting to find resource '{}'", searchPath);
+        LOG.debug("Attempting to find resource '{}'", searchPath);
         final Resource resource = applicationContext.getResource(searchPath);
 
         if (resource.exists()) {
-            log.debug("Found resource '{}' at search path '{}'", resource, searchPath);
+            LOG.debug("Found resource '{}' at search path '{}'", resource, searchPath);
 
             final Properties properties = loadProperties(null, resource);
             if (properties == null) {
                 if (isFailFast(applicationContext)) {
-                    log.error("Unable to load properties from resource '{}'", resource);
+                    LOG.error("Unable to load properties from resource '{}'", resource);
                     throw new ConstraintViolationException("Unable to load properties from resource");
                 }
-                log.warn("Unable to load properties from resource '{}'", resource);
+                LOG.warn("Unable to load properties from resource '{}'", resource);
                 return;
             }
 
@@ -140,11 +141,11 @@ public class IdPPropertiesApplicationContextInitializer
             appendPropertySource(applicationContext, resource.toString(), properties);
 
         } else if (isFailFast(applicationContext)) {
-            log.error("Unable to find '{}' at '{}'", getSearchTarget(), searchLocation);
+            LOG.error("Unable to find '{}' at '{}'", getSearchTarget(), searchLocation);
             throw new ConstraintViolationException(
                     "Unable to find '" + getSearchTarget() + "' at '" + searchLocation + "'");
         } else {
-            log.warn("Unable to find '{}' at '{}'", getSearchTarget(), searchLocation);
+            LOG.warn("Unable to find '{}' at '{}'", getSearchTarget(), searchLocation);
         }
     }
 
@@ -206,12 +207,56 @@ public class IdPPropertiesApplicationContextInitializer
             PropertiesLoaderUtils.fillProperties(properties, resource);
             return properties;
         } catch (final IOException e) {
-            log.warn("Unable to load properties from resource '{}'", resource, e);
+            LOG.warn("Unable to load properties from resource '{}'", resource, e);
             return null;
         }
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+   /** Find out all the additional property files we need to load.  
+     * @param searchLocation Where to search from
+     * @param properties the content of idp.properties so far
+     * @return a collection of paths
+     */
+    public static Collection<String> getAdditionalSources(@Nonnull final String searchLocation,
+                            @Nonnull final Properties properties) {
+       final Collection<String> sources = new ArrayList<>();
+       
+       final Boolean autosearch = Boolean.valueOf(properties.getProperty(IDP_AUTOSEARCH_PROPERTY, "false"));
+       if (autosearch) {
+           final Path searchRoot = Path.of(searchLocation).resolve("conf");
+           if (searchRoot.toFile().isDirectory()) {
+               try (final Stream<Path> paths = Files.find(searchRoot, Integer.MAX_VALUE,
+                       new BiPredicate<Path,BasicFileAttributes>() {
+                               public boolean test(final Path t, final BasicFileAttributes u) {
+                                   if (u.isRegularFile() && t.getFileName().toString().endsWith(".properties")
+                                           && !t.endsWith(Path.of(IDP_PROPERTIES))) {
+                                       LOG.debug("Including auto-located properties in {}", t);
+                                       return true;
+                                   }
+                                   return false;
+                               }
+                       }, FileVisitOption.FOLLOW_LINKS)) {
+                   
+                   sources.addAll(paths.map(Path::toString).collect(Collectors.toUnmodifiableList()));
+               } catch (final IOException e) {
+                   LOG.error("Error searching for additional properties", e);
+               }
+           }
+       }
+       
+       final String additionalSources = properties.getProperty(IDP_ADDITIONAL_PROPERTY);
+       if (additionalSources != null) {
+           final String[] split = additionalSources.split(",");
+           for (final String s : split) {
+               final String trimmedSource = StringSupport.trimOrNull(s);
+               if (trimmedSource != null) {
+                   sources.add(searchLocation + trimmedSource);
+               }
+           }
+       }
+       return sources;
+   }
+    
     /**
      * Load additional property sources.
      * 
@@ -227,61 +272,24 @@ public class IdPPropertiesApplicationContextInitializer
     public void loadAdditionalPropertySources(@Nonnull final ConfigurableApplicationContext applicationContext,
             @Nonnull final String searchLocation, @Nonnull final Properties properties) {
         
-        final Collection<String> sources = new ArrayList<>();
-        
-        final Boolean autosearch = Boolean.valueOf(properties.getProperty(IDP_AUTOSEARCH_PROPERTY, "false"));
-        if (autosearch) {
-            final Path searchRoot = Path.of(searchLocation).resolve("conf");
-            if (searchRoot.toFile().isDirectory()) {
-                try (final Stream<Path> paths = Files.find(searchRoot, Integer.MAX_VALUE,
-                        new BiPredicate<Path,BasicFileAttributes>() {
-                                public boolean test(final Path t, final BasicFileAttributes u) {
-                                    if (u.isRegularFile() && t.getFileName().toString().endsWith(".properties")
-                                            && !t.endsWith(Path.of(IDP_PROPERTIES))) {
-                                        log.debug("Including auto-located properties in {}", t);
-                                        return true;
-                                    }
-                                    return false;
-                                }
-                        }, FileVisitOption.FOLLOW_LINKS)) {
-                    
-                    sources.addAll(paths.map(Path::toString).collect(Collectors.toUnmodifiableList()));
-                } catch (final IOException e) {
-                    log.error("Error searching for additional properties", e);
-                }
-            }
-        }
-        
-        final String additionalSources = properties.getProperty(IDP_ADDITIONAL_PROPERTY);
-        if (additionalSources != null) {
-            final String[] split = additionalSources.split(",");
-            for (final String s : split) {
-                final String trimmedSource = StringSupport.trimOrNull(s);
-                if (trimmedSource != null) {
-                    sources.add(searchLocation + trimmedSource);
-                }
-            }
-        }
-        
-        for (final String source : sources) {
-            log.debug("Attempting to load properties from resource '{}'", source);
+        for (final String source : getAdditionalSources(searchLocation, properties)) {
+            LOG.debug("Attempting to load properties from resource '{}'", source);
             final Resource additionalResource = applicationContext.getResource(source);
             if (additionalResource.exists()) {
-                log.debug("Found property resource '{}'", additionalResource);
+                LOG.debug("Found property resource '{}'", additionalResource);
                 if (loadProperties(properties, additionalResource) == null) {
                     if (isFailFast(applicationContext)) {
-                        log.error("Unable to load properties from resource '{}'", additionalResource);
+                        LOG.error("Unable to load properties from resource '{}'", additionalResource);
                         throw new ConstraintViolationException("Unable to load properties from resource");
                     }
-                    log.warn("Unable to load properties from resource '{}'", additionalResource);
+                    LOG.warn("Unable to load properties from resource '{}'", additionalResource);
                     continue;
                 }
             } else {
-                log.warn("Unable to find property resource '{}'", additionalResource);
+                LOG.warn("Unable to find property resource '{}'", additionalResource);
             }
         }
     }
-// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Log property names and values at debug level, suppressing properties whose name matches 'password',
@@ -290,11 +298,11 @@ public class IdPPropertiesApplicationContextInitializer
      * @param properties the properties to log
      */
     public void logProperties(@Nonnull final Properties properties) {
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             final Pattern pattern = Pattern.compile("password|credential|secret|salt|key", Pattern.CASE_INSENSITIVE);
             for (final String name : new TreeSet<>(properties.stringPropertyNames())) {
                 final Object value = pattern.matcher(name).find() ? "<suppressed>" : properties.get(name);
-                log.debug("Loaded property '{}'='{}'", name, value);
+                LOG.debug("Loaded property '{}'='{}'", name, value);
             }
         }
     }
@@ -323,11 +331,11 @@ public class IdPPropertiesApplicationContextInitializer
         Constraint.isNotNull(properties, "Properties cannot be null");
 
         if (properties.getProperty(IDP_HOME_PROPERTY) != null) {
-            log.debug("Will not set '{}' property because it is already set.", IDP_HOME_PROPERTY);
+            LOG.debug("Will not set '{}' property because it is already set.", IDP_HOME_PROPERTY);
             return;
         }
 
-        log.debug("Setting '{}' property to '{}'", IDP_HOME_PROPERTY, path);
+        LOG.debug("Setting '{}' property to '{}'", IDP_HOME_PROPERTY, path);
 
         properties.setProperty(IDP_HOME_PROPERTY, path);
     }
