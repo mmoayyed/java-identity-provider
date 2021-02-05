@@ -82,5 +82,19 @@
     <jdbc:initialize-database data-source="testbed.JDBCDataSource" ignore-failures="ALL">
         <jdbc:script location="classpath:/test/test-jdbc.sql"/>
     </jdbc:initialize-database>
+
+    <!--
+    <bean id="shibboleth.authn.TOTP.SeedSource" parent="shibboleth.authn.TOTP.StaticSeedSource">
+        <property name="seeds">
+            <map>
+                <entry key="jdoe">
+                    <list>
+                        <value>K44GQWBAI54IQELEGYPDZG5LAJ6EJX73</value>
+                    </list>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    -->
     
 </beans>
