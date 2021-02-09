@@ -178,7 +178,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             final PluginInstallerArguments args) throws ComponentInitializationException {
         inst.setIdpHome(Path.of(getApplicationContext().getEnvironment().getProperty("idp.home")));
         if (!args.isUnattended()) {
-            inst.setAcceptKey(new InstallerQuery("Accept this Key"));
+            inst.setAcceptKey(new InstallerQuery("Accept this key"));
         }
         inst.setTrustore(args.getTruststore());
         if (getHttpClient()!= null) {
@@ -205,7 +205,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param plugin what we are interested in.
      */
     private void printDetails(final IdPPlugin plugin) {
-        log.debug("Interrogating {} ", plugin.getPluginId());
+        log.debug("Interrogating {}", plugin.getPluginId());
         final PluginState state =  new PluginState(plugin);
         if (getHttpClient() != null) {
             state.setHttpClient(getHttpClient());
@@ -304,7 +304,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         if (thePlugin == null) {
             log.warn("Plugin was not installed {}", pluginId);
             if (fromContentsVersion != null) {
-                log.error("Plugin {} not installed, but contents found.", pluginId);
+                log.error("Plugin {} not installed, but contents found", pluginId);
                 log.debug("{}", contents);
             } else {
                 return;
@@ -319,7 +319,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                     pluginId, installedVersion, fromContentsVersion);
         }
         if (contents.isEmpty()) {
-            log.info("No Contents");
+            log.info("No contents");
         } else {
             for (final String s: contents) {
                 outOrLog(String.format("%s", s));
@@ -341,14 +341,14 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         final PluginVersion idPVersion;
         if (idpVersionString == null) {
             idPVersion = new PluginVersion(4,1,0);
-            log.error("Could not determine IdP Version.  Assuming 4.1.0");
+            log.error("Could not determine IdP Version. Assuming 4.1.0");
         } else {
             idPVersion = new PluginVersion(idpVersionString);
         }
 
         final List<PluginVersion> availableVersions = new ArrayList<>(state.getAvailableVersions().keySet());
         availableVersions.sort(null);
-        log.debug("Considering versions {}", availableVersions);
+        log.debug("Considering versions: {}", availableVersions);
 
         for (int i = availableVersions.size()-1; i >= 0; i--) {
             final PluginVersion version = availableVersions.get(i);
@@ -403,14 +403,14 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         if (pluginVersion == null) {
             installVersion = getBestVersion(plugin, state);
             if (installVersion == null) {
-                log.info("No Suitable update version available");
+                log.info("No suitable update version available");
                 return;
             }
         } else {
             installVersion = pluginVersion;
             final Map<PluginVersion, VersionInfo> versions = state.getAvailableVersions();
             if (!versions.containsKey(installVersion)) {
-                log.error("Specified version {} could not be found.  Available versions {}",
+                log.error("Specified version {} could not be found. Available versions: {}",
                         installVersion, versions.keySet());
                 return;
             }

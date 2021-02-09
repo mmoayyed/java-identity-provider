@@ -321,7 +321,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println("Plugin");
         out.println("Provides a command line interface for plugin management operations.");
         out.println();
-        out.println("   Plugn [options] springConfiguration [FullName]");
+        out.println("   Plugin [options] springConfiguration [FullName]");
         out.println();
         out.println("      springConfiguration      name of Spring configuration resource to use");
         super.printHelp(out);
