@@ -39,7 +39,7 @@ public class ConsentFlowDescriptorTest {
     @Test public void testInstantation() {
         Assert.assertEquals(descriptor.getId(), "test");
         Assert.assertFalse(descriptor.compareValues());
-        Assert.assertEquals(Duration.ofDays(365), descriptor.getLifetime());
+        Assert.assertNull(descriptor.getLifetime());
     }
 
     @Test public void testCompareValues() {
@@ -49,7 +49,7 @@ public class ConsentFlowDescriptorTest {
         Assert.assertFalse(descriptor.compareValues());
     }
 
-    @Test(expectedExceptions = ConstraintViolationException.class) public void testNullLifetime() {
+    @Test public void testNullLifetime() {
         descriptor.setLifetime(null);
     }
 
