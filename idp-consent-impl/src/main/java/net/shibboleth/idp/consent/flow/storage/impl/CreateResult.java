@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.flow.storage.impl;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 
@@ -71,8 +72,13 @@ public class CreateResult extends AbstractConsentIndexedStorageAction {
             final Map<String, Consent> currentConsents = getConsentContext().getCurrentConsents();
             final String value = getStorageSerializer().serialize(currentConsents);
 
-            final Instant expiration = Instant.now().plus(getConsentFlowDescriptor().getLifetime());
-
+            final Duration lifetime = getConsentFlowDescriptor().getLifetime();
+            final Instant expiration;
+            if (lifetime == null) {
+                expiration = null;
+            } else {
+                expiration = Instant.now().plus(lifetime);
+            }
             final ProfileInterceptorResult result =
                     new ConsentResult(getStorageContext(), getStorageKey(), value, expiration);
 

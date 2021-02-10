@@ -19,11 +19,10 @@ package net.shibboleth.idp.consent.flow.impl;
 
 import java.time.Duration;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Descriptor for a consent flow.
@@ -37,7 +36,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     private boolean compareValues;
 
     /** Time to expire consent storage records. Default value: 1 year. */
-    @Nonnull private Duration lifetime;
+    @Nullable private Duration lifetime;
 
     /** Maximum number of records stored in the storage service. */
     private int maxStoredRecords;
@@ -50,7 +49,6 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
 
     /** Constructor. */
     public ConsentFlowDescriptor() {
-        lifetime = Duration.ofDays(365);
         expandedStorageThreshold = 1024 * 1024;
     }
 
@@ -66,9 +64,9 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     /**
      * Time to expire consent storage records.
      * 
-     * @return time to expire consent storage records
+     * @return time to expire consent storage records, null for infinite.
      */
-    @Nonnull public Duration getLifetime() {
+    @Nullable public Duration getLifetime() {
         return lifetime;
     }
 
@@ -113,12 +111,12 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     /**
      * Set time to expire consent storage records.
      * 
-     * @param consentLifetime time to expire consent storage records
+     * @param consentLifetime time to expire consent storage records.  null means infinite
      */
-    public void setLifetime(@Nonnull final Duration consentLifetime) {
+    public void setLifetime(@Nullable final Duration consentLifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        lifetime = Constraint.isNotNull(consentLifetime, "Lifetime cannot be null");
+        lifetime = consentLifetime;
     }
 
     /**
@@ -155,5 +153,4 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     
         expandedStorageThreshold = size;
     }
-    
 }
