@@ -25,6 +25,13 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageRecord;
+import org.springframework.webflow.execution.Event;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
@@ -33,14 +40,8 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageRecord;
-import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 /** {@link CreateResult} unit test. */
+@SuppressWarnings("javadoc")
 public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
     protected CreateResult buildAction(@Nonnull final String key) throws Exception {
@@ -81,6 +82,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
     }
 
     @Test public void testCreateResult() throws Exception {
+        
         action.initialize();
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);

@@ -35,6 +35,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AbstractConsentStorageAction} unit test. */
+@SuppressWarnings("javadoc")
 public abstract class AbstractConsentStorageActionTest extends AbstractConsentActionTest {
 
     protected void populateAction() throws Exception {
