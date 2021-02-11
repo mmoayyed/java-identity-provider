@@ -16,7 +16,7 @@
 
     <bean id="encodingTicketService" class="net.shibboleth.idp.cas.ticket.impl.EncodingTicketService" lazy-init="true"
           c:service-ref="#{'%{idp.cas.StorageService:shibboleth.StorageService}'.trim()}"
-          c:sealer-ref="encodedTicketSealer" />
+          c:sealer-ref="#{'%{idp.cas.encodedTicketSealer:encodedTicketSealer}'.trim()}" />
 
     <bean id="encodedTicketSealer" lazy-init="true"
           class="net.shibboleth.utilities.java.support.security.DataSealer"
