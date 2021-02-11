@@ -61,13 +61,13 @@ public class PluginState extends AbstractInitializableComponent {
 
     /** The plug in in question. */
     @Nonnull private final IdPPlugin plugin;
-    
+
     /** The version of this plugin. */
     @Nonnull private final PluginVersion myPluginVersion;
-    
+
     /** The support information. */
     @Nonnull private final Map<PluginVersion, VersionInfo> versionInfo = new HashMap<>();
-    
+
     /** The Download information. */
     @Nonnull private final Map<PluginVersion, Pair<URL,String>> downloadInfo = new HashMap<>();
 
@@ -76,16 +76,21 @@ public class PluginState extends AbstractInitializableComponent {
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PluginState.class);
-    
+
     /** The HttpClient to use.*/
     @NonnullAfterInit private HttpClient httpClient;
+
+    /** If overridden these are the urls to us for update (rather than what the plguin asks for. */
+    @Nonnull private final List<URL> updateOverrideURLs;
 
     /**
      * Constructor.
      *
      * @param description what we are talking about.
+     * @param updateOverrides override for update locations.  An empty list signifies no overrride.
      */
-    public PluginState(@Nonnull final IdPPlugin description) {
+    public PluginState(@Nonnull final IdPPlugin description, final List<URL> updateOverrides) {
+        updateOverrideURLs = Constraint.isNotNull(updateOverrides, "updated Locations must not be null");
         plugin = Constraint.isNotNull(description, "Plugin must not be null");
         myPluginVersion = new PluginVersion(plugin);
     }
@@ -270,10 +275,15 @@ public class PluginState extends AbstractInitializableComponent {
             if (httpClient == null) {
                 httpClient = new HttpClientBuilder().buildClient();
             }
-            final List<URL> urls = plugin.getUpdateURLs();
-            if (urls == null) {
-                log.error("Plugin {} was malformed", plugin.getPluginId());
-                throw new ComponentInitializationException("Could not locate information plugin"); 
+            final List<URL> urls;
+            if (updateOverrideURLs.isEmpty()) {
+                urls = plugin.getUpdateURLs();
+                if (urls == null) {
+                    log.error("Plugin {} was malformed", plugin.getPluginId());
+                    throw new ComponentInitializationException("Could not locate information plugin");
+                }
+            } else {
+                urls = updateOverrideURLs;
             }
             for (final URL url: urls) {
                 final Resource propertyResource;

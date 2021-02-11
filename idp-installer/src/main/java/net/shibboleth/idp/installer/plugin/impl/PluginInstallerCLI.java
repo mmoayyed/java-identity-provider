@@ -21,9 +21,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -59,12 +62,15 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
     /** Class logger. */
     @Nullable private Logger log;
-    
+
     /** A Plugin Installer to use. */
     @Nullable private PluginInstaller installer;
 
+    /** Update URLs. */
+    private List<URL> updateURLs;
+
     /**
-     * Constrained Constructor.
+      * Constrained Constructor.
      */
     private PluginInstallerCLI() {
         super();
@@ -98,7 +104,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     }
     
     /** {@inheritDoc} */
-    //CheckStyle: CyclomaticComplexity OFF
+    //CheckStyle: CyclomaticComplexity|MethodLength OFF
     protected int doRun(final PluginInstallerArguments args) {
         
         if (args.getHttpClientName() == null) {
@@ -111,6 +117,16 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
+        }
+        if (args.getUpdateURL() !=null) {
+            try {
+                updateURLs = List.of(new URL(args.getUpdateURL()));
+            } catch (final MalformedURLException e) {
+                log.error("Could not convert update URL {}", args.getUpdateURL(), e);
+                return RC_INIT;
+            }
+        } else {
+            updateURLs = Collections.emptyList();
         }
 
         try (final PluginInstaller inst = new PluginInstaller()){
@@ -167,7 +183,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         return ret;
     }
-    //CheckStyle: CyclomaticComplexity OM
+    //CheckStyle: CyclomaticComplexity|MethodLength  ON
 
     /** Build the installer.
      * @param inst the newly created installed
@@ -206,7 +222,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      */
     private void printDetails(final IdPPlugin plugin) {
         log.debug("Interrogating {}", plugin.getPluginId());
-        final PluginState state =  new PluginState(plugin);
+        final PluginState state =  new PluginState(plugin, updateURLs);
         if (getHttpClient() != null) {
             state.setHttpClient(getHttpClient());
         }
@@ -389,7 +405,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             return;
         }
         log.debug("Interrogating {} ", plugin.getPluginId());
-        final PluginState state =  new PluginState(plugin);
+        final PluginState state =  new PluginState(plugin, updateURLs);
         if (getHttpClient() != null) {
             state.setHttpClient(getHttpClient());
         }

@@ -68,6 +68,14 @@ public class PluginCLITest extends BasePluginTest {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-fl", } ), AbstractCommandLine.RC_OK);
     }
 
+    @Test(enabled = true,dependsOnMethods = {/*"testWeb"*/}) public void testListWithOverride() throws IOException {
+        ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/plugin/allPlugins.props");
+        String url = resource.getURL().toString();
+        final String parms[]=  { "-fl", "--updateURL", url};
+        final int rc = PluginInstallerCLI.runMain(parms);
+        assertEquals(rc, AbstractCommandLine.RC_OK);
+    }
+
     @Test(enabled = true) public void testWrong() {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-i", "a"}), AbstractCommandLine.RC_INIT);
     }

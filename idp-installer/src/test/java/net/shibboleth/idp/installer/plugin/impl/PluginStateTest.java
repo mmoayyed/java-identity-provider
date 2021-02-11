@@ -25,6 +25,7 @@ import static org.testng.Assert.fail;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 import org.testng.annotations.Test;
@@ -49,7 +50,7 @@ public class PluginStateTest {
 
         final IdPPlugin simple = new TestPlugin();
         
-        final PluginState state = new PluginState(simple);
+        final PluginState state = new PluginState(simple, Collections.EMPTY_LIST);
         
         state.initialize();
 
@@ -86,7 +87,8 @@ public class PluginStateTest {
 
     @Test
     public void testTemplating() throws ComponentInitializationException, MalformedURLException {
-        final PluginState state = new PluginState(new TestPlugin());
+        final TestPlugin tp = new TestPlugin();
+        final PluginState state = new PluginState(tp, tp.getUpdateURLs());
         state.initialize();
         final PluginVersion v123 = new PluginVersion(1,2,3);
         final PluginVersion v124 = new PluginVersion(1,2,4);
@@ -116,7 +118,7 @@ public class PluginStateTest {
             }
         };
         
-        final PluginState state = new PluginState(simple);
+        final PluginState state = new PluginState(simple, Collections.EMPTY_LIST);
         state.initialize();
         
         assertEquals(state.getAvailableVersions().size(), 3);

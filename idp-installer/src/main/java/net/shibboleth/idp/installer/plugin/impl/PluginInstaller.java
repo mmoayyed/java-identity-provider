@@ -121,6 +121,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** What to use to download things. */
     private HttpClient httpClient;
 
+    /** If overridden these are the urls to us for update (rather than what the plugin asks for. */
+    @Nonnull private List<URL> updateOverrideURLs = Collections.emptyList();
+
     /** Dumping space for renamed files. */
     @NonnullAfterInit private Path workspacePath;
 
@@ -184,6 +187,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         httpClient = Constraint.isNotNull(what, "HttpClient should be non-null");
     }
 
+    /** Set the override URLS.
+     * @param urls The updateOverrideURLs to set.
+     */
+    public void setUpdateOverrideURLs(@Nonnull final List<URL> urls) {
+        updateOverrideURLs = Constraint.isNotNull(urls, "Override URLS must be non null");
+    }
+
     /** Set the Module Context security parameters.
      * @param params what to set.
      */
@@ -232,7 +242,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         checkSignature(base, fileName);
         setupDescriptionFromDistribution();
         if (checkVersion) {
-            final PluginState state = new PluginState(description);
+            final PluginState state = new PluginState(description, updateOverrideURLs);
             try {
                 state.initialize();
             } catch (final ComponentInitializationException e) {

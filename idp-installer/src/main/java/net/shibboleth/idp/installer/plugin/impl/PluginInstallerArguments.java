@@ -34,6 +34,7 @@ import com.beust.jcommander.Parameter;
 
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
 import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Arguments for Plugin Installer CLI.
@@ -90,6 +91,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** Contents to list. */
     @Parameter(names= {"-cl", "--contents-list"})
     @Nullable private String contentsList;
+
+    /** location to override the plugin supplied location. */
+    @Parameter(names= {"--updateURL"})
+    @Nullable private String updateURL;
 
     /** The {@link #forceUpdateVersion} as a {@link PluginVersion}. */
     @Nullable private PluginVersion updateVersion;
@@ -206,12 +211,18 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         return noPrompt;
     }
 
-
     /** Return the version to update to or null.
      * @return the version or null
      */
     @Nullable public PluginVersion getUpdateVersion() {
         return updateVersion;
+    }
+
+    /** return the update URL or null.
+     * @return null or the calue supplied
+     */
+    @Nullable public String getUpdateURL() {
+        return StringSupport.trimOrNull(updateURL);
     }
 
     /**
@@ -342,6 +353,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println(String.format("  %-22s %s", "--noPrompt", "Unattended Install"));
         out.println(String.format("  %-22s %s", "--truststore <path>",
                 "Explicit location to look for keys (should exist but may be an empty file)"));
+        out.println(String.format("  %-22s %s", "--updateURL <URL>",
+                "Explicit location to look for update information (overrides the plugin's value)"));
         out.println();
     }
 
