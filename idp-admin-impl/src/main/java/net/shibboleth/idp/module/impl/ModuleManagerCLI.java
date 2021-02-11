@@ -142,7 +142,9 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                     System.out.println("Module: " + module.getId());
                     System.out.println("\tName: " + module.getName(moduleContext));
                     System.out.println("\tDesc: " + module.getDescription(moduleContext));
-                    System.out.println("\tHelp: " + module.getURL());
+                    if (module.getURL() != null) {
+                        System.out.println("\tHelp: " + module.getURL());
+                    }
                     if (module.isEnabled(moduleContext)) {
                         System.out.println("\tStatus: " +
                                 TerminalCodes.GREEN.code(args) + "ENABLED" + TerminalCodes.RESET.code(args));
