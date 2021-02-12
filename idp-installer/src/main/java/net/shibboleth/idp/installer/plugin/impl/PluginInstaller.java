@@ -292,7 +292,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             try (final RollbackPluginInstall rollback = new RollbackPluginInstall(moduleContext)){
                 for (final IdPModule module: description.getDisableOnRemoval()) {
                     moduleId = module.getId();
-                    module.disable(moduleContext, true);
+                    module.disable(moduleContext, false);
                     rollback.getModulesDisabled().add(module);
                 }
                 rollback.completed();
@@ -469,7 +469,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 for (final IdPModule module: oldPlugin.getDisableOnRemoval()) {
                     moduleId = module.getId();
                     if (module.isEnabled(moduleContext)) {
-                        module.disable(moduleContext, true);
+                        module.disable(moduleContext, false);
                         rollback.getModulesDisabled().add(module);
                     }
                 }
