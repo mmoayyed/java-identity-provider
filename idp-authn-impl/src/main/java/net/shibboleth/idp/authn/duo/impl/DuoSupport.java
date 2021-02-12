@@ -75,6 +75,8 @@ public final class DuoSupport {
         
         if (username == null) {
             signedRequestToken = DuoWeb.ERR_USER;
+        } else if (duo.getApplicationKey() == null) {
+            signedRequestToken = DuoWeb.ERR_AKEY;
         } else {
             signedRequestToken = DuoWeb.signRequest(duo.getIntegrationKey(), duo.getSecretKey(),
                     duo.getApplicationKey(), username);
@@ -102,6 +104,9 @@ public final class DuoSupport {
             @Nonnull @NotEmpty final String signedResponseToken)
         throws DuoWebException, InvalidKeyException, IOException, NoSuchAlgorithmException {
         try {
+            if (duo.getApplicationKey() == null) {
+                throw new DuoWebException(DuoWeb.ERR_AKEY);
+            }
             final String username = DuoWeb.verifyResponse(duo.getIntegrationKey(), duo.getSecretKey(),
                     duo.getApplicationKey(), signedResponseToken);
             return username;

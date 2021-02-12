@@ -21,6 +21,7 @@ import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Interface to a particular Duo integration point.
@@ -41,7 +42,7 @@ public interface DuoIntegration extends PrincipalSupportingComponent {
      * 
      * @return the application key
      */
-    @Nonnull @NotEmpty String getApplicationKey();
+    @Nullable @NotEmpty String getApplicationKey();
 
     /**
      * Get the integration key.

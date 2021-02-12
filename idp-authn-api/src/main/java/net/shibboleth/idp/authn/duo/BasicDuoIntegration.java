@@ -46,7 +46,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
     @NonnullAfterInit @NotEmpty private String apiHost;
     
     /** Application key. */
-    @NonnullAfterInit @NotEmpty private String applicationKey;
+    @Nullable @NotEmpty private String applicationKey;
     
     /** Integration key. */
     @NonnullAfterInit @NotEmpty private String integrationKey;
@@ -79,7 +79,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NotEmpty public String getApplicationKey() {
+    @Nullable @NotEmpty public String getApplicationKey() {
         return applicationKey;
     }
     
@@ -88,10 +88,10 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * 
      * @param key application key
      */
-    public void setApplicationKey(@Nonnull @NotEmpty final String key) {
+    public void setApplicationKey(@Nullable @NotEmpty final String key) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        applicationKey = Constraint.isNotNull(StringSupport.trimOrNull(key), "Application key cannot be null or empty");
+        applicationKey = StringSupport.trimOrNull(key);
     }
 
     /** {@inheritDoc} */
@@ -155,7 +155,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
-        if (apiHost == null || applicationKey == null || integrationKey == null || secretKey == null) {
+        if (apiHost == null || integrationKey == null || secretKey == null) {
             throw new ComponentInitializationException("API host and integration keys must be set");
         }
     }
