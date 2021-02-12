@@ -26,7 +26,6 @@
 
     <bean id="shibboleth.authn.Duo.NonBrowser.DuoIntegration" class="net.shibboleth.idp.authn.duo.BasicDuoIntegration"
         p:APIHost="%{idp.duo.nonbrowser.apiHost:%{idp.duo.apiHost:none}}"
-        p:applicationKey="%{idp.duo.nonbrowser.applicationKey:none}"
         p:integrationKey="%{idp.duo.nonbrowser.integrationKey:none}"
         p:secretKey="%{idp.duo.nonbrowser.secretKey:none}" />
     <bean id="shibboleth.authn.Duo.NonBrowser.DuoIntegrationStrategy" parent="shibboleth.Functions.Constant"
