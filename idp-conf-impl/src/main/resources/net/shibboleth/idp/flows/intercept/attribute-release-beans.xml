@@ -70,7 +70,7 @@
     <bean id="shibboleth.consent.UserAndRelyingPartyStorageKey"
         class="net.shibboleth.idp.consent.logic.impl.JoinFunction"
         c:functionA-ref="shibboleth.consent.UserStorageKey"
-        c:functionB-ref="shibboleth.RelyingPartyIdLookup.Simple" />
+        c:functionB="#{getObject('shibboleth.consent.attribute-release.rp.Key') ?: getObject('shibboleth.RelyingPartyIdLookup.Simple')}" />
 
     <!--
     Function to return the storage key of the index record containing all storage keys
