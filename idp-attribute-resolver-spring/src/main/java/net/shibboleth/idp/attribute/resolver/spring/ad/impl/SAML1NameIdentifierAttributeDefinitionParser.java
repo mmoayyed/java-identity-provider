@@ -30,9 +30,12 @@ import org.w3c.dom.Element;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML1NameIdentifierAttributeDefinition;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /** Spring bean definition parser for SAML 1 NameIdentifier attribute definitions. */
+@SuppressWarnings("removal")
 public class SAML1NameIdentifierAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
@@ -49,7 +52,10 @@ public class SAML1NameIdentifierAttributeDefinitionParser extends BaseAttributeD
 
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder) {
+            @Nonnull final BeanDefinitionBuilder builder) {        
+        DeprecationSupport.warn(ObjectType.XSITYPE, "SAML1NameIdentifier",
+                parserContext.getReaderContext().getResource().getDescription(), "(none)");
+        
         super.doParse(config, parserContext, builder);
 
         final String nameIdQualifier = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdQualifier"));

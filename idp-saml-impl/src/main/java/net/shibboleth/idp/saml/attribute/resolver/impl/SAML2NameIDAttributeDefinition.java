@@ -51,8 +51,10 @@ import org.slf4j.LoggerFactory;
  * {@link #nameIdQualifier} is provided that value is used as the NameID's NameQualifier otherwise the attribute
  * issuer's entity ID is used. If a {@link #nameIdSPQualifier} is provided then that valid is used as the NameID's
  * SPNameQualifier, otherwise the attribute recipient's entityID is used.</p>
+ * 
+ * @deprecated
  */
-
+@Deprecated(forRemoval=true, since="4.1.0")
 public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */

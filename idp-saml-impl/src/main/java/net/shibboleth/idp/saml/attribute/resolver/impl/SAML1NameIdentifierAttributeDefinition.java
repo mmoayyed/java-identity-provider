@@ -49,8 +49,10 @@ import org.slf4j.LoggerFactory;
  * <p>When building the NameIdentifier the textual content of the NameIdentifier is the value of the source attribute.
  * If a {@link #nameIdQualifier} is provided that value is used as the NameIdentifier's NameQualifier otherwise the
  * attribute issuer's entity ID is used.</p>
+ * 
+ * @deprecated
  */
-
+@Deprecated(forRemoval=true, since="4.1.0")
 public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
