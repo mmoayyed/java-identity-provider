@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    
+    <!-- ========================================== -->
+    <!--      Data Connectors                       -->
+    <!-- ========================================== -->
+
+    <DataConnector id="static" xsi:type="Static" exportAttributes="one two">
+        <Attribute id="one">
+            <Value>Hello World</Value>
+        </Attribute>
+        <Attribute id="two">
+            <Value>Hello World</Value>
+        </Attribute>
+    </DataConnector>
+
+
+    <!-- Example LDAP Connector -->
+    <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
+        exportAttributes="uid mail sn cn homephone"
+        ldapURL="ldap://localhost:10391"
+        baseDN="dc=shibboleth,dc=net"
+        failFastInitialize="%{failfast:false}"
+        propagateResolutionExceptions="%{propagateResolutionExceptions:true}"
+        connectTimeout="PT6S"
+        responseTimeout="PT6S"
+        principal="cn=Directory Manager"
+        principalCredential="password">
+        <FilterTemplate>
+            <![CDATA[
+                (uid=$resolutionContext.principal)
+            ]]>
+        </FilterTemplate>
+    </DataConnector>
+
+
+</AttributeResolver>
