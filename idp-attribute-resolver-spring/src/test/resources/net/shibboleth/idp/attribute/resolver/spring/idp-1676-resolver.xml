@@ -20,7 +20,7 @@
 
     <!-- Example LDAP Connector -->
     <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
-        exportAttributes="uid mail sn cn homephone"
+        exportAttributes="uid sn cn homephone"
         ldapURL="ldap://localhost:10391"
         baseDN="dc=shibboleth,dc=net"
         failFastInitialize="%{failfast:false}"
@@ -35,6 +35,10 @@
             ]]>
         </FilterTemplate>
     </DataConnector>
+
+    <AttributeDefinition xsi:type="Simple" id="email" >
+        <InputDataConnector ref="myLDAP" attributeNames="mail"/>
+    </AttributeDefinition>
 
 
 </AttributeResolver>
