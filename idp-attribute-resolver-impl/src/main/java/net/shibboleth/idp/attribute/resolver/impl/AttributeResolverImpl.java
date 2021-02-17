@@ -304,7 +304,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * @throws ResolutionException if unable to resolve the requested attribute definition
      */
-    // CheckStyle: ReturnCount OFF
     protected void resolveAttributeDefinition(@Nonnull final String attributeId,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(attributeId, "Attribute ID can not be null");
@@ -339,7 +338,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         workContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
     }
-    // CheckStyle: ReturnCount ON
 
     /**
      * Resolve the {@link DataConnector} which has the specified ID.
@@ -351,7 +349,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * @throws ResolutionException if unable to resolve the requested connector
      */
-    // CheckStyle: ReturnCount OFF
     protected void resolveDataConnector(@Nonnull final String connectorId,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(connectorId, "Data connector ID can not be null");
@@ -387,7 +384,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             if (connector.isPropagateResolutionExceptions()) {
                 throw new ResolutionException("Previous resolve failed");
             }
-            log.error("Data connector '{}' previously failed but was configured not to propagate");
+            log.warn("Data connector '{}' previously failed but was configured not to propagate");
             return;
         }
 
@@ -418,7 +415,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
         workContext.recordDataConnectorResolution(connector, resolvedAttributes);
     }
-    // CheckStyle: ReturnCount ON
 
     /**
      * Resolves all the dependencies for a given plugin.
