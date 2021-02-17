@@ -161,7 +161,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
     }
 
 // CheckStyle: CyclomaticComplexity OFF
-    /** Police SSL for JVM trust.
+    /** Police TLS for JVM trust.
      * @throws ComponentInitializationException if we detect an SSL issue
      */
     private void policeForJVMTrust() throws ComponentInitializationException {
@@ -189,7 +189,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
                 }
             }
         } catch (final GeneralSecurityException | LdapException e) {
-            log.debug("{} Failed to inspect SLL implementation", getLogPrefix(), e);
+            log.debug("{} Failed to inspect TLS implementation", getLogPrefix(), e);
         } finally {
             if (conn != null) {
                 try {
