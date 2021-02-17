@@ -167,7 +167,6 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
                     StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_FAIL_FAST)));
         }
 
-
         if (isNative(config)) {
             // parse the configuration into a beanfactory and inject the resources as well
             builder.addPropertyValue("objectType", getNativeBeanClass());

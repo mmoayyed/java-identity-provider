@@ -25,15 +25,24 @@
         baseDN="dc=shibboleth,dc=net"
         failFastInitialize="%{failfast:false}"
         propagateResolutionExceptions="%{propagateResolutionExceptions:true}"
-        connectTimeout="PT6S"
-        responseTimeout="PT6S"
+        connectTimeout="PT1S"
+        responseTimeout="PT1S"
         principal="cn=Directory Manager"
+        noRetryDelay="PT0.25S"
         principalCredential="password">
         <FilterTemplate>
             <![CDATA[
                 (uid=$resolutionContext.principal)
             ]]>
         </FilterTemplate>
+        <ConnectionPool
+            minPoolSize="2"
+            maxPoolSize="20"
+            validatePeriodically="true"
+            validateTimerPeriod="PT10M"
+            validateDN="ou=users,ou=vault,o=osu"
+            validateFilter="(ou=users)"
+            expirationTime="PT10M"/>
     </DataConnector>
 
     <AttributeDefinition xsi:type="Simple" id="email" >

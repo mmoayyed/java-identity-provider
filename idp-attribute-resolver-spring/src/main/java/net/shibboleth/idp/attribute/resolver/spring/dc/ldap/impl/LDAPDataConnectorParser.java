@@ -637,9 +637,12 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                     AttributeSupport.getAttributeValue(poolConfigElement, new QName("failFastInitialize"));
             if (failFastInitialize != null) {
                 // V4 Deprecation
-                DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "failfastInitialize (on a ConnectionPool element)", 
+                DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "failfastInitialize (on a ConnectionPool element)",
                         null, "failfastInitialize (on a DataConnector)");
                 pool.addPropertyValue("failFastInitialize", failFastInitialize);
+            } else if (configElement.hasAttributeNS(null, ATTR_FAIL_FAST)) {
+                pool.addPropertyValue("failFastInitialize",
+                        StringSupport.trimOrNull(configElement.getAttributeNS(null, ATTR_FAIL_FAST)));
             }
             pool.setInitMethodName("initialize");
             return pool.getBeanDefinition();

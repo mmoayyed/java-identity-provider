@@ -185,7 +185,7 @@ public class IdP1676Test extends OpenSAMLInitBaseTestCase {
         connectorOff();
     }
 
-    @Test public void normal() throws LDAPException, ComponentInitializationException, ResolutionException {
+    @Test public void normal() throws LDAPException, ComponentInitializationException, ResolutionException, InterruptedException {
         connectorOn();
         ReloadableService<AttributeResolver> resolverService = getResolver(false, true);
         testResolve(resolverService, 7);
@@ -203,11 +203,11 @@ public class IdP1676Test extends OpenSAMLInitBaseTestCase {
         } catch (final ResolutionException ex) {
             //expected that
         }
-        connectorOn();
+        connectorOn();Thread.sleep(300);
         testResolve(resolverService, 7);        
     }
     
-    @Test public void normalNoPE() throws LDAPException, ComponentInitializationException, ResolutionException {
+    @Test public void normalNoPE() throws LDAPException, ComponentInitializationException, ResolutionException, InterruptedException {
         connectorOn();
         ReloadableService<AttributeResolver> resolverService = getResolver(false, false);
         testResolve(resolverService, 7);
@@ -215,7 +215,7 @@ public class IdP1676Test extends OpenSAMLInitBaseTestCase {
         testResolve(resolverService, 2);
         resolverService = getResolver(false, false);
         testResolve(resolverService, 2);
-        connectorOn();
+        connectorOn();Thread.sleep(300);
         testResolve(resolverService, 7);        
     }
 
