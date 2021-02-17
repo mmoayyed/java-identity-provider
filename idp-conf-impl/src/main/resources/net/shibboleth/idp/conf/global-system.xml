@@ -153,19 +153,19 @@
     <bean id="shibboleth.SchemaBuilder" lazy-init="true"
         class="org.opensaml.saml.common.xml.SAMLSchemaBuilder" c:ver="SAML_11" c:strict="%{idp.schemaValidation.strict:false}">
         <property name="schemaBuilder">
-            <bean class="net.shibboleth.utilities.java.support.xml.SchemaBuilder">
+            <bean class="net.shibboleth.utilities.java.support.xml.SchemaBuilder"
+                    p:schemaResources="#{getObject('shibboleth.ExtensionSchemas') ?: getObject('shibboleth.DefaultExtensionSchemas')}">
                 <property name="resourceResolver">
                     <bean class="net.shibboleth.utilities.java.support.xml.ClasspathResolver" />
-                </property>
-                <property name="schemaResources">
-                    <list>
-                        <value>#{'classpath:' + T(org.opensaml.saml.common.xml.SAMLConstants).XMLSIG_SCHEMA_LOCATION }</value>
-                        <value>#{'classpath:' + T(net.shibboleth.idp.saml.xmlobject.ExtensionsConstants).SHIB_MDEXT10_SCHEMA_LOCATION }</value>
-                    </list>
                 </property>
             </bean>
         </property>
     </bean>
+
+    <util:list id="shibboleth.DefaultExtensionSchemas">
+        <value>#{'classpath:' + T(org.opensaml.saml.common.xml.SAMLConstants).XMLSIG_SCHEMA_LOCATION }</value>
+        <value>#{'classpath:' + T(net.shibboleth.idp.saml.xmlobject.ExtensionsConstants).SHIB_MDEXT10_SCHEMA_LOCATION }</value>
+    </util:list>
 
     <bean id="shibboleth.HttpServletRequest" class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy" />
     <bean id="shibboleth.HttpServletResponse" class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy" />

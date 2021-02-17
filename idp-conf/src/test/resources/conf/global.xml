@@ -97,4 +97,14 @@
     </bean>
     -->
     
+    <!--
+    <bean id="shibboleth.ExtensionSchemas" parent="shibboleth.DefaultExtensionSchemas">
+        <property name="sourceList">
+            <list merge="true">
+                <value>classpath:/schema/saml-metadata-ext-oidcmd.xsd</value>
+            </list>
+        </property>
+    </bean>
+    -->
+    
 </beans>
