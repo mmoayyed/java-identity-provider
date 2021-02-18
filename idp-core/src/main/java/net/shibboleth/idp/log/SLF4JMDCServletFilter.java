@@ -54,6 +54,9 @@ public class SLF4JMDCServletFilter implements Filter {
     /** MDC attribute name for container session ID. */
     @Nonnull @NotEmpty public static final String JSESSIONID_MDC_ATTRIBUTE = "idp.jsessionid";
 
+    /** Whether to create a session if it doesn't already exist. */
+    private boolean createSession;
+    
     /** {@inheritDoc} */
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
@@ -64,7 +67,7 @@ public class SLF4JMDCServletFilter implements Filter {
             MDC.put(SERVER_ADDRESS_MDC_ATTRIBUTE, request.getServerName());
             MDC.put(SERVER_PORT_MDC_ATTRIBUTE, Integer.toString(request.getServerPort()));
             if (request instanceof HttpServletRequest) {
-                final HttpSession session = ((HttpServletRequest) request).getSession();
+                final HttpSession session = ((HttpServletRequest) request).getSession(createSession);
                 if (session != null) {
                     MDC.put(JSESSIONID_MDC_ATTRIBUTE, session.getId());
                 }
@@ -79,7 +82,12 @@ public class SLF4JMDCServletFilter implements Filter {
     /** {@inheritDoc} */
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        // nothing to do
+        final String param = filterConfig.getInitParameter("createSession");
+        if (param != null) {
+            createSession = Boolean.valueOf(param);
+        } else {
+            createSession = true;
+        }
     }
 
     /** {@inheritDoc} */
