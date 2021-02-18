@@ -26,7 +26,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 /**
  * {@link ProfileConfiguration} with optional override of issuer setting.
  *
- * @since 4.1.0
+ * @since 3.0.0
  */
 public interface OverriddenIssuerProfileConfiguration extends ProfileConfiguration {
 
