@@ -17,33 +17,32 @@
 
 package net.shibboleth.idp.profile.logic;
 
-import java.util.Collections;
+import java.util.Map;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link RelyingPartyIdPredicate}. */
-public class RelyingPartyIdPredicateTest {
+/** Unit test for {@link LoopDetectionPredicate}. */
+public class LoopDetectionPredicateTest extends OpenSAMLInitBaseTestCase {
 
     private ProfileRequestContext prc;
-    
     private RelyingPartyContext rpCtx;
+    private LoopDetectionPredicate pred;
     
     @BeforeMethod
     public void setUp() {
         prc = new ProfileRequestContext();
         rpCtx = prc.getSubcontext(RelyingPartyContext.class, true);
+        pred = new LoopDetectionPredicate();
     }
     
     @Test
-    public void testNone() throws ComponentInitializationException {
-        final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate(Collections.<String>emptySet());
-        
+    public void testNoMap() {
         Assert.assertFalse(pred.test(prc));
         
         rpCtx.setRelyingPartyId("foo");
@@ -51,23 +50,30 @@ public class RelyingPartyIdPredicateTest {
     }
 
     @Test
-    public void testMatch() throws ComponentInitializationException {
-        final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate(Collections.singleton("foo"));
-        
-        Assert.assertFalse(pred.test(prc));
+    public void testNoMatch() {
+        pred.setRelyingPartyMap(Map.of("bar", "bar"));
         
         rpCtx.setRelyingPartyId("foo");
+        Assert.assertFalse(pred.test(prc));
+    }
+
+    @Test
+    public void testMatch() {
+        pred.setRelyingPartyMap(Map.of("foo", "foo"));
+        
+        rpCtx.setRelyingPartyId("foo");
+        Assert.assertFalse(pred.test(prc));
+    }
+
+    @Test
+    public void testExceed() throws InterruptedException {
+        pred.setRelyingPartyMap(Map.of("bar", "bar"));
+        
+        rpCtx.setRelyingPartyId("bar");
+        for (int i=0; i<20; ++i) {
+            Assert.assertFalse(pred.test(prc));
+        }
         Assert.assertTrue(pred.test(prc));
-    }
-
-    @Test
-    public void testNoMatch() throws ComponentInitializationException {
-        final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate(Collections.singleton("bar"));
-        
-        Assert.assertFalse(pred.test(prc));
-        
-        rpCtx.setRelyingPartyId("foo");
-        Assert.assertFalse(pred.test(prc));
     }
 
 }
