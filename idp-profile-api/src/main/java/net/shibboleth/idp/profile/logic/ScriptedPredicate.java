@@ -53,6 +53,7 @@ public class ScriptedPredicate
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
             @Nullable @NotEmpty @ParameterName(name="extraInfo") final String extraInfo) {
         super(theScript, extraInfo);
+        setInputType(ProfileRequestContext.class);
     }
 
     /**
@@ -62,6 +63,7 @@ public class ScriptedPredicate
      */
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
         super(theScript);
+        setInputType(ProfileRequestContext.class);
     }
     
     /** {@inheritDoc} */
