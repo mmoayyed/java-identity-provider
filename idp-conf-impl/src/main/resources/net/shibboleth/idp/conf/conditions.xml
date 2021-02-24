@@ -40,6 +40,9 @@
     <bean id="shibboleth.Conditions.Expression"
         class="net.shibboleth.idp.profile.logic.SpringExpressionPredicate" abstract="true" />
 
+    <bean id="shibboleth.BiConditions.Scripted"
+        class="net.shibboleth.utilities.java.support.logic.ScriptedBiPredicate" abstract="true" />
+
     <!-- Parent bean for building custom predicates that act on a RP's EntityDescriptor. -->
     <bean id="shibboleth.Conditions.EntityDescriptor" abstract="true"
         class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate"
