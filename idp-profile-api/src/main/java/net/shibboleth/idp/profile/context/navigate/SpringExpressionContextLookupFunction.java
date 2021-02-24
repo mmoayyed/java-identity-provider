@@ -53,7 +53,7 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext,U> exte
         
         if(!BaseContext.class.isAssignableFrom(inClass)) {
             LoggerFactory.getLogger(SpringExpressionContextLookupFunction.class).
-                warn("InClass {} is not derived from {}", inClass, BaseContext.class);
+                warn("inClass {} is not derived from {}", inClass, BaseContext.class);
         }
     }
 

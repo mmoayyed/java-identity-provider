@@ -41,13 +41,13 @@ public class SpringExpressionPredicate
      */
     public SpringExpressionPredicate(@Nonnull @NotEmpty @ParameterName(name="expression") final String expression) {
         super(expression);
+        setInputType(ProfileRequestContext.class);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void prepareContext(@Nonnull final EvaluationContext context,
-            @Nullable final ProfileRequestContext input) {
-        context.setVariable("profileContext", input);
+    protected void prepareContext(@Nonnull final EvaluationContext context, @Nullable final Object... input) {
+        context.setVariable("profileContext", input[0]);
     }
 
 }
