@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.logic;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,6 +38,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /**
  * A condition that relies on a {@link Meter} to detect looping SPs. 
@@ -54,10 +56,14 @@ public class LoopDetectionPredicate extends AbstractRelyingPartyPredicate {
     /** Map of RP names to meter names. */
     @Nonnull @NonnullElements private Map<String,String> relyingPartyMap;
     
+    /** Lookup strategy to obtain subject name. */
+    @Nonnull private Function<ProfileRequestContext,String> usernameLookupStrategy;
+    
     /** Constructor. */
     public LoopDetectionPredicate() {
         threshold = 20;
         relyingPartyMap = Collections.emptyMap();
+        usernameLookupStrategy = FunctionSupport.constant(null);
     }
     
     /**
@@ -84,15 +90,26 @@ public class LoopDetectionPredicate extends AbstractRelyingPartyPredicate {
         }
     }
     
+    /**
+     * Set lookup strategy to obtain username.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
+    }
+    
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
         
+        final String username = usernameLookupStrategy.apply(input);
         final RelyingPartyContext rpCtx = getRelyingPartyContextLookupStrategy().apply(input);
-        if (rpCtx != null) {
+        
+        if (username != null && rpCtx != null && rpCtx.getRelyingPartyId() != null) {
             final String meterName = relyingPartyMap.get(rpCtx.getRelyingPartyId());
             if (meterName != null) {
                 final Meter meter = MetricsSupport.getMetricRegistry().meter(
-                        MetricRegistry.name("net.shibboleth.idp.loopDetection", meterName),
+                        MetricRegistry.name("net.shibboleth.idp.loopDetection", meterName, username.replace(".","")),
                         new MetricSupplier<Meter>() {
                             public Meter newMetric() {
                                 return new Meter(new SlidingTimeWindowMovingAverages());
