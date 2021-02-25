@@ -361,9 +361,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         final ProxyAuthenticationPrincipal proxied = new ProxyAuthenticationPrincipal();
         
         final Assertion assertion = (Assertion) samlAuthnContext.getAuthnStatement().getParent();
-        
-        proxied.getAuthorities().add(assertion.getIssuer().getValue());
-        
         if (!authnContext.getAuthenticatingAuthorities().isEmpty()) {
             proxied.getAuthorities().addAll(
                     authnContext.getAuthenticatingAuthorities()
@@ -372,7 +369,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                         .filter(aa -> !Strings.isNullOrEmpty(aa))
                         .collect(Collectors.toUnmodifiableList()));
         }
-        
+        proxied.getAuthorities().add(assertion.getIssuer().getValue());
+                
         final ProxyRestriction condition = assertion.getConditions().getProxyRestriction();
         if (condition != null) {
             proxied.setProxyCount(condition.getProxyCount());
