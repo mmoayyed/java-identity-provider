@@ -32,11 +32,17 @@
 
     <bean id="shibboleth.BiFunctions.Scripted"
         class="net.shibboleth.utilities.java.support.logic.ScriptedBiFunction" abstract="true" />
+    <bean id="shibboleth.BiFunctions.Expression"
+        class="net.shibboleth.ext.spring.util.SpringExpressionBiFunction" abstract="true" />
 
     <bean id="shibboleth.Consumers.Scripted"
         class="net.shibboleth.utilities.java.support.logic.ScriptedConsumer" abstract="true" />
+    <bean id="shibboleth.Consumers.Expression"
+        class="net.shibboleth.ext.spring.util.SpringExpressionConsumer" abstract="true" />
     <bean id="shibboleth.BiConsumers.Scripted"
         class="net.shibboleth.utilities.java.support.logic.ScriptedBiConsumer" abstract="true" />
+    <bean id="shibboleth.BiConsumers.Expression"
+        class="net.shibboleth.ext.spring.util.SpringExpressionBiConsumer" abstract="true" />
 
     <!-- Parent bean for accessing relying party's metadata. -->
     <bean id="shibboleth.EntityDescriptorLookup.RelyingParty" parent="shibboleth.Functions.Compose">

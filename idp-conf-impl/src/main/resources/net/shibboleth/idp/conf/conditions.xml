@@ -35,6 +35,7 @@
         class="org.opensaml.profile.logic.BrowserProfilePredicate" />
     <bean id="shibboleth.Conditions.RelyingPartyId"
         class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate" abstract="true" />
+        
     <bean id="shibboleth.Conditions.Scripted"
         class="net.shibboleth.idp.profile.logic.ScriptedPredicate" abstract="true" />
     <bean id="shibboleth.Conditions.Expression"
@@ -42,6 +43,8 @@
 
     <bean id="shibboleth.BiConditions.Scripted"
         class="net.shibboleth.utilities.java.support.logic.ScriptedBiPredicate" abstract="true" />
+    <bean id="shibboleth.BiConditions.Expression"
+        class="net.shibboleth.ext.spring.util.SpringExpressionBiPredicate" abstract="true" />
 
     <!-- Parent bean for building custom predicates that act on a RP's EntityDescriptor. -->
     <bean id="shibboleth.Conditions.EntityDescriptor" abstract="true"
