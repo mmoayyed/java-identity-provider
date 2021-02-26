@@ -28,6 +28,7 @@ import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
 import org.opensaml.xmlsec.keyinfo.impl.KeyInfoProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
+import org.opensaml.xmlsec.keyinfo.impl.provider.ECKeyValueProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
@@ -175,6 +176,7 @@ public class SignatureValidationParser extends AbstractCustomBeanDefinitionParse
         final List<KeyInfoProvider> keyInfoProviders = new ArrayList<>();
         keyInfoProviders.add(new DSAKeyValueProvider());
         keyInfoProviders.add(new RSAKeyValueProvider());
+        keyInfoProviders.add(new ECKeyValueProvider());
         keyInfoProviders.add(new InlineX509DataProvider());
         trustEngineBuilder.addConstructorArgValue(new BasicProviderKeyInfoCredentialResolver(keyInfoProviders));
 

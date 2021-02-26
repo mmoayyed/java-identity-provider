@@ -309,6 +309,19 @@
             </list>
         </property>
     </bean>
+    
+    <!-- Beans related to configuration of key agreement, mostly to provide abstract parent beans for impl classes -->
+    
+    <bean id="shibboleth.KeyAgreement.Configuration" abstract="true"
+        class="org.opensaml.saml.security.SAMLMetadataKeyAgreementEncryptionConfiguration" />
+
+    <bean id="shibboleth.KeyAgreement.ConcatKDF" abstract="true" class="org.opensaml.xmlsec.derivation.impl.ConcatKDF" />
+
+    <bean id="shibboleth.KeyAgreement.PBKDF2" abstract="true" class="org.opensaml.xmlsec.derivation.impl.PBKDF2" />
+
+    <bean id="shibboleth.KeyAgreement.DigestMethod" abstract="true" class="org.opensaml.xmlsec.agreement.impl.DigestMethod" />
+
+    <bean id="shibboleth.KeyAgreement.KANonce" abstract="true" class="org.opensaml.xmlsec.agreement.impl.KANonce" />
 
     <bean id="shibboleth.MetadataPKIXValidationInformationResolver"
         class="net.shibboleth.idp.saml.security.impl.MetadataPKIXValidationInformationResolver"
@@ -370,8 +383,10 @@
                         <list>
                             <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider" />
                             <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider" />
+                            <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.ECKeyValueProvider" />
                             <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider" />
                             <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider" />
+                            <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.AgreementMethodKeyInfoProvider" />
                         </list>
                     </constructor-arg>
                 </bean>

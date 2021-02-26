@@ -76,7 +76,8 @@
         class="org.opensaml.xmlsec.impl.BasicDecryptionParametersResolver" />
     <bean id="shibboleth.EncryptionParametersResolver"
         class="org.opensaml.saml.security.impl.SAMLMetadataEncryptionParametersResolver"
-        c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+        c:resolver-ref="shibboleth.MetadataCredentialResolver"
+        p:defaultKeyAgreementUseKeyWrap="%{idp.encryption.keyagreement.metadata.defaultUseKeyWrap:Default}" />
     <bean id="shibboleth.ClientTLSValidationParametersResolver"
         class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationParametersResolver" />
     <bean id="shibboleth.HttpClientSecurityParametersResolver"
