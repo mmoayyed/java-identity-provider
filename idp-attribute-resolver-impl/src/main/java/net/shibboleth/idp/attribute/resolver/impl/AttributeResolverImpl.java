@@ -49,6 +49,7 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
+import net.shibboleth.idp.attribute.resolver.NoResultAnErrorResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolvedDataConnector;
@@ -339,6 +340,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         workContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
     }
 
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /**
      * Resolve the {@link DataConnector} which has the specified ID.
      * 
@@ -382,9 +384,9 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 return;
             }
             if (connector.isPropagateResolutionExceptions()) {
-                throw new ResolutionException("Previous resolve failed");
+                throw new ResolutionException("Connector in no-retry state from previous failure");
             }
-            log.warn("Data connector '{}' previously failed but was configured not to propagate");
+            log.debug("Data connector '{}' in no-retry state, not configured to propagate failure");
             return;
         }
 
@@ -396,14 +398,20 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         } catch (final ResolutionException e) {
             final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
             if (null != failoverDataConnectorId) {
-                log.debug("{} Data connector '{}' failed to resolve, invoking failover data"
-                        + " connector '{}'.  Reason for failure:", logPrefix, connectorId, failoverDataConnectorId, e);
+                if (e instanceof NoResultAnErrorResolutionException) {
+                    log.debug("{} Data connector '{}' returned no result, invoking failover connector '{}'", logPrefix,
+                            connectorId, failoverDataConnectorId, e);
+                } else {
+                    log.warn("{} Data connector '{}' failed, invoking failover connector '{}'", logPrefix, connectorId,
+                            failoverDataConnectorId, e);
+                }
                 resolveDataConnector(failoverDataConnectorId, resolutionContext);
                 workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
                 return;
             }
             // Pass it on. Do not look at propagateException because this is handled in the
             // connector code logic.
+            log.warn("{} Data connector '{}' failed", logPrefix, connectorId, e);
             throw e;
         }
 
@@ -415,7 +423,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
         workContext.recordDataConnectorResolution(connector, resolvedAttributes);
     }
-
+// Checkstyle: CyclomaticComplexity|MethodLength ON
+    
     /**
      * Resolves all the dependencies for a given plugin.
      * 
