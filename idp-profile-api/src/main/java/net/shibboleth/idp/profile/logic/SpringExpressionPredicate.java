@@ -47,6 +47,7 @@ public class SpringExpressionPredicate
     /** {@inheritDoc} */
     @Override
     protected void prepareContext(@Nonnull final EvaluationContext context, @Nullable final Object... input) {
+        super.prepareContext(context, input);
         context.setVariable("profileContext", input[0]);
     }
 
