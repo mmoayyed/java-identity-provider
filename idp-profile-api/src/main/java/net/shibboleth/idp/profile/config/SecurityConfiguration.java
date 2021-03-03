@@ -180,7 +180,7 @@ public class SecurityConfiguration {
      * 
      * @return configuration used when validating client TLS X509Credentials, or null
      */
-    public ClientTLSValidationConfiguration getClientTLSValidationConfiguration() {
+    @Nullable public ClientTLSValidationConfiguration getClientTLSValidationConfiguration() {
         return clientTLSConfig;
     }
 
@@ -198,7 +198,7 @@ public class SecurityConfiguration {
      * 
      * @return configuration used when executing HttpClient requests, or null
      */
-    public HttpClientSecurityConfiguration getHttpClientSecurityConfiguration() {
+    @Nullable public HttpClientSecurityConfiguration getHttpClientSecurityConfiguration() {
         return httpClientConfig;
     }
 
