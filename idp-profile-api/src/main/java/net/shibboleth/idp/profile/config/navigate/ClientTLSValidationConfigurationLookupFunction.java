@@ -63,7 +63,7 @@ public class ClientTLSValidationConfigurationLookupFunction
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null) {
                 final SecurityConfiguration sc = pc.getSecurityConfiguration(input);
-                if (sc != null) {
+                if (sc != null && sc.getClientTLSValidationConfiguration() != null) {
                     configs.add(sc.getClientTLSValidationConfiguration());
                 }
             }

@@ -65,7 +65,7 @@ public class HttpClientSecurityConfigurationLookupFunction
             if (pc != null) {
                 final SecurityConfiguration sc =
                         pc.getSecurityConfiguration(this.getProfileRequestContextLookupStrategy().apply(input));
-                if (sc != null) {
+                if (sc != null && sc.getHttpClientSecurityConfiguration() != null) {
                     configs.add(sc.getHttpClientSecurityConfiguration());
                 }
             }

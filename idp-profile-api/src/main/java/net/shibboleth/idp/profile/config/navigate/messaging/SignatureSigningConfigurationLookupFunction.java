@@ -65,7 +65,7 @@ public class SignatureSigningConfigurationLookupFunction
             if (pc != null) {
                 final SecurityConfiguration sc =
                         pc.getSecurityConfiguration(this.getProfileRequestContextLookupStrategy().apply(input));
-                if (sc != null) {
+                if (sc != null && sc.getSignatureSigningConfiguration() != null) {
                     configs.add(sc.getSignatureSigningConfiguration());
                 }
             }
