@@ -296,7 +296,7 @@
         c:_0-ref="shibboleth.PrincipalServiceManager"
         c:_1-ref="shibboleth.GenericPrincipalSerializer" />
 
-    <!-- Dummy bean for compatibility, this is no longer a support extensions point. -->
+    <!-- Dummy bean for compatibility, this is no longer a supported extensions point. -->
     <bean id="shibboleth.DefaultPrincipalSerializers" class="org.springframework.beans.factory.config.ListFactoryBean"
             lazy-init="true">
         <property name="sourceList">
