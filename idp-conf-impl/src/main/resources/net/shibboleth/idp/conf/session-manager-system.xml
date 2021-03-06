@@ -16,6 +16,14 @@
         class="net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy"
         c:identifierSize="%{idp.session.idSize:32}" />
 
+    <!-- Dummy bean for compatibility, this is no longer a supported extensions point. -->
+    <bean id="shibboleth.DefaultSessionTypeProtocolMap" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <list/>
+        </property>
+    </bean>
+
     <!-- SPSession serializers. -->
     
     <bean id="shibboleth.SPSessionSerializer" abstract="true"
