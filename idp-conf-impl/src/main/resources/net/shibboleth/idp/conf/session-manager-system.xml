@@ -20,7 +20,7 @@
     <bean id="shibboleth.DefaultSessionTypeProtocolMap" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
-            <list/>
+            <map/>
         </property>
     </bean>
 
