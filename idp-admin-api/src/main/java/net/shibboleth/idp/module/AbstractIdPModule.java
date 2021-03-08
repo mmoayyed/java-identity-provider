@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -438,7 +439,15 @@ public abstract class AbstractIdPModule implements IdPModule {
                     throw new ModuleException("Module asked to create file outside of IdP installation");
                 }
 
-                Files.createDirectories(destPath.getParent());
+                try {
+                    Files.createDirectories(destPath.getParent());
+                } catch (final IOException e) {
+                    if (e instanceof FileAlreadyExistsException) {
+                        log.info("Path {} existed but not directory, assuming symlink", destPath.getParent());
+                    } else {
+                        throw e;
+                    }
+                }
                 Files.copy(srcStream, destPath, StandardCopyOption.REPLACE_EXISTING);
                 if (isExecutable()) {
                     destPath.toFile().setExecutable(true);
