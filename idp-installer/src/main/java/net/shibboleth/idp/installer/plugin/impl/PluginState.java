@@ -124,7 +124,7 @@ public class PluginState extends AbstractInitializableComponent {
      */
     public void setHttpClient(@Nonnull final HttpClient what) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        httpClient = Constraint.isNotNull(what, "HttpClient must be non null");
+        httpClient = Constraint.isNotNull(what, "HttpClient cannot be null");
     }
 
     /** Look up the key derived from the pluginId, the interfix and the version, but if that
@@ -155,7 +155,7 @@ public class PluginState extends AbstractInitializableComponent {
     private boolean handleAvailableVersion(final Properties props, final String version) {
         final PluginVersion theVersion = new PluginVersion(version);
         if (theVersion.getMajor() == 0 && theVersion.getMinor() == 0 && theVersion.getPatch() == 0) {
-            log.warn("Plugin {}: improbable version {}", plugin.getPluginId(), version);
+            log.warn("Plugin {}: Improbable version {}", plugin.getPluginId(), version);
         }
         if (versionInfo.containsKey(theVersion)) {
             log.warn("Plugin {}: Duplicate version {}", plugin.getPluginId(), version);
@@ -164,14 +164,14 @@ public class PluginState extends AbstractInitializableComponent {
         final String maxVersionInfo = StringSupport.trimOrNull(
                 props.getProperty(plugin.getPluginId() + PluginSupport.MAX_IDP_VERSION_INTERFIX + version));
         if (maxVersionInfo == null) {
-            log.warn("Plugin {}, Version {} : Could not find max idp version.", plugin.getPluginId(), version);
+            log.warn("Plugin {}, Version {}: Could not find max idp version.", plugin.getPluginId(), version);
             return false;
         }
 
         final String minVersionInfo = StringSupport.trimOrNull(
                 props.getProperty(plugin.getPluginId() + PluginSupport.MIN_IDP_VERSION_INTERFIX + version));
         if (minVersionInfo == null) {
-            log.warn("Plugin {}, Version {} : Could not find min idp version.", plugin.getPluginId(), version);
+            log.warn("Plugin {}, Version {}: Could not find min idp version.", plugin.getPluginId(), version);
             return false;
         }
 
@@ -179,13 +179,13 @@ public class PluginState extends AbstractInitializableComponent {
                 props.getProperty(plugin.getPluginId()+ PluginSupport.SUPPORT_LEVEL_INTERFIX + version));
         PluginSupport.SupportLevel supportLevel;
         if (supportLevelString == null) {
-            log.debug("Plugin {}, Version {} : Could not find support level for {}.", plugin.getPluginId(), version);
+            log.debug("Plugin {}, Version {}: Could not find support level for {}.", plugin.getPluginId(), version);
             supportLevel = SupportLevel.Unknown;
         } else {
             try {
                 supportLevel = Enum.valueOf(SupportLevel.class, supportLevelString);
             } catch (final IllegalArgumentException e) {
-                log.warn("Plugin {}, Version {} : Invalid support level {}.",
+                log.warn("Plugin {}, Version {}: Invalid support level {}.",
                         plugin.getPluginId(), version, supportLevelString);
                 supportLevel = SupportLevel.Unknown;
             }
@@ -210,14 +210,14 @@ public class PluginState extends AbstractInitializableComponent {
                 }
                 final URL url = new URL(downloadURL);
                 downloadInfo.put(theVersion, new Pair<>(url, baseName));
-                log.trace("Plugin {}, version {} : Added download URL {}  baseName {} for {}",
+                log.trace("Plugin {}, version {}: Added download URL {}  baseName {} for {}",
                         plugin.getPluginId(), theVersion, url, baseName);
             } catch (final MalformedURLException e) {
-               log.warn("Plugin {}, version {} : download URL '{}' could not be constructed",
+               log.warn("Plugin {}, version {}: Download URL '{}' could not be constructed",
                        plugin.getPluginId(), theVersion, downloadURL, e);
             }
         } else {
-            log.info("Plugin {}, version {} : no download information present", plugin.getPluginId(), theVersion);
+            log.info("Plugin {}, version {}: no download information present", plugin.getPluginId(), theVersion);
         }
         return true;
     }
@@ -231,9 +231,9 @@ public class PluginState extends AbstractInitializableComponent {
     private boolean handleAvailableVersions(final Properties props, final String availableVersions) {
         final String[] versions = SPACE_CONTAINING.split(availableVersions, 0);
 
-        log.debug("Plugin {}: available versions : {} ", plugin.getPluginId(), availableVersions);
+        log.debug("Plugin {}: Available versions : {} ", plugin.getPluginId(), availableVersions);
         for (final String version:versions) {
-            log.debug("Plugin {} : considering {}", plugin.getPluginId(), version);
+            log.debug("Plugin {}: Considering {}", plugin.getPluginId(), version);
             if (!handleAvailableVersion(props, version)) {
                 return false;
            }
@@ -339,8 +339,8 @@ public class PluginState extends AbstractInitializableComponent {
         final VersionInfo info = versionInfo.get(pluginVersion);
         
         if (info == null) {
-            log.error("Plugin: {} Non existant version {} supplied.", plugin.getPluginId(), pluginVersion);
-            log.debug("Plugin: {} available {}", plugin.getPluginId(), versionInfo.keySet());
+            log.error("Plugin {}: Unknown version {} supplied.", plugin.getPluginId(), pluginVersion);
+            log.debug("Plugin {}: Available {}", plugin.getPluginId(), versionInfo.keySet());
             return false;
         }
         

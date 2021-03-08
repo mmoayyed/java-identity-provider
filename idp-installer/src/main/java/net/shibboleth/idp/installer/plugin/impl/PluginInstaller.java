@@ -767,7 +767,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         if (idpHome == null) {
-            throw new ComponentInitializationException("Idp Home should be set");
+            throw new ComponentInitializationException("idp.home property must be set");
         }
         try {
             idpHome = PluginInstallerSupport.canonicalPath(idpHome);
