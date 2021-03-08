@@ -240,22 +240,22 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
         if (upContext == null) {
             log.info("{} No UsernamePasswordContext available", getLogPrefix());
             if (errorHandler != null) {
-                errorHandler.handleError(profileRequestContext, authenticationContext, (String) null,
+                errorHandler.handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                         AuthnEventIds.NO_CREDENTIALS);
             }
             throw new LoginException(AuthnEventIds.NO_CREDENTIALS);
         } else if (upContext.getUsername() == null) {
             log.info("{} No username available within UsernamePasswordContext", getLogPrefix());
             if (errorHandler != null) {
-                errorHandler.handleError(profileRequestContext, authenticationContext, (String) null,
+                errorHandler.handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                         AuthnEventIds.NO_CREDENTIALS);
             }
             throw new LoginException(AuthnEventIds.NO_CREDENTIALS);
         } else if (upContext.getPassword() == null) {
             log.info("{} No password available within UsernamePasswordContext", getLogPrefix());
             if (errorHandler != null) {
-                errorHandler.handleError(profileRequestContext, authenticationContext, (String) null,
-                        AuthnEventIds.INVALID_CREDENTIALS);
+                errorHandler.handleError(profileRequestContext, authenticationContext,
+                        AuthnEventIds.INVALID_CREDENTIALS, AuthnEventIds.INVALID_CREDENTIALS);
             }
             throw new LoginException(AuthnEventIds.INVALID_CREDENTIALS);
         }
