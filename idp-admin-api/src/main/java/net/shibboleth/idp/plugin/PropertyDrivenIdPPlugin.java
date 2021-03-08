@@ -130,10 +130,10 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
         if (version == null) {
             version = StringSupport.trimOrNull(pluginProperties.getProperty(PLUGIN_VERSION_PROPERTY));
             if (version == null) {
-                throw new PluginException("No plugin version property or package attribute available");
+                throw new PluginException("No plugin version property or package attribute available for " + pluginId);
             }
         } else {
-            log.debug("Ignoring plugin version property in favor of package manifest");
+            log.debug("Ignoring plugin '{}' version property in favor of package manifest", pluginId);
         }
         
         try {
