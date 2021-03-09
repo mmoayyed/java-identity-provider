@@ -5,6 +5,9 @@
     <!-- This is a simple login flow for Duo authentication. -->
 
     <action-state id="ExtractDuoAuthenticationFromHeaders">
+        <on-entry>
+            <evaluate expression="T(net.shibboleth.utilities.java.support.primitive.DeprecationSupport).warnOnce(T(net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType).WEBFLOW, 'authn/Duo', null, 'authn/DuoOIDC')" />
+        </on-entry>
         <evaluate expression="ExtractDuoAuthenticationFromHeaders" />
         <evaluate expression="'proceed'" />
         
