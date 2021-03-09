@@ -460,24 +460,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param rollback Rollback Context
      * @throws BuildException on IO or module errors */
     private void uninstallOld(final RollbackPluginInstall rollback) throws BuildException {
-        final IdPPlugin oldPlugin = getInstalledPlugin(pluginId);
-        if (oldPlugin == null) {
-            LOG.debug("{} not installed. No modules disabled", pluginId);
-        } else {
-            String moduleId = null;
-            try {
-                for (final IdPModule module: oldPlugin.getDisableOnRemoval()) {
-                    moduleId = module.getId();
-                    if (module.isEnabled(moduleContext)) {
-                        module.disable(moduleContext, false);
-                        rollback.getModulesDisabled().add(module);
-                    }
-                }
-            } catch (final ModuleException e) {
-                LOG.error("Error disabling {}", moduleId);
-                throw new BuildException(e);
-            }
-        }
 
         if (getVersionFromContents() == null) {
             LOG.debug("{} not installed. files renamed", pluginId);
