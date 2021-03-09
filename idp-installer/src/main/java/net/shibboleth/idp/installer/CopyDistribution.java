@@ -108,7 +108,8 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @param overwrite whether we want to overwrite
      * @throws BuildException if badness occurs
      */
-    private void distCopy(final Path srcDist, final Path dist, final String to, final boolean overwrite) throws BuildException {
+    private void distCopy(final Path srcDist, final Path dist, final String to, final boolean overwrite)
+            throws BuildException {
         final Path toPath =  dist.resolve(to);
         final Path fromPath = srcDist.resolve(to);
         log.debug("Copying distribution from {} to {}", fromPath, toPath);

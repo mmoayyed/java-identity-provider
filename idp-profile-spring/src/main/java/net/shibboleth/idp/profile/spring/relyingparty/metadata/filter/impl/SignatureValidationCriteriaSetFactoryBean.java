@@ -45,9 +45,9 @@ import org.springframework.beans.factory.FactoryBean;
  * <p>
  * The supplied list of {@link SignatureValidationConfiguration} will be resolved into
  * an instance of {@link SignatureValidationParameters} and returned in the criteria set.
- * If {@link #includeOpenSAMLGlobalConfig} is true, then the OpenSAML global configuration supplied
- * from {@link SecurityConfigurationSupport#getGlobalSignatureValidationConfiguration()} will
- * be effectively added at the lowest order of precedence.
+ * If {@link #setIncludeOpenSAMLGlobalConfig(boolean)} is set true (the default), then the OpenSAML global
+ * configuration supplied from {@link SecurityConfigurationSupport#getGlobalSignatureValidationConfiguration()}
+ * will be effectively added at the lowest order of precedence.
  * Resolution will be performed using the supplied instance of {@link SignatureValidationParametersResolver},
  * or if not supplied then an instance of {@link BasicSignatureValidationParametersResolver}.
  * </p>

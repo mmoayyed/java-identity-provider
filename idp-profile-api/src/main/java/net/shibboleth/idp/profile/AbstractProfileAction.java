@@ -78,8 +78,8 @@ public abstract class AbstractProfileAction
     /**
      * Constructor.
      * 
-     * Initializes the ID of this action to the class name. Initializes {@link #profileContextLookupStrategy} to
-     * {@link WebflowRequestContextProfileRequestContextLookup}.
+     * Initializes the ID of this action to the class name and calls {@link #setProfileContextLookupStrategy(Function)}
+     * with {@link WebflowRequestContextProfileRequestContextLookup}.
      */
     public AbstractProfileAction() {
         profileContextLookupStrategy = new WebflowRequestContextProfileRequestContextLookup();

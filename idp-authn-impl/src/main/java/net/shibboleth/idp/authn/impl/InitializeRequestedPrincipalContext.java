@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * with an {@link AuthenticationProfileConfiguration} containing one or more default authentication
  * methods.
  * 
- * <p>If such a context already exists, it is left in place unless the {@link #replaceExistingContext} property
+ * <p>If such a context already exists, it is left in place unless {@link #setReplaceExistingContext(boolean)}
  * is set.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}

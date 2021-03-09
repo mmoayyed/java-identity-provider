@@ -279,7 +279,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
     public static class FormattingMapParser {
         
         /** Set of parsed fields. */
-        @Nonnull @NonnullElements final Set<String> fields;
+        @Nonnull @NonnullElements private final Set<String> fields;
         
         /**
          * Constructor.

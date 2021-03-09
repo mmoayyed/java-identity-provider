@@ -154,6 +154,11 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     }
 
 // Checkstyle: CyclomaticComplexity OFF
+    /**
+     * Load module information from properties.
+     * 
+     * @throws ModuleException on errors
+     */
     protected void load() throws ModuleException {
         try {
             moduleId = Constraint.isNotNull(

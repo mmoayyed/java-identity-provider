@@ -141,7 +141,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
     /**
      * Sets whether to ignore unmapped/decoded EntityAttribute extensions as an optimization.
      * 
-     * <p>Defaults to false. Only applies if {@link #nameFormat} property is set.</p>
+     * <p>Defaults to false. Only applies if {@link #getNameFormat()} property is non-null.</p>
      * 
      * @param flag flag to set
      */

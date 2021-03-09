@@ -74,7 +74,8 @@ import org.slf4j.LoggerFactory;
  * <ol>
  *     <li>Proxy callback URI specifies the <code>https</code> scheme.</li>
  *     <li>The TLS certificate presented by the remote peer is trusted.</li>
- *     <li>The HTTP response status code is in the set of {@link #allowedResponseCodes} (only 200 by default).</li>
+ *     <li>The HTTP response status code is approved via {@link #setAllowedResponseCodes(Set)}
+ *     (only 200 by default).</li>
  * </ol>
  *
  * @author Marvin S. Addison
@@ -99,8 +100,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
     @Nonnull private final HttpClientSecurityParameters securityParameters;
 
     /** List of HTTP response codes permitted for successful proxy callback. */
-    @NotEmpty @NonnullElements private Set<Integer> allowedResponseCodes = Collections.singleton(200);
-
+    @NotEmpty @NonnullElements private Set<Integer> allowedResponseCodes;
 
     /**
      * 
@@ -113,6 +113,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
             @Nonnull final HttpClient client, @Nonnull final HttpClientSecurityParameters parameters) {
         httpClient = Constraint.isNotNull(client, "HTTP client cannot be null");
         securityParameters = Constraint.isNotNull(parameters, "HTTP client security parameters cannot be null");
+        allowedResponseCodes = Collections.singleton(200);
     }
 
     /**
@@ -123,7 +124,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
     public void setAllowedResponseCodes(@NotEmpty @NonnullElements final Set<Integer> responseCodes) {
         Constraint.isNotEmpty(responseCodes, "Response codes cannot be null or empty.");
         Constraint.noNullItems(responseCodes.toArray(), "Response codes cannot contain null elements.");
-        allowedResponseCodes = responseCodes;
+        allowedResponseCodes = Set.copyOf(responseCodes);
     }
 
     /** {@inheritDoc} */
@@ -180,7 +181,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
             if (response != null && CloseableHttpResponse.class.isInstance(response)) {
                 try {
                     CloseableHttpResponse.class.cast(response).close();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     log.debug("Error closing HttpResponse", e);
                 }
             }

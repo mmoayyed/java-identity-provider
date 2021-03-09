@@ -48,9 +48,9 @@ import org.slf4j.LoggerFactory;
  * An attribute definition that creates attributes whose values are {@link NameID}.
  * 
  * <p>When building the NameID the textual content of the NameID is the value of the source attribute. If a
- * {@link #nameIdQualifier} is provided that value is used as the NameID's NameQualifier otherwise the attribute
- * issuer's entity ID is used. If a {@link #nameIdSPQualifier} is provided then that valid is used as the NameID's
- * SPNameQualifier, otherwise the attribute recipient's entityID is used.</p>
+ * {@link #getNameIdQualifier()} is non-null, then that value is used as the NameID's NameQualifier otherwise
+ * the attribute issuer's entityID is used. If {@link #getNameIdSPQualifier()} is non-null, then that valid is
+ * used as the NameID's SPNameQualifier, otherwise the attribute recipient's entityID is used.</p>
  * 
  * @deprecated
  */

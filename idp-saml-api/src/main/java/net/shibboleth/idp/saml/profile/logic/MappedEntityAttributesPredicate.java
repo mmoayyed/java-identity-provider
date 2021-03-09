@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
+import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;

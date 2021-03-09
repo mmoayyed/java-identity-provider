@@ -878,6 +878,14 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             return validator;
         }
         
+        /**
+         * Factory method for overriding hostname verifier.
+         * 
+         * @param disableHostnameVerification whether to install a null verifier
+         * @param logPrefix log prefix
+         * 
+         * @return custom verifier or null
+         */
         @Nullable public static CertificateHostnameVerifier buildHostnameVerifier(
                 @Nullable final String disableHostnameVerification, @Nullable final String logPrefix) {
             if (disableHostnameVerification != null && Boolean.valueOf(disableHostnameVerification)) {

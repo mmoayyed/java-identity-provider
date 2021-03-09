@@ -307,7 +307,8 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /**
      * Set condition controlling whether results from this flow should be reused for SSO.
      * 
-     * <p>Defaults to {@link ProxyCountPredicate}.</p>
+     * <p>Defaults to a built-in condition that applies SP-imposed proxying rules on hop count
+     * when the flow is configured to enforce this.</p>
      * 
      * @param condition condition to set
      * 

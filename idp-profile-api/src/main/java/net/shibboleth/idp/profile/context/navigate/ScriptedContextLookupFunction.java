@@ -42,6 +42,7 @@ import org.springframework.core.io.Resource;
  * 
  * @param <T> the specific type of context
  */
+@SuppressWarnings("removal")
 public class ScriptedContextLookupFunction<T extends BaseContext> extends AbstractScriptEvaluator
         implements ContextDataLookupFunction<T,Object> {
 

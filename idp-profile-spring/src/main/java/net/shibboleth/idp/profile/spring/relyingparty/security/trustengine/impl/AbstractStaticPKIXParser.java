@@ -130,9 +130,9 @@ public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser
         private boolean trustedNameCheckEnabled = true;
 
         /**
-         * Setter for {@link #trustedNameCheckEnabled}.
+         * Set whether to perform the trusted name check.
          * 
-         * @param enabled whether we emit a the {@link X509CredentialNameEvaluator} .
+         * @param enabled whether we emit a {@link X509CredentialNameEvaluator} .
          */
         public void setTrustedNameCheckEnabled(final boolean enabled) {
             trustedNameCheckEnabled = enabled;

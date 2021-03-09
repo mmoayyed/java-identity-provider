@@ -366,6 +366,13 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
         /** printable key. */
         @Nonnull private String keyId;
 
+        /**
+         * Constructor.
+         *
+         * @param input input data
+         * 
+         * @throws IOException if an error occurs
+         */
         protected Signature(final @Nonnull InputStream input) throws IOException {
             try (final InputStream sigStream =  PGPUtil.getDecoderStream(input)) {
                 final JcaPGPObjectFactory factory = new JcaPGPObjectFactory(sigStream);
@@ -380,6 +387,11 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
             keyId = String.format("0X%X", signature.getKeyID());
         }
 
+        /**
+         * Get signature.
+         * 
+         * @return the signature
+         */
         protected PGPSignature getSignature() {
             return signature;
         }

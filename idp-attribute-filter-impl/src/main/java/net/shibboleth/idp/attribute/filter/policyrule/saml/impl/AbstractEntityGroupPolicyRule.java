@@ -33,6 +33,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /**
@@ -70,8 +71,7 @@ public abstract class AbstractEntityGroupPolicyRule extends AbstractPolicyRule {
     }
     
     /**
-     * Set whether to check a supplied {@link org.opensaml.saml.metadata.resolver.MetadataResolver}
-     * for membership in an AffiliationDescriptor
+     * Set whether to check a supplied {@link MetadataResolver} for membership in an AffiliationDescriptor
      * as a form of group policy.
      * 
      * <p>Defaults to false.</p>
@@ -85,11 +85,10 @@ public abstract class AbstractEntityGroupPolicyRule extends AbstractPolicyRule {
 
 
     /**
-     * Returns whether we check a supplied {@link org.opensaml.saml.metadata.resolver.MetadataResolver}
-     * for membership in an AffiliationDescriptor
+     * Returns whether we check a supplied {@link MetadataResolver} for membership in an AffiliationDescriptor
      * as a form of group policy.
      *
-     * @return the value of {@link #checkAffiliations}
+     * @return whether to check for AffiliationDescriptor membership
      *
      * @since 4.0.0
      */

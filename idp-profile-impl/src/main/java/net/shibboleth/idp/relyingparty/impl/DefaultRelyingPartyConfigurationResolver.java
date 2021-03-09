@@ -132,7 +132,7 @@ public class DefaultRelyingPartyConfigurationResolver
 
     /**
      * Get the {@link RelyingPartyConfiguration} to use if the configuration is found to be "unverified"
-     * (via the call to the {@link #verificationPredicate}.
+     * (via use of {@link #getVerificationPredicate()}).
      * 
      * @return unverified configuration
      */
@@ -142,7 +142,7 @@ public class DefaultRelyingPartyConfigurationResolver
 
     /**
      * Set the {@link RelyingPartyConfiguration} to use if the configuration is found to be "unverified"
-     * (via the call to the {@link #verificationPredicate}.
+     * (via use of {@link #getVerificationPredicate()}).
      * 
      * @param configuration unverified configuration
      */

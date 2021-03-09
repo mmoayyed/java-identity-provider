@@ -201,6 +201,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("removal")
     @Override protected void setValues(final AbstractDataConnector what) {
         super.setValues(what);
         if (null != getFailoverDataConnectorId()) {

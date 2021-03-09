@@ -57,13 +57,13 @@ public class CacheConfigParser {
 
     /** Documented maximumCachedElements maximum (500).  Unfortunately it has to be here since
      * we do not own the implemented class */
-    private static final long DEFAULT_CACHE_ENTRIES = 500;
+    public static final long DEFAULT_CACHE_ENTRIES = 500;
 
     /**
      * Documented cache lifetime (4 hours).  Unfortunately it has to be here since
      * we do not own the implemented class.
      */
-    @Nonnull private static final Duration DEFAULT_TTL_MS = Duration.ofHours(4);
+    @Nonnull public static final Duration DEFAULT_TTL_MS = Duration.ofHours(4);
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CacheConfigParser.class);

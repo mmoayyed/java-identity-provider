@@ -233,7 +233,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         profileIdLookupStrategy = Constraint.isNotNull(strategy, "Profile ID lookup strategy cannot be null");
     }
 
-/** {@inheritDoc} */
+    /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();

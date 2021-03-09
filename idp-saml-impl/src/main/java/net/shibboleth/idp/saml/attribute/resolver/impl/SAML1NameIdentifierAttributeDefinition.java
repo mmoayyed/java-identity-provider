@@ -47,8 +47,8 @@ import org.slf4j.LoggerFactory;
  * An attribute definition the creates attributes whose values are {@link NameIdentifier}.
  * 
  * <p>When building the NameIdentifier the textual content of the NameIdentifier is the value of the source attribute.
- * If a {@link #nameIdQualifier} is provided that value is used as the NameIdentifier's NameQualifier otherwise the
- * attribute issuer's entity ID is used.</p>
+ * If {@link #getNameIdQualifier()} is non-null, then that value is used as the NameIdentifier's NameQualifier otherwise
+ * the attribute issuer's entityID is used.</p>
  * 
  * @deprecated
  */
@@ -116,9 +116,9 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
     }
 
     /**
-     * Builds a name ID. The provided value is the textual content of the NameIdentifier. If a {@link #nameIdQualifier}
-     * is not null it is used as the NameIdentifier's name qualifier, otherwise the attribute issuer's entity id is
-     * used.
+     * Builds a name ID. The provided value is the textual content of the NameIdentifier. If 
+     * {@link #getNameIdQualifier()} is not null it is used as the NameIdentifier's name qualifier,
+     * otherwise the attribute issuer's entityID is used.
      * 
      * @param nameIdValue value of the NameIdentifier
      * @param resolutionContext current resolution context

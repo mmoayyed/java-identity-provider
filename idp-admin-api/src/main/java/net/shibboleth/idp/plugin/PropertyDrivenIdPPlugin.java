@@ -122,6 +122,11 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
         load();
     }
     
+    /**
+     * Load plugin information from properties.
+     * 
+     * @throws PluginException on errors
+     */
     protected void load() throws PluginException {
         
         pluginId = StringSupport.trimOrNull(pluginProperties.getProperty(PLUGIN_ID_PROPERTY));

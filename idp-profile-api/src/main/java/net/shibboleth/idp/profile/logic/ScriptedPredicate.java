@@ -38,6 +38,7 @@ import org.springframework.core.io.Resource;
 /**
  * A {@link java.util.function.Predicate} which calls out to a supplied script.
  */
+@SuppressWarnings("removal")
 public class ScriptedPredicate
         extends net.shibboleth.utilities.java.support.logic.ScriptedPredicate<ProfileRequestContext> {
     

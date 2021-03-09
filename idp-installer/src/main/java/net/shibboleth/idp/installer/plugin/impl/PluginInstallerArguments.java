@@ -140,14 +140,16 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     }
 
     /** Plugin Id (if specified).
-     * @return {@link #pluginId}
+     * 
+     * @return plugin ID
      */
     @Nullable public String getPluginId() {
         return pluginId;
     }
 
     /** get TrustStore (if specified).
-     * @return {@link #truststore}
+     * 
+     * @return the trust store
      */
     @Nullable public String getTruststore() {
         return truststore;
@@ -184,14 +186,16 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     }
 
     /** Are we doing a full List?
-     * @return {@link #fullList}
+     * 
+     * @return whether we're doing a full list.
      */
     public boolean isFullList() {
         return fullList;
     }
 
     /** Are we doing a List?
-     * @return {@link #list}
+     * 
+     * @return whether we're doing a list
      */
     public boolean isList() {
         return list;
@@ -205,7 +209,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     }
 
     /** Are we doing an unattended install?
-     * @return {@link #list}
+     * 
+     * @return whether we're doing an unattended install
      */
     public boolean isUnattended() {
         return noPrompt;

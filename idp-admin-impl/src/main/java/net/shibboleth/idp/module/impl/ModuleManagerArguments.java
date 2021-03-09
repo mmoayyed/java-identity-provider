@@ -80,7 +80,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     /**
      * Are we doing a list?
      * 
-     * @return {@link #list}
+     * @return whether this is a list operation
      */
     public boolean getList() {
         return list;
@@ -89,7 +89,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     /**
      * Gets the module ID(s) to report on.
      * 
-     * @return {@link #infoModuleIds}
+     * @return module ID(s) to report on
      */
     @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getInfoModuleIds() {
         return List.copyOf(StringSupport.normalizeStringCollection(infoModuleIds));
@@ -98,7 +98,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     /**
      * Gets the module ID(s) to test.
      * 
-     * @return {@link #testModuleIds}
+     * @return module ID(s) to test
      */
     @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getTestModuleIds() {
         return List.copyOf(StringSupport.normalizeStringCollection(testModuleIds));
@@ -107,7 +107,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     /**
      * Gets the module ID(s) to enable.
      * 
-     * @return {@link #enableModuleIds}
+     * @return module ID(s) to enable
      */
     @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getEnableModuleIds() {
         return List.copyOf(StringSupport.normalizeStringCollection(enableModuleIds));
@@ -116,7 +116,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     /**
      * Gets the module ID(s) to disable.
      * 
-     * @return {@link #disableModuleIds}
+     * @return module ID(s) to disable
      */
     @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getDisableModuleIds() {
         return List.copyOf(StringSupport.normalizeStringCollection(disableModuleIds));
@@ -125,7 +125,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     /**
      * Are we disabling with the clean option?
      * 
-     * @return {@link #clean}
+     * @return clean option
      */
     public boolean getClean() {
         return clean;
