@@ -419,7 +419,7 @@ public class V4Install extends AbstractInitializableComponent {
                     try {
                         module.enable(moduleContext);
                     } catch (final ModuleException e) {
-                        log.error("Error {erforming initial enable on module {}", id, e);
+                        log.error("Error performing initial enable on module {}", id, e);
                         throw new BuildException(e);
                     }
                 }
@@ -498,6 +498,8 @@ public class V4Install extends AbstractInitializableComponent {
                 InstallerSupport.setMode(installerProps.getTargetDir().resolve("system"), "444", "**/*");
             }
             InstallerSupport.setMode(installerProps.getTargetDir().resolve("dist"), "444", "**/*");
+            InstallerSupport.setMode(installerProps.getTargetDir().resolve("dist").resolve("plugin-contents"),
+                    "640", "**/*");
             if (currentState.getInstalledVersion() == null) {
                 InstallerSupport.setMode(installerProps.getTargetDir().resolve("credentials"),
                         installerProps.getCredentialsKeyFileMode(), "**/*");

@@ -483,6 +483,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void saveCopiedFiles(final List<Path> copiedFiles) throws BuildException {
         try {
             final Path parent = distPath.resolve("plugin-contents");
+            // Just in case it has been deprotected
+            InstallerSupport.setMode(parent, "640", "**/*");
             Files.createDirectories(parent);
             final Properties props = new Properties(1+copiedFiles.size());
             props.setProperty("idp.plugin.version",
