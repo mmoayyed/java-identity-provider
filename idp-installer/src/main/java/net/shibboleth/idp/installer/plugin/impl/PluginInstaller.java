@@ -443,7 +443,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
         String moduleId = null;
         try {
-            for (final IdPModule module: description.getDisableOnRemoval()) {
+            for (final IdPModule module: description.getEnableOnInstall()) {
                 moduleId = module.getId();
                 if (!module.isEnabled(moduleContext)) {
                     module.enable(moduleContext);
