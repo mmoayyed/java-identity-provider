@@ -49,11 +49,11 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
     @Parameter(names= {"-l", "--list"})
     @Nullable private boolean list;
 
-    /** Detailed info about an installed module. */
+    /** Detailed info about installed module(s). */
     @Parameter(names= {"-i", "--info"})
     @Nullable @NonnullElements private List<String> infoModuleIds = new ArrayList<>();
 
-    /** Detailed info about installed module(s). */
+    /** Test status of installed module(s). */
     @Parameter(names= {"-t", "--test"})
     @Nullable @NonnullElements private List<String> testModuleIds = new ArrayList<>();
 

@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -126,6 +128,9 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
         int ret = RC_OK;
         
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
+
+        final Set<String> unknownTestModules = new HashSet<>(args.getTestModuleIds());
+        final Set<String> unknownInfoModules = new HashSet<>(args.getInfoModuleIds());
         
         while (modules.hasNext()) {
             try {
@@ -135,6 +140,7 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                     if (!module.isEnabled(moduleContext)) {
                         ret = RC_UNKNOWN;
                     }
+                    unknownTestModules.remove(module.getId());
                 }
                 
                 if (args.getInfoModuleIds().contains(module.getId())) {
@@ -158,20 +164,31 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                                 r.getDestination());
                     });
                     System.out.println();
+                    unknownInfoModules.remove(module.getId());
                 }
                 
                 if (args.getInfoModuleIds().isEmpty() && args.getTestModuleIds().isEmpty()) {
+                    System.out.print("Module: " + module.getId());
                     if (module.isEnabled(moduleContext)) {
-                        System.out.println("Module: " + module.getId() +
+                        System.out.println(
                                 TerminalCodes.GREEN.code(args) + " [ENABLED]" + TerminalCodes.RESET.code(args));
                     } else {
-                        System.out.println("Module: " + module.getId() +
+                        System.out.println(
                                 TerminalCodes.RED.code(args) + " [DISABLED]" + TerminalCodes.RESET.code(args));
                     }
                 }
             } catch (final ServiceConfigurationError e) {
                 System.out.println("ServiceConfigurationError: " + e.getMessage());
             }
+        }
+        
+        if (!unknownTestModules.isEmpty()) {
+            return RC_UNKNOWN;
+        }
+        
+        if (!unknownInfoModules.isEmpty()) {
+            System.out.println("Unknown modules: " + unknownInfoModules);
+            return RC_UNKNOWN;
         }
         
         return ret;
@@ -194,14 +211,19 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
         int ret = RC_OK;
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
         
+        final Set<String> unknownModules = new HashSet<>(args.getEnableModuleIds());
+        unknownModules.addAll(args.getDisableModuleIds());
+        
         while (modules.hasNext()) {
             try {
                 final IdPModule module = modules.next();
                 final boolean enable;
                 if (args.getEnableModuleIds().contains(module.getId())) {
                     enable = true;
+                    unknownModules.remove(module.getId());
                 } else if (args.getDisableModuleIds().contains(module.getId())) {
                     enable = false;
+                    unknownModules.remove(module.getId());
                 } else {
                     continue;
                 }
@@ -232,6 +254,11 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
                 System.out.println("ServiceConfigurationError: " + e.getMessage());
                 ret = RC_UNKNOWN;
             }
+        }
+        
+        if (!unknownModules.isEmpty()) {
+            System.out.println("Unknown modules: " + unknownModules);
+            return RC_UNKNOWN;
         }
         
         return ret;
