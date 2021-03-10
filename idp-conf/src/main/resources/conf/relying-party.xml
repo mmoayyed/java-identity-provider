@@ -27,20 +27,17 @@
         </property>
     </bean>
 
-    <!--
-    Default configuration, with default settings applied for all profiles, and enables
-    the attribute-release consent flow.
-    -->
+    <!-- Default configuration, with default settings applied for all profiles. -->
     <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
             <list>
                 <!-- SAML 1.1 and SAML 2.0 AttributeQuery are disabled by default. -->
                 <!--
-                <bean parent="Shibboleth.SSO" p:postAuthenticationFlows="attribute-release" />
+                <bean parent="Shibboleth.SSO" />
                 <ref bean="SAML1.AttributeQuery" />
                 <ref bean="SAML1.ArtifactResolution" />
                 -->
-                <bean parent="SAML2.SSO" p:postAuthenticationFlows="attribute-release" />
+                <bean parent="SAML2.SSO" />
                 <ref bean="SAML2.ECP" />
                 <ref bean="SAML2.Logout" />
                 <!--
