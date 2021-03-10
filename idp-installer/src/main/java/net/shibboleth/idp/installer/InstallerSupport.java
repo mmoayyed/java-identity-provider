@@ -195,6 +195,10 @@ public final class InstallerSupport {
             log.debug("Not windows. Not [re]setting readonly bit");
             return;
         }
+        if (!Files.exists(path) ) {
+            log.debug("Directory {} does not exist, not performing Attrib -/+r", path);
+            return;
+        }
         if (Files.isDirectory(path)) {
             setReadOnlyDir(path, readOnly);
         } else {
@@ -210,6 +214,10 @@ public final class InstallerSupport {
      */
     public static void setMode(final Path directory, final String permissions, final String includes)
             throws BuildException {
+        if (!Files.exists(directory) ) {
+            log.debug("Directory {} does not exist, not performing chmod", directory);
+            return;
+        }
         log.debug("Performing chmod {} on {} including {}", permissions, directory, includes);
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             log.debug("Windows. Not performing chmod");
@@ -232,6 +240,10 @@ public final class InstallerSupport {
      */
     public static void setGroup(final Path directory, final String group, final String includes)
             throws BuildException {
+        if (!Files.exists(directory) ) {
+            log.debug("Directory {} does not exist, not performing chgrp", directory);
+            return;
+        }
         log.debug("Performing chgrp {} on {} including {}", group, directory, includes);
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             log.debug("Windows. Not performing chown");

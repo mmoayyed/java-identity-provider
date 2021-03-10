@@ -487,7 +487,12 @@ public class V4Install extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     protected void reprotect() throws BuildException {
+        final Path pluginContents = installerProps.getTargetDir().resolve("dist").resolve("plugin-contents");
+        final Path pluginWebapp = installerProps.getTargetDir().resolve("dist").resolve("plugin-webapp");
+
         InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("dist"), true);
+        InstallerSupport.setReadOnly(pluginContents, false);
+        InstallerSupport.setReadOnly(pluginWebapp, false);
         if (currentState.isSystemPresent()) {
             InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("system"), true);
         }
@@ -498,10 +503,8 @@ public class V4Install extends AbstractInitializableComponent {
                 InstallerSupport.setMode(installerProps.getTargetDir().resolve("system"), "444", "**/*");
             }
             InstallerSupport.setMode(installerProps.getTargetDir().resolve("dist"), "444", "**/*");
-            final Path pluginContents = installerProps.getTargetDir().resolve("dist").resolve("plugin-contents");
-            if (Files.exists(pluginContents)) {
-                InstallerSupport.setMode(pluginContents,  "640", "**/*");
-            }
+            InstallerSupport.setMode(pluginContents,  "640", "**/*");
+            InstallerSupport.setMode(pluginWebapp,  "640", "**/*");
             if (currentState.getInstalledVersion() == null) {
                 InstallerSupport.setMode(installerProps.getTargetDir().resolve("credentials"),
                         installerProps.getCredentialsKeyFileMode(), "**/*");

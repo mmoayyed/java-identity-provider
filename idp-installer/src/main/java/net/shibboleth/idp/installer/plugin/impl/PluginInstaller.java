@@ -133,6 +133,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Pluginss webapp. */
     @NonnullAfterInit private Path pluginsWebapp;
 
+    /** Pluginss webapp. */
+    @NonnullAfterInit private Path pluginsContents;
+
     /** What was installed - this is setup by {@link #loadCopiedFiles()}. */
     @Nullable private List<String> installedContents;
 
@@ -328,7 +331,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             builder.execute();
             LOG.info("Removed resources for {} from the war", pluginId);
         }
-        distPath.resolve("plugin-contents").resolve(pluginId).toFile().deleteOnExit();
+        pluginsContents.resolve(pluginId).toFile().deleteOnExit();
     }
 
     /** Get hold of the {@link IdPPlugin} for this plugin.
@@ -482,12 +485,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void saveCopiedFiles(final List<Path> copiedFiles) throws BuildException {
         try {
-            final Path parent = distPath.resolve("plugin-contents");
-            // Just in case it has been deprotected
-            if (Files.exists(parent)) {
-                InstallerSupport.setMode(parent, "640", "**/*");
-            }
-            Files.createDirectories(parent);
+            Files.createDirectories(pluginsContents);
             final Properties props = new Properties(1+copiedFiles.size());
             props.setProperty("idp.plugin.version",
                     new PluginVersion(description).toString());
@@ -496,7 +494,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 props.setProperty("idp.plugin.file."+Integer.toString(count++),
                         PluginInstallerSupport.canonicalPath(p).toString());
             }
-            final File outFile = parent.resolve(pluginId).toFile();
+            final File outFile = pluginsContents.resolve(pluginId).toFile();
             try (final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
                 props.store(out, "Files Copied "  + Instant.now());
             }
@@ -514,9 +512,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         if (installedContents != null) {
             return;
         }
-        final Path parent = distPath.resolve("plugin-contents");
         final Properties props = new Properties();
-        final File inFile = parent.resolve(pluginId).toFile();
+        final File inFile = pluginsContents.resolve(pluginId).toFile();
         if (!inFile.exists()) {
             LOG.debug("Contents file for plugin {} ({}) does not exist", pluginId, inFile.getAbsolutePath());
             installedContents = Collections.emptyList();
@@ -767,7 +764,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         distPath = idpHome.resolve("dist");
         workspacePath = distPath.resolve("plugin-workspace");
         pluginsWebapp = distPath.resolve("plugin-webapp");
+        pluginsContents = distPath.resolve("plugin-contents");
         InstallerSupport.setReadOnly(distPath, false);
+        // Just in case they have been protected
+        InstallerSupport.setMode(workspacePath, "640", "**/*");
+        InstallerSupport.setMode(pluginsWebapp, "640", "**/*");
+        InstallerSupport.setMode(pluginsContents, "640", "**/*");
     }
 
     /** Generate a {@link URLClassLoader} which looks at the
