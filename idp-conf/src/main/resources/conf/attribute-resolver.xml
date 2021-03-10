@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-    This file is an EXAMPLE configuration file. While the configuration
-    presented in this example file is semi-functional, it isn't very
-    interesting. It is here only as a starting point for your deployment
-    process.
-    
-    Very few attribute definitions and data connectors are demonstrated,
-    and the data is derived statically from the logged-in username and a
-    static example connector.
+This file is a rudimentary example. While it is semi-functional, it isn't very
+interesting. It is here only as a starting point for your deployment process
+to avoid any dependency on components like an LDAP directory.
 
-    Attribute-resolver-full.xml contains more examples of attributes,
-    encoders, and data connectors. Deployers should refer to the Shibboleth
-    documentation for a complete list of components and their options.
+Very few attribute definitions and data connectors are demonstrated, and the
+data is derived statically from the logged-in username and a static example
+connector.
+
+The file(s) in the examples directory contain more examples that involve more
+complex approaches. Deployers should refer to the documentation for a complete
+list of possible components and their options.
 -->
 <AttributeResolver
         xmlns="urn:mace:shibboleth:2.0:resolver" 
