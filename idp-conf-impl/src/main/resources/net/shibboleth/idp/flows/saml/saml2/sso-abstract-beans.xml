@@ -87,7 +87,8 @@
     <bean id="AddSubjectConfirmationToSubjects"
         class="org.opensaml.saml.saml2.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:method="urn:oasis:names:tc:SAML:2.0:cm:bearer" />
+        p:method="urn:oasis:names:tc:SAML:2.0:cm:bearer"
+        p:addressLookupStrategy="#{getObject('shibboleth.SubjectLocalityAddressStrategy')}" />
 
     <bean id="AddProxyRestrictionToAssertions"
             class="org.opensaml.saml.saml2.profile.impl.AddProxyRestrictionToAssertions" scope="prototype">
