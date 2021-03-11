@@ -482,6 +482,14 @@ public abstract class AbstractIdPModule implements IdPModule {
                         log.debug("Module {} removing resource {}", getId(), resolved);
                         Files.delete(resolved);
                         result = ResourceResult.REMOVED;
+
+                        // If cleaning check for a previous distribution copy to remove.
+                        if (clean) {
+                            final Path idpnewVersion = resolved.resolveSibling(resolved.getFileName() + ".idpnew");
+                            if (Files.exists(idpnewVersion)) {
+                                Files.delete(idpnewVersion);
+                            }
+                        }
                     } else {
                         log.debug("Module {} backing up resource {}", getId(), resolved);
                         Files.move(resolved, resolved.resolveSibling(resolved.getFileName() + ".idpsave"),
