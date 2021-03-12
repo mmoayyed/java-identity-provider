@@ -41,6 +41,9 @@ public final class SAMLAuditFields {
     /** Response binding field. */
     @Nonnull @NotEmpty public static final String RESPONSE_BINDING = "bb";
     
+    /** RelayState binding field. */
+    @Nonnull @NotEmpty public static final String RELAY_STATE = "RS";
+    
     /** Name identifier field. */
     @Nonnull @NotEmpty public static final String NAMEID = "n";
 
