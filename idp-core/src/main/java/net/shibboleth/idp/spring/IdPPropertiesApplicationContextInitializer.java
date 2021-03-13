@@ -286,7 +286,7 @@ public class IdPPropertiesApplicationContextInitializer
                     continue;
                 }
             } else {
-                LOG.warn("Unable to find property resource '{}' (check {}?}", additionalResource,
+                LOG.warn("Unable to find property resource '{}' (check {}?)", additionalResource,
                         IDP_ADDITIONAL_PROPERTY);
             }
         }
