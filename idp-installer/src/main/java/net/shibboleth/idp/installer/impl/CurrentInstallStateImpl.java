@@ -146,12 +146,17 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
                 targetDir.toString(), props);
         for (final String source : additionalSources) {
             final Path path = Path.of(source);
-            try {
-                final InputStream stream = new FileInputStream(path.toFile());
-                props.load(stream);
-            } catch (final IOException e) {
-                log.error("Error loading {}", path, e);
-                throw new ComponentInitializationException(e);
+            if (Files.exists(path)) {
+                try {
+                    final InputStream stream = new FileInputStream(path.toFile());
+                    props.load(stream);
+                } catch (final IOException e) {
+                    log.error("Error loading {}", path, e);
+                    throw new ComponentInitializationException(e);
+                }
+            } else {
+                log.warn("Unable to find property resource '{}' (check {}?)", path,
+                        IdPPropertiesApplicationContextInitializer.IDP_ADDITIONAL_PROPERTY);
             }
         }
     }
