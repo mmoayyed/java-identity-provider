@@ -40,7 +40,7 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 @SuppressWarnings("javadoc")
 public class PluginCLITest extends BasePluginTest {
     
-    private final String PLUGIN_DISTRO = "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/0.1.4/idp-plugin-rhino-dist-0.1.4.tar.gz";
+    private final String PLUGIN_DISTRO = "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/net/shibboleth/idp/plugin/scripting/idp-plugin-rhino-dist/1.0.0/idp-plugin-rhino-dist-1.0.0.tar.gz";
     
     private final String PLUGIN_ID = "net.shibboleth.idp.plugin.rhino";
 
