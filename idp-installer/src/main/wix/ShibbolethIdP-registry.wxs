@@ -58,6 +58,7 @@
                     <RegistryValue Name="Params" Type="multiString" Action="append">
                         <Permission User="Administrators" GenericAll="yes" />
                         <Permission User="SYSTEM" GenericAll="yes" />
+			<MultiStringValue>jetty.http.compliance=RFC7230_NO_AMBIGUOUS_URIS</MultiStringValue>
                         <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
                         <MultiStringValue>jetty.logging.dir=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
                     </RegistryValue>
