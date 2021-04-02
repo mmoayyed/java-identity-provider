@@ -100,10 +100,7 @@
 
         <!-- Inherit the setup, if they were. -->
         <CustomAction Id="InheritInstallDir" Property="INSTALLDIR" Value="[OLD_INSTALLDIR]" />
-        <CustomAction Id="InheritQIInstallDir" Property="INSTALLDIR" Value="[QI_INSTALL_DIR]\Shib2IdP" />
         <CustomAction Id="InheritInstallJetty" Property="INSTALL_JETTY" Value="[OLD_INSTALL_JETTY]" />
-        <CustomAction Id="InheritQIInstallJetty" Property="INSTALL_JETTY" Value="TRUE" />
-        <CustomAction Id="InheritQIConfigAd" Property="CONFIGURE_AD" Value="TRUE" />
 
         <!-- Pass the NO_FIREWALL_EXCEPTION parameter down to the Jetty Merge Module -->
         <CustomAction Id="PassdownNoFireWall" Property="NO_FIREWALL.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Value="[NO_FIREWALL_EXCEPTION]" />
@@ -136,14 +133,9 @@
         <InstallUISequence>
 
             <!-- inherit installationDir if there is something to inherit (Conditions set in ShibolethIdP-registry) -->
-            <Custom Action="InheritQIInstallDir" After="AppSearch">QI_INSTALL_DIR</Custom>
             <Custom Action="SetDefaultInstallDir" After="AppSearch" />
-            <Custom Action="InheritInstallDir" After="InheritQIInstallDir">OLD_INSTALLDIR</Custom>
+            <Custom Action="InheritInstallDir" After="AppSearch">OLD_INSTALLDIR</Custom>
 
-
-            <!-- Set up defaults for AD and Jetty if we are a QI upgrade -->
-            <Custom Action="InheritQIInstallJetty" After="AppSearch">QI_INSTALLED</Custom>
-            <Custom Action="InheritQIConfigAd" After="AppSearch">QI_INSTALLED</Custom>
 
             <!-- inherit JETTY_INSTALL if there is something to inherit AND JETTY_INSTALL was not passed in -->
             <Custom Action="InheritInstallJetty" After="AppSearch">OLD_INSTALL_JETTY AND NOT INSTALL_JETTY</Custom>
@@ -195,11 +187,6 @@
 
         <Upgrade Id="$(var.UpgradeUUID)">
             <UpgradeVersion ExcludeLanguages="yes" IncludeMaximum="yes" Maximum="127.255.255" Minimum="0.0.1" OnlyDetect="yes" Property="ALREADYINSTALLED" />
-        </Upgrade>
-
-        <!-- Uninstall the Quick Installer if it was used previously. -->
-        <Upgrade Id="{2F478CCE-0E4A-4427-BDFE-E426D5F831DB}">
-            <UpgradeVersion ExcludeLanguages="yes" IncludeMaximum="yes" Maximum="127.255.255" Minimum="0.0.1" Property="QI_INSTALLED" />
         </Upgrade>
 
         <UIRef Id="ShibbolethInstallDir" />
