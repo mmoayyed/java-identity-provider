@@ -171,7 +171,6 @@
         <dependency>
             <groupId>com.duosecurity</groupId>
             <artifactId>DuoWeb</artifactId>
-            <version>${duoweb.version}</version>
         </dependency>
 
         <dependency>

@@ -8,7 +8,7 @@
     <parent>
         <groupId>net.shibboleth</groupId>
         <artifactId>parent</artifactId>
-        <version>11.2.0</version>
+        <version>11.2.1-SNAPSHOT</version>
     </parent>
 
     <name>Shibboleth Identity Provider</name>
@@ -67,8 +67,6 @@
     </modules>
 
     <properties>
-        <ant.version>1.10.7</ant.version>
-        <duoweb.version>1.3</duoweb.version>
         <idwsfconsumer.version>2.1.0</idwsfconsumer.version>
         <java-support.version>8.2.0</java-support.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
@@ -170,18 +168,6 @@
             <!-- Provided Dependencies -->
 
             <!-- Runtime Dependencies -->
-            <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>${ant.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant-launcher</artifactId>
-                <version>${ant.version}</version>
-                <scope>runtime</scope>
-            </dependency>
 
             <!-- Test Dependencies -->
             <dependency>
