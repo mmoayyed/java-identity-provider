@@ -36,7 +36,7 @@ public class PluginIdPModule extends PropertyDrivenIdPModule {
 
     /** Documentation base URL. */
     @Nonnull @NotEmpty
-    public static final String MODULE_URL_BASE = "https://wiki.shibboleth.net/confluence/display/IDPPLUGIN";
+    public static final String MODULE_URL_BASE = "https://wiki.shibboleth.net/confluence/display/IDPPLUGINS";
     
     /**
      * Constructor.
