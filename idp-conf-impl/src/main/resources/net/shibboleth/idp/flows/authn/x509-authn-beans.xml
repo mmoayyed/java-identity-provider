@@ -27,7 +27,7 @@
     <bean id="ValidateExternalAuthentication"
         class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
         p:metricName="net.shibboleth.idp.authn.x509"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: %{idp.authn.X509.addDefaultPrincipals:true}}}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: %{idp.authn.X509.addDefaultPrincipals:true}}"
         p:classifiedMessages="#{getObject('shibboleth.authn.X509.ClassifiedMessageMap')}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}" />
 
