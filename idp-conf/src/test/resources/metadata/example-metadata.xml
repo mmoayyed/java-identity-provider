@@ -1,6 +1,7 @@
 <EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
     xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-    xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" entityID="https://sp.example.org">
+    xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+    xmlns:oidcmd="urn:mace:shibboleth:metadata:oidc:1.0" entityID="https://sp.example.org">
     <Extensions>
 	    <mdattr:EntityAttributes xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
 	        <saml:Attribute Name="http://macedir.org/entity-category"
@@ -34,6 +35,7 @@
         <Extensions>
             <mdui:UIInfo>
                 <mdui:DisplayName xml:lang="en">TEST SP (display Name)</mdui:DisplayName>
+                <mdui:DisplayName xml:lang="de">German SP (achtung)</mdui:DisplayName>
                 <mdui:Description xml:lang="en">
                 TEST SP (description)Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
                 Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit.
@@ -129,6 +131,28 @@ h+XNZ5oAql/cjrwDWw==
         </AttributeConsumingService>
         
     </SPSSODescriptor>
+    <SPSSODescriptor protocolSupportEnumeration="http://openid.net/specs/openid-connect-core-1_0.html">
+        <Extensions>
+            <oidcmd:OAuthRPExtensions>
+                <oidcmd:GrantType>authorization_code</oidcmd:GrantType>
+                <oidcmd:ResponseType>code</oidcmd:ResponseType>
+                <oidcmd:ApplicationType>web</oidcmd:ApplicationType>
+                <oidcmd:TokenEndpointAuthMethod>client_secret_basic</oidcmd:TokenEndpointAuthMethod>
+                <oidcmd:Scope>openid</oidcmd:Scope>
+                <oidcmd:Scope>profile</oidcmd:Scope>
+            </oidcmd:OAuthRPExtensions>
+        </Extensions>
+        <KeyDescriptor>
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <oidcmd:ClientSecret>mockClientSecretValue</oidcmd:ClientSecret>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <NameIDFormat>public</NameIDFormat>
+        <AssertionConsumerService
+                Binding="https://tools.ietf.org/html/rfc6749#section-3.1.2"
+                Location="https://example.org/cb"
+                index="1"/>
+    </SPSSODescriptor>    
     <Organization>
         <OrganizationName xml:lang="en">TC</OrganizationName>
         <OrganizationName xml:lang="en">TSC</OrganizationName>
