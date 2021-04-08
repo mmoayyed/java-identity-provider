@@ -101,6 +101,7 @@ public class AttributeRuleParser extends BaseFilterParser {
                 if (permitAny != null && permitAny.booleanValue()) {
                     builder.addPropertyValue("isDenyRule", false);
                     builder.addPropertyValue("matcher", Matcher.MATCHES_ALL);
+                    return;
                 }
             }
             
