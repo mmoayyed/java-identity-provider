@@ -60,7 +60,6 @@ public class AttributeRuleParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
-    // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -94,17 +93,21 @@ public class AttributeRuleParser extends BaseFilterParser {
             builder.addPropertyValue("matcher",
                     SpringSupport.parseCustomElement(denyValueRule.get(0), parserContext, builder, false));
             builder.addPropertyValue("isDenyRule", true);
-
-        } else if (config.hasAttributeNS(null, PERMIT_ANY_ATTRIBUTE)
-                && AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, PERMIT_ANY_ATTRIBUTE))) {
-            // Note the documented restriction that permitAny cannot be property replaced.
-            builder.addPropertyValue("isDenyRule", false);
-            builder.addPropertyValue("matcher", Matcher.MATCHES_ALL);
         } else {
+            // Note the documented restriction that permitAny cannot be property replaced.
+            if (config.hasAttributeNS(null, PERMIT_ANY_ATTRIBUTE)) {
+                final Boolean permitAny = AttributeSupport.getAttributeValueAsBoolean(
+                        config.getAttributeNodeNS(null, PERMIT_ANY_ATTRIBUTE));
+                if (permitAny != null && permitAny.booleanValue()) {
+                    builder.addPropertyValue("isDenyRule", false);
+                    builder.addPropertyValue("matcher", Matcher.MATCHES_ALL);
+                }
+            }
+            
             log.warn("{}: Attribute rule must have PermitValueRule or a DenyValueRule" +
                     ", or have attribute permitAny=\"true\"",
                     parserContext.getReaderContext().getResource().getDescription());
         }
     }
-    // Checkstyle: CyclomaticComplexity ON
+
 }
