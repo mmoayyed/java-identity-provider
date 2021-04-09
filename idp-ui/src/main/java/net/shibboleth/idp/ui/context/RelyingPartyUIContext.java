@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.BaseContext;
@@ -45,6 +46,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.ACSUIInfo;
 import net.shibboleth.idp.saml.metadata.IdPUIInfo;
@@ -55,8 +57,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * The context which carries the user interface information.
@@ -79,10 +81,13 @@ public final class RelyingPartyUIContext extends BaseContext {
     @Nullable private IdPUIInfo rpUIInfo;
 
     /** The languages that this browser wants to know about. */
-    @Nonnull @NonnullElements private List<LanguageRange> browserLanguages;
+    @Nullable @Deprecated @NonnullElements private List<LanguageRange> browserLanguages;
     
     /** The languages that this the Operator want to fall back to. */
     @Nonnull private List<LanguageRange> fallbackLanguages;
+    
+    /** Current HTTP request, if available. */
+    @Nullable private HttpServletRequest httpServletRequest;
     
     /** Constructor. */
     public RelyingPartyUIContext() {
@@ -220,18 +225,27 @@ public final class RelyingPartyUIContext extends BaseContext {
         return this;
     }
 
+    /** Set the Servlet Request.
+     * @param what what to set.
+     * @return this context
+     */
+    public RelyingPartyUIContext setHttpServletRequest(@Nonnull final HttpServletRequest what) {
+        httpServletRequest = what;
+        return this;
+    }
+
     /**
      * Set the browser languages.
      *
      * @param languages the languages to set
-     * @deprecated use {@link #setBrowserLanguageRanges(List)}
+     * @deprecated use {@link #setHttpServletRequest(HttpServletRequest)}
      * @return this context
      */
     @Deprecated(since="4.0.0", forRemoval=true)
     @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
         Constraint.isNotNull(languages, "Language List cannot be null");
-        // The replacement was created in V4.0
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "setBrowserLanguages", null, "setBrowserLanguageRanges");
+        // The replacement was created in V4.1.1
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setBrowserLanguages", null, "setHttpServletResponse");
         browserLanguages = languages.
                 stream().
                 filter(e -> e != null).
@@ -244,10 +258,14 @@ public final class RelyingPartyUIContext extends BaseContext {
      * Set the browser languages.
      * 
      * @param ranges the languages to set
+     * @deprecated use {@link #setHttpServletRequest(HttpServletRequest)}
      * @return this context
      */
+    @Deprecated(since="4.1.1", forRemoval=true)
     @Nonnull public RelyingPartyUIContext setBrowserLanguageRanges(
             @Nonnull @NonnullElements final List<LanguageRange> ranges) {
+        // The replacement was created in V4.1.1
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setBrowserLanguageRanges", null, "setHttpServletResponse");
         browserLanguages = Constraint.isNotNull(ranges, "Language Range cannot be null");
         return this;
     }
@@ -259,7 +277,10 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return the languages.
      */
     @Nonnull @NonnullElements protected List<LanguageRange> getBrowserLanguages() {
-        return browserLanguages;
+        if (httpServletRequest == null) {
+            return browserLanguages;
+        }
+        return SpringSupport.getLanguageRange(httpServletRequest);
     }
 
     /**

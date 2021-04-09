@@ -31,9 +31,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-/**
- *
- */
+@SuppressWarnings({"javadoc", "removal"})
 public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
 
     private EntityDescriptor[] theEntities = new EntityDescriptor[4];
@@ -160,7 +158,6 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(ctx.getPrivacyStatementURL(), null);
     }
 
-    @SuppressWarnings("deprecation")
     @Test public void logo() {
         RelyingPartyUIContext ctx = getContext();
         
@@ -172,7 +169,6 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
 
     }
     
-    @SuppressWarnings("deprecation")
     @Test public void fallbackLanguage() {
         RelyingPartyUIContext ctx = getContext();
         

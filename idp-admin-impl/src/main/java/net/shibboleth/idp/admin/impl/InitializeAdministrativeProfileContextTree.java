@@ -121,7 +121,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
         
         final RelyingPartyUIContext uiCtx = rpCtx.getSubcontext(RelyingPartyUIContext.class, true);
         uiCtx.setRPUInfo(flowDescriptor.getUIInfo());
-        uiCtx.setBrowserLanguageRanges(SpringSupport.getLanguageRange(getHttpServletRequest()));
+        uiCtx.setHttpServletRequest(getHttpServletRequest());
         
         if (null != fallbackLanguages) {
             uiCtx.setFallbackLanguages(fallbackLanguages);
