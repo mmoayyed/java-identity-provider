@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -80,14 +81,15 @@ public final class RelyingPartyUIContext extends BaseContext {
     /** The appropriate {@link IdPUIInfo}. */
     @Nullable private IdPUIInfo rpUIInfo;
 
-    /** The languages that this browser wants to know about. */
-    @Nullable @Deprecated @NonnullElements private List<LanguageRange> browserLanguages;
+    /** The (statically defined) languages that this user wants to know about. */
+    @Nullable @NonnullElements private List<LanguageRange> browserLanguages;
     
     /** The languages that this the Operator want to fall back to. */
     @Nonnull private List<LanguageRange> fallbackLanguages;
     
-    /** Current HTTP request, if available. */
-    @Nullable private HttpServletRequest httpServletRequest;
+    /** A way of getting the current HTTP request, if available.
+     *  Used to define dynamically selected languages. */
+    @Nullable private Supplier<HttpServletRequest> requestSupplier;
     
     /** Constructor. */
     public RelyingPartyUIContext() {
@@ -229,8 +231,8 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @param what what to set.
      * @return this context
      */
-    public RelyingPartyUIContext setHttpServletRequest(@Nonnull final HttpServletRequest what) {
-        httpServletRequest = what;
+    public RelyingPartyUIContext setRequestSupplier(@Nonnull final Supplier<HttpServletRequest> what) {
+        requestSupplier = what;
         return this;
     }
 
@@ -238,7 +240,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * Set the browser languages.
      *
      * @param languages the languages to set
-     * @deprecated use {@link #setHttpServletRequest(HttpServletRequest)}
+     * @deprecated use {@link #setBrowserLanguageRanges(List)}
      * @return this context
      */
     @Deprecated(since="4.0.0", forRemoval=true)
@@ -258,10 +260,8 @@ public final class RelyingPartyUIContext extends BaseContext {
      * Set the browser languages.
      * 
      * @param ranges the languages to set
-     * @deprecated use {@link #setHttpServletRequest(HttpServletRequest)}
      * @return this context
      */
-    @Deprecated(since="4.1.1", forRemoval=true)
     @Nonnull public RelyingPartyUIContext setBrowserLanguageRanges(
             @Nonnull @NonnullElements final List<LanguageRange> ranges) {
         // The replacement was created in V4.1.1
@@ -272,15 +272,16 @@ public final class RelyingPartyUIContext extends BaseContext {
 
 
     /**
-     * Get the browser languages.
+     * Get the browser languages.  Interrogate the http Request (if available)
+     * otherwise got for the statically defined values.
      * 
      * @return the languages.
      */
     @Nonnull @NonnullElements protected List<LanguageRange> getBrowserLanguages() {
-        if (httpServletRequest == null) {
+        if (requestSupplier == null || requestSupplier.get() == null) {
             return browserLanguages;
         }
-        return SpringSupport.getLanguageRange(httpServletRequest);
+        return SpringSupport.getLanguageRange(requestSupplier.get());
     }
 
     /**
