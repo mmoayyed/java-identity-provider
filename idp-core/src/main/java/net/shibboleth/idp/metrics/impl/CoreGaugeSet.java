@@ -164,6 +164,22 @@ public class CoreGaugeSet implements MetricSet, MetricFilter {
                 });
 
         gauges.put(
+                "memory.max.bytes",
+                new Gauge<Long>() {
+                    public Long getValue() {
+                        return Runtime.getRuntime().maxMemory();
+                    }
+                });
+
+        gauges.put(
+                "memory.max.megs",
+                new Gauge<Long>() {
+                    public Long getValue() {
+                        return Runtime.getRuntime().maxMemory() / (1024 * 1024);
+                    }
+                });
+
+        gauges.put(
                 "memory.usage",
                 new RatioGauge() {
                     protected Ratio getRatio() {
