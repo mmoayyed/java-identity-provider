@@ -17,30 +17,30 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.DataSealer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -93,7 +93,7 @@ public class DecryptedAttributeDefinition extends AbstractAttributeDefinition {
                 PluginDependencySupport.getMergedAttributeValues(workContext, getAttributeDependencies(), 
                         getDataConnectorDependencies(), getId());
 
-        final Collection<IdPAttributeValue> decryptedValues = new ArrayList<>(results.size());
+        final List<IdPAttributeValue> decryptedValues = new ArrayList<>(results.size());
 
         for (final IdPAttributeValue value : results) {
             

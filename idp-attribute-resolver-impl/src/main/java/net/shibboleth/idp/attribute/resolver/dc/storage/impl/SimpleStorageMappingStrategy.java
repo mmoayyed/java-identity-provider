@@ -58,7 +58,7 @@ public class SimpleStorageMappingStrategy implements StorageMappingStrategy {
             @Nonnull final StorageRecord<?> results) throws ResolutionException {
         
         final IdPAttribute attribute = new IdPAttribute(attributeId);
-        attribute.setValues(Collections.singleton(StringAttributeValue.valueOf(results.getValue())));
+        attribute.setValues(Collections.singletonList(StringAttributeValue.valueOf(results.getValue())));
         
         return Collections.singletonMap(attributeId, attribute);
     }
