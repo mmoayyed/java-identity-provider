@@ -64,7 +64,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
     }
 
     @Test public void simplePopulated() throws ComponentInitializationException {
-        final AttributeDefinition attrDef =
+        final SimpleAttributeDefinition attrDef =
                 getAttributeDefn("resolver/simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
 
         attrDef.initialize();
@@ -72,6 +72,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         assertEquals(attrDef.getId(), "simplePopulated");
         assertTrue(attrDef.isDependencyOnly());
         assertTrue(attrDef.isPreRequested());
+        assertFalse(attrDef.isStripNulls());
 
         Set<ResolverAttributeDefinitionDependency> adDeps = attrDef.getAttributeDependencies();
         assertEquals(adDeps.size(), 2, "getAttributeDependencies");
@@ -86,7 +87,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
     }
 
     @Test public void populated2() throws ComponentInitializationException {
-        AttributeDefinition attrDef =
+        SimpleAttributeDefinition attrDef =
                 getAttributeDefn("resolver/simpleAttributePopulated2.xml", SimpleAttributeDefinition.class);
 
         attrDef.initialize();
@@ -94,6 +95,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         assertEquals(attrDef.getId(), "simplePopulated2");
         assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
         assertFalse(attrDef.isPreRequested());
+        assertTrue(attrDef.isStripNulls());
 
         final Set<ResolverAttributeDefinitionDependency> attrDeps = attrDef.getAttributeDependencies();
         assertEquals(attrDeps.size(), 1, "getAttributeDependencies");

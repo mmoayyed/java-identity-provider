@@ -73,7 +73,7 @@ public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
             result.setValues(
                     values.stream().
                     filter(e -> (e!=null) && !(e instanceof EmptyAttributeValue)).
-                    collect(Collectors.toUnmodifiableList())); 
+                    collect(Collectors.toUnmodifiableList()));
         } else {
             result.setValues(values);
         }

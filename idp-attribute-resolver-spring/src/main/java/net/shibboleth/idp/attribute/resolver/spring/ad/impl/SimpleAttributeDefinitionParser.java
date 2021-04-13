@@ -25,6 +25,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
@@ -45,5 +46,10 @@ public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionPars
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
+
+        if (config.hasAttributeNS(null, "ignoreNullValues")) {
+            builder.addPropertyValue("stripNulls",
+                    SpringSupport.getStringValueAsBoolean(config.getAttributeNS(null, "ignoreNullValues")));
+        }
     }
 }

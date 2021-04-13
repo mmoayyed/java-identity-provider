@@ -640,6 +640,11 @@
                     <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
                     <element ref="resolver:AttributeEncoder"/>
                 </choice>
+                <attribute name="ignoreNullValues" type="resolver:string">
+                    <annotation>
+                        <documentation>Do we drop null values (default: FALSE)</documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
