@@ -51,7 +51,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /** Basic data sources for testing the attribute generators. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "removal"})
 public final class TestSources {
     /** The name we use in this test for the static connector. */
     public static final String STATIC_CONNECTOR_NAME = "staticCon";

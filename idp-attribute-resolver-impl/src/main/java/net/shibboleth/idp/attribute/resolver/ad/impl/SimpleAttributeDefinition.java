@@ -17,10 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -36,6 +41,23 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 @ThreadSafe
 public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
 
+    /** Do we strip {@link EmptyAttributeValue}s? */
+    private boolean stripNulls;
+
+    /** Set our "Null" strategy.
+     * @param what The value to set.
+     */
+    public void setStripNulls(final boolean what) {
+        stripNulls = what;
+    }
+
+   /** Do we strip nulls?
+     * @return Returns whether we strip Nulls.
+     */
+    public boolean isStripNulls() {
+        return stripNulls;
+    }
+
     /** {@inheritDoc} */
     @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
@@ -43,10 +65,18 @@ public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
         Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
 
         final IdPAttribute result = new IdPAttribute(getId());
-        result.setValues(PluginDependencySupport.getMergedAttributeValues(workContext,
+        final List<IdPAttributeValue> values = PluginDependencySupport.getMergedAttributeValues(workContext,
                 getAttributeDependencies(), 
                 getDataConnectorDependencies(), 
-                getId()));
+                getId());
+        if (isStripNulls()) {
+            result.setValues(
+                    values.stream().
+                    filter(e -> (e!=null) && !(e instanceof EmptyAttributeValue)).
+                    collect(Collectors.toUnmodifiableList())); 
+        } else {
+            result.setValues(values);
+        }
 
         return result;
     }
