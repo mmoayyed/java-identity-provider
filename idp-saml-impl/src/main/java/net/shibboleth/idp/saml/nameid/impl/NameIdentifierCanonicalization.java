@@ -212,32 +212,30 @@ public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizat
                 nameIdentifiers = c14nContext.getSubject().getPrincipals(NameIdentifierPrincipal.class);
             }
 
-            if (duringAction) {
-                if (nameIdentifiers == null || nameIdentifiers.isEmpty()) {
-                    c14nContext.setException(
-                            new SubjectCanonicalizationException("No NameIdentifierPrincipals were found"));
+            if (nameIdentifiers == null || nameIdentifiers.isEmpty()) {
+                c14nContext.setException(
+                        new SubjectCanonicalizationException("No NameIdentifierPrincipals were found"));
+                if (duringAction) {
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
-                } else if (nameIdentifiers.size() > 1) {
-                    c14nContext.setException(
-                            new SubjectCanonicalizationException("Multiple NameIdentifierPrincipals were found"));
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
-                } else if (!formatMatches(nameIdentifiers.iterator().next().getNameIdentifier().getFormat(),
-                        c14nContext)) {
-                    c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
                 }
-                
-                return true;
-            }
-            
-            // Not in an action, so do the same but without the context side effects
-            if (nameIdentifiers == null || nameIdentifiers.size() != 1) {
+                return false;
+            } else if (nameIdentifiers.size() > 1) {
+                c14nContext.setException(
+                        new SubjectCanonicalizationException("Multiple NameIdentifierPrincipals were found"));
+                if (duringAction) {
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                }
+                return false;
+            } else if (!formatMatches(nameIdentifiers.iterator().next().getNameIdentifier().getFormat(),
+                    c14nContext)) {
+                c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
+                if (duringAction) {
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                }
                 return false;
             }
-            return formatMatches(nameIdentifiers.iterator().next().getNameIdentifier().getFormat(), c14nContext);
+                
+            return true;
         }
     }
     

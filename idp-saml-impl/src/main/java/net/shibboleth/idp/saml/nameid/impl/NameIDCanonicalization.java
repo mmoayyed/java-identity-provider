@@ -211,31 +211,28 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
                 nameIDs = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
             }
 
-            if (duringAction) {
-                if (nameIDs == null || nameIDs.isEmpty()) {
-                    c14nContext.setException(new SubjectCanonicalizationException("No NameIDPrincipals were found"));
+            if (nameIDs == null || nameIDs.isEmpty()) {
+                c14nContext.setException(new SubjectCanonicalizationException("No NameIDPrincipals were found"));
+                if (duringAction) {
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
-                } else if (nameIDs.size() > 1) {
-                    c14nContext.setException(
-                            new SubjectCanonicalizationException("Multiple NameIDPrincipals were found"));
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
-                } else if (!formatMatches(nameIDs.iterator().next().getNameID().getFormat(), c14nContext)) {
-                    c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
                 }
-                
-                return true;
-            }
-            
-            // Not in an action, so do the same but without the context side effects
-            if (nameIDs == null || nameIDs.size() != 1) {
+                return false;
+            } else if (nameIDs.size() > 1) {
+                c14nContext.setException(
+                        new SubjectCanonicalizationException("Multiple NameIDPrincipals were found"));
+                if (duringAction) {
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                }
+                return false;
+            } else if (!formatMatches(nameIDs.iterator().next().getNameID().getFormat(), c14nContext)) {
+                c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
+                if (duringAction) {
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                }
                 return false;
             }
-
-            return formatMatches(nameIDs.iterator().next().getNameID().getFormat(), c14nContext);
+            
+            return true;
         }
     }
     

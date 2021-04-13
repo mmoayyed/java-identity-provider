@@ -31,6 +31,8 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
@@ -44,6 +46,9 @@ import org.opensaml.profile.context.ProfileRequestContext;
  *  || SubjectCanonicalizationContext.getException() != null</pre>
  */
 public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizationAction {
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SelectAuthenticationFlow.class);
 
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
@@ -114,23 +119,23 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
                 usernames = null;
             }
             
-            if (duringAction) {
-                if (usernames == null || usernames.isEmpty()) {
-                    c14nContext.setException(
-                            new SubjectCanonicalizationException("No UsernamePrincipals were found"));
+            if (usernames == null || usernames.isEmpty()) {
+                c14nContext.setException(
+                        new SubjectCanonicalizationException("No UsernamePrincipals were found"));
+                if (duringAction) {
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
-                } else if (usernames.size() > 1) {
-                    c14nContext.setException(
-                            new SubjectCanonicalizationException("Multiple UsernamePrincipals were found"));
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
                 }
-                
-                return true;
+                return false;
+            } else if (usernames.size() > 1) {
+                c14nContext.setException(
+                        new SubjectCanonicalizationException("Multiple UsernamePrincipals were found"));
+                if (duringAction) {
+                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+                }
+                return false;
             }
             
-            return usernames != null && usernames.size() == 1;
+            return true;
         }
         
     }

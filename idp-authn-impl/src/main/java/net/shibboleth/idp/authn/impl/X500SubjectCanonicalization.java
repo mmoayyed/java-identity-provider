@@ -256,11 +256,12 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
                 }
             }
             
+            c14nContext.setException(new SubjectCanonicalizationException(
+                    "Neither a single X509Certificate nor X500Principal were found"));
             if (duringAction) {
-                c14nContext.setException(new SubjectCanonicalizationException(
-                        "Neither a single X509Certificate nor X500Principal were found"));
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
             }
+            
             return false;
         }
         
