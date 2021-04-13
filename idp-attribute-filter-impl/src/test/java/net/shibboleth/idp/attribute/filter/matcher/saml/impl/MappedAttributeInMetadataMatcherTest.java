@@ -180,7 +180,7 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
 
         IdPRequestedAttribute required = new IdPRequestedAttribute("attr");
         required.setRequired(true);
-        required.setValues(Collections.singleton(DataSources.STRING_VALUE));
+        required.setValues(Collections.singletonList(DataSources.STRING_VALUE));
 
         AttributeFilterContext context = makeContext(required);
 
@@ -206,11 +206,11 @@ public class MappedAttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCa
 
         IdPRequestedAttribute req1 = new IdPRequestedAttribute("attr");
         req1.setRequired(true);
-        req1.setValues(Collections.singleton(DataSources.STRING_VALUE));
+        req1.setValues(Collections.singletonList(DataSources.STRING_VALUE));
 
         IdPRequestedAttribute req2 = new IdPRequestedAttribute("attr");
         req2.setRequired(true);
-        req2.setValues(Collections.singleton(DataSources.NON_MATCH_STRING_VALUE));
+        req2.setValues(Collections.singletonList(DataSources.NON_MATCH_STRING_VALUE));
 
         final AttributeFilterContext context = new AttributeFilterContext();
 

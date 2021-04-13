@@ -20,8 +20,8 @@ package net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 
 import org.testng.annotations.Test;
 
@@ -111,7 +111,7 @@ public class NumOfAttributeValuesPolicyRuleTest {
 
     private AttributeFilterContext manufactureWith(String name, int howMany) {
         final IdPAttribute attr = new IdPAttribute(name);
-        final LinkedHashSet<IdPAttributeValue> hs = new LinkedHashSet<>(howMany);
+        final ArrayList<IdPAttributeValue> hs = new ArrayList<>(howMany);
         
         for (int i = 0; i < howMany; i++) {
             hs.add(new StringAttributeValue(Integer.toString(i)));

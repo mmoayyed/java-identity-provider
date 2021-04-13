@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.filter.matcher.impl;
 import java.util.function.Predicate;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")

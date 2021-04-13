@@ -127,7 +127,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
                     } catch (final CloneNotSupportedException e) {
                         throw new AttributeFilterException(e);
                     }
-                    filteredAttribute.setValues(filteredAttributeValues);
+                    filteredAttribute.setValues(List.copyOf(filteredAttributeValues));
                     filterContext.getFilteredIdPAttributes().put(filteredAttribute.getId(), filteredAttribute);
                 }
             }

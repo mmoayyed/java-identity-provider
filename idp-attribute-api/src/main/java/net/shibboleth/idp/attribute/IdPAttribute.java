@@ -226,6 +226,10 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     public void setValues(@Nullable @NullableElements final Collection<IdPAttributeValue> newValues) {
         if (newValues != null) {
+            if (!(newValues instanceof List)) {
+                DeprecationSupport.warnOnce(ObjectType.METHOD, "Passing a Collection to IdpAttribute#setValues()",
+                        null, "List");
+            }
             values = newValues.stream().
                      map(e -> e==null? new EmptyAttributeValue(EmptyType.NULL_VALUE) :e).
                      collect(Collectors.toUnmodifiableList());

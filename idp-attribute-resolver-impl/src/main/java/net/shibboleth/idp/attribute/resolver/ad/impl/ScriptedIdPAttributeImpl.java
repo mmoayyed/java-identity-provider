@@ -66,7 +66,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
      * called.
      * </p>
      */
-    private Collection<Object> attributeValues;
+    private List<Object> attributeValues;
 
     /** The prefix for logging. Derived from the definition's logPrefix and the attribute ID. */
     private final String logPrefix;
