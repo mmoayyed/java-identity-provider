@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -35,6 +36,17 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  */
 @ThreadSafe
 public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
+    
+    /** Do we filter null/empty values out? */
+    private boolean filterNullValues;
+    
+    /** Do we filter null/empty values out?
+     * @param what what to set.
+     */
+    public void setFilterNullValues(boolean what) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        filterNullValues = what;
+    }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(

@@ -99,11 +99,11 @@ public class AttributeFilterServiceTest {
         attributesToBeFiltered = new HashMap<>();
 
         IdPAttribute firstName = new IdPAttribute("firstName");
-        firstName.setValues(Collections.singleton(new StringAttributeValue("john")));
+        firstName.setValues(Collections.singletonList(new StringAttributeValue("john")));
         attributesToBeFiltered.put(firstName.getId(), firstName);
 
         IdPAttribute lastName = new IdPAttribute("lastName");
-        lastName.setValues(Collections.singleton(new StringAttributeValue("smith")));
+        lastName.setValues(Collections.singletonList(new StringAttributeValue("smith")));
         attributesToBeFiltered.put(lastName.getId(), lastName);
 
         IdPAttribute email = new IdPAttribute("email");
