@@ -19,6 +19,8 @@ package net.shibboleth.idp.authn.principal;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import javax.security.auth.Subject;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -50,6 +52,18 @@ public class UsernamePrincipalTest {
         } catch (ConstraintViolationException e) {
 
         }
+    }
+    
+    /** Tests that equality is working correctly. */
+    @Test public void testSubjectBehavior() {
+        final Subject subject = new Subject();
+        Assert.assertTrue(subject.getPrincipals(UsernamePrincipal.class).isEmpty());
+        
+        subject.getPrincipals().add(new UsernamePrincipal("jdoe"));
+        Assert.assertEquals(subject.getPrincipals(UsernamePrincipal.class).size(), 1);
+
+        subject.getPrincipals().add(new UsernamePrincipal("jdoe"));
+        Assert.assertEquals(subject.getPrincipals(UsernamePrincipal.class).size(), 1);
     }
     
 }
