@@ -106,10 +106,11 @@ public class LoopDetectionPredicate extends AbstractRelyingPartyPredicate {
         final RelyingPartyContext rpCtx = getRelyingPartyContextLookupStrategy().apply(input);
         
         if (username != null && rpCtx != null && rpCtx.getRelyingPartyId() != null) {
-            final String meterName = relyingPartyMap.get(rpCtx.getRelyingPartyId());
+            String meterName = relyingPartyMap.get(rpCtx.getRelyingPartyId());
             if (meterName != null) {
-                final Meter meter = MetricsSupport.getMetricRegistry().meter(
-                        MetricRegistry.name("net.shibboleth.idp.loopDetection", meterName, username.replace(".","")),
+                meterName = MetricRegistry.name("net.shibboleth.idp.loopDetection", meterName,
+                        username.replace(".",""));
+                final Meter meter = MetricsSupport.getMetricRegistry().meter(meterName,
                         new MetricSupplier<Meter>() {
                             public Meter newMetric() {
                                 return new Meter(new SlidingTimeWindowMovingAverages());
