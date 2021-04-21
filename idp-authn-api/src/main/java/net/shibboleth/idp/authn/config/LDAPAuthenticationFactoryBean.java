@@ -384,6 +384,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   public void setBindPoolPassivatorType(@Nonnull @NotEmpty final String type) {
     bindPoolPassivatorType = PassivatorType.fromLabel(type);
+    if (bindPoolPassivatorType == null) {
+        throw new IllegalArgumentException("bindPoolPassivatorType property did not have a valid value");
+    }
   }
 
   public void setPrunePeriod(@Nullable final Duration period) {
