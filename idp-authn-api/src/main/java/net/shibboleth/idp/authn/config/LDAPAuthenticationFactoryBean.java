@@ -295,14 +295,23 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   public void setAuthenticatorType(@Nonnull @NotEmpty final String type) {
     authenticatorType = AuthenticatorType.fromLabel(type);
+    if (authenticatorType == null) {
+        throw new IllegalArgumentException("authenticatorType property did not have a valid value");
+    }
   }
 
   public void setTrustType(@Nonnull @NotEmpty final String type) {
     trustType = TrustType.fromLabel(type);
+    if (trustType == null) {
+        throw new IllegalArgumentException("trustType property did not have a valid value");
+    }
   }
 
   public void setConnectionStrategyType(@Nonnull @NotEmpty final String type) {
     connectionStrategyType = ConnectionStrategyType.fromLabel(type);
+    if (connectionStrategyType == null) {
+        throw new IllegalArgumentException("connectionStrategyType property did not have a valid value");
+    }
   }
 
   public void setLdapUrl(@Nullable @NotEmpty final String url) {
