@@ -135,11 +135,16 @@ public class X509AuthServlet extends HttpServlet {
         try {
             final String key = ExternalAuthentication.startExternalAuthentication(httpRequest);
             
-            final X509Certificate[] certs =
+            X509Certificate[] certs =
                     (X509Certificate[]) httpRequest.getAttribute("javax.servlet.request.X509Certificate");
+            if (certs == null || certs.length == 0) {
+                // Check for newer Jakarta variant.
+                // TODO: Once Jakarta is "common", probably reverse these checks.
+                certs = (X509Certificate[]) httpRequest.getAttribute("jakarta.servlet.request.X509Certificate");
+            }
             log.debug("{} X.509 Certificate(s) found in request", certs != null ? certs.length : 0);
 
-            if (certs == null || certs.length < 1) {
+            if (certs == null || certs.length == 0) {
                 log.error("No X.509 Certificates found in request");
                 httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATION_ERROR_KEY, AuthnEventIds.NO_CREDENTIALS);
                 ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);

@@ -48,7 +48,6 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractX509CertificateFromRequest.class);
     
     /** {@inheritDoc} */
-    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -56,18 +55,23 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
         final CertificateContext certCtx = new CertificateContext();
         authenticationContext.addSubcontext(certCtx, true);
         
-        final HttpServletRequest request = getHttpServletRequest();
-        if (request == null) {
+        final HttpServletRequest httpRequest = getHttpServletRequest();
+        if (httpRequest == null) {
             log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
         
-        final X509Certificate[] certs =
-                (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+        X509Certificate[] certs =
+                (X509Certificate[]) httpRequest.getAttribute("javax.servlet.request.X509Certificate");
+        if (certs == null || certs.length == 0) {
+            // Check for newer Jakarta variant.
+            // TODO: Once Jakarta is "common", probably reverse these checks.
+            certs = (X509Certificate[]) httpRequest.getAttribute("jakarta.servlet.request.X509Certificate");
+        }
         log.debug("{} {} X.509 Certificate(s) found in request", getLogPrefix(), certs != null ? certs.length : 0);
 
-        if (certs == null || certs.length < 1) {
+        if (certs == null || certs.length == 0) {
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
@@ -83,5 +87,5 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
             certCtx.getIntermediates().add(certs[i]);
         }
     }
-    // CheckStyle: ReturnCount ON
+
 }

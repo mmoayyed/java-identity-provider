@@ -105,7 +105,7 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
     
-    @Test public void testValid() throws Exception {
+    @Test public void testValidJava() throws Exception {
         
         final X509Certificate entityCert = X509Support.decodeCertificate(entityCertBase64);
         final X509Certificate otherCert1 = X509Support.decodeCertificate(otherCert1Base64);
@@ -124,4 +124,23 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         Assert.assertSame(certCtx.getIntermediates().iterator().next(), otherCert1);
     }
     
+    @Test public void testValidJakarta() throws Exception {
+        
+        final X509Certificate entityCert = X509Support.decodeCertificate(entityCertBase64);
+        final X509Certificate otherCert1 = X509Support.decodeCertificate(otherCert1Base64);
+        
+        final X509Certificate[] certs = new X509Certificate[]{entityCert, otherCert1};
+        
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final CertificateContext certCtx = authCtx.getSubcontext(CertificateContext.class);
+        Assert.assertNotNull(certCtx, "No CertificateContext attached");
+        
+        Assert.assertSame(certCtx.getCertificate(), entityCert);
+        Assert.assertSame(certCtx.getIntermediates().iterator().next(), otherCert1);
+    }
+
 }

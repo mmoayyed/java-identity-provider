@@ -93,8 +93,11 @@ public class X509ProxyFilter implements Filter {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
                 
         try {
-            final X509Certificate[] certs =
+            X509Certificate[] certs =
                     (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+            if (null == certs || 0 == certs.length) {
+                certs = (X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate");
+            }
             
             if (null == certs || 0 == certs.length) {
                 final List<X509Certificate> proxyCerts = new ArrayList<>();
@@ -120,6 +123,8 @@ public class X509ProxyFilter implements Filter {
                 }
                 
                 if (!proxyCerts.isEmpty()) {
+                    // TODO: I guess we'd check the class name(s) we're using here to
+                    // know which attribute to populate?
                     request.setAttribute("javax.servlet.request.X509Certificate",
                             proxyCerts.toArray(new X509Certificate[proxyCerts.size()]));
                 }
