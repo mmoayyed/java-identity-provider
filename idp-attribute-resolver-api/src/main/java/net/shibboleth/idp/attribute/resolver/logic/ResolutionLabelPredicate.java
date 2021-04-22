@@ -57,4 +57,23 @@ public class ResolutionLabelPredicate extends StrategyIndirectedPredicate<Profil
         super(new ResolutionLabelLookupFunction(), pred);
     }
 
+    /**
+     * Factory Method to avoid type-coercion warnings from Spring.
+     *
+     * @param candidates hardwired set of values to check against
+     * @return the result of calling {@link #ResolutionLabelPredicate(Collection)}
+     */
+    static ResolutionLabelPredicate byList(@Nonnull @NonnullElements final Collection<String> candidates) {
+        return new ResolutionLabelPredicate(candidates);
+    }
+
+    /**
+     * Factory Method to avoid type-coercion warnings fromSpring.
+     *
+     * @param pred generalized predicate
+     * @return the result of calling {@link #ResolutionLabelPredicate(Predicate)}
+     */
+    static ResolutionLabelPredicate byPredicate(@Nonnull final Predicate<String> pred) {
+        return new ResolutionLabelPredicate(pred);
+    }
 }

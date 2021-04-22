@@ -160,6 +160,7 @@ public abstract class BaseResolverPluginParser extends AbstractCustomBeanDefinit
         } else if (config.hasAttributeNS(null, "excludeResolutionPhases")) {
             final BeanDefinitionBuilder unnegated =
                     BeanDefinitionBuilder.genericBeanDefinition(ResolutionLabelPredicate.class);
+            unnegated.setFactoryMethod("ofList");
             unnegated.addConstructorArgValue(
                     SpringSupport.getAttributeValueAsList(
                             config.getAttributeNodeNS(null, "excludeResolutionPhases")));
