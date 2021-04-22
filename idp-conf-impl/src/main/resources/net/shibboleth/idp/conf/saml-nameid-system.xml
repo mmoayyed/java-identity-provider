@@ -80,7 +80,7 @@
             p:createTimeColumn="#{'%{idp.persistentId.createTimeColumn:creationDate}'.trim()}"
             p:deactivationTimeColumn="#{'%{idp.persistentId.deactivationTimeColumn:deactivationDate}'.trim()}">
         <property name="retryableErrors">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.persistentId.retryableErrors:}'.trim()}" />
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.persistentId.retryableErrors:23000,23505}'.trim()}" />
         </property>
     </bean>    
     
