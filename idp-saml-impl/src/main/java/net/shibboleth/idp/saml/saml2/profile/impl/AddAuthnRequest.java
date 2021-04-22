@@ -362,7 +362,9 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         final SAMLObjectBuilder<Scoping> scopingBuilder =
                 (SAMLObjectBuilder<Scoping>) bf.<Scoping>getBuilderOrThrow(Scoping.DEFAULT_ELEMENT_NAME);
         final Scoping scoping = scopingBuilder.buildObject();
-        scoping.setProxyCount(Integer.min(0, count - 1));
+        if (count != null) {
+            scoping.setProxyCount(Integer.max(0, count - 1));
+        }
         
         if (!idplist.isEmpty()) {
             final SAMLObjectBuilder<IDPList> idpListBuilder =

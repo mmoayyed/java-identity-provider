@@ -20,6 +20,8 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import static org.testng.Assert.*;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
@@ -48,9 +50,11 @@ import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
+import org.opensaml.saml.saml2.core.Scoping;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.BeforeMethod;
@@ -65,6 +69,11 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
     private RelyingPartyContext rpc;
     private AddAuthnRequest action;
     
+    /**
+     * Set up test state.
+     * 
+     * @throws ComponentInitializationException
+     */
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().buildRequestContext();
         prc1 = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
@@ -177,6 +186,86 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertNotNull(nid);
         assertEquals(nid.getFormat(), NameIDType.EMAIL);
         assertTrue(nid.getAllowCreate());
+    }
+
+    /** Test with Scoping element but no count. */
+    @Test public void testScopingNoCount() {
+        ac.getProxiableAuthorities().add("foo");
+        ac.getProxiableAuthorities().add("bar");
+        
+        Event event = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        assertNotNull(prc2.getOutboundMessageContext().getMessage());
+        assertTrue(prc2.getOutboundMessageContext().getMessage() instanceof AuthnRequest);
+
+        final AuthnRequest request = (AuthnRequest) prc2.getOutboundMessageContext().getMessage();
+        final Scoping scoping = request.getScoping();
+        assertNotNull(scoping);
+        assertNull(scoping.getProxyCount());
+        assertNotNull(scoping.getIDPList());
+        
+        final Set<String> requestedAuthorities = scoping.getIDPList().getIDPEntrys()
+                .stream()
+                .map(IDPEntry::getProviderID)
+                .filter(id -> id != null)
+                .collect(Collectors.toUnmodifiableSet());
+        
+        assertEquals(requestedAuthorities, ac.getProxiableAuthorities());
+    }
+
+    /** Test with Scoping element and count of 1. */
+    @Test public void testScopingCount1() {
+
+        ac.setProxyCount(1);
+        
+        Event event = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        assertNotNull(prc2.getOutboundMessageContext().getMessage());
+        assertTrue(prc2.getOutboundMessageContext().getMessage() instanceof AuthnRequest);
+
+        final AuthnRequest request = (AuthnRequest) prc2.getOutboundMessageContext().getMessage();
+        final Scoping scoping = request.getScoping();
+        assertNotNull(scoping);
+        assertNull(scoping.getIDPList());
+        assertEquals(scoping.getProxyCount(), Integer.valueOf(0));
+    }
+
+    /** Test with Scoping element and count of 5. */
+    @Test public void testScopingCount5() {
+
+        ac.setProxyCount(5);
+        
+        Event event = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        assertNotNull(prc2.getOutboundMessageContext().getMessage());
+        assertTrue(prc2.getOutboundMessageContext().getMessage() instanceof AuthnRequest);
+
+        final AuthnRequest request = (AuthnRequest) prc2.getOutboundMessageContext().getMessage();
+        final Scoping scoping = request.getScoping();
+        assertNotNull(scoping);
+        assertNull(scoping.getIDPList());
+        assertEquals(scoping.getProxyCount(), Integer.valueOf(4));
+    }
+
+    /** Test with Scoping element and count of 0 (this shouldn't really happen). */
+    @Test public void testScopingCount0() {
+
+        ac.setProxyCount(0);
+        
+        Event event = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        assertNotNull(prc2.getOutboundMessageContext().getMessage());
+        assertTrue(prc2.getOutboundMessageContext().getMessage() instanceof AuthnRequest);
+
+        final AuthnRequest request = (AuthnRequest) prc2.getOutboundMessageContext().getMessage();
+        final Scoping scoping = request.getScoping();
+        assertNotNull(scoping);
+        assertNull(scoping.getIDPList());
+        assertEquals(scoping.getProxyCount(), Integer.valueOf(0));
     }
 
     /** Test that the action works for RequestedAuthnContext. */
