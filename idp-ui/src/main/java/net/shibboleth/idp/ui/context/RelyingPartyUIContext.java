@@ -240,14 +240,17 @@ public final class RelyingPartyUIContext extends BaseContext {
      * Set the browser languages.
      *
      * @param languages the languages to set
-     * @deprecated use {@link #setBrowserLanguageRanges(List)}
+     * 
      * @return this context
+     * 
+     * @deprecated use {@link #setRequestSupplier(Supplier)}
      */
     @Deprecated(since="4.0.0", forRemoval=true)
     @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
         Constraint.isNotNull(languages, "Language List cannot be null");
         // The replacement was created in V4.1.1
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "setBrowserLanguages", null, "setHttpServletResponse");
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "RelyingPartyUIContext.setBrowserLanguages", null,
+                "setRequestSupplier");
         browserLanguages = languages.
                 stream().
                 filter(e -> e != null).
@@ -260,12 +263,17 @@ public final class RelyingPartyUIContext extends BaseContext {
      * Set the browser languages.
      * 
      * @param ranges the languages to set
+     * 
      * @return this context
+     * 
+     * @deprecated use {@link #setRequestSupplier(Supplier)}
      */
+    @Deprecated(since="4.1.1", forRemoval=true)
     @Nonnull public RelyingPartyUIContext setBrowserLanguageRanges(
             @Nonnull @NonnullElements final List<LanguageRange> ranges) {
         // The replacement was created in V4.1.1
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "setBrowserLanguageRanges", null, "setHttpServletResponse");
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "RelyingPartyUIContext.setBrowserLanguageRanges", null,
+                "setRequestSupplier");
         browserLanguages = Constraint.isNotNull(ranges, "Language Range cannot be null");
         return this;
     }
