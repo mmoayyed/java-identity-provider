@@ -404,7 +404,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void checkRequiredModules(final Set<String> loadedModules) throws BuildException  {
         for (final String moduleId: description.getRequiredModules()) {
             if (!loadedModules.contains(moduleId)) {
-                LOG.warn("Required modules {} is missing on not enabled ", moduleId);
+                LOG.warn("Required module {} is missing or not enabled ", moduleId);
                 throw new BuildException("One or more required modules are not enabled");
             }
         }
@@ -774,6 +774,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** Generate a {@link URLClassLoader} which looks at the
      * installed WEB-INF/lib in addition to the dist webapp and bin/lib directories.
+     * As a side effect, it also copies the libs (since they may well be overwritten)
      * @return an appropriate loader
      * @throws BuildException if a directory traversal fails.
      */

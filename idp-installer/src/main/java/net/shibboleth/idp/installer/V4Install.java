@@ -48,9 +48,12 @@ import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.Version;
+import net.shibboleth.idp.installer.plugin.impl.PluginState;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
+import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -140,6 +143,22 @@ public class V4Install extends AbstractInitializableComponent {
                 log.error("Install failed: system will not work after V4 upgrade");
                 log.error("idp.service.relyingparty.resources is set to shibboleth.RelyingPartyResolverResources");
                 throw new BuildException("Install failed: system will not work after V4 upgrade");
+            }
+        }
+        final PluginVersion idpVersion = new PluginVersion(Version.getVersion());
+        for (final IdPPlugin plugin: ServiceLoader.load(IdPPlugin.class, currentState.getInstalledPluginsLoader())) {
+            final String pluginId = plugin.getPluginId();
+            final PluginVersion pluginVersion = new PluginVersion(plugin);
+            try {
+                log.debug("Considering Plugin {}, version {}", pluginId,  pluginVersion);
+                final PluginState state = new PluginState(plugin, Collections.emptyList());
+                state.initialize();
+                if (!state.isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
+                    log.warn("Installed Plugin {} version {} is not supported with IdP Version {}, continuing.",
+                            pluginId, pluginVersion, idpVersion);
+                }
+            } catch (final ComponentInitializationException e) {
+                log.error("Could not process plugin {}, continuing", plugin.getPluginId(),e);
             }
         }
     }

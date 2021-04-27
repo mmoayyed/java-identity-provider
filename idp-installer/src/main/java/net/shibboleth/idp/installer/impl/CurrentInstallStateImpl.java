@@ -21,8 +21,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +45,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +91,9 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     
     /** The files to delete after an upgrade. */
     @NonnullAfterInit private List<Path> pathsToDelete;
+
+    /** The classloader for "us plus the plugins in the target". */
+    @Nullable private ClassLoader installedPluginsLoader;
 
     /** Constructor.
      * @param installerProps the installer situation.
@@ -249,5 +261,50 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** {@inheritDoc} */
     @Nonnull public Collection<String> getEnabledModules() {
         return enabledModules;
+    }
+
+    /** {@inheritDoc} */
+    public synchronized ClassLoader getInstalledPluginsLoader() {
+
+        if (installedPluginsLoader != null) {
+            return installedPluginsLoader;
+        }
+        final Path libs = targetDir.resolve("dist").resolve("plugin-webapp").resolve("WEB-INF").resolve("lib");
+        final URL[] urls;
+        if (Files.exists(libs)) {
+            try {
+                final List<Path> copiedFiles = new ArrayList<>();
+                final FileVisitor<Path> visitor = new SimpleFileVisitor<>() {
+                    public FileVisitResult visitFile(final Path file,
+                            final BasicFileAttributes attrs) throws IOException {
+                        copiedFiles.add(file);
+                        return FileVisitResult.CONTINUE;
+                    }
+                };
+                try (final DirectoryStream<Path> webInfLibs = Files.newDirectoryStream(libs)) {
+                    for (final Path jar : webInfLibs) {
+                        visitor.visitFile(jar, null);
+                    }
+                }
+                urls = copiedFiles.
+                        stream().
+                        map( path -> {
+                            try {
+                                return path.toUri().toURL();
+                            } catch (final MalformedURLException e1) {
+                                throw new BuildException(e1);
+                            }
+                        }).
+                        toArray(URL[]::new);
+            } catch (final IOException e) {
+                log.error("Error finding Plugins' classpath", e);
+                installedPluginsLoader = this.getClass().getClassLoader();
+                return installedPluginsLoader;
+            }
+        } else {
+            urls = new URL[0];
+        }
+        installedPluginsLoader = new URLClassLoader(urls);
+        return installedPluginsLoader;
     }
 }

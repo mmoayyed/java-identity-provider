@@ -83,4 +83,11 @@ public interface CurrentInstallState extends InitializableComponent {
     default @Nonnull Collection<String> getEnabledModules() {
         return Collections.emptySet();
     }
+
+    /** Build a classpath loader which adds all the plugins in.
+     * @return a classloader
+     */
+    default ClassLoader getInstalledPluginsLoader() {
+        return this.getClass().getClassLoader();
+    }
 }
