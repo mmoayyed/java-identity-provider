@@ -20,7 +20,6 @@ package net.shibboleth.idp.plugin.impl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -29,6 +28,8 @@ import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginException;
 import net.shibboleth.idp.plugin.PropertyDrivenIdPPlugin;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /**
  * Implementation class for plugins from the project itself to centralize
@@ -51,10 +52,12 @@ public class FirstPartyIdPPlugin extends PropertyDrivenIdPPlugin {
     /** {@inheritDoc} 
      * @throws PluginException */
     @Override
-    @Nonnull @NonnullElements public List<URL> getDefaultUpdateURLs() throws PluginException {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<URL> getDefaultUpdateURLs() throws PluginException {
         try {
-            return Collections.singletonList(
-                    new URL("https://shibboleth.net/downloads/identity-provider/plugins/plugins.properties"));
+            // The second location is a backup CNAME pointing into AWS S3 at present.
+            return List.of(
+                    new URL("https://shibboleth.net/downloads/identity-provider/plugins/plugins.properties"),
+                    new URL("http://plugins.shibboleth.net/plugins.properties"));
         } catch (final MalformedURLException e) {
             throw new PluginException(e);
         }

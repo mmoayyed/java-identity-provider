@@ -26,6 +26,8 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /**
  * A base class implementing {@link IdPPlugin} that defaults common settings.
@@ -57,12 +59,12 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements public Set<String> getRequiredModules() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<String> getRequiredModules() {
         return Collections.emptySet();
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements public Set<IdPModule> getEnableOnInstall() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<IdPModule> getEnableOnInstall() {
         return enableModules;
     }
 
@@ -81,7 +83,7 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements public Set<IdPModule> getDisableOnRemoval() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<IdPModule> getDisableOnRemoval() {
         return disableModules;
     }
 

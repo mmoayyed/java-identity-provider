@@ -37,6 +37,8 @@ import net.shibboleth.idp.module.PropertyDrivenIdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -183,13 +185,13 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements public List<URL> getUpdateURLs() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<URL> getUpdateURLs() {
         return updateURLs;
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements public Set<String> getRequiredModules() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<String> getRequiredModules() {
         return requiredModules;
     }
 
@@ -220,7 +222,7 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
      * @return default update locations
      * @throws PluginException 
      */
-    @Nonnull @NonnullElements protected List<URL> getDefaultUpdateURLs() throws PluginException {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive protected List<URL> getDefaultUpdateURLs() throws PluginException {
         return Collections.emptyList();
     }
     

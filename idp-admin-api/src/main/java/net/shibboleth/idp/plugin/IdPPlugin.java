@@ -29,6 +29,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /**
  * This interface is exported (via the service API) by every IdP plugin.
@@ -54,7 +56,7 @@ public interface IdPPlugin {
      * @return Zero or more URLs
      * @throws IOException if the resource construction failed.
      */
-    @Nonnull @NonnullElements List<URL> getUpdateURLs() throws IOException;
+    @Nonnull @NonnullElements @Unmodifiable @NotLive List<URL> getUpdateURLs() throws IOException;
     
     /** Return the major version, (as defined by the 
      * <a href="https://wiki.shibboleth.net/confluence/display/DEV/Java+Product+Version+Policy">
@@ -88,20 +90,20 @@ public interface IdPPlugin {
      * 
      * @return module IDs that are required
      */
-    @Nonnull @NonnullElements Set<String> getRequiredModules();
+    @Nonnull @NonnullElements @Unmodifiable @NotLive Set<String> getRequiredModules();
 
     /**
      * Get the modules to enable after plugin installation or upgrade.
      * 
      * @return modules to enable
      */
-    @Nonnull @NonnullElements Set<IdPModule> getEnableOnInstall();
+    @Nonnull @NonnullElements @Unmodifiable @NotLive Set<IdPModule> getEnableOnInstall();
 
     /**
      * Get the modules to disable after plugin removal.
      * 
      * @return modules to disable
      */
-    @Nonnull @NonnullElements Set<IdPModule> getDisableOnRemoval();
+    @Nonnull @NonnullElements @Unmodifiable @NotLive Set<IdPModule> getDisableOnRemoval();
 
 }
