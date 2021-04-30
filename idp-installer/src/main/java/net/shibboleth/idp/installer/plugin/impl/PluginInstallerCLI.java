@@ -202,6 +202,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         inst.setModuleContextSecurityParams(getHttpClientSecurityParameters());
         inst.setUpdateOverrideURLs(updateURLs);
+        inst.setRebuildWar(args.isRebuild());
         inst.initialize();
         installer = inst;
     }

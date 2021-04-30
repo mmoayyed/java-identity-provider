@@ -84,6 +84,7 @@ public class PluginCLITest extends BasePluginTest {
             assertEquals(PluginInstallerCLI.runMain(new String[] { 
                     "-i", PLUGIN_DISTRO,
                     "--noCheck",
+                    "--noRebuild"
                     }),
                     AbstractCommandLine.RC_OK);
     }
@@ -93,6 +94,7 @@ public class PluginCLITest extends BasePluginTest {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", PLUGIN_ID,
                 "--noCheck",
+                "--noRebuild"
                 }),
                 AbstractCommandLine.RC_OK);
     }
@@ -117,6 +119,7 @@ public class PluginCLITest extends BasePluginTest {
     public void testUninstall() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-r", PLUGIN_ID,
+                "--noRebuild"
                 }),
                 AbstractCommandLine.RC_OK);
     }

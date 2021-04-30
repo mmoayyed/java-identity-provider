@@ -96,6 +96,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Parameter(names= {"--updateURL"})
     @Nullable private String updateURL;
 
+    /** Override version check. */
+    @Parameter(names= {"--noRebuild", "--no-rebuild"})
+    @Nullable private boolean noRebuild;
+
     /** The {@link #forceUpdateVersion} as a {@link PluginVersion}. */
     @Nullable private PluginVersion updateVersion;
 
@@ -238,6 +242,13 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         return operation;
     }
 
+    /** Do we rebuild the war?
+     * @return whether we do or not
+     */
+    public boolean isRebuild() {
+        return !noRebuild;
+    }
+
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     public void validate() throws IllegalArgumentException {
@@ -348,6 +359,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println(String.format("  %-22s %s", "-i, --input <what>", "Install (file name or web address)"));
         out.println(String.format("  %-22s %s", "--noCheck", "Do not check the version"));
         out.println(String.format("  %-22s %s", "-u, --update <PluginId>", "update"));
+        out.println(String.format("  %-22s %s", "--noRebuild", "do NOT rebuild war"));
         out.println(String.format("  %-22s %s", "-fu, --force-update <version>",
                 "force version to update to (requires -u)"));
         out.println(String.format("  %-22s %s", "-r, --remove, --uninstall <PluginId>",

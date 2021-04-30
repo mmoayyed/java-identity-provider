@@ -159,8 +159,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** The "plugin under construction" classpath loader. AutoClosed. */
     private URLClassLoader installingPluginLoader;
 
-    /** The securiotyParams for the module context. */
+    /** The securityParams for the module context. */
     private HttpClientSecurityParameters securityParams;
+
+    /** Do we rebuild? */
+    private boolean rebuildWar = true;
 
     /** Set IdP Home.
      * @param home Where we are working from
@@ -211,6 +214,20 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     public void setModuleContextSecurityParams(@Nullable final HttpClientSecurityParameters params) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         securityParams =  params;
+    }
+
+    /** Set whether  we rebuild the war.
+     * @param what - whether we will or not
+     */
+    public void setRebuildWar(final boolean what) {
+        rebuildWar = what;
+    }
+
+    /** Do we rebuild the war?
+     * @return true if we are going to.
+     */
+    public boolean isRebuildWar() {
+        return rebuildWar;
     }
 
     /** Install the plugin from the provided URL.  Involves downloading
@@ -282,14 +299,17 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             rollBack.completed();
         }
 
-        final BuildWar builder = new BuildWar(idpHome);
-        try {
-            builder.initialize();
-        } catch (final ComponentInitializationException e) {
-            throw new BuildException(e);
+        if (isRebuildWar()) {
+            final BuildWar builder = new BuildWar(idpHome);
+            try {
+                builder.initialize();
+            } catch (final ComponentInitializationException e) {
+                throw new BuildException(e);
+            }
+            builder.execute();
+        } else {
+            LOG.info("WAR file not rebuilt.");
         }
-        builder.execute();
-
         emitModuleChanges();
     }
 
@@ -332,14 +352,18 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 }
             }
 
-            final BuildWar builder = new BuildWar(idpHome);
-            try {
-                builder.initialize();
-            } catch (final ComponentInitializationException e) {
-                throw new BuildException(e);
+            if (isRebuildWar()) {
+                final BuildWar builder = new BuildWar(idpHome);
+                try {
+                    builder.initialize();
+                } catch (final ComponentInitializationException e) {
+                    throw new BuildException(e);
+                }
+                builder.execute();
+                LOG.info("Removed resources for {} from the WAR file.", pluginId);
+            } else {
+                LOG.info("Removed resources for {}. WAR file not rebuilt.", pluginId);
             }
-            builder.execute();
-            LOG.info("Removed resources for {} from the war", pluginId);
         }
         pluginsContents.resolve(pluginId).toFile().deleteOnExit();
         emitModuleChanges();
