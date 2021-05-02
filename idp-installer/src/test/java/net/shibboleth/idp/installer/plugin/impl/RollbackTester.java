@@ -23,6 +23,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -79,7 +80,7 @@ public class RollbackTester {
             assertFalse(disabled1.isEnabled(null));
             assertFalse(disabled2.isEnabled(null));
             
-            try (final RollbackPluginInstall rp = new RollbackPluginInstall(new ModuleContext(parent))) {
+            try (final RollbackPluginInstall rp = new RollbackPluginInstall(new ModuleContext(parent), new HashMap<>())) {
                 rp.getFilesCopied().add(copied);
                 rp.getFilesRenamedAway().add(renamed);
                 rp.getModulesDisabled().add(disabled1);
@@ -90,7 +91,7 @@ public class RollbackTester {
                     rp.completed();
                 }
             }
-            
+
             if (commit) {
                 assertTrue(enabled1.isEnabled(null));
                 assertTrue(enabled2.isEnabled(null));

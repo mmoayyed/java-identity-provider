@@ -34,9 +34,12 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.ServiceConfigurationError;
@@ -73,6 +76,8 @@ import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
+import net.shibboleth.idp.module.IdPModule.ModuleResource;
+import net.shibboleth.idp.module.IdPModule.ResourceResult;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -144,6 +149,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** The Module Context. */
     @NonnullAfterInit private ModuleContext moduleContext;
+
+    /** Module Changes.*/
+    private final  Map<ModuleResource,ResourceResult> moduleChanges = new HashMap<>();
 
     /** The "plugins" classpath loader. AutoClosed. */
     private URLClassLoader installedPluginsLoader;
@@ -263,7 +271,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 description.getMajorVersion(),description.getMinorVersion(), description.getPatchVersion());
 
         final Set<String> loadedModules = getLoadedModules();
-        try (final RollbackPluginInstall rollBack = new RollbackPluginInstall(moduleContext)) {
+        try (final RollbackPluginInstall rollBack = new RollbackPluginInstall(moduleContext, moduleChanges)) {
             uninstallOld(rollBack);
 
             checkRequiredModules(loadedModules);
@@ -281,6 +289,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new BuildException(e);
         }
         builder.execute();
+
+        emitModuleChanges();
     }
 
     /** Remove the jars for this plugin and rebuild the war.
@@ -292,10 +302,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         if (description == null) {
             LOG.warn("Description for {} not found", pluginId);
         } else {
-            try (final RollbackPluginInstall rollback = new RollbackPluginInstall(moduleContext)){
+            try (final RollbackPluginInstall rollback = new RollbackPluginInstall(moduleContext, moduleChanges)){
                 for (final IdPModule module: description.getDisableOnRemoval()) {
                     moduleId = module.getId();
-                    module.disable(moduleContext, false);
+                    captureChanges(module.disable(moduleContext, false));
                     rollback.getModulesDisabled().add(module);
                 }
                 rollback.completed();
@@ -332,6 +342,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.info("Removed resources for {} from the war", pluginId);
         }
         pluginsContents.resolve(pluginId).toFile().deleteOnExit();
+        emitModuleChanges();
     }
 
     /** Get hold of the {@link IdPPlugin} for this plugin.
@@ -421,7 +432,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 final IdPModule module = modules.next();
                 if (pluginId.equals(module.getOwnerId()) && loadedModules.contains(module.getId())) {
                     LOG.debug("Re-enabling module {}", module.getId());
-                    module.enable(moduleContext);
+                    captureChanges(module.enable(moduleContext));
                 } else {
                     LOG.debug("Not re-enabling module {}, not provided by this plugin", module.getId());
                 }
@@ -449,7 +460,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             for (final IdPModule module: description.getEnableOnInstall()) {
                 moduleId = module.getId();
                 if (!module.isEnabled(moduleContext)) {
-                    module.enable(moduleContext);
+                    captureChanges(module.enable(moduleContext));
                     rollBack.getModulesEnabled().add(module);
                 }
             }
@@ -565,6 +576,59 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 LOG.error("Could not create HttpClient", e);
                 throw new BuildException(e);
             }
+        }
+    }
+
+    /** Capture module changes.
+     * @param changes what has changed */
+    private void captureChanges(final  Map<ModuleResource,ResourceResult> changes) {
+        for (final Entry<ModuleResource, ResourceResult> entry: changes.entrySet()) {
+            moduleChanges.put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /** Emit module changes. */
+    private void emitModuleChanges() {
+        if (!moduleChanges.isEmpty()) {
+            LOG.info("Module file changes as a result of this install");
+            moduleChanges.forEach(this::doReportOperation);
+        }
+    }
+
+    /**
+     * Report on a resource result.
+     *
+     * @param resource resource
+     * @param result result of operation
+     */
+    private void doReportOperation(@Nonnull final ModuleResource resource, @Nonnull final ResourceResult result) {
+        final String dest = resource.getDestination().toString();
+        switch (result) {
+            case CREATED:
+                LOG.info("\t{} created", dest);
+                break;
+
+            case REPLACED:
+                LOG.info("\t{} replaced, {}.idpsave created", dest, dest);
+                break;
+
+            case ADDED:
+                LOG.info("\t{}.idpnew created", dest);
+                break;
+
+            case REMOVED:
+                LOG.info("\t{} removed", dest);
+                break;
+
+            case SAVED:
+                LOG.info("\t{} renamed to, {}.idpsave", dest, dest);
+                break;
+
+            case MISSING:
+                LOG.info("\t{} missing, nothing to do", dest);
+                break;
+
+            default:
         }
     }
 

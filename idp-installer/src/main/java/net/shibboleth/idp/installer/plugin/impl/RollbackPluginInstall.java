@@ -28,6 +28,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
@@ -35,6 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.module.IdPModule.ModuleResource;
+import net.shibboleth.idp.module.IdPModule.ResourceResult;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
@@ -64,12 +68,18 @@ public class RollbackPluginInstall implements AutoCloseable {
     /** The {@link ModuleContext} that the module subsystem needs.*/
     @Nonnull private final ModuleContext moduleContext;
 
+    /** Module Changes.*/
+    @Nonnull private final Map<ModuleResource, ResourceResult> moduleChanges;
+
     /**
      * Constructor.
      * @param context The Module Context
+     * @param changes Where to capture module changes
      */
-    public RollbackPluginInstall(final ModuleContext context) {
-        moduleContext = Constraint.isNotNull(context, "Module context should ne non null");
+    public RollbackPluginInstall(final @Nonnull ModuleContext context,
+            final @Nonnull Map<ModuleResource, ResourceResult> changes) {
+        moduleContext = Constraint.isNotNull(context, "Module context should be non null");
+        moduleChanges = Constraint.isNotNull(changes, "Module changes should be non null");
     }
 
     /** What was enabled?
@@ -111,7 +121,7 @@ public class RollbackPluginInstall implements AutoCloseable {
             final IdPModule module = modulesEnabled.get(i);
             try {
                 log.trace("Deleting {}", module.getId());
-                module.disable(moduleContext, false);
+                captureChanges(module.disable(moduleContext, false));
             } catch (final Throwable t) {
                 log.error("Could not disable {}: ", module.getId(), t);
             }            
@@ -130,7 +140,7 @@ public class RollbackPluginInstall implements AutoCloseable {
             final IdPModule module = modulesDisabled.get(i);
             try {
                 log.trace("Deleting {}", module.getId());
-                module.enable(moduleContext);
+                captureChanges(module.enable(moduleContext));
             } catch (final Throwable t) {
                 log.error("Could not disable {}, continuing ", module.getId(), t);
             }            
@@ -157,7 +167,7 @@ public class RollbackPluginInstall implements AutoCloseable {
         }
         return true;
     }
-    
+
     /** Traverse the {@link #filesRenamedAway} list copying the files back.
      * @return true if we did any work.
      */
@@ -180,6 +190,14 @@ public class RollbackPluginInstall implements AutoCloseable {
         return true;        
     }
 
+    /** Capture module changes.
+     * @param changes what has changed
+     */
+    private void captureChanges(final  Map<ModuleResource,ResourceResult> changes) {
+        for (final Entry<ModuleResource, ResourceResult> entry: changes.entrySet()) {
+            moduleChanges.put(entry.getKey(), entry.getValue());
+        }
+    }
 
     /** Perform the rollback.  This is done in reverse order from the install,
      * which is to say the the lists are iterated over backwards and the order is
