@@ -46,8 +46,8 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -60,7 +60,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 @NotThreadSafe public final class TrustStore extends AbstractInitializableComponent {
 
     /** logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(TrustStore.class);
+    @Nonnull private final Logger log = InstallationLogger.getLogger(TrustStore.class);
     
     /** Where the IdP is installed.  */
     @NonnullAfterInit private Path idpHome;

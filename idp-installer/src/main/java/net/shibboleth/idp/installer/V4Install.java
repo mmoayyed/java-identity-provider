@@ -39,7 +39,6 @@ import javax.annotation.Nonnull;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -49,6 +48,7 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.plugin.impl.PluginState;
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
@@ -67,7 +67,7 @@ import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGener
 public class V4Install extends AbstractInitializableComponent {
 
     /** Log. */
-    private final Logger log = LoggerFactory.getLogger(V4Install.class);
+    private final Logger log = InstallationLogger.getLogger(V4Install.class);
 
     /** Installer Properties. */
     @Nonnull private final InstallerProperties installerProps;

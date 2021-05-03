@@ -28,11 +28,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.Parameter;
 
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -138,7 +138,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** {@inheritDoc} */
     public Logger getLog() {
         if (log == null) {
-            log = LoggerFactory.getLogger(PluginInstallerArguments.class);
+            log = InstallationLogger.getLogger(PluginInstallerArguments.class);
         }
         return log;
     }

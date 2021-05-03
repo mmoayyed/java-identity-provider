@@ -34,8 +34,8 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.IdPModule.ModuleResource;
 import net.shibboleth.idp.module.IdPModule.ResourceResult;
@@ -51,7 +51,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public class RollbackPluginInstall implements AutoCloseable {
 
     /** logger.  */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(RollbackPluginInstall.class);
+    @Nonnull private final Logger log = InstallationLogger.getLogger(RollbackPluginInstall.class);
 
     /** The modules enabled when the {@link IdPPlugin} was installed. */
     @Live @Nonnull private List<IdPModule> modulesEnabled = new ArrayList<>();

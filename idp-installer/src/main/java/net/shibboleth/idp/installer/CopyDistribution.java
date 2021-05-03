@@ -25,8 +25,8 @@ import javax.annotation.Nonnull;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -39,7 +39,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public final class CopyDistribution extends AbstractInitializableComponent {
 
     /** Log. */
-    private final Logger log = LoggerFactory.getLogger(CopyDistribution.class);
+    private final Logger log = InstallationLogger.getLogger(CopyDistribution.class);
 
     /** Properties for the job. */
     @Nonnull private final InstallerProperties installerProps;

@@ -34,7 +34,8 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.selectors.PresentSelector;
 import org.apache.tools.ant.types.selectors.PresentSelector.FilePresence;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 
 /** General common names and helper functions for the Installer. 
  * This is not intended for general use.
@@ -51,7 +52,7 @@ public final class InstallerSupport {
     private static final Project ANT_PROJECT = new Project();
 
     /** Log. */
-    private static Logger log = LoggerFactory.getLogger(InstallerSupport.class);
+    private static Logger log = InstallationLogger.getLogger(InstallerSupport.class);
 
     /** Private Constructor. */
     private InstallerSupport() {}

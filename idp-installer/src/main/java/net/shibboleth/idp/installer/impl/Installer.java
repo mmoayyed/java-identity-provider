@@ -18,7 +18,6 @@
 package net.shibboleth.idp.installer.impl;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.CopyDistribution;
@@ -41,7 +40,7 @@ public final class Installer {
      * @throws ComponentInitializationException if badness occurrs
      */
     public static void main(final String[] args) throws ComponentInitializationException {
-        final Logger log = LoggerFactory.getLogger(Installer.class);
+        final Logger log = InstallationLogger.getLogger(Installer.class);
         if (args.length !=1) {
             log.error("One Parameter only {}", (Object[]) args);
             return;

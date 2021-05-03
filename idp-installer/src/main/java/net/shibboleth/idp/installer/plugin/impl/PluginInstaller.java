@@ -63,7 +63,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 
@@ -72,6 +71,7 @@ import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.ProgressReportingOutputStream;
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
@@ -97,7 +97,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** Class logger. */
     @Nonnull
-    private static final Logger LOG = LoggerFactory.getLogger(PluginInstaller.class);
+    private static final Logger LOG = InstallationLogger.getLogger(PluginInstaller.class);
 
     /** Where we are installing to. */
     @NonnullAfterInit private Path idpHome;

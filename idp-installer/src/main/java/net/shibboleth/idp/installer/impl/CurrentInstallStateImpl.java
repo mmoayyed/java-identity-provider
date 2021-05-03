@@ -63,7 +63,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 public final class CurrentInstallStateImpl extends AbstractInitializableComponent implements CurrentInstallState {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(CurrentInstallStateImpl.class);
+    @Nonnull private final Logger log = InstallationLogger.getLogger(CurrentInstallStateImpl.class);
 
     /** Where we are installing to. */
     private final Path targetDir;

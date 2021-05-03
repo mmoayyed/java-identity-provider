@@ -42,9 +42,9 @@ import org.apache.tools.ant.input.InputHandler;
 import org.apache.tools.ant.input.InputRequest;
 import org.apache.tools.ant.launch.Launcher;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.installer.ant.impl.PasswordHandler;
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -129,7 +129,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     public static final int DEFAULT_KEY_SIZE = 3072;
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InstallerProperties.class);
+    @Nonnull private final Logger log = InstallationLogger.getLogger(InstallerProperties.class);
 
     /** The base directory. */
     @NonnullAfterInit private Path baseDir;

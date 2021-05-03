@@ -31,11 +31,11 @@ import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.resource.HTTPResource;
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
@@ -75,7 +75,7 @@ public class PluginState extends AbstractInitializableComponent {
     @NonnullAfterInit private VersionInfo myVersionInfo;
     
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(PluginState.class);
+    @Nonnull private final Logger log = InstallationLogger.getLogger(PluginState.class);
 
     /** The HttpClient to use.*/
     @NonnullAfterInit private HttpClient httpClient;

@@ -32,9 +32,9 @@ import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.installer.InstallerSupport;
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.collection.Pair;
 
@@ -45,7 +45,7 @@ public final class PluginInstallerSupport {
     
     /** Class logger. */
     @Nonnull
-    private static final Logger LOG = LoggerFactory.getLogger(PluginInstallerSupport.class);
+    private static final Logger LOG = InstallationLogger.getLogger(PluginInstallerSupport.class);
 
     /** Constructor. */
     private PluginInstallerSupport() {

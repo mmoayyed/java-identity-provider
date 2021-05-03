@@ -38,7 +38,6 @@ import javax.annotation.Nullable;
 import org.apache.tools.ant.BuildException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -46,6 +45,7 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
+import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.installer.plugin.impl.PluginState.VersionInfo;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
@@ -80,7 +80,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     @Override
     @Nonnull protected Logger getLogger() {
         if (log == null) {
-            log = LoggerFactory.getLogger(PluginInstallerCLI.class);
+            log = InstallationLogger.getLogger(PluginInstallerCLI.class);
         }
         return log;
     }
