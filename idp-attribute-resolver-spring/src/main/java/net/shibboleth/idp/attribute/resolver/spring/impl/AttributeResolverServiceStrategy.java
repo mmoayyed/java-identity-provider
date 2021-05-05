@@ -49,21 +49,40 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
     
     /** Whether to strip null attribute values. */
     private boolean stripNulls;
+
+    /** Whether to attach DisplayInfo to attributes. */
+    private boolean suppressDisplayInformation;
     
     /** Do we strip nulls from attribute values.
     * @return Returns whether to strip nulls from attribute values
     */
-   public boolean isStripNulls() {
-       return stripNulls;
-   }
+    public boolean isStripNulls() {
+        return stripNulls;
+    }
 
-   /** 
-    * Sets whether to strip nulls from attribute values.
-    * @param doStripNulls what to set 
-    */
-   public void setStripNulls(final boolean doStripNulls) {
+    /** 
+     * Sets whether to strip nulls from attribute values.
+     * @param doStripNulls what to set 
+     */
+    public void setStripNulls(final boolean doStripNulls) {
        stripNulls = doStripNulls;
-   }
+    }
+
+    /** Do we allow addition of Display Information?
+     * @return whether we are suppressing
+     */
+    public boolean isSuppressDisplayInformation() {
+       return suppressDisplayInformation;
+    }
+
+    /**
+     * Set whether we suppress addition of Display Information.
+     *
+     * @param what true if we suppress the addition.
+     */
+    public void setSuppressDisplayInformation(final boolean what) {
+        suppressDisplayInformation = what;
+    }
 
     /** {@inheritDoc} */
     @Nullable public ServiceableComponent<AttributeResolver> apply(@Nullable final ApplicationContext appContext) {
@@ -81,6 +100,7 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
         resolver.setDataConnectors(connectors);
         resolver.setId(getId());
         resolver.setStripNulls(isStripNulls());
+        resolver.setSuppressDisplayInformation(isSuppressDisplayInformation());
         resolver.setApplicationContext(appContext);
 
         try {

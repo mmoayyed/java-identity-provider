@@ -46,6 +46,7 @@ import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.resolver.AbstractResolverPlugin;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -94,10 +95,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
     /** PreRequestedAttributes, resolved first and made available for late-comers. */
     @NonnullAfterInit private List<String> preRequestedAttributes;
-  
+
     /** Whether to strip null attribute values. */
     private boolean stripNulls;
-    
+
+    /** Whether to attach DisplayInfo to attributes. */
+    private boolean suppressDisplayInformation;
+
     /** Strategy to get the {@link ProfileRequestContext}. */
     @Nonnull private Function<AttributeResolutionContext,ProfileRequestContext> profileContextStrategy;
 
@@ -181,6 +185,24 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         stripNulls = doStripNulls;
+    }
+
+    /** Do we allow addition of Display Information?
+     * @return whether we are suppressing
+     */
+    public boolean isSuppressDisplayInformation() {
+        return suppressDisplayInformation;
+    }
+
+    /**
+     * Set whether we suppress addition of Display Information.
+     *
+     * @param what true if we suppress the addition.
+     */
+    public void setSuppressDisplayInformation(final boolean what) {
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        suppressDisplayInformation = what;
     }
 
     /**
@@ -573,7 +595,9 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 }
                 final IdPAttribute newAttr = new IdPAttribute(attribute.getId());
                 newAttr.setValues(values);
-                dataConnector.addDisplayInformation(resolutionContext, newAttr);
+                if (!isSuppressDisplayInformation()) {
+                    dataConnector.addDisplayInformation(resolutionContext, newAttr);
+                }
                 resolvedAttributes.put(attribute.getId(), newAttr);
             }
         }
@@ -659,11 +683,17 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         for (final DataConnector plugin : dataConnectors.values()) {
             log.debug("{} Checking if data connector '{}' has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
+            if (plugin instanceof AbstractResolverPlugin<?>) {
+                ((AbstractResolverPlugin<?>) plugin).setSuppressDisplayInformation(isSuppressDisplayInformation());
+            }
         }
 
         for (final AttributeDefinition plugin : attributeDefinitions.values()) {
             log.debug("{} Checking if attribute definition '{}' has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
+            if (plugin instanceof AbstractResolverPlugin<?>) {
+                ((AbstractResolverPlugin<?>) plugin).setSuppressDisplayInformation(isSuppressDisplayInformation());
+            }
         }
     }
 

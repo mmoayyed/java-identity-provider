@@ -100,7 +100,6 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      * @param what true if we suppress the addition.
      */
     public void setSuppressDisplayInformation(final boolean what) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         suppressDisplayInformation = what;
