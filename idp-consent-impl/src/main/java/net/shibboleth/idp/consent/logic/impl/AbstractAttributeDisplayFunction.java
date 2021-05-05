@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Locale.LanguageRange;
@@ -31,13 +32,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Abstract Function which returns {@link Locale}-aware information about an attribute. The abstract method
- * {@link #getDisplayInfo(IdPAttribute)} returns the information selected from the attribute. This function defaults to
- * returning the attribute ID if no information is selected from the attribute for the desired locales.
+ * {@link #getDisplayInfo(AttributeTranscoderRegistry, IdPAttribute)} returns the information selected for
+ * the attribute from the transcoder.
+ * 
+ * This function defaults to returning the attribute ID if no information is selected from the attribute
+ * for the desired locales.
  */
 public abstract class AbstractAttributeDisplayFunction implements Function<IdPAttribute, String> {
 
@@ -47,17 +55,25 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
     /** The tags for the fallback languages. */
     @Nonnull @Unmodifiable private final List<Locale.LanguageRange> defaultLanguageRange;
 
+    /** Cache of already looked up values. */
+    @Nonnull private Map<IdPAttribute, Map<Locale, String>> cachedInfo = new HashMap<>();
+
+    /** How to do the lookup. */
+    @Nonnull private ReloadableService<AttributeTranscoderRegistry> transcoder;
     
     /**
      * Constructor.
      * 
      * @param request {@link HttpServletRequest} used to get preferred languages
      * @param defaultLanguages list of fallback languages in order of decreasing preference
+     * @param transcoderService the attribute transcoder service
      */
     public AbstractAttributeDisplayFunction(@Nonnull final HttpServletRequest request,
-            @Nullable final List<String> defaultLanguages) {
+            @Nullable final List<String> defaultLanguages,
+            final ReloadableService<AttributeTranscoderRegistry> transcoderService) {
 
         languageRange = SpringSupport.getLanguageRange(request);
+        transcoder = Constraint.isNotNull(transcoderService, "Injected transocde service should be non-null");
         if (defaultLanguages == null || defaultLanguages.isEmpty()) {
             defaultLanguageRange = Collections.emptyList();
         } else {
@@ -75,8 +91,22 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
         if (input == null) {
             return "N/A";
         }
-        
-        final Map<Locale, String> displayInfo = getDisplayInfo(input);
+
+        Map<Locale, String> displayInfo = cachedInfo.get(input);
+        if (displayInfo == null) {
+            ServiceableComponent<AttributeTranscoderRegistry> component = null;
+            try {
+                component = transcoder.getServiceableComponent();
+                if (component != null) {
+                    displayInfo = getDisplayInfo(component.getComponent(), input);
+                }
+            } finally {
+                if (component != null) {
+                    component.unpinComponent();
+                }
+            }
+            cachedInfo.put(input, displayInfo);
+        }
         
         Locale locale = Locale.lookup(languageRange, displayInfo.keySet());
         if (locale == null) {
@@ -85,14 +115,21 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
         if (locale == null) {
             return input.getId();
         }
-        return displayInfo.get(locale);
+        final String result = displayInfo.get(locale);
+        if (result == null) {
+            return input.getId();
+        }
+        return result;
     }
 
     /**
      * Get the information to be displayed from the attribute.
      * 
-     * @param input the attribute to consider
+     * @param registry the {@link AttributeTranscoderRegistry} to ask.
+     * @param attribute the attribute to consider
      * @return the map of locale dependent information to be displayed
      */
-    @Nonnull protected abstract Map<Locale, String> getDisplayInfo(@Nonnull final IdPAttribute input);
+    @Nonnull protected abstract Map<Locale, String> getDisplayInfo(
+            @Nonnull final AttributeTranscoderRegistry registry,
+            @Nonnull final IdPAttribute attribute);
 }

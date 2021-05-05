@@ -17,7 +17,9 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +29,11 @@ import java.util.function.Function;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
@@ -36,9 +43,12 @@ import org.testng.annotations.Test;
 /**
  * {@link AttributeDisplayNameFunction} and {@link AttributeDisplayDescriptionFunction} unit tests.
  */
+@SuppressWarnings("javadoc")
 public class AttributeDisplayNameDescriptionFunctionTest {
     
     private IdPAttribute testAttribute;
+
+    private MockService service = new MockService();
 
     @BeforeClass public void constructAttribute() {
         final IdPAttribute attr = new IdPAttribute("What");
@@ -71,38 +81,38 @@ public class AttributeDisplayNameDescriptionFunctionTest {
     }
     
     @Test public void testNameHttpOnly() {
-        Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), null);
+        Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), null, service);
         Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
 
-        func = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), null);
+        func = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), null, service);
         Assert.assertEquals(func.apply(testAttribute), testAttribute.getId());
     }
 
     @Test public void testNameWithDefault() {
         List<String> fallback = List.of("en", "fr", "de");
         
-        Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), fallback);
+        Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), fallback, service);
         Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
 
-        func = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), fallback);
+        func = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), fallback, service);
         Assert.assertEquals(func.apply(testAttribute), "EN locale Name");
     }
 
     @Test public void testDescHttpOnly() {
-        Function<IdPAttribute, String> func = new AttributeDisplayDescriptionFunction(getMockRequest("fr", "de", "en"), null);
+        Function<IdPAttribute, String> func = new AttributeDisplayDescriptionFunction(getMockRequest("fr", "de", "en"), null, service);
         Assert.assertEquals(func.apply(testAttribute), "FR locale Description");
 
-        func = new AttributeDisplayDescriptionFunction(getMockRequest("pt", "es"), null);
+        func = new AttributeDisplayDescriptionFunction(getMockRequest("pt", "es"), null, service);
         Assert.assertEquals(func.apply(testAttribute), testAttribute.getId());
     }
 
     @Test public void testDescWithDefault() {
         List<String> fallback = List.of("en", "fr", "de");
         
-        Function<IdPAttribute, String> func = new AttributeDisplayDescriptionFunction(getMockRequest("fr", "de", "en"), fallback);
+        Function<IdPAttribute, String> func = new AttributeDisplayDescriptionFunction(getMockRequest("fr", "de", "en"), fallback, service);
         Assert.assertEquals(func.apply(testAttribute), "FR locale Description");
 
-        func = new AttributeDisplayDescriptionFunction(getMockRequest("pt", "es"), fallback);
+        func = new AttributeDisplayDescriptionFunction(getMockRequest("pt", "es"), fallback, service);
         Assert.assertEquals(func.apply(testAttribute), "EN locale Description");
     }
 
@@ -112,10 +122,94 @@ public class AttributeDisplayNameDescriptionFunctionTest {
         fallback.add("");
         fallback.add("fr");
         
-        Function<IdPAttribute, String> displayNameFunc = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), fallback);
+        Function<IdPAttribute, String> displayNameFunc = new AttributeDisplayNameFunction(
+                getMockRequest("pt", "es"), fallback, service);
         Assert.assertEquals(displayNameFunc.apply(testAttribute), "FR locale Name");
         
-        Function<IdPAttribute, String> descFunc = new AttributeDisplayDescriptionFunction(getMockRequest("pt", "es"), fallback);
+        Function<IdPAttribute, String> descFunc = new AttributeDisplayDescriptionFunction(
+                getMockRequest("pt", "es"), fallback, service);
         Assert.assertEquals(descFunc.apply(testAttribute), "FR locale Description");
+    }
+
+    private final static class MockService implements
+        ReloadableService<AttributeTranscoderRegistry>,
+        ServiceableComponent<AttributeTranscoderRegistry>,
+        AttributeTranscoderRegistry
+    {
+
+        /** {@inheritDoc} */
+        public boolean isInitialized() {
+            return true;
+        }
+
+        /** {@inheritDoc} */
+        public void initialize() throws ComponentInitializationException {
+        }
+
+        /** {@inheritDoc} */
+        public Instant getLastSuccessfulReloadInstant() {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public Instant getLastReloadAttemptInstant() {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public Throwable getReloadFailureCause() {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public void reload() {
+        }
+
+        /** {@inheritDoc} */
+        public ServiceableComponent<AttributeTranscoderRegistry> getServiceableComponent() {
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        public String getId() {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public Map<Locale, String> getDisplayNames(IdPAttribute attribute) {
+            return attribute.getDisplayNames();
+        }
+
+        /** {@inheritDoc} */
+        public Map<Locale, String> getDescriptions(IdPAttribute attribute) {
+            return attribute.getDisplayDescriptions();
+        }
+
+        /** {@inheritDoc} */
+        public Collection<TranscodingRule> getTranscodingRules(IdPAttribute from, Class<?> to) {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public <T> Collection<TranscodingRule> getTranscodingRules(T from) {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public AttributeTranscoderRegistry getComponent() {
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        public void pinComponent() {
+        }
+
+        /** {@inheritDoc} */
+        public void unpinComponent() {
+        }
+
+        /** {@inheritDoc} */
+        public void unloadComponent() {
+        }
     }
 }

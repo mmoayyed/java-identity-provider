@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
  * Function which returns the locale-aware display description of an attribute, defaulting to the
@@ -38,14 +40,17 @@ public class AttributeDisplayDescriptionFunction extends AbstractAttributeDispla
      * 
      * @param request {@link HttpServletRequest} used to get preferred languages
      * @param defaultLangauages list of fallback languages in order of decreasing preference
+     * @param transcoderService the attribute transcoder service
      */
     public AttributeDisplayDescriptionFunction(@Nonnull final HttpServletRequest request,
-            @Nullable final List<String> defaultLangauages) {
-        super(request, defaultLangauages);
+            @Nullable final List<String> defaultLangauages,
+            final ReloadableService<AttributeTranscoderRegistry> transcoderService) {
+        super(request, defaultLangauages, transcoderService);
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected Map<Locale, String> getDisplayInfo(@Nonnull final IdPAttribute attribute) {
-        return attribute.getDisplayDescriptions();
+    protected Map<Locale, String> getDisplayInfo( @Nonnull final AttributeTranscoderRegistry registry,
+            @Nonnull final IdPAttribute attribute) {
+        return registry.getDescriptions(attribute);
     }
 }
