@@ -122,6 +122,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * Afterwards, if null was not returned, this method will attach the registered display names, descriptions,
      * and encoders to the resultant attribute.
      */
+    @SuppressWarnings("removal")
     @Override
     @Nullable protected IdPAttribute doResolve(@Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {

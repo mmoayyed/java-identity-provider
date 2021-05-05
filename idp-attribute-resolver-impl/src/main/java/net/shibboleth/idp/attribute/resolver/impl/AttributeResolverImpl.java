@@ -562,6 +562,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param workContext context to extract attributes from
      */
     // CheckStyle: CyclomaticComplexity OFF
+    @SuppressWarnings("removal")
     private void collectExportingDataConnectors(final Map<String, IdPAttribute> resolvedAttributes,
            final AttributeResolutionContext resolutionContext,
            final AttributeResolverWorkContext workContext) {

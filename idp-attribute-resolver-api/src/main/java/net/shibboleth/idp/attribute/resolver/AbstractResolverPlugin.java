@@ -284,11 +284,13 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
     /** Look at the resolution context for an attribute registry and use it to garnish the
      * attribute.
+     * @deprecated These values should be calculated at point of use
      *
      * Controllable via the {@link AbstractResolverPlugin#isSuppressDisplayInformation()} method.
      * @param resolutionContext where to get the registry from
      * @param attribute what to garnish
      */
+    @Deprecated(since = "4.2", forRemoval = true)
     public void addDisplayInformation(@Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final IdPAttribute attribute) {
 

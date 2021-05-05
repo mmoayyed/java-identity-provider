@@ -50,22 +50,21 @@ public class AttributeDisplayNameDescriptionFunctionTest {
 
     private MockService service = new MockService();
 
+    private final Map<Locale, String> names = new HashMap<>(3);
+
+    private final Map<Locale, String> descriptions = new HashMap<>(3);
+
     @BeforeClass public void constructAttribute() {
         final IdPAttribute attr = new IdPAttribute("What");
 
-        final Map<Locale, String> names = new HashMap<>(3);
         names.put(new Locale("en"), "EN locale Name");
         names.put(new Locale("fr"), "FR locale Name");
         names.put(new Locale("de"), "DE locale Name");
 
-        final Map<Locale, String> descriptions = new HashMap<>(3);
         descriptions.put(new Locale("en"), "EN locale Description");
         descriptions.put(new Locale("fr"), "FR locale Description");
         descriptions.put(new Locale("de"), "DE locale Description");
-        
-        attr.setDisplayNames(names);
-        attr.setDisplayDescriptions(descriptions);
-        
+
         testAttribute = attr;
     }
     
@@ -131,7 +130,7 @@ public class AttributeDisplayNameDescriptionFunctionTest {
         Assert.assertEquals(descFunc.apply(testAttribute), "FR locale Description");
     }
 
-    private final static class MockService implements
+    private final class MockService implements
         ReloadableService<AttributeTranscoderRegistry>,
         ServiceableComponent<AttributeTranscoderRegistry>,
         AttributeTranscoderRegistry
@@ -177,12 +176,12 @@ public class AttributeDisplayNameDescriptionFunctionTest {
 
         /** {@inheritDoc} */
         public Map<Locale, String> getDisplayNames(IdPAttribute attribute) {
-            return attribute.getDisplayNames();
+            return names;
         }
 
         /** {@inheritDoc} */
         public Map<Locale, String> getDescriptions(IdPAttribute attribute) {
-            return attribute.getDisplayDescriptions();
+            return descriptions;
         }
 
         /** {@inheritDoc} */

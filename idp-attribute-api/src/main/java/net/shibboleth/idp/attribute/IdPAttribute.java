@@ -74,7 +74,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
             return new Entry<>() {
                 private String val = Constraint.isNotNull(StringSupport.trimOrNull(t.getValue()),
                         "Values must not be null");
-                private Locale key = Constraint.isNotNull(t.getKey(), "Key must not be null");
+                private Locale key = Constraint.isNotNull(t.getKey(), "Locale must not be null");
                 public Locale getKey() {
                     return key;
                 }
@@ -156,10 +156,12 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
 
     /**
      * Gets the localized human readable name of the attribute.
+     * @deprecated These values should be calculated at point of use
      * 
      * @return human readable name of the attribute
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayNames() {
+    @Deprecated(forRemoval = true, since = "4.2") @Nonnull @NonnullElements @Unmodifiable
+    public Map<Locale, String> getDisplayNames() {
         return displayNames;
     }
 
@@ -183,9 +185,11 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
 
     /**
      * Replaces the existing display names for this attribute with the given ones.
+     * @deprecated These values should be calculated at point of use
      * 
      * @param newNames the new names for this attribute
      */
+    @Deprecated(forRemoval = true, since = "4.2")
     public void setDisplayNames(@Nonnull @NonnullElements final Map<Locale, String> newNames) {
         displayNames = checkedNamesFrom(
                 Constraint.isNotNull(newNames, "Display Names should not be null"));
@@ -193,18 +197,22 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
 
     /**
      * Gets the localized human readable description of attribute.
+     * @deprecated These values should be calculated at point of use
      * 
      * @return human readable description of attribute
      */
+    @Deprecated(forRemoval = true, since = "4.2")
     @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayDescriptions() {
         return displayDescriptions;
     }
 
     /**
      * Replaces the existing display descriptions for this attribute with the given ones.
+     * @deprecated These values should be calculated at point of use
      * 
      * @param newDescriptions the new descriptions for this attribute
      */
+    @Deprecated(forRemoval = true, since = "4.2")
     public void setDisplayDescriptions(@Nonnull @NonnullElements final Map<Locale, String> newDescriptions) {
         displayDescriptions = checkedNamesFrom(
                 Constraint.isNotNull(newDescriptions, "Display Descriptions should not be null"));
