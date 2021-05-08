@@ -191,6 +191,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     @Deprecated(forRemoval = true, since = "4.2")
     public void setDisplayNames(@Nonnull @NonnullElements final Map<Locale, String> newNames) {
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setDisplayNames", null, null);
         displayNames = checkedNamesFrom(
                 Constraint.isNotNull(newNames, "Display Names should not be null"));
     }
@@ -214,6 +215,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     @Deprecated(forRemoval = true, since = "4.2")
     public void setDisplayDescriptions(@Nonnull @NonnullElements final Map<Locale, String> newDescriptions) {
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setDisplayDescriptions", null, null);
         displayDescriptions = checkedNamesFrom(
                 Constraint.isNotNull(newDescriptions, "Display Descriptions should not be null"));
     }

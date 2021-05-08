@@ -96,9 +96,11 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
     /**
      * Set whether we suppress addition of Display Information.
-     *
+     * @deprecated Display Information should be consulted at point of use
+
      * @param what true if we suppress the addition.
      */
+    @Deprecated(forRemoval = true, since = "4.2")
     public void setSuppressDisplayInformation(final boolean what) {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
