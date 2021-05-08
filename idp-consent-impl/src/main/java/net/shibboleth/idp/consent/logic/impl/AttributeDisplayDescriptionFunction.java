@@ -25,6 +25,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
@@ -35,6 +38,9 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
  */
 public class AttributeDisplayDescriptionFunction extends AbstractAttributeDisplayFunction {
 
+    /** Logger. */
+    private final Logger log = LoggerFactory.getLogger(AttributeDisplayDescriptionFunction.class);
+    
     /**
      * Constructor.
      * 
@@ -51,6 +57,12 @@ public class AttributeDisplayDescriptionFunction extends AbstractAttributeDispla
     /** {@inheritDoc} */
     protected Map<Locale, String> getDisplayInfo( @Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final IdPAttribute attribute) {
+        @SuppressWarnings("removal")
+        final Map<Locale, String>  fromAttribute = attribute.getDisplayDescriptions();
+        if (fromAttribute != null  && !fromAttribute.isEmpty()) {
+            log.debug("Attribute {} carried locally defines descriptions, skipping the registry", attribute.getId());
+            return fromAttribute;
+        }
         return registry.getDescriptions(attribute);
     }
 }
