@@ -58,7 +58,7 @@
         <constructor-arg name="claz" value="net.shibboleth.idp.attribute.resolver.AttributeResolver" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverServiceStrategy"
-                p:suppressDisplayInformation="%{idp.service.attribute.resolver.suppressDisplayInfo:false}"
+                p:suppressDisplayInformation="%{idp.service.attribute.resolver.suppressDisplayInfo:true}"
                 p:stripNulls="%{idp.service.attribute.resolver.stripNulls:false}"
                 id="ShibbolethAttributeResolver"/>
         </constructor-arg>
