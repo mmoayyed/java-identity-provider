@@ -280,7 +280,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
             }
     
             if (getNameFormat() == null || (Objects.equals(getNameFormat(), entityAttribute.getNameFormat()))) {
-                log.debug("{} Metadata for {} contains Attribute with name {} and format {}",
+                log.debug("{} Metadata for {} contains Attribute matching name {} and format {}",
                         new Object[] {getLogPrefix(), name, getAttributeName(), getNameFormat(),});
                 
                 valueAccumulator.addAll(
