@@ -95,7 +95,9 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
 
         getAttributeReleaseContext().getConsentableAttributes().putAll(consentableAttributes);
 
-        log.debug("{} Consentable attributes '{}'", getLogPrefix(), consentableAttributes);
+        log.debug("{} Consentable attribute IDs '{}'", getLogPrefix(), consentableAttributes.keySet());
+
+        log.trace("{} Consentable attributes '{}'", getLogPrefix(), consentableAttributes);
     }
 
 }
