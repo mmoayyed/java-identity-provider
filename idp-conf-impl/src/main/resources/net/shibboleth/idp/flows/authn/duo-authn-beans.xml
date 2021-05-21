@@ -56,7 +56,7 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:usernameLookupStrategy-ref="shibboleth.authn.Duo.UsernameLookupStrategy"
         p:duoIntegrationLookupStrategy-ref="shibboleth.authn.Duo.DuoIntegrationStrategy"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: true}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: %{idp.authn.Duo.addDefaultPrincipals:true}}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.Duo.resultCachingPredicate')}" />
 
     <bean id="ExtractDuoAuthenticationFromHeaders" scope="prototype"
