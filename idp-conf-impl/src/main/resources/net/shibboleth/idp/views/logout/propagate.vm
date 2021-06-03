@@ -24,7 +24,7 @@
 ## element for the relying party of their session.
 ##
 #if ($logoutContext and !$logoutContext.getSessionMap().isEmpty())
-    <ol>
+    <ol #if($hidden == "true")aria-hidden="true" style="display:none"#end>
         #foreach ($entry in $logoutContext.getKeyedSessionMap().entrySet())
             #set ($sp = $entry.getValue().getId())
             #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
@@ -163,7 +163,8 @@
             #set ($trackerId = "result_$codecUtil.hex($entry.getValue().getId().getBytes())")
             <iframe id="sender_$codecUtil.hex($entry.getKey().getBytes())"
                 src="$request.contextPath/profile/PropagateLogout?SessionKey=$urlEncoder.encode($entry.getKey())"
-                style="display:none" onload="onLoad($(this), $('#$trackerId'), '$trackerId', '$entry.getKey()')"></iframe>
+                style="display:none" #if($hidden == "true")aria-hidden="true"#end
+                onload="onLoad($(this), $('#$trackerId'), '$trackerId', '$entry.getKey()')"></iframe>
         #end
     #end
 #end
