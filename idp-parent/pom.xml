@@ -20,7 +20,7 @@
 
     <groupId>net.shibboleth.idp</groupId>
     <artifactId>idp-parent</artifactId>
-    <version>4.1.3-SNAPSHOT</version>
+    <version>4.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
