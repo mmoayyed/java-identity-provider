@@ -46,59 +46,60 @@ public class SAML2SPSessionTest extends OpenSAMLInitBaseTestCase {
         Thread.sleep(50);
 
         SAML2SPSession session = new SAML2SPSession("test", Instant.now(),
-                Instant.now().plusSeconds(60), nameID, "1234567890", false);
+                Instant.now().plusSeconds(60), nameID, "1234567890", "https://sp.example.org/acs", false);
         Assert.assertEquals(session.getId(), "test");
         Assert.assertTrue(session.getCreationInstant().isAfter(start));
         Assert.assertTrue(session.getExpirationInstant().isAfter(session.getCreationInstant()));
         Assert.assertSame(session.getNameID(), nameID);
         Assert.assertEquals(session.getSessionIndex(), "1234567890");
         Assert.assertEquals(session.getSPSessionKey(), "joe@example.org");
+        Assert.assertEquals(session.getACSLocation(), "https://sp.example.org/acs");
         Assert.assertFalse(session.supportsLogoutPropagation());
 
         try {
-            new SAML2SPSession(null, Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, true);
+            new SAML2SPSession(null, Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, null, true);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, true);
+            new SAML2SPSession("", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, null, true);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("  ", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, true);
+            new SAML2SPSession("  ", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, null, true);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, true);
+            new SAML2SPSession("foo", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, null, true);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", start, Instant.ofEpochMilli(0), null, null, true);
+            new SAML2SPSession("foo", start, Instant.ofEpochMilli(0), null, null, null, true);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", start, start, null, null, true);
+            new SAML2SPSession("foo", start, start, null, null, null, true);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", start, start, nameID, null, true);
+            new SAML2SPSession("foo", start, start, nameID, null, null, true);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

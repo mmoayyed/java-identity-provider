@@ -88,7 +88,7 @@ public class SAML2SPSessionSerializerTest extends OpenSAMLInitBaseTestCase {
         NameID nameID = (NameID) XMLObjectSupport.buildXMLObject(NameID.DEFAULT_ELEMENT_NAME);
         nameID.setValue("joe@example.org");
         
-        SAML2SPSession session = new SAML2SPSession("test", INSTANT, exp, nameID, SESSION_INDEX, false);
+        SAML2SPSession session = new SAML2SPSession("test", INSTANT, exp, nameID, SESSION_INDEX, "https://sp.example.org/acs", false);
         
         String s = serializer.serialize(session);
         String s2 = fileToString(DATAPATH + "saml2SPSession.json");

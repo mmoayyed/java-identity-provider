@@ -51,6 +51,9 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
     /** The SessionIndex asserted to the SP. */
     @Nonnull @NotEmpty private final String sessionIndex;
     
+    /** The ACS location used for the associated response. */
+    @Nullable @NotEmpty private final String acsLocation;
+    
     /** Whether logout propagation is possible. */
     private final boolean supportsLogoutPropagation;
     
@@ -70,12 +73,7 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
     public SAML2SPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
             @Nonnull final Instant expiration, @Nonnull final NameID assertedNameID,
             @Nonnull @NotEmpty final String assertedIndex) {
-        super(id, creation, expiration);
-        
-        nameID = Constraint.isNotNull(assertedNameID, "NameID cannot be null");
-        sessionIndex = Constraint.isNotNull(StringSupport.trimOrNull(assertedIndex),
-                "SessionIndex cannot be null or empty");
-        supportsLogoutPropagation = true;
+        this(id, creation, expiration, assertedNameID, assertedIndex, null, true);
     }
 
     /**
@@ -86,16 +84,19 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
      * @param expiration expiration time of session
      * @param assertedNameID the NameID asserted to the SP
      * @param assertedIndex the SessionIndex asserted to the SP
+     * @param acsLoc the response endpoint used
      * @param supportsLogoutProp whether the session supports logout propagation
      */
     public SAML2SPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
             @Nonnull final Instant expiration, @Nonnull final NameID assertedNameID,
-            @Nonnull @NotEmpty final String assertedIndex, final boolean supportsLogoutProp) {
+            @Nonnull @NotEmpty final String assertedIndex, @Nullable @NotEmpty final String acsLoc,
+            final boolean supportsLogoutProp) {
         super(id, creation, expiration);
         
         nameID = Constraint.isNotNull(assertedNameID, "NameID cannot be null");
         sessionIndex = Constraint.isNotNull(StringSupport.trimOrNull(assertedIndex),
                 "SessionIndex cannot be null or empty");
+        acsLocation = StringSupport.trimOrNull(acsLoc);
         supportsLogoutPropagation = supportsLogoutProp;
     }
 // Checkstyle: ParameterNumber ON
@@ -127,6 +128,15 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
     /** {@inheritDoc} */
     @Nullable @NotEmpty public String getProtocol() {
         return SAMLConstants.SAML20P_NS;
+    }
+    
+    /**
+     * Get the ACS location used for the response that produced this session.
+     * 
+     * @return ACS location
+     */
+    @Nullable @NotEmpty public String getACSLocation() {
+        return acsLocation;
     }
 
     /** {@inheritDoc} */

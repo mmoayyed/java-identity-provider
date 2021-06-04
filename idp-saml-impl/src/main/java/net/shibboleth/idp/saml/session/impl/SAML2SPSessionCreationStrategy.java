@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.session.impl;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -33,6 +34,8 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.SubjectConfirmation;
+import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +106,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Nullable public SPSession apply(@Nullable final ProfileRequestContext input) {
         
@@ -134,6 +138,15 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
             expiration = now.plus(sessionLifetime);
         }
         
+        String acsLocation = null;
+        final List<SubjectConfirmation> sc = result.getFirst().getSubject().getSubjectConfirmations();
+        if (sc != null && !sc.isEmpty()) {
+            final SubjectConfirmationData scData = sc.get(0).getSubjectConfirmationData();
+            if (scData != null) {
+                acsLocation = scData.getRecipient();
+            }
+        }
+        
         // Do a basic check for outbound logout capability to the SP based on metadata.
         // This may optimize out subsequent need to process the session for propagation.
         boolean supportLogoutPropagation = false;
@@ -147,8 +160,9 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         }
         
         return new SAML2SPSession(issuer, now, expiration, result.getFirst().getSubject().getNameID(),
-                result.getSecond().getSessionIndex(), supportLogoutPropagation);
+                result.getSecond().getSessionIndex(), acsLocation, supportLogoutPropagation);
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Locate the first assertion and authentication statement, such that the assertion subject
