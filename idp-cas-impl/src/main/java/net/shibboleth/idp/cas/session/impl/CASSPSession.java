@@ -66,6 +66,7 @@ public class CASSPSession extends BasicSPSession implements SPSessionEx {
         return ticket;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getSPSessionKey() {
         return ticket;
@@ -74,6 +75,12 @@ public class CASSPSession extends BasicSPSession implements SPSessionEx {
     /** {@inheritDoc} */
     @Nullable @NotEmpty public String getProtocol() {
         return AbstractProtocolConfiguration.PROTOCOL_URI;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public boolean supportsLogoutPropagation() {
+        return true;
     }
 
     @Override

@@ -88,7 +88,7 @@ public class SAML2SPSessionSerializerTest extends OpenSAMLInitBaseTestCase {
         NameID nameID = (NameID) XMLObjectSupport.buildXMLObject(NameID.DEFAULT_ELEMENT_NAME);
         nameID.setValue("joe@example.org");
         
-        SAML2SPSession session = new SAML2SPSession("test", INSTANT, exp, nameID, SESSION_INDEX);
+        SAML2SPSession session = new SAML2SPSession("test", INSTANT, exp, nameID, SESSION_INDEX, false);
         
         String s = serializer.serialize(session);
         String s2 = fileToString(DATAPATH + "saml2SPSession.json");
@@ -101,6 +101,7 @@ public class SAML2SPSessionSerializerTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(session.getExpirationInstant(), session2.getExpirationInstant());
         Assert.assertEquals(session.getNameID().getValue(), session2.getNameID().getValue());
         Assert.assertEquals(session.getSessionIndex(), session2.getSessionIndex());
+        Assert.assertFalse(session2.supportsLogoutPropagation());
     }
     
     private String fileToString(String pathname) throws URISyntaxException, IOException {

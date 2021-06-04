@@ -56,6 +56,26 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
     @Nonnull public Class<? extends SPSession> getSessionType() {
         return sessionType;
     }
+    
+    /**
+     * Test an input session to determine if this flow supports it.
+     * 
+     * @param session input session
+     * 
+     * @return true iff this flow should be used to propagate a logout to the corresponding SP
+     */
+    @SuppressWarnings("removal")
+    public boolean isSupported(@Nonnull final SPSession session) {
+        if (sessionType.isInstance(session)) {
+            if (session instanceof SPSessionEx) {
+                return ((SPSessionEx) session).supportsLogoutPropagation();
+            }
+            
+            return true;
+        }
+        
+        return false;
+    }
 
     /** {@inheritDoc} */
     @Override

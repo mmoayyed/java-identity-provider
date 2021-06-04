@@ -28,9 +28,12 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,8 +134,20 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
             expiration = now.plus(sessionLifetime);
         }
         
+        // Do a basic check for outbound logout capability to the SP based on metadata.
+        // This may optimize out subsequent need to process the session for propagation.
+        boolean supportLogoutPropagation = false;
+        if (rpCtx.getRelyingPartyIdContextTree() instanceof SAMLPeerEntityContext) {
+            final SAMLMetadataContext mdCtx =
+                    rpCtx.getRelyingPartyIdContextTree().getSubcontext(SAMLMetadataContext.class);
+            if (mdCtx != null && mdCtx.getRoleDescriptor() instanceof SPSSODescriptor) {
+                supportLogoutPropagation =
+                        !((SPSSODescriptor) mdCtx.getRoleDescriptor()).getSingleLogoutServices().isEmpty();
+            }
+        }
+        
         return new SAML2SPSession(issuer, now, expiration, result.getFirst().getSubject().getNameID(),
-                result.getSecond().getSessionIndex());
+                result.getSecond().getSessionIndex(), supportLogoutPropagation);
     }
 
     /**

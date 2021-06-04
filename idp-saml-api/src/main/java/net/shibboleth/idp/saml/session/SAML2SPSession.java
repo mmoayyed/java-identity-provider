@@ -51,6 +51,9 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
     /** The SessionIndex asserted to the SP. */
     @Nonnull @NotEmpty private final String sessionIndex;
     
+    /** Whether logout propagation is possible. */
+    private final boolean supportsLogoutPropagation;
+    
 // Checkstyle: ParameterNumber OFF
     /**
      * Constructor.
@@ -60,7 +63,10 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
      * @param expiration expiration time of session
      * @param assertedNameID the NameID asserted to the SP
      * @param assertedIndex the SessionIndex asserted to the SP
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.2.0", forRemoval=true)
     public SAML2SPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
             @Nonnull final Instant expiration, @Nonnull final NameID assertedNameID,
             @Nonnull @NotEmpty final String assertedIndex) {
@@ -69,6 +75,28 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
         nameID = Constraint.isNotNull(assertedNameID, "NameID cannot be null");
         sessionIndex = Constraint.isNotNull(StringSupport.trimOrNull(assertedIndex),
                 "SessionIndex cannot be null or empty");
+        supportsLogoutPropagation = true;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param id the identifier of the service associated with this session
+     * @param creation creation time of session
+     * @param expiration expiration time of session
+     * @param assertedNameID the NameID asserted to the SP
+     * @param assertedIndex the SessionIndex asserted to the SP
+     * @param supportsLogoutProp whether the session supports logout propagation
+     */
+    public SAML2SPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
+            @Nonnull final Instant expiration, @Nonnull final NameID assertedNameID,
+            @Nonnull @NotEmpty final String assertedIndex, final boolean supportsLogoutProp) {
+        super(id, creation, expiration);
+        
+        nameID = Constraint.isNotNull(assertedNameID, "NameID cannot be null");
+        sessionIndex = Constraint.isNotNull(StringSupport.trimOrNull(assertedIndex),
+                "SessionIndex cannot be null or empty");
+        supportsLogoutPropagation = supportsLogoutProp;
     }
 // Checkstyle: ParameterNumber ON
    
@@ -101,6 +129,12 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
         return SAMLConstants.SAML20P_NS;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean supportsLogoutPropagation() {
+        return supportsLogoutPropagation;
+    }
+    
     /** {@inheritDoc} */
     @Override
     public int hashCode() {

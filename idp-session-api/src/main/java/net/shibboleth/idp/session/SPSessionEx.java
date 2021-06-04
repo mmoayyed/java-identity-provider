@@ -38,4 +38,16 @@ public interface SPSessionEx extends SPSession {
      * @return a protocol constant
      */
     @Nullable @NotEmpty String getProtocol();
+    
+    /**
+     * Gets whether the session allows for logout propagation.
+     * 
+     * @return whether the session allows for logout propagation
+     * 
+     * @since 4.2.0
+     */
+    default boolean supportsLogoutPropagation() {
+        return false;
+    }
+    
 }

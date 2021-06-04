@@ -49,8 +49,9 @@ public class LogoutPropagationFlowDescriptorSelector implements Function<SPSessi
 
     /** {@inheritDoc} */
     @Nullable public LogoutPropagationFlowDescriptor apply(@Nullable final SPSession input) {
+
         for (final LogoutPropagationFlowDescriptor flowDescriptor : availableFlows) {
-            if (flowDescriptor.getSessionType().isInstance(input)) {
+            if (flowDescriptor.isSupported(input)) {
                 return flowDescriptor;
             }
         }

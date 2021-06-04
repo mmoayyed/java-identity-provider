@@ -59,7 +59,10 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
 
     /** Field name of SessionIndex. */
     @Nonnull @NotEmpty private static final String SESSION_INDEX_FIELD = "ix";
-
+    
+    /** Field name of Single Logout indicator. */
+    @Nonnull @NotEmpty private static final String LOGOUT_PROP_FIELD = "slo";
+    
     /** DOM configuration parameters used by LSSerializer to exclude XML declaration. */
     @Nonnull private static final Map<String, Object> NO_XML_DECL_PARAMS;
     
@@ -98,6 +101,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
             generator.write(NAMEID_FIELD, SerializeSupport.nodeToString(
                     XMLObjectSupport.marshall(saml2Session.getNameID()), NO_XML_DECL_PARAMS));
             generator.write(SESSION_INDEX_FIELD, saml2Session.getSessionIndex());
+            generator.write(LOGOUT_PROP_FIELD, saml2Session.supportsLogoutPropagation());
         } catch (final MarshallingException e) {
             throw new XMLRuntimeException("Error marshalling and serializing NameID", e);
         }
@@ -110,11 +114,12 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
         
         final String rawNameID = obj.getString(NAMEID_FIELD);
         final String sessionIndex = obj.getString(SESSION_INDEX_FIELD);
+        final boolean supportsLogoutProp = obj.getBoolean(LOGOUT_PROP_FIELD, true);
         
         try {
             final XMLObject nameID = XMLObjectSupport.unmarshallFromReader(parserPool, new StringReader(rawNameID));
             if (nameID instanceof NameID) {
-                return new SAML2SPSession(id, creation, expiration, (NameID) nameID, sessionIndex);
+                return new SAML2SPSession(id, creation, expiration, (NameID) nameID, sessionIndex, supportsLogoutProp);
             }
             throw new IOException("XMLObject stored in NameID field was not a NameID");
         } catch (final XMLParserException | UnmarshallingException e) {
