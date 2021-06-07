@@ -21,6 +21,7 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,8 +85,8 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     @Nonnull public String subjectConfirmationMethod = SubjectConfirmation.METHOD_BEARER;
     
     /** Expected subject confirmation data address range for IPv4 addresses. Defaults to "127.0.0.1/32". */
-    @Nonnull public IPRange subjectConfirmationDataAddressRange = IPRange.parseCIDRBlock("127.0.0.1/32");
-    
+    @Nonnull public List<IPRange> subjectConfirmationDataAddressRanges = new ArrayList<>(Arrays.asList(IPRange.parseCIDRBlock("127.0.0.1/32")));
+
     /** Expected subject confirmation data address range for IPv6 addresses. Defaults to "::1/128". */
     @Nonnull public IPRange subjectConfirmationDataAddressRangeV6 = IPRange.parseCIDRBlock("::1/128");
 
@@ -434,7 +435,13 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     public void assertSubjectConfirmationData(@Nullable final SubjectConfirmationData subjectConfirmationData) {
         final InetAddress address = InetAddresses.forString(subjectConfirmationData.getAddress());
         if (address instanceof Inet4Address) {
-            Assert.assertTrue(subjectConfirmationDataAddressRange.contains(address));
+            boolean matches = false;
+            for (final IPRange subjectConfirmationDataAddressRange : subjectConfirmationDataAddressRanges) {
+                if (subjectConfirmationDataAddressRange.contains(address)) {
+                    matches = true;
+                }
+            }
+            Assert.assertTrue(matches, "SubjectConfirmationData Address does not match");
         } else if(address instanceof Inet6Address) {
             Assert.assertTrue(subjectConfirmationDataAddressRangeV6.contains(address));
         } else {
