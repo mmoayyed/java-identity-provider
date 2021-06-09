@@ -60,6 +60,7 @@ import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.profile.SAMLEventIds;
+import org.opensaml.saml.criterion.BestMatchLocationCriterion;
 import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EndpointCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
@@ -119,6 +120,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
 
     /** Strategy function for access to {@link SAMLArtifactContext} to populate. */
     @Nonnull private Function<ProfileRequestContext,SAMLArtifactContext> artifactContextLookupStrategy;
+    
+    /** Optional strategy function to obtain a {@link BestMatchLocationCriterion} to inject. */
+    @Nullable private Function<ProfileRequestContext,BestMatchLocationCriterion> bestMatchCriterionLookupStrategy;
     
     /** List of possible bindings, in preference order. */
     @Nonnull @NonnullElements private List<BindingDescriptor> bindingDescriptors;
@@ -279,6 +283,18 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     }
     
     /**
+     * Set lookup strategy for {@link BestMatchLocationCriterion} to inject.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setBestMatchCriterionLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,BestMatchLocationCriterion> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        bestMatchCriterionLookupStrategy = strategy;
+    }
+    
+    /**
      * Set whether an artifact-based binding implies that the eventual channel for SAML message exchange
      * will be secured, overriding the integrity and confidentiality properties of the current channel.
      * 
@@ -402,6 +418,14 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         // Build criteria for the resolver.
         final CriteriaSet criteria = new CriteriaSet(new BindingCriterion(bindings),
                 buildEndpointCriterion(bindings.get(0)));
+        
+        if (bestMatchCriterionLookupStrategy != null) {
+            final BestMatchLocationCriterion bestMatch = bestMatchCriterionLookupStrategy.apply(profileRequestContext);
+            if (bestMatch != null) {
+                criteria.add(bestMatch);
+            }
+        }
+        
         if (mdContext != null && mdContext.getRoleDescriptor() != null) {
             criteria.add(new RoleDescriptorCriterion(mdContext.getRoleDescriptor()));
         } else {

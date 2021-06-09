@@ -21,7 +21,7 @@
         
         <evaluate expression="InitializeOutboundMessageContext" />
         <evaluate expression="InitializeMessageChannelSecurityContext" />
-        <evaluate expression="PopulateBindingAndEndpointContexts" />
+        <evaluate expression="PopulateLogoutBindingAndEndpointContexts" />
         
         <evaluate expression="'proceed'" />
         

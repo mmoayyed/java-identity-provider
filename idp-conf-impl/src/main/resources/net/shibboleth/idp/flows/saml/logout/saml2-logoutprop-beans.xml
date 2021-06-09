@@ -50,6 +50,15 @@
         class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity" scope="prototype"
         p:confidentialityActive="false" p:integrityActive="false" />
 
+    <bean id="PopulateLogoutBindingAndEndpointContexts"
+        class="net.shibboleth.idp.saml.profile.impl.PopulateBindingAndEndpointContexts" scope="prototype"
+        p:endpointResolver-ref="shibboleth.EndpointResolver"
+        p:endpointType="#{getObject('shibboleth.EndpointType')}"
+        p:bindingDescriptorsLookupStrategy-ref="shibboleth.OutgoingBindingsLookupStrategy"
+        p:artifactImpliesSecureChannel="%{idp.artifact.secureChannel:true}"
+        p:bestMatchCriterionLookupStrategy-ref="BestMatchCriterionLookupStrategy" />
+    <bean id="BestMatchCriterionLookupStrategy" class="net.shibboleth.idp.saml.session.impl.BestMatchLocationLookupStrategy" />
+
     <bean id="AddLogoutRequest"
         class="net.shibboleth.idp.saml.session.impl.AddLogoutRequest" scope="prototype"
             p:overwriteExisting="true"
