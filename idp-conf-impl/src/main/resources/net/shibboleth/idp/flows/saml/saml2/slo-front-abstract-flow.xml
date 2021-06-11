@@ -25,19 +25,18 @@
     passes control back to the next parent state. 
     -->
     <subflow-state id="DoInboundInterceptSubflow">
-        <transition on="proceed" to="CheckLogoutResponse" />
+        <transition on="proceed" to="PreProcessLogoutMessage" />
     </subflow-state>
     
-    <decision-state id="CheckLogoutResponse">
-        <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage() instanceof T(org.opensaml.saml.saml2.core.LogoutResponse)"
-            then="LogoutResponseView" else="CheckAsync1"/>
-    </decision-state>
+    <!-- Tri-decision state. -->
+    <action-state id="PreProcessLogoutMessage">
+        <evaluate expression="PreProcessLogoutMessage" />
+        <evaluate expression="'proceed'" />
 
-    <decision-state id="CheckAsync1">
-        <!-- If parent DoInboundInterceptSubflow transition changes on 'proceed', the else clause needs to also change. -->
-        <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage() instanceof T(org.opensaml.saml.saml2.core.LogoutRequest) and opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() != null and !opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()"
-            then="AsyncDecryptionParameters" else="OutboundContextsAndSecurityParameters" />
-    </decision-state>
+        <transition on="proceed" to="OutboundContextsAndSecurityParameters" />
+        <transition on="IsLogoutResponse" to="LogoutResponseView" />
+        <transition on="IsLogoutRequestAsync" to="AsyncDecryptionParameters" />
+    </action-state>
     
     <!-- This is the one action inside "OutboundContextsAndSecurityParameters" that we can't skip. -->
     <action-state id="AsyncDecryptionParameters">
@@ -46,7 +45,6 @@
         
         <transition on="proceed" to="ExtractSubject" />
     </action-state>
-    
 
     <!-- LogoutRequest handling starts by loading client storage if needed. -->
         

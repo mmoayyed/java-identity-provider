@@ -28,6 +28,10 @@
         p:loggingId="%{idp.service.logging.saml2slo:Logout}"
         p:browserProfile="true" />
 
+    <bean id="PreProcessLogoutMessage"
+        class="net.shibboleth.idp.saml.saml2.profile.impl.PreProcessLogoutMessage" scope="prototype"
+        p:assumeAsynchronousLogout="%{idp.logout.assumeAsync:false}" />
+
     <bean id="InitializeMessageChannelSecurityContext"
         class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity" scope="prototype"
         p:confidentialityActive="false" p:integrityActive="false" />

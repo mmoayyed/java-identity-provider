@@ -53,7 +53,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.profile.SAMLEventIds;
-import org.opensaml.saml.ext.saml2aslo.Asynchronous;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.SessionIndex;
@@ -303,11 +302,6 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             log.warn("{} LogoutRequest contained an empty (therefore invalid) NameID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
             return false;
-        }
-        
-        if (log.isDebugEnabled() && logoutRequest.getExtensions() != null
-                && !logoutRequest.getExtensions().getUnknownXMLObjects(Asynchronous.DEFAULT_ELEMENT_NAME).isEmpty()) {
-            log.debug("{} LogoutRequest contained Asynchronous extension", getLogPrefix());
         }
         
         qualifiedNameIDFormats = new HashSet<>(qualifiedNameIDFormatsLookupStrategy.apply(profileRequestContext));
