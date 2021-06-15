@@ -99,12 +99,12 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
             mavenAvailable = true;
             return;
         }
-        String home = System.getenv("MAVEN_HOME");
+        String home = LOCAL_MAVEN_HOME;
         if (home == null) {
-            home = System.getenv("_");
+            home = System.getenv("MAVEN_HOME");
         }
         if (home == null) {
-            home = LOCAL_MAVEN_HOME;
+            home = System.getenv("_");
         }
 
         if (home != null) {
