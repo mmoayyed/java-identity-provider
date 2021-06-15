@@ -317,6 +317,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         writer.newLine();
         writer.newLine();
         writer.write("     This metadata is not dynamic - it will not change as your configuration changes.");
+        writer.write("     On Demand Metadata Generation available from the metadatagen plugin.");
         writer.newLine();
         closeComment();
         writer.newLine();
