@@ -73,8 +73,14 @@
     <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.PostAssertionAuditExtractors') ?: getObject('shibboleth.DefaultPostAssertionAuditExtractors')}" />
 
+    <!-- Default formats not to encrypt. -->
+    <util:set id="DefaultPlaintextNameIDFormats">
+        <util:constant static-field="org.opensaml.saml.saml2.core.NameIDType.ENTITY" />
+    </util:set>
+
     <bean id="EncryptNameIDs"
             class="org.opensaml.saml.saml2.profile.impl.EncryptNameIDs" scope="prototype"
+            p:excludedFormats="#{getObject('shibboleth.PlaintextNameIDFormats') ?: getObject('DefaultPlaintextNameIDFormats')}"
             p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
         <property name="encryptionContextLookupStrategy">
             <bean parent="shibboleth.Functions.Compose"

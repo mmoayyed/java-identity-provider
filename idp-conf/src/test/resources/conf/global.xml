@@ -51,6 +51,11 @@
     </util:map>
     -->
     
+    <util:set id="shibboleth.PlaintextNameIDFormats">
+        <util:constant static-field="org.opensaml.saml.saml2.core.NameIDType.ENTITY" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.NameIDType.TRANSIENT" />
+    </util:set>
+    
     <util:set id="testbed.MetadataIndexes">
         <bean class="org.opensaml.saml.metadata.resolver.index.impl.SAMLArtifactMetadataIndex" />
         <ref bean="shibboleth.CASMetadataIndices" />
