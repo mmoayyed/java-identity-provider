@@ -27,6 +27,7 @@ import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.reporters.Files;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -133,6 +134,8 @@ public class StorageBackedIdPSessionSerializerTest {
         
         StorageBackedIdPSession session = new StorageBackedIdPSession(manager, "test", "foo", Instant.ofEpochMilli(INSTANT));
         session.doBindToAddress("127.0.0.1");
+        session.doBindToAddress("::1");
+        session.doBindToAddress("zorkmid");
         session.doAddAuthenticationResult(new AuthenticationResult("a", new UsernamePrincipal("jdoe")));
         session.doAddAuthenticationResult(new AuthenticationResult("b", new UsernamePrincipal("jdoe")));
         session.doAddAuthenticationResult(new AuthenticationResult("c", new UsernamePrincipal("jdoe")));
@@ -150,28 +153,18 @@ public class StorageBackedIdPSessionSerializerTest {
         Assert.assertEquals(session.getPrincipalName(), session2.getPrincipalName());
         Assert.assertEquals(session.getCreationInstant(), session2.getCreationInstant());
         Assert.assertEquals(session.getLastActivityInstant(), session2.getLastActivityInstant());
+        Assert.assertTrue(session.checkAddress("127.0.0.1"));
+        Assert.assertTrue(session.checkAddress("::1"));
+        Assert.assertTrue(session.checkAddress("zorkmid"));
+        Assert.assertFalse(session.checkAddress("127.0.0.2"));
+        Assert.assertFalse(session.checkAddress("::1:1"));
+        Assert.assertFalse(session.checkAddress("bugbear"));
     }
     
     private String fileToString(String pathname) throws URISyntaxException, IOException {
         try (FileInputStream stream = new FileInputStream(
                 new File(StorageBackedIdPSessionSerializerTest.class.getResource(pathname).toURI()))) {
-            int avail = stream.available();
-            byte[] data = new byte[avail];
-            int numRead = 0;
-            int pos = 0;
-            do {
-              if (pos + avail > data.length) {
-                byte[] newData = new byte[pos + avail];
-                System.arraycopy(data, 0, newData, 0, pos);
-                data = newData;
-              }
-              numRead = stream.read(data, pos, avail);
-              if (numRead >= 0) {
-                pos += numRead;
-              }
-              avail = stream.available();
-            } while (avail > 0 && numRead >= 0);
-            return new String(data, 0, pos, "UTF-8");
+            return Files.streamToString(stream);
         }
     }
 }

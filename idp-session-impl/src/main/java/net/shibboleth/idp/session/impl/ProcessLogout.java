@@ -20,6 +20,7 @@ package net.shibboleth.idp.session.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
@@ -81,6 +82,9 @@ public class ProcessLogout extends AbstractProfileAction {
     
     /** Function to return {@link CriteriaSet} to give to session resolver. */
     @Nonnull private Function<ProfileRequestContext,CriteriaSet> sessionResolverCriteriaStrategy;
+    
+    /** Function to override source of address to bind session. */
+    @Nullable private Function<ProfileRequestContext,String> addressLookupStrategy;
     
     /** Constructor. */
     public ProcessLogout() {
@@ -151,6 +155,19 @@ public class ProcessLogout extends AbstractProfileAction {
         sessionResolverCriteriaStrategy = Constraint.isNotNull(strategy,
                 "SessionResolver CriteriaSet strategy cannot be null");
     }
+
+    /**
+     * Set an optional lookup strategy to obtain the address to which to validate the session.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.2.0
+     */
+    public void setAddressLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        addressLookupStrategy = strategy;
+    }
     
     /** {@inheritDoc} */
     @Override
@@ -176,20 +193,25 @@ public class ProcessLogout extends AbstractProfileAction {
                 return;
             }
             
-            final HttpServletRequest request = getHttpServletRequest();
-            final String addr = request != null ? HttpServletSupport.getRemoteAddr(request) : null;
+            String addr = null;
+            if (addressLookupStrategy != null) {
+                addr = addressLookupStrategy.apply(profileRequestContext);
+            } else {
+                final HttpServletRequest request = getHttpServletRequest();
+                addr = request != null ? HttpServletSupport.getRemoteAddr(request) : null;
+            }
             if (addr != null) {
                 try {
                     if (!session.checkAddress(addr)) {
                         return;
                     }
                 } catch (final SessionException e) {
-                    log.error("{} Error binding session to client address", getLogPrefix(), e);
+                    log.error("{} Error validating session against client address", getLogPrefix(), e);
                     ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
                     return;
                 } 
             } else {
-                log.info("{} No client address available, skipping address check for sessions",
+                log.info("{} No client address available, skipping address check for session",
                         getLogPrefix());
             }
 

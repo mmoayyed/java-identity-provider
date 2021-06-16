@@ -97,7 +97,7 @@ public class IdPSessionTest {
     }
 
     /**
-     * Tests mutating the last activity instant.
+     * Tests address binding.
      * 
      * @throws Exception if something goes wrong
      */
@@ -110,6 +110,8 @@ public class IdPSessionTest {
         Assert.assertTrue(session.checkAddress("::1"));
         Assert.assertTrue(session.checkAddress("::1"));
         Assert.assertFalse(session.checkAddress("fe80::5a55:caff:fef2:65a3"));
+        Assert.assertTrue(session.checkAddress("zorkmid"));
+        Assert.assertFalse(session.checkAddress("bugbear"));
     }
     
     /**

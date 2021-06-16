@@ -192,17 +192,17 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         mockRequest.setRemoteAddr("192.168.1.1");
         HttpServletRequestResponseContext.loadCurrent(mockRequest, new MockHttpServletResponse());
         
-        // Interleave checks of addresses of the two types.
+        // Interleave checks of addresses of the various types.
         IdPSession session = sessionManager.createSession("joe");
         Assert.assertTrue(session.checkAddress("192.168.1.1"));
         Assert.assertFalse(session.checkAddress("192.168.1.2"));
+        Assert.assertTrue(session.checkAddress("zorkmid"));
         Assert.assertTrue(session.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
+        Assert.assertFalse(session.checkAddress("bugbear"));
         Assert.assertTrue(session.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
         Assert.assertFalse(session.checkAddress("fe80::ca2a:14ff:fe2a:3e05"));
         Assert.assertTrue(session.checkAddress("192.168.1.1"));
-        
-        // Try a bad address type.
-        Assert.assertFalse(session.checkAddress("1,1,1,1"));
+        Assert.assertTrue(session.checkAddress("zorkmid"));
         
         // Interleave manipulation of a session between two copies to check for resync.
         IdPSession one = sessionManager.createSession("joe");
@@ -212,6 +212,8 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertFalse(two.checkAddress("192.168.1.2"));
         Assert.assertTrue(two.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
         Assert.assertFalse(one.checkAddress("fe80::ca2a:14ff:fe2a:3e05"));
+        Assert.assertTrue(one.checkAddress("zorkmid"));
+        Assert.assertFalse(two.checkAddress("bugbear"));
         
         sessionManager.destroySession(session.getId(), true);
     }

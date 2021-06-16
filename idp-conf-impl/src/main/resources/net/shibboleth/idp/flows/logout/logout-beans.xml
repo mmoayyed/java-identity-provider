@@ -46,7 +46,8 @@
     <bean id="ProcessLogout"
         class="net.shibboleth.idp.session.impl.ProcessLogout" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:sessionResolver-ref="shibboleth.SessionManager" />
+        p:sessionResolver-ref="shibboleth.SessionManager"
+        p:addressLookupStrategy="#{getObject('shibboleth.SessionAddressLookupStrategy')}" />
     
     <bean id="DestroySessions"
         class="net.shibboleth.idp.session.impl.DestroySessions" scope="prototype"

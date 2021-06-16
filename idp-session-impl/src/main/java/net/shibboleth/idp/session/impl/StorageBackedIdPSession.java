@@ -104,11 +104,6 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
 
         final AddressFamily family = getAddressFamily(address);
-        if (family == AddressFamily.UNKNOWN) {
-            log.warn("Address {} is of unknown type", address);
-            return false;
-        }
-        
         final String bound = getAddress(family);
         if (bound != null) {
             if (!sessionManager.getConsistentAddressCondition().test(bound, address)) {
@@ -116,7 +111,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 return false;
             }
         } else {
-            log.info("Session {} not yet bound to a {} address, binding to {}", getId(), family, address);
+            log.info("Session {} not yet bound to {} address, binding to {}", getId(), family, address);
             try {
                 bindToAddress(address);
             } catch (final SessionException e) {

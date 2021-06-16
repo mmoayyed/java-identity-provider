@@ -20,6 +20,7 @@ package net.shibboleth.idp.session.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -66,12 +67,13 @@ public class PopulateSessionContext extends AbstractProfileAction {
     
     /** Function to return {@link CriteriaSet} to give to session resolver. */
     @Nonnull private Function<ProfileRequestContext,CriteriaSet> sessionResolverCriteriaStrategy;
+    
+    /** Function to override source of address to bind session. */
+    @Nullable private Function<ProfileRequestContext,String> addressLookupStrategy;
         
     /** Constructor. */
     public PopulateSessionContext() {
-        
         sessionContextCreationStrategy = new ChildContextLookup<>(SessionContext.class, true);
-        
         sessionResolverCriteriaStrategy = prc -> new CriteriaSet(new HttpServletRequestCriterion());
     }
     
@@ -97,6 +99,19 @@ public class PopulateSessionContext extends AbstractProfileAction {
         
         sessionContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SessionContext creation strategy cannot be null");
+    }
+    
+    /**
+     * Set an optional lookup strategy to obtain the address to which to bind the session.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.2.0
+     */
+    public void setAddressLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        addressLookupStrategy = strategy;
     }
     
     /**
@@ -134,8 +149,13 @@ public class PopulateSessionContext extends AbstractProfileAction {
                 return;
             }
             
-            final HttpServletRequest request = getHttpServletRequest();
-            final String addr = request != null ? HttpServletSupport.getRemoteAddr(request) : null;
+            String addr = null;
+            if (addressLookupStrategy != null) {
+                addr = addressLookupStrategy.apply(profileRequestContext);
+            } else {
+                final HttpServletRequest request = getHttpServletRequest();
+                addr = request != null ? HttpServletSupport.getRemoteAddr(request) : null;
+            }
             if (addr != null) {
                 if (!session.checkAddress(addr)) {
                     return;

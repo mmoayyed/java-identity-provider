@@ -86,11 +86,14 @@ public abstract class AbstractIdPSession implements IdPSession {
     /** Last activity instant for this session. */
     @Nonnull private Instant lastActivityInstant;
 
-    /** Addresses to which the session is bound. */
+    /** An IPv4 address to which the session is bound. */
     @Nullable private String ipV4Address;
     
     /** An IPv6 address to which the session is bound. */
     @Nullable private String ipV6Address;
+    
+    /** An "unknown" address to which the session is bound.  */
+    @Nullable private String unknownAddress;
         
     /** Tracks authentication results that have occurred during this session. */
     @Nonnull private final ConcurrentMap<String,Optional<AuthenticationResult>> authenticationResults;
@@ -164,10 +167,6 @@ public abstract class AbstractIdPSession implements IdPSession {
     @Override
     public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
         final AddressFamily family = getAddressFamily(address);
-        if (family == AddressFamily.UNKNOWN) {
-            log.warn("Address {} is of unknown type", address);
-            return false;
-        }
         final String bound = getAddress(family);
         if (bound != null) {
             if (!bound.equals(address)) {
@@ -175,7 +174,7 @@ public abstract class AbstractIdPSession implements IdPSession {
                 return false;
             }
         } else {
-            log.info("Session {} not yet locked to a {} address, locking it to {}", id, family, address);
+            log.info("Session {} not yet locked to {} address, locking it to {}", id, family, address);
             try {
                 bindToAddress(address);
             } catch (final SessionException e) {
@@ -200,6 +199,8 @@ public abstract class AbstractIdPSession implements IdPSession {
                 return ipV4Address;
             case IPV6:
                 return ipV6Address;
+            case UNKNOWN:
+                return unknownAddress;
             default:
                 return null;
         }
@@ -226,6 +227,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     public void doBindToAddress(@Nonnull @NotEmpty final String address) {
         final String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(address),
                 "Address cannot be null or empty");
+        
         switch (getAddressFamily(address)) {
             case IPV6:
                 ipV6Address = StringSupport.trimOrNull(trimmed);
@@ -233,6 +235,10 @@ public abstract class AbstractIdPSession implements IdPSession {
                 
             case IPV4:
                 ipV4Address = StringSupport.trimOrNull(trimmed);
+                break;
+                
+            case UNKNOWN:
+                unknownAddress = StringSupport.trimOrNull(trimmed);
                 break;
                 
             default:
@@ -417,7 +423,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     /** {@inheritDoc} */
     public String toString() {
         return MoreObjects.toStringHelper(this).add("sessionId", id).add("principalName", principalName)
-                .add("IPv4", ipV4Address).add("IPv6", ipV6Address)
+                .add("IPv4", ipV4Address).add("IPv6", ipV6Address).add("Unk", unknownAddress)
                 .add("creationInstant", creationInstant)
                 .add("lastActivityInstant", lastActivityInstant)
                 .add("authenticationResults", getAuthenticationResults()).add("spSessions", getSPSessions())

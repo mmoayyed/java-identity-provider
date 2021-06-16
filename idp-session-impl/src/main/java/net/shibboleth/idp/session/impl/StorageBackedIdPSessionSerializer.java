@@ -67,6 +67,9 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
     /** Field name of IPv6 address. */
     @Nonnull @NotEmpty private static final String IPV6_ADDRESS_FIELD = "v6";
 
+    /** Field name of Unknown address. */
+    @Nonnull @NotEmpty private static final String UNK_ADDRESS_FIELD = "unk";
+
     /** Field name of flow ID array. */
     @Nonnull @NotEmpty private static final String FLOW_ID_ARRAY_FIELD = "flows";
 
@@ -97,6 +100,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
         jsonProvider = JsonProvider.provider();
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override @Nonnull @NotEmpty public String serialize(@Nonnull final StorageBackedIdPSession instance)
             throws IOException {
@@ -115,6 +119,10 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                 gen.write(IPV6_ADDRESS_FIELD, instance.getAddress(AbstractIdPSession.AddressFamily.IPV6));
             }
 
+            if (instance.getAddress(AbstractIdPSession.AddressFamily.UNKNOWN) != null) {
+                gen.write(UNK_ADDRESS_FIELD, instance.getAddress(AbstractIdPSession.AddressFamily.UNKNOWN));
+            }
+            
             final Set<AuthenticationResult> results = instance.getAuthenticationResults();
             if (!results.isEmpty()) {
                 gen.writeStartArray(FLOW_ID_ARRAY_FIELD);
@@ -147,6 +155,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             throw new IOException("Exception while serializing IdPSession", e);
         }
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
@@ -185,6 +194,9 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             }
             if (obj.containsKey(IPV6_ADDRESS_FIELD)) {
                 objectToPopulate.doBindToAddress(obj.getString(IPV6_ADDRESS_FIELD));
+            }
+            if (obj.containsKey(UNK_ADDRESS_FIELD)) {
+                objectToPopulate.doBindToAddress(obj.getString(UNK_ADDRESS_FIELD));
             }
 
             objectToPopulate.getAuthenticationResultMap().clear();
