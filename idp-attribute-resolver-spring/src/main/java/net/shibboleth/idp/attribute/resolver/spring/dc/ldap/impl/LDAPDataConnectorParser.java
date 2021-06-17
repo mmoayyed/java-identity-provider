@@ -127,12 +127,21 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         log.debug("{} Parsing XML configuration {}", getLogPrefix(), config);
 
+        // V4 Deprecation
         final List<Element> oldProperties = ElementSupport.getChildElementsByTagNameNS(config,
                 AttributeResolverNamespaceHandler.NAMESPACE, "LDAPProperty");
-        if (oldProperties != null && !oldProperties.isEmpty()) {
-            // V4 Deprecation
-            DeprecationSupport.warn(ObjectType.ELEMENT, "LDAPProperty", "LDAP Connector",
-                    "(replacement depends on property)");
+        for (final Element oldProperty : oldProperties) {
+            final String oldPropName = oldProperty.getAttributeNS(null, "name");
+            if ("com.sun.jndi.ldap.connect.timeout".equals(oldPropName)) {
+                DeprecationSupport.warn(ObjectType.ELEMENT, "LDAPProperty " + oldPropName, "LDAPConnector",
+                        "LDAPConnector/@connectTimeout");
+            } else if ("com.sun.jndi.ldap.read.timeout".equals(oldPropName)) {
+                DeprecationSupport.warn(ObjectType.ELEMENT, "LDAPProperty " + oldPropName, "LDAPConnector",
+                        "LDAPConnector/@responseTimeout");
+            } else {
+                DeprecationSupport.warn(ObjectType.ELEMENT, "LDAPProperty " + oldPropName, "LDAPConnector",
+                        "(replacement depends on property)");
+            }
         }
         
         final V2Parser v2Parser = new V2Parser(config, getLogPrefix());
