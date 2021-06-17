@@ -63,19 +63,23 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
     
     /** Us. */
     private final PomArtifact us;
-    
+
     /**
      * Constructor.
      *
-     * @param parsers a short vut to let us parse XML
+     * @param parsers a short-cut to let us parse XML
      * @param pom the {@link Path} to the pom.
-     * @param parentOnly Do we just want the parent (and our) info
+     * @param parentPomProperties if present it is properties from the parent (which might be empty), if null we are *only*
+     * looking for the parent pom coordinates.
      * @throws IOException from parsing
      * @throws FileNotFoundException if the file doesn't exist
      * @throws XMLParserException from parsing
      */
-    public ParsedPom(final ParserPool parsers, final Path pom, final boolean parentOnly) 
+    public ParsedPom(@Nonnull final ParserPool parsers,
+                     @Nonnull final Path pom,
+                     @Nullable final Properties parentPomProperties)
             throws FileNotFoundException, IOException, XMLParserException {
+
         Document document;
         try (final InputStream stream = new BufferedInputStream(new FileInputStream(pom.toFile()))) {
             document = parsers.parse(stream);
@@ -92,8 +96,12 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
 
         us = new PomArtifact(el, parent);
 
-        if (parentOnly) {
+        if (parentPomProperties == null) {
             return;
+        }
+        for (final Object p:parentPomProperties.keySet()) {
+            String pName = (String) p;
+            properties.setProperty(pName, parentPomProperties.getProperty(pName));
         }
         final List<Element> props = ElementSupport.getChildElementsByTagName(el, "properties");
         if (!props.isEmpty()) {
@@ -154,7 +162,6 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         }
     }
 
-
     /**
      * @param item
      */
@@ -166,7 +173,6 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
             properties.setProperty(name, value);
         }
     }
-
 
     /**
      * @param item
@@ -181,26 +187,33 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
     public List<PomArtifact> getCompileDependencies() {
         return compileDependencies;
     }
-    
+
     /**
      * @return Returns the bomDependencies.
      */
     public List<PomArtifact> getBomDependencies() {
         return bomDependencies;
     }
-    
+
     /** Return our artifactInformation.
      * @return us.
      */
     public PomArtifact getOurInfo() {
         return us;
     }
-    
+
     /**
      * @return Returns the parent.
      */
     public PomArtifact getParent() {
         return parent;
+    }
+
+    /**
+     * @return Returns the properties.
+     */
+    public Properties getProperties() {
+        return properties;
     }
 
     /** Encapsulation of a &lt;dependency&gt; element. */
@@ -216,7 +229,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         @Nonnull private final String version;
 
         /** &lt;exclusions&gt;. */
-        @Nonnull private final Set<Pair<String, String>> exclusion = new HashSet<>();
+        @Nonnull private final Set<Pair<String, String>> exclusions = new HashSet<>();
 
         /**
          * Constructor.
@@ -269,7 +282,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
                     els = ElementSupport.getChildElementsByTagName(e, "artifactId");
                     Constraint.isGreaterThan(0, els.size(), "<artifactId> should exist in exclusion");
                     final String art = getElementContent(els.get(0));
-                    exclusion.add(new Pair<>(grp, art));
+                    exclusions.add(new Pair<>(grp, art));
                 }
             }
         }
@@ -280,14 +293,14 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         public String getGroupId() {
             return groupId;
         }
-        
+
         /**
          * @return Returns the artifactId.
          */
         public String getArtifactId() {
             return artifactId;
         }
-        
+
         /**
          * @return Returns the version.
          */
@@ -295,9 +308,27 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
             return version;
         }
 
+        /**
+         * @return Returns the exclusions.
+         */
+        public Set<Pair<String, String>> getExclusions() {
+            return exclusions;
+        }
+
         /** {@inheritDoc} */
         public int compareTo(final PomArtifact o) {
             return getArtifactId().compareTo(o.getArtifactId());
+        }
+        
+        /** {@inheritDoc} */
+        public boolean equals(final Object obj) {
+            if (obj != null && obj instanceof PomArtifact ) {
+                final PomArtifact him = (PomArtifact) obj;
+                return  him.getArtifactId().equals(getArtifactId()) &&
+                        him.getGroupId().equals(getGroupId()) &&
+                        him.getVersion().equals(getVersion());
+            }
+            return false;
         }
     }
 }
