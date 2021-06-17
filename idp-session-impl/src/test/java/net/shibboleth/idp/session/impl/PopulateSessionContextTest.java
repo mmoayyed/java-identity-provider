@@ -38,6 +38,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link PopulateSessionContext} unit test. */
+@SuppressWarnings("javadoc")
 public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;
@@ -117,4 +118,28 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
     }
+    
+    @Test public void testAddressLookup() throws ComponentInitializationException, SessionException {
+        action = new PopulateSessionContext();
+        action.setHttpServletRequest(requestProxy);
+        action.setHttpServletResponse(responseProxy);
+        action.setSessionResolver(sessionManager);
+        action.setAddressLookupStrategy(input -> requestProxy.getHeader("User-Agent"));
+        action.initialize();
+        
+        Cookie cookie = createSession("joe");
+        
+        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).addHeader("User-Agent", "UnitTest-Client");
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
+        Assert.assertNotNull(sessionCtx);
+        
+        Assert.assertEquals(sessionCtx.getIdPSession().getPrincipalName(), "joe");
+        Assert.assertTrue(sessionCtx.getIdPSession().checkAddress("UnitTest-Client"));
+    }
+    
 }

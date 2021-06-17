@@ -51,6 +51,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ProcessLogout} unit test. */
+@SuppressWarnings("javadoc")
 public class ProcessLogoutTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;
@@ -183,6 +184,33 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
         Assert.assertNull(prc.getSubcontext(LogoutContext.class));
+    }
+
+    @Test public void testAddressLookup() throws ComponentInitializationException, SessionException, ResolverException {
+        action = new ProcessLogout();
+        action.setHttpServletRequest(requestProxy);
+        action.setHttpServletResponse(responseProxy);
+        action.setSessionResolver(sessionManager);
+        action.setAddressLookupStrategy(input -> requestProxy.getHeader("User-Agent"));
+        action.initialize();
+        
+        Cookie cookie = createSession("joe");
+        
+        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).addHeader("User-Agent", "UnitTest-Client");
+        
+        final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
+        Assert.assertNotNull(session);
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
+        Assert.assertNotNull(subjectCtx);
+        Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
+        Assert.assertTrue(session.checkAddress("UnitTest-Client"));
+        
+        sessionManager.destroySession(session.getId(), false);
     }
 
 }
