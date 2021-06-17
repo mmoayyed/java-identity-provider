@@ -188,15 +188,16 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         for (PomArtifact artifact : dependencies) {
             final String id = artifact.getArtifactId();
             final String ver = artifact.getVersion();
+            final String sourcePomFilename = artifact.getSourcePomFilename();
             final String version = names.remove(id);
             if (artifact.equals(last)) {
-                report.format("%-22s\t: %-12s\tDUPLICATE artifact\n", id, ver);
+                report.format("%-22s\t: %-12s\tDUPLICATE artifact\t%-22s\n", id, ver, sourcePomFilename);
                 dupNames++;
             } else if (version == null) {
-                report.format("%-22s\t: %-12s\tNOT found in war\n", id, ver);
+                report.format("%-22s\t: %-12s\tNOT found in war\t%-22s\n", id, ver, sourcePomFilename);
                 nonUsed++;
             } else if (version.equals(ver)) {
-                report.format("%-22s\t: %-12s\tFound in war\n", id, ver);
+                report.format("%-22s\t: %-12s\tFound in war\t%-22s\n", id, ver, sourcePomFilename);
                 found++;
                 analyzeChild(dependencySource, artifact);
             } else {

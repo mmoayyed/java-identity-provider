@@ -90,11 +90,12 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
             throw new XMLParserException("Top level element was not <project>");
         }
         final List<Element> par = ElementSupport.getChildElementsByTagName(el, "parent");
+        
         if (!par.isEmpty()) {
-            parseParent(par.get(0));
+            parseParent(par.get(0), pom.getFileName().toString());
         }
 
-        us = new PomArtifact(el, parent);
+        us = new PomArtifact(el, parent, pom.getFileName().toString());
 
         if (parentPomProperties == null) {
             return;
@@ -116,7 +117,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         final List<Element> dependencyMgt = ElementSupport.getChildElementsByTagName(el, "dependencyManagement");
         if (!dependencyMgt.isEmpty()) {
             final List<Element> dependencies = ElementSupport.getChildElementsByTagName(dependencyMgt.get(0), "dependencies");
-            parseDependencies(dependencies.get(0));
+            parseDependencies(dependencies.get(0), pom.getFileName().toString());
         }
     }
 
@@ -133,8 +134,9 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
 
     /**
      * @param item
+     * @param pomSource the filename of the POM.
      */
-    private void parseDependencies(Element item) {
+    private void parseDependencies(Element item, final String pomSource) {
         final List<Element> dependencies = ElementSupport.getChildElementsByTagName(item, "dependency");
         
         for (Element dependency : dependencies) {
@@ -142,7 +144,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
             if (!types.isEmpty()) {
                 final String type = StringSupport.trimOrNull(types.get(0).getTextContent());
                 if ("pom".equals(type)) {
-                    bomDependencies.add(new PomArtifact(dependency));
+                    bomDependencies.add(new PomArtifact(dependency,pomSource));
                     continue;
                 } else if (!"jar".equals(type)) {
                     // not for us
@@ -157,7 +159,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
                     continue;
                 }
             }
-            final PomArtifact dep = new PomArtifact(dependency);
+            final PomArtifact dep = new PomArtifact(dependency,pomSource);
             compileDependencies.add(dep);
         }
     }
@@ -176,9 +178,10 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
 
     /**
      * @param item
+     * @param pomSource the filename of the POM this artifact is being extracted from.
      */
-    private void parseParent(Element item) {
-        parent = new PomArtifact(item);
+    private void parseParent(Element item, final String pomSource) {
+        parent = new PomArtifact(item, pomSource);
     }
     
     /**
@@ -219,6 +222,9 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
     /** Encapsulation of a &lt;dependency&gt; element. */
     public class PomArtifact implements Comparable<PomArtifact>{
         
+        /** Which physical POM this artifact is listed in.*/
+        @Nonnull private final String sourcePomFilename;
+        
         /** &lt;groupId&gt;.*/
         @Nonnull private final String groupId;
 
@@ -235,9 +241,10 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
          * Constructor.
          *
          * @param item element to interrogate.
+         * @param pomSource the filename of the POM this artifact is being extracted from.
          */
-        public PomArtifact(Element item) {
-            this(item, null);
+        public PomArtifact(final Element item, final String pomSource) {
+            this(item, null, pomSource);
         }
 
         /**
@@ -245,8 +252,12 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
          *
          * @param item element to interrogate.
          * @param parentArtifact to inherit from
+         * @param pomSource the filename of the POM this artifact is being extracted from.
          */
-        public PomArtifact(final Element item, final @Nullable PomArtifact parentArtifact) {
+        public PomArtifact(final Element item, final @Nullable PomArtifact parentArtifact, 
+                final String pomSource) {
+            
+            sourcePomFilename = pomSource;
 
             final List<Element> grps  = ElementSupport.getChildElementsByTagName(item, "groupId");
             if (grps.size() > 0) {
@@ -306,6 +317,13 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
          */
         public String getVersion() {
             return version;
+        }
+        
+        /**
+         * @return the pom source.
+         */
+        public String getSourcePomFilename() {
+            return sourcePomFilename;
         }
 
         /**
