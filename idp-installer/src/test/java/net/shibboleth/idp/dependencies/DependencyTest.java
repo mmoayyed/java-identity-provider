@@ -30,8 +30,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -157,6 +159,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         final File out = new File("target/dependencyReport.txt");
         final FileOutputStream outStream = new FileOutputStream(out);
         report = new PrintWriter(new BufferedOutputStream(outStream));
+        report.format("Dependency Analysis, started at %s\n", Instant.now().toString());
     }
     
     /** Clean up after ourselves. */
@@ -179,7 +182,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         int found = 0;
         int nonUsed = 0;
         int dupNames = 0;
-        Files.list(lib).forEach(e -> addName(names, lib.relativize(e).toString()));
+        final int similarNames = Files.list(lib).mapToInt(e -> addName(names, lib.relativize(e).toString())).sum();
         report.format("WAR CONTENTS\n=== ========\n");
         Collections.sort(dependencies);
         // ArtifactId->(Ver->[source, source])
@@ -188,20 +191,20 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         for (PomArtifact artifact : dependencies) {
             final String id = artifact.getArtifactId();
             final String ver = artifact.getVersion();
-            final String sourcePomFilename = artifact.getSourcePomFilename();
+            final String sourcePomFilename = "(from " + artifact.getSourcePomFilename() + ")";
             final String version = names.remove(id);
             if (artifact.equals(last)) {
-                report.format("%-22s\t: %-12s\tDUPLICATE artifact\t%-22s\n", id, ver, sourcePomFilename);
+                report.format("%-22s\t: %-12s\tDuplicate artifact: %-22s\n", id, ver, sourcePomFilename);
                 dupNames++;
             } else if (version == null) {
-                report.format("%-22s\t: %-12s\tNOT found in war\t%-22s\n", id, ver, sourcePomFilename);
+                report.format("%-22s\t: %-12s\tNot found in war    %-22s\n", id, ver, sourcePomFilename);
                 nonUsed++;
             } else if (version.equals(ver)) {
-                report.format("%-22s\t: %-12s\tFound in war\t%-22s\n", id, ver, sourcePomFilename);
+                report.format("%-22s\t: %-12s\tFound in war        %-22s\n", id, ver, sourcePomFilename);
                 found++;
                 analyzeChild(dependencySource, artifact);
             } else {
-                report.format("%-22s\t: %-12s\tVERSION MISMATCH - found %s\n", id, ver, version);
+                report.format("%-22s\t: %-12s\tVersion Mismatch- found %s %s\n", id, ver, version, sourcePomFilename);
                 analyzeChild(dependencySource, artifact);
                 wrongVersion++;
             }
@@ -209,6 +212,9 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         }
         if (dupNames != 0) {
             report.format("\n%d Duplicate names\n", dupNames); 
+        }
+        if (similarNames != 0) {
+            report.format("\n%d Artifacts with multiple versions\n", similarNames);
         }
         
         report.format("\n%d dependencies, %d found, %d not found, %d mismatched\n\nDependency Sources\n", dependencies.size(), found, nonUsed, wrongVersion);
@@ -222,33 +228,48 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
             final String version = names.get(dependency);
             if (map == null) {
                 if (!dependency.startsWith("idp-")) {
-                    report.format("%-35s\t: %-12s\tNo source artefact found\n", dependency, version);
+                    report.format("%-22s\t: %-12s\tNo source artefact found\n", dependency, version);
                     noSource++;
                 }
             } else {
                 final Set<String> sources = map.remove(version);
                 if (sources == null) {
-                    report.format("%-35s\t: %-12s\tNO Dependency contributes this version\n", dependency, version);
+                    report.format("%-22s\t: %-12s\tNO Dependency contributes this version\n", dependency, version);
                     verMismatch ++;
                 } else {
-                    List<String> vers = new ArrayList<>(sources);
-                    Collections.sort(vers);
-                    report.format("%-35s\t: %-12s\tContributed by %s\n", dependency, version, String.join(", ", vers));
+                    reportContributions(dependency, version, sources);
                 }
                 final List<String> versions = new ArrayList<>(map.keySet());
                 Collections.sort(versions);
                 for (final String ver:versions) {
-                    List<String> vers = new ArrayList<>(map.get(ver));
-                    Collections.sort(vers);
-                    report.format("%-22s\t: %-12s\tContributed by %s\n", " ", ver, String.join(" ", vers));
+                    reportContributions(dependency, ver, map.get(ver));
                 }
             }
         }
-        report.format("%d Version mismatches, %d lost artifacts", verMismatch, noSource);
+        report.format("%d Version mismatches, %d lost artifacts\n", verMismatch, noSource);
+        report.format("Completed at %s\n", Instant.now().toString());
         report.flush();
         report.close();
         assertEquals(wrongVersion,  0, "Mismatched version");
-        assertEquals(dupNames,  0, "Multiple similarly named jars");
+        assertEquals(similarNames,  0, "Multiple similarly named jars");
+    }
+    
+    /** report the contributions of the provided dependency & version.
+     * @param dependency
+     * @param version
+     * @param sources
+     */
+    private void reportContributions(final String dependency, final String version, final Collection<String> sources) {
+        List<String> srcs = new ArrayList<>(sources);
+        Collections.sort(srcs);
+        report.format("%-22s\t: %-12s\tContributed by ", dependency, version);
+        for (int i = 0; i < (srcs.size()-1); i++) {
+            report.format("%s,", srcs.get(i));
+            if ((i&3)==3) {
+                report.format("\n                                      \t");
+            }
+        }
+        report.format("%s\n", srcs.get(srcs.size()-1));
     }
 
     /** Given an artifact do an "mvn dependency:copy-dependencies" on it.
@@ -384,10 +405,15 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
     /** Trivial accumulator to pull a name in the lib directory apart and insert it into the map.
      * @param names The map to accumulate into
      * @param jarPath the file we are looking at.
+     * @return 1 if there as a artifact with the same name.
      */
-    private void addName(Map<String, String> names, String jarPath) {
+    private int addName(Map<String, String> names, String jarPath) {
         final Pair<String, String> nm = splitFileName(jarPath);
-        names.put(nm.getFirst(), nm.getSecond());
+        final String oldName = names.put(nm.getFirst(), nm.getSecond());
+        if (oldName == null) {
+            return 0;
+        }
+        return 1;
     }
 
     /** tell maven to download the artifact and returns it's path.
