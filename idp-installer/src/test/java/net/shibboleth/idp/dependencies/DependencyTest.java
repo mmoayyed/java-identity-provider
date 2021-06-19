@@ -49,6 +49,7 @@ import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -65,13 +66,13 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 public class DependencyTest extends OpenSAMLInitBaseTestCase {
 
     /** Set this up if you want to run the tests from eclipse. */
-    private static String LOCAL_MAVEN_HOME = "C:/Program Files (x86)/apache-maven-3.6.1";
-    
+    private static String LOCAL_MAVEN_HOME = null;
+
+    /** A list of things which get added to real versions. */
+    private static final List<String> extensionGarnish = List.of("-SNAPSHOT", "-GA", "-jre", "-empty-to-avoid-conflict-with-guava");
+
     /** Parse for us to use. */
     private ParserPool parserPool;
-    
-    /** If this is set to false we do not do any work which requires maven (which is everything). */
-    private boolean mavenAvailable;
     
     /** Work space.  Deleted on exit. */
     private Path workingDir;
@@ -85,7 +86,6 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
     private PrintWriter report;
 
     private PomArtifact parentArtefact;
-
     
     /**  We have as an assumption that the CWD is idp-installer.  Test this.
      * @throws IOException
@@ -94,7 +94,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         final Path path = Path.of(".");
         final String myPath = path.toFile().getCanonicalPath();
         final String indirectPath = path.resolve("..").resolve("idp-installer").toFile().getCanonicalPath();
-        
+
         assertTrue(path.resolve("..").resolve("idp-war").toFile().exists());
         assertEquals(myPath, indirectPath);
     }
@@ -105,7 +105,6 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
      */
     @BeforeClass public void setupMavenEnvironment() {
         if (System.getProperty("maven.home") != null) {
-            mavenAvailable = true;
             return;
         }
         String home = LOCAL_MAVEN_HOME;
@@ -115,11 +114,11 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         if (home == null) {
             home = System.getenv("_");
         }
-
-        if (home != null) {
-            System.setProperty("maven.home", home);
-            mavenAvailable = true;
+        if (home == null) {
+            throw new SkipException("Maven Not Located");
         }
+
+        System.setProperty("maven.home", home);
     }
     
     /** Set up the environment for running the test.
@@ -132,30 +131,38 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
      */
 
     @BeforeClass(dependsOnMethods = {"setupMavenEnvironment", "testWorkingDir"}) public void setup() throws IOException, XMLParserException, MavenInvocationException {
-        if (!mavenAvailable) {
-            return;
-        }
         workingDir = Files.createTempDirectory("dependencyTest");
         parserPool = XMLObjectProviderRegistrySupport.getParserPool();
-        ParsedPom idpParent = new ParsedPom(parserPool, Path.of("../idp-parent/pom.xml"), null);
+        ParsedPom idpParent = new ParsedPom(parserPool, Path.of("../idp-parent/pom.xml"), "idp-parent/pom.xml", null, Collections.emptyList());
         idpArtefact = idpParent.getOurInfo();
         parentArtefact = idpParent.getParent(); 
         assertNotNull(parentArtefact);
         final Path parentPath = downloadPom(parentArtefact);
-        final ParsedPom projectParent = new ParsedPom(parserPool, parentPath, new Properties());
-        idpParent = new ParsedPom(parserPool, Path.of("../idp-parent/pom.xml"), projectParent.getProperties());
+        final ParsedPom projectParent = new ParsedPom(parserPool, parentPath, "parent/pom.xml", new Properties(), Collections.emptyList());
+        idpParent = new ParsedPom(parserPool, Path.of("../idp-parent/pom.xml"), "idp-parent/pom.xml", projectParent.getProperties(), projectParent.getCompileDependencies());
         dependencies.addAll(projectParent.getCompileDependencies());
         dependencies.addAll(idpParent.getCompileDependencies());
         for (final PomArtifact bom : projectParent.getBomDependencies()) {
             final Path bomPath = downloadPom(bom);
-            final ParsedPom bomContents = new ParsedPom(parserPool, bomPath, projectParent.getProperties());
+            final ParsedPom bomContents = new ParsedPom(parserPool, bomPath, bom.getArtifactId()+".pom", projectParent.getProperties(), projectParent.getCompileDependencies());
             dependencies.addAll(bomContents.getCompileDependencies());
         }
         for (final PomArtifact bom : idpParent.getBomDependencies()) {
             final Path bomPath = downloadPom(bom);
-            final ParsedPom bomContents = new ParsedPom(parserPool, bomPath, projectParent.getProperties());
+            final ParsedPom bomContents = new ParsedPom(parserPool, bomPath, bom.getArtifactId()+".pom", projectParent.getProperties(), projectParent.getCompileDependencies());
             dependencies.addAll(bomContents.getCompileDependencies());
         }
+        final Set<PomArtifact> allDeps = new HashSet<>(projectParent.getCompileDependencies().size() +
+                idpParent.getCompileDependencies().size() +
+                projectParent.getRuntimeDependencies().size() +
+                idpParent.getRuntimeDependencies().size() 
+                );
+        allDeps.addAll(projectParent.getCompileDependencies());
+        allDeps.addAll(idpParent.getCompileDependencies());
+        allDeps.addAll(projectParent.getRuntimeDependencies());
+        allDeps.addAll(idpParent.getRuntimeDependencies());
+        final ParsedPom warDist = new ParsedPom(parserPool, Path.of("../idp-war-distribution/pom.xml"), "idp-war-distribution/pom.xml", projectParent.getProperties(), allDeps);
+        dependencies.addAll(warDist.getRuntimeDependencies());
         final File out = new File("target/dependencyReport.txt");
         final FileOutputStream outStream = new FileOutputStream(out);
         report = new PrintWriter(new BufferedOutputStream(outStream));
@@ -172,10 +179,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
      * @throws MavenInvocationException if we fail to download a pom or a dependency
      */
     @Test public void testDependencies() throws IOException, MavenInvocationException {
-        if (!mavenAvailable) {
-            return;
-        }
-        final Path lib = Path.of("../idp-war/target/idp-war-"+ idpArtefact.getVersion()).resolve("WEB-INF").resolve("lib");
+        final Path lib = Path.of("../idp-war-distribution/target/idp-war-distribution-"+ idpArtefact.getVersion()).resolve("WEB-INF").resolve("lib");
         assertTrue(Files.exists(lib), "idp-war must have been built");
         final Map<String, String> names = new HashMap<>();
         int wrongVersion = 0;
@@ -205,8 +209,10 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
                 analyzeChild(dependencySource, artifact);
             } else {
                 report.format("%-22s\t: %-12s\tVersion Mismatch- found %s %s\n", id, ver, version, sourcePomFilename);
-                analyzeChild(dependencySource, artifact);
-                wrongVersion++;
+                analyzeChild(dependencySource, artifact.withVersion(version));
+                if (!ver.equals(PomArtifact.BAD_VERSION)) {
+                    wrongVersion++;
+                }
             }
             last = artifact;
         }
@@ -216,9 +222,9 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         if (similarNames != 0) {
             report.format("\n%d Artifacts with multiple versions\n", similarNames);
         }
-        
+
         report.format("\n%d dependencies, %d found, %d not found, %d mismatched\n\nDependency Sources\n", dependencies.size(), found, nonUsed, wrongVersion);
-        
+
         final List<String> contributedDeps = new ArrayList<>(names.keySet());
         Collections.sort(contributedDeps);
         int noSource = 0, verMismatch = 0;
@@ -293,7 +299,9 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
 
         Invoker invoker = new DefaultInvoker();
         invoker.execute( request );
-        Files.list(outputDir).forEach(e -> addDep(dependencySource, outputDir.relativize(e).toString(), artifact));
+        if (Files.exists(outputDir)) {
+            Files.list(outputDir).forEach(e -> addDep(dependencySource, outputDir.relativize(e).toString(), artifact));
+        }
     }
 
     /** Add the artifact as a source of this file.
@@ -391,11 +399,12 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         } else {
             name = inName;
         }
-        final int last;
-        if (name.endsWith("-SNAPSHOT")) {
-            last = name.substring(0, name.length()-9).lastIndexOf("-");
-        } else {
-            last = name.lastIndexOf("-");
+        int last = name.lastIndexOf("-");
+        for (String otherGarnish : extensionGarnish) {
+            if (name.endsWith(otherGarnish)) {
+                last = name.substring(0, name.length()-otherGarnish.length()).lastIndexOf("-");
+                break;
+            }
         }
         final String base = name.substring(0, last);
         String versionExtension = name.substring(last+1);
