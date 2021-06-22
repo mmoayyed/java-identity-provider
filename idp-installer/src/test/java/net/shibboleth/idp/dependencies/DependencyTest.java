@@ -174,7 +174,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
      * @throws IOException if the file doesn't exist
      * @throws MavenInvocationException if we fail to download a pom or a dependency
      */
-    @Test public void testDependencies() throws IOException, MavenInvocationException {
+    @Test(enabled=false) public void testDependencies() throws IOException, MavenInvocationException {
         final Path lib = Path.of("../idp-war-distribution/target/idp-war-distribution-"+ idpArtefact.getVersion()).resolve("WEB-INF").resolve("lib");
         assertTrue(Files.exists(lib), "idp-war must have been built");
         final Map<String, String> names = new HashMap<>();
