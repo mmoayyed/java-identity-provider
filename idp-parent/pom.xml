@@ -153,18 +153,6 @@
                 <version>${spring-extensions.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>${spring-webflow.groupId}</groupId>
-                <artifactId>spring-webflow</artifactId>
-                <version>${spring-webflow.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <!-- Provided Dependencies -->
 
             <!-- Runtime Dependencies -->
@@ -184,7 +172,6 @@
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
