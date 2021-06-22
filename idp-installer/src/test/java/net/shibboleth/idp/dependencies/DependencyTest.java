@@ -138,30 +138,26 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         parentArtefact = idpParent.getParent(); 
         assertNotNull(parentArtefact);
         final Path parentPath = downloadPom(parentArtefact);
+        final Set<PomArtifact> allManagedDeps = new HashSet<>();
         final ParsedPom projectParent = new ParsedPom(parserPool, parentPath, "parent/pom.xml", new Properties(), Collections.emptyList());
+        allManagedDeps.addAll(projectParent.getManagedDependencies());
         idpParent = new ParsedPom(parserPool, Path.of("../idp-parent/pom.xml"), "idp-parent/pom.xml", projectParent.getProperties(), projectParent.getCompileDependencies());
+        allManagedDeps.addAll(idpParent.getManagedDependencies());
         dependencies.addAll(projectParent.getCompileDependencies());
         dependencies.addAll(idpParent.getCompileDependencies());
         for (final PomArtifact bom : projectParent.getBomDependencies()) {
             final Path bomPath = downloadPom(bom);
             final ParsedPom bomContents = new ParsedPom(parserPool, bomPath, bom.getArtifactId()+".pom", projectParent.getProperties(), projectParent.getCompileDependencies());
             dependencies.addAll(bomContents.getCompileDependencies());
+            allManagedDeps.addAll(bomContents.getManagedDependencies());
         }
         for (final PomArtifact bom : idpParent.getBomDependencies()) {
             final Path bomPath = downloadPom(bom);
             final ParsedPom bomContents = new ParsedPom(parserPool, bomPath, bom.getArtifactId()+".pom", projectParent.getProperties(), projectParent.getCompileDependencies());
             dependencies.addAll(bomContents.getCompileDependencies());
+            allManagedDeps.addAll(bomContents.getManagedDependencies());
         }
-        final Set<PomArtifact> allDeps = new HashSet<>(projectParent.getCompileDependencies().size() +
-                idpParent.getCompileDependencies().size() +
-                projectParent.getRuntimeDependencies().size() +
-                idpParent.getRuntimeDependencies().size() 
-                );
-        allDeps.addAll(projectParent.getCompileDependencies());
-        allDeps.addAll(idpParent.getCompileDependencies());
-        allDeps.addAll(projectParent.getRuntimeDependencies());
-        allDeps.addAll(idpParent.getRuntimeDependencies());
-        final ParsedPom warDist = new ParsedPom(parserPool, Path.of("../idp-war-distribution/pom.xml"), "idp-war-distribution/pom.xml", projectParent.getProperties(), allDeps);
+        final ParsedPom warDist = new ParsedPom(parserPool, Path.of("../idp-war-distribution/pom.xml"), "idp-war-distribution/pom.xml", projectParent.getProperties(), allManagedDeps);
         dependencies.addAll(warDist.getRuntimeDependencies());
         final File out = new File("target/dependencyReport.txt");
         final FileOutputStream outStream = new FileOutputStream(out);

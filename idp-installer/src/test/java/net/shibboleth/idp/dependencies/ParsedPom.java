@@ -63,8 +63,11 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
     /** Rumtime dependencies. */
     private final List<PomArtifact> runtimeDependencies = new ArrayList<>();    
 
+    /** managed dependencies. */
+    private final List<PomArtifact> myManagedDependencies = new ArrayList<>();    
+    
     /** Inherits dependencies. */
-    private final Map<String, PomArtifact> managedDependencies;
+    private final Map<String, PomArtifact> inputManagedDependencies;
     
     /** Which the POM.*/
     @Nonnull private final String sourcePomInfo;
@@ -98,7 +101,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
                      @Nonnull final Collection<PomArtifact> managed)
             throws FileNotFoundException, IOException, XMLParserException {
 
-        managedDependencies = managed.stream().collect(Collectors.toMap(e->e.getGroupId()+"+"+e.getArtifactId(), Function.identity()));
+        inputManagedDependencies = managed.stream().collect(Collectors.toMap(e->e.getGroupId()+"+"+e.getArtifactId(), Function.identity()));
                 
         sourcePomInfo = pomName;
         Document document;
@@ -138,11 +141,11 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         final List<Element> dependencyMgt = ElementSupport.getChildElementsByTagName(el, "dependencyManagement");
         if (!dependencyMgt.isEmpty()) {
             final List<Element> dependencies = ElementSupport.getChildElementsByTagName(dependencyMgt.get(0), "dependencies");
-            parseDependencies(dependencies.get(0));
+            parseDependencies(dependencies.get(0), true);
         }
         final List<Element> dependencies = ElementSupport.getChildElementsByTagName(el, "dependencies");
         if (!dependencies.isEmpty()) {
-            parseDependencies(dependencies.get(0));
+            parseDependencies(dependencies.get(0), false);
         }
     }
 
@@ -158,28 +161,33 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
     }
 
     /**
-     * @param item
+     * @param item what to parse
+     * @param isManaged to we add to the managed dependencies?
      */
-    private void parseDependencies(Element item) {
+    private void parseDependencies(final Element item, final boolean isManaged) {
         final List<Element> dependencies = ElementSupport.getChildElementsByTagName(item, "dependency");
         
         for (Element dependency : dependencies) {
+            final PomArtifact artifact = new PomArtifact(dependency);
             final List<Element> types = ElementSupport.getChildElementsByTagName(dependency, "type");
             if (!types.isEmpty()) {
                 final String type = StringSupport.trimOrNull(types.get(0).getTextContent());
                 if ("pom".equals(type)) {
-                    bomDependencies.add(new PomArtifact(dependency));
+                    bomDependencies.add(artifact);
                     continue;
                 } else if (!"jar".equals(type)) {
                     // not for us
                     continue;
                 }                
             }
+            if (isManaged) {
+                myManagedDependencies.add(artifact);
+            }
             final List<Element> scopes = ElementSupport.getChildElementsByTagName(dependency, "scope");
             if (!scopes.isEmpty()) {
                 final String scope = StringSupport.trimOrNull(scopes.get(0).getTextContent());
                 if ("runtime".equals(scope)) {
-                    runtimeDependencies.add(new PomArtifact(dependency));
+                    runtimeDependencies.add(artifact);
                     continue;
                 }
                 if (!"compile".equals(scope)) {
@@ -187,8 +195,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
                     continue;
                 }
             }
-            final PomArtifact dep = new PomArtifact(dependency);
-            compileDependencies.add(dep);
+            compileDependencies.add(artifact);
         }
     }
 
@@ -230,6 +237,13 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
      */
     public List<PomArtifact> getRuntimeDependencies() {
         return runtimeDependencies;
+    }
+    
+    /**
+     * @return Returns the myManagedDependencies.
+     */
+    public List<PomArtifact> getManagedDependencies() {
+        return myManagedDependencies;
     }
 
     /** Return our artifactInformation.
@@ -321,7 +335,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
             } else if (parentArtifact != null) {
                 version = parentArtifact.getVersion();
             } else {
-                final PomArtifact inherited = managedDependencies.get(groupId+"+"+artifactId);
+                final PomArtifact inherited = inputManagedDependencies.get(groupId+"+"+artifactId);
                 if (inherited != null) {
                     version = inherited.getVersion();
                 } else {
