@@ -95,7 +95,7 @@
     </repositories>
 
     <dependencies>
-    <!-- This file should contain NO additional dependencies.  See IDP-1620. -->
+    <!-- This file should contain NO additional dependencies unless they truly apply to every "every module. See IDP-1620. -->
         <dependency>
             <groupId>${slf4j.groupId}</groupId>
             <artifactId>slf4j-api</artifactId>
