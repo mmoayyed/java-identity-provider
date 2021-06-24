@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
+import java.util.List;
 
 import javax.security.auth.Subject;
 
@@ -58,6 +58,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AddAuthnStatementToAssertion} unit test. */
+@SuppressWarnings("javadoc")
 public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
 
     private RequestContext rc;
@@ -221,7 +222,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     
     @Test public void testAuthenticatingAuthorities() {
         prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
-                new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(Arrays.asList("foo", "bar", "baz"))));
+                new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(List.of("foo", "bar", "baz"))));
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
@@ -235,6 +236,26 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(authnContext.getAuthenticatingAuthorities().get(0).getURI(), "foo");
         Assert.assertEquals(authnContext.getAuthenticatingAuthorities().get(1).getURI(), "bar");
         Assert.assertEquals(authnContext.getAuthenticatingAuthorities().get(2).getURI(), "baz");
+    }
+
+    @Test public void testSuppressedAuthenticatingAuthorities() {
+        final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
+        ssoConfig.setSuppressAuthenticatingAuthority(true);
+        ssoConfig.setSecurityConfiguration(new SecurityConfiguration());
+        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(ssoConfig);
+
+        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+                new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(List.of("foo", "bar", "baz"))));
+        
+        final Event event = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
+
+        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        final Assertion assertion = response.getAssertions().get(0);
+        final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
+        final AuthnContext authnContext = authenticationStatement.getAuthnContext();
+        Assert.assertNotNull(authnContext);
+        Assert.assertTrue(authnContext.getAuthenticatingAuthorities().isEmpty());
     }
 
 }

@@ -421,6 +421,14 @@
                 <constructor-arg value="true" />
             </bean>
         </property>
+        <property name="suppressAuthenticatingAuthoritiesPredicate">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="suppressAuthenticatingAuthorities" />
+                </constructor-arg>
+                <constructor-arg value="false" />
+            </bean>
+        </property>
         <property name="authnContextTranslationStrategyLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="authnContextTranslationStrategy"
                     p:propertyType="#{T(java.util.function.Function)}">

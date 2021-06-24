@@ -22,6 +22,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,6 +40,7 @@ import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.navigate.SessionLifetimeLookupFunction;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAssertion;
+import net.shibboleth.idp.saml.saml2.profile.config.logic.SuppressAuthenticatingAuthorityPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -94,10 +96,14 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
 
     /** Strategy used to determine SessionNotOnOrAfter value to set. */
     @Nullable private Function<ProfileRequestContext,Duration> sessionLifetimeLookupStrategy;
+    
+    /** Strategy used to determine whether to suppress AuthenticatingAuthority. */
+    @Nonnull private Predicate<ProfileRequestContext> suppressAuthenticatingAuthorityPredicate;
         
     /** Constructor. */
     public AddAuthnStatementToAssertion() {
         sessionLifetimeLookupStrategy = new SessionLifetimeLookupFunction();
+        suppressAuthenticatingAuthorityPredicate = new SuppressAuthenticatingAuthorityPredicate();
     }
     
     /**
@@ -135,6 +141,18 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         sessionLifetimeLookupStrategy = strategy;
     }
     
+    /**
+     * Set the condition used to determine whether to suppress inclusion of AuthenticatingAuthority.
+     * 
+     * @param condition condition to set
+     */
+    public void setSuppressAuthenticatingAuthorityPredicate(
+            @Nonnull final Predicate<ProfileRequestContext> condition) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        suppressAuthenticatingAuthorityPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -169,7 +187,6 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         log.debug("{} Added AuthenticationStatement to Assertion {}", getLogPrefix(), assertion.getID());
     }
 
-// Checkstyle: CyclomaticComplexity OFF
     /**
      * Build the {@link AuthnStatement} to be added to the {@link Response}.
      * 
@@ -212,23 +229,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
                     classRefLookupStrategy.apply(profileRequestContext).getAuthnContextClassRef());
         }
         
-        final Set<ProxyAuthenticationPrincipal> proxyPrincipals =
-                getAuthenticationResult().getSubject().getPrincipals(ProxyAuthenticationPrincipal.class);
-        if (proxyPrincipals != null && !proxyPrincipals.isEmpty()) {
-            if (proxyPrincipals.size() == 1) {
-                final SAMLObjectBuilder<AuthenticatingAuthority> authorityBuilder =
-                        (SAMLObjectBuilder<AuthenticatingAuthority>) bf.<AuthenticatingAuthority>getBuilderOrThrow(
-                                AuthenticatingAuthority.DEFAULT_ELEMENT_NAME);
-                for (final String authority : proxyPrincipals.iterator().next().getAuthorities()) {
-                    final AuthenticatingAuthority aa = authorityBuilder.buildObject();
-                    aa.setURI(authority);
-                    authnContext.getAuthenticatingAuthorities().add(aa);
-                }
-            } else {
-                log.warn("{} Multiple ProxyAuthenticationPrincipals, skipping AuthenticatingAuthority population",
-                        getLogPrefix());
-            }
-        }
+        addAuthenticatingAuthorities(profileRequestContext, authnContext);
         
         final Duration lifetime = sessionLifetimeLookupStrategy != null ?
                 sessionLifetimeLookupStrategy.apply(profileRequestContext) : null;
@@ -249,7 +250,36 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         
         return statement;
     }
-// Checkstyle: CyclomaticComplexity ON
+    
+    private void addAuthenticatingAuthorities(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthnContext authnContext) {
+        
+        final Set<ProxyAuthenticationPrincipal> proxyPrincipals =
+                getAuthenticationResult().getSubject().getPrincipals(ProxyAuthenticationPrincipal.class);
+        if (proxyPrincipals != null && !proxyPrincipals.isEmpty()) {
+            if (proxyPrincipals.size() == 1) {
+                final ProxyAuthenticationPrincipal proxyPrincipal = proxyPrincipals.iterator().next();
+                
+                final boolean suppress = suppressAuthenticatingAuthorityPredicate.test(profileRequestContext);
+                if (!suppress) {
+                    final SAMLObjectBuilder<AuthenticatingAuthority> authorityBuilder =
+                            (SAMLObjectBuilder<AuthenticatingAuthority>) XMLObjectProviderRegistrySupport
+                                .getBuilderFactory().<AuthenticatingAuthority>getBuilderOrThrow(
+                                    AuthenticatingAuthority.DEFAULT_ELEMENT_NAME);
+                    for (final String authority : proxyPrincipal.getAuthorities()) {
+                        final AuthenticatingAuthority aa = authorityBuilder.buildObject();
+                        aa.setURI(authority);
+                        authnContext.getAuthenticatingAuthorities().add(aa);
+                    }
+                } else {
+                    log.debug("{} Suppressing AuthenticatingAuthority population", getLogPrefix());
+                }
+            } else {
+                log.warn("{} Multiple ProxyAuthenticationPrincipals, skipping AuthenticatingAuthority population",
+                        getLogPrefix());
+            }
+        }
+    }
     
     /**
      * Default strategy for obtaining assertion to modify.

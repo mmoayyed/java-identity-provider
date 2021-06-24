@@ -44,6 +44,7 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.SubjectLocality;
@@ -87,6 +88,11 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     /** Whether authentication results should carry the proxied AuthnInstant. */
     @Nonnull private Predicate<ProfileRequestContext> proxiedAuthnInstantPredicate;
 
+    /** 
+     * The predicate used to determine whether to suppress {@link AuthenticatingAuthority} when possible.
+     */
+    @Nonnull private Predicate<ProfileRequestContext> suppressAuthenticatingAuthorityPredicate;
+    
     /** Lookup function to supply maximum session lifetime. */
     @Nonnull private Function<ProfileRequestContext,Duration> maximumSPSessionLifetimeLookupStrategy;
 
@@ -146,6 +152,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         checkAddressPredicate = Predicates.alwaysTrue();
         skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
         proxiedAuthnInstantPredicate = Predicates.alwaysTrue();
+        suppressAuthenticatingAuthorityPredicate = Predicates.alwaysFalse();
         maximumSPSessionLifetimeLookupStrategy = FunctionSupport.constant(null);
         maximumTimeSinceAuthnLookupStrategy = FunctionSupport.constant(null);
         maximumTokenDelegationChainLengthLookupStrategy = FunctionSupport.constant(DEFAULT_DELEGATION_CHAIN_LENGTH);
@@ -355,6 +362,45 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     public void setSkipEndpointValidationWhenSignedPredicate(
             @Nonnull final Predicate<ProfileRequestContext> condition) {
         skipEndpointValidationWhenSignedPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
+    }
+
+    /**
+     * Gets whether to suppress inclusion of {@link AuthenticatingAuthority} element.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return true iff the element should be suppressed when possible
+     * 
+     * @since 4.2.0
+     */
+    public boolean isSuppressAuthenticatingAuthority(@Nullable final ProfileRequestContext profileRequestContext) {
+        return suppressAuthenticatingAuthorityPredicate.test(profileRequestContext);
+    }
+    
+    /**
+     * Sets whether to suppress inclusion of {@link AuthenticatingAuthority} element.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.2.0
+     */
+    public void setSuppressAuthenticatingAuthority(final boolean flag) {
+        suppressAuthenticatingAuthorityPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+
+    /**
+     * Sets condition to determine whether to suppress inclusion of {@link AuthenticatingAuthority} element.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.2.0
+     */
+    public void setSuppressAuthenticatingAuthority(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        suppressAuthenticatingAuthorityPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
     }
     
     /**
