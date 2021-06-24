@@ -88,7 +88,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
     private PomArtifact parentArtefact;
     
     /**  We have as an assumption that the CWD is idp-installer.  Test this.
-     * @throws IOException
+     * @throws IOException if the directorty isn't what we expect it to be, 
      */
     @BeforeClass public void testWorkingDir() throws IOException {
         final Path path = Path.of(".");
@@ -123,11 +123,11 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
     
     /** Set up the environment for running the test.
      * Parse the IdP parent pom.
-     * From that find the description of parent pom & download it.
+     * From that find the description of parent pom &amp; download it.
      * Parse that.
-     * @throws IOException 
-     * @throws XMLParserException
-     * @throws MavenInvocationException 
+     * @throws IOException if a folder or files has issues
+     * @throws XMLParserException if the pom is badly formed
+     * @throws MavenInvocationException if maven fails
      */
 
     @BeforeClass(dependsOnMethods = {"setupMavenEnvironment", "testWorkingDir"}) public void setup() throws IOException, XMLParserException, MavenInvocationException {
@@ -256,10 +256,10 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         assertEquals(similarNames,  0, "Multiple similarly named jars");
     }
     
-    /** report the contributions of the provided dependency & version.
-     * @param dependency
-     * @param version
-     * @param sources
+    /** report the contributions of the provided dependency &amp; version.
+     * @param dependency the artifact ID  
+     * @param version the version we are considering
+     * @param sources what caused this to exist
      */
     private void reportContributions(final String dependency, final String version, final Collection<String> sources) {
         List<String> srcs = new ArrayList<>(sources);
@@ -332,7 +332,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
     /** Create a pom file which has one dependency - this artifact.
      * @param artifact the artifact.
      * @return the file.
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException if the created pom file doesnt exist?
      */
     private File outputPom(PomArtifact artifact) throws FileNotFoundException {
         final File file = workingDir.resolve(new StringBuilder(artifact.getArtifactId())
@@ -424,7 +424,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
     /** tell maven to download the artifact and returns it's path.
      * @param artifact what to look for
      * @return the pom as a {@link Path}
-     * @throws MavenInvocationException 
+     * @throws MavenInvocationException if the download failed
      */
     private Path downloadPom(final PomArtifact artifact) throws MavenInvocationException {
         final Path output =  workingDir.resolve(artifact.getArtifactId() + ".pom");

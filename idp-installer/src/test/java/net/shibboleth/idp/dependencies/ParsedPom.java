@@ -199,8 +199,8 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         }
     }
 
-    /**
-     * @param item
+    /** Parse the properties from the pom.
+     * @param item the &lt;properties&gt; element
      */
     private void parseProperties(Element item) {
         
@@ -211,36 +211,36 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         }
     }
 
-    /**
-     * @param item
+    /** Parse the parent from the pom. 
+     * @param item the &lt;parent&gt; element
      */
     private void parseParent(Element item) {
         parent = new PomArtifact(item);
     }
     
-    /**
-     * @return Returns the compileDependencies.
+    /** Returns the Compile Dependencies.
+     * @return Returns the Compile Dependencies.
      */
     public List<PomArtifact> getCompileDependencies() {
         return compileDependencies;
     }
 
-    /**
-     * @return Returns the bomDependencies.
+    /** Returns the Bom Dependencies.
+     * @return Returns the Bom Dependencies.
      */
     public List<PomArtifact> getBomDependencies() {
         return bomDependencies;
     }
     
-    /**
-     * @return Returns the runtimeDependencies.
+    /** Returns the Runtime Dependencies.
+     * @return Returns the Runtime Dependencies.
      */
     public List<PomArtifact> getRuntimeDependencies() {
         return runtimeDependencies;
     }
     
-    /**
-     * @return Returns the myManagedDependencies.
+    /**  Returns the Managed Dependencies.
+     * @return Returns the Managed Dependencies.
      */
     public List<PomArtifact> getManagedDependencies() {
         return myManagedDependencies;
@@ -253,14 +253,14 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         return us;
     }
 
-    /**
-     * @return Returns the parent.
+    /** Return the parent.
+     * @return  the parent.
      */
     public PomArtifact getParent() {
         return parent;
     }
 
-    /**
+    /** The &lt;properties&gt; contents.
      * @return Returns the properties.
      */
     public Properties getProperties() {
@@ -288,9 +288,9 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         /**
          * Constructor.
          *
-         * @param id 
-         * @param group
-         * @param ver
+         * @param id the &lt;artifactId&gt; 
+         * @param group the &lt;groupId&gt;
+         * @param ver the &lt;version&gt;
          */
         private PomArtifact(final String id, final String group, final String ver) {
             artifactId = id;

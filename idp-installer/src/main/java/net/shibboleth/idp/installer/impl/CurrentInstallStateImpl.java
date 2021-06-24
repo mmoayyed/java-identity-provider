@@ -139,7 +139,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
 
     /** Populate {{@link #props} from idp.properties and other files pointed to by
      * {@value IdPPropertiesApplicationContextInitializer#IDP_ADDITIONAL_PROPERTY}.
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException on various IO issues
      */
     private void setupPreviousProps() throws ComponentInitializationException {
         if (!isIdPPropertiesPresent()) {
