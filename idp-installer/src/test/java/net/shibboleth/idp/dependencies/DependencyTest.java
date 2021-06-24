@@ -58,12 +58,11 @@ import net.shibboleth.idp.dependencies.ParsedPom.PomArtifact;
 import net.shibboleth.idp.installer.plugin.impl.PluginInstallerSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
-import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
 /**
  * Test that what we see is what we wanted in abuild - we do this by reading the pom
  */
-public class DependencyTest extends OpenSAMLInitBaseTestCase {
+public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoader {
 
     /** Set this up if you want to run the tests from eclipse. */
     private static String LOCAL_MAVEN_HOME = null;
@@ -77,18 +76,15 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
     /** Work space.  Deleted on exit. */
     private Path workingDir;
     
-    /** The project parent dependencies */
-    private List<PomArtifact> dependencies = new ArrayList<>();
-    
-    /** The IDP Version/artifact info */
-    private PomArtifact idpArtefact;
+    /** The parsed idp-parent pom. */
+    private ParsedPom idpParent;
     
     private PrintWriter report;
 
     private PomArtifact parentArtefact;
     
     /**  We have as an assumption that the CWD is idp-installer.  Test this.
-     * @throws IOException if the directorty isn't what we expect it to be, 
+     * @throws IOException if the directory isn't what we expect it to be
      */
     @BeforeClass public void testWorkingDir() throws IOException {
         final Path path = Path.of(".");
@@ -121,61 +117,57 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         System.setProperty("maven.home", home);
     }
     
-    /** Set up the environment for running the test.
-     * Parse the IdP parent pom.
-     * From that find the description of parent pom &amp; download it.
-     * Parse that.
-     * @throws IOException if a folder or files has issues
-     * @throws XMLParserException if the pom is badly formed
-     * @throws MavenInvocationException if maven fails
+    /** Parse the idp-parent pom and all related.
+     * @throws Exception if a folder or files has issues, 
+     *    if the pom is badly formed, or if the download fails
      */
 
-    @BeforeClass(dependsOnMethods = {"setupMavenEnvironment", "testWorkingDir"}) public void setup() throws IOException, XMLParserException, MavenInvocationException {
+    @BeforeClass(dependsOnMethods = {"setupMavenEnvironment", "testWorkingDir"}) public void parsePom() throws Exception {
         workingDir = Files.createTempDirectory("dependencyTest");
         parserPool = XMLObjectProviderRegistrySupport.getParserPool();
-        ParsedPom idpParent = new ParsedPom(parserPool, Path.of("../idp-parent/pom.xml"), "idp-parent/pom.xml", null, Collections.emptyList());
-        idpArtefact = idpParent.getOurInfo();
+
+        idpParent = new ParsedPom(parserPool, this, Path.of("../idp-parent/pom.xml"), "idp-parent/pom.xml", null, Collections.emptyMap());
         parentArtefact = idpParent.getParent(); 
         assertNotNull(parentArtefact);
         final Path parentPath = downloadPom(parentArtefact);
-        final Set<PomArtifact> allManagedDeps = new HashSet<>();
-        final ParsedPom projectParent = new ParsedPom(parserPool, parentPath, "parent/pom.xml", new Properties(), Collections.emptyList());
-        allManagedDeps.addAll(projectParent.getManagedDependencies());
-        idpParent = new ParsedPom(parserPool, Path.of("../idp-parent/pom.xml"), "idp-parent/pom.xml", projectParent.getProperties(), projectParent.getCompileDependencies());
-        allManagedDeps.addAll(idpParent.getManagedDependencies());
-        dependencies.addAll(projectParent.getCompileDependencies());
-        dependencies.addAll(idpParent.getCompileDependencies());
-        for (final PomArtifact bom : projectParent.getBomDependencies()) {
-            final Path bomPath = downloadPom(bom);
-            final ParsedPom bomContents = new ParsedPom(parserPool, bomPath, bom.getArtifactId()+".pom", projectParent.getProperties(), projectParent.getCompileDependencies());
-            dependencies.addAll(bomContents.getCompileDependencies());
-            allManagedDeps.addAll(bomContents.getManagedDependencies());
-        }
-        for (final PomArtifact bom : idpParent.getBomDependencies()) {
-            final Path bomPath = downloadPom(bom);
-            final ParsedPom bomContents = new ParsedPom(parserPool, bomPath, bom.getArtifactId()+".pom", projectParent.getProperties(), projectParent.getCompileDependencies());
-            dependencies.addAll(bomContents.getCompileDependencies());
-            allManagedDeps.addAll(bomContents.getManagedDependencies());
-        }
-        final ParsedPom warDist = new ParsedPom(parserPool, Path.of("../idp-war-distribution/pom.xml"), "idp-war-distribution/pom.xml", projectParent.getProperties(), allManagedDeps);
-        dependencies.addAll(warDist.getRuntimeDependencies());
+        final ParsedPom projectParent = new ParsedPom(parserPool, this, parentPath, "parent/pom.xml", new Properties(), Collections.emptyMap());
+        idpParent = new ParsedPom(parserPool, this, Path.of("../idp-parent/pom.xml"), "idp-parent/pom.xml", projectParent.getProperties(), projectParent.getManagedDependencies());
+        assertTrue(projectParent.getCompileDependencies().isEmpty(), "project parent contributes compile dependencies");
+        assertTrue(projectParent.getRuntimeDependencies().isEmpty(), "project parent contributes run time dependencies");
+    }
+
+    /** Create the reporter print stream
+     * @throws FileNotFoundException  if we cannot
+     */
+    @BeforeClass(dependsOnMethods = {"testWorkingDir"}) public void initializeOutput() throws FileNotFoundException {
         final File out = new File("target/dependencyReport.txt");
         final FileOutputStream outStream = new FileOutputStream(out);
         report = new PrintWriter(new BufferedOutputStream(outStream));
         report.format("Dependency Analysis, started at %s\n", Instant.now().toString());
     }
-    
+
     /** Clean up after ourselves. */
     @AfterClass public void teardown() {
         PluginInstallerSupport.deleteTree(workingDir);
     }
-    
+
     /** The guts of the first test.  Are all the files what we expected?
      * @throws IOException if the file doesn't exist
      * @throws MavenInvocationException if we fail to download a pom or a dependency
      */
-    @Test(enabled=false) public void testDependencies() throws IOException, MavenInvocationException {
-        final Path lib = Path.of("../idp-war-distribution/target/idp-war-distribution-"+ idpArtefact.getVersion()).resolve("WEB-INF").resolve("lib");
+    @Test(enabled=true) public void testDependencies() throws IOException, MavenInvocationException {
+        if (!idpParent.getDuplicates().isEmpty()) {
+            report.format("Duplicates found parsing the poms\n");
+            for (final Pair<PomArtifact,PomArtifact> poms : idpParent.getDuplicates()) {
+                final PomArtifact f = poms.getFirst();
+                final PomArtifact s = poms.getSecond();
+
+                report.format("%-22s\t: %s (from %s) and %s (from %s)\n", f.getMapKey(),
+                        f.getVersion(), f.getSourcePomFilename(),
+                        s.getVersion(), s.getSourcePomFilename());
+            }
+        }
+        final Path lib = Path.of("../idp-war-distribution/target/idp-war-distribution-"+ idpParent.getOurInfo().getVersion()).resolve("WEB-INF").resolve("lib");
         assertTrue(Files.exists(lib), "idp-war must have been built");
         final Map<String, String> names = new HashMap<>();
         int wrongVersion = 0;
@@ -183,7 +175,11 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         int nonUsed = 0;
         int dupNames = 0;
         final int similarNames = Files.list(lib).mapToInt(e -> addName(names, lib.relativize(e).toString())).sum();
-        report.format("WAR CONTENTS\n=== ========\n");
+        report.format("Dependencies found in war file\n\n");
+
+        List<PomArtifact> dependencies = new ArrayList<>(idpParent.getCompileDependencies().size() + idpParent.getRuntimeDependencies().size());
+        dependencies.addAll(idpParent.getCompileDependencies());
+        dependencies.addAll(idpParent.getRuntimeDependencies());
         Collections.sort(dependencies);
         // ArtifactId->(Ver->[source, source])
         final Map<String, Map<String, Set<String>>> dependencySource = new HashMap<>();
@@ -193,8 +189,12 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
             final String ver = artifact.getVersion();
             final String sourcePomFilename = "(from " + artifact.getSourcePomFilename() + ")";
             final String version = names.remove(id);
-            if (artifact.equals(last)) {
-                report.format("%-22s\t: %-12s\tDuplicate artifact: %-22s\n", id, ver, sourcePomFilename);
+            if (idpParent.getGeneratedArtifacts().contains(artifact)) {
+                if (!artifact.equals(last)) {
+                    report.format("%-22s\t: %-12s\tGenerated by parent war\n", id, ver);
+                }
+            } else if (artifact.equals(last)) {
+                report.format("%-22s\t: %-12s\tRuntime & Compile: %-22s\n", id, ver, sourcePomFilename);
                 dupNames++;
             } else if (version == null) {
                 report.format("%-22s\t: %-12s\tNot found in war    %-22s\n", id, ver, sourcePomFilename);
@@ -223,7 +223,9 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
 
         final List<String> contributedDeps = new ArrayList<>(names.keySet());
         Collections.sort(contributedDeps);
-        int noSource = 0, verMismatch = 0;
+        int noSource = 0;
+
+        report.format("Found in but not explicitly defined as a dependency:\n\n");
 
         for (final String dependency: contributedDeps) {
             final Map<String, Set<String>> map = dependencySource.get(dependency);
@@ -237,7 +239,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
                 final Set<String> sources = map.remove(version);
                 if (sources == null) {
                     report.format("%-22s\t: %-12s\tNO Dependency contributes this version\n", dependency, version);
-                    verMismatch ++;
+                    noSource ++;
                 } else {
                     reportContributions(dependency, version, sources);
                 }
@@ -248,12 +250,16 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
                 }
             }
         }
-        report.format("%d Version mismatches, %d lost artifacts\n", verMismatch, noSource);
+        report.format("%d Orphans artifact(s)\n", noSource);
+        report.format("%d Similar artifact names(s)\n", similarNames);
+        report.format("%d Wrong Versions(s)\n", wrongVersion);
         report.format("Completed at %s\n", Instant.now().toString());
         report.flush();
         report.close();
         assertEquals(wrongVersion,  0, "Mismatched version");
         assertEquals(similarNames,  0, "Multiple similarly named jars");
+        assertEquals(noSource,  0, "Orphaned Artefacts");
+        assertTrue(idpParent.getDuplicates().isEmpty(), "Duplicate dependencies");
     }
     
     /** report the contributions of the provided dependency &amp; version.
@@ -340,47 +346,47 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
                 .append(artifact.getVersion())
                 .append(".xml").
                 toString()).toFile();
-        final FileOutputStream outStream = new FileOutputStream(file);
-        final PrintWriter pom = new PrintWriter(new BufferedOutputStream(outStream));
-        pom.format("<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                + "     xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n"
-                + "    <modelVersion>4.0.0</modelVersion>\n"
-                + "\n"
-                + "    <parent>\n"
-                + "        <groupId>%s</groupId>\n"
-                + "        <artifactId>%s</artifactId>\n"
-                + "        <version>%s</version>\n"
-                + "    </parent>\n"
-                + "\n", parentArtefact.getGroupId(), parentArtefact.getArtifactId(), parentArtefact.getVersion());
-        pom.format("    <groupId>shibboleth.net.dependency</groupId>\n"
-                + "    <version>0.0.1</version>\n"
-                + "    <name>Shibboleth Dependency</name>\n"
-                + "    <artifactId>idp-dep-%s</artifactId>\n"
-                + "    <packaging>jar</packaging>\n\n", artifact.getArtifactId());
-        pom.format("    <dependencies>\n"
-                + "    <dependency>\n"
-                + "            <groupId>%s</groupId><artifactId>%s</artifactId><version>%s</version>\n"
-                + "    </dependency>\n"
-                + "    </dependencies>\n\n", artifact.getGroupId(),artifact.getArtifactId(), artifact.getVersion());
-        pom.format("    <repositories>\n"
-                + "        <repository>\n"
-                + "            <id>shib-release</id>\n"
-                + "            <url>https://build.shibboleth.net/nexus/content/groups/public</url>\n"
-                + "            <snapshots>\n"
-                + "                <enabled>false</enabled>\n"
-                + "            </snapshots>\n"
-                + "        </repository>\n"
-                + "        <repository>\n"
-                + "            <id>shib-snapshot</id>\n"
-                + "            <url>https://build.shibboleth.net/nexus/content/repositories/snapshots</url>\n"
-                + "            <releases>\n"
-                + "                <enabled>false</enabled>\n"
-                + "            </releases>\n"
-                + "        </repository>\n"
-                + "    </repositories>\n"
-                + "</project>\n");
-        pom.flush();
-        pom.close();
+        try (final PrintWriter pom = new PrintWriter(new BufferedOutputStream(new FileOutputStream(file)))) {
+            pom.format("<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                    + "     xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n"
+                    + "    <modelVersion>4.0.0</modelVersion>\n"
+                    + "\n"
+                    + "    <parent>\n"
+                    + "        <groupId>%s</groupId>\n"
+                    + "        <artifactId>%s</artifactId>\n"
+                    + "        <version>%s</version>\n"
+                    + "    </parent>\n"
+                    + "\n", parentArtefact.getGroupId(), parentArtefact.getArtifactId(), parentArtefact.getVersion());
+            pom.format("    <groupId>shibboleth.net.dependency</groupId>\n"
+                    + "    <version>0.0.1</version>\n"
+                    + "    <name>Shibboleth Dependency</name>\n"
+                    + "    <artifactId>idp-dep-%s</artifactId>\n"
+                    + "    <packaging>jar</packaging>\n\n", artifact.getArtifactId());
+            pom.format("    <dependencies>\n"
+                    + "    <dependency>\n"
+                    + "            <groupId>%s</groupId><artifactId>%s</artifactId><version>%s</version>\n"
+                    + "    </dependency>\n"
+                    + "    </dependencies>\n\n", artifact.getGroupId(),artifact.getArtifactId(), artifact.getVersion());
+            pom.format("    <repositories>\n"
+                    + "        <repository>\n"
+                    + "            <id>shib-release</id>\n"
+                    + "            <url>https://build.shibboleth.net/nexus/content/groups/public</url>\n"
+                    + "            <snapshots>\n"
+                    + "                <enabled>false</enabled>\n"
+                    + "            </snapshots>\n"
+                    + "        </repository>\n"
+                    + "        <repository>\n"
+                    + "            <id>shib-snapshot</id>\n"
+                    + "            <url>https://build.shibboleth.net/nexus/content/repositories/snapshots</url>\n"
+                    + "            <releases>\n"
+                    + "                <enabled>false</enabled>\n"
+                    + "            </releases>\n"
+                    + "        </repository>\n"
+                    + "    </repositories>\n"
+                    + "</project>\n");
+            pom.flush();
+            pom.close();
+        }
         return file;
     }
 
@@ -421,12 +427,12 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase {
         return 1;
     }
 
-    /** tell maven to download the artifact and returns it's path.
+    /** Tell Maven to download the artifact and returns it's path.
      * @param artifact what to look for
      * @return the pom as a {@link Path}
      * @throws MavenInvocationException if the download failed
      */
-    private Path downloadPom(final PomArtifact artifact) throws MavenInvocationException {
+    public Path downloadPom(final PomArtifact artifact) throws MavenInvocationException {
         final Path output =  workingDir.resolve(artifact.getArtifactId() + ".pom");
         assertFalse(Files.exists(output));
         final String fullArtifactName = new StringBuilder(artifact.getGroupId())

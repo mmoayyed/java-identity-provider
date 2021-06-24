@@ -19,20 +19,19 @@ package net.shibboleth.idp.dependencies;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
@@ -55,19 +54,22 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 public class ParsedPom extends OpenSAMLInitBaseTestCase{
     
     /** Compile dependencies - what we care about. */
-    private final List<PomArtifact> compileDependencies = new ArrayList<>();
+    private final Map<String, PomArtifact> compileDependencies = new HashMap<>();
     
     /** BOM dependencies. */
-    private final List<PomArtifact> bomDependencies = new ArrayList<>();
+    private final Map<String, PomArtifact> bomDependencies = new HashMap<>();
 
-    /** Rumtime dependencies. */
-    private final List<PomArtifact> runtimeDependencies = new ArrayList<>();    
+    /** Rum time dependencies. */
+    private final Map<String, PomArtifact> runtimeDependencies = new HashMap<>();    
 
-    /** managed dependencies. */
-    private final List<PomArtifact> myManagedDependencies = new ArrayList<>();    
-    
+    /** Duplicate dependencies. */
+    private final List<Pair<PomArtifact,PomArtifact>> duplicates = new ArrayList<>();    
+
+    /** Generated artifacts. */
+    private final Set<PomArtifact> generated = new HashSet<>();
+
     /** Inherits dependencies. */
-    private final Map<String, PomArtifact> inputManagedDependencies;
+    private final Map<String, PomArtifact> managedDependencies;
     
     /** Which the POM.*/
     @Nonnull private final String sourcePomInfo;
@@ -85,24 +87,24 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
      * Constructor.
      *
      * @param parsers a short-cut to let us parse XML
+     * @param pomLoader how to get a pom (for BOM loading)
      * @param pom the {@link Path} to the pom.
      * @param pomName an ID for the pom
      * @param parentPomProperties if present it is properties from the parent (which might be empty), if null we are *only*
      * looking for the parent pom coordinates.
-     * @param managed Managed dependencies from parent
-     * @throws IOException from parsing
-     * @throws FileNotFoundException if the file doesn't exist
-     * @throws XMLParserException from parsing
+     * @param map Managed dependencies from parent
+     * @throws Exception if we have issued locating a bom
      */
     public ParsedPom(@Nonnull final ParserPool parsers,
+                     @Nonnull final PomLoader pomLoader,
                      @Nonnull final Path pom,
                      @Nonnull final String pomName,
                      @Nullable final Properties parentPomProperties, 
-                     @Nonnull final Collection<PomArtifact> managed)
-            throws FileNotFoundException, IOException, XMLParserException {
+                     @Nonnull final Map<String, PomArtifact> map)
+            throws Exception {
 
-        inputManagedDependencies = managed.stream().collect(Collectors.toMap(e->e.getGroupId()+"+"+e.getArtifactId(), Function.identity()));
-                
+        managedDependencies = new HashMap<>(map);
+
         sourcePomInfo = pomName;
         Document document;
         try (final InputStream stream = new BufferedInputStream(new FileInputStream(pom.toFile()))) {
@@ -128,43 +130,82 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
             String pName = (String) p;
             properties.setProperty(pName, parentPomProperties.getProperty(pName));
         }
+        properties.setProperty("project.basedir", "<bogus_base_dir>");
+        properties.setProperty("project.build.directory", "<bogus_build_dir>");
+        properties.setProperty("project.version", us.getVersion());
+        properties.setProperty("project.groupId", us.getGroupId());
+        properties.setProperty("project.artifactId", us.getArtifactId());
+
         final List<Element> props = ElementSupport.getChildElementsByTagName(el, "properties");
         if (!props.isEmpty()) {
             parseProperties(props.get(0));
         }
-        if (!properties.contains("project.groupId") && parent != null) {
-            properties.setProperty("project.groupId", parent.groupId);
+
+        for (final Element dependencyMgt: ElementSupport.getChildElementsByTagName(el, "dependencyManagement")) {
+            for (final Element dependencies : ElementSupport.getChildElementsByTagName(dependencyMgt, "dependencies")) {
+                parseManagedDependencies(dependencies);
+            }
         }
-        if (!properties.contains("project.version") && parent != null) {
-            properties.setProperty("project.version", parent.version);
+        for (final PomArtifact bom : bomDependencies.values()) {
+            final ParsedPom parsedBom = new ParsedPom(parsers, pomLoader, pomLoader.downloadPom(bom), bom.toString(), new Properties(), Collections.emptyMap());
+            for (PomArtifact dep : parsedBom.getManagedDependencies().values()) {
+                addWithCheck(dep, managedDependencies);
+            }
         }
-        final List<Element> dependencyMgt = ElementSupport.getChildElementsByTagName(el, "dependencyManagement");
-        if (!dependencyMgt.isEmpty()) {
-            final List<Element> dependencies = ElementSupport.getChildElementsByTagName(dependencyMgt.get(0), "dependencies");
-            parseDependencies(dependencies.get(0), true);
+
+        for (final Element dependencies : ElementSupport.getChildElementsByTagName(el, "dependencies")) {
+            parseDependencies(dependencies);
         }
-        final List<Element> dependencies = ElementSupport.getChildElementsByTagName(el, "dependencies");
-        if (!dependencies.isEmpty()) {
-            parseDependencies(dependencies.get(0), false);
+
+        final Set<PomArtifact> moduleCompiles = new HashSet<>();
+        final Set<PomArtifact> moduleRuntimes = new HashSet<>();
+        for (final Element modules: ElementSupport.getChildElementsByTagName(el, "modules")) {
+            for (final Element module: ElementSupport.getChildElementsByTagName(modules, "module")) {
+                // Kludge for Jackson
+                final Path modulePath = Path.of(module.getTextContent()).resolve("pom.xml");
+                if (Files.exists(modulePath)) {
+                    final ParsedPom modulePom = new ParsedPom(parsers, pomLoader, modulePath ,module.getTextContent(), properties, managedDependencies);
+                    moduleCompiles.addAll(modulePom.getCompileDependencies());
+                    moduleRuntimes.addAll(modulePom.getRuntimeDependencies());
+                    generated.add(modulePom.getOurInfo());
+                }
+            }
+        }
+        for (final PomArtifact dep : moduleCompiles) {
+            addWithCheck(dep, compileDependencies);
+        }
+        for (final PomArtifact dep : moduleRuntimes) {
+            addWithCheck(dep, runtimeDependencies);
         }
     }
 
-    @Nonnull protected String getElementContent(final Element el) {
-        String contents = StringSupport.trimOrNull(el.getTextContent());
-        contents = Constraint.isNotNull(contents, "<" + el.getLocalName() +  "> must have content");
-        // Not perfect matching but fits our needs
-        if (contents.length() > 3 && contents.startsWith("${") && contents.endsWith("}")) {
-            final String propName = contents.substring(2, contents.length()-1);
-            contents = Constraint.isNotNull(properties.getProperty(propName), propName + " is not defined");
-        }
-        return contents;
-    }
-
-    /**
-     * @param item what to parse
-     * @param isManaged to we add to the managed dependencies?
+    /** Get the text content of the element, performing property replacement as we go.
+     * @param el the element
+     * @return the value, with property replacement.
      */
-    private void parseDependencies(final Element item, final boolean isManaged) {
+    @Nonnull protected String getElementContent(final Element el) {
+        String remainingContents = StringSupport.trimOrNull(el.getTextContent());
+        remainingContents = Constraint.isNotNull(remainingContents, "<" + el.getLocalName() +  "> must have content");
+        final StringBuilder contents = new StringBuilder();
+        for (int index = remainingContents.indexOf("${"); index >= 0; index = remainingContents.indexOf("${")) {
+            contents.append(remainingContents.substring(0, index));
+            remainingContents = remainingContents.substring(index);
+            final int endIndex = remainingContents.indexOf("}");
+            if (endIndex <= 1) {
+                break;
+            }
+            final String propName = remainingContents.substring(2, endIndex);
+            contents.append(Constraint.isNotNull(properties.getProperty(propName), propName + " is not defined"));
+            remainingContents = remainingContents.substring(endIndex+1);
+        }
+        contents.append(remainingContents);
+        return contents.toString();
+    }
+
+    /** Parse the dependency part of the pom.
+     * @param item what to parse
+     */
+    private void parseDependencies(final Element item) {
         final List<Element> dependencies = ElementSupport.getChildElementsByTagName(item, "dependency");
         
         for (Element dependency : dependencies) {
@@ -173,21 +214,18 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
             if (!types.isEmpty()) {
                 final String type = StringSupport.trimOrNull(types.get(0).getTextContent());
                 if ("pom".equals(type)) {
-                    bomDependencies.add(artifact);
+                    addWithCheck(artifact, bomDependencies);
                     continue;
                 } else if (!"jar".equals(type)) {
                     // not for us
                     continue;
                 }                
             }
-            if (isManaged) {
-                myManagedDependencies.add(artifact);
-            }
             final List<Element> scopes = ElementSupport.getChildElementsByTagName(dependency, "scope");
             if (!scopes.isEmpty()) {
                 final String scope = StringSupport.trimOrNull(scopes.get(0).getTextContent());
                 if ("runtime".equals(scope)) {
-                    runtimeDependencies.add(artifact);
+                    addWithCheck(artifact, runtimeDependencies);
                     continue;
                 }
                 if (!"compile".equals(scope)) {
@@ -195,7 +233,41 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
                     continue;
                 }
             }
-            compileDependencies.add(artifact);
+            addWithCheck(artifact, compileDependencies);
+            continue;
+        }
+    }
+
+    /** parse the Managed Dependencies from the provided item
+     * @param item  what to parse
+     */
+    private void parseManagedDependencies(final Element item) {
+        final List<Element> dependencies = ElementSupport.getChildElementsByTagName(item, "dependency");
+        for (Element dependency : dependencies) {
+            final PomArtifact artifact = new PomArtifact(dependency);
+            final List<Element> types = ElementSupport.getChildElementsByTagName(dependency, "type");
+            if (!types.isEmpty()) {
+                final String type = StringSupport.trimOrNull(types.get(0).getTextContent());
+                if ("pom".equals(type)) {
+                    addWithCheck(artifact, bomDependencies);
+                    continue;
+                } else if (!"jar".equals(type)) {
+                    // not for us
+                    continue;
+                }
+            }
+            addWithCheck(artifact, managedDependencies);
+        }
+    }
+
+    /** Add the artifact to the map, accumulating duplicates.
+     * @param artifact what to add
+     * @param map wghere to add it
+     */
+    private void addWithCheck(final PomArtifact artifact, final Map<String, PomArtifact> map) {
+        final PomArtifact old = map.put(artifact.getMapKey(),artifact);
+        if (old != null) {
+            duplicates.add(new Pair<>(old, artifact));
         }
     }
 
@@ -206,7 +278,8 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         
         for (final Element child : ElementSupport.getChildElements(item)) {
             final String name = child.getLocalName();
-            final String value = child.getTextContent();
+            final String value = getElementContent(child);
+            
             properties.setProperty(name, value);
         }
     }
@@ -217,33 +290,40 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
     private void parseParent(Element item) {
         parent = new PomArtifact(item);
     }
-    
+
     /** Returns the Compile Dependencies.
      * @return Returns the Compile Dependencies.
      */
-    public List<PomArtifact> getCompileDependencies() {
-        return compileDependencies;
+    @Nonnull public Collection<PomArtifact> getCompileDependencies() {
+        return compileDependencies.values();
     }
 
-    /** Returns the Bom Dependencies.
-     * @return Returns the Bom Dependencies.
-     */
-    public List<PomArtifact> getBomDependencies() {
-        return bomDependencies;
-    }
-    
     /** Returns the Runtime Dependencies.
      * @return Returns the Runtime Dependencies.
      */
-    public List<PomArtifact> getRuntimeDependencies() {
-        return runtimeDependencies;
+    @Nonnull public Collection<PomArtifact> getRuntimeDependencies() {
+        return runtimeDependencies.values();
     }
-    
+
     /**  Returns the Managed Dependencies.
      * @return Returns the Managed Dependencies.
      */
-    public List<PomArtifact> getManagedDependencies() {
-        return myManagedDependencies;
+    @Nonnull public Map<String, PomArtifact> getManagedDependencies() {
+        return managedDependencies;
+    }
+
+    /** Get artifacts that were duplicated by this build
+     * @return Returns the duplicates.
+     */
+    @Nonnull public List<Pair<PomArtifact, PomArtifact>> getDuplicates() {
+        return duplicates;
+    }
+
+    /** returns any sub modules created by this module.
+     * @return Returns the generated.
+     */
+    @Nonnull public Set<PomArtifact> getGeneratedArtifacts() {
+        return generated;
     }
 
     /** Return our artifactInformation.
@@ -335,7 +415,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
             } else if (parentArtifact != null) {
                 version = parentArtifact.getVersion();
             } else {
-                final PomArtifact inherited = inputManagedDependencies.get(groupId+"+"+artifactId);
+                final PomArtifact inherited = managedDependencies.get(groupId+"+"+artifactId);
                 if (inherited != null) {
                     version = inherited.getVersion();
                 } else {
@@ -386,6 +466,13 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
             return sourcePomInfo;
         }
         
+        /** Get the key we use in out maps.
+         * @return the key - derives from groupId and EntityId 
+         */
+        public String getMapKey() {
+            return getGroupId()+"+"+getArtifactId();
+        }
+        
         /**
          * @return Returns the exclusions.
          */
@@ -412,6 +499,11 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
         /** {@inheritDoc} */
         public int hashCode() {
             return Objects.hash(artifactId, groupId, version);
+        }
+        
+        /** {@inheritDoc} */
+        public String toString() {
+            return artifactId + "-" + version;
         }
 
         /** return the same artifact but with an amended version.
