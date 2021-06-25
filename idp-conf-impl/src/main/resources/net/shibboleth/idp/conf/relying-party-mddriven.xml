@@ -421,10 +421,10 @@
                 <constructor-arg value="true" />
             </bean>
         </property>
-        <property name="suppressAuthenticatingAuthoritiesPredicate">
+        <property name="suppressAuthenticatingAuthorityPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
-                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="suppressAuthenticatingAuthorities" />
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="suppressAuthenticatingAuthority" />
                 </constructor-arg>
                 <constructor-arg value="false" />
             </bean>
