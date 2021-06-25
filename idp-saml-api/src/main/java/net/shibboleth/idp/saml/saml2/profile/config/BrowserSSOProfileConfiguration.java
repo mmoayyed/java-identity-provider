@@ -399,7 +399,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * 
      * @since 4.2.0
      */
-    public void setSuppressAuthenticatingAuthority(@Nonnull final Predicate<ProfileRequestContext> condition) {
+    public void setSuppressAuthenticatingAuthorityPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         suppressAuthenticatingAuthorityPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
     }
     
