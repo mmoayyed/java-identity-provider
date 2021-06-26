@@ -155,7 +155,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
      * @throws IOException if the file doesn't exist
      * @throws MavenInvocationException if we fail to download a pom or a dependency
      */
-    @Test(enabled=true) public void testDependencies() throws IOException, MavenInvocationException {
+    @Test(enabled=false) public void testDependencies() throws IOException, MavenInvocationException {
         if (!idpParent.getDuplicates().isEmpty()) {
             report.format("Duplicates found parsing the poms\n");
             for (final Pair<PomArtifact,PomArtifact> poms : idpParent.getDuplicates()) {
