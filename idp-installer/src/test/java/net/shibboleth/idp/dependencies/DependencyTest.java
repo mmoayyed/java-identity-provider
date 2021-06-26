@@ -155,7 +155,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
      * @throws IOException if the file doesn't exist
      * @throws MavenInvocationException if we fail to download a pom or a dependency
      */
-    @Test(enabled=false) public void testDependencies() throws IOException, MavenInvocationException {
+    @Test(enabled=true) public void testDependencies() throws IOException, MavenInvocationException {
         if (!idpParent.getDuplicates().isEmpty()) {
             report.format("Duplicates found parsing the poms\n");
             for (final Pair<PomArtifact,PomArtifact> poms : idpParent.getDuplicates()) {
@@ -168,7 +168,9 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
             }
         }
         final Path lib = Path.of("../idp-war-distribution/target/idp-war-distribution-"+ idpParent.getOurInfo().getVersion()).resolve("WEB-INF").resolve("lib");
-        assertTrue(Files.exists(lib), "idp-war must have been built");
+	if (!Files.exists(lib)) {
+	     throw new SkipException("War distribution target not found");
+	}
         final Map<String, String> names = new HashMap<>();
         int wrongVersion = 0;
         int found = 0;
