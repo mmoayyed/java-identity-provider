@@ -73,7 +73,7 @@
         <opensaml.version>4.2.0-SNAPSHOT</opensaml.version>
         <spring-extensions.version>6.1.2</spring-extensions.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
-        <idp-parent.site.url>${shibboleth.site.url}java-identity-provider/${project.version}/</idp-parent.site.url>
+        <idp-parent.site.url>${shibboleth.site.deploy.url}java-identity-provider/${project.version}/</idp-parent.site.url>
         <idp-module.site.url>${idp-parent.site.url}${project.artifactId}</idp-module.site.url>
     </properties>
 
@@ -184,7 +184,7 @@
     <distributionManagement>
         <site>
             <id>site</id>
-            <url>dav:${idp-parent.site.url}</url>
+            <url>scp:${idp-parent.site.url}</url>
         </site>
     </distributionManagement>
 

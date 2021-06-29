@@ -77,7 +77,7 @@
     <distributionManagement>
         <site>
             <id>site</id>
-            <url>dav:${idp-module.site.url}</url>
+            <url>scp:${idp-module.site.url}</url>
         </site>
     </distributionManagement>
 
