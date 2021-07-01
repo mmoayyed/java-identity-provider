@@ -105,6 +105,7 @@
     by emitting the outcome in the LogoutPropagationContext, which is set appropriately.
     -->
     <end-state id="proceed"/>
+    <end-state id="InvalidProfileConfiguration" />
     <end-state id="EndpointResolutionFailed" />
 
     <!--
@@ -113,6 +114,7 @@
     -->
     <global-transitions>
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
+        <transition on="InvalidProfileConfiguration" to="InvalidProfileConfiguration" />
         <transition on="EndpointResolutionFailed" to="EndpointResolutionFailed" />
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="proceed" />
     </global-transitions>
