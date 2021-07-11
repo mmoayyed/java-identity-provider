@@ -346,7 +346,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
     public Properties getProperties() {
         return properties;
     }
-
+ 
     /** Encapsulation of a &lt;dependency&gt; element. */
     public class PomArtifact implements Comparable<PomArtifact>{
 
@@ -372,7 +372,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
          * @param group the &lt;groupId&gt;
          * @param ver the &lt;version&gt;
          */
-        private PomArtifact(final String id, final String group, final String ver) {
+        public PomArtifact(final String  group, final String id, final String ver) {
             artifactId = id;
             groupId = group;
             version = ver;
@@ -511,7 +511,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
          * @return an amended artifact.
          */
         public PomArtifact withVersion(String ver) {
-            return new PomArtifact(artifactId, groupId, ver);
+            return new PomArtifact(groupId, artifactId, ver);
         }
     }
 }

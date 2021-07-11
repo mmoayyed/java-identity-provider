@@ -29,8 +29,7 @@ public interface PomLoader {
     /** tell Something to download the artifact and returns it's path.
      * @param artifact what to look for
      * @return the pom as a {@link Path}
-     * @throws Exception 
+     * @throws Exception on an error
      */
     Path downloadPom(PomArtifact artifact) throws Exception;
-
 }

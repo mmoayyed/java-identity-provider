@@ -68,6 +68,9 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     /** Explicit path to trust store.  */
     @NonnullAfterInit private String explicitTrustStore;
 
+    /** Explicit stream for trust store.  */
+    @NonnullAfterInit private InputStream explicitTrustStoreStream;
+
     /** The plugin this is the trust store for. */
     @NonnullAfterInit private String pluginId;
 
@@ -75,7 +78,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     @NonnullAfterInit private Path store;
 
     /** The key store backup. */
-    @NonnullAfterInit private Path backup;
+    @Nullable private Path backup;
 
     /** KeyRing. */
     @NonnullAfterInit private PGPPublicKeyRingCollection keyRings;
@@ -104,6 +107,14 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
    public void setTrustStore(@Nullable final String what) {
        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
        explicitTrustStore = what;
+   }
+
+   /** Set explicitTrustStore.
+   * @param what The value to set.
+   */
+   public void setTrustStore(@Nullable final InputStream what) {
+       ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+       explicitTrustStoreStream = what;
    }
 
     /** Return a store loaded from the supplied stream.
@@ -179,7 +190,10 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
      * @throws IOException from {@link Files#newOutputStream(Path, java.nio.file.OpenOption...)} and
      * from {@link PGPPublicKeyRingCollection#encode(OutputStream)}
      */
-    public void saveStoreInternal() throws IOException {
+    private void saveStoreInternal() throws IOException {
+        if (backup == null) {
+            throw new IOException("Cannot save this store");
+        }
         if (Files.exists(store)) {
             Files.copy(store, backup, StandardCopyOption.REPLACE_EXISTING);
         }
@@ -202,6 +216,30 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
         }
     }
     
+    /** Lookup and return the key information for this key.
+     * @param sigForKey the signature to lookup
+     * @return the string in a normalized form.
+     */
+    public String getKeyInfo(final Signature sigForKey) {
+        final PGPPublicKey key;
+        try {
+            key = keyRings.getPublicKey(sigForKey.getSignature().getKeyID());
+        } catch (final PGPException e) {
+                log.warn("Couldn't locate key", e);
+                return null;
+        }
+        if (key == null) {
+            log.info("Provided key stream did not contain a key for {}", sigForKey);
+            return null;
+        }
+        final StringBuilder builder = new StringBuilder("KeyId: ").append(sigForKey.toString());
+        final Iterator<String> namesIterator = key.getUserIDs();
+        while (namesIterator.hasNext()) {
+            builder.append("\tUsername:\t").append(namesIterator.next());
+        }
+        return builder.toString();
+    }
+
     /** Load up the provided store and if the key is found and the
      * Predicate allows it add it to the store which we will then save.
      *
@@ -304,14 +342,23 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     }
     
     /** {@inheritDoc} */
+ // CheckStyle: CyclomaticComplexity OFF
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (pluginId == null) {
+        if (pluginId == null && explicitTrustStoreStream == null) {
             throw new ComponentInitializationException("Plugin Id not set up");
         }
 
-        if (explicitTrustStore != null) {
+        if (explicitTrustStoreStream != null) {
+            try {
+                keyRings = loadStoreFrom(explicitTrustStoreStream);
+            } catch (final IOException e) {
+                log.error("Plugin {}: Could not load explicit trust store from stream", e);
+                throw new ComponentInitializationException(e);
+            }
+            backup = null;
+        } else if (explicitTrustStore != null) {
             store = Path.of(explicitTrustStore);
             if (!Files.exists(store)) {
                 log.error("Trust store {} does not exist", explicitTrustStore);
@@ -354,7 +401,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
             }
         }
     }
-    
+ // CheckStyle: CyclomaticComplexity ON
     /**
      * An opaque handle around a {@link PGPSignature}.
      */
