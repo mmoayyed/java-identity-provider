@@ -30,10 +30,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Security;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +49,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
+import org.apache.http.client.HttpClient;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -60,12 +65,14 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.dependencies.ParsedPom.PomArtifact;
 import net.shibboleth.idp.installer.plugin.impl.PluginInstallerSupport;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 
 /**
@@ -74,7 +81,7 @@ import net.shibboleth.utilities.java.support.xml.ParserPool;
 public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoader {
 
     /** Set this up if you want to run the tests from eclipse. */
-    private static String LOCAL_MAVEN_HOME = "c:/Program Files (x86)/apache-maven-3.6.1";
+    private static String LOCAL_MAVEN_HOME = null;
 
     /** A list of things which get added to real versions. */
     private static final List<String> extensionGarnish = List.of("-SNAPSHOT", "-GA", "-jre", "-empty-to-avoid-conflict-with-guava");
@@ -103,6 +110,9 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
     /** Is this a snapshot build (the idp version ends with -SNAPSHOT.*/
     private boolean isSnapShot;
     
+    /** Http Client. */
+    private HttpClient httpClient;
+
    /**  We have as an assumption that the CWD is idp-installer.  Test this.
      * @throws IOException if the directory isn't what we expect it to be
      */
@@ -142,7 +152,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
      *    if the pom is badly formed, or if the download fails
      */
 
-    @BeforeClass(dependsOnMethods = {"setupMavenEnvironment", "testWorkingDir"}) public void parsePom() throws Exception {
+    @BeforeClass(dependsOnMethods = {"setupMavenEnvironment", "testWorkingDir", "initialize"}) public void parsePom() throws Exception {
         workingDir = Files.createTempDirectory("dependencyTest");
         parserPool = XMLObjectProviderRegistrySupport.getParserPool();
 
@@ -227,13 +237,16 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
     }
 
     /** Create the reporter print stream
-     * @throws FileNotFoundException  if we cannot
+     * @throws Exception if we cannot build our client
      */
-    @BeforeClass(dependsOnMethods = {"testWorkingDir"}) public void initialize() throws FileNotFoundException {
+    @BeforeClass(dependsOnMethods = {"testWorkingDir"}) public void initialize() throws Exception {
+        final HttpClientBuilder builder = new HttpClientBuilder();
+        builder.setConnectionTimeout(Duration.ofSeconds(5));
+        httpClient = builder.buildClient();
         final File out = new File("target/dependencyReport.txt");
         final FileOutputStream outStream = new FileOutputStream(out);
         report = new PrintWriter(new BufferedOutputStream(outStream));
-        report.format("Dependency Analysis, started at %s\n", Instant.now().toString());
+        report.format("POM based Testing started at %s\n\n", Instant.now().toString());
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
@@ -249,11 +262,18 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
     /** The Body of the signature test.  Are all the files what we expected?
      * @throws IOException if the enumeration failed.
      */
-    @Test(enabled=false) public void testSignatures() throws IOException {
+    @Test(enabled=true) public void testSignatures() throws IOException {
+        report.format("\nSigning Test Started at %s\n", Instant.now().toString());
         final Path lib = Path.of("../idp-war-distribution/target/idp-war-distribution-"+ idpParent.getOurInfo().getVersion()).resolve("WEB-INF").resolve("lib");
         
         final int sigFails = Files.list(lib).mapToInt(e -> checkSignature(e)).sum();
-        assertEquals(sigFails, 0, "Signature Failures");
+        if (sigFails != 0) {
+            report.format("\t%d non-exempt jar files did not have valid signatures\n", sigFails);
+        } else {
+            report.format("\tAll non-exempt jar files correctly signed\n");
+        }
+        report.format("Signing Test Completed at %s\n", Instant.now().toString());
+        //assertEquals(sigFails, 0, "Signature Failures");
     }
 
     /** Given the Path and the parent dir check the signature.
@@ -264,37 +284,37 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
         final Pair<String,String> name = splitFileName(jarFile.getFileName().toString());
         final String group = artifactToGroup.get(name.getFirst());
         if (group == null) {
-            report.format("%-30s: %-12s Could not determine group\n", name.getFirst(), name.getSecond());
+            report.format("%-30s: %-14s Could not determine group\n", name.getFirst(), name.getSecond());
             return 1;
         }
         final PomArtifact jarAsArtifact = idpParent.new PomArtifact(group, name.getFirst(), name.getSecond());
         if (idpParent.getGeneratedArtifacts().contains(jarAsArtifact)) {
-            report.format("%-30s: %-12s Generated by IdP build.  Not checked\n", name.getFirst(), name.getSecond());
+            report.format("%-30s: %-14s Generated by IdP build.  Not checked\n", name.getFirst(), name.getSecond());
             return 0;
         }
         if (isSnapShot && name.getSecond().endsWith("-SNAPSHOT")) {
-            report.format("%-30s: %-12s SnapShot version on a snapshot build.  Not Checked\n", name.getFirst(), name.getSecond());
+            report.format("%-30s: %-14s Snapshot version on a snapshot build.  Not Checked\n", name.getFirst(), name.getSecond());
             return 0;
         }
         final TrustStore store = getTrustStore(group);
         if (store == null) {
-            report.format("%-30s: %-12s No truststore for group %s\n", name.getFirst(), name.getSecond(), group);
+            report.format("%-30s: %-14s No truststore for group %s\n", name.getFirst(), name.getSecond(), group);
             return 1;
         }
         final Signature sig = getSignature(jarAsArtifact);
         if (sig == null) {
-            report.format("%-30s: %-12s Could not find signature (group : %s)\n",
+            report.format("%-30s: %-14s Could not find signature (group : %s)\n",
                     name.getFirst(), name.getSecond(), group);
             return 1;
         }
         if (!store.contains(sig)) {
-            report.format("%-30s: %-12s KeyId (%s) not found in truststore for %s\n", name.getFirst(), name.getSecond(), sig.toString(), group);
+            report.format("%-30s: %-14s KeyId (%s) not found in truststore for %s\n", name.getFirst(), name.getSecond(), sig.toString(), group);
             return 1;
         }
 
         try (final BufferedInputStream stream = new BufferedInputStream(new FileInputStream(jarFile.toFile()))) {
             if (!store.checkSignature(stream, sig)) {
-                report.format("%-30s: %-12s Signature Mismatch : %s in Trustore %s\n",
+                report.format("%-30s: %-14s Signature Mismatch : %s in Trustore %s\n",
                         name.getFirst(), name.getSecond(), store.getKeyInfo(sig), group);
                 return 1;
             }
@@ -302,7 +322,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
             e.printStackTrace();
             return 1;
         }
-        report.format("%-30s: %-12s Signature Match in trustore %s : %s \n", 
+        report.format("%-30s: %-14s Signature Match in trustore %s : %s \n",
                 name.getFirst(), name.getSecond(), group, store.getKeyInfo(sig));
         return 0;
     }
@@ -315,7 +335,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
         Path path;
         try {
             path = download(artifact, "jar.asc");
-        } catch (MavenInvocationException e1) {
+        } catch (final Exception e1) {
             e1.printStackTrace();
             return null;
         }
@@ -364,7 +384,8 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
      * @throws IOException if the file doesn't exist
      * @throws MavenInvocationException if we fail to download a pom or a dependency
      */
-    @Test(enabled=false) public void testDependencies() throws IOException, MavenInvocationException {
+    @Test(enabled=true) public void testDependencies() throws IOException, MavenInvocationException {
+        report.format("Dependency Test Started at %s\n", Instant.now().toString());
         if (!idpParent.getDuplicates().isEmpty()) {
             report.format("Duplicates found parsing the poms\n");
             for (final Pair<PomArtifact,PomArtifact> poms : idpParent.getDuplicates()) {
@@ -461,7 +482,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
         report.format("%d Orphans artifact(s)\n", noSource);
         report.format("%d Similar artifact names(s)\n", similarNames);
         report.format("%d Wrong Versions(s)\n", wrongVersion);
-        report.format("Completed at %s\n", Instant.now().toString());
+        report.format("Dependency Test Completed at %s\n\n ", Instant.now().toString());
         assertEquals(wrongVersion,  0, "Mismatched version");
         assertEquals(similarNames,  0, "Multiple similarly named jars");
         assertEquals(noSource,  0, "Orphaned Artefacts");
@@ -636,40 +657,74 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
 
     /** {@inheritDoc} */
     @Override
-    public Path downloadPom(final PomArtifact artifact) throws MavenInvocationException {
+    public Path downloadPom(final PomArtifact artifact) throws Exception {
         final Path path = download(artifact, "pom");
         assertTrue(Files.exists(path));
         return path;
+    }
+
+    /**
+     * Get the base URL in Maven for the artifact.
+     * @param artifact the input.
+     * @return the address in nexus.
+     */
+    @Nonnull private String baseURLfor(@Nonnull final PomArtifact artifact) {
+        if (artifact.getGroupId().startsWith("net.shibboleth") || artifact.getGroupId().startsWith("org.opensaml")) {
+            return "https://build.shibboleth.net/nexus/service/local/repositories/releases/content/";
+        }
+        return "https://build.shibboleth.net/nexus/service/local/repositories/thirdparty/content/";
     }
 
     /** Tell Maven to download the POM for artifact and returns it's path.
      * @param artifact what to look for
      * @param type the type to dowb load ('pom' or 'jar.asc' and so on
      * @return the pom as a {@link Path}
-     * @throws MavenInvocationException if the download failed
+     * @throws Exception from the copy
      */
-    public Path download(final PomArtifact artifact, final String type) throws MavenInvocationException {
-        final Path output =  workingDir.resolve(artifact.getArtifactId() + "." + type);
-        assertFalse(Files.exists(output));
-        final String fullArtifactName = new StringBuilder(artifact.getGroupId())
-                    .append(':')
-                    .append(artifact.getArtifactId())
-                    .append(':')
-                    .append(artifact.getVersion())
-                    .append(':')
-                    .append(type)
-                    .toString();
+    public Path download(final PomArtifact artifact, final String type) throws Exception {
+        final Path path = workingDir.resolve(artifact.getArtifactId() + "." + type);
+        final File output =  path.toFile();
+        assertFalse(output.exists());
         
-        final Properties props = new Properties(3);
-        props.setProperty("artifact",fullArtifactName);
-        props.setProperty("mdep.stripVersion","true");
-        props.setProperty("outputDirectory", workingDir.toString());
-       
-        InvocationRequest request = new DefaultInvocationRequest().setProperties(props).setGoals( Arrays.asList( "dependency:copy" ) );
+        if (artifact.getVersion().endsWith("SNAPSHOT")) {
+                // Gotta use maven...
+                final String fullArtifactName = new StringBuilder(artifact.getGroupId())
+                        .append(':')
+                        .append(artifact.getArtifactId())
+                        .append(':')
+                        .append(artifact.getVersion())
+                        .append(':')
+                        .append(type)
+                        .toString();
+            final Properties props = new Properties(3);
+            props.setProperty("artifact",fullArtifactName);
+            props.setProperty("mdep.stripVersion","true");
+            props.setProperty("outputDirectory", workingDir.toString());
 
-        Invoker invoker = new DefaultInvoker();
-        invoker.execute( request );
-        
-        return output;
+            InvocationRequest request = new DefaultInvocationRequest().setProperties(props).setGoals( Arrays.asList( "dependency:copy"));
+            Invoker invoker = new DefaultInvoker();
+            invoker.execute( request );
+        } else {
+            final String fullAddress = new StringBuilder(baseURLfor(artifact))
+                        .append(artifact.getGroupId().replaceAll("\\.", "/"))
+                        .append('/')
+                        .append(artifact.getArtifactId())
+                        .append('/')
+                        .append(artifact.getVersion())
+                        .append('/')
+                        .append(artifact.getArtifactId())
+                        .append('-')
+                        .append(artifact.getVersion())
+                        .append('.')
+                        .append(type)
+                        .toString();
+            final HTTPResource inResource = new HTTPResource(httpClient, fullAddress);
+
+            try (final OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(output));
+                 final InputStream inStream = inResource.getInputStream()) {
+                inStream.transferTo(outputStream);
+            }
+        }
+        return path;
     }
 }
