@@ -431,7 +431,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
                     throw new IOException("Provided file was not a signature");
                 }
             }
-            keyId = String.format("0X%X", signature.getKeyID());
+            keyId = String.format("0X%016X", signature.getKeyID());
         }
 
         /**
