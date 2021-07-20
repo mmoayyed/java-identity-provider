@@ -75,7 +75,7 @@ public class IdPUIInfo {
                 return false;
             }
             if (u.getURI() == null) {
-                LOG.warn("Ignoring empty URUI in <IdpUIInfo/>", u.getURI());
+                LOG.warn("Ignoring empty URI in <IdpUIInfo/>", u.getURI());
                 return false;
             }
 
