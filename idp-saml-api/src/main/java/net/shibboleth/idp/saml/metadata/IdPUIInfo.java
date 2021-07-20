@@ -66,38 +66,7 @@ public class IdPUIInfo {
     
     /** The Privacy Statement URLs as a map from locale to actual value.*/ 
     @Nonnull @Unmodifiable private final Map<Locale, String> privacyStatementURLs; 
-    
-    /** Warning check against a non localized URL. */
-    private final Predicate<LocalizedURI> nullLanguageURL = new Predicate<>() {
-        public boolean test(final LocalizedURI u) {
-            if (u.getXMLLang() == null) {
-                LOG.warn("URI with value {} in <IdpUIInfo/> has no language associated, ignoring", u.getURI());
-                return false;
-            }
-            if (u.getURI() == null) {
-                LOG.warn("Ignoring empty URI in <IdpUIInfo/>", u.getURI());
-                return false;
-            }
-
-            return true;
-        }
-    };
-    
-    /** Warning check against a non localized String. */
-    private final Predicate<LocalizedName> nullLanguageString = new Predicate<>() {
-        public boolean test(final LocalizedName u) {
-            if (u.getXMLLang() == null) {
-                LOG.warn("String with value {} in <IdpUIInfo/> has no language associated, ignoring", u.getValue());
-                return false;
-            }
-            if (u.getValue()== null) {
-                LOG.warn("Ignoring empty string in <IdpUIInfo/>");
-                return false;
-            }
-            return true;
-        }
-    };
-
+ 
     /** Warning check against a non localized keyword. */
     private final Predicate<Keywords> nullLanguageKeyword = new Predicate<>() {
         public boolean test(final Keywords u) {
@@ -120,7 +89,7 @@ public class IdPUIInfo {
         displayNames = uiInfo.
                 getDisplayNames().
                 stream().
-                filter(nullLanguageString).
+                filter(nullLanguageString("DisplayName")).
                 collect(Collectors.toUnmodifiableMap(
                         displayName -> Locale.forLanguageTag(displayName.getXMLLang()), 
                         displayName -> displayName.getValue(),
@@ -137,7 +106,7 @@ public class IdPUIInfo {
         descriptions = uiInfo.
                 getDescriptions().
                 stream().
-                filter(nullLanguageString).
+                filter(nullLanguageString("Description")).
                 collect(Collectors.toUnmodifiableMap(
                         description -> Locale.forLanguageTag(description.getXMLLang()), 
                         description -> description.getValue(),
@@ -146,7 +115,7 @@ public class IdPUIInfo {
         informationURLs = uiInfo.
                 getInformationURLs().
                 stream().
-                filter(nullLanguageURL).
+                filter(nullLanguageURL("InformationURL")).
                 collect(Collectors.toUnmodifiableMap(
                         url -> Locale.forLanguageTag(url.getXMLLang()), 
                         dn -> dn.getURI(),
@@ -155,7 +124,7 @@ public class IdPUIInfo {
         privacyStatementURLs = uiInfo.
                 getPrivacyStatementURLs().
                 stream().
-                filter(nullLanguageURL).
+                filter(nullLanguageURL("PrivacyStatementURL")).
                 collect(Collectors.toUnmodifiableMap(
                         url -> Locale.forLanguageTag(url.getXMLLang()), 
                         url -> url.getURI(),
@@ -181,7 +150,50 @@ public class IdPUIInfo {
         localeLogos = Collections.unmodifiableMap(withLocaleLogo);
         nonLocaleLogos = Collections.unmodifiableList(noLocaleLogo);
     }
+    
+    /** Warning check against a non localized String.
+     * @param inside further contextual info for logging
+     * @return true if the string inside the name is empty.
+     */
+    @Nonnull private final Predicate<LocalizedName> nullLanguageString(final String inside) {
+        return new Predicate<>() {
+            public boolean test(@Nonnull final LocalizedName u) {
+                if (u.getXMLLang() == null) {
+                    LOG.warn("String with value {} in <{}/> has no language associated, ignoring",
+                            u.getValue(), inside);
+                    return false;
+                }
+                if (u.getValue()== null) {
+                    LOG.warn("Ignoring empty string in <{}/>", inside);
+                    return false;
+                }
+                return true;
+            }
+        };
+    }
 
+    /** Warning check against a non localized URL.
+     * @param inside further contextual info for logging
+     * @return true if the string inside the name is empty.
+     */
+    private final Predicate<LocalizedURI> nullLanguageURL(@Nonnull final String inside) {
+        return new Predicate<>() {
+            public boolean test(final LocalizedURI u) {
+                if (u.getXMLLang() == null) {
+                    LOG.warn("URI with value {} in <{}/> has no language associated, ignoring",
+                            u.getURI(), inside);
+                    return false;
+                }
+                if (u.getURI() == null) {
+                    LOG.warn("Ignoring empty URI in <{}/>", inside);
+                    return false;
+                }
+    
+                return true;
+            }
+        };
+    }
+    
     /** 
      * Get the Display Names as a map from locale to actual value.
      * 
