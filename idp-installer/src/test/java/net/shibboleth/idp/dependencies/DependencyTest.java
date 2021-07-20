@@ -398,6 +398,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
             }
         }
         final Path lib = Path.of("../idp-war-distribution/target/idp-war-distribution-"+ idpParent.getOurInfo().getVersion()).resolve("WEB-INF").resolve("lib");
+
         final Map<String, String> names = new HashMap<>();
         int wrongVersion = 0;
         int found = 0;
@@ -454,7 +455,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
         Collections.sort(contributedDeps);
         int noSource = 0;
 
-        report.format("Found in but not explicitly defined as a dependency:\n\n");
+        report.format("Found in WAR but not explicitly defined as a dependency:\n\n");
 
         for (final String dependency: contributedDeps) {
             final Map<String, Set<String>> map = dependencySource.get(dependency);
@@ -479,7 +480,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
                 }
             }
         }
-        report.format("%d Orphans artifact(s)\n", noSource);
+        report.format("%d Orphaned artifact(s)\n", noSource);
         report.format("%d Similar artifact names(s)\n", similarNames);
         report.format("%d Wrong Versions(s)\n", wrongVersion);
         report.format("Dependency Test Completed at %s\n\n ", Instant.now().toString());
@@ -584,7 +585,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
                     + "        <artifactId>%s</artifactId>\n"
                     + "        <version>%s</version>\n"
                     + "    </parent>\n"
-                    + "\n", parentArtefact.getGroupId(), parentArtefact.getArtifactId(), parentArtefact.getVersion());
+                    + "\n", idpParent.getOurInfo().getGroupId(), idpParent.getOurInfo().getArtifactId(), idpParent.getOurInfo().getVersion());
             pom.format("    <groupId>shibboleth.net.dependency</groupId>\n"
                     + "    <version>0.0.1</version>\n"
                     + "    <name>Shibboleth Dependency</name>\n"

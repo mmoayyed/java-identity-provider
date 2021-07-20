@@ -266,7 +266,7 @@ public class ParsedPom extends OpenSAMLInitBaseTestCase{
      */
     private void addWithCheck(final PomArtifact artifact, final Map<String, PomArtifact> map) {
         final PomArtifact old = map.put(artifact.getMapKey(),artifact);
-        if (old != null) {
+        if (old != null && !old.equals(artifact)) {
             duplicates.add(new Pair<>(old, artifact));
         }
     }
