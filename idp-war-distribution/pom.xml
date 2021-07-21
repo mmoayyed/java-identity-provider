@@ -68,6 +68,15 @@
             <artifactId>metrics-jvm</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!--
+        JPA supporting library in case storage service option used.
+        TODO: Remove once the JPA code becomes a plugin.
+        -->
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-orm</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <scm>
