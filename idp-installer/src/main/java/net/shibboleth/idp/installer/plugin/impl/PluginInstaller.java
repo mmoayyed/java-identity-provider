@@ -271,6 +271,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         setupDescriptionFromDistribution();
         if (checkVersion) {
             final PluginState state = new PluginState(description, updateOverrideURLs);
+            state.setHttpClient(httpClient);
             try {
                 state.initialize();
             } catch (final ComponentInitializationException e) {
