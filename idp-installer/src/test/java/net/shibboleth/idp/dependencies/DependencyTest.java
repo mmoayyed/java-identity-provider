@@ -364,13 +364,17 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
             return opt.get();
         }
 
-        try (final InputStream input = getClass().getResourceAsStream("/net/shibboleth/idp/dependencies/stores/"+group)) {
-            if (input == null) {
+        try (final InputStream input = getClass().getResourceAsStream("/net/shibboleth/idp/dependencies/stores/"+group);
+             final InputStream keyStore = getClass().getResourceAsStream("/net/shibboleth/idp/dependencies/stores/"+group+".gpg")) {
+            final TrustStore store = new TrustStore();
+            if (keyStore != null) {
+                store.setKeyStore(keyStore);
+            } else if (input != null) {
+                store.setTrustStore(input);
+            } else {
                 trustStrores.put(group, Optional.empty());
                 return null;
             }
-            final TrustStore store = new TrustStore();
-            store.setTrustStore(input);
             store.initialize();
             trustStrores.put(group,  Optional.of(store));
             return store;
@@ -574,7 +578,6 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
                 .append(artifact.getVersion())
                 .append(".xml").
                 toString()).toFile();
-        final PomArtifact parentArtefact = idpParent.getParent();
         try (final PrintWriter pom = new PrintWriter(new BufferedOutputStream(new FileOutputStream(file)))) {
             pom.format("<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
                     + "     xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n"

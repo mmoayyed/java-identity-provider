@@ -25,7 +25,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -71,6 +73,9 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     /** Explicit stream for trust store.  */
     @NonnullAfterInit private InputStream explicitTrustStoreStream;
 
+    /** Explicit stream for trust store.  */
+    @NonnullAfterInit private InputStream explicitKeyStoreStream;
+
     /** The plugin this is the trust store for. */
     @NonnullAfterInit private String pluginId;
 
@@ -109,12 +114,20 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
        explicitTrustStore = what;
    }
 
-   /** Set explicitTrustStore.
+   /** Set {@link #explicitTrustStoreStream}.
    * @param what The value to set.
    */
    public void setTrustStore(@Nullable final InputStream what) {
        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
        explicitTrustStoreStream = what;
+   }
+
+   /** Set {@link #explicitKeyStoreStream}.
+   * @param what The value to set.
+   */
+   public void setKeyStore(@Nullable final InputStream what) {
+       ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+       explicitKeyStoreStream = what;
    }
 
     /** Return a store loaded from the supplied stream.
@@ -216,26 +229,34 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
         }
     }
     
-    /** Lookup and return the key information for this key.
+    /** Lookup and return the key information for this key (and any parent).
      * @param sigForKey the signature to lookup
      * @return the string in a normalized form.
      */
     public String getKeyInfo(final Signature sigForKey) {
-        final PGPPublicKey key;
+        final PGPPublicKeyRing keyRing;
         try {
-            key = keyRings.getPublicKey(sigForKey.getSignature().getKeyID());
+            keyRing = keyRings.getPublicKeyRing(sigForKey.getSignature().getKeyID());
         } catch (final PGPException e) {
                 log.warn("Couldn't locate key", e);
                 return null;
         }
-        if (key == null) {
+        if (keyRing == null) {
             log.info("Provided key stream did not contain a key for {}", sigForKey);
             return null;
         }
         final StringBuilder builder = new StringBuilder("KeyId: ").append(sigForKey.toString());
-        final Iterator<String> namesIterator = key.getUserIDs();
-        while (namesIterator.hasNext()) {
-            builder.append("\tUsername:\t").append(namesIterator.next());
+        final Iterator<PGPPublicKey> keyIterator = keyRing.getPublicKeys();
+        final Set<String> seenNames = new HashSet<>();
+        while (keyIterator.hasNext()) {
+            final PGPPublicKey key = keyIterator.next();
+            final Iterator<String> namesIterator = key.getUserIDs();
+            while (namesIterator.hasNext()) {
+                final String name =  namesIterator.next();
+                if (seenNames.add(name)) {
+                    builder.append("\tUsername:\t").append(name);
+                }
+            }
         }
         return builder.toString();
     }
@@ -346,11 +367,19 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (pluginId == null && explicitTrustStoreStream == null) {
+        if (pluginId == null && explicitTrustStoreStream == null && explicitKeyStoreStream == null) {
             throw new ComponentInitializationException("Plugin Id not set up");
         }
 
-        if (explicitTrustStoreStream != null) {
+        if (explicitKeyStoreStream != null) {
+            try {
+                keyRings = new PGPPublicKeyRingCollection(explicitKeyStoreStream, new JcaKeyFingerprintCalculator());
+            } catch (final IOException | PGPException e) {
+                e.printStackTrace();
+                throw new ComponentInitializationException(e);
+            }
+
+        } else if (explicitTrustStoreStream != null) {
             try {
                 keyRings = loadStoreFrom(explicitTrustStoreStream);
             } catch (final IOException e) {
