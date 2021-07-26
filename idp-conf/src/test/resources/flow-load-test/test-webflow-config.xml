@@ -1,0 +1,27 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+
+    <webflow:flow-executor id="flowExecutor" flow-registry="testFlowRegistry" />
+    
+    <!-- For this test, we must use the IdP customised Flow registry and associated classes -->
+    <bean id="testFlowRegistry"
+        class="net.shibboleth.idp.profile.spring.factory.FlowDefinitionRegistryFactoryBean"
+        p:flowBuilderServices-ref="flowBuilderServices"
+        p:basePath="classpath:/flow-load-test/flows"
+        p:parent="#{getObject('shibboleth.ParentFlowRegistry')}">
+        
+        <property name="flowLocations">
+            <map>
+                <entry key="test-flow-loads" value="/test-flow-loads-flow.xml"/>
+            </map>
+        </property>    
+    </bean>
+
+    
+</beans>
