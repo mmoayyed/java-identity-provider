@@ -25,9 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -70,12 +68,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     /** Explicit path to trust store.  */
     @NonnullAfterInit private String explicitTrustStore;
 
-    /** Explicit stream for trust store.  */
-    @NonnullAfterInit private InputStream explicitTrustStoreStream;
-
-    /** Explicit stream for trust store.  */
-    @NonnullAfterInit private InputStream explicitKeyStoreStream;
-
     /** The plugin this is the trust store for. */
     @NonnullAfterInit private String pluginId;
 
@@ -83,7 +75,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     @NonnullAfterInit private Path store;
 
     /** The key store backup. */
-    @Nullable private Path backup;
+    @NonnullAfterInit private Path backup;
 
     /** KeyRing. */
     @NonnullAfterInit private PGPPublicKeyRingCollection keyRings;
@@ -112,22 +104,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
    public void setTrustStore(@Nullable final String what) {
        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
        explicitTrustStore = what;
-   }
-
-   /** Set {@link #explicitTrustStoreStream}.
-   * @param what The value to set.
-   */
-   public void setTrustStore(@Nullable final InputStream what) {
-       ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-       explicitTrustStoreStream = what;
-   }
-
-   /** Set {@link #explicitKeyStoreStream}.
-   * @param what The value to set.
-   */
-   public void setKeyStore(@Nullable final InputStream what) {
-       ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-       explicitKeyStoreStream = what;
    }
 
     /** Return a store loaded from the supplied stream.
@@ -203,10 +179,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
      * @throws IOException from {@link Files#newOutputStream(Path, java.nio.file.OpenOption...)} and
      * from {@link PGPPublicKeyRingCollection#encode(OutputStream)}
      */
-    private void saveStoreInternal() throws IOException {
-        if (backup == null) {
-            throw new IOException("Cannot save this store");
-        }
+    public void saveStoreInternal() throws IOException {
         if (Files.exists(store)) {
             Files.copy(store, backup, StandardCopyOption.REPLACE_EXISTING);
         }
@@ -229,38 +202,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
         }
     }
     
-    /** Lookup and return the key information for this key (and any parent).
-     * @param sigForKey the signature to lookup
-     * @return the string in a normalized form.
-     */
-    public String getKeyInfo(final Signature sigForKey) {
-        final PGPPublicKeyRing keyRing;
-        try {
-            keyRing = keyRings.getPublicKeyRing(sigForKey.getSignature().getKeyID());
-        } catch (final PGPException e) {
-                log.warn("Couldn't locate key", e);
-                return null;
-        }
-        if (keyRing == null) {
-            log.info("Provided key stream did not contain a key for {}", sigForKey);
-            return null;
-        }
-        final StringBuilder builder = new StringBuilder("KeyId: ").append(sigForKey.toString());
-        final Iterator<PGPPublicKey> keyIterator = keyRing.getPublicKeys();
-        final Set<String> seenNames = new HashSet<>();
-        while (keyIterator.hasNext()) {
-            final PGPPublicKey key = keyIterator.next();
-            final Iterator<String> namesIterator = key.getUserIDs();
-            while (namesIterator.hasNext()) {
-                final String name =  namesIterator.next();
-                if (seenNames.add(name)) {
-                    builder.append("\tUsername:\t").append(name);
-                }
-            }
-        }
-        return builder.toString();
-    }
-
     /** Load up the provided store and if the key is found and the
      * Predicate allows it add it to the store which we will then save.
      *
@@ -363,31 +304,14 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     }
     
     /** {@inheritDoc} */
- // CheckStyle: CyclomaticComplexity OFF
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (pluginId == null && explicitTrustStoreStream == null && explicitKeyStoreStream == null) {
+        if (pluginId == null) {
             throw new ComponentInitializationException("Plugin Id not set up");
         }
 
-        if (explicitKeyStoreStream != null) {
-            try {
-                keyRings = new PGPPublicKeyRingCollection(explicitKeyStoreStream, new JcaKeyFingerprintCalculator());
-            } catch (final IOException | PGPException e) {
-                e.printStackTrace();
-                throw new ComponentInitializationException(e);
-            }
-
-        } else if (explicitTrustStoreStream != null) {
-            try {
-                keyRings = loadStoreFrom(explicitTrustStoreStream);
-            } catch (final IOException e) {
-                log.error("Plugin {}: Could not load explicit trust store from stream", e);
-                throw new ComponentInitializationException(e);
-            }
-            backup = null;
-        } else if (explicitTrustStore != null) {
+        if (explicitTrustStore != null) {
             store = Path.of(explicitTrustStore);
             if (!Files.exists(store)) {
                 log.error("Trust store {} does not exist", explicitTrustStore);
@@ -430,7 +354,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
             }
         }
     }
- // CheckStyle: CyclomaticComplexity ON
+    
     /**
      * An opaque handle around a {@link PGPSignature}.
      */
@@ -460,7 +384,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
                     throw new IOException("Provided file was not a signature");
                 }
             }
-            keyId = String.format("0X%016X", signature.getKeyID());
+            keyId = String.format("0X%X", signature.getKeyID());
         }
 
         /**

@@ -66,12 +66,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.resource.HTTPResource;
+import net.shibboleth.idp.dependencies.GPGKeyRing.Signature;
 import net.shibboleth.idp.dependencies.ParsedPom.PomArtifact;
 import net.shibboleth.idp.installer.plugin.impl.PluginInstallerSupport;
-import net.shibboleth.idp.installer.plugin.impl.TrustStore;
-import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 
@@ -101,8 +99,8 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
     /** where we are writing to (target/dependencyReport.txt).*/
     private PrintWriter report;
 
-    /** The trust stores for our signature test. */
-    private final Map<String, Optional<TrustStore>> trustStrores = new HashMap<>();
+    /** The key rings for our signature test. */
+    private final Map<String, Optional<GPGKeyRing>> keyRings = new HashMap<>();
     
     /** The ArtefactId to GroupId mapping */
     private final Map<String, String> artifactToGroup = new HashMap<>();
@@ -299,9 +297,9 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
             report.format("%-30s: %-14s Snapshot version on a snapshot build.  Not Checked\n", name.getFirst(), name.getSecond());
             return 0;
         }
-        final TrustStore store = getTrustStore(group);
-        if (store == null) {
-            report.format("%-30s: %-14s No truststore for group %s\n", name.getFirst(), name.getSecond(), group);
+        final GPGKeyRing keyRing = getKeyRing(group);
+        if (keyRing == null) {
+            report.format("%-30s: %-14s No keyring for group %s\n", name.getFirst(), name.getSecond(), group);
             return 1;
         }
         final Signature sig = getSignature(jarAsArtifact);
@@ -310,23 +308,23 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
                     name.getFirst(), name.getSecond(), group);
             return 1;
         }
-        if (!store.contains(sig)) {
-            report.format("%-30s: %-14s KeyId (%s) not found in truststore for %s\n", name.getFirst(), name.getSecond(), sig.toString(), group);
+        if (!keyRing.contains(sig)) {
+            report.format("%-30s: %-14s KeyId (%s) not found in keyring for %s\n", name.getFirst(), name.getSecond(), sig.toString(), group);
             return 1;
         }
 
         try (final BufferedInputStream stream = new BufferedInputStream(new FileInputStream(jarFile.toFile()))) {
-            if (!store.checkSignature(stream, sig)) {
-                report.format("%-30s: %-14s Signature Mismatch : %s in Trustore %s\n",
-                        name.getFirst(), name.getSecond(), store.getKeyInfo(sig), group);
+            if (!keyRing.checkSignature(stream, sig)) {
+                report.format("%-30s: %-14s Signature Mismatch : %s in keyring %s\n",
+                        name.getFirst(), name.getSecond(), keyRing.getKeyInfo(sig), group);
                 return 1;
             }
         } catch (IOException e) {
             e.printStackTrace();
             return 1;
         }
-        report.format("%-30s: %-14s Signature Match in trustore %s : %s \n",
-                name.getFirst(), name.getSecond(), group, store.getKeyInfo(sig));
+        report.format("%-30s: %-14s Signature Match in keyring %s : %s \n",
+                name.getFirst(), name.getSecond(), group, keyRing.getKeyInfo(sig));
         return 0;
     }
  
@@ -346,7 +344,7 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
             return null;
         }
         try (final InputStream stream = new BufferedInputStream(new FileInputStream(path.toFile()))){
-            return TrustStore.signatureOf(stream);
+            return GPGKeyRing.signatureOf(stream);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -354,12 +352,12 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
         }
     }
 
-    /** Locate the truststore in the cache or load &amp; cache it (or a negative lookup).
+    /** Locate the keyring in the cache or load &amp; cache it (or a negative lookup).
      * @param group the group to load
-     * @return a truststore or null if there wasn't one.
+     * @return a keyring or null if there wasn't one.
      */
-    private TrustStore getTrustStore(final String group) {
-        final Optional<TrustStore> opt = trustStrores.get(group);
+    private GPGKeyRing getKeyRing(final String group) {
+        final Optional<GPGKeyRing> opt = keyRings.get(group);
         if (opt != null) {
             if (opt.isEmpty()) {
                 return null;
@@ -367,22 +365,12 @@ public class DependencyTest extends OpenSAMLInitBaseTestCase implements PomLoade
             return opt.get();
         }
 
-        try (final InputStream input = getClass().getResourceAsStream("/net/shibboleth/idp/dependencies/stores/"+group);
-             final InputStream keyStore = getClass().getResourceAsStream("/net/shibboleth/idp/dependencies/stores/"+group+".gpg")) {
-            final TrustStore store = new TrustStore();
-            if (keyStore != null) {
-                store.setKeyStore(keyStore);
-            } else if (input != null) {
-                store.setTrustStore(input);
-            } else {
-                trustStrores.put(group, Optional.empty());
-                return null;
-            }
-            store.initialize();
-            trustStrores.put(group,  Optional.of(store));
+        try  {
+            final GPGKeyRing store = new GPGKeyRing(group);
+            keyRings.put(group,  Optional.of(store));
             return store;
-        } catch (IOException | ComponentInitializationException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            keyRings.put(group, Optional.empty());
             return null;
         }
     }
