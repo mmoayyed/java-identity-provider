@@ -31,7 +31,7 @@
 final RequestContext requestContext = (RequestContext) request.getAttribute("flowRequestContext");
 final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
 final Instant now = Instant.now();
-final Instant startupTime = Instant.ofEpochMilli(requestContext.getActiveFlow().getApplicationContext().getStartupDate());
+final Instant startupTime = Instant.ofEpochMilli(requestContext.getActiveFlow().getApplicationContext().getParent().getStartupDate());
 %>### Operating Environment Information
 operating_system: <%= System.getProperty("os.name") %>
 operating_system_version: <%= System.getProperty("os.version") %>
