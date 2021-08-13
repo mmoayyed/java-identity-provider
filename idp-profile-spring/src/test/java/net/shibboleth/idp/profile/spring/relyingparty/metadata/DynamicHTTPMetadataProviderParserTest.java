@@ -213,7 +213,8 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertEquals(resolver.getRequestURLBuilder().getClass(), HTTPEntityIDRequestURLBuilder.class);
     }
     
-    @Test
+    // Test disabled due to target site being unavailable, see IDP-1852
+    @Test(enabled=false)
     public void testWellKnown() throws Exception {
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicWellKnown.xml", "beans.xml");
