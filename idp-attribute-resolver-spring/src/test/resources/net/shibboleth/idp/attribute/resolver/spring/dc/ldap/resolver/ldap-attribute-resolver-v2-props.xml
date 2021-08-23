@@ -47,6 +47,7 @@
             expirationTime="%{connectionPool.expirationTime}"
             validatePeriodically="%{connectionPool.validatePeriodically}"
             validateTimerPeriod="%{connectionPool.validatePeriod}"
+            validateOnCheckout="%{connectionPool.validateOnCheckout}"
             validateDN="%{connectionPool.validator.baseDn}"
             validateFilter="%{connectionPool.validator.filter}"
             prunePeriod="%{connectionPool.prunePeriod}"

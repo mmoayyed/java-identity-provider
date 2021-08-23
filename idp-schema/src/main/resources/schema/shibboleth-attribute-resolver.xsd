@@ -1874,6 +1874,13 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="validateOnCheckout" type="resolver:string">
+            <annotation>
+                <documentation>
+                    Whether to validate connections when checking them out of the pool.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="prunePeriod" type="resolver:string">
             <annotation>
                 <documentation>

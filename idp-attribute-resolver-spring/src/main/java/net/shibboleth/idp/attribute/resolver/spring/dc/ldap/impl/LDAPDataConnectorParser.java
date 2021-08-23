@@ -681,6 +681,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                     AttributeSupport.getAttributeValue(poolConfigElement, new QName("validatePeriodically"));
             final String validateTimerPeriod =
                     AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateTimerPeriod"));
+            final String validateOnCheckout =
+                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateOnCheckout"));
 
             final BeanDefinitionBuilder poolConfig = BeanDefinitionBuilder.genericBeanDefinition(PoolConfig.class);
             if (minPoolSize == null) {
@@ -700,6 +702,11 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 poolConfig.addPropertyValue("validatePeriod", validateTimerPeriod);
             } else {
                 poolConfig.addPropertyValue("validatePeriod", Duration.ofMinutes(30));
+            }
+            if (validateOnCheckout != null)  {
+                poolConfig.addPropertyValue("validateOnCheckOut", validateOnCheckout);
+            } else {
+                poolConfig.addPropertyValue("validateOnCheckOut", false);
             }
             return poolConfig.getBeanDefinition();
         }
