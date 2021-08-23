@@ -74,10 +74,10 @@ import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleContext;
-import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.IdPModule.ModuleResource;
 import net.shibboleth.idp.module.IdPModule.ResourceResult;
+import net.shibboleth.idp.module.ModuleContext;
+import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -504,6 +504,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.debug("{} not installed. files renamed", pluginId);
         } else {
             try {
+                LOG.debug("Uninstalling old version of {}", pluginId);
                 PluginInstallerSupport.renameToTree(pluginsWebapp,
                         workspacePath.resolve("rollback"),
                         getInstalledContents(),
