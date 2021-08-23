@@ -624,8 +624,13 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 pool.addPropertyValue("blockWaitTime", blockWaitTime);
             }
             if (expirationTime != null) {
+                final String prunePeriod =
+                        AttributeSupport.getAttributeValue(poolConfigElement, new QName("prunePeriod"));
                 final BeanDefinitionBuilder strategy =
                         BeanDefinitionBuilder.genericBeanDefinition(IdlePruneStrategy.class);
+                if (prunePeriod != null) {
+                    strategy.addConstructorArgValue(prunePeriod);
+                }
                 strategy.addConstructorArgValue(expirationTime);
                 pool.addPropertyValue("pruneStrategy", strategy.getBeanDefinition());
             }

@@ -80,6 +80,7 @@
             validateTimerPeriod="%{idp.pool.LDAP.validatePeriod:PT5M}"
             validateDN="%{idp.pool.LDAP.validateDN:}"
             validateFilter="%{idp.pool.LDAP.validateFilter:(objectClass=*)}"
+            prunePeriod="%{idp.pool.LDAP.prunePeriod:PT5M}"
             expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"/>
     </DataConnector>
 

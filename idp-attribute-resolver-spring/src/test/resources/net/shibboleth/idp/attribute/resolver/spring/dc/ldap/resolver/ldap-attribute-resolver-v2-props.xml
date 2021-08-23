@@ -49,6 +49,7 @@
             validateTimerPeriod="%{connectionPool.validatePeriod}"
             validateDN="%{connectionPool.validator.baseDn}"
             validateFilter="%{connectionPool.validator.filter}"
+            prunePeriod="%{connectionPool.prunePeriod}"
             failFastInitialize="%{connectionPool.failFastInitialize}"/>
         <ResultCache
             expireAfterAccess="%{cache.TTL}"

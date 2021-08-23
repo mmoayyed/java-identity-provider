@@ -1874,6 +1874,14 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="prunePeriod" type="resolver:string">
+            <annotation>
+                <documentation>
+                    Duration between looking for idle connections to reduce the pool back
+                    to its minimum size.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="expirationTime" type="resolver:string">
             <annotation>
                 <documentation>
