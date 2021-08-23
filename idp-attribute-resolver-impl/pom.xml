@@ -224,29 +224,16 @@
             versions where the JDK doesn't provide one.
         -->
         <profile>
-            <id>get-graal-nashorn</id>
+            <id>get-nashorn</id>
             <activation>
                 <jdk>[15,</jdk>
             </activation>
             <dependencies>
-                <!-- We need these even if mvn dependency:analyze says we don't - loaded by service interface -->
                 <dependency>
-                    <groupId>org.graalvm.sdk</groupId>
-                    <artifactId>graal-sdk</artifactId>
-                    <version>${graalvm.version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.graalvm.js</groupId>
-                    <artifactId>js</artifactId>
-                    <version>${graalvm.version}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>net.shibboleth.idp.plugin.scripting</groupId>
-                    <artifactId>idp-plugin-nashorn-impl</artifactId>
-                    <version>${nashorn.engine.version}</version>
-                    <scope>test</scope>
+		    <groupId>org.openjdk.nashorn</groupId>
+		    <artifactId>nashorn-core</artifactId>
+		    <version>${nashorn.jdk.version}</version>
+		    <scope>test</scope>
                 </dependency>
             </dependencies>
         </profile>
