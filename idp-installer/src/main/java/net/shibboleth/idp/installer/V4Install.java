@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.installer;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,6 +35,7 @@ import java.util.Properties;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 
@@ -47,8 +50,8 @@ import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.Version;
-import net.shibboleth.idp.installer.plugin.impl.PluginState;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
+import net.shibboleth.idp.installer.plugin.impl.PluginState;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
@@ -58,6 +61,8 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
@@ -145,7 +150,8 @@ public class V4Install extends AbstractInitializableComponent {
                 throw new BuildException("Install failed: system will not work after V4 upgrade");
             }
         }
-        final PluginVersion idpVersion = new PluginVersion(Version.getVersion());
+        final String versionAsString = Version.getVersion();
+        final PluginVersion idpVersion = new PluginVersion(versionAsString!=null?versionAsString:"4.2.0");
         for (final IdPPlugin plugin: ServiceLoader.load(IdPPlugin.class, currentState.getInstalledPluginsLoader())) {
             final String pluginId = plugin.getPluginId();
             final PluginVersion pluginVersion = new PluginVersion(plugin);
@@ -370,6 +376,7 @@ public class V4Install extends AbstractInitializableComponent {
     protected void handleEditWebApp() throws BuildException {
         final Path editWebApp = installerProps.getTargetDir().resolve("edit-webapp");
         if (Files.exists(editWebApp)) {
+            checkWebXml(editWebApp.resolve("WEB-INF").resolve("web.xml"));
             return;
         }
         final Path suppliedInput = installerProps.getInitialEditWeb();
@@ -393,6 +400,34 @@ public class V4Install extends AbstractInitializableComponent {
             final Copy imagesCopy = InstallerSupport.getCopyTask(distEditWebApp.resolve("images"), images);
             imagesCopy.setFailOnError(false);
             imagesCopy.execute();
+        }
+    }
+
+    /** If it exists check web.xml for deprecated content.
+     * @param webXml the path of the file
+     * We do this in a very simplistic fashion at first
+     * @throws BuildException if we have problems handling the web.xml file
+     */
+    private void checkWebXml(final Path webXml) throws BuildException {
+        if (Files.notExists(webXml)) {
+            return;
+        }
+        try (final BufferedReader in = new BufferedReader(new FileReader(webXml.toFile()))) {
+            final Pattern pat = Pattern.compile(".*net\\.shibboleth\\.ext\\.spring"+
+                    "\\.context\\.DeferPlaceholderFileSystemXmlWebApplicationContext.*");
+            String line = in.readLine();
+            while (line != null) {
+                if (pat.matcher(line).matches()) {
+                    DeprecationSupport.warn(ObjectType.CLASS,
+                            "net.shibboleth.ext.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext",
+                            "edit-webapp/WEB-INF/web.xml",
+                            "net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext");
+                    break;
+                }
+                line = in.readLine();
+            }
+        } catch (final IOException e) {
+            throw new BuildException(e);
         }
     }
 
