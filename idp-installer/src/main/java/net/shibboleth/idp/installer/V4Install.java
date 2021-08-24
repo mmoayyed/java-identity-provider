@@ -48,6 +48,8 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import net.shibboleth.ext.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext;
+import net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext;
 import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
@@ -61,8 +63,6 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
@@ -418,10 +418,10 @@ public class V4Install extends AbstractInitializableComponent {
             String line = in.readLine();
             while (line != null) {
                 if (pat.matcher(line).matches()) {
-                    DeprecationSupport.warn(ObjectType.CLASS,
-                            "net.shibboleth.ext.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext",
-                            "edit-webapp/WEB-INF/web.xml",
-                            "net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext");
+                    log.warn("Your copy of edit-webapp/WEB-INF/web.xml contains a reference to a replaced class, " +
+                            DeferPlaceholderFileSystemXmlWebApplicationContext.class.getCanonicalName());
+                    log.warn("You MUST update this to " + DelimiterAwareApplicationContext.class.getCanonicalName() +
+                            " and rebuild the war after installation or the IdP will refuse to start.");
                     break;
                 }
                 line = in.readLine();
