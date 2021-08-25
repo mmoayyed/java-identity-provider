@@ -308,8 +308,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
             pluginId = contentsList;
             operation = OperationType.LISTCONTENTS;
         } else {
-            getLog().error("Missing qualifier. Options are : -l, -fl, -cl, -i, -u, -r, --license");
-            throw new IllegalArgumentException("Missing qualifier");
+            throw new IllegalArgumentException("Missing qualifier. Try  --help");
         }
     }
     // Checkstyle: CyclomaticComplexity ON

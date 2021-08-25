@@ -32,6 +32,9 @@ public class ProgressReportingOutputStream extends BufferedOutputStream {
     /** How much have we written so far? */
     private int written;
 
+    /** Do we need to output a terminateing newline? */
+    private boolean terminate;
+
     /** Constructor.
      * @param outStream what to bracket.
      */
@@ -55,8 +58,17 @@ public class ProgressReportingOutputStream extends BufferedOutputStream {
             if (System.out != null) {
                 System.out.print('.');
                 System.out.flush();
+                terminate = true;
             }
             written -= PROGRESS_EVERY;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void close() throws IOException {
+        super.close();
+        if (terminate) {
+            System.out.println();
         }
     }
 }
