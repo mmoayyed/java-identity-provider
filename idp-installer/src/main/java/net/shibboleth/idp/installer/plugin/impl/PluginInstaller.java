@@ -279,7 +279,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             }
             final PluginVersion pluginVersion = new PluginVersion(description);
             final PluginVersion idpVersion = new PluginVersion(Version.getVersion());
-            if (!state.isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
+            if (!state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
                 LOG.error("Plugin {} version {} is not supported with IdP Version {}",
                         pluginId, pluginVersion, idpVersion);
                 throw new BuildException("Version Mismatch");

@@ -243,6 +243,30 @@ public class PluginInfo {
             log.debug("Plugin {}: Available {}", pluginId, versionInfo.keySet());
             return false;
         }
-        return PluginState.isSupportedWithIdPVersion(info, idPVersion);
+        return PluginInfo.isSupportedWithIdPVersion(info, idPVersion);
+    }
+
+    /** Is the specified plugin supported with this IdP version.
+     * Worker method for all 'isSupportedWith' classes.
+     * @param pluginVersionInfo the version info to consider
+     * @param idPVersion the version as a {@link PluginVersion}
+     * @return whether it is supported.
+     */
+    public static boolean isSupportedWithIdPVersion(final PluginState.VersionInfo pluginVersionInfo,
+            final PluginVersion idPVersion) {
+        final int maxCompare = idPVersion.compareTo(pluginVersionInfo.getMaxSupported()); 
+        
+        if (maxCompare >= 0) {
+            // Exclusive:
+            // IdP (test against) Version is GREATER THAN OR EQUAL to our Max
+            return false;
+        }
+        final int minCompare = idPVersion.compareTo(pluginVersionInfo.getMinSupported());
+        if (minCompare >= 0) {
+            // Inclusive:
+            // IdP (test against) version is GREATER THAN OR EQUAL to our Min
+            return true;
+        }
+        return false;
     }
 }

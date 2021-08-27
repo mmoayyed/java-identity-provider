@@ -159,7 +159,7 @@ public class V4Install extends AbstractInitializableComponent {
                 log.debug("Considering Plugin {}, version {}", pluginId,  pluginVersion);
                 final PluginState state = new PluginState(plugin, Collections.emptyList());
                 state.initialize();
-                if (!state.isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
+                if (!state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
                     log.warn("Installed Plugin {} version {} is not supported with IdP Version {}, continuing.",
                             pluginId, pluginVersion, idpVersion);
                 }

@@ -20,11 +20,9 @@ package net.shibboleth.idp.installer.plugin.impl;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
@@ -37,7 +35,6 @@ import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -80,20 +77,11 @@ public class PluginState extends AbstractInitializableComponent {
         myPluginVersion = new PluginVersion(plugin);
     }
     
-    /** Get the base URL for this version.
-     * @param version which version
-     * @return the base URL
+    /** get our PluginInfo.
+     * @return our PluginInfo.
      */
-    @Nullable public URL getUpdateURL(final PluginVersion version) {
-        return myPluginInfo.getUpdateURL(version);
-    }
-
-    /** Get the base Name for this version.
-     * @param version which version
-     * @return the base name
-     */
-    @Nullable public String getUpdateBaseName(final PluginVersion version) {
-        return myPluginInfo.getUpdateBaseName(version);
+    public PluginInfo getPluginInfo() {
+        return myPluginInfo;
     }
     
     /** (try to) populate the information about this plugin.
@@ -187,47 +175,6 @@ public class PluginState extends AbstractInitializableComponent {
     }
     // CheckStyle: CyclomaticComplexity ON
 
-    /** Is the specified plugin supported with this IdP version.
-     * @param pluginVersion the version if the plugin as a {@link PluginVersion}
-     * @param idPVersion the version if the IDP as a {@link PluginVersion}
-     * @return whether it is supported.
-     */
-    public boolean isSupportedWithIdPVersion(final PluginVersion pluginVersion, final PluginVersion idPVersion) {
-        return myPluginInfo.isSupportedWithIdPVersion(pluginVersion, idPVersion);
-    }
-
-    /** Is the specified plugin supported with this IdP version.
-     * Worker method for all 'isSupportedWith' classes.
-     * @param pluginVersionInfo the version info to consider
-     * @param idPVersion the version as a {@link PluginVersion}
-     * @return whether it is supported.
-     */
-    public static boolean isSupportedWithIdPVersion(final VersionInfo pluginVersionInfo,
-            final PluginVersion idPVersion) {
-        final int maxCompare = idPVersion.compareTo(pluginVersionInfo.getMaxSupported()); 
-        
-        if (maxCompare >= 0) {
-            // Exclusive:
-            // IdP (test against) Version is GREATER THAN OR EQUAL to our Max
-            return false;
-        }
-        final int minCompare = idPVersion.compareTo(pluginVersionInfo.getMinSupported());
-        if (minCompare >= 0) {
-            // Inclusive:
-            // IdP (test against) version is GREATER THAN OR EQUAL to our Min
-            return true;
-        }
-        return false;
-    }
-    
-    /** Return all announced versions.
-     * @return the versions.
-     */
-    @Nonnull @NotEmpty public Map<PluginVersion, VersionInfo> getAvailableVersions() {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        return myPluginInfo.getAvailableVersions();
-    }
-    
     /** Encapsulation of the information about a given IdP version. */
     public static class VersionInfo {
         

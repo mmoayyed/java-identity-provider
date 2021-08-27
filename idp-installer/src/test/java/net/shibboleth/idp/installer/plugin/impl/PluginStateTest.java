@@ -42,7 +42,7 @@ public class PluginStateTest {
     
     private boolean testSupportState(final PluginVersion pluginVersion, final PluginState state, final String IdpVersion) {
         final PluginVersion idPVersion = new PluginVersion(IdpVersion);
-        return state.isSupportedWithIdPVersion(pluginVersion, idPVersion);
+        return state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idPVersion);
     }
 
     @Test
@@ -57,11 +57,11 @@ public class PluginStateTest {
         final PluginVersion pluginVersion = new PluginVersion(simple.getMajorVersion(), simple.getMinorVersion(), simple.getPatchVersion());
         
         assertEquals(pluginVersion, new PluginVersion("1.2.3"));
-        assertEquals(state.getAvailableVersions().size(), 3);
-        assertTrue(state.getAvailableVersions().containsKey(new PluginVersion(1, 2, 3)));
-        assertTrue(state.getAvailableVersions().containsKey(new PluginVersion(1, 2, 4)));
-        assertTrue(state.getAvailableVersions().containsKey(new PluginVersion(2,0,0)));
-        assertFalse(state.getAvailableVersions().containsKey(new PluginVersion(3, 2, 3)));
+        assertEquals(state.getPluginInfo().getAvailableVersions().size(), 3);
+        assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new PluginVersion(1, 2, 3)));
+        assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new PluginVersion(1, 2, 4)));
+        assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new PluginVersion(2,0,0)));
+        assertFalse(state.getPluginInfo().getAvailableVersions().containsKey(new PluginVersion(3, 2, 3)));
 
         assertTrue(testSupportState(pluginVersion, state, "4.1.0"));
         assertTrue(testSupportState(pluginVersion, state, "4.2.0"));
@@ -94,13 +94,13 @@ public class PluginStateTest {
         final PluginVersion v124 = new PluginVersion(1,2,4);
         final PluginVersion v2 = new PluginVersion(2,0,0);
 
-        assertEquals(state.getUpdateURL(v123), new URL("https://example.org/plugins/"));
-        assertEquals(state.getUpdateURL(v124), new URL("https://example.org/plugins4/"));
-        assertEquals(state.getUpdateURL(v2), new URL("https://example.org/plugins2/"));
+        assertEquals(state.getPluginInfo().getUpdateURL(v123), new URL("https://example.org/plugins/"));
+        assertEquals(state.getPluginInfo().getUpdateURL(v124), new URL("https://example.org/plugins4/"));
+        assertEquals(state.getPluginInfo().getUpdateURL(v2), new URL("https://example.org/plugins2/"));
 
-        assertEquals(state.getUpdateBaseName(v123), "base-1.2.3-1.2.3");
-        assertEquals(state.getUpdateBaseName(v124), "base-1.2.4-1.2.4");
-        assertEquals(state.getUpdateBaseName(v2), "base-1-2-4");
+        assertEquals(state.getPluginInfo().getUpdateBaseName(v123), "base-1.2.3-1.2.3");
+        assertEquals(state.getPluginInfo().getUpdateBaseName(v124), "base-1.2.4-1.2.4");
+        assertEquals(state.getPluginInfo().getUpdateBaseName(v2), "base-1-2-4");
     }
 
     @Test
@@ -121,6 +121,6 @@ public class PluginStateTest {
         final PluginState state = new PluginState(simple, Collections.EMPTY_LIST);
         state.initialize();
         
-        assertEquals(state.getAvailableVersions().size(), 3);
+        assertEquals(state.getPluginInfo().getAvailableVersions().size(), 3);
     }
 }
