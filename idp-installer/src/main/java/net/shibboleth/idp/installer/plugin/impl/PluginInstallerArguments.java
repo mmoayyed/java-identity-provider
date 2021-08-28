@@ -56,6 +56,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Parameter(names= {"-l", "--list"})
     @Nullable private boolean list;
 
+    /** Brief info about installed plugins. */
+    @Parameter(names= {"-L", "--list-available"})
+    @Nullable private boolean listAvailable;
+
     /** Override version check. */
     @Parameter(names= {"--noCheck"})
     @Nullable private boolean noCheck;
@@ -71,6 +75,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** What to install. */
     @Parameter(names= {"-i", "--input"})
     @Nullable private String input;
+
+    /** What to install. */
+    @Parameter(names= {"-I", "--install-ID"})
+    @Nullable private String installId;
 
     /** Truststore to use for signing. */
     @Parameter(names= {"--truststore"})
@@ -197,6 +205,20 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         return fullList;
     }
 
+    /** Are we going to list everything from the remote site?
+     * @return listAvailable.
+     */
+    public boolean isListAvailable() {
+        return listAvailable;
+    }
+    
+    /** Are we going to install from the pluginId?
+     * @return whether the user specified {@link #installId}
+     */
+    public boolean isInstallId() {
+        return StringSupport.trimOrNull(installId) != null;
+    }
+
     /** Are we doing a List?
      * 
      * @return whether we're doing a list
@@ -272,7 +294,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
             getLog().error("Unexpected extra arguments {}", output);
             throw new IllegalArgumentException("Unexpected extra arguments");
         }
-        if (list || fullList) {
+        if (list || fullList || listAvailable) {
             operation = OperationType.LIST;
             if (input !=  null || uninstallId != null) {
                 getLog().error("Cannot List and Install or Remove in the same operation.");
@@ -287,7 +309,10 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
                 getLog().error("Cannot Install and Update or Remove in the same operation.");
                 throw new IllegalArgumentException("Cannot List and Update or Remove in the same operation.");
             }
-            operation = decodeInput() ;
+            operation = decodeInput();
+        } else if (installId != null) {
+            operation = OperationType.INSTALLREMOTE;
+            pluginId = installId;
         } else if (updatePluginId != null) {
             if (uninstallId != null) {
                 getLog().error("Cannot Update and Remove in the same operation.");

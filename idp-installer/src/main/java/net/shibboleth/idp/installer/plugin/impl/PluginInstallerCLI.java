@@ -27,9 +27,12 @@ import java.nio.file.Path;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -40,9 +43,11 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.ext.spring.cli.AbstractCommandLine;
+import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
@@ -134,6 +139,9 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
             switch (args.getOperation()) {
                 case LIST:
+                    if (args.isListAvailable()) {
+                        return doListAvailable();
+                    }
                     doList(args.isFullList(), args.getPluginId());
                     break;
 
@@ -148,7 +156,11 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                     if (args.getPluginId() != null) {
                         installer.setPluginId(args.getPluginId());
                     }
-                    installer.installPlugin(args.getInputURL(), args.getInputFileName(), !args.isNoCheck());
+                    if (args.isInstallId()) {
+                        //autoInstallPlugin();
+                    } else {
+                        installer.installPlugin(args.getInputURL(), args.getInputFileName(), !args.isNoCheck());
+                    }
                     break;
 
                 case UPDATE:
@@ -346,6 +358,94 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
     }
 
+    /** Go to the well known url (or the provided one) and list all
+     * the available plugin ids.
+     * @return whether it worked
+     */
+    private int doListAvailable() {
+        final Properties props = loadPluginInfo();
+        if (props == null) {
+            return RC_IO;
+        }
+
+        final Map<String, PluginInfo> plugins = new HashMap<>();
+        final Enumeration<Object> en = props.keys();
+        while (en.hasMoreElements()) {
+            final String key = (String)en.nextElement();
+            if (key.endsWith(".versions")) {
+                final String pluginId = key.substring(0, key.length()-9);
+                plugins.put(pluginId, new PluginInfo(pluginId, props));
+            }
+        }
+
+        for (final Entry<String, PluginInfo> e: plugins.entrySet()) {
+            final PluginVersion nullVersion = new PluginVersion(0, 0, 0);
+            final IdPPlugin existingPlugin = installer.getInstalledPlugin(e.getKey());
+            if (existingPlugin == null) {
+                final PluginVersion version = getBestVersion(nullVersion, e.getValue());
+                if (version == null) {
+                    log.debug("Plugin {} has no version available", e.getKey());
+                } else {
+                    outOrLog(String.format("Plugin %s: version %s available for install", e.getKey(), version));
+                }
+            } else {
+                final PluginVersion existingVersion = new PluginVersion(existingPlugin);
+                final PluginVersion version = getBestVersion(existingVersion, e.getValue());
+                if (version == null) {
+                    outOrLog(String.format("Plugin %s: Installed version %s: No update available",
+                            e.getKey(),
+                            existingVersion));
+                } else {
+                    outOrLog(String.format("Plugin %s: Installed version %s: Update to &s available",
+                            e.getKey(),
+                            existingVersion,
+                            version));
+                }
+            }
+        }
+        return RC_OK;
+    }
+
+    /** Load the property file describing all the plugin we know about from a known location.
+     * @return the property files plugins.
+     */
+    private Properties loadPluginInfo() {
+        final List<URL> urls;
+        final Properties props = new Properties();
+        try {
+            if ((updateURLs == null) || (updateURLs.isEmpty())) {
+                    urls = List.of(
+                            new URL("https://shibboleth.net/downloads/identity-provider/plugins/plugins.properties"),
+                            new URL("http://plugins.shibboleth.net/plugins.properties"));
+            } else {
+                urls = updateURLs;
+            }
+            for (final URL url: urls) {
+                final Resource propertyResource;
+                if ("file".equals(url.getProtocol())) {
+                    propertyResource = new FileSystemResource(url.getPath());
+                } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+                    propertyResource = new HTTPResource(getHttpClient(), url);
+                } else {
+                    log.error("Only file and http[s] URLs are allowed");
+                    return null;
+                }
+
+                log.debug("Plugin Listing: Looking for update at {}", propertyResource.getDescription());
+                if (!propertyResource.exists()) {
+                    log.info("{} could not be located", propertyResource.getDescription());
+                    continue;
+                }
+                props.load(propertyResource.getInputStream());
+                break;
+            }
+
+        } catch (final IOException e) {
+            log.error("Could not load update URL", e);
+            return null;
+        }
+        return props;
+    }
 
     /** Find the best update version.  Helper function for {@linkplain #doUpdate(String, PluginVersion, boolean)}.
      * @param pluginVersion The Plugin version

@@ -255,7 +255,6 @@ public class PluginInfo {
     public static boolean isSupportedWithIdPVersion(final PluginState.VersionInfo pluginVersionInfo,
             final PluginVersion idPVersion) {
         final int maxCompare = idPVersion.compareTo(pluginVersionInfo.getMaxSupported()); 
-        
         if (maxCompare >= 0) {
             // Exclusive:
             // IdP (test against) Version is GREATER THAN OR EQUAL to our Max
