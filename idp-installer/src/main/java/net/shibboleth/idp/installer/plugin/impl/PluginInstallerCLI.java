@@ -157,14 +157,13 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                         installer.setPluginId(args.getPluginId());
                     }
                     if (args.isInstallId()) {
-                        //autoInstallPlugin();
-                    } else {
-                        installer.installPlugin(args.getInputURL(), args.getInputFileName(), !args.isNoCheck());
+                        return autoPluginFromId(args.getPluginId(), !args.isNoCheck());
                     }
+                    installer.installPlugin(args.getInputURL(), args.getInputFileName(), !args.isNoCheck());
                     break;
 
                 case UPDATE:
-                    doUpdate(args.getPluginId() , args.getUpdateVersion(), !args.isNoCheck());
+                    doUpdate(args.getPluginId(), args.getUpdateVersion(), !args.isNoCheck());
                     break;
 
                 case UNINSTALL:
@@ -374,7 +373,10 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             final String key = (String)en.nextElement();
             if (key.endsWith(".versions")) {
                 final String pluginId = key.substring(0, key.length()-9);
-                plugins.put(pluginId, new PluginInfo(pluginId, props));
+                final PluginInfo info = new PluginInfo(pluginId, props);
+                if (info.isInfoComplete()) {
+                    plugins.put(pluginId, info);
+                }
             }
         }
 
@@ -446,6 +448,37 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         return props;
     }
+
+    /** Given the pluginId find the best version and install.
+     * If already installed whine
+     * @param pluginId what to install
+     * @param checkVersion are we checking the version.
+     * @return installation status
+     */
+    private int autoPluginFromId(final String pluginId, final boolean checkVersion) {
+        final IdPPlugin existing = installer.getInstalledPlugin(pluginId);
+        if (existing != null) {
+            log.error("Plugin {} is already installed");
+            return RC_INIT;
+        }
+        final Properties props = loadPluginInfo();
+        final PluginInfo info = new PluginInfo(pluginId, props);
+        if (!info.isInfoComplete()) {
+            log.error("Plugin {}: Information not found");
+            return RC_INIT;
+        }
+        final PluginVersion versionToInstall = getBestVersion(new PluginVersion(0,0,0), info);
+        if (versionToInstall == null) {
+            log.error("Plugin {}: No version available to install");
+            return RC_INIT;
+        }
+        installer.installPlugin(info.getUpdateURL(versionToInstall),
+                info.getUpdateBaseName(versionToInstall) + ".tar.gz",
+                checkVersion);
+        return RC_IO;
+    }
+
+
 
     /** Find the best update version.  Helper function for {@linkplain #doUpdate(String, PluginVersion, boolean)}.
      * @param pluginVersion The Plugin version

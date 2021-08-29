@@ -72,6 +72,10 @@ public class PluginCLITest extends BasePluginTest {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-L", } ), AbstractCommandLine.RC_OK);
     }
 
+    @Test(enabled = true) public void testInstallById() throws IOException {
+        assertEquals(PluginInstallerCLI.runMain(new String[] { "-I", "net.shibboleth.idp.plugin.authn.totp"} ), AbstractCommandLine.RC_OK);
+    }
+
     @Test(enabled = true,dependsOnMethods = {/*"testWeb"*/}) public void testListWithOverride() throws IOException {
         ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/plugin/allPlugins.props");
         String url = resource.getURL().toString();
