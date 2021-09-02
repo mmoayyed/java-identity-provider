@@ -475,7 +475,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         installer.installPlugin(info.getUpdateURL(versionToInstall),
                 info.getUpdateBaseName(versionToInstall) + ".tar.gz",
                 checkVersion);
-        return RC_IO;
+        return RC_OK;
     }
 
 
@@ -487,15 +487,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      */
     @Nullable private PluginVersion getBestVersion(final PluginVersion pluginVersion , final PluginInfo pluginInfo) {
 
-        final String idpVersionString = net.shibboleth.idp.Version.getVersion();
-
-        final PluginVersion idPVersion;
-        if (idpVersionString == null) {
-            idPVersion = new PluginVersion(4,1,0);
-            log.error("Could not determine IdP Version. Assuming 4.1.0");
-        } else {
-            idPVersion = new PluginVersion(idpVersionString);
-        }
+        final PluginVersion idPVersion = PluginInstaller.getIdPVersion();
 
         final List<PluginVersion> availableVersions = new ArrayList<>(pluginInfo.getAvailableVersions().keySet());
         availableVersions.sort(null);

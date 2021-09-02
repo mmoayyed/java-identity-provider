@@ -63,9 +63,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
-
 import com.google.common.base.Predicates;
-
 import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.BuildWar;
@@ -89,7 +87,6 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resource.Resource;
-
 /**
  *  The class where the heavy lifting of managing a plugin happens. 
  */
@@ -278,7 +275,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                throw new BuildException(e);
             }
             final PluginVersion pluginVersion = new PluginVersion(description);
-            final PluginVersion idpVersion = new PluginVersion(Version.getVersion());
+            final PluginVersion idpVersion = getIdPVersion();
             if (!state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
                 LOG.error("Plugin {} version {} is not supported with IdP Version {}",
                         pluginId, pluginVersion, idpVersion);
@@ -985,5 +982,18 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         InstallerSupport.setReadOnly(distPath, true);
     }
     
+    /** Return a version we can use in a test proof manner.
+     * @return the IdP version or a fixed value
+     */
+    protected static PluginVersion getIdPVersion() {
+        final String version  = Version.getVersion();
+
+        if (version == null) {
+            LOG.error("Could not determine IdP Version. Assuming 4.2.0");
+            LOG.error("You should never see this outside a test environment");
+            return new PluginVersion(4,1,0);
+        } 
+        return new PluginVersion(version);
+    }
 }
 
