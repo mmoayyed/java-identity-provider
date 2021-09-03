@@ -18,8 +18,11 @@
 package net.shibboleth.idp.authn.config;
 
 import java.time.Duration;
+import java.time.Period;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.google.common.base.MoreObjects;
 import net.shibboleth.idp.authn.PooledTemplateSearchDnResolver;
 import net.shibboleth.idp.authn.TemplateSearchDnResolver;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -293,6 +296,15 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
   /** Whether to use account state data as defined by the EDirectory schema. */
   private boolean isEDirectory;
 
+  /** Authentication handler account state expiration period. */
+  private Period accountStateExpirationPeriod;
+
+  /** Authentication handler account state warning period. */
+  private Period accountStateWarningPeriod;
+
+  /** Authentication handler account state login failures. */
+  private int accountStateLoginFailures;
+
   public void setAuthenticatorType(@Nonnull @NotEmpty final String type) {
     authenticatorType = AuthenticatorType.fromLabel(type);
     if (authenticatorType == null) {
@@ -451,6 +463,18 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 
   public void setEDirectory(final boolean b) {
     isEDirectory = b;
+  }
+
+  public void setAccountStateExpirationPeriod(@Nullable final Period period) {
+    accountStateExpirationPeriod = period;
+  }
+
+  public void setAccountStateWarningPeriod(@Nullable final Period period) {
+    accountStateWarningPeriod = period;
+  }
+
+  public void setAccountStateLoginFailures(final int loginFailures) {
+    accountStateLoginFailures = loginFailures;
   }
 
   /**
@@ -725,15 +749,62 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     } else if (usePasswordExpiration) {
       authenticator.setAuthenticationResponseHandlers(new PasswordExpirationAuthenticationResponseHandler());
     } else if (isActiveDirectory) {
-      authenticator.setAuthenticationResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler());
+      authenticator.setAuthenticationResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler(accountStateExpirationPeriod, accountStateWarningPeriod));
     } else if (isEDirectory) {
-      authenticator.setAuthenticationResponseHandlers(new EDirectoryAuthenticationResponseHandler());
+      authenticator.setAuthenticationResponseHandlers(new EDirectoryAuthenticationResponseHandler(accountStateWarningPeriod));
     } else if (isFreeIPA) {
-      authenticator.setAuthenticationResponseHandlers(new FreeIPAAuthenticationResponseHandler());
+      authenticator.setAuthenticationResponseHandlers(new FreeIPAAuthenticationResponseHandler(accountStateExpirationPeriod, accountStateWarningPeriod, accountStateLoginFailures));
     }
+    log.debug("Created {} from {}", authenticator, this);
     return authenticator;
   }
 // Checkstyle: CyclomaticComplexity|MethodLength ON
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+            .add("authenticatorType", authenticatorType)
+            .add("trustType", trustType)
+            .add("connectionStrategyType", connectionStrategyType)
+            .add("ldapUrl", ldapUrl)
+            .add("useStartTLS", useStartTLS)
+            .add("useSSL", useSSL)
+            .add("disableHostnameVerification", disableHostnameVerification)
+            .add("connectTimeout", connectTimeout)
+            .add("responseTimeout", responseTimeout)
+            .add("trustCertificatesCredentialConfig", trustCertificatesCredentialConfig)
+            .add("truststoreCredentialConfig", truststoreCredentialConfig)
+            .add("disablePooling", disablePooling)
+            .add("blockWaitTime", blockWaitTime)
+            .add("minPoolSize", minPoolSize)
+            .add("maxPoolSize", maxPoolSize)
+            .add("validateOnCheckout", validateOnCheckout)
+            .add("validatePeriodically", validatePeriodically)
+            .add("validatePeriod", validatePeriod)
+            .add("validateDn", validateDn)
+            .add("validateFilter", validateFilter)
+            .add("bindPoolPassivatorType", bindPoolPassivatorType)
+            .add("prunePeriod", prunePeriod)
+            .add("idleTime", idleTime)
+            .add("dnFormat", dnFormat)
+            .add("baseDn", baseDn)
+            .add("userFilter", userFilter)
+            .add("subtreeSearch", subtreeSearch)
+            .add("resolveEntryOnFailure", resolveEntryOnFailure)
+            .add("resolveEntryWithBindDn", resolveEntryWithBindDn)
+            .add("velocityEngine", velocityEngine)
+            .add("bindDn", bindDn)
+            .add("bindDnCredential", bindDnCredential != null ? "suppressed" : null)
+            .add("usePasswordPolicy", usePasswordPolicy)
+            .add("usePasswordExpiration", usePasswordExpiration)
+            .add("isActiveDirectory", isActiveDirectory)
+            .add("isFreeIPA", isFreeIPA)
+            .add("isEDirectory", isEDirectory)
+            .add("accountStateExpirationPeriod", accountStateExpirationPeriod)
+            .add("accountStateWarningPeriod", accountStateWarningPeriod)
+            .add("accountStateLoginFailures", accountStateLoginFailures)
+            .toString();
+  }
 
   @Override
   public Class<?> getObjectType() {

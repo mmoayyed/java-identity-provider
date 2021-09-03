@@ -30,6 +30,7 @@
                 <bean class="net.shibboleth.ext.spring.config.FunctionToFunctionConverter" />
                 <bean class="net.shibboleth.ext.spring.config.PredicateToPredicateConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringToDurationConverter" />
+                <bean class="net.shibboleth.ext.spring.config.StringToPeriodConverter" />
             </set>
         </property>
     </bean>
