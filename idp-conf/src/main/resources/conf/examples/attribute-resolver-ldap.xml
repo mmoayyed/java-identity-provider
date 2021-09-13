@@ -79,7 +79,7 @@
             validatePeriodically="%{idp.pool.LDAP.validatePeriodically:true}"
             validateTimerPeriod="%{idp.pool.LDAP.validatePeriod:PT5M}"
             validateDN="%{idp.pool.LDAP.validateDN:}"
-            validateOnCheckout="%{idp.pool.LDAP.validateOnCheckout:}"
+            validateOnCheckout="%{idp.pool.LDAP.validateOnCheckout:false}"
             validateFilter="%{idp.pool.LDAP.validateFilter:(objectClass=*)}"
             prunePeriod="%{idp.pool.LDAP.prunePeriod:PT5M}"
             expirationTime="%{idp.pool.LDAP.idleTime:PT10M}"/>
