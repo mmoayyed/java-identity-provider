@@ -1,0 +1,6 @@
+1) Download the new key as foo.asc
+2) copy empty.gpg to ./<GroupName>.gpg (which makes sure its old style)
+2) gpg --no-default-keyring --keyring ./<GroupName>.gpg  --import foo.asc
+3) rm ./<GroupName>.bak
+4) rm ./<GroupName>.gpg.lock
+

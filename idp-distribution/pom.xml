@@ -246,6 +246,38 @@
                     <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <dependencies>
+		    <dependency>
+			<groupId>net.shibboleth.maven.enforcer.rules</groupId>
+			<artifactId>maven-dist-enforcer</artifactId>
+			<version>1.0.0</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>idp-enforce</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <idpEnforcer implementation="net.shibboleth.idp.enforcer.impl.IdPEnforcer">
+				    <enforcerData>${basedir}/src/main/enforcer</enforcerData>
+                                    <parentPomDir>../idp-parent</parentPomDir>
+                                    <jarDirs>${project.build.directory}/${idp.finalName}/bin/lib ${project.build.directory}/${idp.finalName}/webapp/WEB-INF/lib</jarDirs>
+                                    <checkSignatures>true</checkSignatures>
+                                    <checkDependencies>true</checkDependencies>
+                                    <listJarSources>false</listJarSources>
+                                </idpEnforcer>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
