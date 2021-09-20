@@ -38,7 +38,7 @@
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
             <optional>true</optional>
-            <scope>runtime</scope>
+            <scope>provided</scope>
         </dependency>
         <!-- Required if you're using classes from the security package. -->
         <dependency>
@@ -182,10 +182,6 @@
                                 <artifactItem>
                                     <groupId>com.beust</groupId>
                                     <artifactId>jcommander</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.bouncycastle</groupId>
-                                    <artifactId>bcpkix-jdk15on</artifactId>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.bouncycastle</groupId>

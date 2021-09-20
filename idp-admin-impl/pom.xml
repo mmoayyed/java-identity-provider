@@ -131,6 +131,11 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+	    <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <!--  Only used in a command line --> 

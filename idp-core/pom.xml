@@ -23,10 +23,6 @@
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
-            <groupId>com.beust</groupId>
-            <artifactId>jcommander</artifactId>
-        </dependency>
-        <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-core</artifactId>
         </dependency>
@@ -108,6 +104,11 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+	    <scope>provided</scope>
         </dependency>
 
         <!-- Runtime Dependencies -->
