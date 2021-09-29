@@ -20,19 +20,12 @@ package net.shibboleth.idp.log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.shibboleth.idp.Version;
-import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceException;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,15 +34,27 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import com.google.common.base.StandardSystemProperty;
+import com.google.common.io.Closeables;
+
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.status.ErrorStatus;
 import ch.qos.logback.core.status.InfoStatus;
 import ch.qos.logback.core.status.StatusManager;
-
-import com.google.common.base.StandardSystemProperty;
-import com.google.common.io.Closeables;
+import net.shibboleth.idp.Version;
+import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.module.ModuleContext;
+import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceException;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Simple {@link LoggingService} that watches for logback configuration file changes
@@ -245,6 +250,37 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
                 logger.debug("{}", standardSystemProperty);
             }
         }
+        final List<IdPPlugin> plugins = ServiceLoader.
+                load(IdPPlugin.class).
+                stream().
+                map(e->e.get()).
+                collect(Collectors.toList());
+        if (plugins.isEmpty()) {
+            logger.info("No Plugins Loaded");
+        } else {
+            logger.info("Plugins:");
+            for (final IdPPlugin idpPlugin : plugins) {
+                logger.info("\t\t{} : v{}.{}.{}",  idpPlugin.getPluginId(), idpPlugin.getMajorVersion(),
+                        idpPlugin.getMajorVersion(), idpPlugin.getPatchVersion());
+            }
+        }
+        final String idpHome = loggerContext.getProperty(IdPPropertiesApplicationContextInitializer.IDP_HOME_PROPERTY);
+        if (idpHome != null) {
+            final ModuleContext context = new ModuleContext(idpHome);
+            final List<IdPModule> modules = ServiceLoader.
+                    load(IdPModule.class).
+                    stream().
+                    map(e->e.get()).
+                    filter(f->f.isEnabled(context)).
+                    collect(Collectors.toList());
+            if (modules.isEmpty()) {
+                logger.info("No Modules Enabled");
+            } else {
+                logger.info("Enabled Modules:");
+                for (final IdPModule module : modules) {
+                    logger.info("\t\t{}",  module.getName(context));
+                }
+            }
+        }
     }
-
 }
