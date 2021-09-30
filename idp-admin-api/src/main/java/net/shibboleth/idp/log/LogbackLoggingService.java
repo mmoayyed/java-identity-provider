@@ -19,6 +19,7 @@ package net.shibboleth.idp.log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -264,7 +265,20 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
                         idpPlugin.getMajorVersion(), idpPlugin.getPatchVersion());
             }
         }
-        final String idpHome = loggerContext.getProperty(IdPPropertiesApplicationContextInitializer.IDP_HOME_PROPERTY);
+        Path idpHome;
+        final String homeAsString =
+                loggerContext.getProperty(IdPPropertiesApplicationContextInitializer.IDP_HOME_PROPERTY);
+        try {
+            if (homeAsString != null) {
+                idpHome = Path.of(homeAsString);
+            } else {
+                idpHome = null;
+            }
+        } catch (final RuntimeException e) {
+            logger.info("Could not resolve idpHome {} ", homeAsString, e);
+            idpHome = null;
+        }
+
         if (idpHome != null) {
             final ModuleContext context = new ModuleContext(idpHome);
             final List<IdPModule> modules = ServiceLoader.
@@ -281,6 +295,8 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
                     logger.info("\t\t{}",  module.getName(context));
                 }
             }
+        } else {
+            logger.info("Could not enumerate Modules");
         }
     }
 }
