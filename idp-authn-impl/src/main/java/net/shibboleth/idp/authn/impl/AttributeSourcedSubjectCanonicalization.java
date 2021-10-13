@@ -230,7 +230,13 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
     @Nullable private String findValue(@Nonnull final IdPAttribute attribute) {
         
         for (final IdPAttributeValue val : attribute.getValues()) {
-            if (val instanceof StringAttributeValue) {
+            if (val instanceof ScopedStringAttributeValue) {
+                final ScopedStringAttributeValue scoped = (ScopedStringAttributeValue) val;
+                final String withScope = scoped.getValue() + delimiter + scoped.getScope();
+                log.debug("{} Using attribute {} scoped value {} as input to transforms", getLogPrefix(),
+                        attribute.getId(), withScope);
+                return applyTransforms(withScope);
+            } else if (val instanceof StringAttributeValue) {
                 final StringAttributeValue stringVal = (StringAttributeValue) val;
                 if (stringVal.getValue() == null || stringVal.getValue().isEmpty()) {
                     log.debug("{} Ignoring null/empty string value", getLogPrefix());
@@ -239,12 +245,6 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
                 log.debug("{} Using attribute {} string value {} as input to transforms", getLogPrefix(),
                         attribute.getId(), stringVal.getValue());
                 return applyTransforms(stringVal.getValue());
-            } else if (val instanceof ScopedStringAttributeValue) {
-                final ScopedStringAttributeValue scoped = (ScopedStringAttributeValue) val;
-                final String withScope = scoped.getValue() + delimiter + scoped.getScope();
-                log.debug("{} Using attribute {} scoped value {} as input to transforms", getLogPrefix(),
-                        attribute.getId(), withScope);
-                return applyTransforms(withScope);
             } else {
                 log.warn("{} Unsupported attribute value type: {}", getLogPrefix(), val.getClass().getName());
             }

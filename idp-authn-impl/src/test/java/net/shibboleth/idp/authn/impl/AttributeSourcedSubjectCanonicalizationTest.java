@@ -28,6 +28,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -122,6 +123,22 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
 
+    @Test public void testSubjectSourcedScopedSuccess() throws ComponentInitializationException {
+        action.setResolveFromSubject(true);
+        action.initialize();
+        
+        final IdPAttribute inputAttribute = new IdPAttribute("attr2");
+        inputAttribute.setValues(Collections.singletonList(new ScopedStringAttributeValue("foo", "scope")));
+        final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        sc.setSubject(new Subject());
+        sc.getSubject().getPrincipals().add(new IdPAttributePrincipal(inputAttribute));
+
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertEquals(sc.getPrincipalName(), "foo@scope");
+    }
+    
     @Test public void testDualSubjectSourcedSuccess() throws ComponentInitializationException {
         action.setResolveFromSubject(true);
         action.initialize();
