@@ -287,7 +287,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         }
     }
         
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
@@ -298,39 +298,55 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
 
         final AuthnContext authnContext = samlAuthnContext.getAuthnStatement().getAuthnContext();
         
+        boolean principalsAdded = false;
+        
         if (authnContextTranslatorEx != null) {
-            // PRC is two levels above SAMLAuthnContext.
+            // PRC is up (AuthenticationContext) and then down (to nested PRC).
             final Collection<Principal> translated = authnContextTranslatorEx.apply(
-                    (ProfileRequestContext) samlAuthnContext.getParent().getParent());
-            if (translated != null) {
+                    samlAuthnContext.getParent().getSubcontext(ProfileRequestContext.class));
+            if (translated != null && !translated.isEmpty()) {
                 subject.getPrincipals().addAll(translated);
                 if (log.isDebugEnabled()) {
                     log.debug("{} Added translated Principals: {}", getLogPrefix(),
                             translated.stream().map(Principal::getName).collect(Collectors.toUnmodifiableList()));
                 }
+                principalsAdded = true;
             }
-        } else if (authnContextTranslator != null) {
+        }
+        
+        if (!principalsAdded && authnContextTranslator != null) {
             final Collection<Principal> translated = authnContextTranslator.apply(authnContext);
-            if (translated != null) {
+            if (translated != null && !translated.isEmpty()) {
                 subject.getPrincipals().addAll(translated);
                 if (log.isDebugEnabled()) {
                     log.debug("{} Added translated AuthnContext Principals: {}", getLogPrefix(),
                             translated.stream().map(Principal::getName).collect(Collectors.toUnmodifiableList()));
                 }
+                principalsAdded = true;
             }
-        } else if (authnContext.getAuthnContextClassRef() != null) {
-            final String classRef = authnContext.getAuthnContextClassRef().getURI();
-            if (classRef != null) {
-                subject.getPrincipals().add(new AuthnContextClassRefPrincipal(classRef));
-                log.debug("{} Added AuthnContextClassRef from assertion: {}", getLogPrefix(), classRef);
+        }
+        
+        if (!principalsAdded) {
+            if (authnContext.getAuthnContextClassRef() != null) {
+                final String classRef = authnContext.getAuthnContextClassRef().getURI();
+                if (classRef != null) {
+                    subject.getPrincipals().add(new AuthnContextClassRefPrincipal(classRef));
+                    log.debug("{} Added AuthnContextClassRef from assertion: {}", getLogPrefix(), classRef);
+                }
+                principalsAdded = true;
             }
-        } else if (authnContext.getAuthnContextDeclRef() != null) {
-            final String declRef = authnContext.getAuthnContextDeclRef().getURI();
-            if (declRef != null) {
-                subject.getPrincipals().add(new AuthnContextDeclRefPrincipal(declRef));
-                log.debug("{} Added AuthnContextDeclRef from assertion: {}", getLogPrefix(), declRef);
+            
+            if (authnContext.getAuthnContextDeclRef() != null) {
+                final String declRef = authnContext.getAuthnContextDeclRef().getURI();
+                if (declRef != null) {
+                    subject.getPrincipals().add(new AuthnContextDeclRefPrincipal(declRef));
+                    log.debug("{} Added AuthnContextDeclRef from assertion: {}", getLogPrefix(), declRef);
+                }
+                principalsAdded = true;
             }
-        } else {
+        }
+        
+        if (!principalsAdded) {
             log.warn("{} No AuthnContext information usable from assertion", getLogPrefix());
         }
         
@@ -347,7 +363,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         return subject;
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
     
     /**
      * Construct a populated {@link ProxyAuthenticationPrincipal} based on the inbound assertion.
