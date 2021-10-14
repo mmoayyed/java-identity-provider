@@ -270,7 +270,6 @@
                                     <parentPomDir>${basedir}/../idp-parent</parentPomDir>
                                     <jarDirs>${project.build.directory}/${idp.finalName}/bin/lib ${project.build.directory}/${idp.finalName}/webapp/WEB-INF/lib</jarDirs>
                                     <checkSignatures>true</checkSignatures>
-<checkM2>true</checkM2>
                                     <checkDependencies>true</checkDependencies>
                                     <listJarSources>false</listJarSources>
                                     <artifactMap>${basedir}/src/main/enforcer/artifactMap.properties</artifactMap>
