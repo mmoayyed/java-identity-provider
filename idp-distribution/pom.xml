@@ -253,7 +253,7 @@
                     <dependency>
                         <groupId>net.shibboleth.maven.enforcer.rules</groupId>
                         <artifactId>maven-dist-enforcer</artifactId>
-                        <version>2.0.0</version>
+                        <version>2.1.0</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -270,6 +270,7 @@
                                     <parentPomDir>${basedir}/../idp-parent</parentPomDir>
                                     <jarDirs>${project.build.directory}/${idp.finalName}/bin/lib ${project.build.directory}/${idp.finalName}/webapp/WEB-INF/lib</jarDirs>
                                     <checkSignatures>true</checkSignatures>
+<checkM2>true</checkM2>
                                     <checkDependencies>true</checkDependencies>
                                     <listJarSources>false</listJarSources>
                                     <artifactMap>${basedir}/src/main/enforcer/artifactMap.properties</artifactMap>
