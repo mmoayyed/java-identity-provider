@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -197,6 +198,12 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
         }
         
         authenticationContext.setAuthenticationResult(result);
+        
+        final BiConsumer<ProfileRequestContext,Subject> decorator =
+                authenticationContext.getAttemptedFlow().getSubjectDecorator();
+        if (decorator != null) {
+            decorator.accept(profileRequestContext, result.getSubject());
+        }
         
         // Override cacheability if a predicate is installed.
         if (authenticationContext.isResultCacheable() && resultCachingPredicate != null) {
