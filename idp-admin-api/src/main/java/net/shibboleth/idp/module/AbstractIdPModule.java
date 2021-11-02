@@ -47,6 +47,8 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -109,9 +111,18 @@ public abstract class AbstractIdPModule implements IdPModule {
 
             final Path resolved = moduleContext.getIdPHome().resolve(resource.getDestination());
             log.debug("Module {}: resolved resource destination {}", getId(), resolved);
-            if (!resolved.toFile().exists()) {
-                log.debug("Module {}: resource destination {} missing, module is disabled", getId(), resolved);
-                return false;
+            if (resolved.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                final ClassPathResource cp = new ClassPathResource(
+                        resolved.toString().substring(ResourceUtils.CLASSPATH_URL_PREFIX.length()));
+                if (!cp.exists()) {
+                    log.debug("Module {}: resource destination {} missing, module is disabled", getId(), resolved);
+                    return false;
+                }
+            } else {
+                if (!resolved.toFile().exists()) {
+                    log.debug("Module {}: resource destination {} missing, module is disabled", getId(), resolved);
+                    return false;
+                }
             }
         }
         
@@ -122,6 +133,11 @@ public abstract class AbstractIdPModule implements IdPModule {
     /** {@inheritDoc} */
     @Nonnull @NonnullElements public Map<ModuleResource, ResourceResult> enable(
             @Nonnull final ModuleContext moduleContext) throws ModuleException {
+        
+        if (moduleContext.getIdPHome().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+            throw new ModuleException("IdP location is a classpath");
+        }
+        
         if (isHttpClientRequired() && moduleContext.getHttpClient() == null) {
             throw new ModuleException("HTTP client required but not available");
         }
@@ -147,6 +163,11 @@ public abstract class AbstractIdPModule implements IdPModule {
     /** {@inheritDoc} */
     @Nonnull @NonnullElements public Map<ModuleResource, ResourceResult> disable(
             @Nonnull final ModuleContext moduleContext, final boolean clean) throws ModuleException {
+
+        if (moduleContext.getIdPHome().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+            throw new ModuleException("IdP location is a classpath");
+        }
+
         log.debug("Module {} disabling", getId());
 
         final Map<ModuleResource,ResourceResult> results;
