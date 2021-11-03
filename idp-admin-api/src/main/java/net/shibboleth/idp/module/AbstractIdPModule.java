@@ -109,16 +109,24 @@ public abstract class AbstractIdPModule implements IdPModule {
                 continue;
             }
 
-            final Path resolved = moduleContext.getIdPHome().resolve(resource.getDestination());
-            log.debug("Module {}: resolved resource destination {}", getId(), resolved);
-            if (resolved.toString().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
-                final ClassPathResource cp = new ClassPathResource(
-                        resolved.toString().substring(ResourceUtils.CLASSPATH_URL_PREFIX.length()));
+            if (moduleContext.getInstallLocation().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                final ClassPathResource cp;
+                if (moduleContext.getInstallLocation().equals(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                    cp = new ClassPathResource(resource.getDestination().toString());
+                } else {
+                    cp = (ClassPathResource) new ClassPathResource(
+                            moduleContext.getInstallLocation().substring(
+                                    ResourceUtils.CLASSPATH_URL_PREFIX.length())).createRelative(
+                                            resource.getDestination().toString());
+                }
+                
                 if (!cp.exists()) {
-                    log.debug("Module {}: resource destination {} missing, module is disabled", getId(), resolved);
+                    log.debug("Module {}: resource destination {} missing, module is disabled", getId(),
+                            ResourceUtils.CLASSPATH_URL_PREFIX + cp.getPath());
                     return false;
                 }
             } else {
+                final Path resolved = Path.of(moduleContext.getInstallLocation()).resolve(resource.getDestination());
                 if (!resolved.toFile().exists()) {
                     log.debug("Module {}: resource destination {} missing, module is disabled", getId(), resolved);
                     return false;
@@ -134,7 +142,7 @@ public abstract class AbstractIdPModule implements IdPModule {
     @Nonnull @NonnullElements public Map<ModuleResource, ResourceResult> enable(
             @Nonnull final ModuleContext moduleContext) throws ModuleException {
         
-        if (moduleContext.getIdPHome().toString().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+        if (moduleContext.getInstallLocation().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             throw new ModuleException("IdP location is a classpath");
         }
         
@@ -164,7 +172,7 @@ public abstract class AbstractIdPModule implements IdPModule {
     @Nonnull @NonnullElements public Map<ModuleResource, ResourceResult> disable(
             @Nonnull final ModuleContext moduleContext, final boolean clean) throws ModuleException {
 
-        if (moduleContext.getIdPHome().toString().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+        if (moduleContext.getInstallLocation().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             throw new ModuleException("IdP location is a classpath");
         }
 
@@ -400,7 +408,7 @@ public abstract class AbstractIdPModule implements IdPModule {
         @Nullable private InputStream getDestinationStream(@Nonnull final ModuleContext moduleContext)
                 throws IOException {
             
-            final Path destPath = moduleContext.getIdPHome().resolve(destination);
+            final Path destPath = Path.of(moduleContext.getInstallLocation()).resolve(destination);
             if (Files.exists(destPath)) {
                 try {
                     return Files.newInputStream(destPath, StandardOpenOption.READ);
@@ -436,7 +444,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                 
                 if (hasChanged) {
                     if (isReplace()) {
-                        destPath = moduleContext.getIdPHome().resolve(destination);
+                        destPath = Path.of(moduleContext.getInstallLocation()).resolve(destination);
                         final Path savedPath = destPath.resolveSibling(destPath.getFileName() + ".idpsave");
                         if (savedPath.toFile().exists()) {
                             throw new IOException(savedPath + " exists, aborting");
@@ -445,17 +453,17 @@ public abstract class AbstractIdPModule implements IdPModule {
                         log.debug("Module {} preserved {}", getId(), destPath);
                         result = ResourceResult.REPLACED;
                     } else {
-                        final Path basePath = moduleContext.getIdPHome().resolve(destination);
+                        final Path basePath = Path.of(moduleContext.getInstallLocation()).resolve(destination);
                         destPath = basePath.resolveSibling(basePath.getFileName() + ".idpnew");
                         result = ResourceResult.ADDED;
                     }
                     
                 } else {
-                    destPath = moduleContext.getIdPHome().resolve(destination);
+                    destPath = Path.of(moduleContext.getInstallLocation()).resolve(destination);
                     result = ResourceResult.CREATED;
                 }
                 
-                if (!destPath.startsWith(moduleContext.getIdPHome())) {
+                if (!destPath.startsWith(moduleContext.getInstallLocation())) {
                     log.error("Module {} attempted to create file outside of IdP installation: {}", getId(), destPath);
                     throw new ModuleException("Module asked to create file outside of IdP installation");
                 }
@@ -495,7 +503,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                 throws ModuleException {
             
             final ResourceResult result;
-            final Path resolved = moduleContext.getIdPHome().resolve(destination);
+            final Path resolved = Path.of(moduleContext.getInstallLocation()).resolve(destination);
             log.debug("Module {} resolved resource destination {}", getId(), resolved);
             if (Files.exists(resolved)) {
                 try {

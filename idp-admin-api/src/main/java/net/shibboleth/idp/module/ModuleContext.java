@@ -43,7 +43,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public final class ModuleContext {
 
     /** IdP installation root. */
-    @Nonnull private Path idpHome;
+    @Nonnull private String idpHome;
     
     /** HttpClient if needed. */
     @Nullable private HttpClient httpClient;
@@ -63,7 +63,7 @@ public final class ModuleContext {
      * @param home location of IdP install
      */
     public ModuleContext(@Nonnull @NotEmpty final String home) {
-        idpHome = Path.of(home);
+        idpHome = Constraint.isNotEmpty(home, "Home location cannot be null or empty");
         languageRanges = Collections.emptyList();
     }
 
@@ -73,16 +73,31 @@ public final class ModuleContext {
      * @param home location of IdP install
      */
     public ModuleContext(@Nonnull final Path home) {
-        idpHome = Constraint.isNotNull(home, "IdP home path cannot be null");
-        languageRanges = Collections.emptyList();
+        this(home.toString());
+    }
+    
+    /**
+     * Gets software installation location.
+     * 
+     * <p>Use the String variant to avoid Windows borkage.</p>
+     * 
+     * @return install path
+     * 
+     * @deprecated
+     */
+    @Deprecated(since="4.2", forRemoval=true)
+    @Nonnull Path getIdPHome() {
+        return Path.of(idpHome);
     }
     
     /**
      * Gets software installation location.
      * 
      * @return install path
+     * 
+     * @since 4.2.0
      */
-    @Nonnull Path getIdPHome() {
+    @Nonnull @NotEmpty String getInstallLocation() {
         return idpHome;
     }
     
