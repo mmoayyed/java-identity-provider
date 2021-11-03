@@ -55,6 +55,7 @@
 
     <!-- Logs unencrypted SAML at DEBUG level -->
     <logger name="org.opensaml.saml.saml2.encryption.Encrypter" level="${idp.loglevel.encryption}" />
+    <logger name="org.opensaml.saml.saml2.encryption.Decrypter" level="${idp.loglevel.encryption}" />
 
     <!-- Logs system properties during startup at DEBUG level -->
     <logger name="net.shibboleth.idp.log.LogbackLoggingService" level="${idp.loglevel.props}" />
