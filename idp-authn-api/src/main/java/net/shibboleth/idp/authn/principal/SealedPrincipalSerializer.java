@@ -81,21 +81,26 @@ public class SealedPrincipalSerializer<T extends Principal> extends SimplePrinci
     /** {@inheritDoc} */
     @Override
     public boolean supports(@Nonnull final Principal principal) {
-        if (sealer == null) {
+        if (!super.supports(principal)) {
+            return false;
+        } else if (sealer == null) {
             log.error("No DataSealer was provided, unable to support serialization");
             return false;
         }
-        return super.supports(principal);
+        return true;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
-        if (sealer == null) {
+
+        if (!super.supports(value)) {
+            return false;
+        } else if (sealer == null) {
             log.error("No DataSealer was provided, unable to support deserialization");
             return false;
         }
-        return super.supports(value);
+        return true;
     }
     
     /** {@inheritDoc} */
