@@ -77,7 +77,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
         try {
             component = service.getServiceableComponent();
             if (null == component) {
-                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration.", getId());
+                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration", getId());
             } else {
                 final RelyingPartyConfigurationResolver resolver = component.getComponent();
                 final List<RelyingPartyConfiguration> results = new ArrayList<>();
@@ -105,7 +105,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
         try {
             component = service.getServiceableComponent();
             if (null == component) {
-                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration.", getId());
+                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration", getId());
             } else {
                 final RelyingPartyConfigurationResolver resolver = component.getComponent();
                 return resolver.resolveSingle(context);
@@ -129,7 +129,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
             component = service.getServiceableComponent();
             if (null == component) {
                 log.error("RelyingPartyResolver '{}': error looking up default security config:"
-                        + " Invalid configuration.", getId());
+                        + " Invalid configuration", getId());
             } else {
                 final RelyingPartyConfigurationResolver resolver = component.getComponent();
                 return resolver.getDefaultSecurityConfiguration(profileId);

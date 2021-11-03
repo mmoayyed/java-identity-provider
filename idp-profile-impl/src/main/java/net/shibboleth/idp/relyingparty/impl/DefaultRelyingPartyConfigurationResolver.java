@@ -190,7 +190,7 @@ public class DefaultRelyingPartyConfigurationResolver
         final HashSet<String> configIds = new HashSet<>(rpConfigurations.size());
         for (final RelyingPartyConfiguration config : rpConfigurations) {
             if (configIds.contains(config.getId())) {
-                throw new ComponentInitializationException("Multiple replying party configurations with ID "
+                throw new ComponentInitializationException("Multiple relying party configurations with ID "
                         + config.getId() + " detected. Configuration IDs must be unique.");
             }
             configIds.add(config.getId());

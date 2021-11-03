@@ -83,7 +83,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      */
     @Nonnull @NotEmpty public String getResponderId(@Nullable final ProfileRequestContext profileRequestContext) {
         return Constraint.isNotEmpty(responderIdLookupStrategy.apply(profileRequestContext),
-                "ResponderId cannot be null");
+                "ResponderId cannot be null or empty");
     }
 
     /**
@@ -95,7 +95,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         final String id =
-                Constraint.isNotNull(StringSupport.trimOrNull(responder), "ResponseId cannot be null or empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(responder), "ResponderId cannot be null or empty");
         responderIdLookupStrategy = FunctionSupport.constant(id);
     }
 
@@ -226,7 +226,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         activationCondition =
-                Constraint.isNotNull(condition, "Relying partying configuration activation condition cannot be null");
+                Constraint.isNotNull(condition, "Relying party configuration activation condition cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -234,7 +234,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
         super.doInitialize();
     
         if (responderIdLookupStrategy == null) {
-            throw new ComponentInitializationException("Responder ID lookup strategy cannot be null");
+            throw new ComponentInitializationException("ResponderID lookup strategy cannot be null");
         }
         
     }
