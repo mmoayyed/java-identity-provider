@@ -111,7 +111,7 @@ public abstract class AbstractIdPModule implements IdPModule {
 
             final Path resolved = moduleContext.getIdPHome().resolve(resource.getDestination());
             log.debug("Module {}: resolved resource destination {}", getId(), resolved);
-            if (resolved.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+            if (resolved.toString().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
                 final ClassPathResource cp = new ClassPathResource(
                         resolved.toString().substring(ResourceUtils.CLASSPATH_URL_PREFIX.length()));
                 if (!cp.exists()) {
@@ -134,7 +134,7 @@ public abstract class AbstractIdPModule implements IdPModule {
     @Nonnull @NonnullElements public Map<ModuleResource, ResourceResult> enable(
             @Nonnull final ModuleContext moduleContext) throws ModuleException {
         
-        if (moduleContext.getIdPHome().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+        if (moduleContext.getIdPHome().toString().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             throw new ModuleException("IdP location is a classpath");
         }
         
@@ -164,7 +164,7 @@ public abstract class AbstractIdPModule implements IdPModule {
     @Nonnull @NonnullElements public Map<ModuleResource, ResourceResult> disable(
             @Nonnull final ModuleContext moduleContext, final boolean clean) throws ModuleException {
 
-        if (moduleContext.getIdPHome().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+        if (moduleContext.getIdPHome().toString().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             throw new ModuleException("IdP location is a classpath");
         }
 
