@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
@@ -31,9 +32,11 @@ import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -61,6 +64,9 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
     /** Lookup function for the flow IDs to activate from within the available set. */
     @NonnullAfterInit private Function<ProfileRequestContext,Collection<String>> activeFlowsLookupStrategy;
     
+    /** A label for logging activity indicating what type of flows are being handled. */
+    @Nullable private String loggingLabel;
+    
     /** Constructor. */
     public PopulateProfileInterceptorContext() {
         availableFlows = Collections.emptyList();
@@ -85,7 +91,21 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
     public void setActiveFlowsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         activeFlowsLookupStrategy = Constraint.isNotNull(strategy, "Flow lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set a label for logging indicating which "type" of interceptors are being handled.
+     * 
+     * @param label logging label
+     * 
+     * @since 4.2.0
+     */
+    public void setLoggingLabel(@Nullable @NotEmpty final String label) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        loggingLabel = StringSupport.trimOrNull(label);
     }
     
     /** {@inheritDoc} */
@@ -106,21 +126,25 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
         interceptorContext.setAttemptedFlow(null);
         
         final Collection<String> activeFlows = activeFlowsLookupStrategy.apply(profileRequestContext);
-        if (activeFlows != null) {
+        if (activeFlows != null && !activeFlows.isEmpty()) {
             for (final String id : activeFlows) {
                 final String flowId = ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + id;
                 final Optional<ProfileInterceptorFlowDescriptor> flow =
                         availableFlows.stream().filter(fd -> fd.getId().equals(flowId)).findFirst();
                 
                 if (flow.isPresent()) {
-                    log.debug("{} Installing flow {} into interceptor context", getLogPrefix(), flowId);
+                    log.debug("{} Installing {} flow {} into interceptor context", getLogPrefix(), loggingLabel,
+                            flowId);
                     interceptorContext.getAvailableFlows().put(flow.orElseThrow().getId(), flow.orElseThrow());
                 } else {
-                    log.error("{} Configured interceptor flow {} not available for use", getLogPrefix(), flowId);
+                    log.error("{} Configured {} interceptor flow {} not available for use", getLogPrefix(),
+                            loggingLabel, flowId);
                     ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
                     return;
                 }
             }
+        } else {
+            log.debug("{} No {} interceptor flows active for this request", getLogPrefix(), loggingLabel);
         }
     }
     

@@ -92,6 +92,15 @@
     <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.PostResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostResponseAuditExtractors')}" />
 
+    <bean id="PopulateOutboundInterceptContext"
+            class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}"
+            p:loggingLabel="outbound">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.OutboundFlowsLookupFunction" />
+        </property>
+    </bean>
+
     <bean id="PostDecodePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.PostDecodeAuditExtractors') ?: getObject('shibboleth.DefaultPostDecodeAuditExtractors')}" />
     

@@ -43,7 +43,8 @@
 
     <bean id="PopulatePostAuthnInterceptContext"
           class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
-          p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}">
+          p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}"
+          p:loggingLabel="post-authn">
         <property name="activeFlowsLookupStrategy">
             <bean class="net.shibboleth.idp.authn.config.navigate.PostAuthenticationFlowsLookupFunction" />
         </property>
