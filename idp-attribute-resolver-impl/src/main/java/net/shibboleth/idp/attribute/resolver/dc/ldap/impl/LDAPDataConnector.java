@@ -182,8 +182,8 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
                         sslConfig.getCredentialConfig().createSSLContextInitializer() : null;
                     if (cxtInit instanceof X509SSLContextInitializer) {
                         if (((X509SSLContextInitializer) cxtInit).getTrustCertificates() == null) {
-                            throw new ComponentInitializationException("Cannot use the default JVM trust store for "+
-                                    getLogPrefix());
+                            throw new ComponentInitializationException(getLogPrefix() +
+                                    ": Use of default JVM trust store not supported");
                         }
                     }
                 }
