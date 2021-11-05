@@ -1334,7 +1334,7 @@
                             <sequence>
                                 <element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded" />
                             </sequence>
-                            <attribute name="providerRef" type="shibmd:string" use="required" />
+                            <attribute name="providerRef" type="shibmd:listOfStrings" use="required" />
                         </complexType>
                     </element>
                 </sequence>
@@ -1415,10 +1415,16 @@
             </annotation>
         </attribute>
     </complexType>
+    
+    <simpleType name="listOfStrings">
+        <list itemType="shibmd:string"/>
+    </simpleType>
 
     <simpleType name="string">
         <restriction base="string">
             <minLength value="1"/>
         </restriction>
     </simpleType>
+    
+    
 </schema>

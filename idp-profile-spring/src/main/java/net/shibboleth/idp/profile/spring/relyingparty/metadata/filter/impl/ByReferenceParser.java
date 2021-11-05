@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.ByReferenceMetadataFilter;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.ManagedMap;
@@ -66,7 +67,9 @@ public class ByReferenceParser extends AbstractCustomBeanDefinitionParser {
                 final List<Element> filters = ElementSupport.getChildElements(child,
                         new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "MetadataFilter"));
                 if (filters != null && !filters.isEmpty()) {
-                    final String providerRef = child.getAttributeNS(null, "providerRef");
+                    final AbstractBeanDefinition providerRef =
+                            SpringSupport.getAttributeValueAsList(child.getAttributeNodeNS(null, "providerRef"));
+                    
                     final ManagedList<BeanDefinition> filterBeans =
                             SpringSupport.parseCustomElements(filters, parserContext, builder);
                     if (filterBeans != null) {
