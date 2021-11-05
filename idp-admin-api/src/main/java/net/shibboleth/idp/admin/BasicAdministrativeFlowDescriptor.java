@@ -18,6 +18,7 @@
 package net.shibboleth.idp.admin;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
@@ -37,6 +39,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.LangBearingString;
@@ -91,6 +94,12 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     @Nonnull private Function<ProfileRequestContext,Collection<Principal>>
             defaultAuthenticationMethodsLookupStrategy;
 
+    /**
+     * Auhentication methods provided by delimited strings, for post-initialization override via
+     * {@link PrincipalServiceManager}.
+     */
+    @Nonnull private Function<ProfileRequestContext,Collection<String>> stringBasedPrincipalsLookupStrategy;
+    
     /** Filters the usable authentication flows. */
     @Nonnull private Function<ProfileRequestContext,Set<String>> authenticationFlowsLookupStrategy;
 
@@ -105,6 +114,9 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     
     /** Builder factory for XMLObjects needed in UIInfo emulation. */
     @Nonnull private final XMLObjectBuilderFactory builderFactory;
+
+    /** Access to principal services. */
+    @Nullable private PrincipalServiceManager principalServiceManager;
     
     /**
      * Constructor.
@@ -125,9 +137,21 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
                 UIInfo.DEFAULT_ELEMENT_NAME)).buildObject();
         
         defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(null);
+        stringBasedPrincipalsLookupStrategy = FunctionSupport.constant(null);
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         proxyCountLookupStrategy = FunctionSupport.constant(null);
+    }
+    
+    /**
+     * Sets a {@link PrincipalServiceManager} to use for string-based principal processing.
+     * 
+     * @param manager manager to set
+     * 
+     * @since 4.2.0
+     */
+    public void setPrincipalServiceManager(@Nullable final PrincipalServiceManager manager) {
+        principalServiceManager = manager;
     }
     
     /** {@inheritDoc} */
@@ -351,10 +375,29 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext) {
+        
+        // Check for string-based representation first, then back off to native objects.
+        
+        if (principalServiceManager != null) {
+            final Collection<String> stringBasedPrincipals =
+                    stringBasedPrincipalsLookupStrategy.apply(profileRequestContext);
+            if (stringBasedPrincipals != null && !stringBasedPrincipals.isEmpty()) {
+                final List<Principal> principals = new ArrayList<>(stringBasedPrincipals.size());
+                stringBasedPrincipals.forEach(v -> {
+                    final Principal p = principalServiceManager.principalFromString(v);
+                    if (p != null) {
+                        principals.add(p);
+                    }
+                });
+                return List.copyOf(principals);
+            }
+        }
+        
         final Collection<Principal> methods = defaultAuthenticationMethodsLookupStrategy.apply(profileRequestContext);
         if (methods != null) {
             return List.copyOf(methods);
         }
+        
         return Collections.emptyList();
     }
     
@@ -382,6 +425,36 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
         defaultAuthenticationMethodsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
+    /**
+     * Set the authentication methods to use, expressed as strings that will be
+     * converted to principals during initialization.
+     *
+     * @param methods default authentication methods to use, expressed as strings
+     * 
+     * @since 4.2.0
+     */
+    public void setDefaultAuthenticationMethodsByString(
+            @Nullable @NonnullElements final Collection<String> methods) {
+        if (methods != null) {
+            stringBasedPrincipalsLookupStrategy = FunctionSupport.constant(List.copyOf(methods));
+        } else {
+            stringBasedPrincipalsLookupStrategy = FunctionSupport.constant(null);
+        }
+    }
+    
+    /**
+     * Set a lookup strategy for the authentication methods to use, expressed as strings that will be
+     * converted to principals during initialization.
+     *
+     * @param strategy  lookup strategy
+     * 
+     * @since 4.2.0
+     */
+    public void setDefaultAuthenticationMethodsByStringLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+        stringBasedPrincipalsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {

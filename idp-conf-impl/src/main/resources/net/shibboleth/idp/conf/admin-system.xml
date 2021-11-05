@@ -35,6 +35,10 @@
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.status.postAuthenticationFlows:}'.trim()}" />
         </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.status.defaultAuthenticationMethods:}'.trim()}" />
+        </property>
     </bean>
 
     <bean parent="shibboleth.AdminFlow"
@@ -47,6 +51,10 @@
         <property name="postAuthenticationFlows">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.reload.postAuthenticationFlows:}'.trim()}" />
+        </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.reload.defaultAuthenticationMethods:}'.trim()}" />
         </property>
     </bean>
 
@@ -61,6 +69,10 @@
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.reload.postAuthenticationFlows:}'.trim()}" />
         </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.reload.defaultAuthenticationMethods:}'.trim()}" />
+        </property>
     </bean>
 
     <bean parent="shibboleth.AdminFlow"
@@ -73,6 +85,10 @@
         <property name="postAuthenticationFlows">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.resolvertest.postAuthenticationFlows:}'.trim()}" />
+        </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.resolvertest.defaultAuthenticationMethods:}'.trim()}" />
         </property>
     </bean>
 
@@ -87,6 +103,10 @@
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.mdquery.postAuthenticationFlows:}'.trim()}" />
         </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.mdquery.defaultAuthenticationMethods:}'.trim()}" />
+        </property>
     </bean>
 
     <bean parent="shibboleth.AdminFlow"
@@ -99,6 +119,10 @@
         <property name="postAuthenticationFlows">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.metrics.postAuthenticationFlows:}'.trim()}" />
+        </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.metrics.defaultAuthenticationMethods:}'.trim()}" />
         </property>
     </bean>
 
@@ -113,6 +137,10 @@
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.hello.postAuthenticationFlows:}'.trim()}" />
         </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.hello.defaultAuthenticationMethods:}'.trim()}" />
+        </property>
     </bean>
 
     <bean parent="shibboleth.AdminFlow"
@@ -125,6 +153,10 @@
         <property name="postAuthenticationFlows">
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.lockout.postAuthenticationFlows:}'.trim()}" />
+        </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.lockout.defaultAuthenticationMethods:}'.trim()}" />
         </property>
     </bean>
 
@@ -139,6 +171,10 @@
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.storage.postAuthenticationFlows:}'.trim()}" />
         </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.storage.defaultAuthenticationMethods:}'.trim()}" />
+        </property>
     </bean>
 
     <bean parent="shibboleth.OneTimeAdminFlow"
@@ -152,16 +188,22 @@
             <bean parent="shibboleth.CommaDelimStringArray"
                 c:_0="#{'%{idp.unlock-keys.postAuthenticationFlows:}'.trim()}" />
         </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.unlock-keys.defaultAuthenticationMethods:}'.trim()}" />
+        </property>
     </bean>
 
     <!-- Parent beans to default some of the flow boilerplate. -->
 
     <bean id="shibboleth.AdminFlow" abstract="true"
         class="net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor"
+        p:principalServiceManager-ref="shibboleth.PrincipalServiceManager"
         p:nonBrowserSupported="false" />
 
     <bean id="shibboleth.OneTimeAdminFlow" abstract="true"
         class="net.shibboleth.idp.admin.OneTimeAdministrativeFlowDescriptor"
+        p:principalServiceManager-ref="shibboleth.PrincipalServiceManager"
         p:nonBrowserSupported="false" />
 
     <!-- Function for returning custom access control policies for access to metrics. -->
