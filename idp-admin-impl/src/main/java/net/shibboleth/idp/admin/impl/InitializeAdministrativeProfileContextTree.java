@@ -43,8 +43,8 @@ import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestPr
  * An action that processes settings from a supplied {@link AdministrativeFlowDescriptor} to prepare
  * the profile context tree for subsequent use by an administrative profile flow.
  * 
- * <p>This action finalizes settings like non-browser compatibility, and if instructed to do so,
- * decorates the context tree with a mocked up {@link RelyingPartyContext} and {@link RelyingPartyUIContext}.</p>
+ * <p>This action finalizes settings like non-browser compatibility, and decorates the context tree with
+ * a mocked up {@link RelyingPartyContext} and {@link RelyingPartyUIContext}.</p>
  * 
  * @pre The injected {@link AdministrativeFlowDescriptor}'s ID must match {@link ProfileRequestContext#getProfileId()}
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}

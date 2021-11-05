@@ -65,10 +65,22 @@
     
     <action-state id="AttributeResolution">
         <evaluate expression="ResolveAttributes" />
+        <evaluate expression="PopulatePostAuthnInterceptContext" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="PopulateClientStorageSaveContext" />
+        <transition on="proceed" to="CheckPostAuthnInterceptContext" />
     </action-state>
+
+    <decision-state id="CheckPostAuthnInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="PopulateClientStorageSaveContext" else="DoPostAuthnInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="PopulateClientStorageSaveContext" />
+        <transition on="RestartAuthentication" to="AuthenticationSetup" />
+    </subflow-state>
 
     <action-state id="PopulateClientStorageSaveContext">
         <evaluate expression="AdminPopulateAuditContext" />

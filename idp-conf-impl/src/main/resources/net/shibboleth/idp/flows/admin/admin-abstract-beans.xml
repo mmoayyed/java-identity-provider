@@ -59,6 +59,15 @@
         p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
         p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
 
+    <bean id="PopulatePostAuthnInterceptContext"
+            class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}"
+            p:loggingLabel="post-authn">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.authn.config.navigate.PostAuthenticationFlowsLookupFunction" />
+        </property>
+    </bean>
+
     <bean id="PopulateClientStorageSaveContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
         p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />

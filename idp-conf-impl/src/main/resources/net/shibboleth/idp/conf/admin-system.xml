@@ -25,94 +25,144 @@
     <!-- Built-in flow descriptors. -->
     
     <bean parent="shibboleth.AdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/status"
-        p:loggingId="%{idp.status.logging:Status}"
-        p:policyName="%{idp.status.accessPolicy:AccessByIPAddress}"
-        p:nonBrowserSupported="%{idp.status.nonBrowserSupported:false}"
-        p:authenticated="%{idp.status.authenticated:false}"
-        p:resolveAttributes="%{idp.status.resolveAttributes:false}" />
+            c:id="http://shibboleth.net/ns/profiles/status"
+            p:loggingId="%{idp.status.logging:Status}"
+            p:policyName="%{idp.status.accessPolicy:AccessByIPAddress}"
+            p:nonBrowserSupported="%{idp.status.nonBrowserSupported:false}"
+            p:authenticated="%{idp.status.authenticated:false}"
+            p:resolveAttributes="%{idp.status.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.status.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <bean parent="shibboleth.AdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/reload-service-configuration"
-        p:loggingId="%{idp.reload.logging:Reload}"
-        p:policyName="%{idp.reload.accessPolicy:AccessByIPAddress}"
-        p:nonBrowserSupported="%{idp.reload.nonBrowserSupported:false}"
-        p:authenticated="%{idp.reload.authenticated:false}"
-        p:resolveAttributes="%{idp.reload.resolveAttributes:false}" />
+            c:id="http://shibboleth.net/ns/profiles/reload-service-configuration"
+            p:loggingId="%{idp.reload.logging:Reload}"
+            p:policyName="%{idp.reload.accessPolicy:AccessByIPAddress}"
+            p:nonBrowserSupported="%{idp.reload.nonBrowserSupported:false}"
+            p:authenticated="%{idp.reload.authenticated:false}"
+            p:resolveAttributes="%{idp.reload.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.reload.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <bean parent="shibboleth.AdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/reload-metadata"
-        p:loggingId="%{idp.reload.logging:Reload}"
-        p:policyName="%{idp.reload.accessPolicy:AccessByIPAddress}"
-        p:nonBrowserSupported="%{idp.reload.nonBrowserSupported:false}"
-        p:authenticated="%{idp.reload.authenticated:false}"
-        p:resolveAttributes="%{idp.reload.resolveAttributes:false}" />
+            c:id="http://shibboleth.net/ns/profiles/reload-metadata"
+            p:loggingId="%{idp.reload.logging:Reload}"
+            p:policyName="%{idp.reload.accessPolicy:AccessByIPAddress}"
+            p:nonBrowserSupported="%{idp.reload.nonBrowserSupported:false}"
+            p:authenticated="%{idp.reload.authenticated:false}"
+            p:resolveAttributes="%{idp.reload.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.reload.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <bean parent="shibboleth.AdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/resolvertest"
-        p:loggingId="%{idp.resolvertest.logging:ResolverTest}"
-        p:policyName="%{idp.resolvertest.accessPolicy:AccessByIPAddress}"
-        p:nonBrowserSupported="%{idp.resolvertest.nonBrowserSupported:false}"
-        p:authenticated="%{idp.resolvertest.authenticated:false}"
-        p:resolveAttributes="%{idp.resolvertest.resolveAttributes:false}" />
+            c:id="http://shibboleth.net/ns/profiles/resolvertest"
+            p:loggingId="%{idp.resolvertest.logging:ResolverTest}"
+            p:policyName="%{idp.resolvertest.accessPolicy:AccessByIPAddress}"
+            p:nonBrowserSupported="%{idp.resolvertest.nonBrowserSupported:false}"
+            p:authenticated="%{idp.resolvertest.authenticated:false}"
+            p:resolveAttributes="%{idp.resolvertest.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.resolvertest.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <bean parent="shibboleth.AdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/mdquery"
-        p:loggingId="%{idp.mdquery.logging:MetadataQuery}"
-        p:policyName="%{idp.mdquery.accessPolicy:AccessByIPAddress}"
-        p:nonBrowserSupported="%{idp.mdquery.nonBrowserSupported:false}"
-        p:authenticated="%{idp.mdquery.authenticated:false}"
-        p:resolveAttributes="%{idp.mdquery.resolveAttributes:false}" />
+            c:id="http://shibboleth.net/ns/profiles/mdquery"
+            p:loggingId="%{idp.mdquery.logging:MetadataQuery}"
+            p:policyName="%{idp.mdquery.accessPolicy:AccessByIPAddress}"
+            p:nonBrowserSupported="%{idp.mdquery.nonBrowserSupported:false}"
+            p:authenticated="%{idp.mdquery.authenticated:false}"
+            p:resolveAttributes="%{idp.mdquery.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.mdquery.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <bean parent="shibboleth.AdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/metrics"
-        p:loggingId="%{idp.metrics.logging:Metrics}"
-        p:policyNameLookupStrategy-ref="shibboleth.metrics.AccessPolicyStrategy"
-        p:nonBrowserSupported="%{idp.metrics.nonBrowserSupported:false}"
-        p:authenticated="%{idp.metrics.authenticated:false}"
-        p:resolveAttributes="%{idp.metrics.resolveAttributes:false}" />
+            c:id="http://shibboleth.net/ns/profiles/metrics"
+            p:loggingId="%{idp.metrics.logging:Metrics}"
+            p:policyNameLookupStrategy-ref="shibboleth.metrics.AccessPolicyStrategy"
+            p:nonBrowserSupported="%{idp.metrics.nonBrowserSupported:false}"
+            p:authenticated="%{idp.metrics.authenticated:false}"
+            p:resolveAttributes="%{idp.metrics.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.metrics.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <bean parent="shibboleth.AdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/hello"
-        p:loggingId="%{idp.hello.logging:Hello}"
-        p:policyName="%{idp.hello.accessPolicy:AccessByAdminUser}"
-        p:nonBrowserSupported="%{idp.hello.nonBrowserSupported:false}"
-        p:authenticated="%{idp.hello.authenticated:true}"
-        p:resolveAttributes="%{idp.hello.resolveAttributes:true}" />
+            c:id="http://shibboleth.net/ns/profiles/hello"
+            p:loggingId="%{idp.hello.logging:Hello}"
+            p:policyName="%{idp.hello.accessPolicy:AccessByAdminUser}"
+            p:nonBrowserSupported="%{idp.hello.nonBrowserSupported:false}"
+            p:authenticated="%{idp.hello.authenticated:true}"
+            p:resolveAttributes="%{idp.hello.resolveAttributes:true}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.hello.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <bean parent="shibboleth.AdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/lockout-manager"
-        p:loggingId="%{idp.lockout.logging:Lockout}"
-        p:policyName="%{idp.lockout.accessPolicy:AccessDenied}"
-        p:nonBrowserSupported="%{idp.lockout.nonBrowserSupported:false}"
-        p:authenticated="%{idp.lockout.authenticated:false}"
-        p:resolveAttributes="%{idp.lockout.resolveAttributes:false}" />
+            c:id="http://shibboleth.net/ns/profiles/lockout-manager"
+            p:loggingId="%{idp.lockout.logging:Lockout}"
+            p:policyName="%{idp.lockout.accessPolicy:AccessDenied}"
+            p:nonBrowserSupported="%{idp.lockout.nonBrowserSupported:false}"
+            p:authenticated="%{idp.lockout.authenticated:false}"
+            p:resolveAttributes="%{idp.lockout.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.lockout.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <bean parent="shibboleth.AdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/storage"
-        p:loggingId="%{idp.storage.logging:Storage}"
-        p:policyName="%{idp.storage.accessPolicy:AccessDenied}"
-        p:nonBrowserSupported="%{idp.storage.nonBrowserSupported:false}"
-        p:authenticated="%{idp.storage.authenticated:false}"
-        p:resolveAttributes="%{idp.storage.resolveAttributes:false}" />
+            c:id="http://shibboleth.net/ns/profiles/storage"
+            p:loggingId="%{idp.storage.logging:Storage}"
+            p:policyName="%{idp.storage.accessPolicy:AccessDenied}"
+            p:nonBrowserSupported="%{idp.storage.nonBrowserSupported:false}"
+            p:authenticated="%{idp.storage.authenticated:false}"
+            p:resolveAttributes="%{idp.storage.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.storage.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <bean parent="shibboleth.OneTimeAdminFlow"
-        c:id="http://shibboleth.net/ns/profiles/unlock-keys"
-        p:loggingId="%{idp.unlock-keys.logging:UnlockKeys}"
-        p:policyName="%{idp.unlock-keys.accessPolicy:AccessDenied}"
-        p:nonBrowserSupported="%{idp.unlock-keys.nonBrowserSupported:false}"
-        p:authenticated="%{idp.unlock-keys.authenticated:true}"
-        p:resolveAttributes="%{idp.unlock-keys.resolveAttributes:false}" />
+            c:id="http://shibboleth.net/ns/profiles/unlock-keys"
+            p:loggingId="%{idp.unlock-keys.logging:UnlockKeys}"
+            p:policyName="%{idp.unlock-keys.accessPolicy:AccessDenied}"
+            p:nonBrowserSupported="%{idp.unlock-keys.nonBrowserSupported:false}"
+            p:authenticated="%{idp.unlock-keys.authenticated:true}"
+            p:resolveAttributes="%{idp.unlock-keys.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.unlock-keys.postAuthenticationFlows:}'.trim()}" />
+        </property>
+    </bean>
 
     <!-- Parent beans to default some of the flow boilerplate. -->
 
     <bean id="shibboleth.AdminFlow" abstract="true"
-            class="net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor"
-            p:nonBrowserSupported="false" />
+        class="net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor"
+        p:nonBrowserSupported="false" />
 
     <bean id="shibboleth.OneTimeAdminFlow" abstract="true"
-            class="net.shibboleth.idp.admin.OneTimeAdministrativeFlowDescriptor"
-            p:nonBrowserSupported="false" />
+        class="net.shibboleth.idp.admin.OneTimeAdministrativeFlowDescriptor"
+        p:nonBrowserSupported="false" />
 
     <!-- Function for returning custom access control policies for access to metrics. -->
 
