@@ -52,6 +52,7 @@ public class SPNEGOAutoLoginManagerTest {
 
         SPNEGOAutoLoginManager autoLoginManager = new SPNEGOAutoLoginManager();
         autoLoginManager.setCookieManager(cookieManager);
+        autoLoginManager.setCookieName("spnego_autologin");
         autoLoginManager.initialize();
 
         return autoLoginManager;
@@ -64,7 +65,7 @@ public class SPNEGOAutoLoginManagerTest {
 
         autoLoginManager.enable();
 
-        Cookie cookie = res.getCookie(SPNEGOAutoLoginManager.AUTOLOGIN_COOKIE_NAME);
+        Cookie cookie = res.getCookie("spnego_autologin");
         Assert.assertNotNull(cookie);
         Assert.assertEquals(cookie.getValue(), SPNEGOAutoLoginManager.AUTOLOGIN_COOKIE_VALUE_TRUE);
     }
@@ -76,7 +77,7 @@ public class SPNEGOAutoLoginManagerTest {
 
         autoLoginManager.disable();
 
-        Cookie cookie = res.getCookie(SPNEGOAutoLoginManager.AUTOLOGIN_COOKIE_NAME);
+        Cookie cookie = res.getCookie("spnego_autologin");
         Assert.assertNotNull(cookie);
         Assert.assertNull(cookie.getValue());
     }
@@ -84,7 +85,7 @@ public class SPNEGOAutoLoginManagerTest {
     @Test
     public void givenCookieTrue_onlyIsEnabledShouldReturnTrue() throws Exception {
         MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setCookies(new Cookie(SPNEGOAutoLoginManager.AUTOLOGIN_COOKIE_NAME,
+        req.setCookies(new Cookie("spnego_autologin",
                 SPNEGOAutoLoginManager.AUTOLOGIN_COOKIE_VALUE_TRUE));
         SPNEGOAutoLoginManager autoLoginManager = createAutoLoginManager(req, null);
 
@@ -104,7 +105,7 @@ public class SPNEGOAutoLoginManagerTest {
     @Test
     public void givenCookieFalse_onlyIsDisabledShouldReturnTrue() throws Exception {
         MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setCookies(new Cookie(SPNEGOAutoLoginManager.AUTOLOGIN_COOKIE_NAME, AUTOLOGIN_COOKIE_VALUE_FALSE));
+        req.setCookies(new Cookie("spnego_autologin", AUTOLOGIN_COOKIE_VALUE_FALSE));
         SPNEGOAutoLoginManager autoLoginManager = createAutoLoginManager(req, null);
 
         Assert.assertFalse(autoLoginManager.isEnabled());
@@ -114,7 +115,7 @@ public class SPNEGOAutoLoginManagerTest {
     @Test
     public void givenCookieOtherValue_onlyIsDisabledShouldReturnTrue() throws Exception {
         MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setCookies(new Cookie(SPNEGOAutoLoginManager.AUTOLOGIN_COOKIE_NAME, AUTOLOGIN_COOKIE_VALUE_OTHER));
+        req.setCookies(new Cookie("spnego_autologin", AUTOLOGIN_COOKIE_VALUE_OTHER));
         SPNEGOAutoLoginManager autoLoginManager = createAutoLoginManager(req, null);
 
         Assert.assertFalse(autoLoginManager.isEnabled());

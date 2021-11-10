@@ -26,6 +26,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.CookieManager;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
     /** Name of the SPNEGO auto-login signaling parameter. */
     @Nonnull @NotEmpty public static final String AUTOLOGIN_PARAMETER_NAME = "_shib_idp_SPNEGO_enable_autologin";
 
-    /** Name of the SPNEGO auto-login cookie. */
+    /** Default name of the SPNEGO auto-login cookie. */
     @Nonnull @NotEmpty public static final String AUTOLOGIN_COOKIE_NAME = "_idp_spnego_autologin";
 
     /** SPNEGO auto-login cookie value representing true. */
@@ -49,7 +50,15 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
 
     /** Manages creation of cookies. */
     @NonnullAfterInit private CookieManager cookieManager;
+    
+    /** Auto-login cookie name. */
+    @Nonnull @NotEmpty private String cookieName;
 
+    /** Constructor. */
+    public SPNEGOAutoLoginManager() {
+        cookieName = AUTOLOGIN_COOKIE_NAME;
+    }
+    
     /**
      * Set the {@link CookieManager} to use.
      * 
@@ -70,6 +79,19 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
         return cookieManager;
     }
 
+    /**
+     * Set the auto-login cookie name.
+     * 
+     * @param name cookie name
+     * 
+     * @since 4.2.0
+     */
+    public void setCookieName(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        cookieName = Constraint.isNotEmpty(StringSupport.trimOrNull(name), "Cookie name cannot be null or empty");
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -85,7 +107,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * Enable auto-login, i.e. set cookie to 'true'.
      */
     public void enable() {
-        cookieManager.addCookie(AUTOLOGIN_COOKIE_NAME, AUTOLOGIN_COOKIE_VALUE_TRUE);
+        cookieManager.addCookie(cookieName, AUTOLOGIN_COOKIE_VALUE_TRUE);
         log.debug("Auto-login has been enabled.");
     }
 
@@ -93,7 +115,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * Disable auto-login. i.e. unset cookie.
      */
     public void disable() {
-        cookieManager.unsetCookie(AUTOLOGIN_COOKIE_NAME);
+        cookieManager.unsetCookie(cookieName);
         log.debug("Auto-login has been disabled.");
     }
 
@@ -103,7 +125,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * @return true if auto-login is enabled.
      */
     public boolean isEnabled() {
-        return cookieManager.cookieHasValue(AUTOLOGIN_COOKIE_NAME, AUTOLOGIN_COOKIE_VALUE_TRUE);
+        return cookieManager.cookieHasValue(cookieName, AUTOLOGIN_COOKIE_VALUE_TRUE);
     }
 
     /**
@@ -115,7 +137,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
         /*
          * auto-login is considered disabled if cookie is absent or value is anything except "true".
          */
-        final String value = getCookieManager().getCookieValue(AUTOLOGIN_COOKIE_NAME, null);
+        final String value = getCookieManager().getCookieValue(cookieName, null);
         return value == null || !value.equals(AUTOLOGIN_COOKIE_VALUE_TRUE);
     }
 

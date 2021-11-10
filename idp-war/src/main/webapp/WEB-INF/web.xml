@@ -181,8 +181,13 @@
     <session-config>
         <session-timeout>15</session-timeout>
         <cookie-config>
-            <http-only>true</http-only>
+            <!-- Uncomment to add __Host- protection. -->
+            <!--
+            <name>__Host-JSESSIONID</name>
+            <path>/</path>
+            -->
             <secure>true</secure>
+            <http-only>true</http-only>
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
