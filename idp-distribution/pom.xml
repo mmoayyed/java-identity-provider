@@ -19,7 +19,17 @@
     <properties>
         <idp.finalName>shibboleth-identity-provider-${project.version}</idp.finalName>
         <idp.assemblyDirectory>${project.build.directory}/${idp.finalName}</idp.assemblyDirectory>
+        <checkM2>false</checkM2>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>checkMavenRepo</id>
+            <properties>
+                <checkM2>true</checkM2>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <!-- Compile Dependencies -->
@@ -272,6 +282,7 @@
                                     <checkSignatures>true</checkSignatures>
                                     <checkDependencies>true</checkDependencies>
                                     <listJarSources>false</listJarSources>
+                                    <checkM2>${checkM2}</checkM2>
                                     <artifactMap>${basedir}/src/main/enforcer/artifactMap.properties</artifactMap>
                                 </jarEnforcer>
                             </rules>
