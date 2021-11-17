@@ -79,6 +79,7 @@ public abstract class AbstractAttributeTranscoder<T> extends AbstractInitializab
         return doEncode(profileRequestContext, attribute, to, rule);
     }
     
+   
     /** {@inheritDoc} */
     @Nullable public IdPAttribute decode(@Nullable final ProfileRequestContext profileRequestContext,
             @Nonnull final T input, @Nonnull final TranscodingRule rule) throws AttributeDecodingException {
@@ -90,10 +91,6 @@ public abstract class AbstractAttributeTranscoder<T> extends AbstractInitializab
         }
         
         final IdPAttribute attribute = doDecode(profileRequestContext, input, rule);
-        
-        attribute.setDisplayNames(rule.getDisplayNames());
-        attribute.setDisplayDescriptions(rule.getDescriptions());
-        
         return attribute;
     }
     
