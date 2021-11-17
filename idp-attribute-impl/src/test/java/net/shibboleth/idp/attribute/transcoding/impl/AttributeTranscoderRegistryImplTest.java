@@ -194,10 +194,6 @@ public class AttributeTranscoderRegistryImplTest {
         assertEquals(attributes.get(0).getId(), "foo");
         assertTrue(attributes.get(0).getValues().isEmpty());
         
-        assertEquals(attributes.get(0).getDisplayNames().get(Locale.getDefault()), "Default name");
-        assertEquals(attributes.get(0).getDisplayDescriptions().get(Locale.forLanguageTag("en")), "English desc");
-        assertEquals(attributes.get(0).getDisplayNames().get(Locale.forLanguageTag("fr-ca")), "Canadian French name");
-        assertEquals(attributes.get(0).getDisplayDescriptions().get(Locale.forLanguageTag("fr-ca")), "Canadian French desc");
     }
 
     @Test public void testDecodeTwoNoValues() throws AttributeDecodingException {
