@@ -421,6 +421,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      * 
      * @return the AttributeValue object containing the EPR
      */
+    @SuppressWarnings("unchecked")
     @Nonnull private XMLObject buildLibertSSOSEPRAttributeValue(@Nonnull final ProfileRequestContext requestContext, 
             @Nonnull final Assertion assertion) {
         

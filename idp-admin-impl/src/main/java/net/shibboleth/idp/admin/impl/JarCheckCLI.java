@@ -65,7 +65,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     @Nonnull private List<String> distJars = Collections.emptyList();
 
     /** Populate {@link #webAppJars}, {@link #pluginJars} and {@link #distJars}. 
-     * @param args
+     * @param args the arguments
      */
     private void loadJarFiles(final JarCheckArguments args) {
         final Path idpHome = Path.of(args.getIdPHome());

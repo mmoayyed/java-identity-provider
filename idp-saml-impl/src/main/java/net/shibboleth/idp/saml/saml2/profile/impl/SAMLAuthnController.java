@@ -125,7 +125,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
     /**
      * Set inbound bindings to use to deduce ProtocolBinding attribute.
      * 
-     * @param bindings
+     * @param bindings the bindings to set
      */
     public void setInboundBindings(@Nullable @NonnullElements final Collection<BindingDescriptor> bindings) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);

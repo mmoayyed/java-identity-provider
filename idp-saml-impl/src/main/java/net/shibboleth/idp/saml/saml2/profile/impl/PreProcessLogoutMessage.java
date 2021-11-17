@@ -98,7 +98,7 @@ public class PreProcessLogoutMessage extends AbstractProfileAction {
      * 
      * <p>Defaults to false.</p>
      * 
-     * @param flag
+     * @param flag what to set
      */
     public void setAssumeAsynchronousLogout(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);

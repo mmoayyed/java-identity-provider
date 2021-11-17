@@ -338,7 +338,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * Sets a subject decorating component called prior to completing authentication and passing
      * control to subject canonicalization.
      * 
-     * @param decorator
+     * @param decorator the decorator to set
      * 
      * @since 4.1.0
      */

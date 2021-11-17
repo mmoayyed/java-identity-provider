@@ -50,7 +50,7 @@ public class FirstPartyIdPPlugin extends PropertyDrivenIdPPlugin {
     }
 
     /** {@inheritDoc} 
-     * @throws PluginException */
+     * @throws PluginException if the URLs cannot be resolved */
     @Override
     @Nonnull @NonnullElements @Unmodifiable @NotLive public List<URL> getDefaultUpdateURLs() throws PluginException {
         try {

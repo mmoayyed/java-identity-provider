@@ -220,7 +220,7 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
      * Provides default update locations to use.
      * 
      * @return default update locations
-     * @throws PluginException 
+     * @throws PluginException if a derived class throws it (see derived classes)
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive protected List<URL> getDefaultUpdateURLs() throws PluginException {
         return Collections.emptyList();
