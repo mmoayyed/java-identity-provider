@@ -21,6 +21,7 @@ import java.util.List;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
@@ -48,5 +49,10 @@ public class ChainingMetadataProviderParser extends AbstractMetadataProviderPars
 
         builder.addPropertyValue("resolvers",
                 SpringSupport.parseCustomElements(childProviders, parserContext, builder));
+        
+        if (element.hasAttributeNS(null, "detectDuplicateEntityIDs")) {
+            builder.addPropertyValue("detectDuplicateEntityIDs",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "detectDuplicateEntityIDs")));
+        }
     }
 }

@@ -42,6 +42,13 @@
                         </annotation>
                     </element>
                 </sequence>
+                <attribute name="detectDuplicateEntityIDs" type="shibmd:string">
+                    <annotation>
+                        <documentation>
+                            Strategy for detecting duplicate entityIDs across resolvers.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

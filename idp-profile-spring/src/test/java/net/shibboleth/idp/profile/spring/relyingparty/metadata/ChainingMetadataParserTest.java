@@ -23,6 +23,7 @@ import java.util.Iterator;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.DetectDuplicateEntityIDs;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -34,6 +35,8 @@ public class ChainingMetadataParserTest extends AbstractMetadataParserTest {
         ChainingMetadataResolver resolver = getBean(ChainingMetadataResolver.class, "chain.xml");
         
         Assert.assertEquals(resolver.getId(), "chain");
+        
+        Assert.assertEquals(resolver.getDetectDuplicateEntityIDs(), DetectDuplicateEntityIDs.Off);
    
         final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
         
@@ -48,6 +51,8 @@ public class ChainingMetadataParserTest extends AbstractMetadataParserTest {
         ChainingMetadataResolver resolver = getBean(ChainingMetadataResolver.class, "chain2.xml");
         
         Assert.assertEquals(resolver.getId(), "chain2");
+   
+        Assert.assertEquals(resolver.getDetectDuplicateEntityIDs(), DetectDuplicateEntityIDs.Batch);
    
         final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
         
