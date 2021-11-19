@@ -20,6 +20,8 @@ package net.shibboleth.idp.profile.impl;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.opensaml.saml.metadata.resolver.DetectDuplicateEntityIDs;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -38,6 +40,9 @@ public class MetadataQueryRequest {
     
     /** Protocol identifier for query. */
     @Nullable private String protocol;
+    
+    /** The strategy for duplicate entityID detection. */
+    @Nullable private DetectDuplicateEntityIDs detectDuplicateEntityIDs;
 
     /**
      * Constructor.
@@ -82,12 +87,31 @@ public class MetadataQueryRequest {
         protocol = StringSupport.trimOrNull(prot);
     }
 
+    /**
+     * Get the strategy for duplicate entityID detection.
+     * 
+     * @return strategy for duplicate entityID detection
+     */
+    @Nullable public DetectDuplicateEntityIDs getDetectDuplicateEntityIDs() {
+        return detectDuplicateEntityIDs;
+    }
+
+    /**
+     * Set the strategy for duplicate entityID detection.
+     * 
+     * @param strategy the strategy for duplicate entityID detection
+     */
+    public void setDetectDuplicateEntityIDs(@Nullable final DetectDuplicateEntityIDs strategy) {
+        detectDuplicateEntityIDs = strategy;
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
             .add("entityID", entityID)
             .add("protocol", protocol)
+            .add("detectDuplicateEntityIDs", detectDuplicateEntityIDs)
             .toString();
     }
     

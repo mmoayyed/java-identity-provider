@@ -27,9 +27,11 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataLookupParametersContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLProtocolContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.metadata.resolver.DetectDuplicateEntityIDs;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,9 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
     /** Name of the query parameter for the CAS protocol: {@value} . */
     @Nonnull @NotEmpty public static final String CAS_PARAM = "cas";
     
+    /** Name of the query parameter carrying the detectDuplicateEntityIDs: {@value} . */
+    @Nonnull @NotEmpty public static final String DETECT_DUPLICATES_PARAM= "detectDuplicateEntityIDs";
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(MetadataQueryRequestDecoder.class);
     
@@ -68,6 +73,7 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
         final MetadataQueryRequest message = new MetadataQueryRequest();
         message.setEntityID(getEntityID(request));
         message.setProtocol(getProtocol(request));
+        message.setDetectDuplicateEntityIDs(getDetectDuplicateEntityIDs(request));
         
         final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(message);
@@ -80,6 +86,11 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
         
         if (message.getProtocol() != null) {
             messageContext.getSubcontext(SAMLProtocolContext.class, true).setProtocol(message.getProtocol());
+        }
+        
+        if (message.getDetectDuplicateEntityIDs() != null) {
+           messageContext.getSubcontext(SAMLMetadataLookupParametersContext.class, true)
+               .setDetectDuplicateEntityIDs(message.getDetectDuplicateEntityIDs());
         }
     }
 
@@ -125,5 +136,31 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
         
         return null;
     }
+    
+    /**
+     * Get the strategy for duplicate entityID detection.
+     * 
+     * @param request current HTTP request
+     * 
+     * @return the strategy, or null
+     * 
+     * @throws MessageDecodingException if the request request contains an invalid value
+     *                                  for <code>detectDuplicateEntityIDs</code>
+     */
+    @Nullable protected DetectDuplicateEntityIDs getDetectDuplicateEntityIDs(@Nonnull final HttpServletRequest request)
+            throws MessageDecodingException {
+        final String strategy = StringSupport.trimOrNull(request.getParameter(DETECT_DUPLICATES_PARAM));
+        if (strategy != null) {
+            try {
+                return DetectDuplicateEntityIDs.valueOf(strategy);
+            } catch (final IllegalArgumentException e) {
+                throw new MessageDecodingException("Saw invalid value for param: " + DETECT_DUPLICATES_PARAM, e);
+            }
+            
+        }
+        
+        return null;
+    }
+
 
 }
