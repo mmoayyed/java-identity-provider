@@ -137,14 +137,8 @@ h+XNZ5oAql/cjrwDWw==
     </SPSSODescriptor>
     <SPSSODescriptor protocolSupportEnumeration="http://openid.net/specs/openid-connect-core-1_0.html">
         <Extensions>
-            <oidcmd:OAuthRPExtensions>
-                <oidcmd:GrantType>authorization_code</oidcmd:GrantType>
-                <oidcmd:ResponseType>code</oidcmd:ResponseType>
-                <oidcmd:ApplicationType>web</oidcmd:ApplicationType>
-                <oidcmd:TokenEndpointAuthMethod>client_secret_basic</oidcmd:TokenEndpointAuthMethod>
-                <oidcmd:Scope>openid</oidcmd:Scope>
-                <oidcmd:Scope>profile</oidcmd:Scope>
-            </oidcmd:OAuthRPExtensions>
+            <oidcmd:OAuthRPExtensions application_type="web" grant_types="authorization_code" response_types="code"
+                    token_endpoint_auth_method="client_secret_basic" scopes="openid profile" />
         </Extensions>
         <KeyDescriptor>
             <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">

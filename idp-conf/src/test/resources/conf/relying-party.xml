@@ -23,7 +23,8 @@
     <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
             <list>
-            <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
+<!--                 <ref bean="OIDC.Configuration" /> -->
+<!--                 <ref bean="OIDC.Keyset" /> -->
             </list>
         </property>
     </bean>
@@ -43,6 +44,10 @@
                 <ref bean="SAML2.Logout.MDDriven" />
                 <ref bean="SAML2.AttributeQuery.MDDriven" />
                 <ref bean="SAML2.ArtifactResolution.MDDriven" />
+<!--                 <ref bean="OIDC.SSO" /> -->
+<!--                 <ref bean="OIDC.UserInfo"/> -->
+<!--                 <ref bean="OAUTH2.Revocation"/> -->
+<!--                 <ref bean="OAUTH2.Introspection" /> -->
             </list>
         </property>
     </bean>
