@@ -12,6 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <context:annotation-config/>
+
     <!-- This is one of the few properties we rely on that has no default. -->
     <bean id="entityID" class="java.lang.String" c:_0="%{idp.entityID}" />
 
@@ -20,9 +22,20 @@
         p:unverifiedConfiguration-ref="shibboleth.UnverifiedRelyingParty"
         p:defaultConfiguration-ref="shibboleth.DefaultRelyingParty"
         p:relyingPartyConfigurations-ref="shibboleth.RelyingPartyOverrides"
-        p:defaultSecurityConfiguration-ref="%{idp.security.config:shibboleth.DefaultSecurityConfiguration}" 
-        p:signingCredentials="#{getObject('shibboleth.SigningCredentials')}"
-        p:encryptionCredentials="#{getObject('shibboleth.EncryptionCredentials')}" />
+        p:defaultSecurityConfiguration-ref="%{idp.security.config:shibboleth.DefaultSecurityConfiguration}" />
+
+    <!--
+    Auto-wiring exposers for credentials to get them loaded into the bean above.
+    The qualifiers control which auto-wiring point is used.
+    -->
+    <bean class="net.shibboleth.idp.relyingparty.RelyingPartyResolverCredentialHolder"
+            c:_0="#{getObject('shibboleth.SigningCredentials')}">
+        <qualifier value="signing"/>
+    </bean>
+    <bean class="net.shibboleth.idp.relyingparty.RelyingPartyResolverCredentialHolder"
+            c:_0="#{getObject('shibboleth.EncryptionCredentials')}">
+        <qualifier value="encryption"/>
+    </bean>
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"

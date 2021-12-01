@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,6 +32,7 @@ import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.logic.VerifiedProfilePredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.idp.relyingparty.RelyingPartyResolverCredentialHolder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -45,6 +47,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.credential.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context.
@@ -88,7 +92,7 @@ public class DefaultRelyingPartyConfigurationResolver
         signingCredentials = Collections.emptyList();
         encryptionCredentials = Collections.emptyList();
     }
-
+    
     /**
      * Get an unmodifiable list of verified relying party configurations.
      * 
@@ -291,9 +295,16 @@ public class DefaultRelyingPartyConfigurationResolver
      * 
      * @param credentials the list of signing credentials, may be null
      */
-    public void setSigningCredentials(@Nullable @NonnullElements final List<Credential> credentials) {
+    @Autowired
+    @Qualifier("signing")
+    public void setSigningCredentials(
+            @Nullable @NonnullElements final List<RelyingPartyResolverCredentialHolder> credentials) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         if (credentials != null) {
-            signingCredentials = List.copyOf(credentials);
+            signingCredentials = credentials.stream()
+                    .flatMap(h -> h.getCredentials().stream())
+                    .collect(Collectors.toUnmodifiableList());
         } else {
             signingCredentials = Collections.emptyList();
         }
@@ -313,9 +324,16 @@ public class DefaultRelyingPartyConfigurationResolver
      * 
      * @param credentials the list of encryption credentials, may be null
      */
-    public void setEncryptionCredentials(@Nullable @NonnullElements final List<Credential> credentials) {
+    @Autowired
+    @Qualifier("encryption")
+    public void setEncryptionCredentials(
+            @Nullable @NonnullElements final List<RelyingPartyResolverCredentialHolder> credentials) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         if (credentials != null) {
-            encryptionCredentials = List.copyOf(credentials);
+            encryptionCredentials = credentials.stream()
+                    .flatMap(h -> h.getCredentials().stream())
+                    .collect(Collectors.toUnmodifiableList());
         } else {
             encryptionCredentials = Collections.emptyList();
         }
