@@ -103,8 +103,7 @@
             </map>
         </property>
     </bean>
-    -->
-    
+
     <bean id="shibboleth.ExtensionSchemas" parent="shibboleth.DefaultExtensionSchemas">
         <property name="sourceList">
             <list merge="true">
@@ -112,5 +111,5 @@
             </list>
         </property>
     </bean>
-    
+    -->
 </beans>
