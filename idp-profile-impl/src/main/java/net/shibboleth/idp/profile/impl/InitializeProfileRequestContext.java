@@ -53,6 +53,9 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
     /** The profile ID to initialize the context to. */
     @Nullable private String profileId;
 
+    /** Backup profile ID to populate as a legacy value. */
+    @Nullable private String legacyProfileId;
+    
     /** The logging ID to initialize the context to. */
     @Nullable private String loggingId;
     
@@ -71,6 +74,19 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         profileId = StringSupport.trimOrNull(id);
+    }
+    
+    /**
+     * Set the legacy/fallback profile ID to populate into the context.
+     * 
+     * @param id    legacy profile ID to populate into the context
+     * 
+     * @since 4.2.0
+     */
+    public void setLegacyProfileId(@Nullable final String id) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        legacyProfileId = StringSupport.trimOrNull(id);
     }
 
     /**
@@ -121,6 +137,10 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         final ProfileRequestContext prc = new ProfileRequestContext();
         if (profileId != null) {
             prc.setProfileId(profileId);
+        }
+        
+        if (legacyProfileId != null) {
+            prc.setLegacyProfileId(legacyProfileId);
         }
         
         if (loggingId != null) {

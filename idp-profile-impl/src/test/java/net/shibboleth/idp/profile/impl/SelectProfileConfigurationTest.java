@@ -26,7 +26,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.impl.SelectProfileConfiguration;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.MockProfileConfiguration;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -47,6 +46,11 @@ public class SelectProfileConfigurationTest {
 
     private SelectProfileConfiguration action;
     
+    /**
+     * Test setup.
+     * 
+     * @throws ComponentInitializationException
+     */
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
@@ -113,4 +117,25 @@ public class SelectProfileConfigurationTest {
         Assert.assertEquals(prc.getSubcontext(RelyingPartyContext.class).getProfileConfig().getId(), "mock");
     }
     
+    /**
+     * Test that the action fails over to the legacy value if supplied.
+     * 
+     * @throws Exception if something goes wrong
+     */
+    @Test public void testFallback() throws Exception {
+        src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+
+        prc.setProfileId("new");
+        prc.setLegacyProfileId("mock");
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+
+        Assert.assertNotNull(prc.getSubcontext(RelyingPartyContext.class).getProfileConfig());
+        Assert.assertEquals(prc.getSubcontext(RelyingPartyContext.class).getProfileConfig().getId(), "mock");
+        Assert.assertEquals(prc.getProfileId(), "mock");
+    }
+
 }
