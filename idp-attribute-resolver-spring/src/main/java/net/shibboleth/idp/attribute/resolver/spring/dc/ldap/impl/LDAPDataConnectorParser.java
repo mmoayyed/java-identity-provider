@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.RandomConnectionStrategy;
@@ -244,7 +245,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * @param parserContext bean definition parsing context
          * @return connection config bean definition
          */
-        // CheckStyle: CyclomaticComplexity|MethodLength OFF
+        // CheckStyle: CyclomaticComplexity|MethodLength OFF*/
         @Nonnull public BeanDefinition createConnectionConfig(@Nonnull final ParserContext parserContext) {
             final String url = AttributeSupport.getAttributeValue(configElement, new QName("ldapURL"));
             final String useStartTLS = AttributeSupport.getAttributeValue(configElement, new QName("useStartTLS"));
@@ -328,30 +329,11 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
             final String connectionStrategy = AttributeSupport.getAttributeValue(
                 configElement, new QName("connectionStrategy"));
-            if (connectionStrategy == null) {
-                connectionConfig.addPropertyValue("connectionStrategy", new ActivePassiveConnectionStrategy());
-            } else {
-                switch (connectionStrategy) {
-                case "ROUND_ROBIN":
-                    connectionConfig.addPropertyValue("connectionStrategy", new RoundRobinConnectionStrategy());
-                    break;
+            final BeanDefinitionBuilder connectionStrategyBuilder =
+                    BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildConnectionStrategy");
+            connectionStrategyBuilder.addConstructorArgValue(connectionStrategy);
 
-                case "RANDOM":
-                    connectionConfig.addPropertyValue("connectionStrategy", new RandomConnectionStrategy());
-                    break;
-
-                case "DEFAULT":
-                    // V4 Deprecation
-                    DeprecationSupport.warn(ObjectType.CONFIGURATION, "connectionStrategy=DEFAULT", "LDAP Connector",
-                            "ACTIVE_PASSIVE");
-                    connectionConfig.addPropertyValue("connectionStrategy", new ActivePassiveConnectionStrategy());
-                    break;
-                    
-                default:
-                    connectionConfig.addPropertyValue("connectionStrategy", new ActivePassiveConnectionStrategy());
-                    break;
-                }
-            }
+            connectionConfig.addPropertyValue("connectionStrategy", connectionStrategyBuilder.getBeanDefinition());
 
             return connectionConfig.getBeanDefinition();
         }
@@ -962,6 +944,37 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final SaslConfig config = new SaslConfig();
             config.setMechanism(Mechanism.valueOf(mechanism));
             return config;
+        }
+
+        /** Returns an appropriate {@link ConnectionStrategy}.
+         * @param connectionStrategy the provided string (with properties stripped)
+         * @return the appropriate {@link ConnectionStrategy}.
+        */
+        @Nonnull public static ConnectionStrategy buildConnectionStrategy(@Nonnull final String connectionStrategy) {
+
+            if (connectionStrategy == null) {
+                return new ActivePassiveConnectionStrategy();
+            }
+            switch (connectionStrategy) {
+                case "ROUND_ROBIN":
+                     return new RoundRobinConnectionStrategy();
+
+                case "RANDOM":
+                    return new RandomConnectionStrategy();
+
+                case "ACTIVE_PASSIVE":
+                    return new ActivePassiveConnectionStrategy();
+
+                case "DEFAULT":
+                    // V4 Deprecation
+                    DeprecationSupport.warn(ObjectType.CONFIGURATION, "connectionStrategy=DEFAULT", "LDAP Connector",
+                            "ACTIVE_PASSIVE");
+                    return new ActivePassiveConnectionStrategy();
+
+                default:
+                    LOG.warn("Unexpected connectionStrategy {}", connectionStrategy);
+                    return new ActivePassiveConnectionStrategy();
+            }
         }
     }
 }
