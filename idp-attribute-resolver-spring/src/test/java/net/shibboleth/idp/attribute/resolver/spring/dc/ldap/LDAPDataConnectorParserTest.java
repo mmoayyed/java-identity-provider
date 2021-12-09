@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.RandomConnectionStrategy;
+import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
@@ -370,6 +372,9 @@ public class LDAPDataConnectorParserTest {
         assertNotNull(attrs.get("homephone"));
         assertNotNull(attrs.get("mail"));
         assertNotNull(attrs.get("entryDN"));
+
+        assertEquals(dataConnector.getConnectionFactory().getConnection().getConnectionConfig().getConnectionStrategy().getClass(),
+                RandomConnectionStrategy.class);
     }
 
     @Test public void v2SaslConfig() throws Exception {
