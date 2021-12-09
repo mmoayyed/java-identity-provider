@@ -217,11 +217,11 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
     protected static class V2Parser {
 
+        /** Class logger. */
+        private static final Logger LOG = LoggerFactory.getLogger(V2Parser.class);
+
         /** LDAPDirectory XML element. */
         private final Element configElement;
-
-        /** Class logger. */
-        private final Logger log = LoggerFactory.getLogger(V2Parser.class);
         
         /** LogPrefix of parent. */
         private final String logPrefix;
@@ -305,12 +305,12 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                     "<SASLConfig>");
                 final Mechanism mechanism = Mechanism.valueOf(authenticationType);
                 if ("ANONYMOUS".equals(authenticationType)) {
-                    log.warn("{} Ignoring unsupported authenticationType {}. " +
+                    LOG.warn("{} Ignoring unsupported authenticationType {}. " +
                             "Do not set bind credentials for anonymous authentication", getLogPrefix(), mechanism);
                 } else if ("STRONG".equals(authenticationType)) {
-                    log.warn("{} Ignoring unsupported authenticationType {}.", getLogPrefix(), mechanism);
+                    LOG.warn("{} Ignoring unsupported authenticationType {}.", getLogPrefix(), mechanism);
                 } else if ("SIMPLE".equals(authenticationType)) {
-                    log.warn("{} Ignoring unsupported authenticationType {}. " +
+                    LOG.warn("{} Ignoring unsupported authenticationType {}. " +
                             "Set bind credentials for simple authentication", getLogPrefix(), mechanism);
                 } else {
                     final BeanDefinitionBuilder saslConfigBuilder =
@@ -375,7 +375,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                     StringSupport.trimOrNull(AttributeSupport.getAttributeValue(configElement, null, "trustFile"));
             if (trustResource != null) {
                 if (!trustElements.isEmpty()) {
-                    log.warn("{} StartTLSTrustCredential and trustFile= are incompatible.  trustFile used.",
+                    LOG.warn("{} StartTLSTrustCredential and trustFile= are incompatible.  trustFile used.",
                             getLogPrefix());
                 }
                 final BeanDefinitionBuilder credential =
@@ -384,7 +384,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 result.addPropertyValue("trustCredential", credential.getBeanDefinition());
             } else if (!trustElements.isEmpty()) {
                 if (trustElements.size() > 1) {
-                    log.warn("{} Too many StartTLSTrustCredential elements in {}; only the first has been consulted",
+                    LOG.warn("{} Too many StartTLSTrustCredential elements in {}; only the first has been consulted",
                             getLogPrefix(), parserContext.getReaderContext().getResource().getDescription());
                 }
                 result.addPropertyValue("trustCredential",
@@ -402,7 +402,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             if (authKey != null|| authCert != null) {
 
                 if (!authElements.isEmpty()) {
-                    log.warn("{} StartTLSAuthenticationCredential and"
+                    LOG.warn("{} StartTLSAuthenticationCredential and"
                             + " authKey/authCert= are incompatible.  authCert/authKey used.",
                             getLogPrefix());
                 }
@@ -418,7 +418,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             } else if (!authElements.isEmpty()) {
                 if (authElements.size() > 1) {
-                    log.warn("{} Too many StartTLSAuthenticationCredential elements in {};"
+                    LOG.warn("{} Too many StartTLSAuthenticationCredential elements in {};"
                             + " only the first has been consulted", getLogPrefix(), 
                             parserContext.getReaderContext().getResource().getDescription());
                 }
@@ -442,7 +442,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final String filter;
             if (!filterElements.isEmpty()) {
                 if (filterElements.size() > 1) {
-                    log.warn("{} only one <FilterTemplate> can be specified; only the first has been consulted",
+                    LOG.warn("{} only one <FilterTemplate> can be specified; only the first has been consulted",
                             getLogPrefix());
                 }
                 filter = StringSupport.trimOrNull(filterElements.get(0).getTextContent().trim());
@@ -540,7 +540,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             
             if (!returnAttrsElements.isEmpty()) {
                 if (returnAttrsElements.size() > 1) {
-                    log.warn("{} Only one <ReturnAttributes> element can be specified; "+
+                    LOG.warn("{} Only one <ReturnAttributes> element can be specified; "+
                             "only the first has been consulted.", getLogPrefix());
                 }
                 final Element returnAttrsElement = returnAttrsElements.get(0);
@@ -556,7 +556,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             if (!binaryAttrsElements.isEmpty()) {
                 if (binaryAttrsElements.size() > 1) {
-                    log.warn("{} Only one <BinaryAttributes> element can be specified; "+
+                    LOG.warn("{} Only one <BinaryAttributes> element can be specified; "+
                       "only the first has been consulted.", getLogPrefix());
                 }
                 final Element binaryAttrsElement = binaryAttrsElements.get(0);
@@ -582,7 +582,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 return null;
             }
             if (poolConfigElements.size() > 1) {
-                log.warn("{} Only one <ConnectionPool> should be specified; only the first has been consulted.",
+                LOG.warn("{} Only one <ConnectionPool> should be specified; only the first has been consulted.",
                         getLogPrefix());
             }
 
@@ -724,7 +724,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             if (saslConfigElements.isEmpty()) {
                 return null;
             } else if (saslConfigElements.size() > 1) {
-                log.warn("{} Only one <SASLConfig> element can be specified; "+
+                LOG.warn("{} Only one <SASLConfig> element can be specified; "+
                         "only the first has been consulted.", getLogPrefix());
             }
             final Element saslConfigElement = saslConfigElements.get(0);
