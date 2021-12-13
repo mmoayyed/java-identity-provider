@@ -85,7 +85,7 @@ public class BaseMultiFactorAuthenticationContextTest {
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows.values());
-        action.setPotentialFlows(Collections.singletonList(authenticationFlows.get("authn/MFA")));
+        action.setPotentialFlowsLookupStrategy(FunctionSupport.constant(Collections.singletonList(authenticationFlows.get("authn/MFA"))));
         action.initialize();
 
         action.execute(src);

@@ -34,6 +34,7 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -60,8 +61,9 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** All of the known flows in the system. */
     @Nonnull @NonnullElements private Collection<AuthenticationFlowDescriptor> availableFlows;
 
-    /** The flows to make available for possible use. */
-    @Nonnull @NonnullElements private Collection<AuthenticationFlowDescriptor> potentialFlows;
+    /** Lookup function for the flows to make available for possible use. */
+    @Nonnull
+    private Function<ProfileRequestContext,Collection<AuthenticationFlowDescriptor>> potentialFlowsLookupStrategy;
     
     /** Lookup function for the flow IDs to activate from within the available set. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> activeFlowsLookupStrategy;
@@ -75,7 +77,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** Constructor. */
     public PopulateAuthenticationContext() {
         availableFlows = Collections.emptyList();
-        potentialFlows = Collections.emptyList();
+        potentialFlowsLookupStrategy = FunctionSupport.constant(Collections.emptyList());
         activeFlowsLookupStrategy = new AuthenticationFlowsLookupFunction();
     }
     
@@ -91,16 +93,17 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     }
 
     /**
-     * Set the flows to make available for use (a subset of the available ones).
+     * Set the lookup strategy for the flows to make available for use (a subset of the available ones).
      * 
-     * @param flows the flows to make available for use
+     * @param strategy lookup strategy
      * 
-     * @since 3.3.0
+     * @since 4.2.0
      */
-    public void setPotentialFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
+    public void setPotentialFlowsLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Collection<AuthenticationFlowDescriptor>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        potentialFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
+        potentialFlowsLookupStrategy = Constraint.isNotNull(strategy, "Potential flow lookup strategy cannot be null");
     }
     
     /**
@@ -157,11 +160,6 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
 
         if (evalRegistry != null) {
             authenticationContext.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
-            final RequestedPrincipalContext rpCtx =
-                    authenticationContext.getSubcontext(RequestedPrincipalContext.class);
-            if (rpCtx != null) {
-                rpCtx.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
-            }
         }
         
         if (fixedEventLookupStrategy != null) {
@@ -184,7 +182,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         final Collection<String> activeFlows = activeFlowsLookupStrategy.apply(profileRequestContext);
 
         if (activeFlows != null && !activeFlows.isEmpty()) {
-            for (final AuthenticationFlowDescriptor desc : potentialFlows) {
+            for (final AuthenticationFlowDescriptor desc : potentialFlowsLookupStrategy.apply(profileRequestContext)) {
                 final String flowId = desc.getId().substring(desc.getId().indexOf('/') + 1);
                 if (activeFlows.contains(flowId)) {
                     if (authenticationContext.getAvailableFlows().containsKey(desc.getId())
@@ -199,7 +197,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
                 }
             }
         } else {
-            for (final AuthenticationFlowDescriptor desc : potentialFlows) {
+            for (final AuthenticationFlowDescriptor desc : potentialFlowsLookupStrategy.apply(profileRequestContext)) {
                 if (authenticationContext.getAvailableFlows().containsKey(desc.getId())
                         && desc.test(profileRequestContext)) {
                     authenticationContext.getPotentialFlows().put(desc.getId(), desc);

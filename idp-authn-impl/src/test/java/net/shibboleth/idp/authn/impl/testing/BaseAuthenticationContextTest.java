@@ -22,6 +22,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.PopulateAuthenticationContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class BaseAuthenticationContextTest extends OpenSAMLInitBaseTestCase {
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);
-        action.setPotentialFlows(authenticationFlows);
+        action.setPotentialFlowsLookupStrategy(FunctionSupport.constant(authenticationFlows));
         action.initialize();
 
         action.execute(src);

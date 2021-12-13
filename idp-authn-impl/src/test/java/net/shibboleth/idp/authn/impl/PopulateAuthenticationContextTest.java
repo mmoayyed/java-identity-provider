@@ -22,9 +22,9 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.testing.ActionTestingSupport;
@@ -49,7 +49,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);
-        action.setPotentialFlows(authenticationFlows);
+        action.setPotentialFlowsLookupStrategy(FunctionSupport.constant(authenticationFlows));
         action.initialize();
 
         action.execute(src);
@@ -78,7 +78,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         
         final AuthenticationFlowDescriptor unavailableFlow = new AuthenticationFlowDescriptor();
         unavailableFlow.setId("test4");
-        action.setPotentialFlows(Arrays.asList(authenticationFlows.get(0), unavailableFlow));
+        action.setPotentialFlowsLookupStrategy(FunctionSupport.constant(List.of(authenticationFlows.get(0), unavailableFlow)));
         action.initialize();
 
         action.execute(src);
@@ -108,7 +108,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);
-        action.setPotentialFlows(authenticationFlows);
+        action.setPotentialFlowsLookupStrategy(FunctionSupport.constant(authenticationFlows));
         action.setActiveFlowsLookupStrategy(
                 FunctionSupport.<ProfileRequestContext,Collection<String>>constant(Collections.singletonList("test2")));
         action.initialize();

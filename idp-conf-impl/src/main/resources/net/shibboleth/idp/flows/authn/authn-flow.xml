@@ -9,9 +9,23 @@
     finalization of the processing such as updating a session, before returning control
     to the calling flow.
     -->
+
+    <!-- Allows use of standard global properties to be overridden. -->    
+    <input name="bypassSessionActions" type="boolean" />
+    <input name="potentialFlows" type="java.util.Collection" />
     
     <action-state id="AuthenticationSetup">
         <evaluate expression="PopulateAuthenticationContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="SessionSetup" />
+    </action-state>
+
+    <decision-state id="UseSessions1">
+        <if test="bypassSessionActions" then="FilterFlows" else="SessionSetup" />
+    </decision-state>
+
+    <action-state id="SessionSetup">
         <evaluate expression="PopulateSessionContext" />
         <evaluate expression="SetRPUIInformation" />
         <evaluate expression="'proceed'" />
@@ -88,8 +102,12 @@
     <!-- This runs a c14n step on the result of the authentication. -->
     <subflow-state id="CallSubjectCanonicalization" subflow="c14n">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="DetectIdentitySwitch" />
+        <transition on="proceed" to="UseSessions2" />
     </subflow-state>
+
+    <decision-state id="UseSessions2">
+        <if test="bypassSessionActions" then="FinalizeAuthentication" else="DetectIdentitySwitch" />
+    </decision-state>
 
     <!-- Handles an identity switch by dumping the old session. -->
     <action-state id="DetectIdentitySwitch">
@@ -115,8 +133,12 @@
         <evaluate expression="FinalizeAuthentication" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="UpdateSessionWithAuthenticationResult" />
+        <transition on="proceed" to="UseSessions3" />
     </action-state>
+    
+    <decision-state id="UseSessions3">
+        <if test="bypassSessionActions" then="proceed" else="UpdateSessionWithAuthenticationResult" />
+    </decision-state>
     
     <!-- Finally, create/update the client session. -->
     <action-state id="UpdateSessionWithAuthenticationResult">
