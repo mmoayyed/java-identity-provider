@@ -18,10 +18,16 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
+    <bean id="PotentialFlowsLookup" parent="shibboleth.ContextFunctions.Expression"
+        p:customObject-ref="shibboleth.AuthenticationFlowDescriptorManager"
+        c:outputType="#{T(java.util.Collection)}"
+        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('potentialFlows') ?:
+            #custom.getComponents().?[id matches 'authn/(' + '%{idp.authn.flows:Password}'.trim() + ')']" />
+    
     <bean id="PopulateAuthenticationContext"
         class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
         p:availableFlows="#{@'shibboleth.AuthenticationFlowDescriptorManager'.getComponents()}"
-        p:potentialFlows="#{@'shibboleth.AuthenticationFlowDescriptorManager'.getComponents().?[id matches 'authn/(' + '%{idp.authn.flows:Password}'.trim() + ')']}"
+        p:potentialFlowsLookupStrategy-ref="PotentialFlowsLookup"
         p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry"
         p:fixedEventLookupStrategy="#{getObject('shibboleth.FixedAuthenticationEventStrategy')}" />
 
@@ -65,6 +71,7 @@
     
     <bean id="DetectIdentitySwitch"
         class="net.shibboleth.idp.session.impl.DetectIdentitySwitch" scope="prototype"
+        p:activationCondition="%{idp.session.enabled:true}"
         p:sessionManager-ref="shibboleth.SessionManager" />
     
     <bean id="IdentitySwitchIsError" class="java.lang.Boolean">
