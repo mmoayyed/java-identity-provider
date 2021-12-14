@@ -254,7 +254,7 @@
                     <dependency>
                         <groupId>net.shibboleth.maven.enforcer.rules</groupId>
                         <artifactId>maven-dist-enforcer</artifactId>
-                        <version>3.0.0-SNAPSHOT</version>
+                        <version>3.0.0</version>
                     </dependency>
                 </dependencies>
                 <executions>
