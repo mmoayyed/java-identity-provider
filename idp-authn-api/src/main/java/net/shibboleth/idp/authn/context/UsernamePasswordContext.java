@@ -74,7 +74,7 @@ public final class UsernamePasswordContext extends BaseContext {
     }
 
     /**
-     * Sets the username and resets the transformed version to be identical.
+     * Sets the transformed username.
      * 
      * @param name the username
      * 
