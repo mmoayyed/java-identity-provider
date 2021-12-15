@@ -25,13 +25,14 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** {@link TransitionMultiFactorAuthentication} unit test. */
 public class TransitionMultiFactorAuthenticationTest extends BaseMultiFactorAuthenticationContextTest {
     
     private TransitionMultiFactorAuthentication action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new TransitionMultiFactorAuthentication();

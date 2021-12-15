@@ -24,6 +24,7 @@ import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import java.util.Collections;
@@ -45,7 +46,7 @@ public class BaseMultiFactorAuthenticationContextTest {
     protected MultiFactorAuthenticationContext mfa;
     protected ImmutableMap<String,AuthenticationFlowDescriptor> authenticationFlows;
 
-    protected void initializeMembers() throws Exception {
+    protected void initializeMembers() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         ac = (AuthenticationContext) prc.addSubcontext(new AuthenticationContext(), true);
@@ -80,7 +81,7 @@ public class BaseMultiFactorAuthenticationContextTest {
         authenticationFlows = builder.build();
     }
 
-    protected void setUp() throws Exception {        
+    protected void setUp() throws ComponentInitializationException {        
         initializeMembers();
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();

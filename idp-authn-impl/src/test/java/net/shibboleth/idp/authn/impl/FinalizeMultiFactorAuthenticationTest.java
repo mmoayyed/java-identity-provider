@@ -41,7 +41,7 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
     
     private FinalizeMultiFactorAuthentication action;
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
