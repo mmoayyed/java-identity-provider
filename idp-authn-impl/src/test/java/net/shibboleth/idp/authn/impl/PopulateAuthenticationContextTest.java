@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import java.util.Collection;
@@ -36,7 +37,7 @@ import org.testng.annotations.Test;
 final public class PopulateAuthenticationContextTest extends BaseAuthenticationContextTest {
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() throws ComponentInitializationException {
         initializeMembers();
     }
 
@@ -71,7 +72,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
      * 
      * @throws Exception if something goes wrong
      */
-    @Test public void testNonIdentical() throws Exception {
+    @Test public void testNonIdentical() throws ComponentInitializationException {
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);
@@ -104,7 +105,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
      * 
      * @throws Exception if something goes wrong
      */
-    @Test public void testFiltered() throws Exception {
+    @Test public void testFiltered() throws ComponentInitializationException {
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);

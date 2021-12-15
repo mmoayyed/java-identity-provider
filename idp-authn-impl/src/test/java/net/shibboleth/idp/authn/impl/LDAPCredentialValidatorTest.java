@@ -37,6 +37,7 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 import org.ldaptive.DefaultConnectionFactory;
@@ -118,7 +119,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         directoryServer.shutDown(true);
     }
 
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
 
         validator = new LDAPCredentialValidator();
@@ -136,7 +137,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         action.setHttpServletRequest(new MockHttpServletRequest());
     }
 
-    @Test public void testMissingFlow() throws Exception {
+    @Test public void testMissingFlow() throws ComponentInitializationException {
         validator.setAuthenticator(authenticator);
         validator.initialize();
         
@@ -146,7 +147,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
-    @Test public void testMissingUser() throws Exception {
+    @Test public void testMissingUser() throws ComponentInitializationException {
         prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setAuthenticator(authenticator);
@@ -158,7 +159,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingUser2() throws Exception {
+    @Test public void testMissingUser2() throws ComponentInitializationException {
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
@@ -174,7 +175,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testUnmatchedUser() throws Exception {
+    @Test public void testUnmatchedUser() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -194,7 +195,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
-    @Test public void testBadConfig() throws Exception {
+    @Test public void testBadConfig() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -222,7 +223,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
     }
 
-    @Test public void testBadConfig2() throws Exception {
+    @Test public void testBadConfig2() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -253,7 +254,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertEquals(aec.getClassifiedErrors().size(), 0);
     }
 
-    @Test public void testBadUsername() throws Exception {
+    @Test public void testBadUsername() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -281,7 +282,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
     }
 
-    @Test public void testEmptyPassword() throws Exception {
+    @Test public void testEmptyPassword() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "");
 
@@ -301,7 +302,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
-    @Test public void testBadPassword() throws Exception {
+    @Test public void testBadPassword() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -329,7 +330,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
     }
 
-    @Test public void testExpiredPassword() throws Exception {
+    @Test public void testExpiredPassword() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -364,7 +365,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
     }
 
-    @Test public void testChangeAfterReset() throws Exception {
+    @Test public void testChangeAfterReset() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -410,7 +411,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    @Test public void testExpiringPassword() throws Exception {
+    @Test public void testExpiringPassword() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -459,7 +460,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    @Test public void testAuthorized() throws Exception {
+    @Test public void testAuthorized() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -495,7 +496,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    @Test public void testComputedAndAuthorized() throws Exception {
+    @Test public void testComputedAndAuthorized() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "change");
 
@@ -539,7 +540,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    @Test public void testDefaultFilterSyntax() throws Exception {
+    @Test public void testDefaultFilterSyntax() throws ComponentInitializationException {
         TemplateSearchDnResolver testResolver = new TemplateSearchDnResolver(new DefaultConnectionFactory("ldap://localhost:10389"),
                 VelocityEngine.newVelocityEngine(), "(uid={user})");
         testResolver.setBaseDn("ou=people,dc=shibboleth,dc=net");
@@ -580,7 +581,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    @Test public void testCombinedFilterSyntax() throws Exception {
+    @Test public void testCombinedFilterSyntax() throws ComponentInitializationException {
         TemplateSearchDnResolver testResolver = new TemplateSearchDnResolver(new DefaultConnectionFactory("ldap://localhost:10389"),
                 VelocityEngine.newVelocityEngine(), "(|(mail=$usernamePasswordContext.username)(uid={user}))");
         testResolver.setBaseDn("ou=people,dc=shibboleth,dc=net");
@@ -621,7 +622,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    @Test public void testMatchAndAuthorized() throws Exception {
+    @Test public void testMatchAndAuthorized() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -658,7 +659,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    @Test public void testAuthorizedAndKeepContext() throws Exception {
+    @Test public void testAuthorizedAndKeepContext() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -676,7 +677,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertProceedEvent(event);
     }
 
-    private void doExtract() throws Exception {
+    private void doExtract() throws ComponentInitializationException {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();

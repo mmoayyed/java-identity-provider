@@ -45,7 +45,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
     
     private SelectAuthenticationFlow action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new SelectAuthenticationFlow();

@@ -27,6 +27,7 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -38,7 +39,7 @@ public class SimpleSubjectCanonicalizationTest extends BaseAuthenticationContext
     
     private SimpleSubjectCanonicalization action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new SimpleSubjectCanonicalization();

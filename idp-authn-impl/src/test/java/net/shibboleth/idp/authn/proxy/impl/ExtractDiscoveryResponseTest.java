@@ -22,6 +22,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
@@ -34,7 +35,7 @@ public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest 
     
     private ExtractDiscoveryResponse action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new ExtractDiscoveryResponse();
@@ -42,7 +43,7 @@ public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest 
         action.initialize();
     }
     
-    @Test public void testNoServlet() throws Exception {
+    @Test public void testNoServlet() throws ComponentInitializationException {
         action = new ExtractDiscoveryResponse();
         action.initialize();
         final Event event = action.execute(src);
@@ -51,14 +52,14 @@ public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest 
         Assert.assertNull(prc.getSubcontext(AuthenticationContext.class).getAuthenticatingAuthority());
     }
 
-    @Test public void testFailure() throws Exception {
+    @Test public void testFailure() {
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
         Assert.assertNull(prc.getSubcontext(AuthenticationContext.class).getAuthenticatingAuthority());
     }
 
-    @Test public void testSuccess() throws Exception {
+    @Test public void testSuccess() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("entityID", "foo");
         
         final Event event = action.execute(src);

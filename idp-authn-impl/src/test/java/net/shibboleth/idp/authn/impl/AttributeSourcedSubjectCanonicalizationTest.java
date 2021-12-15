@@ -44,7 +44,7 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
     private AttributeSourcedSubjectCanonicalization action; 
     
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new AttributeSourcedSubjectCanonicalization();

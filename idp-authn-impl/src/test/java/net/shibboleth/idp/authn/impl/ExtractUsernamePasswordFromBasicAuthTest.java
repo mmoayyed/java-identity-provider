@@ -31,13 +31,14 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** {@link ExtractUsernamePasswordFromBasicAuth} unit test. */
 public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthenticationContextTest {
     
     private ExtractUsernamePasswordFromBasicAuth action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new ExtractUsernamePasswordFromBasicAuth();
@@ -45,34 +46,34 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthentication
         action.initialize();
     }
     
-    @Test public void testNoServlet() throws Exception {
+    @Test public void testNoServlet() throws ComponentInitializationException {
         action = new ExtractUsernamePasswordFromBasicAuth();
         action.initialize();
-        final Event event = action.execute(src);
         
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
-    }
-
-    @Test public void testMissingIdentity() throws Exception {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingIdentity2() throws Exception {
+    @Test public void testMissingIdentity() {
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
+    }
+
+    @Test public void testMissingIdentity2() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "foo");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testInvalid() throws Exception {
+    @Test public void testInvalid() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic foo:bar");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
-    @Test public void testInvalid2() throws Exception {
+    @Test public void testInvalid2() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOg==");
         
         final Event event = action.execute(src);
@@ -80,14 +81,14 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthentication
     }
     
     /* Test invalid base64 trailing bits. */
-    @Test public void testInvalidBase64() throws Exception {
+    @Test public void testInvalidBase64() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic AB==");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
     
-    @Test public void testValid() throws Exception {
+    @Test public void testValid() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOmJhcg==");
         
         final Event event = action.execute(src);

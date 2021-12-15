@@ -45,7 +45,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
     
     private ValidateUserAgentAddress action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new ValidateUserAgentAddress();

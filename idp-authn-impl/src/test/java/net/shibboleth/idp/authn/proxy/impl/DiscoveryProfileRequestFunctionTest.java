@@ -20,9 +20,11 @@ package net.shibboleth.idp.authn.proxy.impl;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.net.URISupport;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +42,7 @@ public class DiscoveryProfileRequestFunctionTest extends BaseAuthenticationConte
     
     private DiscoveryProfileRequestFunction function; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         ((MockFlowExecutionContext) ((MockRequestContext) src).getFlowExecutionContext()).setKey(new MockFlowExecutionKey("flowkey"));
@@ -50,7 +52,7 @@ public class DiscoveryProfileRequestFunctionTest extends BaseAuthenticationConte
         function.initialize();
     }
     
-    @Test public void test() throws Exception {
+    @Test public void test() throws MalformedURLException {
         final URL url = new URL(function.apply(new Pair<>(src, prc)));
         
         Assert.assertEquals(url.getProtocol(), "https");

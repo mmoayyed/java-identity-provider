@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,6 +41,7 @@ import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactor
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.URISupport;
 
 import org.springframework.core.io.ClassPathResource;
@@ -91,7 +93,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         directoryServer.shutDown(true);
     }
 
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
 
         validator = new JAASCredentialValidator();
@@ -108,7 +110,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         action.setHttpServletRequest(new MockHttpServletRequest());
     }
 
-    @Test public void testMissingFlow() throws Exception {
+    @Test public void testMissingFlow() throws ComponentInitializationException {
         validator.initialize();
         action.initialize();
 
@@ -116,7 +118,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
 
-    @Test public void testMissingUser() throws Exception {
+    @Test public void testMissingUser() throws ComponentInitializationException {
         prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
         
         validator.initialize();
@@ -126,7 +128,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingUser2() throws Exception {
+    @Test public void testMissingUser2() throws ComponentInitializationException {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
@@ -138,7 +140,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testNoConfig() throws Exception {
+    @Test public void testNoConfig() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -157,7 +159,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
     }
 
-    @Test public void testBadConfig() throws Exception {
+    @Test public void testBadConfig() throws ComponentInitializationException, URISyntaxException, IOException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -180,7 +182,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
     }
 
-    @Test public void testUnsupportedConfig() throws Exception {
+    @Test public void testUnsupportedConfig() throws ComponentInitializationException, URISyntaxException, IOException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -208,7 +210,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
     
-    @Test public void testUnmatchedUser() throws Exception {
+    @Test public void testUnmatchedUser() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -227,7 +229,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
-    @Test public void testBadUsername() throws Exception {
+    @Test public void testBadUsername() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -249,7 +251,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertFalse(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
-    @Test public void testBadPassword() throws Exception {
+    @Test public void testBadPassword() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -271,7 +273,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
-    @Test public void testAuthorized() throws Exception {
+    @Test public void testAuthorized() throws ComponentInitializationException, URISyntaxException, IOException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -295,7 +297,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
-    @Test public void testAuthorizedAndKeep() throws Exception {
+    @Test public void testAuthorizedAndKeep() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -318,7 +320,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
-    @Test public void testSupported() throws Exception {
+    @Test public void testSupported() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -351,7 +353,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
                 .next().getName(), "test1");
     }
     
-    @Test public void testMultiConfigAuthorized() throws Exception {
+    @Test public void testMultiConfigAuthorized() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -375,7 +377,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
     
-    @Test public void testMatchAndAuthorized() throws Exception {
+    @Test public void testMatchAndAuthorized() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -399,7 +401,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
     
-    private void doExtract() throws Exception {
+    private void doExtract() throws ComponentInitializationException {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();

@@ -43,7 +43,7 @@ public class ValidateFunctionResultTest extends BaseAuthenticationContextTest {
     
     private ValidateFunctionResult action;
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));

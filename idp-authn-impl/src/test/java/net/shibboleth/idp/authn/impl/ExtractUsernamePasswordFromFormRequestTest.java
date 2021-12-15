@@ -23,6 +23,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
@@ -35,7 +36,7 @@ public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticati
     
     private ExtractUsernamePasswordFromFormRequest action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new ExtractUsernamePasswordFromFormRequest();
@@ -45,7 +46,7 @@ public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticati
         action.initialize();
     }
     
-    @Test public void testNoServlet() throws Exception {
+    @Test public void testNoServlet() throws ComponentInitializationException {
         action = new ExtractUsernamePasswordFromFormRequest();
         action.setUsernameFieldName("j_username");
         action.setPasswordFieldName("j_password");
@@ -55,20 +56,19 @@ public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticati
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingIdentity() throws Exception {
+    @Test public void testMissingIdentity() {
         final Event event = action.execute(src);
-        
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingIdentity2() throws Exception {
+    @Test public void testMissingIdentity2() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_username", "foo");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testValid() throws Exception {
+    @Test public void testValid() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_password", "bar");
         
@@ -82,7 +82,7 @@ public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticati
         Assert.assertEquals(upCtx.getPassword(), "bar");
     }
 
-    @Test public void testSSOBypass() throws Exception {
+    @Test public void testSSOBypass() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_password", "bar");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("donotcache", "1");

@@ -39,7 +39,7 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
     
     private ExtractRemoteUser action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new ExtractRemoteUser();
@@ -56,22 +56,22 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         }
     }
     
-    @Test public void testNoServlet() throws Exception {
+    @Test public void testNoServlet() throws ComponentInitializationException {
         action.setHttpServletRequest(null);
         action.initialize();
-        final Event event = action.execute(src);
         
+        final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingIdentity() throws Exception {
+    @Test public void testMissingIdentity() throws ComponentInitializationException {
         action.initialize();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testRemoteUser() throws Exception {
+    @Test public void testRemoteUser() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("foo");
         action.initialize();
         
@@ -83,7 +83,7 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
 
-    @Test public void testAttribute() throws Exception {
+    @Test public void testAttribute() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("Username", "foo");
         action.setCheckAttributes(Arrays.asList("Username"));
         action.initialize();
@@ -96,7 +96,7 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
 
-    @Test public void testHeader() throws Exception {
+    @Test public void testHeader() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader("X-Username", "foo");
         action.setCheckAttributes(Arrays.asList("Username"));
         action.setCheckHeaders(Arrays.asList("X-Username"));
@@ -110,7 +110,7 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
 
-    @Test public void testTransforms() throws Exception {
+    @Test public void testTransforms() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser(" Foo@osu.edu ");
         action.setTrim(true);
         action.setTransforms(Arrays.asList(new Pair<>("^(.+)@osu\\.edu$", "$1")));

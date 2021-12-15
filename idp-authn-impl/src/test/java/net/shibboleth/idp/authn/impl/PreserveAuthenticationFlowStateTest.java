@@ -21,6 +21,7 @@ package net.shibboleth.idp.authn.impl;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import java.util.Arrays;
 
@@ -35,7 +36,7 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
     
     private PreserveAuthenticationFlowState action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new PreserveAuthenticationFlowState();
@@ -44,7 +45,7 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         action.initialize();
     }
     
-    @Test public void testNoServlet() throws Exception {
+    @Test public void testNoServlet() throws ComponentInitializationException {
         action = new PreserveAuthenticationFlowState();
         action.initialize();
         
@@ -54,7 +55,7 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         Assert.assertTrue(prc.getSubcontext(AuthenticationContext.class).getAuthenticationStateMap().isEmpty());
     }
 
-    @Test public void testNoParameters() throws Exception {
+    @Test public void testNoParameters() throws ComponentInitializationException {
         action = new PreserveAuthenticationFlowState();
         action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
@@ -65,7 +66,7 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         Assert.assertTrue(prc.getSubcontext(AuthenticationContext.class).getAuthenticationStateMap().isEmpty());
     }
 
-    @Test public void testNoneFound() throws Exception {
+    @Test public void testNoneFound(){
         
         final Event event = action.execute(src);
         
@@ -73,7 +74,7 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         Assert.assertTrue(prc.getSubcontext(AuthenticationContext.class).getAuthenticationStateMap().isEmpty());
     }
     
-    @Test public void testNoValues() throws Exception {
+    @Test public void testNoValues() {
         
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("foo", (String) null);
         
@@ -87,7 +88,7 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         Assert.assertNull(authCtx.getAuthenticationStateMap().get("foo"));
     }
     
-    @Test public void testSingleValued() throws Exception {
+    @Test public void testSingleValued() {
         
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("foo", "bar");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("foo2", "bar2");
@@ -102,7 +103,7 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         Assert.assertEquals(authCtx.getAuthenticationStateMap().get("foo2"), "bar2");
     }
     
-    @Test public void testMultiValued() throws Exception {
+    @Test public void testMultiValued() {
         
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("foo", new String[]{"bar", "bar2"});
         

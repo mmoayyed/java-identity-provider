@@ -21,6 +21,7 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import java.time.Duration;
 
@@ -34,14 +35,14 @@ public class FilterFlowsByForceAuthnTest extends BaseAuthenticationContextTest {
     
     private FilterFlowsByForcedAuthn action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new FilterFlowsByForcedAuthn();
         action.initialize();
     }
     
-    @Test public void testNonForced() throws Exception {
+    @Test public void testNonForced() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setForceAuthn(false);
         

@@ -24,6 +24,7 @@ import net.shibboleth.idp.authn.duo.DuoAuthAPI;
 import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
@@ -36,7 +37,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
     
     private ExtractDuoAuthenticationFromHeaders action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new ExtractDuoAuthenticationFromHeaders();
@@ -44,7 +45,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         action.initialize();
     }
     
-    @Test public void testNoServletNoAuto() throws Exception {
+    @Test public void testNoServletNoAuto() throws ComponentInitializationException {
         action = new ExtractDuoAuthenticationFromHeaders();
         action.setAutoAuthenticationSupported(false);
         action.initialize();
@@ -57,7 +58,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         Assert.assertNull(duoCtx);
     }
 
-    @Test public void testNoAuto() throws Exception {
+    @Test public void testNoAuto() throws ComponentInitializationException {
         action = new ExtractDuoAuthenticationFromHeaders();
         action.setHttpServletRequest(new MockHttpServletRequest());
         action.setAutoAuthenticationSupported(false);
@@ -71,7 +72,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         Assert.assertNull(duoCtx);
     }
     
-    @Test public void testNoServletAuto() throws Exception {
+    @Test public void testNoServletAuto() throws ComponentInitializationException {
         action = new ExtractDuoAuthenticationFromHeaders();
         action.initialize();
         
@@ -86,7 +87,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         Assert.assertNull(duoCtx.getPasscode());
     }
     
-    @Test public void testFactorAutoDevice() throws Exception {
+    @Test public void testFactorAutoDevice() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_FACTOR_HEADER_NAME, DuoAuthAPI.DUO_FACTOR_PUSH);
         
         final Event event = action.execute(src);
@@ -100,7 +101,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         Assert.assertNull(duoCtx.getPasscode());
     }
     
-    @Test public void testDeviceAutoFactor() throws Exception {
+    @Test public void testDeviceAutoFactor() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_DEVICE_HEADER_NAME, "foo");
         
         final Event event = action.execute(src);
@@ -114,7 +115,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         Assert.assertNull(duoCtx.getPasscode());
     }
     
-    @Test public void testNoPasscode() throws Exception {
+    @Test public void testNoPasscode() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_FACTOR_HEADER_NAME, DuoAuthAPI.DUO_FACTOR_PASSCODE);
         
         final Event event = action.execute(src);
@@ -125,7 +126,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         Assert.assertNull(duoCtx);
     }
 
-    @Test public void testPasscode() throws Exception {
+    @Test public void testPasscode() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_FACTOR_HEADER_NAME, DuoAuthAPI.DUO_FACTOR_PASSCODE);
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_PASSCODE_HEADER_NAME, "foo");
         

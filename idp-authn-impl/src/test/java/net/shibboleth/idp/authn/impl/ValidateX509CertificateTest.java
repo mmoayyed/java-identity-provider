@@ -93,7 +93,7 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
     
     private ValidateX509Certificate action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new ValidateX509Certificate();

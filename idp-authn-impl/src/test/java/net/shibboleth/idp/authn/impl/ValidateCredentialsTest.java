@@ -34,6 +34,7 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 import org.ldaptive.DefaultConnectionFactory;
@@ -106,7 +107,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         directoryServer.shutDown(true);
     }
 
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
 
         final LDAPCredentialValidator ldap = new LDAPCredentialValidator();
@@ -132,7 +133,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         action.setHttpServletRequest(new MockHttpServletRequest());
     }
 
-    @Test public void testBadUsername() throws Exception {
+    @Test public void testBadUsername() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -157,7 +158,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
     }
 
-    @Test public void testEmptyPassword() throws Exception {
+    @Test public void testEmptyPassword() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "");
 
@@ -178,7 +179,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
     }
 
-    @Test public void testBadPassword() throws Exception {
+    @Test public void testBadPassword() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -203,7 +204,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
     }
 
-    @Test public void testAuthorized() throws Exception {
+    @Test public void testAuthorized() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -238,7 +239,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    @Test public void testAuthorized2() throws Exception {
+    @Test public void testAuthorized2() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL2");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -273,7 +274,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
     }
     
-    @Test public void testBadPassword2() throws Exception {
+    @Test public void testBadPassword2() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL2");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -299,7 +300,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError(AuthnEventIds.UNKNOWN_USERNAME));
     }
     
-    @Test public void testAuthorizedAll() throws Exception {
+    @Test public void testAuthorizedAll() throws ComponentInitializationException {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
@@ -337,7 +338,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
-    private void doExtract() throws Exception {
+    private void doExtract() throws ComponentInitializationException {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();

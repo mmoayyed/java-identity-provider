@@ -41,7 +41,7 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     
     private ValidateRemoteUser action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new ValidateRemoteUser();

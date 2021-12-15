@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -25,6 +26,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.CertificateContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.security.x509.X509Support;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -83,7 +85,7 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
     
     private ExtractX509CertificateFromRequest action; 
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         action = new ExtractX509CertificateFromRequest();
@@ -91,21 +93,20 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         action.initialize();
     }
     
-    @Test public void testNoServlet() throws Exception {
+    @Test public void testNoServlet() throws ComponentInitializationException {
         action = new ExtractX509CertificateFromRequest();
         action.initialize();
         
         final Event event = action.execute(src);
-        
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testMissingIdentity() throws Exception {
+    @Test public void testMissingIdentity() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
     
-    @Test public void testValidJava() throws Exception {
+    @Test public void testValidJava() throws CertificateException {
         
         final X509Certificate entityCert = X509Support.decodeCertificate(entityCertBase64);
         final X509Certificate otherCert1 = X509Support.decodeCertificate(otherCert1Base64);
@@ -124,7 +125,7 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         Assert.assertSame(certCtx.getIntermediates().iterator().next(), otherCert1);
     }
     
-    @Test public void testValidJakarta() throws Exception {
+    @Test public void testValidJakarta() throws CertificateException {
         
         final X509Certificate entityCert = X509Support.decodeCertificate(entityCertBase64);
         final X509Certificate otherCert1 = X509Support.decodeCertificate(otherCert1Base64);

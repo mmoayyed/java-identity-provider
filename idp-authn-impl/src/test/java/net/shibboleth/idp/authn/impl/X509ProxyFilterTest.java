@@ -32,6 +32,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** {@link X509ProxyFilter} unit test. */
 public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
@@ -89,7 +90,7 @@ public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
     
     private MockHttpServletRequest request;
     
-    @BeforeMethod public void setUp() throws Exception {
+    @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
         final MockFilterConfig config = new MockFilterConfig();
@@ -98,7 +99,11 @@ public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
                 "SSL_CLIENT_CERT_CHAIN_0 SSL_CLIENT_CERT_CHAIN_1 SSL_CLIENT_CERT_CHAIN_2 SSL_CLIENT_CERT_CHAIN_3");
         
         filter = new X509ProxyFilter();
-        filter.init(config);
+        try {
+            filter.init(config);
+        } catch (final ServletException e) {
+            throw new ComponentInitializationException(e);
+        }
         
         request = (MockHttpServletRequest) src.getExternalContext().getNativeRequest();
     }
