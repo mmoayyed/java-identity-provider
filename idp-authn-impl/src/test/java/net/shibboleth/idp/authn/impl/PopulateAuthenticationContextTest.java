@@ -44,9 +44,9 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
     /**
      * Test available flows == potential flows.
      * 
-     * @throws Exception if something goes wrong
+     * @throws ComponentInitializationException if something goes wrong
      */
-    @Test public void testIdentical() throws Exception {
+    @Test public void testIdentical() throws ComponentInitializationException {
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);
@@ -70,7 +70,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
     /**
      * Test available flows != potential flows.
      * 
-     * @throws Exception if something goes wrong
+     * @throws ComponentInitializationException if something goes wrong
      */
     @Test public void testNonIdentical() throws ComponentInitializationException {
         
@@ -103,7 +103,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
     /**
      * Test active flow filtering.
      * 
-     * @throws Exception if something goes wrong
+     * @throws ComponentInitializationException if something goes wrong
      */
     @Test public void testFiltered() throws ComponentInitializationException {
         
