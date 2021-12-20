@@ -1,7 +1,10 @@
 ##
 ## Velocity Template for error end-state
 ##
-## Velocity context will contain the following properties
+## Velocity context will contain the following variables during controlled errors.
+## Some error paths involve runtime exceptions handled outside Spring Web Flow by the
+## MVC layer and will not generally populate most of these variables.
+##
 ## flowRequestContext - the Spring Web Flow RequestContext
 ## profileRequestContext - root of context tree
 ## encoder - HTMLEncoder class
