@@ -27,6 +27,7 @@
     <global-transitions>
         <transition on="NoCredentials" to="ReselectFlow" />
         <transition on="InvalidCredentials" to="ReselectFlow" />
+        <transition on="RequestUnsupported" to="ReselectFlow" />
     </global-transitions>
 
     <bean-import resource="x509-internal-authn-beans.xml" />

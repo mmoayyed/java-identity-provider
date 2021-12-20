@@ -57,7 +57,7 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
         
         final HttpServletRequest httpRequest = getHttpServletRequest();
         if (httpRequest == null) {
-            log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
+            log.warn("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
@@ -69,13 +69,15 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
             // TODO: Once Jakarta is "common", probably reverse these checks.
             certs = (X509Certificate[]) httpRequest.getAttribute("jakarta.servlet.request.X509Certificate");
         }
-        log.debug("{} {} X.509 Certificate(s) found in request", getLogPrefix(), certs != null ? certs.length : 0);
 
         if (certs == null || certs.length == 0) {
+            log.info("{} No X.509 certificate found in request", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return;
         }
 
+        log.debug("{} {} X.509 Certificate(s) found in request", getLogPrefix(), certs.length);
+        
         final X509Certificate cert = certs[0];
         log.debug("{} End-entity X.509 certificate found with subject '{}', issued by '{}'", getLogPrefix(),
                 cert.getSubjectDN().getName(), cert.getIssuerDN().getName());

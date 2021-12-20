@@ -25,11 +25,15 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         
     <bean id="ValidateX509Certificate"
-        class="net.shibboleth.idp.authn.impl.ValidateX509Certificate" scope="prototype"
-        p:trustEngine="#{getObject('shibboleth.authn.X509.TrustEngine')}"
-        p:saveCertificateToCredentialSet="%{idp.authn.X509Internal.saveCertificateToCredentialSet:true}"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: %{idp.authn.X509Internal.addDefaultPrincipals:true}}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}" />
+            class="net.shibboleth.idp.authn.impl.ValidateCredentials" scope="prototype"
+            p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: %{idp.authn.X509Internal.addDefaultPrincipals:true}}"
+            p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}">
+        <property name="validators">
+            <bean id="x509" class="net.shibboleth.idp.authn.impl.X509CertificateCredentialValidator"
+                p:trustEngine="#{getObject('shibboleth.authn.X509.TrustEngine')}"
+                p:saveCertificateToCredentialSet="%{idp.authn.X509Internal.saveCertificateToCredentialSet:true}" />
+        </property>    
+    </bean>
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"

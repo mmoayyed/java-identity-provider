@@ -20,9 +20,9 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 
 import javax.security.auth.x500.X500Principal;
-import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -43,8 +43,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link ValidateX509Certificate} unit test. */
-public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
+/** {@link X509CertificateCredentialValidator} unit test. */
+public class X509CertificateCredentialValidatorTest extends BaseAuthenticationContextTest {
     
     private String entityCertBase64 = 
             "MIIDjDCCAnSgAwIBAgIBKjANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +
@@ -91,13 +91,18 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
             "Zy+LbvWg3urUkiDjMcB6nGImmEfDSxRdybitcMwbwL26z2WOpwL3llm3mcCydKXg" +
             "Xt8IQhfDhOZOHWckeD2tStnJRP/cqBgO62/qirw=";
     
-    private ValidateX509Certificate action; 
+    private X509CertificateCredentialValidator validator;
+    private ValidateCredentials action;
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
         
-        action = new ValidateX509Certificate();
-        action.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
+        validator = new X509CertificateCredentialValidator();
+        validator.setId("x509");
+        
+        action = new ValidateCredentials();
+        action.setValidators(Collections.singletonList(validator));
+        action.setHttpServletRequest(new MockHttpServletRequest());
         action.initialize();
     }
 
@@ -106,10 +111,13 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
     }
     
-    @Test public void testMissingCert() {
+    @Test public void testMissingCert() throws ComponentInitializationException {
         prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
+        
+        validator.initialize();
+        
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
     @Test public void testNoTrustEngine() throws ComponentInitializationException, CertificateException {
@@ -120,7 +128,9 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
         
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        
+
+        validator.initialize();
+
         doExtract();
         
         final Event event = action.execute(src);
@@ -137,11 +147,8 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
         final CredentialResolver resolver = new StaticCredentialResolver(new BasicX509Credential(entityCert));
         final TrustEngine<X509Credential> engine = new ExplicitX509CertificateTrustEngine(resolver);
         
-        action = new ValidateX509Certificate();
-        action.setTrustEngine(engine);
-        action.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
-        
-        action.initialize();
+        validator.setTrustEngine(engine);
+        validator.initialize();
 
         ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("javax.servlet.request.X509Certificate", certs);
 
@@ -167,15 +174,11 @@ public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
         final CredentialResolver resolver = new StaticCredentialResolver(new BasicX509Credential(otherCert1));
         final TrustEngine<X509Credential> engine = new ExplicitX509CertificateTrustEngine(resolver);
         
-        action = new ValidateX509Certificate();
-        action.setTrustEngine(engine);
-        action.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
+        validator.setTrustEngine(engine);
+        validator.initialize();
         
-        action.initialize();
-
         ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("javax.servlet.request.X509Certificate", certs);
 
-        
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         

@@ -19,21 +19,24 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
+import javax.security.auth.login.LoginException;
 
-import net.shibboleth.idp.authn.AbstractValidationAction;
+import net.shibboleth.idp.authn.AbstractCredentialValidator;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.CertificateContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.trust.TrustEngine;
@@ -43,41 +46,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An action that checks for a {@link CertificateContext} containing {@link X509Certificate} objects, and
- * directly produces an {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity, after
- * optionally validating the certificate(s) against a {@link TrustEngine}.
- *  
- * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
- * @event {@link AuthnEventIds#NO_CREDENTIALS}
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
- * @post If AuthenticationContext.getSubcontext(CertificateContext.class) != null, then
- * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
- * successful validation. On a failure, the
- * {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, Exception, String)}
- * method is called.
+ * A credential validator that validates an X.509 certificate.
+ * 
+ * @since 4.2.0
  */
-public class ValidateX509Certificate extends AbstractValidationAction {
-
-    /** Default prefix for metrics. */
-    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.x509";
-
+@ThreadSafeAfterInit
+public class X509CertificateCredentialValidator extends AbstractCredentialValidator {
+    
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateX509Certificate.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(X509CertificateCredentialValidator.class);
+
+    /** Lookup strategy for cert context. */
+    @Nonnull private Function<AuthenticationContext,CertificateContext> certContextLookupStrategy;
 
     /** Optional trust engine to validate certificates against. */
     @Nullable private TrustEngine<? super X509Credential> trustEngine;
-    
-    /** CertificateContext containing the credentials to validate. */
-    @Nullable private CertificateContext certContext;
     
     /** Whether to save the certificate in the Java Subject's public credentials. */
     private boolean saveCertificateToCredentialSet;
     
     /** Constructor. */
-    public ValidateX509Certificate() {
-        setMetricName(DEFAULT_METRIC_NAME);
-        saveCertificateToCredentialSet = true;
+    public X509CertificateCredentialValidator() {
+        certContextLookupStrategy = new ChildContextLookup<>(CertificateContext.class);
+    }
+    
+    /**
+     * Set the lookup strategy to locate the {@link UsernamePasswordContext}.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setCertificateContextLookupStrategy(
+            @Nonnull final Function<AuthenticationContext,CertificateContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        certContextLookupStrategy = Constraint.isNotNull(strategy,
+                "CertificateContextLookupStrategy cannot be null");
     }
     
     /**
@@ -97,45 +100,30 @@ public class ValidateX509Certificate extends AbstractValidationAction {
      * <p>Defaults to true</p>
      * 
      * @param flag flag to set
-     * 
-     * @since 4.1.0
      */
     public void setSaveCertificateToCredentialSet(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         saveCertificateToCredentialSet = flag;
     }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        
-        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        certContext = authenticationContext.getSubcontext(CertificateContext.class);
-        if (certContext == null) {
-            log.info("{} No CertificateContext available within authentication context", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
-                    AuthnEventIds.NO_CREDENTIALS);
-            return false;
-        } else if (certContext.getCertificate() == null || !(certContext.getCertificate() instanceof X509Certificate)) {
-            log.info("{} No X.509 certificate available within CertificateContext", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
-                    AuthnEventIds.NO_CREDENTIALS);
-            return false;
-        }
-        
-        return true;
-    }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        
+    @Nullable protected Subject doValidate(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext,
+            @Nullable final WarningHandler warningHandler,
+            @Nullable final ErrorHandler errorHandler) throws Exception {
+
+        final CertificateContext certContext = certContextLookupStrategy.apply(authenticationContext);
+        if (certContext == null) {
+            log.debug("{} No CertificateContext available within authentication context", getLogPrefix());
+            return null;
+        } else if (certContext.getCertificate() == null || !(certContext.getCertificate() instanceof X509Certificate)) {
+            log.debug("{} No X.509 certificate available within CertificateContext", getLogPrefix());
+            return null;
+        }
+
         if (trustEngine != null) {
             log.debug("{} Attempting to validate certificate using trust engine", getLogPrefix());
             try {
@@ -153,16 +141,20 @@ public class ValidateX509Certificate extends AbstractValidationAction {
                     log.debug("{} Trust engine validated X.509 certificate", getLogPrefix());
                 } else {
                     log.warn("{} Trust engine failed to validate X.509 certificate", getLogPrefix());
-                    handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
-                            AuthnEventIds.INVALID_CREDENTIALS);
-                    recordFailure(profileRequestContext);
-                    return;
+                    final LoginException e = new LoginException(AuthnEventIds.INVALID_CREDENTIALS);
+                    if (errorHandler != null) {
+                        errorHandler.handleError(profileRequestContext, authenticationContext, e,
+                                AuthnEventIds.INVALID_CREDENTIALS);
+                    }
+                    throw e;
                 }
             } catch (final SecurityException e) {
                 log.error("{} Exception raised by trust engine", getLogPrefix(), e);
-                handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
-                recordFailure(profileRequestContext);
-                return;
+                if (errorHandler != null) {
+                    errorHandler.handleError(profileRequestContext, authenticationContext, e,
+                            AuthnEventIds.INVALID_CREDENTIALS);
+                }
+                throw e;
             }
         } else {
             log.debug("{} No trust engine configured, certificate will be trusted", getLogPrefix());
@@ -170,19 +162,28 @@ public class ValidateX509Certificate extends AbstractValidationAction {
 
         log.info("{} Login by '{}' succeeded", getLogPrefix(),
                 ((X509Certificate) certContext.getCertificate()).getSubjectX500Principal().getName());
-        recordSuccess(profileRequestContext);
-        buildAuthenticationResult(profileRequestContext, authenticationContext);
-        ActionSupport.buildProceedEvent(profileRequestContext);
+        
+        return populateSubject((X509Certificate) certContext.getCertificate());
     }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
-        subject.getPrincipals().add(((X509Certificate) certContext.getCertificate()).getSubjectX500Principal());
+// Checkstyle: CyclomaticComplexity ON
+    
+    /**
+     * Builds a subject with "standard" content from the validation.
+     *
+     * @param certificate the certificate validated
+     * 
+     * @return the decorated subject
+     */
+    @Nonnull protected Subject populateSubject(@Nonnull final X509Certificate certificate) {
+       
+        final Subject subject = new Subject();
+       
+        subject.getPrincipals().add(certificate.getSubjectX500Principal());
         if (saveCertificateToCredentialSet) {
-            subject.getPublicCredentials().add(certContext.getCertificate());
+            subject.getPublicCredentials().add(certificate);
         }
-        return subject;
+       
+        return super.populateSubject(subject);
     }
 
 }
