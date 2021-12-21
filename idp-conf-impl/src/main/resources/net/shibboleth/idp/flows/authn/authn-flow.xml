@@ -18,7 +18,7 @@
         <evaluate expression="PopulateAuthenticationContext" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="SessionSetup" />
+        <transition on="proceed" to="UseSessions1" />
     </action-state>
 
     <decision-state id="UseSessions1">
