@@ -238,7 +238,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
         
         final UsernamePasswordContext upContext = usernamePasswordContextLookupStrategy.apply(authenticationContext);
         if (upContext == null) {
-            log.info("{} No UsernamePasswordContext available", getLogPrefix());
+            log.debug("{} No UsernamePasswordContext available", getLogPrefix());
             if (errorHandler != null) {
                 errorHandler.handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                         AuthnEventIds.NO_CREDENTIALS);
