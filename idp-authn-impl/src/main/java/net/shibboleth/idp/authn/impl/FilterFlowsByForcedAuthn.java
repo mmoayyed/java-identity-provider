@@ -85,7 +85,8 @@ public class FilterFlowsByForcedAuthn extends AbstractAuthenticationAction {
         if (potentialFlows.size() == 0) {
             log.info("{} No potential authentication flows remain after filtering", getLogPrefix());
         } else {
-            log.debug("{} Potential authentication flows left after filtering: {}", getLogPrefix(), potentialFlows);
+            log.debug("{} Potential authentication flows left after filtering: {}", getLogPrefix(),
+                    potentialFlows.keySet());
         }
     }
     
