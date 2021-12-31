@@ -254,7 +254,7 @@
                     <dependency>
                         <groupId>net.shibboleth.maven.enforcer.rules</groupId>
                         <artifactId>maven-dist-enforcer</artifactId>
-                        <version>3.0.0</version>
+                        <version>3.1.0-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -276,6 +276,7 @@
                                     <tgzFiles>${project.build.directory}/${idp.finalName}.tar.gz</tgzFiles>
                                     <checkSignatures>true</checkSignatures>
                                     <checkDependencies>true</checkDependencies>
+				    <compileRuntimeArtifactFatal>false</compileRuntimeArtifactFatal>
                                     <listJarSources>false</listJarSources>
                                     <checkM2>${net.shibboleth.maven.enforcer.rules.checkM2}</checkM2>
                                 </jarEnforcer>
