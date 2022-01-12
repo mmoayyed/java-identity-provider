@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -85,6 +86,9 @@ public final class ResolveAttributes extends AbstractProfileAction {
     
     /** Strategy used to determine the attributes to resolve. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> attributesLookupStrategy;
+    
+    /** Hook for adjusting/adding to resolution context. */
+    @Nullable private Consumer<AttributeResolutionContext> resolutionContextDecorator;
     
     /** Whether to treat resolver errors as equivalent to resolving no attributes. */
     private boolean maskFailures;
@@ -202,6 +206,19 @@ public final class ResolveAttributes extends AbstractProfileAction {
     }
     
     /**
+     * Set optional hook for decorating or adding to resolution context.
+     * 
+     * @param decorator decorator hook
+     * 
+     * @since 4.2.0
+     */
+    public void setResolutionContextDecorator(@Nullable final Consumer<AttributeResolutionContext> decorator) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        resolutionContextDecorator = decorator;
+    }
+    
+    /**
      * Set whether to treat resolution failure as equivalent to resolving no attributes.
      * 
      * <p>This matches the behavior of V2.</p>
@@ -314,7 +331,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param profileRequestContext current profile request context
      * @param resolutionContext context to populate
      */
-    protected void populateResolutionContext(@Nonnull final ProfileRequestContext profileRequestContext,
+    private void populateResolutionContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeResolutionContext resolutionContext) {
 
         resolutionContext
@@ -343,6 +360,10 @@ public final class ResolveAttributes extends AbstractProfileAction {
             resolutionContext.setAttributeIssuerID(issuerLookupStrategy.apply(profileRequestContext));
         } else {
             resolutionContext.setAttributeIssuerID(null);
+        }
+        
+        if (resolutionContextDecorator != null) {
+            resolutionContextDecorator.accept(resolutionContext);
         }
     }
     
