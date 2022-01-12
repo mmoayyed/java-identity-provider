@@ -314,7 +314,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param profileRequestContext current profile request context
      * @param resolutionContext context to populate
      */
-    private void populateResolutionContext(@Nonnull final ProfileRequestContext profileRequestContext,
+    protected void populateResolutionContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeResolutionContext resolutionContext) {
 
         resolutionContext
