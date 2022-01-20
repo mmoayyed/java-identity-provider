@@ -215,7 +215,9 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     @Deprecated(forRemoval = true, since = "4.2")
     public void setDisplayDescriptions(@Nonnull @NonnullElements final Map<Locale, String> newDescriptions) {
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "setDisplayDescriptions", null, null);
+        if (!newDescriptions.isEmpty()) {
+            DeprecationSupport.warnOnce(ObjectType.METHOD, "setDisplayDescriptions", null, null);
+        }
         displayDescriptions = checkedNamesFrom(
                 Constraint.isNotNull(newDescriptions, "Display Descriptions should not be null"));
     }
@@ -263,8 +265,8 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     @Override
     @Nonnull public IdPAttribute clone() throws CloneNotSupportedException {
         final IdPAttribute clone = (IdPAttribute) super.clone();
-        clone.setDisplayDescriptions(getDisplayDescriptions());
-        clone.setDisplayNames(getDisplayNames());
+        clone.displayDescriptions = checkedNamesFrom(this.displayDescriptions);
+        clone.displayNames = checkedNamesFrom(this.displayNames);
         clone.setValues(getValues());
         return clone;
     }
