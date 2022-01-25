@@ -105,6 +105,9 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     /** Expected attributes. */
     @Nonnull public List<Attribute> expectedDesignatedAttributes;
 
+    /** Expected schacHomeOganization attribute. */
+    @Nonnull public Attribute homeOrgAttribute;
+    
     /** Expected uid attribute. */
     @Nonnull public Attribute uidAttribute;
 
@@ -140,6 +143,15 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         final XMLObjectBuilder<XSAny> anyBuilder =
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(
                         XSAny.TYPE_NAME);
+        
+        // the expected schacHomeOganization attribute
+        homeOrgAttribute = builder.buildObject();
+        homeOrgAttribute.setName("urn:oid:1.3.6.1.4.1.25178.1.2.9");
+        homeOrgAttribute.setNameFormat(Attribute.URI_REFERENCE);
+        homeOrgAttribute.setFriendlyName("schacHomeOganization");
+        final XSAny orgValue = anyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        orgValue.setTextContent("example.org");
+        homeOrgAttribute.getAttributeValues().add(orgValue);
         
         // the expected uid attribute
         uidAttribute = builder.buildObject();
@@ -178,6 +190,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         eduPersonScopedAffiliationAttribute.getAttributeValues().add(eduPersonScopedAffiliationAttributeValue);
 
         expectedAttributes = new ArrayList<>();
+        expectedAttributes.add(homeOrgAttribute);
         expectedAttributes.add(uidAttribute);
         expectedAttributes.add(mailAttribute);
         expectedAttributes.add(eppnAttribute);
