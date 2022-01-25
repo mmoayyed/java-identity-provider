@@ -23,8 +23,9 @@
     <import resource="inetOrgPerson.xml" />
     <import resource="eduPerson.xml" />
     <import resource="eduCourse.xml" />
+    <import resource="schac.xml" />
     <import resource="samlSubject.xml" />
 
-<!--     <import resource="oidc-claim-rules.xml" /> -->
+    <import resource="oidc-claim-rules.xml" />
 
 </beans>

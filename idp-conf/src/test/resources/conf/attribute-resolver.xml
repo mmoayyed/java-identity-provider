@@ -97,7 +97,10 @@ list of possible components and their options.
     </DataConnector>
     -->
 
-    <DataConnector id="staticAttributes" xsi:type="Static">
+    <DataConnector id="staticAttributes" xsi:type="Static" exportAttributes="schacHomeOrganization">
+        <Attribute id="schacHomeOrganization">
+            <Value>%{idp.scope}</Value>
+        </Attribute>
         <Attribute id="affiliation">
             <Value>member</Value>
         </Attribute>
