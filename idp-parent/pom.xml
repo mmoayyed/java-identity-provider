@@ -68,7 +68,7 @@
 
     <properties>
         <idwsfconsumer.version>2.1.0</idwsfconsumer.version>
-        <java-support.version>8.2.1</java-support.version>
+        <java-support.version>8.2.2-SNAPSHOT</java-support.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>4.2.0-SNAPSHOT</opensaml.version>
         <spring-extensions.version>6.2.0-SNAPSHOT</spring-extensions.version>
