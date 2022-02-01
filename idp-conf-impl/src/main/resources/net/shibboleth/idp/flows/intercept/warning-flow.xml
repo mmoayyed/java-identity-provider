@@ -7,7 +7,7 @@
     <input name="calledAsSubflow" type="boolean" required="true" />
 
     <on-start>
-        <evaluate expression="WarningConditionMap.entrySet().iterator()" result="flowScope.WarningIterator" />
+        <evaluate expression="new net.shibboleth.utilities.java.support.collection.ReflectionSafeIterator(WarningConditionMap.entrySet().iterator())" result="flowScope.WarningIterator" />
     </on-start>
 
     <decision-state id="CheckIterator">
