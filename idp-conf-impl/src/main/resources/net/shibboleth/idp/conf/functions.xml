@@ -97,6 +97,10 @@
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.attribute.filter.context.AttributeFilterContext) }"
         c:createContext="true" />
+    <bean id="shibboleth.ChildLookupOrCreate.RelyingParty"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.profile.context.RelyingPartyContext) }"
+        c:createContext="true" />
     <bean id="shibboleth.ChildLookupOrCreate.RelyingPartyUIContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.ui.context.RelyingPartyUIContext) }"
