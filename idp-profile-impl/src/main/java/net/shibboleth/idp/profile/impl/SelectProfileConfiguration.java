@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CONFIG}
  * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
- * 
- * @post ProfileRequestContext.getSubcontext(RelyingPartyContext.class).getProfileConfiguration() != null
  */
 public class SelectProfileConfiguration extends AbstractProfileAction {
 
@@ -61,9 +59,13 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
     /** The RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpCtx;
     
+    /** Fail if no profile configuration is found. */
+    private boolean failIfMissing;
+    
     /** Constructor. */
     public SelectProfileConfiguration() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+        failIfMissing = true;
     }
 
     /**
@@ -79,6 +81,21 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set whether a missing profile configuration should result in an error event.
+     * 
+     * <p>Defaults to true.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.2.0
+     */
+    public void setFailIfMissing(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        failIfMissing = flag;
     }
 
     /** {@inheritDoc} */
@@ -124,15 +141,25 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         }
         
         if (profileConfiguration == null) {
-            log.warn("{} Profile {} is not available for RP configuration {} (RPID {})",
-                    new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            if (failIfMissing) {
+                log.warn("{} Profile {} is not available for RP configuration {} (RPID {})",
+                        new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            } else {
+                log.debug("{} Profile {} is not available for RP configuration {} (RPID {})",
+                        new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+            }
         } else if (profileConfiguration instanceof ConditionalProfileConfiguration
                 && !((ConditionalProfileConfiguration) profileConfiguration).getActivationCondition().test(
                         profileRequestContext)) {
-            log.warn("{} Profile {} is not active for RP configuration {} (RPID {})",
-                    new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            if (failIfMissing) {
+                log.warn("{} Profile {} is not active for RP configuration {} (RPID {})",
+                        new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            } else {
+                log.debug("{} Profile {} is not active for RP configuration {} (RPID {})",
+                        new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+            }
         } else {
             rpCtx.setProfileConfig(profileConfiguration);
         }

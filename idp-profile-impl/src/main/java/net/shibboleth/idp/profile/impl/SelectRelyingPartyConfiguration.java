@@ -111,6 +111,10 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
     /** {@inheritDoc} */
     @Override
     public boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.debug("{} No relying party context available", getLogPrefix());
@@ -118,7 +122,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
             return false;
         }
         
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
     
     /** {@inheritDoc} */

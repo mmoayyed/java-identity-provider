@@ -55,6 +55,7 @@ public class SelectProfileConfigurationTest {
     public void setUp() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(null);
 
         action = new SelectProfileConfiguration();
         action.initialize();        
@@ -93,10 +94,32 @@ public class SelectProfileConfigurationTest {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(null);
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
+        Assert.assertNull(prc.getSubcontext(RelyingPartyContext.class).getProfileConfig());
     }
+
+   /**
+    * Test that the action proceeds properly if the desired profile configuration is not configured.
+    * 
+    * @throws Exception if something goes wrong
+    */
+   @Test public void testInvalidProfileConfigurationNoFail() throws Exception {
+       action = new SelectProfileConfiguration();
+       action.setFailIfMissing(false);
+       action.initialize();        
+
+       src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+               Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
+       prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+       prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(null);
+
+       final Event event = action.execute(src);
+       ActionTestingSupport.assertProceedEvent(event);
+       Assert.assertNull(prc.getSubcontext(RelyingPartyContext.class).getProfileConfig());
+   }
 
     /**
      * Test that the action selects the appropriate profile configuration and proceeds properly.
@@ -107,6 +130,7 @@ public class SelectProfileConfigurationTest {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(null);
 
         prc.setProfileId("mock");
 
@@ -126,6 +150,7 @@ public class SelectProfileConfigurationTest {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(null);
 
         prc.setProfileId("new");
         prc.setLegacyProfileId("mock");
