@@ -88,6 +88,10 @@
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.xmlsec.context.SecurityParametersContext) }"
         c:createContext="true" />
+    <bean id="shibboleth.ChildLookupOrCreate.EncryptionParameters"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(org.opensaml.saml.saml2.profile.context.EncryptionContext) }"
+        c:createContext="true" />
 
     <bean id="shibboleth.ChildLookupOrCreate.AttributeContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
