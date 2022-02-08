@@ -28,6 +28,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.RelyingPartyResolverContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -129,19 +130,24 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
     @Override
     public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
+        final RelyingPartyResolverContext workContext = new RelyingPartyResolverContext();
+        workContext.setVerificationPredicate(prc -> relyingPartyCtx.isVerified());
+        profileRequestContext.addSubcontext(workContext, true);
+        
         try {
             final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);
-            if (config == null) {
+            if (config != null) {
+                log.debug("{} Found relying party configuration {} for request", getLogPrefix(), config.getId());
+                relyingPartyCtx.setConfiguration(config);
+            } else {
                 log.debug("{} No relying party configuration applies to this request", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
-                return;
             }
-
-            log.debug("{} Found relying party configuration {} for request", getLogPrefix(), config.getId());
-            relyingPartyCtx.setConfiguration(config);
         } catch (final ResolverException e) {
             log.error("{} Error trying to resolve relying party configuration", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
         }
+        
+        profileRequestContext.removeSubcontext(workContext);
     }
 }

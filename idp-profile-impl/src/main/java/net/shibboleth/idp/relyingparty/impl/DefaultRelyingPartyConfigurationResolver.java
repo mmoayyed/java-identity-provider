@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.context.RelyingPartyResolverContext;
 import net.shibboleth.idp.profile.logic.VerifiedProfilePredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
@@ -210,8 +211,16 @@ public class DefaultRelyingPartyConfigurationResolver
             return Collections.emptyList();
         }
 
+        final Predicate<ProfileRequestContext> condition;
+        final RelyingPartyResolverContext resolverCtx = context.getSubcontext(RelyingPartyResolverContext.class);
+        if (resolverCtx != null && resolverCtx.getVerificationPredicate() != null) {
+            condition = resolverCtx.getVerificationPredicate();
+        } else {
+            condition = getVerificationPredicate();
+        }
+        
         log.debug("Resolving relying party configuration");
-        if (!verificationPredicate.test(context)) {
+        if (!condition.test(context)) {
             if (getUnverifiedConfiguration() == null) {
                 log.warn("Profile request was unverified, but no such configuration is available");
                 return Collections.emptyList();
@@ -250,8 +259,16 @@ public class DefaultRelyingPartyConfigurationResolver
             return null;
         }
         
+        final Predicate<ProfileRequestContext> condition;
+        final RelyingPartyResolverContext resolverCtx = context.getSubcontext(RelyingPartyResolverContext.class);
+        if (resolverCtx != null && resolverCtx.getVerificationPredicate() != null) {
+            condition = resolverCtx.getVerificationPredicate();
+        } else {
+            condition = getVerificationPredicate();
+        }
+        
         log.debug("Resolving relying party configuration");
-        if (!verificationPredicate.test(context)) {
+        if (!condition.test(context)) {
             if (getUnverifiedConfiguration() == null) {
                 log.warn("Profile request was unverified, but no such configuration is available");
                 return null;
