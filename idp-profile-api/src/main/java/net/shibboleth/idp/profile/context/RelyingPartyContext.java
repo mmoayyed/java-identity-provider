@@ -158,7 +158,6 @@ public final class RelyingPartyContext extends BaseContext {
     @Nonnull public RelyingPartyContext setVerificationLookupStrategy(
             @Nonnull final Function<RelyingPartyContext,Boolean> strategy) {
         verificationLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
-        verified = null;
         return this;
     }
     
@@ -181,7 +180,6 @@ public final class RelyingPartyContext extends BaseContext {
     @Nonnull public RelyingPartyContext setRelyingPartyIdLookupStrategy(
             @Nonnull final Function<RelyingPartyContext,String> strategy) {
         relyingPartyIdLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
-        relyingPartyId = null;
         return this;
     }
     
