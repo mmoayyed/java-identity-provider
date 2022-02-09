@@ -238,6 +238,10 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext == null) {
             log.debug("{} Unable to locate RelyingPartyContext", getLogPrefix());
@@ -292,7 +296,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         log.debug("{} Encryption for assertions ({}), identifiers ({}), attributes({})", getLogPrefix(),
                 encryptAssertions, encryptIdentifiers, encryptAttributes);
         
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
     
     /** {@inheritDoc} */
