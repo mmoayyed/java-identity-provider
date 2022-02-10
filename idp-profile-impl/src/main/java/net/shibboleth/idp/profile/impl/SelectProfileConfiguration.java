@@ -28,8 +28,10 @@ import net.shibboleth.idp.profile.config.ConditionalProfileConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -56,6 +58,9 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
      */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /** Profile ID to use if not derived from context tree. */
+    @Nullable @NotEmpty private String profileId;
+    
     /** The RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpCtx;
     
@@ -81,6 +86,21 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set the profile identifier to use in selection.
+     * 
+     * <p>If not set, this defaults to using {@link ProfileRequestContext#getProfileId()}.</p>
+     * 
+     * @param id profile ID to use
+     * 
+     * @since 4.2.0
+     */
+    public void setProfileId(@Nullable @NotEmpty final String id) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        profileId = StringSupport.trimOrNull(id);
     }
     
     /**
@@ -122,15 +142,20 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         return true;
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final String profileId = profileRequestContext.getProfileId();
+        String targetId = profileId;
+        if (targetId == null) {
+            targetId = profileRequestContext.getProfileId();
+        }
+        
         final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
 
-        ProfileConfiguration profileConfiguration = rpConfig.getProfileConfiguration(profileRequestContext, profileId);
-        if (profileConfiguration == null && profileRequestContext.getLegacyProfileId() != null) {
+        ProfileConfiguration profileConfiguration = rpConfig.getProfileConfiguration(profileRequestContext, targetId);
+        if (profileConfiguration == null && profileId == null && profileRequestContext.getLegacyProfileId() != null) {
             // Try the legacy ID.
             profileConfiguration = rpConfig.getProfileConfiguration(profileRequestContext,
                     profileRequestContext.getLegacyProfileId());
@@ -143,26 +168,27 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         if (profileConfiguration == null) {
             if (failIfMissing) {
                 log.warn("{} Profile {} is not available for RP configuration {} (RPID {})",
-                        new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             } else {
                 log.debug("{} Profile {} is not available for RP configuration {} (RPID {})",
-                        new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
             }
         } else if (profileConfiguration instanceof ConditionalProfileConfiguration
                 && !((ConditionalProfileConfiguration) profileConfiguration).getActivationCondition().test(
                         profileRequestContext)) {
             if (failIfMissing) {
                 log.warn("{} Profile {} is not active for RP configuration {} (RPID {})",
-                        new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             } else {
                 log.debug("{} Profile {} is not active for RP configuration {} (RPID {})",
-                        new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
             }
         } else {
             rpCtx.setProfileConfig(profileConfiguration);
         }
     }
+// Checkstyle: CyclomaticComplexity ON
     
 }
