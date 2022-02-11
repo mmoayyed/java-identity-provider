@@ -9,7 +9,7 @@
     supportedContentTypes="application/xml test/foo">
 
         <metadata:MetadataQueryProtocol>
-            https://test.shibboleth.net/mdq
+            https://mdq.incommon.org
         </metadata:MetadataQueryProtocol>
 
 </metadata:MetadataProvider>

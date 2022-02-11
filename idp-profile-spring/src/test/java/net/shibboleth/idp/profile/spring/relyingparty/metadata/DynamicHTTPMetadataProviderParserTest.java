@@ -253,7 +253,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertEquals(resolver.getSupportedContentTypes(), Collections.singletonList("application/samlmetadata+xml"));
 
-        final String entityID = "https://foo1.example.org/idp/shibboleth";
+        final String entityID = "urn:mace:incommon:osu.edu";
         
         final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
@@ -277,7 +277,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicMetadataQueryProtocolWithSecondaryURLBuilders.xml", "beans.xml");
         
-        final String entityID = "https://foo1.example.org/idp/shibboleth";
+        final String entityID = "urn:mace:incommon:osu.edu";
         MessageDigest sha1Digester = MessageDigest.getInstance(JCAConstants.DIGEST_SHA1);
         byte[] entityIDSourceID = sha1Digester.digest(entityID.getBytes("UTF-8"));
         SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");

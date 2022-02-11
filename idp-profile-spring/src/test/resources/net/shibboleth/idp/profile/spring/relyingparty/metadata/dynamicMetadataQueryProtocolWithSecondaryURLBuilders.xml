@@ -7,7 +7,7 @@
 	id="dynamicMDQ" xsi:type="metadata:DynamicHTTPMetadataProvider" disregardTLSCertificate="true">
     
         <metadata:MetadataQueryProtocol secondaryURLBuildersRef="metadata.MDQ.secondaryURLBuilders">
-            https://test.shibboleth.net/mdq
+            https://mdq.incommon.org
         </metadata:MetadataQueryProtocol>
 
 </metadata:MetadataProvider>
