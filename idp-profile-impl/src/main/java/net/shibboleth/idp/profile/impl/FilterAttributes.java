@@ -322,7 +322,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * 
      * @since 4.2.0
      */
-    public void setProxiedRequesterMetadataLookupStrategy(
+    public void setProxiedRequesterMetadataContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
