@@ -87,14 +87,17 @@ public final class AttributeFilterContext extends BaseContext {
     /** The attribute recipient's group identity. */
     @Nullable private String attributeRecipientGroupID;
 
-    /** Cache of IdP metadata context. */
+    /** Cache of issuer metadata context. */
     @Nullable private SAMLMetadataContext issuerMetadataContext;
     
-    /** Cache of SP metadata context. */
+    /** Cache of requester metadata context. */
     @Nullable private SAMLMetadataContext requesterMetadataContext;
 
     /** Cache of the proxied requester context. */
     @Nullable private ProxiedRequesterContext proxiedRequesterContext;
+
+    /** Cache of proxied requester metadata context. */
+    @Nullable private SAMLMetadataContext proxiedRequesterMetadataContext;
 
     /** Lookup strategy used to locate the IdP's metadata context. */
     @Nullable
@@ -107,6 +110,10 @@ public final class AttributeFilterContext extends BaseContext {
     /** Lookup strategy used to locate a {@link ProxiedRequesterContext}. */
     @Nullable
     private Function<AttributeFilterContext,ProxiedRequesterContext> proxiedRequesterContextLookupStrategy;
+
+    /** Lookup strategy used to locate a proxied requester's metadata context. */
+    @Nullable
+    private Function<AttributeFilterContext,SAMLMetadataContext> proxiedRequesterMetadataContextLookupStrategy;
 
     /** Constructor. */
     public AttributeFilterContext() {
@@ -336,6 +343,21 @@ public final class AttributeFilterContext extends BaseContext {
     }
 
     /**
+     * Set the strategy used to locate the SP's metadata context.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @return this context
+     */
+    @Nonnull public AttributeFilterContext setRequesterMetadataContextLookupStrategy(
+            @Nullable final Function<AttributeFilterContext,SAMLMetadataContext> strategy) {
+        requesterMetadataContextLookupStrategy = strategy;
+        
+        return this;
+    }
+
+    
+    /**
      * Set the strategy used to locate the IdP's metadata context.
      * 
      * @param strategy lookup strategy
@@ -361,21 +383,7 @@ public final class AttributeFilterContext extends BaseContext {
     @Nullable public Function<AttributeFilterContext,SAMLMetadataContext> getIssuerMetadataContextLookupStrategy() {
         return issuerMetadataContextLookupStrategy;
     }
-
-    /**
-     * Set the strategy used to locate the SP's metadata context.
-     * 
-     * @param strategy lookup strategy
-     * 
-     * @return this context
-     */
-    @Nonnull public AttributeFilterContext setRequesterMetadataContextLookupStrategy(
-            @Nullable final Function<AttributeFilterContext,SAMLMetadataContext> strategy) {
-        requesterMetadataContextLookupStrategy = strategy;
-        
-        return this;
-    }
-
+    
     /**
      * Get the strategy used to locate the {@link ProxiedRequesterContext}.
      * 
@@ -404,7 +412,38 @@ public final class AttributeFilterContext extends BaseContext {
         return this;
     }
 
-    /** Get the Issuer Metadata context.
+    /**
+     * Get the strategy used to locate a proxied requester's metadata context.
+     * 
+     * @return lookup strategy
+     * 
+     * @since 4.2.0
+     */
+    @Nullable
+    public Function<AttributeFilterContext,SAMLMetadataContext> getProxiedRequesterMetadataContextLookupStrategy() {
+        return proxiedRequesterMetadataContextLookupStrategy;
+    }
+
+
+    /**
+     * Set the strategy used to locate a proxied requester's metadata context.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @return this context
+     * 
+     * @since 4.2.0
+     */
+    @Nonnull public AttributeFilterContext setProxiedRequesterMetadataContextLookupStrategy(
+            @Nullable final Function<AttributeFilterContext,SAMLMetadataContext> strategy) {
+        proxiedRequesterMetadataContextLookupStrategy = strategy;
+        
+        return this;
+    }
+
+    
+    /**
+     * Get the Issuer Metadata context.
      * 
      * <p>This value is cached and so only calculated once.</p>
      * 
@@ -419,7 +458,8 @@ public final class AttributeFilterContext extends BaseContext {
         return issuerMetadataContext;
     }
 
-    /** Get the Requester Metadata context.
+    /**
+     * Get the Requester Metadata context.
      * 
      * <p>This value is cached and so only calculated once.</p>
      * 
@@ -432,7 +472,8 @@ public final class AttributeFilterContext extends BaseContext {
         return requesterMetadataContext;
     }
     
-    /** Get the {@link ProxiedRequesterContext}.
+    /**
+     * Get the {@link ProxiedRequesterContext}.
      * 
      * <p>This value is cached and so only calculated once.</p>
      * 
@@ -447,6 +488,22 @@ public final class AttributeFilterContext extends BaseContext {
         return proxiedRequesterContext;
     }
 
+    /**
+     * Get the Proxied Requester Metadata context.
+     * 
+     * <p>This value is cached and so only calculated once.</p>
+     * 
+     * @return the context
+     * 
+     * @since 4.2.0
+     */
+    @Nullable public SAMLMetadataContext getProxiedRequesterMetadataContext() {
+        if (null == proxiedRequesterMetadataContext && null != proxiedRequesterMetadataContextLookupStrategy) {
+            proxiedRequesterMetadataContext = proxiedRequesterMetadataContextLookupStrategy.apply(this);
+        }
+        return proxiedRequesterMetadataContext;
+    }
+    
     /**
      * Helper method to invoke an AttributeFilter service using this context.
      * 

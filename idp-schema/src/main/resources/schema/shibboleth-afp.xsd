@@ -606,6 +606,18 @@
         </complexContent>
     </complexType>
 
+    <complexType name="ProxiedRequesterEntityAttributeExactMatch">
+        <annotation>
+            <documentation>
+                A match function that checks if a proxied requester's metadata
+                contains an entity attribute with the specified value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:EntityAttributeExactMatchType"/>
+        </complexContent>
+    </complexType>
+
     <complexType name="IssuerEntityAttributeExactMatch">
         <annotation>
             <documentation>
@@ -650,8 +662,20 @@
     <complexType name="EntityAttributeRegexMatch">
         <annotation>
             <documentation>
-                A match function that checks if the attribute requester's metadata
-                contains an entity attribute with a value that matches the given regular expression.
+                A match function that checks if the attribute requester's metadata contains
+                an entity attribute with a value that matches the given regular expression.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:EntityAttributeRegexMatchType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ProxiedRequesterEntityAttributeRegexMatch">
+        <annotation>
+            <documentation>
+                A match function that checks if a proxied requester's metadata contains
+                an entity attribute with a value that matches the given regular expression.
             </documentation>
         </annotation>
         <complexContent>
@@ -662,8 +686,8 @@
     <complexType name="IssuerEntityAttributeRegexMatch">
         <annotation>
             <documentation>
-                A match function that checks if the attribute issuer's metadata
-                contains an entity attribute with a value that matches the given regular expression.
+                A match function that checks if the attribute issuer's metadata contains
+                an entity attribute with a value that matches the given regular expression.
             </documentation>
         </annotation>
         <complexContent>
@@ -749,6 +773,18 @@
         </complexContent>
     </complexType>
 
+    <complexType name="ProxiedRequesterInEntityGroup">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true if a proxied requester is found in metadata and
+                is a member of the given entity group.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:EntityGroupMatchType"/>
+        </complexContent>
+    </complexType>
+
     <complexType name="IssuerInEntityGroup">
         <annotation>
             <documentation>
@@ -785,7 +821,18 @@
     <complexType name="RegistrationAuthority">
         <annotation>
             <documentation>
-                A match function that matches the SP (requester) MDRPI against a list of potential values.
+                A match function that matches a requester's MDRPI against a list of potential values.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:RegistrationAuthorityMatchType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="ProxiedRequesterRegistrationAuthority">
+        <annotation>
+            <documentation>
+                A match function that matches a proxied requester's MDRPI against a list of potential values.
             </documentation>
         </annotation>
         <complexContent>

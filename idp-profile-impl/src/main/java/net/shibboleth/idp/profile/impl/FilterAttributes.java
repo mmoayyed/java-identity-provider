@@ -130,6 +130,15 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     @Nullable private Function<AttributeFilterContext,ProxiedRequesterContext> proxiesFromFilterLookupStrategy;
     
+    /** Strategy used to locate the {@link SAMLMetadataContext} for the proxied requester. */
+    @Nullable private Function<ProfileRequestContext,SAMLMetadataContext> proxiedRequesterMetadataLookupStrategy;
+    
+    /**
+     * Strategy used to locate the {@link SAMLMetadataContext} for the proxied requester via the
+     * {@link AttributeFilterContext}.
+     */
+    @Nullable private Function<AttributeFilterContext,SAMLMetadataContext> proxiedMetadataFromFilterLookupStrategy;
+    
     /** Whether to treat resolver errors as equivalent to resolving no attributes. */
     private boolean maskFailures;
 
@@ -307,6 +316,22 @@ public class FilterAttributes extends AbstractProfileAction {
     }
     
     /**
+     * Sets the strategy used to locate proxied requester metadata.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.2.0
+     */
+    public void setProxiedRequesterMetadataLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        proxiedRequesterMetadataLookupStrategy = strategy;
+        proxiedMetadataFromFilterLookupStrategy = strategy != null ?
+                proxiedRequesterMetadataLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
+    }
+    
+    /**
      * Set whether to treat resolution failure as equivalent to resolving no attributes.
      * 
      * <p>This matches the behavior of V2.</p>
@@ -413,7 +438,8 @@ public class FilterAttributes extends AbstractProfileAction {
                     issuerLookupStrategy != null ? issuerLookupStrategy.apply(profileRequestContext) : null)
             .setIssuerMetadataContextLookupStrategy(issuerMetadataFromFilterLookupStrategy)
             .setRequesterMetadataContextLookupStrategy(metadataFromFilterLookupStrategy)
-            .setProxiedRequesterContextLookupStrategy(proxiesFromFilterLookupStrategy);
+            .setProxiedRequesterContextLookupStrategy(proxiesFromFilterLookupStrategy)
+            .setProxiedRequesterMetadataContextLookupStrategy(proxiedMetadataFromFilterLookupStrategy);
 
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the AttributeContext.

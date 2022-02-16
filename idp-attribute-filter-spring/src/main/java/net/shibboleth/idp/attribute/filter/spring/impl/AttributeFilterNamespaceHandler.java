@@ -43,17 +43,21 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.PrincipalNameR
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.ProxiedRequesterRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.ProxiedRequesterRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeInMetadataRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerEntityAttributeExactRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerEntityAttributeRegexRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerInEntityGroupRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerNameIDFormatRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerRegistrationAuthorityRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeExactRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterEntityAttributeRegexRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterInEntityGroupRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterNameIDFormatRuleParser;
-import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeRequesterRegistrationAuthorityRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.IssuerEntityAttributeExactRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.IssuerEntityAttributeRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.IssuerInEntityGroupRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.IssuerNameIDFormatRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.IssuerRegistrationAuthorityRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.RequesterEntityAttributeExactRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.RequesterEntityAttributeRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.RequesterInEntityGroupRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.RequesterNameIDFormatRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.RequesterRegistrationAuthorityRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.MappedAttributeInMetadataRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.ProxiedRequesterEntityAttributeExactRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.ProxiedRequesterEntityAttributeRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.ProxiedRequesterInEntityGroupRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.ProxiedRequesterRegistrationAuthorityRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.ScopeMatchesShibMDScopeParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.ValueMatchesShibMDScopeParser;
 
@@ -130,29 +134,38 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         registerBeanDefinitionParser(PredicateRuleParser.SCHEMA_TYPE, new PredicateRuleParser());
         
         // SAML - 
-        registerBeanDefinitionParser(AttributeRequesterEntityAttributeExactRuleParser.SCHEMA_TYPE,
-                new AttributeRequesterEntityAttributeExactRuleParser());
+        registerBeanDefinitionParser(RequesterEntityAttributeExactRuleParser.SCHEMA_TYPE,
+                new RequesterEntityAttributeExactRuleParser());
 
-        registerBeanDefinitionParser(AttributeIssuerEntityAttributeExactRuleParser.SCHEMA_TYPE,
-                new AttributeIssuerEntityAttributeExactRuleParser());
+        registerBeanDefinitionParser(ProxiedRequesterEntityAttributeExactRuleParser.SCHEMA_TYPE,
+                new ProxiedRequesterEntityAttributeExactRuleParser());
 
-        registerBeanDefinitionParser(AttributeRequesterEntityAttributeRegexRuleParser.SCHEMA_TYPE,
-                new AttributeRequesterEntityAttributeRegexRuleParser());
+        registerBeanDefinitionParser(IssuerEntityAttributeExactRuleParser.SCHEMA_TYPE,
+                new IssuerEntityAttributeExactRuleParser());
 
-        registerBeanDefinitionParser(AttributeIssuerEntityAttributeRegexRuleParser.SCHEMA_TYPE,
-                new AttributeIssuerEntityAttributeRegexRuleParser());
+        registerBeanDefinitionParser(RequesterEntityAttributeRegexRuleParser.SCHEMA_TYPE,
+                new RequesterEntityAttributeRegexRuleParser());
 
-        registerBeanDefinitionParser(AttributeRequesterNameIDFormatRuleParser.SCHEMA_TYPE,
-                new AttributeRequesterNameIDFormatRuleParser());
+        registerBeanDefinitionParser(ProxiedRequesterEntityAttributeRegexRuleParser.SCHEMA_TYPE,
+                new ProxiedRequesterEntityAttributeRegexRuleParser());
 
-        registerBeanDefinitionParser(AttributeIssuerNameIDFormatRuleParser.SCHEMA_TYPE,
-                new AttributeIssuerNameIDFormatRuleParser());
+        registerBeanDefinitionParser(IssuerEntityAttributeRegexRuleParser.SCHEMA_TYPE,
+                new IssuerEntityAttributeRegexRuleParser());
 
-        registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE,
-                new AttributeRequesterInEntityGroupRuleParser());
+        registerBeanDefinitionParser(RequesterNameIDFormatRuleParser.SCHEMA_TYPE,
+                new RequesterNameIDFormatRuleParser());
 
-        registerBeanDefinitionParser(AttributeIssuerInEntityGroupRuleParser.SCHEMA_TYPE,
-                new AttributeIssuerInEntityGroupRuleParser());
+        registerBeanDefinitionParser(IssuerNameIDFormatRuleParser.SCHEMA_TYPE,
+                new IssuerNameIDFormatRuleParser());
+
+        registerBeanDefinitionParser(RequesterInEntityGroupRuleParser.SCHEMA_TYPE,
+                new RequesterInEntityGroupRuleParser());
+
+        registerBeanDefinitionParser(ProxiedRequesterInEntityGroupRuleParser.SCHEMA_TYPE,
+                new ProxiedRequesterInEntityGroupRuleParser());
+
+        registerBeanDefinitionParser(IssuerInEntityGroupRuleParser.SCHEMA_TYPE,
+                new IssuerInEntityGroupRuleParser());
 
         registerBeanDefinitionParser(AttributeInMetadataRuleParser.SCHEMA_TYPE,
                 new AttributeInMetadataRuleParser());
@@ -160,11 +173,14 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.SCHEMA_TYPE,
                 new MappedAttributeInMetadataRuleParser());
 
-        registerBeanDefinitionParser(AttributeRequesterRegistrationAuthorityRuleParser.SCHEMA_TYPE,
-                new AttributeRequesterRegistrationAuthorityRuleParser());
+        registerBeanDefinitionParser(RequesterRegistrationAuthorityRuleParser.SCHEMA_TYPE,
+                new RequesterRegistrationAuthorityRuleParser());
 
-        registerBeanDefinitionParser(AttributeIssuerRegistrationAuthorityRuleParser.SCHEMA_TYPE,
-                new AttributeIssuerRegistrationAuthorityRuleParser());
+        registerBeanDefinitionParser(ProxiedRequesterRegistrationAuthorityRuleParser.SCHEMA_TYPE,
+                new ProxiedRequesterRegistrationAuthorityRuleParser());
+
+        registerBeanDefinitionParser(IssuerRegistrationAuthorityRuleParser.SCHEMA_TYPE,
+                new IssuerRegistrationAuthorityRuleParser());
         
         registerBeanDefinitionParser(ValueMatchesShibMDScopeParser.SCHEMA_TYPE, new ValueMatchesShibMDScopeParser());
 

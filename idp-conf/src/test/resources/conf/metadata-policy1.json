@@ -1,0 +1,21 @@
+{
+    "grant_types": {
+        "one_of": ["authorization_code","implicit"]
+    },
+    "client_name": {
+        "default": "A known test application"
+    },
+    "organization_name": {
+        "value": "A trusted organization"
+    },
+    "redirect_uris": {
+        "regexp": "^https:\/\/(?:([^.]+).)?example.org\/(.*)",
+        "essential": true
+    },
+    "id_token_signed_response_alg": {
+        "subset_of": ["RS256", "RS384", "RS512"]
+    },
+    "scopes": {
+        "subset_of": ["openid", "profile", "email", "phone"]
+    }
+}
