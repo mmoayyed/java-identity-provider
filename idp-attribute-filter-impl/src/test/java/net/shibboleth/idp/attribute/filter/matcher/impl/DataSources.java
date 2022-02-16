@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 
-import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
  * Strings and such used for testing.
@@ -69,7 +69,7 @@ public abstract class DataSources {
 
     public static AttributeFilterContext populatedFilterContext(String principal, String issuerID, String recipientId) {
 
-        BaseContext parent = new BaseContext() {};
+        final ProfileRequestContext parent = new ProfileRequestContext();
         parent.addSubcontext(TestSources.createResolutionContext(principal, issuerID, recipientId));
         AttributeFilterContext retVal = parent.getSubcontext(AttributeFilterContext.class, true);
         retVal.setPrincipal(principal);
@@ -80,8 +80,9 @@ public abstract class DataSources {
 
     public static AttributeFilterContext unPopulatedFilterContext() {
 
-        BaseContext parent = new BaseContext() {};
+        final ProfileRequestContext parent = new ProfileRequestContext();
         parent.addSubcontext(new AttributeResolutionContext());
         return parent.getSubcontext(AttributeFilterContext.class, true);
     }
+
 }

@@ -40,6 +40,7 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.OutboundRulePa
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.PredicateRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.PrincipalNameRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.PrincipalNameRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.ProfileRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.ProxiedRequesterRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.impl.ProxiedRequesterRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeInMetadataRuleParser;
@@ -132,6 +133,8 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         registerBeanDefinitionParser(ScriptedMatcherParser.SCHEMA_TYPE, new ScriptedMatcherParser());
         
         registerBeanDefinitionParser(PredicateRuleParser.SCHEMA_TYPE, new PredicateRuleParser());
+        
+        registerBeanDefinitionParser(ProfileRuleParser.SCHEMA_TYPE, new ProfileRuleParser());
         
         // SAML - 
         registerBeanDefinitionParser(RequesterEntityAttributeExactRuleParser.SCHEMA_TYPE,
