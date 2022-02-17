@@ -72,7 +72,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
     /**
      * Set up test state.
      * 
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException on error
      */
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().buildRequestContext();

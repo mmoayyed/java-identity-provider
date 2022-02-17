@@ -49,7 +49,7 @@ public class SelectProfileConfigurationTest {
     /**
      * Test setup.
      * 
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException on error
      */
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {

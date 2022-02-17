@@ -33,7 +33,7 @@ public class ProxiedRequesterEntityAttributeExactRuleParserTest extends BaseAttr
     /**
      * Basic test.
      * 
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException on error
      */
     @Test public void basic() throws ComponentInitializationException {
         ProxiedRequesterEntityAttributeExactPolicyRule rule =

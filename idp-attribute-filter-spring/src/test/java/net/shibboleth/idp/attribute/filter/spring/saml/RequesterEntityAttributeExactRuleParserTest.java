@@ -33,7 +33,7 @@ public class RequesterEntityAttributeExactRuleParserTest extends BaseAttributeFi
     /**
      * Basic test.
      * 
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException on error
      */
     @Test public void basic() throws ComponentInitializationException {
         RequesterEntityAttributeExactPolicyRule rule =

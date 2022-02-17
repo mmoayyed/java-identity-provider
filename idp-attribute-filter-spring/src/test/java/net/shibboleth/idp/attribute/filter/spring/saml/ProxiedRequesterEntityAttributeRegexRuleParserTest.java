@@ -34,7 +34,7 @@ public class ProxiedRequesterEntityAttributeRegexRuleParserTest extends  BaseAtt
     /**
      * Basic test.
      * 
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException on error
      */
     @Test public void basic() throws ComponentInitializationException {
         final ProxiedRequesterEntityAttributeRegexPolicyRule rule =

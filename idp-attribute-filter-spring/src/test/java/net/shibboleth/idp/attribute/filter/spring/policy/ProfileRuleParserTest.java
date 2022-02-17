@@ -32,7 +32,7 @@ public class ProfileRuleParserTest extends BaseAttributeFilterParserTest {
     /**
      * Basic test.
      * 
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException on error
      */
     @Test public void policy() throws ComponentInitializationException {
 

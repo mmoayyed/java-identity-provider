@@ -23,13 +23,11 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.ProxiedRequesterInEntityGroupPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.ProxiedRequesterInEntityGroupRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.testing.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-/**
- * test for {@link ProxiedRequesterInEntityGroupRuleParser}.
- */
-@SuppressWarnings("javadoc")
+/** Unit test for {@link ProxiedRequesterInEntityGroupRuleParser}. */
 public class ProxiedRequesterInEntityGroupRuleParserTest extends  BaseAttributeFilterParserTest {
 
     private void testRule(final String propValue, final boolean result) throws ComponentInitializationException {
@@ -40,14 +38,29 @@ public class ProxiedRequesterInEntityGroupRuleParserTest extends  BaseAttributeF
         assertEquals(rule.isCheckAffiliations(), result);
     }
 
-    @Test(expectedExceptions = {BeanCreationException.class}) public void basic() throws ComponentInitializationException {
+    /**
+     * Failure test.
+     * 
+     * @throws ComponentInitializationException on error
+     */
+    @Test(expectedExceptions = {BeanCreationException.class}) public void failure() throws ComponentInitializationException {
         testRule("", false);
     }
 
+    /**
+     * Test true outcome.
+     * 
+     * @throws ComponentInitializationException on error
+     */
     @Test public void egTrue() throws ComponentInitializationException {
         testRule("true", true);
     }
 
+    /**
+     * Test false outcome.
+     *  
+     * @throws ComponentInitializationException on error
+     */
     @Test public void egFalse() throws ComponentInitializationException {
         testRule("false", false);
     }

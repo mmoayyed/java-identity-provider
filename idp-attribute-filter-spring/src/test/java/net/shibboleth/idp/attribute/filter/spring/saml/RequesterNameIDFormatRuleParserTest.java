@@ -34,7 +34,7 @@ public class RequesterNameIDFormatRuleParserTest extends BaseAttributeFilterPars
     /**
      * Basic test.
      * 
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException on error
      */
     @Test public void basic() throws ComponentInitializationException {
         final RequesterNameIDFormatExactPolicyRule rule =

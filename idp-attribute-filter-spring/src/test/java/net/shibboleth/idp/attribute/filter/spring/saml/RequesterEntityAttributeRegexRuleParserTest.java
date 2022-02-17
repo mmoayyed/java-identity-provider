@@ -34,7 +34,7 @@ public class RequesterEntityAttributeRegexRuleParserTest extends  BaseAttributeF
     /**
      * Basic test.
      * 
-     * @throws ComponentInitializationException
+     * @throws ComponentInitializationException on error
      */
     @Test public void basic() throws ComponentInitializationException {
         final RequesterEntityAttributeRegexPolicyRule rule = (RequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex2.xml");
