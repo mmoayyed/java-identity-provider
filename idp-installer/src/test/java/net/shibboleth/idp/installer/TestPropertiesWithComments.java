@@ -19,12 +19,14 @@ package net.shibboleth.idp.installer;
 
 import static org.testng.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Properties;
 import java.util.Set;
 
@@ -140,4 +142,21 @@ public class TestPropertiesWithComments {
         
     }
 
+    @Test( enabled=false ) public void testBareKey() throws FileNotFoundException, IOException {
+        final PropertiesWithComments pwc = new PropertiesWithComments();
+        final String bareKey = "key";
+        pwc.load(new ByteArrayInputStream(bareKey.getBytes()));
+
+        pwc.store(new FileOutputStream(testFile));
+
+        final Properties p = new Properties();
+        p.load(new FileInputStream(testFile));
+
+        Assert.assertEquals(p.getProperty("key"), "");
+        
+        final String testFileAsString = Files.readString(testFile.toPath());
+
+        Assert.assertTrue(testFileAsString.contains("key"));
+        Assert.assertFalse(testFileAsString.contains("key="));
+    }
 }
