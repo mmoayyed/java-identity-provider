@@ -469,7 +469,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         final Collection<TranscodingRule> transcodingRules = registry.getTranscodingRules(input);
         if (transcodingRules.isEmpty()) {
-            log.info("{} No transcoding rule for Attribute '{}'", getLogPrefix(), input.getName());
+            log.info("{} No transcoding rule for Attribute (Name '{}', NameFormat: '{}')", getLogPrefix(),
+                    input.getName(), input.getNameFormat() != null ? input.getNameFormat() : Attribute.UNSPECIFIED);
             return;
         }
         
