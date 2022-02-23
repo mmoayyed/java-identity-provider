@@ -160,7 +160,7 @@ public final class ModuleContext {
     }
 
     /**
-     * Gets the output stream to receive any instructioons or additional information after
+     * Gets the output stream to receive any instructions or additional information after
      * performing operations.
      * 
      * @return output stream, or null
@@ -170,7 +170,7 @@ public final class ModuleContext {
     }
     
     /**
-     * Sets the output stream to receive any instructioons or additional information after
+     * Sets the output stream to receive any instructions or additional information after
      * performing operations.
      * 
      * @param stream output stream
