@@ -112,7 +112,7 @@ public final class RequestedPrincipalContext extends BaseContext {
      * 
      * @return comparison operator
      */
-    @Nonnull @NotEmpty public String getOperator() {
+    @Nullable @NotEmpty public String getOperator() {
         return operatorString;
     }
     
@@ -183,8 +183,11 @@ public final class RequestedPrincipalContext extends BaseContext {
      */
     @Nullable public PrincipalEvalPredicate getPredicate(@Nonnull final Principal principal) {
         
-        final PrincipalEvalPredicateFactory factory = evalRegistry.lookup(principal.getClass(), operatorString);
-        return factory != null ? factory.getPredicate(principal) : null;
+        if (operatorString != null) {
+            final PrincipalEvalPredicateFactory factory = evalRegistry.lookup(principal.getClass(), operatorString);
+            return factory != null ? factory.getPredicate(principal) : null;
+        }
+        return null;
     }
     
     /**

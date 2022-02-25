@@ -146,10 +146,21 @@ public class FinalizeAuthenticationTest extends BaseAuthenticationContextTest {
         authCtx.setAuthenticationResult(active);
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
-        final Event event = action.execute(src);
+        Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         SubjectContext sc = prc.getSubcontext(SubjectContext.class);
+        Assert.assertNotNull(sc);
+        Assert.assertEquals(sc.getPrincipalName(), "foo");
+        Assert.assertEquals(sc.getAuthenticationResults().size(), 1);
+        
+        prc.removeSubcontext(SubjectContext.class);
+        authCtx.getSubcontext(RequestedPrincipalContext.class, true);
+        
+        event = action.execute(src);
+        
+        ActionTestingSupport.assertProceedEvent(event);
+        sc = prc.getSubcontext(SubjectContext.class);
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
         Assert.assertEquals(sc.getAuthenticationResults().size(), 1);

@@ -144,7 +144,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
         // and the actual result produced may be a subset (and therefore could be an inadequate subset).
         final RequestedPrincipalContext requestedPrincipalCtx =
                 authenticationContext.getSubcontext(RequestedPrincipalContext.class);
-        if (requestedPrincipalCtx != null) {
+        if (requestedPrincipalCtx != null && requestedPrincipalCtx.getOperator() != null) {
             
             // If a matching principal is set, re-verify it. Normally this will work.
             final Principal match = requestedPrincipalCtx.getMatchingPrincipal();
