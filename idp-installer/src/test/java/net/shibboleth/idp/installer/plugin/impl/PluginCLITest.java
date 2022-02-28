@@ -72,7 +72,7 @@ public class PluginCLITest extends BasePluginTest {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-L", } ), AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testInstallById() throws IOException {
+    @Test(enabled = false) public void testInstallById() throws IOException {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-I", "net.shibboleth.idp.plugin.authn.totp"} ), AbstractCommandLine.RC_OK);
     }
 
