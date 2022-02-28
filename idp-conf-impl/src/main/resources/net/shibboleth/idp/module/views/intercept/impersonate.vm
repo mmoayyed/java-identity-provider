@@ -45,13 +45,13 @@
 
                     <fieldset>
                         <label for="impersonation">#springMessageText("idp.impersonate.login-as", "Login as")</label>
-                        <input class="form-element form-field" id="impersonation" name="principal" type="text" />
+                        <input id="impersonation" name="principal" type="text" />
                         
                         <!-- Defaults to input box above, example below populates a select list from an IdPAttribute. -->
                         <!--
                         #set ($attributeContext = $rpContext.getSubcontext('net.shibboleth.idp.attribute.context.AttributeContext'))
                         #set ($usernamesAttribute = $attributeContext.getUnfilteredIdPAttributes().get("impersonatableUsernames"))
-                        <select class="form-element form-field" id="impersonation" name="principal">
+                        <select id="impersonation" name="principal">
                         #if ($usernamesAttribute)
                             #foreach ($username in $usernamesAttribute.getValues())
                                 <option value="$encoder.encodeForHTML($username.getValue())">$encoder.encodeForHTML($username.getValue())</option>
