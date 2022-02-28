@@ -14,60 +14,57 @@
 ##
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>#springMessageText("idp.title", "Web Login Service") - #springMessageText("hello-world.title", "Hello World")</title>
-    <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-  </head>
+    <head>
+        <title>#springMessageText("idp.title", "Web Login Service") - #springMessageText("hello-world.title", "Hello World")</title>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")" media="all">
+        #parse("custom-styles.vm")
+    </head>
   
-  <body>
-    <div class="wrapper">
-      <div class="container" style="width: 100%">
-        <header>
-          <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
-          <h3>#springMessageText("idp.title", "Web Login Service")</h3>
-        </header>
+    <body>
+        <main class="main">
+            <header>
+                <img class="main-logo" src="$request.getContextPath()#springMessageText("idp.logo", "/images/placeholder-logo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")">
+            </header>
                 
-        <div class="content">
-          <h4>#springMessageText("hello-world.greeting", "Greetings"), <em>$encoder.encodeForHTML($subjectContext.getPrincipalName())</em></h4>
-          <br/>
-          <h4>Authenticated By</h4>
-          #foreach ($result in $subjectContext.getAuthenticationResults().entrySet())
-            <blockquote>$encoder.encodeForHTML($result.getKey())</blockquote>
-          #end
-          <br/>
-          <h4>Java Principals in Subjects</h4>
-          #foreach ($s in $subjectContext.getSubjects())
-            #foreach ($p in $s.getPrincipals())
-              <blockquote>$encoder.encodeForHTML($p)<blockquote>
-            #end
-          #end
-          #if ($attributeContext && !$attributeContext.getUnfilteredIdPAttributes().isEmpty())
-            <br/>
-            <h4>Attributes:</h4>
-            #foreach ($a in $attributeContext.getUnfilteredIdPAttributes())
-              #if (!$a.getValues().isEmpty())
-                <br/>
-                <h5>$encoder.encodeForHTML($a.getId())</h5>
-                  #foreach ($v in $a.getValues())
-                    <blockquote>$encoder.encodeForHTML($v.getDisplayValue())</blockquote>
-                  #end
-              #end
-            #end
-          #end
-        </div>
+            <section>
+                <h1>#springMessageText("idp.title", "Web Login Service")</h1>
+                <h2>#springMessageText("hello-world.greeting", "Greetings"), <em>$encoder.encodeForHTML($subjectContext.getPrincipalName())</em></h2>
+                <p><strong>Authenticated by</strong><br />
+                  #foreach ($result in $subjectContext.getAuthenticationResults().entrySet())
+                   <small>$encoder.encodeForHTML($result.getKey())</small><br/>
+                  #end</p>
+                  
+                <p><strong>Java Principals in Subjects</strong><br/>
+                #foreach ($s in $subjectContext.getSubjects())
+                    #foreach ($p in $s.getPrincipals())
+                      <small>$encoder.encodeForHTML($p)</small></br/>
+                    #end
+                  #end</p>
+                
+                #if ($attributeContext && !$attributeContext.getUnfilteredIdPAttributes().isEmpty())
 
-        <header>
-          <h3><a href="$request.getContextPath()/profile/admin/hello">#springMessageText("hello-world.reload", "Reload the Page")</a></h3>
-        </header>
-      </div>
-
-      <footer>
-        <div class="container container-footer">
-          <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
-        </div>
-      </footer>
-    </div>
-  </body>
+                    <p><strong>Attributes</strong><br />
+                        #foreach ($a in $attributeContext.getUnfilteredIdPAttributes())
+                          #if (!$a.getValues().isEmpty())
+                            <small><strong>$encoder.encodeForHTML($a.getId())</strong></small><br/>
+                              #foreach ($v in $a.getValues())
+                                <small>$encoder.encodeForHTML($v.getDisplayValue())</small><br/>
+                              #end
+                          #end
+                        #end
+                      #end
+                    </p>
+                    
+                <a class="button button--secondary" href="$request.getContextPath()/profile/admin/hello">#springMessageText("hello-world.reload", "Reload the Page")</a>
+            </section>
+        </main>
+        <footer class="footer">
+            <div class="cc">
+                <p>#springMessageText("idp.footer", "Insert your footer text here.")</p>
+            </div>
+        </footer>
+    </body>
 </html>

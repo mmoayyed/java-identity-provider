@@ -14,36 +14,31 @@
 #set ($eventKey = $springMacroRequestContext.getMessage("SPNEGOUnavailable", "spnego-unavailable"))
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>#springMessageText("idp.title", "Web Login Service") - #springMessageText("${eventKey}.title", "Error")</title>
-    <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-  </head>
-  
-  <body onload="window.location = '$errorUrl'">
-    <div class="wrapper">
-      <div class="container">
-        <header>
-          <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
-          <h3>#springMessageText("idp.title", "Web Login Service") - #springMessage("idp.title.suffix", "Error")</h3>
-        </header>
-                
-        <div class="content">
-          #springMessageText("${eventKey}.message", "Your web browser doesn't support authentication with your desktop login credentials.")
-          <ul class="list list-help">
-            <li class="list-help-item">
-              <a href="$errorUrl"><span class="item-marker">&rsaquo;</span> #springMessageText("spnego-unavailable.return", "Cancel the attempt.")</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+    <head>
+        <title>#springMessageText("idp.title", "Web Login Service") - #springMessageText("${eventKey}.title", "Error")</title>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
+        #parse("custom-styles.vm")
+    </head>
+    <body onload="window.location = '$errorUrl'">
+        <main class="main">
+            <header>
+                <img class="main-logo" src="$request.getContextPath()#springMessageText("idp.logo", "/images/placeholder-logo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")">
+            </header>
 
-      <footer>
-        <div class="container container-footer">
-          <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
-        </div>
-      </footer>
-    </div>
-  </body>
+            <section>
+                <h2>#springMessageText("idp.title", "Web Login Service") - #springMessage("idp.title.suffix", "Error")</h2>
+                <p>#springMessageText("${eventKey}.message", "Your web browser doesn't support authentication with your desktop login credentials.")</p>
+                <p><a class="button secondary--button" href="$errorUrl">#springMessageText("spnego-unavailable.return", "Cancel the attempt.")</a></p>
+            </section>
+            
+        </main>
+        <footer class="footer">
+            <div class="cc">
+                <p>#springMessageText("idp.footer", "Insert your footer text here.")</p>
+            </div>
+        </footer>
+    </body>
 </html>

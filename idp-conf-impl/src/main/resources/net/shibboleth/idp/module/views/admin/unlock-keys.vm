@@ -16,82 +16,80 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>$title - $titleSuffix</title>
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")" media="all">
+        #parse("custom-styles.vm")
     </head>
     
     <body>
-    <div class="wrapper">
-        <div class="container">
+        <main class="main">
             <header>
-                <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
-                <h3>$title - $titleSuffix</h3>
+                <img class="main-logo" src="$request.getContextPath()#springMessageText("idp.logo", "/images/placeholder-logo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")" />
             </header>
-        
-            <div class="content">
+
+            <section>
             #if ($state == "end")
-                <strong>#springMessageText("idp.unlock-keys.complete", "The system is unlocked and ready for use.")</strong>
+                <p>#springMessageText("idp.unlock-keys.complete", "The system is unlocked and ready for use.")</p>
                 <p><a href="$request.getContextPath()/profile/SAML2/Unsolicited/SSO?providerId=https://sp.example.org/shibboleth">Validation Link</a></p>
             #else
                 #if ($eventId == "InvalidMessage")
-                    <p class="form-element form-error">
-                    #springMessageText("idp.unlock-keys.error", "Unlock failed; check log for specific message.")
-                    </p>
-                    <br/><br/>
+                    <div class="output-message output--error">
+                        <p>#springMessageText("idp.unlock-keys.error", "Unlock failed; check log for specific message.")</p>
+                    </div>
                 #end
             
                 <form action="$flowExecutionUrl" method="post">
-                  #parse("csrf/csrf.vm")
+                    #parse("csrf/csrf.vm")
                   
-                  <!--
-                  If you have multiple key strategies defined, you'll need multiple pairs of form fields for
-                  the passwords, labeled in the order they're fed into the shibboleth.unlock-keys.KeyStrategies
-                  bean. If you have none, remove the fields.
-                  -->
+                    <!--
+                    If you have multiple key strategies defined, you'll need multiple pairs of form fields for
+                    the passwords, labeled in the order they're fed into the shibboleth.unlock-keys.KeyStrategies
+                    bean. If you have none, remove the fields.
+                    -->
 
-                  <div class="form-element-wrapper">
-                    <label for="password">#springMessageText("idp.unlock-keys.keystorePassword", "DataSealer Keystore Password")</label>
-                    <input class="form-element form-field" id="password" name="keystorePassword" type="password" />
-                  </div>
+                    <fieldset>
+                        <legend><span>Passwords</span></legend>
+                        <label for="password">#springMessageText("idp.unlock-keys.keystorePassword", "DataSealer Keystore Password")</label>
+                        <input type="password" name="keystorePassword" id="password" />
+                    </fieldset>
+                    
+                    <fieldset>
+                        <legend><span>Passwords</span></legend>
+                        <label for="password">#springMessageText("idp.unlock-keys.keyPassword", "DataSealer Key Password")</label>
+                        <input type="password" name="keyPassword" id="password" />
+                    </fieldset>
 
-                  <div class="form-element-wrapper">
-                    <label for="password">#springMessageText("idp.unlock-keys.keyPassword", "DataSealer Key Password")</label>
-                    <input class="form-element form-field" id="password" name="keyPassword" type="password" />
-                  </div>
+                    <!--
+                    If you have multiple private keys defined, you'll need a form field for each passwords, labeled in the order
+                    they're fed into the shibboleth.unlock-keys.Credentials/PrivateKeys beans. If you have none, remove the fields.
+                    -->
 
-                  <!--
-                  If you have multiple private keys defined, you'll need a form field for each passwords, labeled in the order
-                  they're fed into the shibboleth.unlock-keys.Credentials/PrivateKeys beans. If you have none, remove the fields.
-                  -->
-
-                  <div class="form-element-wrapper">
-                    <label for="password">#springMessageText("idp.unlock-keys.privateKeyPassword", "Private Key Password")</label>
-                    <input class="form-element form-field" id="password" name="privateKeyPassword" type="password" />
-                  </div>
+                    <fieldset>
+                        <legend><span>Passwords</span></legend>
+                        <label for="password">#springMessageText("idp.unlock-keys.privateKeyPassword", "Private Key Password")</label>
+                        <input type="password" name="privateKeyPassword" id="password" />
+                    </fieldset>
                   
-                  <div class="form-element-wrapper">
-                    <button class="form-element form-button" type="submit" name="_eventId_proceed"
-                        >#springMessageText("idp.unlock-keys.unlock", "Unlock")</button>
-                  </div>
-
-                  <div class="form-element-wrapper">
-                    <button class="form-element form-button" type="submit" name="_eventId_cancel"
-                        >#springMessageText("idp.unlock-keys.cancel", "Cancel")</button>
-                  </div>
-                  
+                    <div class="grid md-2">
+                        <div class="grid-item">
+                            <button type="submit" name="_eventId_proceed">#springMessageText("idp.unlock-keys.unlock", "Unlock")</button>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <button class="button--secondary button--full" type="submit" name="_eventId_cancel">#springMessageText("idp.unlock-keys.cancel", "Cancel")</button>
+                        </div>
+                    </div>
                 </form>
             #end
-            </div>
-        </div>
-
-        <footer>
-            <div class="container container-footer">
-                <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
+            </section>
+        </main>
+        <footer class="footer">
+            <div class="cc">
+                <p>#springMessageText("idp.footer", "Insert your footer text here.")</p>
             </div>
         </footer>
-        
-    </div>
     </body>
 </html>

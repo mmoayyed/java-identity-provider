@@ -20,7 +20,5 @@
 #end
 
 #if ($message)
-    <section>
-        <p class="form-element form-error">$encoder.encodeForHTML($message)</p>
-    </section>
+    <h3 class="output-message output--error">$encoder.encodeForHTML($message)</h3>
 #end
