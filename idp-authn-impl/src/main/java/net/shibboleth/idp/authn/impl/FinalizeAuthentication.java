@@ -110,13 +110,11 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
 
         final SubjectCanonicalizationContext c14nCtx =
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class);
-        if (c14nCtx != null) {
+        if (c14nCtx != null && c14nCtx.getPrincipalName() != null) {
             canonicalPrincipalName = c14nCtx.getPrincipalName();
             profileRequestContext.removeSubcontext(c14nCtx);
             log.debug("{} Canonical principal name was established as '{}'", getLogPrefix(), canonicalPrincipalName);
-        }
-        
-        if (canonicalPrincipalName == null) {
+        } else if (canonicalPrincipalName == null) {
             final SessionContext sessionCtx = profileRequestContext.getSubcontext(SessionContext.class);
             if (sessionCtx != null && sessionCtx.getIdPSession() != null) {
                 canonicalPrincipalName = sessionCtx.getIdPSession().getPrincipalName();
@@ -194,6 +192,8 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             
             final SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, true);
             sc.setPrincipalName(canonicalPrincipalName);
+            
+            log.info("{} Principal {} authenticated", getLogPrefix(), canonicalPrincipalName);
     
             final Map<String,AuthenticationResult> scResults = sc.getAuthenticationResults();
             scResults.putAll(authenticationContext.getActiveResults());
