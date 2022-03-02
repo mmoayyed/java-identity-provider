@@ -315,8 +315,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(format, arguments);
         }
-        System.out.format(format, arguments);
-        System.out.println();
+        format(format, arguments);
     }
 
     /** {@inheritDoc} */
