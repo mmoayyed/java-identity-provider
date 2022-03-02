@@ -375,19 +375,21 @@ public class V4Install extends AbstractInitializableComponent {
      */
     protected void handleEditWebApp() throws BuildException {
         final Path editWebApp = installerProps.getTargetDir().resolve("edit-webapp");
-        final Path distEditWebApp =  installerProps.getTargetDir().resolve("dist").resolve("webapp");
         final Path css = editWebApp.resolve("css");
         final Path images = editWebApp.resolve("images");
-        final Path suppliedInput = installerProps.getInitialEditWeb();
-        final boolean doCopy;
+        final Path distEditWebApp =  installerProps.getTargetDir().resolve("dist").resolve("webapp");
+
         if (Files.exists(editWebApp)) {
             checkWebXml(editWebApp.resolve("WEB-INF").resolve("web.xml"));
-            doCopy = true;
-        } else if (suppliedInput != null) {
+            InstallerSupport.copyDirIfNotPresent(distEditWebApp.resolve("css"), css);
+            InstallerSupport.copyDirIfNotPresent(distEditWebApp.resolve("images"), images);
+            return;
+        }
+        final Path suppliedInput = installerProps.getInitialEditWeb();
+        if (suppliedInput != null) {
             final Copy copy = InstallerSupport.getCopyTask(suppliedInput, editWebApp);
             copy.setFailOnError(false);
             copy.execute();
-            doCopy = false;
         } else {
             InstallerSupport.createDirectory(editWebApp);
             InstallerSupport.createDirectory(css);
@@ -395,15 +397,12 @@ public class V4Install extends AbstractInitializableComponent {
             InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF"));
             InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF").resolve("lib"));
             InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF").resolve("classes"));
-            doCopy = true;
-        }
-        if (doCopy) {
             final Copy cssCopy = InstallerSupport.getCopyTask(distEditWebApp.resolve("css"), css);
             cssCopy.setFailOnError(false);
             cssCopy.execute();
             final Copy imagesCopy = InstallerSupport.getCopyTask(distEditWebApp.resolve("images"), images);
             imagesCopy.setFailOnError(false);
-            imagesCopy.execute();            
+            imagesCopy.execute();
         }
     }
 
