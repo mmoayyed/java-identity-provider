@@ -384,6 +384,7 @@
 
     <bean id="AssertionValidationContextBuilder" class="org.opensaml.saml.saml2.profile.impl.DefaultAssertionValidationContextBuilder">
         <property name="clockSkew" value="%{idp.policy.clockSkew:PT3M}" />
+        <property name="lifetime" value="%{idp.policy.assertionLifetime:PT3M}" />
         <property name="checkAddress">
             <bean class="net.shibboleth.idp.saml.saml2.profile.config.logic.CheckAddressPredicate" />
         </property>
