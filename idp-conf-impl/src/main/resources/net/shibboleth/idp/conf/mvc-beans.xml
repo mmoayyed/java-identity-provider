@@ -25,7 +25,7 @@
     </bean>
     
     <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping" p:order="0"
-            p:flowRegistry-ref="flowRegistry">
+            p:flowRegistry-ref="flowRegistry" p:corsConfigurations="#{getObject('shibboleth.CorsConfigurations')}">
         <property name="flowUrlHandler">
             <bean class="net.shibboleth.idp.profile.support.PathInfoSupportingFlowUrlHandler"
                 p:supportedFlows="#{getObject('shibboleth.RESTFlows') ?: getObject('shibboleth.DefaultRESTFlows')}" />
