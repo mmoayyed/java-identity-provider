@@ -177,10 +177,11 @@ public final class PropertiesWithComments {
                     if (what.contains("=")) {
                         addCommentedProperty(s, true);
                     } else {
-                        contents.add(what);
+                        contents.add(s);
                     }
+                } else if (what.startsWith("--") || !what.contains("=")) {                    
+                    contents.add(s);
                 } else {
-    
                     addCommentedProperty(s, false);
                 }
                 s = reader.readLine();
