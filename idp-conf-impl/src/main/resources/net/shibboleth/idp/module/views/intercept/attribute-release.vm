@@ -107,28 +107,26 @@
 
                 <p>#springMessageText("idp.attribute-release.confirmationQuestion", "The information above would be shared with the service if you proceed. Do you agree to release this information to the service every time you access it?")</p>
 
+                <fieldset>
                 #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed || $attributeReleaseFlowDescriptor.globalConsentAllowed)
-                    <p><strong>#springMessageText("idp.attribute-release.consentMethod", "Select an information release consent duration:")</strong></p>
+                    <legend>
+                        <p><strong>#springMessageText("idp.attribute-release.consentMethod", "Select an information release consent duration:")</strong></p>
+                    </legend>
                 #end
                 
                 #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed)
-                    <fieldset>
                         <input id="_shib_idp_doNotRememberConsent" type="radio" name="_shib_idp_consentOptions" value="_shib_idp_doNotRememberConsent">
                         <label for="_shib_idp_doNotRememberConsent">#springMessageText("idp.attribute-release.doNotRememberConsent", "Ask me again at next login")<br /><small>#springMessageText("idp.attribute-release.doNotRememberConsentItem", "I agree to send my information this time.")</small></label>
-                    </fieldset>
                 #end
                 #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed || $attributeReleaseFlowDescriptor.globalConsentAllowed)
-                    <fieldset>
                         <input id="_shib_idp_rememberConsent" type="radio" name="_shib_idp_consentOptions" value="_shib_idp_rememberConsent" checked>
                         <label for="_shib_idp_rememberConsent">#springMessageText("idp.attribute-release.rememberConsent", "Ask me again if information changes")<br /><small>#springMessageText("idp.attribute-release.rememberConsentItem", "I agree that the same information will be sent automatically to this service in the future.")</small></label>
-                    </fieldset>
                 #end
                 #if ($attributeReleaseFlowDescriptor.globalConsentAllowed)
-                    <fieldset>
                         <input id="_shib_idp_globalConsent" type="radio" name="_shib_idp_consentOptions" value="_shib_idp_globalConsent">
                         <label for="_shib_idp_globalConsent">#springMessageText("idp.attribute-release.globalConsent", "Do not ask me again")<br /><small>#springMessageText("idp.attribute-release.globalConsentItem", "I agree that <strong>all</strong> of my information will be released to <strong>any</strong> service.")</small></label>
-                    </fieldset>
                 #end
+                </fieldset>
 
                 <div class="grid md-2">
                     <div class="grid-item">
