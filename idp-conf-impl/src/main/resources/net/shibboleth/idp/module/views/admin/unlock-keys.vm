@@ -21,7 +21,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")" media="all">
-        #parse("custom-styles.vm")
     </head>
     
     <body>
@@ -36,9 +35,7 @@
                 <p><a href="$request.getContextPath()/profile/SAML2/Unsolicited/SSO?providerId=https://sp.example.org/shibboleth">Validation Link</a></p>
             #else
                 #if ($eventId == "InvalidMessage")
-                    <div class="output-message output--error">
-                        <p>#springMessageText("idp.unlock-keys.error", "Unlock failed; check log for specific message.")</p>
-                    </div>
+                    <p class="output-message output--error">#springMessageText("idp.unlock-keys.error", "Unlock failed; check log for specific message.")</p>
                 #end
             
                 <form action="$flowExecutionUrl" method="post">
@@ -51,13 +48,11 @@
                     -->
 
                     <fieldset>
-                        <legend><span>Passwords</span></legend>
+                        <legend><span>Secret Key Passwords</span></legend>
+                        
                         <label for="password">#springMessageText("idp.unlock-keys.keystorePassword", "DataSealer Keystore Password")</label>
                         <input type="password" name="keystorePassword" id="password" />
-                    </fieldset>
-                    
-                    <fieldset>
-                        <legend><span>Passwords</span></legend>
+                        
                         <label for="password">#springMessageText("idp.unlock-keys.keyPassword", "DataSealer Key Password")</label>
                         <input type="password" name="keyPassword" id="password" />
                     </fieldset>
@@ -68,7 +63,8 @@
                     -->
 
                     <fieldset>
-                        <legend><span>Passwords</span></legend>
+                        <legend><span>Private Key Passwords</span></legend>
+                        
                         <label for="password">#springMessageText("idp.unlock-keys.privateKeyPassword", "Private Key Password")</label>
                         <input type="password" name="privateKeyPassword" id="password" />
                     </fieldset>

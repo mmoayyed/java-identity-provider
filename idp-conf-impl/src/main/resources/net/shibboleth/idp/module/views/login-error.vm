@@ -20,5 +20,5 @@
 #end
 
 #if ($message)
-    <h3 class="output-message output--error">$encoder.encodeForHTML($message)</h3>
+    <p class="output-message output--error">$encoder.encodeForHTML($message)</p>
 #end

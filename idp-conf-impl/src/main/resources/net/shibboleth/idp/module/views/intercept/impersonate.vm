@@ -22,7 +22,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
-        #parse("custom-styles.vm")
     </head>
       
     <body>
@@ -43,23 +42,21 @@
                 <form action="$flowExecutionUrl" method="post">
                 #parse("csrf/csrf.vm")
 
-                    <fieldset>
-                        <label for="impersonation">#springMessageText("idp.impersonate.login-as", "Login as")</label>
-                        <input id="impersonation" name="principal" type="text" />
-                        
-                        <!-- Defaults to input box above, example below populates a select list from an IdPAttribute. -->
-                        <!--
-                        #set ($attributeContext = $rpContext.getSubcontext('net.shibboleth.idp.attribute.context.AttributeContext'))
-                        #set ($usernamesAttribute = $attributeContext.getUnfilteredIdPAttributes().get("impersonatableUsernames"))
-                        <select id="impersonation" name="principal">
-                        #if ($usernamesAttribute)
-                            #foreach ($username in $usernamesAttribute.getValues())
-                                <option value="$encoder.encodeForHTML($username.getValue())">$encoder.encodeForHTML($username.getValue())</option>
-                            #end
+                    <label for="impersonation">#springMessageText("idp.impersonate.login-as", "Login as")</label>
+                    <input id="impersonation" name="principal" type="text" />
+                    
+                    <!-- Defaults to input box above, example below populates a select list from an IdPAttribute. -->
+                    <!--
+                    #set ($attributeContext = $rpContext.getSubcontext('net.shibboleth.idp.attribute.context.AttributeContext'))
+                    #set ($usernamesAttribute = $attributeContext.getUnfilteredIdPAttributes().get("impersonatableUsernames"))
+                    <select id="impersonation" name="principal">
+                    #if ($usernamesAttribute)
+                        #foreach ($username in $usernamesAttribute.getValues())
+                            <option value="$encoder.encodeForHTML($username.getValue())">$encoder.encodeForHTML($username.getValue())</option>
                         #end
-                        </select>
-                        -->
-                    </fieldset>
+                    #end
+                    </select>
+                    -->
 
                     <div class="grid md-2">
                         <div class="grid-item">

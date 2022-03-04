@@ -20,7 +20,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")" media="all">
-        #parse("custom-styles.vm")
     </head>
   
     <body>
@@ -30,8 +29,7 @@
             </header>
                 
             <section>
-                <h1>#springMessageText("idp.title", "Web Login Service")</h1>
-                <h2>#springMessageText("hello-world.greeting", "Greetings"), <em>$encoder.encodeForHTML($subjectContext.getPrincipalName())</em></h2>
+                <h1>#springMessageText("hello-world.greeting", "Greetings"), <em>$encoder.encodeForHTML($subjectContext.getPrincipalName())</em></h1>
                 <p><strong>Authenticated by</strong><br />
                   #foreach ($result in $subjectContext.getAuthenticationResults().entrySet())
                    <small>$encoder.encodeForHTML($result.getKey())</small><br/>
@@ -46,7 +44,7 @@
                 
                 #if ($attributeContext && !$attributeContext.getUnfilteredIdPAttributes().isEmpty())
 
-                    <p><strong>Attributes</strong><br />
+                    <p><strong>Attributes</strong><br/>
                         #foreach ($a in $attributeContext.getUnfilteredIdPAttributes())
                           #if (!$a.getValues().isEmpty())
                             <small><strong>$encoder.encodeForHTML($a.getId())</strong></small><br/>

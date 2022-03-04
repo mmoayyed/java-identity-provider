@@ -35,7 +35,6 @@
         #end
         *#
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
-        #parse("custom-styles.vm")
     </head>
 
    <body>
@@ -46,7 +45,9 @@
 
             <section>
                 <div class="output-message">
-                    <p><strong>Note for deployers:</strong> This page is displayed when a logout operation at the Identity Provider completes. This page is an example and should be customized. It is not fully internationalized because the presentation will be a highly localized decision, and we don't have a good suggestion for a default.</p>
+                    <p><strong>Note for deployers:</strong> This page is displayed when a logout operation at the Identity Provider completes.
+                    This page is an example and should be customized. It is not fully internationalized because the presentation will be a highly localized decision,
+                    and we don't have a good suggestion for a default.</p>
                 </div>
     
             #if ($rpContext)

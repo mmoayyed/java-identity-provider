@@ -24,7 +24,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
-        #parse("custom-styles.vm")
     </head>
 
     <body>
@@ -51,10 +50,7 @@
               #if ( $profileRequestContext.getProfileId().contains("saml2/logout") )
                   <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed"></iframe>
               #end
-              
-      
             </section>
-            
         </main>
         <footer class="footer">
             <div class="cc">

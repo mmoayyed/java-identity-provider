@@ -15,7 +15,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
-        #parse("custom-styles.vm")
         <script language="Javascript">
         <!--
         #parse( "user-prefs.js" )
@@ -31,7 +30,7 @@
             
             
             <section>
-                <h2>#springMessageText("idp.title", "Web Login Service") - #springMessageText("idp.userprefs.title.suffix", "Login Preferences")</h2>
+                <h1>#springMessageText("idp.title", "Web Login Service") - #springMessageText("idp.userprefs.title.suffix", "Login Preferences")</h1>
                 <p>#springMessage("idp.userprefs.info")</p>
                 
                 <noscript>
@@ -40,13 +39,10 @@
                   </div>
                 </noscript>
         
-        
                 <form>
-                    <fieldset>
-                        <label>#springMessageText("idp.userprefs.options", "The following options are available:")</label>
-                        <input type="checkbox" id="spnego" name="_idp_spnego_autologin" value="1" onClick="check(this)">
-                        <label for="spnego"> #springMessageText("idp.userprefs.spnego", "Automatically try desktop login when available.")</label>
-                    </fieldset>
+                    <p>#springMessageText("idp.userprefs.options", "The following options are available:")</p>
+                    <input type="checkbox" id="spnego" name="_idp_spnego_autologin" value="1" onClick="check(this)">
+                    <label for="spnego"> #springMessageText("idp.userprefs.spnego", "Automatically try desktop login when available.")</label>
                 </form>
             </section>
             

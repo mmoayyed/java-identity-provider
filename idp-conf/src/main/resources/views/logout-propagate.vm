@@ -26,7 +26,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/logout.css">
-        #parse("custom-styles.vm")
     </head>
 
     <body>
@@ -35,12 +34,11 @@
                 <img class="main-logo" src="$request.getContextPath()#springMessageText("idp.logo", "/images/placeholder-logo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")" />
             </header>
             
-            
             <section>
                 #if($hidden == "true")
                 <p>#springMessageText("idp.logout.hidden", "Your single sign-on session has been terminated, but you are still logged into many of the services you have accessed during your session.")</p>
                 #else
-                <p>#springMessageText("idp.logout.attempt", "Attempting to log out of the following services:")</p>
+                <h1>#springMessageText("idp.logout.attempt", "Attempting to log out of the following services:")</h1>
                 #end
                 #parse("logout/propagate.vm")
                 
@@ -49,7 +47,6 @@
                     <li><a href="#springMessageText("idp.url.helpdesk", '#')">#springMessageText("idp.login.needHelp", "Need Help?")</a></li>
                 </ul>
             </section>
-            
         </main>
         <footer class="footer">
             <div class="cc">

@@ -23,7 +23,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
-        #parse("custom-styles.vm")
     </head>
     <body>
         <main class="main">
@@ -41,14 +40,14 @@
                 <form action="$flowExecutionUrl" method="post">
                     <fieldset>
                         <legend><span>Agreement</span></legend>
-                            <form action="$flowExecutionUrl" method="post" >
-                                #parse("csrf/csrf.vm")
-                                <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required>
-                                <label for="accept">#springMessageText("idp.terms-of-use.accept", "I accept the terms of use")
-                                #if ($requireCheckbox)
-                                    <br/><small>#springMessageText("idp.terms-of-use.required", "Please check this box if you want to proceed.")</small>
-                                #end
-                                </label>
+                        <form action="$flowExecutionUrl" method="post" >
+                            #parse("csrf/csrf.vm")
+                            <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required>
+                            <label for="accept">#springMessageText("idp.terms-of-use.accept", "I accept the terms of use")
+                            #if ($requireCheckbox)
+                                <br/><small>#springMessageText("idp.terms-of-use.required", "Please check this box if you want to proceed.")</small>
+                            #end
+                            </label>
                     </fieldset>
                     
                     <div class="grid md-2">

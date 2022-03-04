@@ -26,7 +26,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")" media="all">
-        #parse("custom-styles.vm")
         <style>
           #duo_iframe {
             width: 100%;
@@ -43,7 +42,7 @@
             </header>
 
             <section>
-                <h2>#springMessageText("idp.login.duoRequired", "Authentication with Duo is required for the requested service.")</h2>
+                <h1>#springMessageText("idp.login.duoRequired", "Authentication with Duo is required for the requested service.")</h1>
                 <noscript>#springMessageText("idp.login.duoNoScript", "The Duo service requires JavaScript.")</noscript>
                 <script src="$request.getContextPath()$duoScriptPath"></script>
                 <iframe id="duo_iframe"

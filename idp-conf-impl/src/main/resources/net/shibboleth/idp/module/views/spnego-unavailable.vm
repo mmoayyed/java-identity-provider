@@ -20,7 +20,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
-        #parse("custom-styles.vm")
     </head>
     <body onload="window.location = '$errorUrl'">
         <main class="main">
@@ -29,11 +28,10 @@
             </header>
 
             <section>
-                <h2>#springMessageText("idp.title", "Web Login Service") - #springMessage("idp.title.suffix", "Error")</h2>
+                <h1>#springMessageText("idp.title", "Web Login Service") - #springMessage("idp.title.suffix", "Error")</h1>
                 <p>#springMessageText("${eventKey}.message", "Your web browser doesn't support authentication with your desktop login credentials.")</p>
                 <p><a class="button secondary--button" href="$errorUrl">#springMessageText("spnego-unavailable.return", "Cancel the attempt.")</a></p>
             </section>
-            
         </main>
         <footer class="footer">
             <div class="cc">

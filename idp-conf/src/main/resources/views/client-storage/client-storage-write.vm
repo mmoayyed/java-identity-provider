@@ -22,7 +22,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
-        #parse("custom-styles.vm")
         <script>
         <!--
         #include("client-storage/local-storage-write.js")
@@ -32,7 +31,7 @@
     <body onload="doSave()">    
         <main class="main">
             <section>
-                <h2>$title - $titleSuffix</h2>
+                <h1>$title - $titleSuffix</h1>
                 <p>$springMacroRequestContext.getMessage("idp.client-storage-write.text", "Saving login session information to the browser...")</p>
                 <noscript>
                     <div class="content">
