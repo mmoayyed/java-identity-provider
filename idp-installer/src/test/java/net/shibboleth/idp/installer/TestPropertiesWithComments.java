@@ -79,7 +79,7 @@ public class TestPropertiesWithComments {
         
         p.load(new FileInputStream(testFile));
         
-        Assert.assertEquals(p.stringPropertyNames().size(), 4);
+        Assert.assertEquals(p.stringPropertyNames().size(), 6);
         Assert.assertEquals(p.getProperty("p"), "321");
         Assert.assertEquals(p.getProperty("nn"), "123");
         Assert.assertEquals(p.getProperty("yy"), "123321");
@@ -136,13 +136,13 @@ public class TestPropertiesWithComments {
         
         p.load(new FileInputStream(testFile));
         
-        Assert.assertEquals(p.stringPropertyNames().size(), 2);
+        Assert.assertEquals(p.stringPropertyNames().size(), 4);
         Assert.assertEquals(p.getProperty("p"), "123");
         Assert.assertEquals(p.getProperty("elephantName"), "elephants");
         
     }
 
-    @Test( enabled=false ) public void testBareKey() throws FileNotFoundException, IOException {
+    @Test( enabled=true ) public void testBareKey() throws FileNotFoundException, IOException {
         final PropertiesWithComments pwc = new PropertiesWithComments();
         final String bareKey = "key";
         pwc.load(new ByteArrayInputStream(bareKey.getBytes()));
@@ -159,4 +159,22 @@ public class TestPropertiesWithComments {
         Assert.assertTrue(testFileAsString.contains("key"));
         Assert.assertFalse(testFileAsString.contains("key="));
     }
+    
+    @Test( enabled=true ) public void testBareModules() throws FileNotFoundException, IOException {
+        final PropertiesWithComments pwc = new PropertiesWithComments();
+        pwc.load(new ByteArrayInputStream("--module=Foo\n--module=BAR".getBytes()));
+
+        pwc.store(new FileOutputStream(testFile));
+
+        final Properties p = new Properties();
+        p.load(new FileInputStream(testFile));
+
+        Assert.assertEquals(p.size(), 1);
+        Assert.assertTrue("Foo".equals(p.get("--module")) || "BAR".equals(p.get("--module"))); 
+        
+        
+        final String testFileAsString = Files.readString(testFile.toPath());
+        Assert.assertTrue(testFileAsString.contains("--module=Foo") && testFileAsString.contains("--module=BAR"));
+    }
+
 }
