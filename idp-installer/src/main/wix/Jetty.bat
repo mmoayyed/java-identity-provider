@@ -109,7 +109,7 @@ if exist "%2" (
 ) else (
   "%JARCMD%" xf ..\%2
 )
-dir /s jsp.ini 1> nl:a 2> nl:b
+dir /s jetty-ssl-context.xml 1> nl:a 2> nl:b
 if ERRORLEVEL 1 (
   cd ..
   echo "Could not find jsp.ini in Jetty package"
