@@ -19,6 +19,7 @@ package net.shibboleth.idp.spring;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +27,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.function.BiPredicate;
@@ -43,7 +45,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -198,14 +199,28 @@ public class IdPPropertiesApplicationContextInitializer
     @Nullable public Properties loadProperties(@Nullable final Properties sink, @Nonnull final Resource resource) {
         Constraint.isNotNull(resource, "Resource cannot be null");
         try {
-            final Properties properties;
-            if (sink != null) {
-                properties = sink;
-            } else {
-                properties = new Properties();
+            final Properties holder = new Properties();
+            try (final InputStream is = resource.getInputStream()) {
+                final String filename = resource.getFilename();
+                if (filename != null && filename.endsWith(".xml")) {
+                    holder.loadFromXML(is);
+                } else {
+                    holder.load(is);
+                }
             }
-            PropertiesLoaderUtils.fillProperties(properties, resource);
-            return properties;
+            
+            if (sink == null) {
+                return holder;
+            }
+
+            // Check for duplicates before adding.
+            for (final Map.Entry<Object,Object> entry : holder.entrySet()) {
+                if (sink.putIfAbsent(entry.getKey(), entry.getValue()) != null) {
+                    LOG.warn("Ignoring duplicate property '{}'", entry.getKey());
+                }
+            }
+
+            return sink;
         } catch (final IOException e) {
             LOG.warn("Unable to load properties from resource '{}'", resource, e);
             return null;
