@@ -55,6 +55,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
@@ -117,7 +118,10 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
 
     /** Pluggable strategy function for generalized extraction of data. */
     @Nullable private Function<ProfileRequestContext,Collection<IdPAttribute>> attributeExtractionStrategy;
-    
+
+    /** An IdPAttribute ID to log as a "name" in place of the NameID for "info" purposes. */
+    @Nullable @NotEmpty private String loggedAttributeId;
+
     /** Context containing the result to validate. */
     @Nullable private SAMLAuthnContext samlAuthnContext;
     
@@ -129,7 +133,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
 
     /** Incoming context extended translation function. */
     @Nullable private Function<ProfileRequestContext,Collection<Principal>> authnContextTranslatorEx;
-
+    
     /** Context for externally supplied inbound attributes. */
     @Nullable private AttributeContext attributeContext;
         
@@ -197,6 +201,19 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         attributeExtractionStrategy = strategy;
+    }
+    
+    /**
+     * An attribute ID to pull a "name" from for logging purposes.
+     * 
+     * @param id attribute ID
+     * 
+     * @since 4.2.0
+     */
+    public void setLoggedAttributeId(@Nullable @NotEmpty final String id) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        loggedAttributeId = StringSupport.trimOrNull(id);
     }
 
     /** {@inheritDoc} */
@@ -270,6 +287,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                 attributeContext.setIdPAttributes(attributes);
             }
         }
+
+        logSuccess();
         
         authnContextTranslator = profileConfiguration.getAuthnContextTranslationStrategy(profileRequestContext);
         authnContextTranslatorEx = profileConfiguration.getAuthnContextTranslationStrategyEx(profileRequestContext);
@@ -285,6 +304,26 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                         samlAuthnContext.getAuthnStatement().getAuthnInstant());
             }
         }
+    }
+    
+    /**
+     * Log a successful authentication based on a designated attribute ID or the NameID value.
+     */
+    protected void logSuccess() {
+        String nameToLog = null;
+        if (loggedAttributeId != null && attributeContext != null) {
+            final IdPAttribute attrToLog = attributeContext.getIdPAttributes().get(loggedAttributeId);
+            if (attrToLog != null && !attrToLog.getValues().isEmpty()) {
+                nameToLog = attrToLog.getValues().get(0).getDisplayValue();
+            }
+        }
+        
+        if (nameToLog == null && samlAuthnContext.getSubject() != null
+                && samlAuthnContext.getSubject().getNameID() != null) {
+            nameToLog = samlAuthnContext.getSubject().getNameID().getValue();
+        }
+
+        log.info("{} SAML authentication succeeded for '{}'", getLogPrefix(), nameToLog);
     }
         
 // Checkstyle: CyclomaticComplexity|MethodLength OFF

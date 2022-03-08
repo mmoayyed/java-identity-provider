@@ -454,7 +454,8 @@
         p:metadataResolver-ref="shibboleth.MetadataResolver"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.SAML.addDefaultPrincipals') ?: %{idp.authn.SAML.addDefaultPrincipals:false}}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.SAML.resultCachingPredicate')}"        
-        p:attributeExtractionStrategy="#{getObject('shibboleth.authn.SAML.attributeExtractionStrategy')}" />
+        p:attributeExtractionStrategy="#{getObject('shibboleth.authn.SAML.attributeExtractionStrategy')}"
+        p:loggedAttributeId="%{idp.authn.SAML.loggedAttributeId:}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
