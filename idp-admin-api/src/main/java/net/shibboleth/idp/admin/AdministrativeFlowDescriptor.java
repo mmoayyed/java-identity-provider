@@ -24,6 +24,7 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.FlowDescriptor;
+import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
 
 /**
  * A descriptor for an administrative flow.
@@ -36,7 +37,8 @@ import net.shibboleth.idp.profile.FlowDescriptor;
  * 
  * @since 3.3.0
  */
-public interface AdministrativeFlowDescriptor extends FlowDescriptor, AuthenticationProfileConfiguration {
+public interface AdministrativeFlowDescriptor
+        extends FlowDescriptor, AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration {
     
     /**
      * Get a logging ID to use when auditing this profile.
@@ -78,15 +80,6 @@ public interface AdministrativeFlowDescriptor extends FlowDescriptor, Authentica
      * @return name of access control policy
      */
     @Nullable String getPolicyName(@Nullable final ProfileRequestContext profileRequestContext);
-
-    /**
-     * Get whether to resolve attributes during the profile (default is false).
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return whether to resolve attributes during the profile
-     */
-    boolean isResolveAttributes(@Nullable final ProfileRequestContext profileRequestContext);
 
     /** {@inheritDoc} */
     @Override
