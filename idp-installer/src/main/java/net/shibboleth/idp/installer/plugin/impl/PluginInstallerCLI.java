@@ -469,7 +469,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         final PluginVersion versionToInstall = getBestVersion(new PluginVersion(0,0,0), info);
         if (versionToInstall == null) {
-            log.error("Plugin {}: No version available to install");
+            log.error("Plugin {}: No version available to install", pluginId);
             return RC_INIT;
         }
         installer.installPlugin(info.getUpdateURL(versionToInstall),

@@ -40,9 +40,9 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 @SuppressWarnings("javadoc")
 public class PluginCLITest extends BasePluginTest {
     
-    private final String PLUGIN_DISTRO = "https://shibboleth.net/downloads/identity-provider/plugins/totp/1.0.0/idp-plugin-totp-dist-1.0.0.tar.gz";
+    private final String PLUGIN_DISTRO = "https://shibboleth.net/downloads/identity-provider/plugins/metadatagen/1.0.0/idp-plugin-metadatagen-dist-1.0.0.tar.gz";
     
-    private final String PLUGIN_ID = "net.shibboleth.idp.plugin.authn.totp";
+    private final String PLUGIN_ID = "net.shibboleth.idp.plugin.metadatagen";
 
     @BeforeSuite public void setUp() throws IOException
     {
@@ -72,8 +72,8 @@ public class PluginCLITest extends BasePluginTest {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-L", } ), AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = false) public void testInstallById() throws IOException {
-        assertEquals(PluginInstallerCLI.runMain(new String[] { "-I", "net.shibboleth.idp.plugin.authn.totp"} ), AbstractCommandLine.RC_OK);
+    @Test(enabled = true) public void testInstallById() throws IOException {
+        assertEquals(PluginInstallerCLI.runMain(new String[] { "-I", PLUGIN_ID} ), AbstractCommandLine.RC_OK);
     }
 
     @Test(enabled = true,dependsOnMethods = {/*"testWeb"*/}) public void testListWithOverride() throws IOException {
