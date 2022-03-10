@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
+import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.logic.ProxyAwareForceAuthnPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareAuthnContextComparisonLookupFunction;
@@ -53,7 +54,7 @@ import com.google.common.base.Predicates;
 
 /** Configuration support for SAML 2 Browser SSO. */
 public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration
-        implements AuthenticationProfileConfiguration {
+        implements AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration {
     
     /** ID for this profile configuration. */
     @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/browser";
@@ -166,15 +167,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
     }
     
-    /**
-     * Get whether attributes should be resolved during the profile.
-     *
-     * <p>Default is true</p>
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return true iff attributes should be resolved
-     */
+    /** {@inheritDoc} */
     public boolean isResolveAttributes(@Nullable final ProfileRequestContext profileRequestContext) {
         return resolveAttributesPredicate.test(profileRequestContext);
     }

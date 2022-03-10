@@ -15,33 +15,33 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.config.logic;
+package net.shibboleth.idp.profile.config.logic;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.logic.ResolveAttributesPredicate;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A predicate that evaluates a {@link ProfileRequestContext} and determines whether attribute resolution
- * and filtering should take place.
+ * Predicate to determine whether a profile request should resolve attributes.
  * 
- * <p>For SAML 1 and SAML 2 SSO profiles, the "resolveAttributes" flag is the setting governing
- * this decision. For other profiles, false is returned.</p>
- * 
- * @deprecated
+ * @since 4.2.0
  */
-@Deprecated(since="4.2.0", forRemoval=true)
-public class ResolveAttributesProfileConfigPredicate extends ResolveAttributesPredicate {
+public class ResolveAttributesPredicate extends AbstractRelyingPartyPredicate {
 
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
-        DeprecationSupport.warnOnce(ObjectType.CLASS, getClass().getName(), null, ResolveAttributesPredicate.class.getName());
+        if (input != null) {
+            final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+            if (rpc != null && rpc.getProfileConfig() instanceof AttributeResolvingProfileConfiguration) {
+                return ((AttributeResolvingProfileConfiguration) rpc.getProfileConfig()).isResolveAttributes(input);
+            }
+        }
         
-        return super.test(input);
+        return false;
     }
 
 }

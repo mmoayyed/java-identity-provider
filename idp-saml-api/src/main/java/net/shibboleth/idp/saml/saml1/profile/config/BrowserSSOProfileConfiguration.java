@@ -33,6 +33,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
+import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -45,7 +46,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Configuration for SAML 1 Browser SSO profile requests. */
 public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwareProfileConfiguration
-        implements AuthenticationProfileConfiguration {
+        implements AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration {
 
     /** ID for this profile configuration. */
     @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/sso/browser";
@@ -98,15 +99,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         proxyCountLookupStrategy = FunctionSupport.constant(null);
     }
 
-    /**
-     * Get whether attributes should be resolved during the profile.
-     *
-     * <p>Default is true</p>
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return true iff attributes should be resolved
-     */
+    /** {@inheritDoc} */
     public boolean isResolveAttributes(@Nullable final ProfileRequestContext profileRequestContext) {
         return resolveAttributesPredicate.test(profileRequestContext);
     }

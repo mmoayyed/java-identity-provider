@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
+import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
@@ -42,7 +43,7 @@ import com.google.common.base.Predicates;
  * @author Marvin S. Addison
  */
 public abstract class AbstractProtocolConfiguration extends AbstractConditionalProfileConfiguration implements
-        InitializableComponent {
+        AttributeResolvingProfileConfiguration, InitializableComponent {
 
     /** CAS base protocol URI. */
     @Nonnull @NotEmpty public static final String PROTOCOL_URI = "https://www.apereo.org/cas/protocol";
@@ -121,13 +122,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
         ticketValidityPeriodLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
-    /**
-     * Get whether attributes should be resolved during the profile (defaults to true).
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return true iff attributes should be resolved
-     */
+    /** {@inheritDoc} */
     public boolean isResolveAttributes(@Nullable final ProfileRequestContext profileRequestContext) {
         return resolveAttributesPredicate.test(profileRequestContext);
     }

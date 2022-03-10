@@ -31,8 +31,7 @@
         class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity" scope="prototype"
         p:confidentialityActive="false" p:integrityActive="false" />
 
-    <bean id="ResolveAttributesPredicate"
-        class="net.shibboleth.idp.saml.profile.config.logic.ResolveAttributesProfileConfigPredicate" />
+    <bean id="ResolveAttributesPredicate" class="net.shibboleth.idp.profile.config.logic.ResolveAttributesPredicate" />
 
     <bean id="AddNameIdentifierToSubjects"
             class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype">

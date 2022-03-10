@@ -59,9 +59,8 @@
         </constructor-arg>
     </bean>
         
-    <bean id="ResolveAttributesPredicate"
-        class="net.shibboleth.idp.saml.profile.config.logic.ResolveAttributesProfileConfigPredicate" />
-
+    <bean id="ResolveAttributesPredicate" class="net.shibboleth.idp.profile.config.logic.ResolveAttributesPredicate" />
+    
     <bean id="AddNameIDToSubjects"
             class="org.opensaml.saml.saml2.profile.impl.AddNameIDToSubjects" scope="prototype">
         <property name="formatLookupStrategy">
