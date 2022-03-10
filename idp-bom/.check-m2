@@ -1,0 +1,1 @@
+This file provokes a signature check of the maven repository unless overridden by the no-check-m2 property.

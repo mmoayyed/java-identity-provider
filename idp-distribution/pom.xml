@@ -19,7 +19,6 @@
     <properties>
         <idp.finalName>shibboleth-identity-provider-${project.version}</idp.finalName>
         <idp.assemblyDirectory>${project.build.directory}/${idp.finalName}</idp.assemblyDirectory>
-        <net.shibboleth.maven.enforcer.rules.checkM2>false</net.shibboleth.maven.enforcer.rules.checkM2>
     </properties>
 
     <dependencies>
@@ -254,7 +253,7 @@
                     <dependency>
                         <groupId>net.shibboleth.maven.enforcer.rules</groupId>
                         <artifactId>maven-dist-enforcer</artifactId>
-                        <version>3.1.1-SNAPSHOT</version>
+                        <version>${maven-dist-enforcer.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -269,7 +268,7 @@
                                 <jarEnforcer implementation="net.shibboleth.mvn.enforcer.impl.JarEnforcer">
                                     <dataGroupId>net.shibboleth.maven.enforcer.rules</dataGroupId>
                                     <dataArtifactId>maven-dist-enforcer-data</dataArtifactId>
-                                    <dataVersion>1.0.1-SNAPSHOT</dataVersion>
+                                    <dataVersion>${maven-dist-enforcer-data.version}</dataVersion>
                                     <dataKeyRing>${basedir}/src/main/enforcer/shibbolethKeys.gpg</dataKeyRing>
                                     <parentPomDir>${basedir}/../idp-parent</parentPomDir>
                                     <zipFiles>${project.build.directory}/${idp.finalName}.zip</zipFiles>
@@ -278,7 +277,7 @@
                                     <checkDependencies>true</checkDependencies>
 				    <compileRuntimeArtifactFatal>false</compileRuntimeArtifactFatal>
                                     <listJarSources>false</listJarSources>
-                                    <checkM2>${net.shibboleth.maven.enforcer.rules.checkM2}</checkM2>
+                                    <checkM2>false</checkM2>
                                 </jarEnforcer>
                             </rules>
                         </configuration>
