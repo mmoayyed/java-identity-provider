@@ -991,7 +991,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         if (version == null) {
             LOG.error("Could not determine IdP Version. Assuming 4.2.0");
             LOG.error("You should never see this outside a test environment");
-            return new PluginVersion(4,1,0);
+            return new PluginVersion(4,2,0);
         } 
         return new PluginVersion(version);
     }
