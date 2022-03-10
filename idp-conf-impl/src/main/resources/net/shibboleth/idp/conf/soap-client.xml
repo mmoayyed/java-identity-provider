@@ -14,9 +14,7 @@
     
     <!-- Aliases used for wiring, especially by other components. In case we want to switch strategies, can do it here -->
     <alias alias="shibboleth.SOAPClient.SAML" name="SOAPClient.SAML.LocatorMap" />
-    <alias alias="SOAPClient.SAML.HttpClient" name="SOAPClient.HttpClient" />
     
-
     <!-- Security Configuration lookup -->
 
     <bean id="shibboleth.MessageContext.SignatureValidationConfigurationLookup"
@@ -32,7 +30,7 @@
     <!-- SOAP client and pipeline factory definitions. -->
          
     <bean id="SOAPClient.SAML.LocatorMap" class="org.opensaml.soap.client.http.PipelineFactoryHttpSOAPClient">
-        <property name="httpClient" ref="SOAPClient.SAML.HttpClient" />
+        <property name="httpClient" ref="#{'%{idp.soap.httpClient:SOAPClient.HttpClient}'.trim()}" />
         <property name="pipelineFactory" ref="SOAPClient.PipelineFactory.LocatorMap" />
     </bean>
     
