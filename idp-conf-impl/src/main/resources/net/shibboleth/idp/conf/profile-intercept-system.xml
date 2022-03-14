@@ -58,29 +58,10 @@
             p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"
             p:expandedNumberOfStoredRecords="%{idp.consent.expandedMaxStoredRecords:0}"
             p:expandedStorageThreshold="%{idp.consent.expandedStorageThreshold:1048576}"
-            p:nonBrowserSupported="false">
-        <property name="activationCondition">
-            <bean parent="shibboleth.Conditions.AND">
-                <constructor-arg>
-                    <ref bean="#{'%{idp.consent.attribute-release.activationCondition:shibboleth.Conditions.TRUE}'.trim()}" />
-                </constructor-arg>
-                <constructor-arg>
-                    <bean parent="shibboleth.Conditions.OR">
-                        <constructor-arg>
-                            <bean parent="shibboleth.Conditions.NOT">
-                                <constructor-arg value="%{idp.consent.allowPerAttribute:false}" />
-                            </bean>
-                        </constructor-arg>
-                        <constructor-arg>
-                            <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
-                        </constructor-arg>
-                    </bean>
-                </constructor-arg>
-            </bean>
-        </property>
-    </bean>
+            p:nonBrowserSupported="false"
+            p:activationCondition-ref="#{'%{idp.consent.attribute-release.activationCondition:shibboleth.Conditions.TRUE}'.trim()}" />
 
-    <!-- Attribute release flow for attribute queries -->
+    <!-- Attribute release flow for attribute queries or related back-channel profiles. -->
     <bean p:id="intercept/attribute-release-query" parent="shibboleth.consent.AttributeReleaseFlow" />
 
     <!-- Parent bean for terms of use consent flows. -->
