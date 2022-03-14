@@ -37,6 +37,15 @@
           c:validator="#{getObject('shibboleth.CASProxyAuthenticator') ?: getObject('shibboleth.DefaultCASProxyAuthenticator')}"
           c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
+    <bean id="PopulateConsentInterceptContext"
+            class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}"
+            p:loggingLabel="backchannel">
+        <property name="activeFlowsLookupStrategy">
+            <bean parent="shibboleth.Functions.Constant" c:target="#{ {'attribute-release-query' } }" />
+        </property>
+    </bean>
+
     <bean id="PrepareTicketValidationResponse"
           class="net.shibboleth.idp.cas.flow.impl.PrepareTicketValidationResponseAction" scope="prototype"
           p:transcoderRegistry-ref="shibboleth.AttributeRegistryService" />
