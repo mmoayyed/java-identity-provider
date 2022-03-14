@@ -52,12 +52,18 @@
     <decision-state id="ResolveAttributes">
         <if test="ResolveAttributesPredicate.test(opensamlProfileRequestContext)"
             then="AttributeResolution"
-            else="BuildResponse" />
+            else="PopulatePostAuthnInterceptContext" />
     </decision-state>
     
     <action-state id="AttributeResolution">
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="FilterAttributes" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="PopulatePostAuthnInterceptContext" />
+    </action-state>
+    
+    <action-state id="PopulatePostAuthnInterceptContext">
         <evaluate expression="PopulatePostAuthnInterceptContext" />
         <evaluate expression="'proceed'" />
         

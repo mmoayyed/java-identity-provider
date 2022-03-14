@@ -66,14 +66,20 @@
     <decision-state id="CheckResolveAttributes">
         <if test="LoginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes(opensamlProfileRequestContext)"
             then="ResolveAttributes"
-            else="GrantServiceTicket" />
+            else="PopulatePostAuthnInterceptContext" />
     </decision-state>
 
     <action-state id="ResolveAttributes">
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="FilterAttributes" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="PopulatePostAuthnInterceptContext" />
+    </action-state>
+
+    <action-state id="PopulatePostAuthnInterceptContext">
         <evaluate expression="PopulatePostAuthnInterceptContext" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="CheckPostAuthnInterceptContext" />
     </action-state>
 
