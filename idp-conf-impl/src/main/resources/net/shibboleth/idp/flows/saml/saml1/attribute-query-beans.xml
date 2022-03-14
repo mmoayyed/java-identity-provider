@@ -72,7 +72,8 @@
 
     <bean id="PopulateConsentInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
-            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}">
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}"
+            p:loggingLabel="backchannel">
         <property name="activeFlowsLookupStrategy">
             <bean parent="shibboleth.Functions.Constant" c:target="#{ {'attribute-release-query' } }" />
         </property>
