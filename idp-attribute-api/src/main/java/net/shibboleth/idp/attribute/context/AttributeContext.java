@@ -47,6 +47,9 @@ public final class AttributeContext extends BaseContext {
     /** The attributes tracked by this context prior to filtering. */
     @Nullable private Map<String,IdPAttribute> unfilteredAttributes;
     
+    /** Whether attribute release consent was obtained from the subject. */
+    private boolean consented;
+    
     /** Constructor. */
     public AttributeContext() {
         unfilteredAttributes = Collections.emptyMap();
@@ -66,8 +69,11 @@ public final class AttributeContext extends BaseContext {
      * Sets the attributes tracked by this context.
      * 
      * @param newAttributes the attributes
+     * 
+     * @return this context
      */
-    public void setIdPAttributes(@Nullable @NonnullElements final Collection<IdPAttribute> newAttributes) {
+    @Nonnull public AttributeContext setIdPAttributes(
+            @Nullable @NonnullElements final Collection<IdPAttribute> newAttributes) {
         
         if (newAttributes != null) {
             attributes = newAttributes.
@@ -78,6 +84,8 @@ public final class AttributeContext extends BaseContext {
         } else {
             attributes = Collections.emptyMap();
         }
+        
+        return this;
     }
     
     
@@ -94,8 +102,11 @@ public final class AttributeContext extends BaseContext {
      * Sets the unfiltered attributes tracked by this context.
      * 
      * @param newAttributes the attributes
+     * 
+     * @return this context
      */
-    public void setUnfilteredIdPAttributes(@Nullable @NonnullElements final Collection<IdPAttribute> newAttributes) {
+    @Nonnull public AttributeContext setUnfilteredIdPAttributes(
+            @Nullable @NonnullElements final Collection<IdPAttribute> newAttributes) {
         if (null != unfilteredAttributes) {
             unfilteredAttributes = newAttributes.
                     stream().
@@ -105,6 +116,36 @@ public final class AttributeContext extends BaseContext {
         } else {
             unfilteredAttributes = Collections.emptyMap();
         }
+        
+        return this;
     }
     
+    /**
+     * Gets whether attribute release consent was obtained from the subject during this request.
+     * 
+     * <p>This may be false if consent was obtained during a prior request, but is a signal to later
+     * actions that consent may have been obtained but not stored.</p>
+     * 
+     * @return true iff consent was obtained during this request
+     * 
+     * @since 4.2.0
+     */
+    public boolean isConsented() {
+        return consented;
+    }
+    
+    /**
+     * Sets whether attribute release consent was obtained from the subject during this request.
+     * 
+     * @param flag flag to set
+     * 
+     * @return this context
+     * 
+     * @since 4.2.0
+     */
+    @Nonnull public AttributeContext setConsented(final boolean flag) {
+        consented = flag;
+        
+        return this;
+    }
 }

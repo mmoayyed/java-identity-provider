@@ -149,6 +149,10 @@
     <!-- If global consent was given by user, create appropriate storage result and end flow. -->
 
     <decision-state id="TestForGlobalConsent">
+        <on-entry>
+            <!-- Note consent obtained for subsequent profile use. -->
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getSubcontext(T(net.shibboleth.idp.attribute.context.AttributeContext)).setConsented(true)" />
+        </on-entry>
         <if test="requestParameters._shib_idp_consentOptions == '_shib_idp_globalConsent'"
             then="GlobalConsent" else="ExtractConsent" />
     </decision-state>
