@@ -668,6 +668,14 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
+        <property name="storeConsentInTicketsPredicate">
+            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="storeConsentInTickets" />
+                </constructor-arg>
+                <constructor-arg value="false" />
+            </bean>
+        </property>
         <property name="proxyCountLookupStrategy">
             <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="proxyCount" />
         </property>

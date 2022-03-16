@@ -38,6 +38,7 @@ import javax.annotation.Nonnull;
 import static org.testng.Assert.*;
 
 import java.time.Instant;
+import java.util.Set;
 
 /**
  * Tests the flow behind the <code>/samlValidate</code> endpoint.
@@ -97,6 +98,39 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"uid\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john</saml1:AttributeValue></saml1:Attribute>"));
         assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"mail\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue></saml1:Attribute>"));
         assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"eduPersonPrincipalName\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue></saml1:Attribute>"));
+        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
+    }
+
+    @Test
+    public void testSuccessWithConsent() throws Exception {
+        final String principal = "john";
+        final IdPSession session = sessionManager.createSession(principal);
+        final TicketState state = new TicketState(session.getId(), principal, Instant.now(), "Password");
+        state.setConsentedAttributeIds(Set.of("uid", "eduPersonPrincipalName"));
+        final ServiceTicket ticket = ticketService.createServiceTicket(
+                "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
+                Instant.now().plusSeconds(5),
+                "https://test.example.org/",
+                state,
+                false);
+        final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
+        request.setMethod("POST");
+        request.setContentType("text/xml");
+        request.setContent(requestBody.getBytes("UTF-8"));
+        externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
+        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "ValidateSuccess");
+        assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"saml1p:Success\"/>"));
+        assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
+        assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
+        assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"uid\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john</saml1:AttributeValue></saml1:Attribute>"));
+        assertTrue(responseBody.contains("<saml1:Attribute AttributeName=\"eduPersonPrincipalName\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue></saml1:Attribute>"));
+        assertFalse(responseBody.contains("<saml1:Attribute AttributeName=\"mail\" AttributeNamespace=\"http://www.ja-sig.org/products/cas/\"><saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue></saml1:Attribute>"));
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
     }
 

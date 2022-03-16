@@ -121,12 +121,9 @@ public final class AttributeContext extends BaseContext {
     }
     
     /**
-     * Gets whether attribute release consent was obtained from the subject during this request.
+     * Gets whether attribute release consent was obtained from the subject during this request but not stored.
      * 
-     * <p>This may be false if consent was obtained during a prior request, but is a signal to later
-     * actions that consent may have been obtained but not stored.</p>
-     * 
-     * @return true iff consent was obtained during this request
+     * @return true iff consent was obtained during this request but not stored
      * 
      * @since 4.2.0
      */
@@ -135,7 +132,7 @@ public final class AttributeContext extends BaseContext {
     }
     
     /**
-     * Sets whether attribute release consent was obtained from the subject during this request.
+     * Sets whether attribute release consent was obtained from the subject during this request but not stored.
      * 
      * @param flag flag to set
      * 
@@ -148,4 +145,5 @@ public final class AttributeContext extends BaseContext {
         
         return this;
     }
+    
 }

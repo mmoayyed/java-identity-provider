@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.flow.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -43,6 +44,7 @@ import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.TicketPrincipalLookupFunction;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
@@ -93,6 +95,9 @@ public class PrepareTicketValidationResponseAction extends
     
     /** Stored off context from request. */
     @Nullable private AttributeContext attributeContext;
+    
+    /** Stored consented attributes from ticket. */
+    @Nullable private Set<String> consentedAttributeIds;
     
     /** Profile configuration. */
     @Nullable private ValidateConfiguration validateConfiguration;
@@ -157,6 +162,10 @@ public class PrepareTicketValidationResponseAction extends
         
         try {
             response = getCASResponse(profileRequestContext);
+            final TicketState state = getCASTicket(profileRequestContext).getTicketState();
+            if (state != null) {
+                consentedAttributeIds = state.getConsentedAttributeIds();
+            }
         } catch (final EventException e) {
             ActionSupport.buildEvent(profileRequestContext, e.getEventID());
             return false;
@@ -213,7 +222,12 @@ public class PrepareTicketValidationResponseAction extends
                 return;
             }
             for (final IdPAttribute attribute : inputAttributes) {
-                encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
+                if (consentedAttributeIds == null || consentedAttributeIds.contains(attribute.getId())) {
+                    encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
+                } else {
+                    log.info("{} Skipping attribute {} not in stored consent list from ticket", getLogPrefix(),
+                            attribute.getId());
+                }
             }
         } finally {
             if (null != component) {

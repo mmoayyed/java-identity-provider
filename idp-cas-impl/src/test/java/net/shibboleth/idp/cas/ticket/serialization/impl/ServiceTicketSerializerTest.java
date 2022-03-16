@@ -25,6 +25,8 @@ import static org.testng.Assert.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Unit test for {@link ServiceTicketSerializer}.
@@ -66,4 +68,45 @@ public class ServiceTicketSerializerTest {
         assertEquals(st2.isRenew(), st1.isRenew());
         assertEquals(st2.getTicketState(), st1.getTicketState());
     }
+
+    @Test
+    public void testSerializeWithConsent() throws Exception {
+        final ServiceTicket st1 = new ServiceTicket(
+                "ST-0123456789-e6342d467a4414e599aa3c323528e96f",
+                "https://nobody.example.org",
+                Instant.now().truncatedTo(ChronoUnit.MILLIS),
+                true);
+        final TicketState state = new TicketState("idpsess-d2db22058dc178d3b917363859e", "bob",
+                Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password");
+        state.setConsentedAttributeIds(Set.of("foo", "bar"));
+        st1.setTicketState(state);
+        final String serialized = serializer.serialize(st1);
+        final ServiceTicket st2 = serializer.deserialize(1, "notused", st1.getId(), serialized, null);
+        assertEquals(st2.getId(), st1.getId());
+        assertEquals(st2.getService(), st1.getService());
+        assertEquals(st2.getExpirationInstant(), st1.getExpirationInstant());
+        assertEquals(st2.isRenew(), st1.isRenew());
+        assertEquals(st2.getTicketState(), st1.getTicketState());
+    }
+
+    @Test
+    public void testSerializeWithEmptyConsent() throws Exception {
+        final ServiceTicket st1 = new ServiceTicket(
+                "ST-0123456789-e6342d467a4414e599aa3c323528e96f",
+                "https://nobody.example.org",
+                Instant.now().truncatedTo(ChronoUnit.MILLIS),
+                true);
+        final TicketState state = new TicketState("idpsess-d2db22058dc178d3b917363859e", "bob",
+                Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password");
+        state.setConsentedAttributeIds(Collections.emptySet());
+        st1.setTicketState(state);
+        final String serialized = serializer.serialize(st1);
+        final ServiceTicket st2 = serializer.deserialize(1, "notused", st1.getId(), serialized, null);
+        assertEquals(st2.getId(), st1.getId());
+        assertEquals(st2.getService(), st1.getService());
+        assertEquals(st2.getExpirationInstant(), st1.getExpirationInstant());
+        assertEquals(st2.isRenew(), st1.isRenew());
+        assertEquals(st2.getTicketState(), st1.getTicketState());
+    }
+
 }

@@ -74,6 +74,9 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     /** Whether to mandate forced authentication for the request. */
     @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
 
+    /** Whether to store consent in service tickets. */
+    @Nonnull private Predicate<ProfileRequestContext> storeConsentInTicketsPredicate;
+
     /** Lookup function to supply proxyCount property. */
     @Nonnull private Function<ProfileRequestContext,Integer> proxyCountLookupStrategy;
     
@@ -85,6 +88,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         defaultAuthenticationContextsLookupStrategy = FunctionSupport.constant(null);
         forceAuthnPredicate = Predicates.alwaysFalse();
+        storeConsentInTicketsPredicate = Predicates.alwaysFalse();
         proxyCountLookupStrategy = FunctionSupport.constant(null);
     }
 
@@ -215,6 +219,41 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
         forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
     }
 
+    /**
+     * Get whether to store consent in service tickets.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @return whether to store consent in service tickets
+     * 
+     * @since 4.2.0
+     */
+    public boolean isStoreConsentInTickets(@Nullable final ProfileRequestContext profileRequestContext) {
+        return storeConsentInTicketsPredicate.test(profileRequestContext);
+    }
+
+    /**
+     * Set whether to store consent in service tickets.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.2.0
+     */
+    public void setStoreConsentInTickets(final boolean flag) {
+        storeConsentInTicketsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+
+    /**
+     * Set condition for whether to store consent in service tickets.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.2.0
+     */
+    public void setStoreConsentInTicketsPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        storeConsentInTicketsPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Nullable public Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext) {
         final Integer count = proxyCountLookupStrategy.apply(profileRequestContext);

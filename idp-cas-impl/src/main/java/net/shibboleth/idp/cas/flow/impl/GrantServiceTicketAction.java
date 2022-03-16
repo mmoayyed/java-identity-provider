@@ -23,6 +23,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -38,8 +39,10 @@ import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -75,6 +78,9 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     /** Function to retrieve subject principal name. */
     @Nonnull private final Function<ProfileRequestContext, String> principalLookupFunction;
 
+    /** Strategy used to locate the {@link AttributeContext} associated with a given {@link ProfileRequestContext}. */
+    @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
+
     /** Manages CAS tickets. */
     @Nonnull private final TicketService casTicketService;
 
@@ -89,7 +95,13 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     
     /** Authentication result. */
     @Nullable private AuthenticationResult authnResult;
+
+    /** Whether consent needs to be stored in ticket. */
+    private boolean storeConsent;
     
+    /** AttributeContext to use. */
+    @Nullable private AttributeContext attributeCtx;
+
     /** CAS request. */
     @Nullable private ServiceTicketRequest request;
 
@@ -106,6 +118,25 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         authnCtxLookupFunction = new ChildContextLookup<>(AuthenticationContext.class);
         principalLookupFunction = new SubjectContextPrincipalLookupFunction().compose(
                 new ChildContextLookup<>(SubjectContext.class));
+        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+                new ChildContextLookup<>(RelyingPartyContext.class));
+    }
+    
+    /**
+     * Set the strategy used to locate the {@link AttributeContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link AttributeContext} associated with a given
+     *            {@link ProfileRequestContext}
+     *            
+     * @since 4.2.0
+     */
+    public void setAttributeContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        attributeContextLookupStrategy =
+                Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }
 
     @Override
@@ -155,7 +186,18 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
-        
+
+        if (loginConfig.getPostAuthenticationFlows(profileRequestContext).contains("attribute-release")) {
+            attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
+            if (attributeCtx != null) {
+                storeConsent = attributeCtx.isConsented() || loginConfig.isStoreConsentInTickets(profileRequestContext);
+                if (storeConsent) {
+                    log.debug("{} Storing consented attribute IDs into ticket: {}", getLogPrefix(),
+                            attributeCtx.getIdPAttributes().keySet());
+                }
+            }
+        }
+
         return true;
     }    
     
@@ -170,6 +212,11 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
                     getPrincipalName(profileRequestContext),
                     authnResult.getAuthenticationInstant(),
                     authnResult.getAuthenticationFlowId());
+            
+            if (storeConsent) {
+                state.setConsentedAttributeIds(attributeCtx.getIdPAttributes().keySet());
+            }
+            
             ticket = casTicketService.createServiceTicket(
                     securityConfig.getIdGenerator().generateIdentifier(),
                     Instant.now().plus(loginConfig.getTicketValidityPeriod(profileRequestContext)),

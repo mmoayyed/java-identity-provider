@@ -18,10 +18,18 @@
 package net.shibboleth.idp.cas.ticket;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Supplemental state data to be stored with a ticket.
@@ -31,21 +39,19 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public class TicketState {
 
     /** ID of session in which ticket is created. */
-    @Nonnull
-    private String sessId;
+    @Nonnull private String sessId;
 
     /** Canonical authenticated principal name. */
-    @Nonnull
-    private String authenticatedPrincipalName;
+    @Nonnull private String authenticatedPrincipalName;
 
     /** Authentication instant. */
-    @Nonnull
-    private Instant authenticationInstant;
+    @Nonnull private Instant authenticationInstant;
 
     /** Authentication method ID/name/description. */
-    @Nonnull
-    private String authenticationMethod;
+    @Nonnull private String authenticationMethod;
 
+    /** Attribute IDs that were consented to during the ticket request. */
+    @Nonnull @NonnullElements private Set<String> consentedAttributeIds;
 
     /**
      * Creates a new instance with required fields.
@@ -71,8 +77,7 @@ public class TicketState {
      *
      * @return IdP session ID.
      */
-    @Nonnull
-    public String getSessionId() {
+    @Nonnull public String getSessionId() {
         return sessId;
     }
 
@@ -81,8 +86,7 @@ public class TicketState {
      *
      * @return Canonical principal.
      */
-    @Nonnull
-    public String getPrincipalName() {
+    @Nonnull public String getPrincipalName() {
         return authenticatedPrincipalName;
     }
 
@@ -91,8 +95,7 @@ public class TicketState {
      *
      * @return Principal authentication instant.
      */
-    @Nonnull
-    public Instant getAuthenticationInstant() {
+    @Nonnull public Instant getAuthenticationInstant() {
         return authenticationInstant;
     }
 
@@ -101,11 +104,36 @@ public class TicketState {
      *
      * @return Principal authentication method.
      */
-    @Nonnull
-    public String getAuthenticationMethod() {
+    @Nonnull public String getAuthenticationMethod() {
         return authenticationMethod;
     }
 
+    /**
+     * Get the attribute IDs that were consented to during the request.
+     * 
+     * @return immutable set of attribute IDs
+     * 
+     * @since 4.2.0
+     */
+    @Nullable @NonnullElements @Unmodifiable @NotLive public Set<String> getConsentedAttributeIds() {
+        return consentedAttributeIds;
+    }
+    
+    /**
+     * Set the attribute IDs that were consented to during the request.
+     * 
+     * @param attributeIds attribute IDs
+     * 
+     * @since 4.2.0
+     */
+    public void setConsentedAttributeIds(@Nullable @NonnullElements final Collection<String> attributeIds) {
+        if (attributeIds != null) {
+            consentedAttributeIds = Set.copyOf(StringSupport.normalizeStringCollection(attributeIds));
+        } else {
+            consentedAttributeIds = null;
+        }
+    }
+    
     @Override
     public boolean equals(final Object o) {
         if (o instanceof TicketState) {

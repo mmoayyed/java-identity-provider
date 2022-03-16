@@ -21,14 +21,19 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 
@@ -52,28 +57,31 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractTicketSerializer<T extends Ticket> implements StorageSerializer<T> {
 
     /** Service field name. */
-    private static final String SERVICE_FIELD = "rp";
+    @Nonnull @NotEmpty private static final String SERVICE_FIELD = "rp";
 
     /** Expiration instant field name. */
-    private static final String EXPIRATION_FIELD = "exp";
+    @Nonnull @NotEmpty private static final String EXPIRATION_FIELD = "exp";
 
     /** Supplemental ticket state field name. */
-    private static final String STATE_FIELD = "ts";
+    @Nonnull @NotEmpty private static final String STATE_FIELD = "ts";
 
     /** Session ID field name. */
-    private static final String SESSION_FIELD = "sid";
+    @Nonnull @NotEmpty private static final String SESSION_FIELD = "sid";
 
     /** Authenticated canonical principal name field. */
-    private static final String PRINCIPAL_FIELD = "p";
+    @Nonnull @NotEmpty private static final String PRINCIPAL_FIELD = "p";
 
     /** Authentication instant field name. */
-    private static final String AUTHN_INSTANT_FIELD = "ai";
+    @Nonnull @NotEmpty private static final String AUTHN_INSTANT_FIELD = "ai";
 
     /** Authentication method field name. */
-    private static final String AUTHN_METHOD_FIELD = "am";
+    @Nonnull @NotEmpty private static final String AUTHN_METHOD_FIELD = "am";
+    
+    /** Consented attribute IDs field name. */
+    @Nonnull @NotEmpty private static final String CONSENTED_ATTRS_FIELD = "con";
 
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(AbstractTicketSerializer.class);
+    @Nonnull private final Logger logger = LoggerFactory.getLogger(AbstractTicketSerializer.class);
 
     /** JSON generator factory. */
     @Nonnull
@@ -99,13 +107,23 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
             gen.writeStartObject()
                     .write(SERVICE_FIELD, ticket.getService())
                     .write(EXPIRATION_FIELD, ticket.getExpirationInstant().toEpochMilli());
+            
             if (ticket.getTicketState() != null) {
                 gen.writeStartObject(STATE_FIELD)
                         .write(SESSION_FIELD, ticket.getTicketState().getSessionId())
                         .write(PRINCIPAL_FIELD, ticket.getTicketState().getPrincipalName())
                         .write(AUTHN_INSTANT_FIELD, ticket.getTicketState().getAuthenticationInstant().toEpochMilli())
-                        .write(AUTHN_METHOD_FIELD, ticket.getTicketState().getAuthenticationMethod())
-                        .writeEnd();
+                        .write(AUTHN_METHOD_FIELD, ticket.getTicketState().getAuthenticationMethod());
+                
+                if (ticket.getTicketState().getConsentedAttributeIds() != null) {
+                    gen.writeStartArray(CONSENTED_ATTRS_FIELD);
+                    for (final String id : ticket.getTicketState().getConsentedAttributeIds()) {
+                        gen.write(id);
+                    }
+                    gen.writeEnd();
+                }
+                
+                gen.writeEnd();
             }
             serializeInternal(gen, ticket);
             gen.writeEnd();
@@ -137,6 +155,16 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
                         so.getString(PRINCIPAL_FIELD),
                         Instant.ofEpochMilli(so.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact()),
                         so.getString(AUTHN_METHOD_FIELD));
+                final JsonValue consent = so.get(CONSENTED_ATTRS_FIELD);
+                if (consent instanceof JsonArray) {
+                    final Set<String> idset = new HashSet<>();
+                    for (final JsonValue id : (JsonArray) consent) {
+                        if (id instanceof JsonString) {
+                            idset.add(((JsonString) id).getString());
+                        }
+                    }
+                    state.setConsentedAttributeIds(idset);
+                }
             } else {
                 state = null;
             }
