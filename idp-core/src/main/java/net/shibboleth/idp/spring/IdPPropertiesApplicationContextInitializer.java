@@ -245,7 +245,7 @@ public class IdPPropertiesApplicationContextInitializer
                                public boolean test(final Path t, final BasicFileAttributes u) {
                                    if (u.isRegularFile() && t.getFileName().toString().endsWith(".properties")
                                            && !t.toString().endsWith(IDP_PROPERTIES)) {
-                                       LOG.debug("Including auto-located properties in {}", t);
+                                       LOG.info("Including auto-located properties in {}", t);
                                        return true;
                                    }
                                    return false;
