@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Interface for JCommander command line argument handling for an HTTP-based remote service call. 
@@ -50,4 +51,15 @@ public interface CommandLineArguments {
      */
     @Nonnull public URL buildURL() throws MalformedURLException;
     
+    /**
+     * Builds the HTTP-Basic value to be used in the Authorization -header, containing username and password.
+     *
+     * @return The value to be used in the Authorization -header, or null if username or password didn't have a value.
+     * 
+     * @since 4.2.0
+     */
+    @Nullable public default String getBasicAuthHeader() {
+        return null;
+    }
+
 }

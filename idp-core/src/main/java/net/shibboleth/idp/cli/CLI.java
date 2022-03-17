@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -101,7 +102,13 @@ public final class CLI {
         URL url = null;
         try {
             url = args.buildURL();
-            try (final InputStream stream = url.openStream()) {
+            final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            final String authorization = args.getBasicAuthHeader();
+            if (authorization != null) {
+                System.out.println("Using HTTP-Basic authentication");
+                connection.setRequestProperty("Authorization", authorization);
+            }
+            try (final InputStream stream = connection.getInputStream()) {
                 try (final InputStreamReader reader = new InputStreamReader(stream)) {
                     try (final BufferedReader in = new BufferedReader(reader)) {
                         String line;

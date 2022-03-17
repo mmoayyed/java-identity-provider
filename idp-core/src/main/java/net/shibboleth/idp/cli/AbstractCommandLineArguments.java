@@ -19,6 +19,7 @@ package net.shibboleth.idp.cli;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,6 +28,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.codec.EncodingException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -68,6 +72,15 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     /** Trust store password for SSL connectivity. */
     @Parameter(names = {"-tp", "--trustStorePassword"}, description = "Password to a trust store for SSL connections")
     @Nullable private String trustStorePassword;
+
+    /** Username to be used in the HTTP-Basic authentication. */
+    @Parameter(names = {"--username"}, required = false, description = "Username to be used in HTTP-Basic Auth")
+    @Nullable private String username;
+
+    /** Password to be used in the HTTP-Basic authentication. */
+    @Parameter(names = {"--password"}, required = false, password = true,
+            description = "Password to be used in HTTP-Basic Auth")
+    @Nullable private String password;
 
     /** Constructor. */
     public AbstractCommandLineArguments() {
@@ -141,6 +154,28 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     public boolean isDisableNameChecking() {
         return disableNameChecking;
     }
+    
+    /**
+     * Value of "username" parameter.
+     * 
+     * @return username parameter
+     * 
+     * @since 4.2.0
+     */
+    @Nullable public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Value of "password" parameter.
+     * 
+     * @return password parameter
+     * 
+     * @since 4.2.0
+     */
+    @Nullable public String getPassword() {
+        return password;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -190,6 +225,20 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
      */
     @Nonnull protected StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
         return builder;
+    }
+    
+    /** {@inheritDoc} */
+    @Nullable public String getBasicAuthHeader() {
+        if (StringSupport.trimOrNull(username) == null || StringSupport.trimOrNull(password) == null) {
+            return null;
+        }
+        final String rawHeader = username + ":" + password;
+        try {
+            return "Basic " + Base64Support.encode(rawHeader.getBytes(StandardCharsets.UTF_8), false);
+        } catch (final EncodingException e) {
+            System.err.print(e.getMessage());
+            return null;
+        }
     }
     
     /** Use the configured parameters to set global JVM trust store parameters for SSL connectivity. */
