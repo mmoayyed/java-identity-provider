@@ -123,7 +123,7 @@ public class IdPPropertiesApplicationContextInitializer
                 return;
             }
 
-            if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
+            if ("classpath:".equals(searchLocation) || resource instanceof ClassPathResource) {
                 setIdPHomeProperty(searchLocation, properties);
             } else {
                 String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
@@ -244,7 +244,7 @@ public class IdPPropertiesApplicationContextInitializer
                        new BiPredicate<Path,BasicFileAttributes>() {
                                public boolean test(final Path t, final BasicFileAttributes u) {
                                    if (u.isRegularFile() && t.getFileName().toString().endsWith(".properties")
-                                           && !t.endsWith(Path.of(IDP_PROPERTIES))) {
+                                           && !t.toString().endsWith(IDP_PROPERTIES)) {
                                        LOG.debug("Including auto-located properties in {}", t);
                                        return true;
                                    }
