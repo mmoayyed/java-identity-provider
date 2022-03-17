@@ -20,6 +20,10 @@ package net.shibboleth.idp.cli;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +31,10 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -82,6 +89,10 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
             description = "Password to be used in HTTP-Basic Auth")
     @Nullable private String password;
 
+    /** HTTP header name/value pair(s). */
+    @Parameter(names = {"--header"}, required = false, arity = 2, description = "HTTP header name and value")
+    @Nullable private List<String> headers;
+    
     /** Constructor. */
     public AbstractCommandLineArguments() {
         url = System.getProperty(BASEURL_PROPERTY);
@@ -176,6 +187,29 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     @Nullable public String getPassword() {
         return password;
     }
+    
+    /** {@inheritDoc} */
+    @Nullable @NonnullElements @NotLive @Unmodifiable public Map<String,String> getHeaders() {
+        if (headers != null) {
+            final Map<String,String> map = new HashMap<>();
+            final Iterator<String> iter = headers.iterator();
+            while (iter.hasNext()) {
+                final String h = iter.next();
+                if (iter.hasNext()) {
+                    final String v = iter.next();
+                    if (h != null && v != null) {
+                        if (map.containsKey(h)) {
+                            map.put(h, map.get(h).concat(",").concat(v));
+                        } else {
+                            map.put(h, v);
+                        }
+                    }
+                }
+            }
+            return map;
+        }
+        return null;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -236,7 +270,7 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
         try {
             return "Basic " + Base64Support.encode(rawHeader.getBytes(StandardCharsets.UTF_8), false);
         } catch (final EncodingException e) {
-            System.err.print(e.getMessage());
+            System.err.println(e.getMessage());
             return null;
         }
     }

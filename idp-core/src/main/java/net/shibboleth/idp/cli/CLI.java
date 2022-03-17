@@ -25,6 +25,9 @@ import java.lang.reflect.Constructor;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -105,9 +108,16 @@ public final class CLI {
             final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             final String authorization = args.getBasicAuthHeader();
             if (authorization != null) {
-                System.out.println("Using HTTP-Basic authentication");
                 connection.setRequestProperty("Authorization", authorization);
             }
+            
+            final Map<String,String> headers = args.getHeaders();
+            if (headers != null) {
+                for (final Map.Entry<String,String> h : headers.entrySet()) {
+                    connection.setRequestProperty(h.getKey(), h.getValue());
+                }
+            }
+            
             try (final InputStream stream = connection.getInputStream()) {
                 try (final InputStreamReader reader = new InputStreamReader(stream)) {
                     try (final BufferedReader in = new BufferedReader(reader)) {

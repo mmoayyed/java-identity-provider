@@ -19,9 +19,14 @@ package net.shibboleth.idp.cli;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 /**
  * Interface for JCommander command line argument handling for an HTTP-based remote service call. 
@@ -59,6 +64,17 @@ public interface CommandLineArguments {
      * @since 4.2.0
      */
     @Nullable public default String getBasicAuthHeader() {
+        return null;
+    }
+
+    /**
+     * Values of "header" parameter.
+     * 
+     * @return header parameter
+     * 
+     * @since 4.2.0
+     */
+    @Nullable @NonnullElements @NotLive @Unmodifiable public default Map<String,String> getHeaders() {
         return null;
     }
 
