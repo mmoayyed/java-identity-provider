@@ -89,6 +89,10 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
             description = "Password to be used in HTTP-Basic Auth")
     @Nullable private String password;
 
+    /** HTTP method to use, GET by default. */
+    @Parameter(names = {"--method"}, required = false, description = "")
+    @Nullable @NotEmpty private String method;
+    
     /** HTTP header name/value pair(s). */
     @Parameter(names = {"--header"}, required = false, arity = 2, description = "HTTP header name and value")
     @Nullable private List<String> headers;
@@ -188,6 +192,17 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
         return password;
     }
     
+    /**
+     * Value of "method" parameter.
+     * 
+     * @return method
+     * 
+     * @since 4.2.0
+     */
+    @Nullable @NotEmpty public String getMethod() {
+        return StringSupport.trimOrNull(method);
+    }
+    
     /** {@inheritDoc} */
     @Nullable @NonnullElements @NotLive @Unmodifiable public Map<String,String> getHeaders() {
         if (headers != null) {
@@ -262,7 +277,7 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     }
     
     /** {@inheritDoc} */
-    @Nullable public String getBasicAuthHeader() {
+    @Nullable @NotEmpty public String getBasicAuthHeader() {
         if (StringSupport.trimOrNull(username) == null || StringSupport.trimOrNull(password) == null) {
             return null;
         }

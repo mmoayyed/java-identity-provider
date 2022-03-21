@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
@@ -63,7 +64,7 @@ public interface CommandLineArguments {
      * 
      * @since 4.2.0
      */
-    @Nullable public default String getBasicAuthHeader() {
+    @Nullable @NotEmpty public default String getBasicAuthHeader() {
         return null;
     }
 
@@ -75,6 +76,17 @@ public interface CommandLineArguments {
      * @since 4.2.0
      */
     @Nullable @NonnullElements @NotLive @Unmodifiable public default Map<String,String> getHeaders() {
+        return null;
+    }
+    
+    /**
+     * Value of method parameter.
+     * 
+     * @return HTTP method
+     * 
+     * @since 4.2.0
+     */
+    @Nullable @NotEmpty public default String getMethod() {
         return null;
     }
 

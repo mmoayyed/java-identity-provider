@@ -24,9 +24,8 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -106,6 +105,11 @@ public final class CLI {
         try {
             url = args.buildURL();
             final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            
+            if (args.getMethod() != null) {
+                connection.setRequestMethod(args.getMethod());
+            }
+            
             final String authorization = args.getBasicAuthHeader();
             if (authorization != null) {
                 connection.setRequestProperty("Authorization", authorization);
@@ -128,7 +132,7 @@ public final class CLI {
                     }
                 }
             }
-        } catch (final MalformedURLException e) {
+        } catch (final MalformedURLException|ProtocolException e) {
             errorAndExit(e.getMessage());
         } catch (final IOException e) {
             errorAndExit((url != null ? "(" + url.toString() + ") " : "") + e.getMessage());
