@@ -214,13 +214,13 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     }
     
     // Test disabled due to target site being unavailable, see IDP-1852
-    @Test(enabled=false)
+    @Test
     public void testWellKnown() throws Exception {
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicWellKnown.xml", "beans.xml");
         
-        //TODO update with permanent test target, if there is a better one.
-        final String entityID = "https://issues.shibboleth.net/shibboleth";
+        // TODO: this really should be an embedded mock server
+        final String entityID = "https://test.shibboleth.net/shibboleth";
         
         final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
