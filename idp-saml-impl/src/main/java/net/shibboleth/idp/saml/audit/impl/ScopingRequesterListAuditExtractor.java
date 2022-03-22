@@ -45,13 +45,8 @@ public class ScopingRequesterListAuditExtractor extends AbstractScopingAuditExtr
         super(strategy);
     }
 
-    /**
-     * Override point to do the extraction.
-     * 
-     * @param scoping the input object
-     * 
-     * @return the extracted value
-     */
+    /** {@inheritDoc} */
+    @Override
     @Nullable protected Collection<String> doApply(@Nullable final Scoping scoping) {
         if (scoping != null) {
             return scoping.getRequesterIDs().stream()

@@ -113,6 +113,12 @@ public final class SAMLAuditFields {
     /** Scoping RequesterID list field. @since 4.2.0 */
     @Nonnull @NotEmpty public static final String SCOPING_REQ_LIST = "SCR";
 
+    /** ProxyRestriction ProxyCount field. @since 4.2.0 */
+    @Nonnull @NotEmpty public static final String PROXY_COUNT = "PRC";
+
+    /** ProxyRestriction Audience field. @since 4.2.0 */
+    @Nonnull @NotEmpty public static final String PROXY_AUDIENCE = "PRA";
+
     /** Signed inbound message field. @since 4.0.0 */
     @Nonnull @NotEmpty public static final String SIGNING = "XX";
 

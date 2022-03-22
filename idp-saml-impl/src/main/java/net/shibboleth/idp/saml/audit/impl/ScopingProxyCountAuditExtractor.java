@@ -23,31 +23,30 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.saml2.core.ProxyRestriction;
+import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Scoping;
 
 /**
- * {@link Function} that returns {@link ProxyRestriction#getProxyCount()}.
+ * {@link Function} that returns {@link Scoping#getProxyCount()} from an {@link AuthnRequest}.
  * 
  * @since 4.2.0
  */
-public class ProxyCountAuditExtractor extends AbstractProxyRestrictionAuditExtractor<Integer> {
+public class ScopingProxyCountAuditExtractor extends AbstractScopingAuditExtractor<Integer> {
     
     /**
      * Constructor.
      *
      * @param strategy lookup strategy for message
      */
-    public ProxyCountAuditExtractor(
-            @Nonnull final Function<ProfileRequestContext,SAMLObject> strategy) {
+    public ScopingProxyCountAuditExtractor(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
         super(strategy);
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Integer doApply(@Nullable final ProxyRestriction condition) {
-        if (condition != null) {
-            return condition.getProxyCount();
+    @Nullable protected Integer doApply(@Nullable final Scoping scoping) {
+        if (scoping != null) {
+            return scoping.getProxyCount();
         }
         
         return null;

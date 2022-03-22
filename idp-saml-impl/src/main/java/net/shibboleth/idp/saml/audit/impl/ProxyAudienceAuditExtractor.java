@@ -17,37 +17,42 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
+import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.ProxyRestriction;
 
 /**
- * {@link Function} that returns {@link ProxyRestriction#getProxyCount()}.
+ * {@link Function} that returns {@link ProxyRestriction#getAudiences()}.
  * 
  * @since 4.2.0
  */
-public class ProxyCountAuditExtractor extends AbstractProxyRestrictionAuditExtractor<Integer> {
+public class ProxyAudienceAuditExtractor extends AbstractProxyRestrictionAuditExtractor<Collection<String>> {
     
     /**
      * Constructor.
      *
      * @param strategy lookup strategy for message
      */
-    public ProxyCountAuditExtractor(
+    public ProxyAudienceAuditExtractor(
             @Nonnull final Function<ProfileRequestContext,SAMLObject> strategy) {
         super(strategy);
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Integer doApply(@Nullable final ProxyRestriction condition) {
+    @Nullable protected Collection<String> doApply(@Nullable final ProxyRestriction condition) {
         if (condition != null) {
-            return condition.getProxyCount();
+            return condition.getAudiences().stream()
+                    .map(Audience::getURI)
+                    .collect(Collectors.toUnmodifiableList());
         }
         
         return null;

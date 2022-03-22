@@ -256,7 +256,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SCOPING_PROXY_COUNT"/>
                     </key>
-                    <bean class="net.shibboleth.idp.saml.audit.impl.ProxyCountAuditExtractor">
+                    <bean class="net.shibboleth.idp.saml.audit.impl.ScopingProxyCountAuditExtractor">
                         <constructor-arg>
                             <bean parent="shibboleth.Functions.Compose"
                                 c:g-ref="shibboleth.MessageLookup.AuthnRequest"
@@ -440,7 +440,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SCOPING_PROXY_COUNT"/>
                     </key>
-                    <bean class="net.shibboleth.idp.saml.audit.impl.ProxyCountAuditExtractor">
+                    <bean class="net.shibboleth.idp.saml.audit.impl.ScopingProxyCountAuditExtractor">
                         <constructor-arg>
                             <bean parent="shibboleth.Functions.Compose"
                                 c:g-ref="shibboleth.MessageLookup.AuthnRequest"
@@ -646,6 +646,30 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROXY_COUNT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.ProxyCountAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROXY_AUDIENCE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.ProxyAudienceAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.ENCRYPTION"/>
                     </key>
                     <bean parent="shibboleth.Functions.Compose">
@@ -772,6 +796,30 @@
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SP_NAME_QUALIFIER"/>
                     </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.SPNameQualifierAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROXY_COUNT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.ProxyCountAuditExtractor">
+                        <constructor-arg>
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROXY_AUDIENCE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.ProxyAudienceAuditExtractor">
                         <constructor-arg>
                             <bean parent="shibboleth.Functions.Compose"
                                 c:g-ref="shibboleth.MessageLookup.SAMLObject"
