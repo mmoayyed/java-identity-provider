@@ -104,6 +104,15 @@ public final class SAMLAuditFields {
     /** ForceAuthn requested field. */
     @Nonnull @NotEmpty public static final String FORCE_AUTHN = "fauth";
 
+    /** Scoping ProxyCount field. @since 4.2.0 */
+    @Nonnull @NotEmpty public static final String SCOPING_PROXY_COUNT = "SCC";
+
+    /** Scoping IdP list field. @since 4.2.0 */
+    @Nonnull @NotEmpty public static final String SCOPING_IDP_LIST = "SCI";
+
+    /** Scoping RequesterID list field. @since 4.2.0 */
+    @Nonnull @NotEmpty public static final String SCOPING_REQ_LIST = "SCR";
+
     /** Signed inbound message field. @since 4.0.0 */
     @Nonnull @NotEmpty public static final String SIGNING = "XX";
 
