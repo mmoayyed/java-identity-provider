@@ -102,15 +102,34 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         }
     }
 
-    public AuthnRequest buildAuthnRequest(HttpServletRequest servletRequest) throws EncryptionException {
+    public String getDestinationECP(HttpServletRequest servletRequest) {
+        // TODO servlet context
+        String destinationPath = "/idp/profile/SAML2/SOAP/ECP";
+        try {
+            String baseUrl = SimpleURLCanonicalizer.canonicalize(getBaseUrl(servletRequest));
+            URLBuilder urlBuilder = new URLBuilder(baseUrl);
+            urlBuilder.setPath(destinationPath);
+            return urlBuilder.buildURL();
+        } catch (final MalformedURLException e) {
+            log.error("Couldn't parse base URL, reverting to internal default destination");
+            return "http://localhost:8080" + destinationPath;
+        }
+    }
+
+    public AuthnRequest buildAuthnRequest(final HttpServletRequest servletRequest) throws EncryptionException {
+        return buildAuthnRequest(servletRequest, getAcsUrl(servletRequest), SAMLConstants.SAML2_POST_BINDING_URI);
+    }
+    
+    public AuthnRequest buildAuthnRequest(final HttpServletRequest servletRequest, final String acsURL, final String outboundBinding)
+            throws EncryptionException {
         final AuthnRequest authnRequest =
                 (AuthnRequest) builderFactory.getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME).buildObject(
                         AuthnRequest.DEFAULT_ELEMENT_NAME);
 
         authnRequest.setID(idGenerator.generateIdentifier());
         authnRequest.setIssueInstant(Instant.now());
-        authnRequest.setAssertionConsumerServiceURL(getAcsUrl(servletRequest));
-        authnRequest.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
+        authnRequest.setAssertionConsumerServiceURL(acsURL);
+        authnRequest.setProtocolBinding(outboundBinding);
 
         final Issuer issuer =
                 (Issuer) builderFactory.getBuilder(Issuer.DEFAULT_ELEMENT_NAME)
@@ -162,17 +181,20 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         return encrypter;
     }
 
-    public String getAcsUrl(HttpServletRequest servletRequest) {
+    public String getAcsUrl(final HttpServletRequest servletRequest) {
+        return getAcsUrl(servletRequest, "/sp/SAML2/POST/ACS"); 
+    }
+    
+    public String getAcsUrl(final HttpServletRequest servletRequest, final String acsURL) {
         // TODO servlet context
-        String acsPath = "/sp/SAML2/POST/ACS";
         String baseUrl = getBaseUrl(servletRequest);
         try {
             URLBuilder urlBuilder = new URLBuilder(SimpleURLCanonicalizer.canonicalize(baseUrl));
-            urlBuilder.setPath(acsPath);
+            urlBuilder.setPath(acsURL);
             return urlBuilder.buildURL();
         } catch (MalformedURLException e) {
             log.error("Couldn't parse base URL, reverting to internal default ACS: {}", baseUrl);
-            return "http://localhost:8080" + acsPath;
+            return "http://localhost:8080" + acsURL;
         }
     }
 
