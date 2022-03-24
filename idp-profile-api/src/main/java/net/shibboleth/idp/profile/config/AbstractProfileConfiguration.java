@@ -34,6 +34,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -131,11 +133,28 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * @param strategy  lookup strategy
      * 
      * @since 3.3.0
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.2.0", forRemoval=true)
     public void setInboundFlowsLookupStrategy(@Nonnull final Function<ProfileRequestContext,List<String>> strategy) {
-        inboundFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+        DeprecationSupport.warn(ObjectType.METHOD, "setInboundFlowsLookupStrategy", "relying-party.xml",
+                "setInboundInterceptorFlowsLookupStrategy");
+        setInboundInterceptorFlowsLookupStrategy(strategy);
     }
 
+
+    /**
+     * Set a lookup strategy for the inbound interceptor flows to enable.
+     *
+     * @param strategy  lookup strategy
+     * 
+     * @since 4.2.0
+     */
+    public void setInboundInterceptorFlowsLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,List<String>> strategy) {
+        inboundFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows(
@@ -167,8 +186,25 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      * @param strategy  lookup strategy
      * 
      * @since 3.3.0
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.2.0", forRemoval=true)
     public void setOutboundFlowsLookupStrategy(@Nonnull final Function<ProfileRequestContext,List<String>> strategy) {
+        DeprecationSupport.warn(ObjectType.METHOD, "setOutboundFlowsLookupStrategy", "relying-party.xml",
+                "setOutboundInterceptorFlowsLookupStrategy");
+        outboundFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set a lookup strategy for the outbound interceptor flows to enable.
+     *
+     * @param strategy  lookup strategy
+     * 
+     * @since 4.2.0
+     */
+    public void setOutboundInterceptorFlowsLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,List<String>> strategy) {
         outboundFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 

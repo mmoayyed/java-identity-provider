@@ -112,6 +112,12 @@
                 </property>
             </bean>
         </property>
+        <property name="inboundInterceptorFlowsLookupStrategy">
+            <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="inboundInterceptorFlows" />
+        </property>
+        <property name="outboundInterceptorFlowsLookupStrategy">
+            <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="outboundInterceptorFlows" />
+        </property>
     </bean>
     
     <bean id="AbstractMDDrivenSAMLProfile" parent="AbstractMDDrivenProfile" abstract="true">
@@ -232,8 +238,7 @@
 
     <bean id="Shibboleth.SSO.MDDriven" parent="AbstractMDDrivenSAMLProfile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
-            p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
-            p:inboundInterceptorFlows="security-policy/shibboleth-sso">
+            p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration">
         <property name="artifactConfigurationLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
                 p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
@@ -286,8 +291,7 @@
     </bean>
     
     <bean id="SAML1.AttributeQuery.MDDriven" parent="AbstractMDDrivenSAMLProfile" lazy-init="true"
-            class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration"
-            p:inboundInterceptorFlows="security-policy/saml-soap">
+            class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration">
         <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
@@ -301,8 +305,7 @@
     </bean>
 
     <bean id="SAML1.ArtifactResolution.MDDriven" parent="AbstractMDDrivenSAMLProfile" lazy-init="true"
-            class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration"
-            p:inboundInterceptorFlows="security-policy/saml-soap">
+            class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration">
         <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
@@ -317,8 +320,7 @@
 
     <bean id="SAML2.SSO.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
-            p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
-            p:inboundInterceptorFlows="security-policy/saml2-sso">
+            p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration">
         <property name="artifactConfigurationLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
                 p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
@@ -490,8 +492,7 @@
     </bean>
 
     <bean id="SAML2.ECP.MDDriven" parent="SAML2.SSO.MDDriven" lazy-init="true"
-            class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
-            p:inboundInterceptorFlows="security-policy/saml2-ecp">
+            class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration">
         <property name="localEventsLookupStrategy">
             <bean parent="shibboleth.MDDrivenSetProperty" p:propertyName="localEvents" />
         </property>
@@ -499,8 +500,7 @@
 
     <bean id="SAML2.Logout.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration"
-            p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
-            p:inboundInterceptorFlows="security-policy/saml2-slo">
+            p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration">
         <property name="artifactConfigurationLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
                 p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
@@ -589,8 +589,7 @@
     </bean>
 
     <bean id="SAML2.AttributeQuery.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"
-            class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
-            p:inboundInterceptorFlows="security-policy/saml-soap">
+            class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration">
         <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
@@ -614,8 +613,7 @@
     </bean>
 
     <bean id="SAML2.ArtifactResolution.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"
-            class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
-            p:inboundInterceptorFlows="security-policy/saml-soap">
+            class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration">
         <property name="signResponsesPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
@@ -639,8 +637,7 @@
     </bean>
 
     <bean id="Liberty.SSOS.MDDriven" parent="SAML2.SSO.MDDriven" lazy-init="true"
-            class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration"
-            p:inboundInterceptorFlows="security-policy/saml2-idwsf-ssos">
+            class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration">
         <property name="delegationPredicate">
             <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>

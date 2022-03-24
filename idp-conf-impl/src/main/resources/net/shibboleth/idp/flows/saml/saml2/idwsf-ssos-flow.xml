@@ -8,6 +8,7 @@
     <action-state id="InitializeProfileRequestContext">
         <on-entry>
             <evaluate expression="T(net.shibboleth.utilities.java.support.primitive.DeprecationSupport).warnOnce(T(net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType).WEBFLOW, 'SAML delegation flow', null, null)" />
+            <set name="flowScope.inboundSecuritySubflow" value="'intercept/security-policy/saml2-idwsf-ssos'" />
         </on-entry>
         <evaluate expression="InitializeProfileRequestContext" />
         <evaluate expression="FlowStartPopulateAuditContext" />

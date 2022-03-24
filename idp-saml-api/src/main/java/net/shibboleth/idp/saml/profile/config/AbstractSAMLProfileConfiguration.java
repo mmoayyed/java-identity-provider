@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.profile.config;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -32,7 +31,6 @@ import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -85,18 +83,6 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
         includeNotBeforePredicate = Predicates.alwaysTrue();
         assertionLifetimeLookupStrategy = FunctionSupport.constant(DEFAULT_ASSERTION_LIFETIME);
         assertionAudiencesLookupStrategy = FunctionSupport.constant(null);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
-            @Nullable final ProfileRequestContext profileRequestContext) {
-        
-        final List<String> flows = super.getInboundInterceptorFlows(profileRequestContext);
-        if (flows.isEmpty()) {
-            log.warn("Inbound interceptor collection is empty, this disables default inbound message security checks");
-        }
-        return flows;
     }
     
     /** {@inheritDoc} */

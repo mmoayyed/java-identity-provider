@@ -3,6 +3,13 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
       parent="saml2.sso.abstract">
 
+    <!-- This adds the <set> element to the end of the parent flow's initial state, which overrides the subflow value. -->
+    <action-state id="InitializeProfileRequestContext" parent="saml2.sso.abstract#InitializeProfileRequestContext">
+        <on-entry>
+            <set name="flowScope.inboundSecuritySubflow" value="'intercept/security-policy/saml2-ecp'" />
+        </on-entry>
+    </action-state>
+
     <bean-import resource="sso-ecp-beans.xml" />
 
 </flow>

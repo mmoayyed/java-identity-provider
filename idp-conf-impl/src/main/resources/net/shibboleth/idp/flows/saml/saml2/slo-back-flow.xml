@@ -10,6 +10,9 @@
     </on-start>
     
     <action-state id="InitializeProfileRequestContext">
+        <on-entry>
+            <set name="flowScope.inboundSecuritySubflow" value="'intercept/security-policy/saml2-slo'" />
+        </on-entry>
         <evaluate expression="InitializeProfileRequestContext" />
         <evaluate expression="FlowStartPopulateAuditContext" />
         <evaluate expression="'proceed'" />

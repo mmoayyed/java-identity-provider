@@ -6,6 +6,9 @@
     <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
     
     <action-state id="InitializeProfileRequestContext">
+        <on-entry>
+            <set name="flowScope.inboundSecuritySubflow" value="'intercept/security-policy/shibboleth-sso'" />
+        </on-entry>
         <evaluate expression="InitializeProfileRequestContext" />
         <evaluate expression="FlowStartPopulateAuditContext" />
         <evaluate expression="'proceed'" />

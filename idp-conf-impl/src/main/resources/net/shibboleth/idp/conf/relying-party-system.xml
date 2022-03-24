@@ -82,21 +82,17 @@
     
     <bean id="Shibboleth.SSO" lazy-init="true"
         class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
-        p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
-        p:inboundInterceptorFlows="security-policy/shibboleth-sso" />
+        p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration" />
         
     <bean id="SAML1.AttributeQuery" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration"
-        p:inboundInterceptorFlows="security-policy/saml-soap" />
+        class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration" />
 
     <bean id="SAML1.ArtifactResolution" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration"
-        p:inboundInterceptorFlows="security-policy/saml-soap" />
+        class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration" />
 
     <bean id="SAML2.SSO" lazy-init="true"
 	        class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
 	        p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
-	        p:inboundInterceptorFlows="security-policy/saml2-sso"
 	        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}">
         <property name="defaultAuthenticationMethodsLookupStrategy">
             <bean class="net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction"
@@ -116,28 +112,23 @@
 
     <bean id="SAML2.ECP" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
-        p:inboundInterceptorFlows="security-policy/saml2-ecp"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.Logout" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
-        p:inboundInterceptorFlows="security-policy/saml2-slo"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.AttributeQuery" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
-        p:inboundInterceptorFlows="security-policy/saml-soap"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.ArtifactResolution" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
-        p:inboundInterceptorFlows="security-policy/saml-soap"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="Liberty.SSOS" lazy-init="true"
         class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration"
-        p:inboundInterceptorFlows="security-policy/saml2-idwsf-ssos"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="CAS.LoginConfiguration" lazy-init="true"

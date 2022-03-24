@@ -39,10 +39,16 @@
 
     <decision-state id="CheckInboundInterceptContext">
         <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
-            then="OutboundContextsAndSecurityParameters" else="DoInboundInterceptSubflow" />
+            then="DoInboundSecuritySubflow" else="DoInboundInterceptSubflow" />
     </decision-state>
 
     <subflow-state id="DoInboundInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="DoInboundSecuritySubflow" />
+    </subflow-state>
+    
+    <!-- Each SAML flow has a dedicated subflow for applying message handlers inbound. -->
+    <subflow-state id="DoInboundSecuritySubflow" subflow="#{flowScope.inboundSecuritySubflow}">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="OutboundContextsAndSecurityParameters" />
     </subflow-state>
