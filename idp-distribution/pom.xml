@@ -269,7 +269,7 @@
                                     <dataGroupId>net.shibboleth.maven.enforcer.rules</dataGroupId>
                                     <dataArtifactId>maven-dist-enforcer-data</dataArtifactId>
                                     <dataVersion>${maven-dist-enforcer-data.version}</dataVersion>
-                                    <dataKeyRing>${basedir}/src/main/enforcer/shibbolethKeys.gpg</dataKeyRing>
+                                    <dataKeyRing>${basedir}/../idp-bom/src/main/enforcer/shibbolethKeys.gpg</dataKeyRing>
                                     <parentPomDir>${basedir}/../idp-parent</parentPomDir>
                                     <zipFiles>${project.build.directory}/${idp.finalName}.zip</zipFiles>
                                     <tgzFiles>${project.build.directory}/${idp.finalName}.tar.gz</tgzFiles>
