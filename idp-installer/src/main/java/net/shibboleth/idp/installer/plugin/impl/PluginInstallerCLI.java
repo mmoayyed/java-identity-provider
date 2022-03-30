@@ -398,7 +398,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                             e.getKey(),
                             existingVersion));
                 } else {
-                    outOrLog(String.format("Plugin %s: Installed version %s: Update to &s available",
+                    outOrLog(String.format("Plugin %s: Installed version %s: Update to %s available",
                             e.getKey(),
                             existingVersion,
                             version));
@@ -415,10 +415,10 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         final List<URL> urls;
         final Properties props = new Properties();
         try {
-            if ((updateURLs == null) || (updateURLs.isEmpty())) {
-                    urls = List.of(
-                            new URL("https://shibboleth.net/downloads/identity-provider/plugins/plugins.properties"),
-                            new URL("http://plugins.shibboleth.net/plugins.properties"));
+            if (updateURLs == null || updateURLs.isEmpty()) {
+                urls = List.of(
+                        new URL("https://shibboleth.net/downloads/identity-provider/plugins/plugins.properties"),
+                        new URL("http://plugins.shibboleth.net/plugins.properties"));
             } else {
                 urls = updateURLs;
             }
@@ -458,13 +458,13 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     private int autoPluginFromId(final String pluginId, final boolean checkVersion) {
         final IdPPlugin existing = installer.getInstalledPlugin(pluginId);
         if (existing != null) {
-            log.error("Plugin {} is already installed");
+            log.error("Plugin {} is already installed", pluginId);
             return RC_INIT;
         }
         final Properties props = loadPluginInfo();
         final PluginInfo info = new PluginInfo(pluginId, props);
         if (!info.isInfoComplete()) {
-            log.error("Plugin {}: Information not found");
+            log.error("Plugin {}: Information not found", pluginId);
             return RC_INIT;
         }
         final PluginVersion versionToInstall = getBestVersion(new PluginVersion(0,0,0), info);
