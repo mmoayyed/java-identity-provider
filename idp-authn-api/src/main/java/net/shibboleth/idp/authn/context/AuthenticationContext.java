@@ -359,7 +359,8 @@ public final class AuthenticationContext extends BaseContext {
      * Get a non-normative hint provided by the request about the user's identity.
      * 
      * <p>This is <strong>NOT</strong> a trustworthy value, but may be used to optimize
-     * the user experience.</p>
+     * the user experience. There should be no assumptions about the safety or format of this
+     * value, so care should be taken in using it.</p>
      * 
      * @return  the username hint
      */
