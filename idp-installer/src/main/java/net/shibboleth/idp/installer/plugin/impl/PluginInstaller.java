@@ -1,3 +1,4 @@
+// CheckStyle:  FileLength|Header OFF
 /*
  * Licensed to the University Corporation for Advanced Internet Development,
  * Inc. (UCAID) under one or more contributor license agreements.  See the
@@ -63,7 +64,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
+
 import com.google.common.base.Predicates;
+
 import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.BuildWar;
@@ -95,6 +98,15 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Class logger. */
     @Nonnull
     private static final Logger LOG = InstallationLogger.getLogger(PluginInstaller.class);
+
+    /** Property Name for version. */
+    private  static final String PLUGIN_VERSION_PROPERTY ="idp.plugin.version";
+
+    /** Property Prefix for install files . */
+    private static final String PLUGIN_FILE_PROPERTY_PREFIX = "idp.plugin.file.";
+
+    /** Property Name for whether paths are relative. */
+    private  static final String PLUGIN_RELATIVE_PATHS_PROPERTY = "idp.plugin.relativePaths";
 
     /** Where we are installing to. */
     @NonnullAfterInit private Path idpHome;
@@ -138,8 +150,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Pluginss webapp. */
     @NonnullAfterInit private Path pluginsContents;
 
-    /** What was installed - this is setup by {@link #loadCopiedFiles()}. */
-    @Nullable private List<String> installedContents;
+    /** The absolute paths of what was installed - this is setup by {@link #loadCopiedFiles()}. */
+    @Nullable private List<Path> installedContents;
 
     /** The version from the contents file, or null if it isn't loaded. */
     @Nullable private String installedVersionFromContents;
@@ -336,17 +348,16 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         if (getVersionFromContents() == null) {
             LOG.warn("Installed contents for {} not found", pluginId);
         } else {
-            for (final String content: getInstalledContents()) {
-                final Path p = Path.of(content);
-                if (!Files.exists(p)) {
+            for (final Path content: getInstalledContents()) {
+                if (!Files.exists(content)) {
                     continue;
                 }
                 try {
-                    InstallerSupport.setReadOnly(p, false);
-                    Files.deleteIfExists(p);
+                    InstallerSupport.setReadOnly(content, false);
+                    Files.deleteIfExists(content);
                 } catch (final IOException e) {
-                    LOG.warn("Could not delete {}, deferring the delete", content, e);
-                    p.toFile().deleteOnExit();
+                    LOG.warn("Could not delete {}, deferring the delete", content.toString(), e);
+                    content.toFile().deleteOnExit();
                 }
             }
 
@@ -392,10 +403,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     }
 
     /** What files were installed to webapp for this plugin?
-     * @return a list of the installed contents, may be empty if
-     * nothing is installed or the plugin didn't install anything.
+     * @return a list of the absolute paths of the installed contents,
+     * may be empty if nothing is installed or the plugin didn't install anything.
      */
-    @Nonnull public List<String> getInstalledContents() {
+    @Nonnull public List<Path> getInstalledContents() {
         loadCopiedFiles();
         return installedContents;
     }
@@ -497,17 +508,18 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @throws BuildException on IO or module errors */
     private void uninstallOld(final RollbackPluginInstall rollback) throws BuildException {
 
-        if (getVersionFromContents() == null) {
+        final String oldVersion =getVersionFromContents(); 
+        if (oldVersion == null) {
             LOG.debug("{} not installed. files renamed", pluginId);
         } else {
             try {
-                LOG.debug("Uninstalling old version of {}", pluginId);
+                LOG.debug("Uninstalling version {} of {}", oldVersion, pluginId);
                 PluginInstallerSupport.renameToTree(pluginsWebapp,
                         workspacePath.resolve("rollback"),
                         getInstalledContents(),
                         rollback.getFilesRenamedAway());
             } catch (final IOException e) {
-                LOG.error("Error uninstalling plugin");
+                LOG.error("Error uninstalling plugin", e);
                 throw new BuildException(e);
             }
         }
@@ -521,12 +533,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         try {
             Files.createDirectories(pluginsContents);
             final Properties props = new Properties(1+copiedFiles.size());
-            props.setProperty("idp.plugin.version",
-                    new PluginVersion(description).toString());
+            props.setProperty(PLUGIN_VERSION_PROPERTY, new PluginVersion(description).toString());
+            props.setProperty(PLUGIN_RELATIVE_PATHS_PROPERTY, "true");
             int count = 1;
             for (final Path p: copiedFiles) {
-                props.setProperty("idp.plugin.file."+Integer.toString(count++),
-                        PluginInstallerSupport.canonicalPath(p).toString());
+                final Path relPath = idpHome.relativize(p);
+                props.setProperty(PLUGIN_FILE_PROPERTY_PREFIX+Integer.toString(count++), relPath.toString());
             }
             final File outFile = pluginsContents.resolve(pluginId).toFile();
             try (final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outFile))) {
@@ -537,6 +549,42 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new BuildException(e);
         }
     }
+
+    /** Infer where the properties were installed to.
+     * @param props The property files
+     * @return the idpHome it was installed to or null if no files installed
+     */
+    private Path inferInstalledIdpHome(final Properties props) {
+        if (props.get(PLUGIN_FILE_PROPERTY_PREFIX+"1") == null) {
+            // No files
+            return null;
+        }
+        int count = 1;
+        LOG.debug("Inferring IdP Home");
+        String val = props.getProperty(PLUGIN_FILE_PROPERTY_PREFIX+Integer.toString(count++));
+        while (val != null) {
+            LOG.debug("Looking at {}", val);
+            int index = val.indexOf("/dist/plugin-webapp/");
+            if (index < 0) {
+                // try windows
+                index = val.indexOf("\\dist\\plugin-webapp\\");
+            }
+            if (index >= 0) {
+                final String s = val.substring(0, index);
+                if (idpHome.toString().equals(s)) {
+                    LOG.debug("Inferred install to {}", s);
+                } else {
+                    LOG.info("Inferred initial install to {}", s);
+                }
+                return Path.of(s);
+            }
+            val = props.getProperty(PLUGIN_FILE_PROPERTY_PREFIX+Integer.toString(count++));
+        }
+        LOG.error("Could no infer IDPHOME from previous contents");
+        return null;
+    }
+
+
 
     /** Load the contents for this plugin from the properties file used during
      * installation.
@@ -559,13 +607,28 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.error("Error loading list of copied files from {}.", inFile, e);
             throw new BuildException(e);
         }
+        LOG.debug("Property file {}", props);
         installedContents = new ArrayList<>(props.size());
-        installedVersionFromContents = StringSupport.trimOrNull(props.getProperty("idp.plugin.version"));
+        installedVersionFromContents = StringSupport.trimOrNull(props.getProperty(PLUGIN_VERSION_PROPERTY));
+        final boolean relativePaths = props.get(PLUGIN_RELATIVE_PATHS_PROPERTY) != null;
+        final Path installedIdPHome;
+        if (relativePaths) {
+            installedIdPHome = null;
+        } else {
+            installedIdPHome = inferInstalledIdpHome(props);
+        }
         int count = 1;
-        String val = props.getProperty("idp.plugin.file."+Integer.toString(count++));
+        String val = props.getProperty(PLUGIN_FILE_PROPERTY_PREFIX+Integer.toString(count++));
         while (val != null) {
-            installedContents.add(val);
-            val = props.getProperty("idp.plugin.file."+Integer.toString(count++));
+            final Path valAsPath = Path.of(val);
+            if (relativePaths || installedIdPHome == null) {
+                installedContents.add(idpHome.resolve(valAsPath));
+            } else {
+                final Path relPath = installedIdPHome.relativize(valAsPath);
+                final Path newPath = idpHome.resolve(relPath);
+                installedContents.add(newPath);
+            }
+            val = props.getProperty(PLUGIN_FILE_PROPERTY_PREFIX+Integer.toString(count++));
         }
     }
 

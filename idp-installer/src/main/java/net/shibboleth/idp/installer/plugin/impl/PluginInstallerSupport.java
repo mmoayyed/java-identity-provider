@@ -130,15 +130,14 @@ public final class PluginInstallerSupport {
      */
     public static void renameToTree(@Nonnull final Path fromBase,
             @Nonnull final Path toBase,
-            @Nonnull final List<String> fromFiles,
+            @Nonnull final List<Path> fromFiles,
             @Nonnull @Live final List<Pair<Path, Path>> renames) throws IOException {
         if (!Files.exists(toBase)) {
             Files.createDirectories(toBase);
         }
-        for (final String file : fromFiles) {
-            final Path path = Path.of(file);
+        for (final Path path : fromFiles) {
             if (!Files.exists(path)) {
-                LOG.info("File {} was not renamed away because it does not exist", file);
+                LOG.info("File {} was not renamed away because it does not exist", path);
                 continue;
             }
             final Path relName = fromBase.relativize(path);

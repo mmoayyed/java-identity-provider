@@ -330,7 +330,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         final IdPPlugin thePlugin = installer.getInstalledPlugin(pluginId);
 
         final String fromContentsVersion =  installer.getVersionFromContents();
-        final List<String> contents = installer.getInstalledContents();
+        final List<Path> contents = installer.getInstalledContents();
         if (thePlugin == null) {
             log.warn("Plugin was not installed {}", pluginId);
             if (fromContentsVersion != null) {
@@ -351,8 +351,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         if (contents.isEmpty()) {
             log.info("No contents");
         } else {
-            for (final String s: contents) {
-                outOrLog(String.format("%s", s));
+            for (final Path path: contents) {
+                outOrLog(String.format("%s", path.toString()));
             }
         }
     }
