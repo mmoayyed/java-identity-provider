@@ -242,10 +242,13 @@ public class IdPPropertiesApplicationContextInitializer
            if (searchRoot.toFile().isDirectory()) {
                try (final Stream<Path> paths = Files.find(searchRoot, Integer.MAX_VALUE,
                        new BiPredicate<Path,BasicFileAttributes>() {
-                               public boolean test(final Path t, final BasicFileAttributes u) {
-                                   if (u.isRegularFile() && t.getFileName().toString().endsWith(".properties")
-                                           && !t.toString().endsWith(IDP_PROPERTIES)) {
-                                       LOG.info("Including auto-located properties in {}", t);
+                               public boolean test(final Path path, final BasicFileAttributes u) {
+                                   final String pathAsString = path.toString();
+                                   // convert back and forth to handle different dir separators
+                                   final String idpPropertiesNative = Path.of(IDP_PROPERTIES).toString();
+                                   if (u.isRegularFile() && path.getFileName().toString().endsWith(".properties")
+                                           && !pathAsString.endsWith(idpPropertiesNative)) {
+                                       LOG.info("Including auto-located properties in {}", path);
                                        return true;
                                    }
                                    return false;
