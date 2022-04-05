@@ -33,6 +33,9 @@
     
     <!-- Tri-decision state. -->
     <action-state id="PreProcessLogoutMessage">
+        <on-entry>
+            <set name="flowScope.asyncLogout" value="false" />
+        </on-entry>
         <evaluate expression="PreProcessLogoutMessage" />
         <evaluate expression="'proceed'" />
 
@@ -43,6 +46,9 @@
     
     <!-- This is the one action inside "OutboundContextsAndSecurityParameters" that we can't skip. -->
     <action-state id="AsyncDecryptionParameters">
+        <on-entry>
+            <set name="flowScope.asyncLogout" value="true" />
+        </on-entry>
         <evaluate expression="PopulateDecryptionParameters" />
         <evaluate expression="'proceed'" />
         
@@ -140,7 +146,7 @@
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
         
-        <transition on="proceed" to="CheckAsync2" />
+        <transition on="proceed" to="CheckAsync" />
         <transition on="local" to="DestroySessions">
             <set name="flowScope.transitionAfterDestroy" value="'LogoutCompleteView'" />
         </transition>
@@ -172,7 +178,7 @@
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
         
-        <transition on="proceed" to="CheckAsync2" />
+        <transition on="proceed" to="CheckAsync" />
     </view-state>
 
     <view-state id="LogoutCompleteView" view="logout-complete">
@@ -187,12 +193,12 @@
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
 
-        <transition on="proceed" to="CheckAsync2" />
+        <transition on="proceed" to="CheckAsync" />
     </view-state>
     
-    <decision-state id="CheckAsync2">
-        <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() == null or opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()"
-            then="BuildResponse" else="AsyncLogoutView" />
+    <decision-state id="CheckAsync">
+        <if test="flowScope.asyncLogout"
+            then="AsyncLogoutView" else="BuildResponse" />
     </decision-state>
     
     <action-state id="BuildResponse">
