@@ -291,8 +291,8 @@ public class AttributeTranscoderRegistryImpl extends AbstractServiceableComponen
                 return;
             }
             
-            log.debug("Attribute mapping: {} {}-{} {} via {}", id, targetName,
-                    decoder ? "<" : "", encoder ? ">" : "", transcoder.getClass().getSimpleName());
+            log.debug("Attribute mapping: {} {}-{} {} via {}", id, decoder ? "<" : "", encoder ? ">" : "", targetName,
+                    transcoder.getClass().getSimpleName());
             
             // Install mapping back to IdPAttribute's trimmed name.
             copy.getMap().put(PROP_ID, id);
