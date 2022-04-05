@@ -19,11 +19,16 @@ package net.shibboleth.idp.installer.impl;
 
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
+import org.slf4j.event.Level;
 
-/** Shimmed logger.
+/**
+ * Shimmed logger.
  * If debug is enabled there is no difference, otherwise warn and above
  * goes to stdout.
  * If debug is enabled everything is logged but warn and above still go
@@ -45,30 +50,42 @@ public final class InstallationLogger implements Logger {
         encapsulated = parent;
     }
 
-    /** Convert format and output.
+    /**
+     * Convert format and output.
+     * 
+     * @param level logging level
      * @param format the format to use
      * @param arg the argument
      */
-    private void format(final String format, final Object arg) {
+    private void format(@Nullable final Level level, @Nonnull final String format, final Object arg) {
+        if (level != null) {
+            System.out.print(level.toString() + "  - ");
+        }
         System.out.format(pat.matcher(format).replaceAll("%s"), arg);
         System.out.println();
     }
 
-    /** Convert format and output.
+    /**
+     * Convert format and output.
+     * 
+     * @param level logging level
      * @param format the format to use
      * @param arg1 the first argument
      * @param arg2 the second argument
      */
-    private void format(final String format, final Object arg1, final Object arg2) {
+    private void format(@Nullable final Level level, final String format, final Object arg1, final Object arg2) {
         System.out.format(pat.matcher(format).replaceAll("%s"), arg1, arg2);
         System.out.println();
     }
 
-    /** Convert format and output.
+    /**
+     * Convert format and output.
+     * 
+     * @param level logging level
      * @param format the format to use
      * @param arguments the arguments
      */
-    private void format(final String format, final Object... arguments) {
+    private void format(@Nullable final Level level, final String format, final Object... arguments) {
         System.out.format(pat.matcher(format).replaceAll("%s"), arguments);
         System.out.println();
     }
@@ -216,7 +233,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.info(format,arg);
         }
-        format(format, arg);
+        format(null, format, arg);
     }
 
     /** {@inheritDoc} */
@@ -224,7 +241,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.info(format, arg1, arg2);
         }
-        format(format, arg1, arg2);
+        format(null, format, arg1, arg2);
     }
 
     /** {@inheritDoc} */
@@ -232,7 +249,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.info(format, arguments);
         }
-        format(format, arguments);
+        format(null, format, arguments);
     }
 
     /** {@inheritDoc} */
@@ -240,7 +257,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
         encapsulated.info(msg,t);
         }
-        format("%s %s", msg, t);
+        format(null, "%s %s", msg, t);
     }
 
     /** {@inheritDoc} */
@@ -261,7 +278,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.info(marker, format, arg);
         }
-        format(format, arg);
+        format(null, format, arg);
     }
 
     /** {@inheritDoc} */
@@ -276,7 +293,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.info(marker, format, arguments);
         }
-        format(format, arguments);
+        format(null, format, arguments);
     }
 
     /** {@inheritDoc} */
@@ -299,6 +316,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(msg);
         }
+        System.out.print("WARN  -  ");
         System.out.println(msg);
     }
 
@@ -307,7 +325,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(format, arg);
         }
-        format(format, arg);
+        format(Level.WARN, format, arg);
     }
 
     /** {@inheritDoc} */
@@ -315,7 +333,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(format, arguments);
         }
-        format(format, arguments);
+        format(Level.WARN, format, arguments);
     }
 
     /** {@inheritDoc} */
@@ -323,7 +341,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(format, arg1, arg2);
         }
-        format(format, arg1, arg2);
+        format(Level.WARN, format, arg1, arg2);
     }
 
     /** {@inheritDoc} */
@@ -331,6 +349,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(msg, t);
         }
+        System.out.print("WARN  -  ");
         System.out.format("%s %s", msg, t);
         System.out.println();
     }
@@ -345,6 +364,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(marker, msg);
         }
+        System.out.print("WARN  -  ");
         System.out.println(msg);
     }
 
@@ -353,7 +373,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(marker, format, arg);
         }
-        format(format, arg);
+        format(Level.WARN, format, arg);
     }
 
     /** {@inheritDoc} */
@@ -361,7 +381,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(marker, format, arg1, arg2);
         }
-        format(format, arg1, arg2);
+        format(Level.WARN, format, arg1, arg2);
     }
 
     /** {@inheritDoc} */
@@ -369,7 +389,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(marker, format, arguments);
         }
-        format(format, arguments);
+        format(Level.WARN, format, arguments);
     }
 
     /** {@inheritDoc} */
@@ -377,6 +397,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(marker, msg, t);
         }
+        System.out.print("WARN  -  ");
         System.out.format("%s %s", msg, t);
         System.out.println();
     }
@@ -391,6 +412,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(msg);
         }
+        System.out.print("ERROR  -  ");
         System.out.println(msg);
     }
 
@@ -399,7 +421,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(format, arg);
         }
-        format(format, arg);
+        format(Level.ERROR, format, arg);
     }
 
     /** {@inheritDoc} */
@@ -407,7 +429,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(format, arg1, arg2);
         }
-        format(format, arg1, arg2);
+        format(Level.ERROR, format, arg1, arg2);
     }
 
     /** {@inheritDoc} */
@@ -415,7 +437,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(format, arguments);
         }
-        format(format, arguments);
+        format(Level.ERROR, format, arguments);
     }
 
     /** {@inheritDoc} */
@@ -423,6 +445,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(msg, t);
         } else {
+            System.out.print("ERROR  -  ");
             System.out.format("%s %s", msg, t);
             System.out.println();
         }
@@ -438,6 +461,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(marker, msg);
         } else {
+            System.out.print("ERROR  -  ");
             System.out.println(msg);
         }
     }
@@ -447,7 +471,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(marker, format, arg);
         } else {
-            format(format, arg);
+            format(Level.ERROR, format, arg);
         }
     }
 
@@ -456,7 +480,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(marker, format, arg1, arg2);
         }
-        format(format, arg1, arg2);
+        format(Level.ERROR, format, arg1, arg2);
     }
 
     /** {@inheritDoc} */
@@ -464,7 +488,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(marker, format, arguments);
         }
-        format(format, arguments);
+        format(Level.ERROR, format, arguments);
     }
 
     /** {@inheritDoc} */
@@ -472,7 +496,7 @@ public final class InstallationLogger implements Logger {
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(marker, msg, t);
         }
-        format("%s %s", msg, t);
+        format(Level.ERROR, "%s %s", msg, t);
     }
 
     /** Replacement for {@link LoggerFactory#getLogger(Class)}.
@@ -482,4 +506,5 @@ public final class InstallationLogger implements Logger {
     public static Logger getLogger(final Class<?> clazz) {
         return new InstallationLogger(LoggerFactory.getLogger(clazz));
     }
+
 }
