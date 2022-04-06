@@ -74,6 +74,9 @@ public final class InstallationLogger implements Logger {
      * @param arg2 the second argument
      */
     private void format(@Nullable final Level level, final String format, final Object arg1, final Object arg2) {
+        if (level != null) {
+            System.out.print(level.toString() + "  - ");
+        }
         System.out.format(pat.matcher(format).replaceAll("%s"), arg1, arg2);
         System.out.println();
     }
@@ -86,6 +89,9 @@ public final class InstallationLogger implements Logger {
      * @param arguments the arguments
      */
     private void format(@Nullable final Level level, final String format, final Object... arguments) {
+        if (level != null) {
+            System.out.print(level.toString() + "  - ");
+        }
         System.out.format(pat.matcher(format).replaceAll("%s"), arguments);
         System.out.println();
     }
