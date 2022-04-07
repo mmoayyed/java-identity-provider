@@ -19,6 +19,8 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -35,6 +37,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -88,7 +91,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
         assertionLookupStrategy = Constraint.isNotNull(strategy, "Assertion lookup strategy cannot be null");
     }
 
-//CheckStyle: ReturnCount OFF
+// CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         try {
@@ -113,8 +116,9 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
         }
     }
-//CheckStyle: ReturnCount ON
+// CheckStyle: ReturnCount ON
 
+// CheckStyle: CyclomaticComplexity OFF
     /**
      * Builds an attribute statement from a collection of attributes.
      * 
@@ -162,8 +166,44 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
                         AttributeStatement.DEFAULT_ELEMENT_NAME);
 
         final AttributeStatement statement = statementBuilder.buildObject();
-        statement.getAttributes().addAll(encodedAttributes);
+        
+        for (final Attribute attribute : encodedAttributes) {
+            final Attribute existing = findExistingAttribute(statement, attribute);
+            if (existing != null) {
+                final Iterator<XMLObject> newValues = attribute.getAttributeValues().iterator();
+                while (newValues.hasNext()) {
+                    final XMLObject newValue = newValues.next();
+                    newValues.remove();
+                    existing.getAttributeValues().add(newValue);                    
+                }
+            } else {
+                statement.getAttributes().add(attribute);
+            }
+        }
+        
         return statement;
+    }
+// CheckStyle: CyclomaticComplexity ON
+    
+    /**
+     * Find a matching {@link Attribute} in the statement, if any.
+     * 
+     * @param statement input statement
+     * @param newAttribute the attribute to match
+     * 
+     * @return a match, or null
+     */
+    @Nullable private Attribute findExistingAttribute(@Nonnull final AttributeStatement statement,
+            @Nonnull final Attribute newAttribute) {
+        
+        for (final Attribute attr : statement.getAttributes()) {
+            if (Objects.equals(attr.getName(), newAttribute.getName())
+                    && Objects.equals(attr.getNameFormat(), newAttribute.getNameFormat())) {
+                return attr;
+            }
+        }
+        
+        return null;
     }
 
     /**

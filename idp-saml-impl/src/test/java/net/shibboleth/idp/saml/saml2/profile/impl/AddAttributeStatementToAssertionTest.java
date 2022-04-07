@@ -93,6 +93,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     
     private AttributeTranscoderRegistryImpl registry;
     
+    /**
+     * Set up for tests.
+     * 
+     * @throws ComponentInitializationException on error
+     */
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().setOutboundMessage(
                 SAML2ActionTestingSupport.buildResponse()).buildRequestContext();
@@ -125,6 +130,12 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         rule2_1.put(SAML2AttributeTranscoder.PROP_NAME, MY_NAME_2);
         rule2_1.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, MY_NAMESPACE);
 
+        final Map<String,Object> rule2_2 = new HashMap<>();
+        rule2_2.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_2);
+        rule2_2.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
+        rule2_2.put(SAML2AttributeTranscoder.PROP_NAME, MY_ALTNAME_1);
+        rule2_2.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, MY_NAMESPACE);
+
         final Map<String,Object> rule3_1 = new HashMap<>();
         rule3_1.put(AttributeTranscoderRegistry.PROP_ID, MY_NAME_3);
         rule3_1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
@@ -135,6 +146,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
                 new TranscodingRule(rule1_1),
                 new TranscodingRule(rule1_2),
                 new TranscodingRule(rule2_1),
+                new TranscodingRule(rule2_2),
                 new TranscodingRule(rule3_1)));
         registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
@@ -398,19 +410,27 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         boolean one = false, altone = false, two = false;
         
         for (final Attribute samlAttr : attributeStatement.getAttributes()) {
-            Assert.assertNotNull(samlAttr.getAttributeValues());
-            Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
-            final XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
-            Assert.assertTrue(xmlObject instanceof XSStringImpl);
             if (samlAttr.getName().equals(MY_NAME_1)) {
+                Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
+                final XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_1);
                 one = true;
             } else if (samlAttr.getName().equals(MY_NAME_2)) {
+                Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
+                final XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_2);
                 altone = true;
             } else if (samlAttr.getName().equals(MY_ALTNAME_1)) {
-                Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_1);
-                two = true;
+                Assert.assertEquals(samlAttr.getAttributeValues().size(), 2);
+                final String val1 = ((XSStringImpl) samlAttr.getAttributeValues().get(0)).getValue();
+                final String val2 = ((XSStringImpl) samlAttr.getAttributeValues().get(1)).getValue();
+                if (val1.equals(MY_VALUE_1)) {
+                    Assert.assertEquals(val2, MY_VALUE_2);
+                    two = true;
+                } else if (val2.equals(MY_VALUE_1)) {
+                    Assert.assertEquals(val1, MY_VALUE_2);
+                    two = true;
+                }
             } else {
                 Assert.fail("Incorrect attribute name.");
             }
@@ -418,7 +438,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         
         if (!one || !altone || !two) {
-            Assert.fail("Missing attribute");
+            Assert.fail("Missing attribute/value");
         }
     }
 
