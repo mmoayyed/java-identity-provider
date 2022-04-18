@@ -82,6 +82,12 @@
             <artifactId>spring-orm</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Needed for Memcache storage plugin. -->
+        <dependency>
+            <groupId>net.spy</groupId>
+            <artifactId>spymemcached</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <scm>
