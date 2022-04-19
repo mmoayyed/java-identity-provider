@@ -24,6 +24,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -56,6 +57,7 @@ import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 /**
  * Unit tests exercising module code.
  */
+@SuppressWarnings("javadoc")
 public class IdPModuleTest {
 
     private static final String XML_DATA = "<test>foo</test>\n";
@@ -88,8 +90,7 @@ public class IdPModuleTest {
         context.setHttpClientSecurityParameters(params);
     }
     
-    @AfterMethod
-    public void tearDown() throws IOException {
+    private void tearDownWorker() throws IOException {
         if (testHome != null) {
             Files.walkFileTree(testHome, new SimpleFileVisitor<Path>() {
                 @Override
@@ -114,6 +115,18 @@ public class IdPModuleTest {
             testHome = null;
         }
     }
+
+    @AfterMethod
+    public void tearDown() throws IOException, InterruptedException {
+        try {
+            tearDownWorker();
+        } catch (final DirectoryNotEmptyException ex) {
+            // We hates the Microsoft Defender.  (it pins files so directories cannot be deleted)
+            Thread.sleep(10);
+            tearDownWorker();
+        }
+    }
+
     
     @Test
     public void testBadModules() {
