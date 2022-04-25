@@ -165,7 +165,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
                 "Test specific module(s) for enablement"));
         out.println(String.format("  %-22s %s", "-e, --enable <id>[,<id>]",
                 "Enable module(s)"));
-        out.println(String.format("  %-22s %s", "-u, --disable <id>[,<id>]",
+        out.println(String.format("  %-22s %s", "-d, --disable <id>[,<id>]",
                 "Disable module(s)"));
         out.println(String.format("  %-22s %s", "-f, --clean",
                 "Clean disabled files instead of preserving them"));
