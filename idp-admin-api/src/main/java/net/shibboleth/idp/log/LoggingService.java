@@ -24,7 +24,12 @@ import org.springframework.core.io.Resource;
 
 /**
  * A logging configuration abstraction that piggybacks on the {@link ReloadableService} interface.
+ * 
+ * <p>This interface is being moved to a supporting library.</p>
+ * 
+ * @deprecated
  */
+@Deprecated(forRemoval=true, since="4.2.2")
 public interface LoggingService extends ReloadableService<Object> {
 
     /**
