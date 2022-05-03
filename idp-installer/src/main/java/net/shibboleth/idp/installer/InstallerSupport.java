@@ -85,6 +85,8 @@ public final class InstallerSupport {
         result.setTodir(to.toFile());
         final FileSet fromSet = new FileSet();
         fromSet.setDir(from.toFile());
+        final String[] gitkeep= {"**/.gitkeep"};
+        fromSet.appendExcludes(gitkeep);
         result.setPreserveLastModified(true);
         result.addFileset(fromSet);
         result.setProject(ANT_PROJECT);
