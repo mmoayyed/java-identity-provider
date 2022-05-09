@@ -129,7 +129,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
     private Server startServer(final String keyStorePath, final Handler handler) {
         final Server server = new Server();
 
-        final SslContextFactory sslContextFactory = new SslContextFactory.Server();
+        final var sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStoreType("PKCS12");
         sslContextFactory.setKeyStorePath(keyStorePath);
         sslContextFactory.setKeyStorePassword("changeit");
