@@ -21,21 +21,6 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.shibboleth.ext.spring.factory.X509CertificateFactoryBean;
-import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-import net.shibboleth.idp.test.InMemoryDirectory;
-import net.shibboleth.idp.test.PreferFileSystemApplicationContextInitializer;
-import net.shibboleth.idp.test.PreferFileSystemContextLoader;
-import net.shibboleth.idp.test.TestEnvironmentApplicationContextInitializer;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.impl.Type4UUIDIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
@@ -82,6 +67,21 @@ import org.testng.annotations.BeforeMethod;
 
 import com.google.common.net.HttpHeaders;
 import com.unboundid.ldap.sdk.LDAPException;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.shibboleth.ext.spring.factory.X509CertificateFactoryBean;
+import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.idp.test.InMemoryDirectory;
+import net.shibboleth.idp.test.PreferFileSystemApplicationContextInitializer;
+import net.shibboleth.idp.test.PreferFileSystemContextLoader;
+import net.shibboleth.idp.test.TestEnvironmentApplicationContextInitializer;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.impl.Type4UUIDIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.xml.ParserPool;
 
 /**
  * Abstract flow test.

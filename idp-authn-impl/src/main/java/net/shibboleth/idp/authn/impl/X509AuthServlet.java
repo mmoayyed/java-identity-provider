@@ -24,12 +24,12 @@ import java.util.Arrays;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.ExternalAuthentication;
@@ -136,7 +136,7 @@ public class X509AuthServlet extends HttpServlet {
             final String key = ExternalAuthentication.startExternalAuthentication(httpRequest);
             
             X509Certificate[] certs =
-                    (X509Certificate[]) httpRequest.getAttribute("javax.servlet.request.X509Certificate");
+                    (X509Certificate[]) httpRequest.getAttribute("jakarta.servlet.request.X509Certificate");
             if (certs == null || certs.length == 0) {
                 // Check for newer Jakarta variant.
                 // TODO: Once Jakarta is "common", probably reverse these checks.

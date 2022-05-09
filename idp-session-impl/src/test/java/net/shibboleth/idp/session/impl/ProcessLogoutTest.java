@@ -21,7 +21,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;

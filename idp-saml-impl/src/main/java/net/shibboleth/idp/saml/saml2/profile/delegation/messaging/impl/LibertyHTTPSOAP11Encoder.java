@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;

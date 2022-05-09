@@ -7,7 +7,7 @@
     <parent>
         <groupId>net.shibboleth.idp</groupId>
         <artifactId>idp-parent</artifactId>
-        <version>4.2.2-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
         <relativePath>../idp-parent</relativePath>
     </parent>
 
@@ -92,6 +92,10 @@
             <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${spring-webflow.groupId}</groupId>
             <artifactId>spring-webflow</artifactId>
         </dependency>
@@ -107,8 +111,8 @@
         </dependency>
         <!-- Provided Dependencies -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
 

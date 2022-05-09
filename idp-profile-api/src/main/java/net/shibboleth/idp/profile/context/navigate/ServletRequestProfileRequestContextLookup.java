@@ -22,7 +22,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 /**
  * Looks up the profile request context from a servlet request attribute.

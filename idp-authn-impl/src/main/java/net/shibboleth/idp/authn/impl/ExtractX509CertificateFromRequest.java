@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
- * @post If getHttpServletRequest() != null, the content of the "javax.servlet.request.X509Certificate"
+ * @post If getHttpServletRequest() != null, the content of the "jakarta.servlet.request.X509Certificate"
  * request attribute is attached to a {@link CertificateContext}.
  */
 public class ExtractX509CertificateFromRequest extends AbstractExtractionAction {
@@ -63,7 +63,7 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
         }
         
         X509Certificate[] certs =
-                (X509Certificate[]) httpRequest.getAttribute("javax.servlet.request.X509Certificate");
+                (X509Certificate[]) httpRequest.getAttribute("jakarta.servlet.request.X509Certificate");
         if (certs == null || certs.length == 0) {
             // Check for newer Jakarta variant.
             // TODO: Once Jakarta is "common", probably reverse these checks.

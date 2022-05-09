@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Nullable;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyContent;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.BodyContent;
 
 import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
 

@@ -21,9 +21,6 @@ package net.shibboleth.idp.authn.impl;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletResponse;
-
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -31,6 +28,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletResponse;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -123,19 +122,19 @@ public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
                 (ServletResponse) src.getExternalContext().getNativeResponse(),
                 new MockFilterChain());
         
-        Assert.assertNull(request.getAttribute("javax.servlet.request.X509Certificate"));
+        Assert.assertNull(request.getAttribute("jakarta.servlet.request.X509Certificate"));
     }
     
     @Test public void testPreexistingCertificates() throws IOException, ServletException {
         
-        request.setAttribute("javax.servlet.request.X509Certificate", "foo");
+        request.setAttribute("jakarta.servlet.request.X509Certificate", "foo");
         
         filter.doFilter(
                 request,
                 (ServletResponse) src.getExternalContext().getNativeResponse(),
                 new MockFilterChain());
         
-        Assert.assertEquals("foo" ,request.getAttribute("javax.servlet.request.X509Certificate"));
+        Assert.assertEquals("foo" ,request.getAttribute("jakarta.servlet.request.X509Certificate"));
     }
     
 
@@ -148,7 +147,7 @@ public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
                 (ServletResponse) src.getExternalContext().getNativeResponse(),
                 new MockFilterChain());
         
-        Assert.assertNull(request.getAttribute("javax.servlet.request.X509Certificate"));
+        Assert.assertNull(request.getAttribute("jakarta.servlet.request.X509Certificate"));
     }
 
     @Test public void testEntityCertificate() throws IOException, ServletException {
@@ -160,9 +159,9 @@ public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
                 (ServletResponse) src.getExternalContext().getNativeResponse(),
                 new MockFilterChain());
         
-        Assert.assertEquals(1, ((X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate")).length);
+        Assert.assertEquals(1, ((X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate")).length);
         Assert.assertEquals("CN=foobar.example.org, O=Internet2",
-                ((X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate"))[0].getSubjectDN().toString());
+                ((X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate"))[0].getSubjectDN().toString());
     }
 
     @Test public void testCertificateChain() throws IOException, ServletException {
@@ -175,10 +174,10 @@ public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
                 (ServletResponse) src.getExternalContext().getNativeResponse(),
                 new MockFilterChain());
         
-        Assert.assertEquals(2, ((X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate")).length);
+        Assert.assertEquals(2, ((X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate")).length);
         Assert.assertEquals("CN=foobar.example.org, O=Internet2",
-                ((X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate"))[0].getSubjectDN().toString());
+                ((X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate"))[0].getSubjectDN().toString());
         Assert.assertEquals("CN=idp.example.org",
-                ((X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate"))[1].getSubjectDN().toString());
+                ((X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate"))[1].getSubjectDN().toString());
     }
 }

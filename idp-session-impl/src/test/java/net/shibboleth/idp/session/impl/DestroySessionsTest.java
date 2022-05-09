@@ -20,7 +20,7 @@ package net.shibboleth.idp.session.impl;
 import java.time.Duration;
 import java.util.Collections;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;

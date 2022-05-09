@@ -18,27 +18,30 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import javax.servlet.Filter;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import java.security.cert.X509Certificate;
-import org.opensaml.security.x509.X509Support;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Servlet filter to translate Apache mod_ssl certificate variables into Java servlet attributes.
@@ -94,7 +97,7 @@ public class X509ProxyFilter implements Filter {
                 
         try {
             X509Certificate[] certs =
-                    (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+                    (X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate");
             if (null == certs || 0 == certs.length) {
                 certs = (X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate");
             }
@@ -125,7 +128,7 @@ public class X509ProxyFilter implements Filter {
                 if (!proxyCerts.isEmpty()) {
                     // TODO: I guess we'd check the class name(s) we're using here to
                     // know which attribute to populate?
-                    request.setAttribute("javax.servlet.request.X509Certificate",
+                    request.setAttribute("jakarta.servlet.request.X509Certificate",
                             proxyCerts.toArray(new X509Certificate[proxyCerts.size()]));
                 }
             }

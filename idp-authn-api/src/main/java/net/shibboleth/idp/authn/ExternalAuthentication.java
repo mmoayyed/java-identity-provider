@@ -20,8 +20,6 @@ package net.shibboleth.idp.authn;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -34,6 +32,8 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 import com.google.common.base.Strings;
 import com.google.common.net.UrlEscapers;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;

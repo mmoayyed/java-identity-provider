@@ -21,20 +21,19 @@ package net.shibboleth.idp.authn.impl;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /** {@link ValidateRemoteUser} unit test. */
 public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {

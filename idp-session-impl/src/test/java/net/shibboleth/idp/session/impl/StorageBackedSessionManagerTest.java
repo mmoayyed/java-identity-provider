@@ -30,7 +30,7 @@ import java.util.Map;
 
 import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;

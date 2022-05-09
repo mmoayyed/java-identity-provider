@@ -19,8 +19,8 @@ package net.shibboleth.idp.profile.support;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.webflow.core.FlowException;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;

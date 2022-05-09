@@ -22,13 +22,13 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.admin.AdministrativeFlowDescriptor;
 import net.shibboleth.idp.profile.AbstractProfileAction;

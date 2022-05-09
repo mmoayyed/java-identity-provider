@@ -17,9 +17,32 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.Cookie;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
+
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.webflow.execution.FlowExecutionOutcome;
+import org.springframework.webflow.executor.FlowExecutionResult;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.google.common.net.HttpHeaders;
+
+import jakarta.servlet.http.Cookie;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.SubjectContext;
@@ -37,25 +60,6 @@ import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import net.shibboleth.utilities.java.support.net.URISupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.webflow.execution.FlowExecutionOutcome;
-import org.springframework.webflow.executor.FlowExecutionResult;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import com.google.common.net.HttpHeaders;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.testng.Assert.*;
 
 /**
  * Tests the flow behind the <code>/login</code> endpoint.

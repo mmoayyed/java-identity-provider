@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.IdPAttribute;

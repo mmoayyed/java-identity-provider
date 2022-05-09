@@ -123,7 +123,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
     @Test public void testNoTrustEngine() throws ComponentInitializationException, CertificateException {
         final X509Certificate entityCert = X509Support.decodeCertificate(entityCertBase64);
         final X509Certificate[] certs = new X509Certificate[]{entityCert};
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("javax.servlet.request.X509Certificate", certs);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
 
         
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
@@ -150,7 +150,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         validator.setTrustEngine(engine);
         validator.initialize();
 
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("javax.servlet.request.X509Certificate", certs);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
 
         
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
@@ -177,7 +177,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         validator.setTrustEngine(engine);
         validator.initialize();
         
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("javax.servlet.request.X509Certificate", certs);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));

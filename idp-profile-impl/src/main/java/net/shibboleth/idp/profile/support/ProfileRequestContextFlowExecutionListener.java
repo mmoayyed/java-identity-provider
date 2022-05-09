@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 /**
  * Exposes the {@link org.opensaml.profile.context.ProfileRequestContext} in a request attribute to make it

@@ -20,7 +20,7 @@ package net.shibboleth.idp.session.impl.testing;
 import java.time.Duration;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;

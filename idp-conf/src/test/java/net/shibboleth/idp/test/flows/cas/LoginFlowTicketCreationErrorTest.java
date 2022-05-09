@@ -17,18 +17,19 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
-import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import static org.testng.Assert.assertEquals;
+
+import javax.annotation.Nonnull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nonnull;
-import javax.servlet.http.Cookie;
-
-import static org.testng.Assert.assertEquals;
+import jakarta.servlet.http.Cookie;
+import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
+import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 /**
  * Tests error handling of ticketCreationError event in login flow.

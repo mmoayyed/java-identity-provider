@@ -113,7 +113,7 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         
         final X509Certificate[] certs = new X509Certificate[]{entityCert, otherCert1};
         
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("javax.servlet.request.X509Certificate", certs);
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

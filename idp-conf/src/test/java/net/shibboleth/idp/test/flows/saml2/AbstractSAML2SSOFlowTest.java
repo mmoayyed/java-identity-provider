@@ -21,11 +21,6 @@ import java.net.MalformedURLException;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
-import net.shibboleth.utilities.java.support.net.SimpleURLCanonicalizer;
-import net.shibboleth.utilities.java.support.net.URLBuilder;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
@@ -51,6 +46,11 @@ import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
 import org.opensaml.xmlsec.keyinfo.impl.X509KeyInfoGeneratorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.utilities.java.support.net.SimpleURLCanonicalizer;
+import net.shibboleth.utilities.java.support.net.URLBuilder;
 
 /**
  * Abstract SAML 2 SSO flow test.

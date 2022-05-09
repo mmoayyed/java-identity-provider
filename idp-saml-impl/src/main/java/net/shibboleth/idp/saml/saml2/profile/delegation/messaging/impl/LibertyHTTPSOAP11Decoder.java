@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;

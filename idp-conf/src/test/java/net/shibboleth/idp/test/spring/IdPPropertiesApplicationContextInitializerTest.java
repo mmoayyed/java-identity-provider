@@ -20,8 +20,6 @@ package net.shibboleth.idp.test.spring;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import javax.servlet.ServletContextEvent;
-
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.ContextLoader;
@@ -33,6 +31,7 @@ import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import jakarta.servlet.ServletContextEvent;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 

@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 

@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import java.io.IOException;
 import java.time.Instant;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.impl.ReloadServiceConfiguration;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;

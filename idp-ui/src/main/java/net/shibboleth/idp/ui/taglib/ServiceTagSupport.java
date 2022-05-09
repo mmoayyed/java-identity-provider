@@ -23,17 +23,17 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
-import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
+import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
 
 /**
  * Display the serviceName.

@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.BaseContext;
@@ -47,6 +46,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.ACSUIInfo;

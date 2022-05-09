@@ -1,6 +1,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="urn:mace:shibboleth:2.0:idp:ui" prefix="idpui" %>
-<%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="jakarta.servlet.http.Cookie" %>
 <%@ page import="org.opensaml.profile.context.ProfileRequestContext" %>
 <%@ page import="net.shibboleth.idp.authn.ExternalAuthentication" %>
 <%@ page import="net.shibboleth.idp.authn.context.AuthenticationContext" %>
