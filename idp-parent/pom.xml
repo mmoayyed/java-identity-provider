@@ -67,6 +67,8 @@
     </modules>
 
     <properties>
+        <!-- Remove 'maven-dist-enforcer-data.version' when we move to the latest parent -->
+        <maven-dist-enforcer-data.version>1.0.10-SNAPSHOT</maven-dist-enforcer-data.version>
         <idwsfconsumer.version>2.1.0</idwsfconsumer.version>
         <java-support.version>8.3.1</java-support.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
