@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.PairwiseId;
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore.ConnectionWithLock;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -57,7 +58,6 @@ public class JDBCPairwiseIdStoreTest {
     @AfterMethod public void teardown() {
         DatabaseTestingSupport.InitializeDataSource(DELETE_FILE, testSource);
     }
-
     
     @Test public void initializeAndGetters() throws ComponentInitializationException, IOException {
 
@@ -111,11 +111,19 @@ public class JDBCPairwiseIdStoreTest {
                 Objects.equals(one.getPrincipalName(), other.getPrincipalName()) &&
                 Objects.equals(one.getPeerProvidedId(), other.getPeerProvidedId());
     }
-   
+
     @Test public void storeEntry() throws ComponentInitializationException, IOException, SQLException {
+        storeEntry(Connection.TRANSACTION_SERIALIZABLE, false);
+        storeEntry(Connection.TRANSACTION_SERIALIZABLE, true);
+        storeEntry(Connection.TRANSACTION_READ_UNCOMMITTED, true);
+    }
+
+    public void storeEntry(final int isolateLevel, final boolean localLock) throws ComponentInitializationException, IOException, SQLException {
         final JDBCPairwiseIdStore store = new JDBCPairwiseIdStore();
         store.setDataSource(testSource);
         store.setVerifyDatabase(true);
+        store.setTransactionIsolation(isolateLevel);
+        store.setLocalLocking(localLock);
         store.initialize();
         
         final PairwiseId id = new PairwiseId();
@@ -129,7 +137,7 @@ public class JDBCPairwiseIdStoreTest {
         id.setPairwiseId(persistentId);
         id.setCreationTime(Instant.now());
         
-        try (final Connection conn = testSource.getConnection()) {
+        try (final ConnectionWithLock conn = store.new ConnectionWithLock(true, localLock)) {
             store.store(id, conn);
         }
         
@@ -159,7 +167,7 @@ public class JDBCPairwiseIdStoreTest {
         id.setPairwiseId(persistentId);
         id.setPeerProvidedId(null);
         id.setRecipientEntityID(DatabaseTestingSupport.SP_ENTITY_ID + "2");
-        try (final Connection conn = testSource.getConnection()) {
+        try (final ConnectionWithLock conn = store.new ConnectionWithLock(true, localLock)) {
             store.store(id, conn);
         }
         

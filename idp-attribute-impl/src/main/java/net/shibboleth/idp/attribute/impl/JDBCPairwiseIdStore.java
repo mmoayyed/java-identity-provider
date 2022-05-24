@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -90,9 +93,15 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
 
     /** Number of times to retry a transaction if it rolls back. */
     @NonNegative private int transactionRetry;
-    
+
+    /** What transaction isolation do we want? */
+    private int transactionIsolation = Connection.TRANSACTION_SERIALIZABLE;
+
     /** Error messages that signal a transaction should be retried. */
     @Nonnull @NonnullElements private Collection<String> retryableErrors;
+
+    /** If non-null we doing local locking. */
+    private ReadWriteLock readWriteLock;
 
     /** Whether to fail if the database cannot be verified.  */
     private boolean verifyDatabase;
@@ -181,6 +190,37 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         dataSource = Constraint.isNotNull(source, "DataSource cannot be null");
+    }
+
+    /** Will we do thread level locking or delegate to the Database?
+     * @param what do we want to lock locally?
+     */
+    public void setLocalLocking(final boolean what) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        if (what) {
+            readWriteLock = new ReentrantReadWriteLock(true);
+        } else {
+            readWriteLock = null;
+        }
+    }
+
+    /** Do  we do thread level locking or delegate to the Database?
+     * @return do we lock locally?
+     */
+    public boolean isLocalLocking() {
+        return readWriteLock != null;
+    }
+
+    /** Set the parameter that will be passed to {@link Connection#setTransactionIsolation(int)}.
+     * @param what the value to set
+     */
+    public void setTransactionIsolation(final int what) {
+        Constraint.isTrue(what == Connection.TRANSACTION_READ_COMMITTED ||
+                          what == Connection.TRANSACTION_READ_UNCOMMITTED ||
+                          what == Connection.TRANSACTION_REPEATABLE_READ ||
+                          what == Connection.TRANSACTION_SERIALIZABLE,
+                          "Invalid value for TransactionIsolation");
+        transactionIsolation = what;
     }
 
     /**
@@ -567,9 +607,8 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
 
         int retries = transactionRetry;
         while (true) {
-            try (final Connection dbConn = getConnection(false)) {
+            try (final ConnectionWithLock dbConn = new ConnectionWithLock(false, false)) {
                 final PreparedStatement statement = dbConn.prepareStatement(getBySourceSelectSQL);
-                statement.setQueryTimeout((int) queryTimeout.toSeconds());
                 statement.setString(1, pid.getIssuerEntityID());
                 statement.setString(2, pid.getRecipientEntityID());
                 statement.setString(3, pid.getSourceSystemId());
@@ -647,9 +686,8 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         log.trace("Setting prepared statement parameter {}: {}", 2, pid.getRecipientEntityID());
         log.trace("Setting prepared statement parameter {}: {}", 3, pid.getPairwiseId());
     
-        try (final Connection dbConn = getConnection(true)) {
+        try (final ConnectionWithLock dbConn = new ConnectionWithLock(true, false)) {
             final PreparedStatement statement = dbConn.prepareStatement(getByIssuedSelectSQL);
-            statement.setQueryTimeout((int) queryTimeout.toSeconds());
     
             statement.setString(1, pid.getIssuerEntityID());
             statement.setString(2, pid.getRecipientEntityID());
@@ -699,9 +737,8 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         log.trace("Setting prepared statement parameter {}: {}", 3, pid.getRecipientEntityID());
         log.trace("Setting prepared statement parameter {}: {}", 4, pid.getPairwiseId());
         
-        try (final Connection dbConn = getConnection(true)) {
+        try (final ConnectionWithLock dbConn = new ConnectionWithLock(true, true)) {
             final PreparedStatement statement = dbConn.prepareStatement(deactivateSQL);
-            statement.setQueryTimeout((int) queryTimeout.toSeconds());
             statement.setTimestamp(1, deactivationTime);
             statement.setString(2, pid.getIssuerEntityID());
             statement.setString(3, pid.getRecipientEntityID());
@@ -733,9 +770,8 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         log.trace("Setting prepared statement parameter {}: {}", 3, pid.getRecipientEntityID());
         log.trace("Setting prepared statement parameter {}: {}", 4, pid.getPairwiseId());
         
-        try (final Connection dbConn = getConnection(true)) {
+        try (final ConnectionWithLock dbConn = new ConnectionWithLock(true, true)) {
             final PreparedStatement statement = dbConn.prepareStatement(attachSQL);
-            statement.setQueryTimeout((int) queryTimeout.toSeconds());
             statement.setString(1, pid.getPeerProvidedId());
             statement.setString(2, pid.getIssuerEntityID());
             statement.setString(3, pid.getRecipientEntityID());
@@ -749,8 +785,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         }
     }
     
-// Checkstyle: MethodLength|CyclomaticComplexity ON
-    
+    // Checkstyle: MethodLength|CyclomaticComplexity ON
     /**
      * Store a record containing the values from the input object.
      * 
@@ -759,7 +794,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
      * 
      * @throws SQLException if an error occurs
      */
-    void store(@Nonnull final PairwiseId entry, @Nonnull final Connection dbConn) throws SQLException {
+    void store(@Nonnull final PairwiseId entry, @Nonnull final ConnectionWithLock dbConn) throws SQLException {
         
         log.debug("Storing new pairwise ID entry");
         
@@ -783,7 +818,6 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         log.trace("Setting prepared statement parameter {}: {}", 8, entry.getDeactivationTime());
         
         final PreparedStatement statement = dbConn.prepareStatement(insertSQL);
-        statement.setQueryTimeout((int) queryTimeout.toSeconds());
     
         statement.setString(1, entry.getIssuerEntityID());
         statement.setString(2, entry.getRecipientEntityID());
@@ -801,25 +835,7 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         } else {
             statement.setNull(8, Types.TIMESTAMP);
         }
-    
         statement.executeUpdate();
-    }
-
-    /**
-     * Obtain a connection from the data source.
-     * 
-     * <p>The caller must close the connection.</p>
-     * 
-     * @param autoCommit auto-commit setting to apply to the connection
-     * 
-     * @return a fresh connection
-     * @throws SQLException if an error occurs
-     */
-    @Nonnull private Connection getConnection(final boolean autoCommit) throws SQLException {
-        final Connection conn = dataSource.getConnection();
-        conn.setAutoCommit(autoCommit);
-        conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-        return conn;
     }
     
     /**
@@ -839,12 +855,12 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
         newEntry.setCreationTime(Instant.now());
         newEntry.setPairwiseId(uuid);
         
-        try (final Connection conn = getConnection(true)) {
+        try (final ConnectionWithLock conn = new ConnectionWithLock(true, true)) {
             store(newEntry, conn);
         }
 
         boolean keyMissing = false;
-        try (final Connection conn = getConnection(true)) {
+        try (final ConnectionWithLock conn = new ConnectionWithLock(true, true)) {
             store(newEntry, conn);
             keyMissing = true;
         } catch (final SQLException e) {
@@ -854,9 +870,8 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
             }
         }
 
-        try (final Connection conn = getConnection(true)) {
+        try (final ConnectionWithLock conn = new ConnectionWithLock(true, true)) {
             final PreparedStatement statement = conn.prepareStatement(deleteSQL);
-            statement.setQueryTimeout((int) queryTimeout.toSeconds());
             statement.setString(1, "http://dummy.com/idp/" + uuid);
             statement.executeUpdate();
         }
@@ -903,5 +918,68 @@ public class JDBCPairwiseIdStore extends AbstractInitializableComponent implemen
     
         return entries;
     }
-    
+
+    /** A Class to encapsulate a {@link Connection} protected by an optional
+     * read/write lock.
+     * Because the class implements {@link AutoCloseable} the unlock can "just happen"
+     */
+    protected class ConnectionWithLock implements AutoCloseable {
+
+        /** The connection we set up. */
+        @Nonnull private final Connection connection;
+
+        /** The lock we may or may not have set up. */
+        @Nullable private final Lock threadLock;
+
+        /** Constructor.
+         * @param autoCommit
+         * @param writeLock
+         * @throws SQLException
+         */
+        public ConnectionWithLock(final boolean autoCommit, final boolean writeLock) throws SQLException {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(autoCommit);
+            connection.setTransactionIsolation(transactionIsolation);
+            if (readWriteLock != null) {
+                if (writeLock) {
+                    threadLock = readWriteLock.writeLock();
+                } else {
+                    threadLock = readWriteLock.readLock();
+                }
+                threadLock.lock();
+            } else {
+                threadLock = null;
+            }
+        }
+
+        /** Delegated operation to the encapsulated {@link Connection}.
+         * @param sql what to prepare
+         * @return what the encapsulated {@link Connection} returns
+         * @throws SQLException if encapsulated {@link Connection} does
+         */
+        public PreparedStatement prepareStatement(final String sql) throws SQLException {
+            final PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setQueryTimeout((int) queryTimeout.toSeconds());
+            return statement;
+        }
+
+        /** Delegated operation to the encapsulated {@link Connection}.
+         * @throws SQLException if encapsulated {@link Connection} does
+         */
+        public void commit() throws SQLException {
+            connection.commit();
+        }
+
+        @Override
+        public void close()  {
+            try {
+                connection.close();
+            } catch (final SQLException e) {
+                log.error("Auto close failed", e);
+            }
+            if (threadLock != null) {
+                threadLock.unlock();
+            }
+        }
+    }
 }
