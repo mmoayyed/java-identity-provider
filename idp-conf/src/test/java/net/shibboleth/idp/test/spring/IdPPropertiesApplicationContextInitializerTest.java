@@ -29,6 +29,7 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -60,15 +61,17 @@ public class IdPPropertiesApplicationContextInitializerTest {
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNotFound() {
-        Assert.assertFalse(Files.exists(Paths.get("/opt", "shibboleth-idp", "conf", "idp.properties")),
-                "File /opt/shibboleth-idp/conf/idp.properties should not exist");
+        if (Files.exists(Paths.get("/opt", "shibboleth-idp", "conf", "idp.properties"))) {
+           throw new SkipException("Skipping test because /opt/shibboleth-idp/conf/idp.properties exists");
+        }
         listener.contextInitialized(new ServletContextEvent(sc));
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
     }
 
     @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void testNotFoundFalseFailFast() {
-        Assert.assertFalse(Files.exists(Paths.get("/opt", "shibboleth-idp", "conf", "idp.properties")),
-                "File /opt/shibboleth-idp/conf/idp.properties should not exist");
+        if (Files.exists(Paths.get("/opt", "shibboleth-idp", "conf", "idp.properties"))) {
+            throw new SkipException("Skipping test because /opt/shibboleth-idp/conf/idp.properties exists");
+        }
         sc.addInitParameter("idp.initializer.failFast", "false");
         listener.contextInitialized(new ServletContextEvent(sc));
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
