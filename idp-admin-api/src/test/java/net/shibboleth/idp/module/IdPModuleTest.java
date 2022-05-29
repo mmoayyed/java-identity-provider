@@ -16,15 +16,19 @@ package net.shibboleth.idp.module;
  * limitations under the License.
  */
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -223,7 +227,7 @@ public class IdPModuleTest {
     }
 
     @Test
-    public void testEnableExistingSame() throws IOException, ModuleException {
+    public void testEnableExistingSame() throws IOException, ModuleException, InterruptedException {
         Files.createDirectory(testHome.resolve("conf"));
         Files.createDirectory(testHome.resolve("views"));
         
@@ -237,7 +241,18 @@ public class IdPModuleTest {
             os.write(VEL_DATA.getBytes());
         }
 
-        testModule.enable(context);
+        try {
+            testModule.enable(context);
+        } catch (final ModuleException moduleException) {
+            if (moduleException.getCause() instanceof AccessDeniedException) {
+                assertEquals(File.pathSeparatorChar == ';', null);
+                // Our old friend Windows Defender still has its claws in the file.  Sleep then try again
+                Thread.sleep(100);
+                testModule.enable(context);                
+            } else {
+                throw moduleException;
+            }
+        }
 
         String xml = Files.readString(testHome.resolve("conf/test.xml"));
         Assert.assertEquals(xml, XML_DATA);
