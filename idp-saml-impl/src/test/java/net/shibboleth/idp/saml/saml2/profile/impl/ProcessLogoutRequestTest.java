@@ -171,7 +171,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameIdForSession, "index"));
+                nameIdForSession, "index", "foo", false));
                 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.SESSION_NOT_FOUND);
@@ -200,7 +200,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertNotNull(session);
         final NameID nameIdForSession = SAML2ActionTestingSupport.buildNameID("joe");
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameIdForSession, "index"));
+                nameIdForSession, "index", "foo", false));
                 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -239,7 +239,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         nameIdForSession.setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         nameIdForSession.setSPNameQualifier(ActionTestingSupport.INBOUND_MSG_ISSUER);
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameIdForSession, "index"));
+                nameIdForSession, "index", "foo", false));
                 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -275,7 +275,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameId, "index"));
+                nameId, "index", "foo", false));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -312,9 +312,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameId, "index"));
+                nameId, "index", "foo", false));
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", creation, expiration,
-                nameId2, "index2"));
+                nameId2, "index2", "foo", false));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -358,9 +358,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameId, "index"));
+                nameId, "index", "foo", false));
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", creation, expiration,
-                nameId2, "index2"));
+                nameId2, "index2", "foo", false));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.SESSION_NOT_FOUND);
@@ -390,7 +390,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameId, "index"));
+                nameId, "index", "foo", false));
         
         
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie2);
@@ -398,7 +398,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session2);
         session2.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameId, "index2"));
+                nameId, "index2", "foo", false));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -436,7 +436,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameId, "index"));
+                nameId, "index", "foo", false));
         
         
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie2);
@@ -444,7 +444,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session2);
         session2.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
-                nameId, "index2"));
+                nameId, "index2", "foo", false));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

@@ -32,7 +32,6 @@ import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 import com.google.common.base.MoreObjects;
 
 import net.shibboleth.idp.session.BasicSPSession;
-import net.shibboleth.idp.session.SPSessionEx;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -42,8 +41,7 @@ import net.shibboleth.utilities.java.support.xml.SerializeSupport;
  * Extends a {@link BasicSPSession} with SAML 2.0 information required for
  * reverse lookup in the case of a logout. 
  */
-@SuppressWarnings("removal")
-public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
+public class SAML2SPSession extends BasicSPSession {
 
     /** The NameID asserted to the SP. */
     @Nonnull private final NameID nameID;
@@ -58,24 +56,6 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
     private final boolean supportsLogoutPropagation;
     
 // Checkstyle: ParameterNumber OFF
-    /**
-     * Constructor.
-     *
-     * @param id the identifier of the service associated with this session
-     * @param creation creation time of session
-     * @param expiration expiration time of session
-     * @param assertedNameID the NameID asserted to the SP
-     * @param assertedIndex the SessionIndex asserted to the SP
-     * 
-     * @deprecated
-     */
-    @Deprecated(since="4.2.0", forRemoval=true)
-    public SAML2SPSession(@Nonnull @NotEmpty final String id, @Nonnull final Instant creation,
-            @Nonnull final Instant expiration, @Nonnull final NameID assertedNameID,
-            @Nonnull @NotEmpty final String assertedIndex) {
-        this(id, creation, expiration, assertedNameID, assertedIndex, null, true);
-    }
-
     /**
      * Constructor.
      *
@@ -126,6 +106,7 @@ public class SAML2SPSession extends BasicSPSession implements SPSessionEx {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable @NotEmpty public String getProtocol() {
         return SAMLConstants.SAML20P_NS;
     }

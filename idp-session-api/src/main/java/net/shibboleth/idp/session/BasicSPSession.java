@@ -81,6 +81,16 @@ public class BasicSPSession implements SPSession {
     }
     
     /** {@inheritDoc} */
+    @Nullable @NotEmpty public String getProtocol() {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public boolean supportsLogoutPropagation() {
+        return false;
+    }
+    
+    /** {@inheritDoc} */
     public int hashCode() {
         return serviceId.hashCode();
     }

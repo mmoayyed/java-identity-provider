@@ -25,15 +25,13 @@ import javax.annotation.Nullable;
 import org.opensaml.saml.common.xml.SAMLConstants;
 
 import net.shibboleth.idp.session.BasicSPSession;
-import net.shibboleth.idp.session.SPSessionEx;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
  * Marker subtype for a SAML 1 session, adds no actual information other than its identity as
  * a SAML 1 session. 
  */
-@SuppressWarnings("removal")
-public class SAML1SPSession extends BasicSPSession implements SPSessionEx {
+public class SAML1SPSession extends BasicSPSession {
     
     /**
      * Constructor.
@@ -48,6 +46,7 @@ public class SAML1SPSession extends BasicSPSession implements SPSessionEx {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable @NotEmpty public String getProtocol() {
         return SAMLConstants.SAML11P_NS;
     }

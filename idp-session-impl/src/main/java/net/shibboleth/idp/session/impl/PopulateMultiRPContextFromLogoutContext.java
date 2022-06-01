@@ -27,7 +27,6 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.MultiRelyingPartyContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.idp.session.SPSessionEx;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -61,7 +60,6 @@ import org.slf4j.LoggerFactory;
  * @post If (ProfileRequestContext.getSubcontext(LogoutContext.class) != null,
  *  then ProfileRequestContext.getSubcontext(MultiRelyingPartyContext.class) != null
  */
-@SuppressWarnings("removal")
 public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileAction {
     
     /** Label for {@link MultiRelyingPartyContext} entries. */
@@ -166,9 +164,8 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
             
             ProtocolCriterion protocolCriterion = null;
             final SPSession spSession = logoutCtx.getSessions(relyingPartyId).iterator().next();
-            final String protocol = spSession instanceof SPSessionEx ? ((SPSessionEx) spSession).getProtocol() : null;
-            if (protocol != null) {
-                protocolCriterion = new ProtocolCriterion(protocol);
+            if (spSession.getProtocol() != null) {
+                protocolCriterion = new ProtocolCriterion(spSession.getProtocol());
             }
             
             final CriteriaSet criteria = new CriteriaSet(entityIdCriterion, protocolCriterion, roleCriterion);
@@ -177,7 +174,8 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
                 if (roleMetadata == null) {
                     if (protocolCriterion != null) {
                         log.info("{} No metadata returned for {} in role {} with protocol {}",
-                                new Object[]{getLogPrefix(), entityIdCriterion.getEntityId(), role, protocol,});
+                                new Object[]{getLogPrefix(), entityIdCriterion.getEntityId(), role,
+                                        spSession.getProtocol(),});
                     } else {
                         log.info("{} No metadata returned for {} in role {}",
                                 new Object[]{getLogPrefix(), entityIdCriterion.getEntityId(), role,});

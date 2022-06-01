@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /**
@@ -59,4 +60,23 @@ public interface SPSession extends IdentifiedComponent {
      * @return a unique key identifying this subject's session with the service, or null
      */
     @Nullable String getSPSessionKey();
+
+    /**
+     * Get a protocol constant for the session suitable for metadata lookup.
+     *
+     * @return a protocol constant
+     * 
+     * @since 5.0.0
+     */
+    @Nullable @NotEmpty String getProtocol();
+    
+    /**
+     * Gets whether the session allows for logout propagation.
+     * 
+     * @return whether the session allows for logout propagation
+     * 
+     * @since 5.0.0
+     */
+    boolean supportsLogoutPropagation();
+
 }
