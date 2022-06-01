@@ -46,6 +46,7 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.http.HTTPResponseMappingStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resource.Resource;
@@ -297,7 +298,21 @@ public final class ScriptedResponseMappingStrategy extends AbstractScriptEvaluat
             final EvaluableScript script = new EvaluableScript();
             script.setEngineName(engineName);
             script.setScript(is);
-            script.initializeWithScriptException();
+            try {
+                script.initialize();
+            } catch (final ComponentInitializationException e) {
+                final Throwable cause = e.getCause();
+
+                if (cause != null) {
+                    if (cause instanceof ScriptException) {
+                        throw (ScriptException) cause;
+                    }
+                    else if (cause instanceof IOException) {
+                        throw (IOException) cause;
+                    }
+                }
+                throw new ScriptException(e);
+            }
             return new ScriptedResponseMappingStrategy(script);
         }
     }
@@ -328,7 +343,16 @@ public final class ScriptedResponseMappingStrategy extends AbstractScriptEvaluat
         final EvaluableScript script = new EvaluableScript();
         script.setEngineName(engineName);
         script.setScript(scriptSource);
-        script.initializeWithScriptException();
+        try {
+            script.initialize();
+        } catch (final ComponentInitializationException e) {
+            final Throwable cause = e.getCause();
+
+            if (cause != null && cause instanceof ScriptException) {
+                throw (ScriptException) cause;
+            }
+            throw new ScriptException(e);
+        }
         return new ScriptedResponseMappingStrategy(script);
     }
 
