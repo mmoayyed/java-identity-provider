@@ -33,9 +33,9 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.StringResultMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.TemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.V2CompatibleTemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ManagedConnectionParser;
@@ -193,7 +193,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
          */
         @Nonnull public BeanDefinition createTemplateBuilder() {
             final BeanDefinitionBuilder templateBuilder =
-                    BeanDefinitionBuilder.genericBeanDefinition(V2CompatibleTemplatedExecutableStatementBuilder.class);
+                    BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableStatementBuilder.class);
             templateBuilder.setInitMethodName("initialize");
             templateBuilder.setDestroyMethodName("destroy");
 
@@ -202,8 +202,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                 velocityEngineRef = "shibboleth.VelocityEngine";
             }
             templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
-
-            templateBuilder.addPropertyValue("v2Compatibility", true);
 
             final String queryTimeout = AttributeSupport.getAttributeValue(configElement, new QName("queryTimeout"));
             if (queryTimeout != null) {

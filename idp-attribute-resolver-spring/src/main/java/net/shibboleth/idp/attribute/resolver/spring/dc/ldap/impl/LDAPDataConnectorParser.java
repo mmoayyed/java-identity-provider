@@ -64,9 +64,9 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.StringAttributeValueMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.TemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.V2CompatibleTemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
@@ -450,7 +450,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          */
         @Nonnull public BeanDefinition createTemplateBuilder() {
             final BeanDefinitionBuilder templateBuilder = BeanDefinitionBuilder.genericBeanDefinition(
-                    V2CompatibleTemplatedExecutableSearchFilterBuilder.class);
+                    TemplatedExecutableSearchFilterBuilder.class);
             templateBuilder.setInitMethodName("initialize");
 
             String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttribute("templateEngine"));
@@ -458,8 +458,6 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 velocityEngineRef = "shibboleth.VelocityEngine";
             }
             templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
-
-            templateBuilder.addPropertyValue("v2Compatibility", true);
 
             templateBuilder.addPropertyValue("templateText", getFilterText());
 
