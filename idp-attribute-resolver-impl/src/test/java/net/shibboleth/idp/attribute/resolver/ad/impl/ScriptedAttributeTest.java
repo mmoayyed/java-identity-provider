@@ -584,36 +584,6 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     }
 
-    @Test public void v2Context() throws IOException, ComponentInitializationException, ResolutionException,
-            ScriptException {
-
-        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
-        scripted.setId("scripted");
-        scripted.setScript(getScript("requestContext.script"));
-        scripted.initialize();
-
-        final IdPAttribute result = scripted.resolve(generateContext());
-        final HashSet<IdPAttributeValue> set = new HashSet<>(result.getValues());
-        assertEquals(set.size(), 3);
-        assertTrue(set.contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
-        assertTrue(set.contains(new StringAttributeValue(TestSources.IDP_ENTITY_ID)));
-        assertTrue(set.contains(new StringAttributeValue(TestSources.SP_ENTITY_ID)));
-
-    }
-
-    @Test public void unimplementedV2Context() throws IOException, ComponentInitializationException,
-            ResolutionException, ScriptException {
-
-        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
-        scripted.setId("scripted");
-        scripted.setScript(getScript("requestContextUnimplemented.script"));
-        scripted.initialize();
-
-        final IdPAttribute result = scripted.resolve(generateContext());
-        assertEquals(result.getValues().iterator().next(), new StringAttributeValue("AllDone"));
-
-    }
-
     private static AttributeResolutionContext generateContext() {
         final AttributeResolutionContext ctx = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                 TestSources.SP_ENTITY_ID);

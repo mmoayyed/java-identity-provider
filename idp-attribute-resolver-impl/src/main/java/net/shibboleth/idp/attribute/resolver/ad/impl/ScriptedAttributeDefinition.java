@@ -29,6 +29,12 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
@@ -43,14 +49,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.ParentContextLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that executes a script in order to populate the
@@ -269,11 +267,6 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
                             ScriptContext.ENGINE_SCOPE);
                 }
             }
-
-            log.debug("{} Adding emulated V2 request context to script context", getLogPrefix());
-            scriptContext.setAttribute("requestContext",
-                    new V2SAMLProfileRequestContext((AttributeResolutionContext) input[0], getId()),
-                    ScriptContext.ENGINE_SCOPE);
 
             for (final Entry<String,List<IdPAttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
                 log.trace("{} Adding dependent attribute '{}' with the following values to the script context: {}",
