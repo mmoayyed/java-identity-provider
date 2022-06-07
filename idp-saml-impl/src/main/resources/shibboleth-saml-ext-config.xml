@@ -4,13 +4,6 @@
     <!-- Shibboleth Extensions Object providers -->
     <ObjectProviders>
     
-        <!-- DelegationPolicy provider -->
-        <ObjectProvider qualifiedName="shibdel:DelegationPolicy">
-            <BuilderClass className="net.shibboleth.idp.saml.xmlobject.impl.DelegationPolicyBuilder"/>
-            <MarshallingClass className="net.shibboleth.idp.saml.xmlobject.impl.DelegationPolicyMarshaller"/>
-            <UnmarshallingClass className="net.shibboleth.idp.saml.xmlobject.impl.DelegationPolicyUnmarshaller"/>
-        </ObjectProvider>
-		
         <!-- Scope provider -->
         <ObjectProvider qualifiedName="shibmd:Scope">
             <BuilderClass className="net.shibboleth.idp.saml.xmlobject.impl.ScopeBuilder"/>

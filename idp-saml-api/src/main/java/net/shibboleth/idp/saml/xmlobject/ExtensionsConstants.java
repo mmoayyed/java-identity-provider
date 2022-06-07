@@ -29,15 +29,6 @@ public final class ExtensionsConstants {
     /** Namespace QName prefix for Shibboleth extensions to SAML metadata. */
     public static final String SHIB_MDEXT10_PREFIX = "shibmd";
 
-    /** Relative resource path for XML schema for Shibboleth extensions supporting SAML delegation. */
-    public static final String SHIB_DELEXT10_SCHEMA_LOCATION = "/schema/shibboleth-delegation-1.0.xsd";
-    
-    /** URI for XML schema namespace for Shibboleth extensions supporting SAML delegation. */
-    public static final String SHIB_DELEXT10_NS = "urn:mace:shibboleth:delegation:1.0";
-
-    /** Namespace QName prefix for Shibboleth extensions supporting AML delegation. */
-    public static final String SHIB_DELEXT10_PREFIX = "shibdel";
-
     /** Constructor. */
     private ExtensionsConstants() {
     }

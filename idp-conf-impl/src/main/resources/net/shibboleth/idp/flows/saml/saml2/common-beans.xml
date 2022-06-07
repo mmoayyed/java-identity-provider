@@ -115,10 +115,7 @@
     <bean id="EncryptNameIDs"
             class="org.opensaml.saml.saml2.profile.impl.EncryptNameIDs" scope="prototype"
             p:excludedFormats="#{getObject('shibboleth.PlaintextNameIDFormats') ?: getObject('DefaultPlaintextNameIDFormats')}"
-            p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple"
-            p:encryptToSelf-ref="shibboleth.Conditions.IssuingDelegatedAssertion"
-            p:encryptToSelfParametersStrategy-ref="EncryptToSelfParametersStrategy"
-            p:selfRecipientLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
+            p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
         <property name="encryptionContextLookupStrategy">
             <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.ChildLookup.EncryptionParameters"

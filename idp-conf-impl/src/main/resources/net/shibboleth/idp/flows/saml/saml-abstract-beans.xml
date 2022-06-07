@@ -127,11 +127,6 @@
         p:endpointType="#{getObject('shibboleth.EndpointType')}"
         p:bindingDescriptorsLookupStrategy-ref="shibboleth.OutgoingBindingsLookupStrategy"
         p:artifactImpliesSecureChannel="%{idp.artifact.secureChannel:true}" />
-        
-    <bean id="PopulateDelegationContext"
-            class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.PopulateDelegationContext" scope="prototype">
-        <property name="credentialResolver" ref="shibboleth.MetadataCredentialResolver" />
-    </bean>
 
     <bean id="PopulateResponseSignatureSigningParameters"
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
@@ -149,13 +144,8 @@
             p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
             p:noResultIsError="true">
         <property name="activationCondition">
-            <bean parent="shibboleth.Conditions.OR">
-                <constructor-arg>
-                    <bean class="net.shibboleth.idp.saml.profile.config.logic.SignAssertionsPredicate"
-                        p:honorMetadata="%{idp.saml.honorWantAssertionsSigned:true}" />
-                </constructor-arg>
-                <constructor-arg ref="shibboleth.Conditions.IssuingDelegatedAssertion" />
-            </bean>
+            <bean class="net.shibboleth.idp.saml.profile.config.logic.SignAssertionsPredicate"
+                p:honorMetadata="%{idp.saml.honorWantAssertionsSigned:true}" />
         </property>
         <property name="securityParametersContextLookupStrategy">
             <bean parent="shibboleth.Functions.Compose"

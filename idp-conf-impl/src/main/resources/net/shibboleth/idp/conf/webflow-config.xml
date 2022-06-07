@@ -66,9 +66,6 @@
                 <entry key="SAML2/SOAP/SLO" value="classpath:/net/shibboleth/idp/flows/saml/saml2/slo-back-flow.xml" />
                 <entry key="SAML2/SOAP/AttributeQuery" value="classpath:/net/shibboleth/idp/flows/saml/saml2/attribute-query-flow.xml" />
                 <entry key="SAML2/SOAP/ArtifactResolution" value="classpath:/net/shibboleth/idp/flows/saml/saml2/artifact-resolution-flow.xml" />
-                
-                <!-- Liberty IDWSF SSOS flow (for SAML 2 delegation) -->
-                <entry key="IDWSF/SSOS" value="classpath:/net/shibboleth/idp/flows/saml/saml2/idwsf-ssos-flow.xml" />
         
                 <!-- Main flow for authentication. -->
                 <entry key="authn.events" value="%{idp.home}/conf/authn/authn-events-flow.xml" />

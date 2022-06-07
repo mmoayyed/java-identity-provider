@@ -96,15 +96,6 @@
         </property>
     </bean>
     
-    <bean id="DecorateDelegatedAssertion"
-            class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.DecorateDelegatedAssertion" scope="prototype"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-            p:libertySSOSEndpointURL="%{idp.delegation.saml2.libertySSOSEndpointURL:#{null}}">
-        <property name="keyInfoGeneratorManager">
-            <bean factory-method="buildBasicKeyInfoGeneratorManager" class="org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap" />
-        </property>
-    </bean>
-
     <bean id="AddChannelBindingsToAssertions"
         class="org.opensaml.saml.saml2.profile.impl.AddChannelBindingsToAssertions" scope="prototype" />
 
@@ -173,44 +164,5 @@
     <bean id="InitializeOutboundMessageContextForSOAPFault"
         class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype"
         p:outboundBinding-ref="shibboleth.Binding.SAML2SOAP" />
-        
-    <bean id="AddAuthnStatementToAssertionFromInboundAssertionToken"
-        class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.AddAuthnStatementToAssertionFromInboundAssertionToken"
-        scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest">
-        <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
-                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
-        </property>
-        <property name="activationCondition">
-            <bean parent="shibboleth.Conditions.Expression">
-                <constructor-arg>
-                    <value>
-                        #profileContext.getProfileId().equals('http://shibboleth.net/ns/profiles/liberty/ssos')
-                    </value>
-                </constructor-arg>
-            </bean>
-        </property>
-    </bean>
-    
-    <bean id="AddDelegationRestrictionToAssertions"
-        class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.AddDelegationRestrictionToAssertions"
-        scope="prototype">
-        <property name="activationCondition">
-            <bean parent="shibboleth.Conditions.Expression">
-                <constructor-arg>
-                    <value>
-                        #profileContext.getProfileId().equals('http://shibboleth.net/ns/profiles/liberty/ssos')
-                    </value>
-                </constructor-arg>
-            </bean>
-        </property>
-    </bean>
-    
-    <bean id="AddDelegationPolicyToAssertion"
-        class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.AddDelegationPolicyToAssertion"
-        scope="prototype"
-        p:activationCondition-ref="shibboleth.Conditions.IssuingDelegatedAssertion">
-    </bean>
-        
+
 </beans>

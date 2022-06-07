@@ -67,7 +67,6 @@
     </modules>
 
     <properties>
-        <idwsfconsumer.version>2.1.0</idwsfconsumer.version>
         <java-support.version>9.0.0-SNAPSHOT</java-support.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>5.0.0-SNAPSHOT</opensaml.version>

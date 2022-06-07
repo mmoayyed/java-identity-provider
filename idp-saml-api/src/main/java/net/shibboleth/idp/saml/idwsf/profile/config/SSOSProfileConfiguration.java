@@ -25,12 +25,19 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Predicates;
 
-/** Configuration support for the Liberty ID-WSF SSOS profile. */
+/**
+ * Configuration support for the Liberty ID-WSF SSOS profile.
+ * 
+ * @deprecated
+ */
+@Deprecated(forRemoval=true, since="5.0.0")
 public class SSOSProfileConfiguration extends BrowserSSOProfileConfiguration {
 
     /** ID for this profile configuration. */
@@ -53,6 +60,9 @@ public class SSOSProfileConfiguration extends BrowserSSOProfileConfiguration {
         super(profileId);
         
         delegationPredicate = Predicates.alwaysFalse();
+        
+        DeprecationSupport.warn(ObjectType.BEAN, "Liberty.SSOS or Liberty.SSOS.MDDriven", "relying-party.xml",
+                "(none)");
     }
 
     /**

@@ -101,7 +101,6 @@
         <evaluate expression="AddInResponseToToResponse" />
 
         <evaluate expression="AddAuthnStatementToAssertion" />
-        <evaluate expression="AddAuthnStatementToAssertionFromInboundAssertionToken" />
         
         <evaluate expression="AddAttributeStatementToAssertion" />
         <evaluate expression="AddNameIDToSubjects" />
@@ -109,12 +108,9 @@
         <evaluate expression="AddNotBeforeConditionToAssertions" />
         <evaluate expression="AddNotOnOrAfterConditionToAssertions" />
         <evaluate expression="AddAudienceRestrictionToAssertions" />
-        <evaluate expression="AddDelegationRestrictionToAssertions" />
         <evaluate expression="AddProxyRestrictionToAssertions" />
         <evaluate expression="AddChannelBindingsToAssertions" />
         <evaluate expression="AddGeneratedKeyToAssertions" />
-        <evaluate expression="DecorateDelegatedAssertion" />
-        <evaluate expression="AddDelegationPolicyToAssertion" />
 
         <!-- Need access to unencrypted NameID and Assertion. -->
         <evaluate expression="PostAssertionPopulateAuditContext" />

@@ -24,12 +24,6 @@
         <!-- Compile Dependencies -->
         
         <dependency>
-            <groupId>net.shibboleth.liberty</groupId>
-            <artifactId>idwsfconsumer</artifactId>
-            <version>${idwsfconsumer.version}</version>
-        </dependency>
-        
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-core</artifactId>
             <version>${project.version}</version>
