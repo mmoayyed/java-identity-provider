@@ -636,17 +636,9 @@
         </property>
     </bean>
 
+    <!-- Remove in V6. -->
     <bean id="Liberty.SSOS.MDDriven" parent="SAML2.SSO.MDDriven" lazy-init="true"
-            class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration">
-        <property name="delegationPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
-                <constructor-arg>
-                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="delegation" />
-                </constructor-arg>
-                <constructor-arg value="false" />
-            </bean>
-        </property>
-    </bean>
+            class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />
 
     <bean id="CAS.LoginConfiguration.MDDriven" parent="AbstractMDDrivenCASProfile" lazy-init="true"
             class="net.shibboleth.idp.cas.config.LoginConfiguration">

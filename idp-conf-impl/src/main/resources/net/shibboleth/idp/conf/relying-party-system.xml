@@ -127,9 +127,9 @@
         class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
+    <!-- Remove in V6. -->
     <bean id="Liberty.SSOS" lazy-init="true"
-        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration"
-        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
+        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />
 
     <bean id="CAS.LoginConfiguration" lazy-init="true"
         class="net.shibboleth.idp.cas.config.LoginConfiguration" />
