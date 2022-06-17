@@ -68,20 +68,6 @@
             <artifactId>metrics-jvm</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!--
-        JPA supporting library in case storage service option used.
-        TODO: Remove once the JPA code becomes a plugin.
-        -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core-jakarta</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-orm</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <!-- Needed for Memcache storage plugin. -->
         <dependency>
             <groupId>net.spy</groupId>

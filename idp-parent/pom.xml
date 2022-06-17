@@ -242,12 +242,6 @@
                                         <exclude>javax.mail:mail</exclude>
                                         <exclude>javax.xml.bind:jaxb-api</exclude>
                                         <exclude>com.sun.mail:javax.mail</exclude>
-                                        <!--
-                                            Ban use of the EE 7 version of
-                                            hibernate-core for Hibernate V5.
-                                            Must use hibernate-core-jakarta instead.
-                                        -->
-                                        <exclude>org.hibernate:hibernate-core</exclude>
                                     </excludes>
                                     <includes>
                                         <!--
