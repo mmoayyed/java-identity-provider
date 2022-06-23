@@ -1,3 +1,2 @@
 urn\:mace\:shibboleth\:2.0\:metadata            = net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:resource            = net.shibboleth.idp.profile.spring.resource.impl.ResourceNamespaceHandler
-urn\:mace\:shibboleth\:2.0\:security            = net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler

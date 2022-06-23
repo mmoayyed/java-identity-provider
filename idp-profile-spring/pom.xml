@@ -106,6 +106,10 @@
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-xmlsec-api</artifactId>
         </dependency>
         <dependency>

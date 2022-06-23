@@ -25,6 +25,8 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
+import org.opensaml.spring.credential.BasicInlineCredentialFactoryBean;
+import org.opensaml.spring.credential.BasicX509CredentialFactoryBean;
 import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
 import org.opensaml.xmlsec.keyinfo.impl.KeyInfoProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
@@ -43,8 +45,6 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.AbstractCustomBeanDefinitionParser;
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.factory.BasicInlineCredentialFactoryBean;
-import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
