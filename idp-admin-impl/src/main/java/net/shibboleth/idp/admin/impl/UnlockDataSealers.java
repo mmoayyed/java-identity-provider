@@ -36,7 +36,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 
 /**
@@ -78,7 +77,7 @@ public class UnlockDataSealers extends AbstractProfileAction {
      * @param strategies objects to unlock
      */
     public void setKeyStrategies(@Nullable @NonnullElements final Collection<BasicKeystoreKeyStrategy> strategies) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         if (strategies != null) {
             keyStrategies = List.copyOf(strategies);

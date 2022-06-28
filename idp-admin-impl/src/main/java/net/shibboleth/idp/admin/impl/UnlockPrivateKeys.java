@@ -28,12 +28,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-
 import org.cryptacular.EncodingException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -43,6 +37,11 @@ import org.opensaml.security.crypto.KeySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * Action that creates private key objects and injects them into existing
@@ -82,7 +81,7 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
      * @param creds credentials to load keys into
      */
     public void setCredentials(@Nullable @NonnullElements final Collection<MutableCredential> creds) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         if (creds != null) {
             credentials = List.copyOf(creds);
@@ -97,7 +96,7 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
      * @param keys key resources to load
      */
     public void setKeyResources(@Nullable @NonnullElements final Collection<Resource> keys) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         if (keys != null) {
             keyResources = List.copyOf(keys);

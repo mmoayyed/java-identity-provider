@@ -56,7 +56,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -116,7 +115,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param filter metric filter
      */
     public void setMetricFilter(@Nullable final MetricFilter filter) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         metricFilter = filter;
     }
@@ -127,7 +126,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param registry metric registry
      */
     public void setMetricRegistry(@Nonnull final MetricRegistry registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         metricRegistry = Constraint.isNotNull(registry, "MetricRegistry cannot be null");
     }
@@ -138,7 +137,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param origin header value
      */
     public void setAllowedOrigin(@Nullable final String origin) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         allowedOrigin = StringSupport.trimOrNull(origin);
     }
@@ -149,7 +148,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param callbackName callback function name.
      */
     public void setJSONPCallbackName(@Nullable final String callbackName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         jsonpCallbackName = StringSupport.trimOrNull(callbackName);
     }
@@ -160,7 +159,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         if (format != null) {
             dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
@@ -175,7 +174,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @since 4.1.0
      */
     public void setUseDefaultTimeZone(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         useDefaultTimeZone = flag;
     }
@@ -186,7 +185,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param map group to filter map
      */
     public void setMetricFilterMap(@Nonnull @NonnullElements final Map<String,MetricFilter> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         Constraint.isNotNull(map, "MetricFilter map cannot be null");
         metricFilterMap = new HashMap<>(map.size());

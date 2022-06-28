@@ -36,7 +36,6 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
 
 /**
@@ -68,7 +67,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
      * @param descriptor the flow descriptor to base the action on
      */
     public void setAdministrativeFlowDescriptor(@Nullable final AdministrativeFlowDescriptor descriptor) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
 
         flowDescriptor = descriptor;
     }
@@ -79,7 +78,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
      * @param langs a semi-colon separated string.
      */
     public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         if (langs != null) {
             fallbackLanguages = List.copyOf(langs);

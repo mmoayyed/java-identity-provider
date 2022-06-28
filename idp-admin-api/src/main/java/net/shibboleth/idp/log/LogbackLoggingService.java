@@ -51,7 +51,6 @@ import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceException;
@@ -90,7 +89,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
 
     /** {@inheritDoc} */
     @Override public void setLoggingConfiguration(@Nonnull final Resource configuration) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
 
         configurationResource = Constraint.isNotNull(configuration, "Logging configuration resource cannot be null");
     }
