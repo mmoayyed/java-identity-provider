@@ -128,7 +128,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
     @Nullable protected Pair<String,String> decodeCredentials(@Nonnull @NotEmpty final String encodedCredentials) {
         String decodedUserPass = null;
         try {
-            decodedUserPass = new String(Base64Support.decode(encodedCredentials), Charsets.US_ASCII);
+            decodedUserPass = new String(Base64Support.decode(encodedCredentials), Charsets.UTF_8);
         } catch (final DecodingException e) {
             log.warn("{} Credentials could not be base64 decoded: {}",getLogPrefix(),e.getMessage());
             //nothing else, decodedUserPass remains null.

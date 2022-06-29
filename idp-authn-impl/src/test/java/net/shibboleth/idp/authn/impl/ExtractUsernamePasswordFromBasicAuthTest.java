@@ -90,7 +90,6 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthentication
     
     @Test public void testValid() {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOmJhcg==");
-        
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
@@ -98,5 +97,17 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthentication
         Assert.assertNotNull(upCtx, "No UsernamePasswordContext attached");
         Assert.assertEquals(upCtx.getUsername(), "foo");
         Assert.assertEquals(upCtx.getPassword(), "bar");
+    }
+
+    @Test public void idp1968() {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOuKYr++4j2Jhcg==");
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
+        Assert.assertNotNull(upCtx, "No UsernamePasswordContext attached");
+        Assert.assertEquals(upCtx.getUsername(), "foo");
+        Assert.assertEquals(upCtx.getPassword(), "☯️bar");
     }
 }
