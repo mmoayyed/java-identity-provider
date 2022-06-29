@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -66,21 +68,29 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
     
     private ProfileRequestContext prc;
 
+    private List<GenericApplicationContext> contexts = new ArrayList<>();
+
     protected <Type> Type getBean(String fileName, Class<Type> claz) {
 
-        try (final GenericApplicationContext context = new GenericApplicationContext()) {
-            SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                    new SchemaTypeAwareXMLBeanDefinitionReader(context);
+        final GenericApplicationContext context = new GenericApplicationContext();
+        contexts.add(context);
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
+        beanDefinitionReader.loadBeanDefinitions(fileName);
+
+        context.refresh();
+
+        Collection<Type> beans = context.getBeansOfType(claz).values();
+        Assert.assertEquals(beans.size(), 1);
+
+        return beans.iterator().next();
+    }
     
-            beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
-            beanDefinitionReader.loadBeanDefinitions(fileName);
-            
-            context.refresh();
-    
-            Collection<Type> beans = context.getBeansOfType(claz).values();
-            Assert.assertEquals(beans.size(), 1);
-    
-            return beans.iterator().next();
+    @AfterClass public void teardown() {
+        for (final GenericApplicationContext ctx : contexts) {
+            ctx.close();
         }
     }
         
