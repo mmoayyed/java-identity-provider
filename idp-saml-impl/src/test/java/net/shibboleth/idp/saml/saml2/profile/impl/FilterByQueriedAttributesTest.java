@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -55,39 +57,47 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
 
     static final String PATH = "/net/shibboleth/idp/saml/impl/profile/";
-    
+
     private AttributeQuery query;
-    
+
     private ReloadableService<AttributeTranscoderRegistry> registry;
-    
+
     private FilterByQueriedAttributes action;
-    
+
     private RequestContext rc;
-    
+
     private ProfileRequestContext prc;
+
+    private List<GenericApplicationContext> contexts = new ArrayList<>();
 
     protected <Type> Type getBean(String fileName, Class<Type> claz) {
 
-        try (final GenericApplicationContext context = new GenericApplicationContext()) {
-            SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                    new SchemaTypeAwareXMLBeanDefinitionReader(context);
-    
-            beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
-            beanDefinitionReader.loadBeanDefinitions(fileName);
-            
-            context.refresh();
-    
-            Collection<Type> beans = context.getBeansOfType(claz).values();
-            Assert.assertEquals(beans.size(), 1);
-    
-            return beans.iterator().next();
-        }
+        final GenericApplicationContext context = new GenericApplicationContext();
+        contexts.add(context);
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
+        beanDefinitionReader.loadBeanDefinitions(fileName);
+
+        context.refresh();
+
+        Collection<Type> beans = context.getBeansOfType(claz).values();
+        Assert.assertEquals(beans.size(), 1);
+
+        return beans.iterator().next();
     }
         
     @BeforeClass public void setup() {
         registry = new MockReloadableService<>(getBean(PATH + "saml2Mapper.xml", AttributeTranscoderRegistryImpl.class));
     }
     
+    @AfterClass public void teardown() {
+        for (final GenericApplicationContext ctx : contexts) {
+            ctx.close();
+        }
+    }
+
     @BeforeMethod public void setUpMethod() throws ComponentInitializationException, XMLParserException, UnmarshallingException {
         query = unmarshallElement(PATH + "AttributeQuery.xml", true);        
         action = new FilterByQueriedAttributes();
