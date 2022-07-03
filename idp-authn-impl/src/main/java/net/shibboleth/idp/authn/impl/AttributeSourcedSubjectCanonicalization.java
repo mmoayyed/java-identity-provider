@@ -29,6 +29,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -41,15 +47,8 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An action that extracts a resolved {@link IdPAttribute} value from an {@link AttributeContext} child obtained via
@@ -107,8 +106,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
      * @param ch delimiter to use
      */
     public void setScopedDelimiter(final char ch) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         delimiter = ch;
     }
     
@@ -121,8 +119,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
      * @since 4.1.0
      */
     public void setResolveFromSubject(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         resolveFromSubject = flag;
     }
     
@@ -132,8 +129,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
      * @param ids   attribute IDs to read from
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         attributeSourceIds = new ArrayList<>(StringSupport.normalizeStringCollection(ids));
     }
     
@@ -144,8 +140,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
                 "AttributeContext lookup strategy cannot be null");
     }

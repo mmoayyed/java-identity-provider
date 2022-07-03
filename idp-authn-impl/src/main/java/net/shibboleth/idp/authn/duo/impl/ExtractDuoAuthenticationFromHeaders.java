@@ -36,7 +36,6 @@ import net.shibboleth.idp.authn.duo.DuoAuthAPI;
 import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -94,8 +93,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param headerName the factor header name
      */
     public void setFactorHeader(@Nonnull @NotEmpty final String headerName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         factorHeaderName = Constraint.isNotNull(StringSupport.trimOrNull(headerName),
                 "Factor header name cannot be null or empty.");
     }
@@ -106,8 +104,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param headerName the factor header name
      */
     public void setDeviceHeader(@Nonnull @NotEmpty final String headerName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         deviceHeaderName = Constraint.isNotNull(StringSupport.trimOrNull(headerName),
                 "Device header name cannot be null or empty.");
     }
@@ -118,8 +115,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param headerName the factor header name
      */
     public void setPasscodeHeader(@Nonnull @NotEmpty final String headerName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         passcodeHeaderName = Constraint.isNotNull(StringSupport.trimOrNull(headerName),
                 "Passcode header name cannot be null or empty.");
     }
@@ -139,8 +135,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param flag flag to set
      */
     public void setClientAdddressTrusted(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         clientAddressTrusted = flag;
     }
     
@@ -159,8 +154,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param flag flag to set
      */
     public void setAutoAuthenticationSupported(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         autoAuthenticationSupported = flag;
     }
     
@@ -171,8 +165,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      */
     public void setPushInfoLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Map<String,String>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         pushInfoLookupStrategy = strategy;
     }
 

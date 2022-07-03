@@ -44,7 +44,6 @@ import net.shibboleth.idp.authn.duo.DuoIntegration;
 import net.shibboleth.idp.authn.duo.DuoPrincipal;
 import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
@@ -104,8 +103,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
      */
     public void setDuoIntegrationLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,DuoIntegration> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         duoIntegrationLookupStrategy = Constraint.isNotNull(strategy, "DuoIntegration lookup strategy cannot be null");
     }
 
@@ -115,8 +113,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
      * @param duo Duo integration details
      */
     public void setDuoIntegration(@Nonnull final DuoIntegration duo) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(duo, "DuoIntegration cannot be null");
         duoIntegrationLookupStrategy = FunctionSupport.constant(duo);
     }
@@ -127,8 +124,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
      * @param strategy lookup strategy
      */
     public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 

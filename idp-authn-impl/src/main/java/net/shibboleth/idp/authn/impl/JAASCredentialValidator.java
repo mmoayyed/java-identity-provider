@@ -39,6 +39,11 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginException;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+
 import net.shibboleth.idp.authn.AbstractUsernamePasswordCredentialValidator;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -49,13 +54,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 
 /**
  * A password validator that authenticates against JAAS.
@@ -111,8 +110,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param type the type of JAAS configuration to use
      */
     public void setLoginConfigType(@Nullable final String type) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         loginConfigType = StringSupport.trimOrNull(type);
     }
 
@@ -131,8 +129,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param uri the JAAS configuration URI parameters to use
      */
     public void setLoginConfigParameters(@Nullable final URI uri) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         if (uri != null) {
             loginConfigParameters = new URIParameter(uri);
         } else {
@@ -148,8 +145,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @since 4.1.0
      */
     public void setLoginConfigResource(@Nullable final Resource resource) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         loginConfigResource = resource;
     }
 
@@ -160,8 +156,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param configs list of JAAS application names and custom principals to use
      */
     public void setLoginConfigurations(@Nullable final Collection<Pair<String,Collection<Principal>>> configs) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         if (configs != null) {
             loginConfigurations = new ArrayList<>(configs.size());
             for (final Pair<String,Collection<Principal>> config : configs) {
@@ -185,8 +180,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param names list of JAAS application names to use
      */
     public void setLoginConfigNames(@Nullable @NonnullElements final Collection<String> names) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         loginConfigNames = StringSupport.normalizeStringCollection(names);
     }
     
@@ -197,8 +191,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      */
     public void setLoginConfigStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<Pair<String,Subject>>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         loginConfigStrategy = strategy;
     }
     

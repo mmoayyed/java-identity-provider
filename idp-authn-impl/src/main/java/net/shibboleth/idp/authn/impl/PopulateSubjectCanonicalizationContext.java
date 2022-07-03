@@ -23,16 +23,15 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An action that populates a {@link SubjectCanonicalizationContext} with the
@@ -62,8 +61,7 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
      */
     public void setAvailableFlows(
             @Nonnull @NonnullElements final Collection<SubjectCanonicalizationFlowDescriptor> flows) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
         

@@ -26,16 +26,6 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
-import net.shibboleth.idp.authn.AbstractCredentialValidator;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.CertificateContext;
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.SecurityException;
@@ -44,6 +34,15 @@ import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.security.x509.X509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.AbstractCredentialValidator;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.CertificateContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 /**
  * A credential validator that validates an X.509 certificate.
@@ -77,8 +76,7 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
      */
     public void setCertificateContextLookupStrategy(
             @Nonnull final Function<AuthenticationContext,CertificateContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         certContextLookupStrategy = Constraint.isNotNull(strategy,
                 "CertificateContextLookupStrategy cannot be null");
     }
@@ -89,8 +87,7 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
      * @param tm trust engine to use  
      */
     public void setTrustEngine(@Nullable final TrustEngine<? super X509Credential> tm) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         trustEngine = tm;
     }
     
@@ -102,8 +99,7 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
      * @param flag flag to set
      */
     public void setSaveCertificateToCredentialSet(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         saveCertificateToCredentialSet = flag;
     }
 

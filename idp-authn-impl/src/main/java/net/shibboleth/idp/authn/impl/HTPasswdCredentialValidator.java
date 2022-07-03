@@ -33,6 +33,15 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
+import org.apache.commons.codec.digest.Crypt;
+import org.apache.commons.codec.digest.Md5Crypt;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+
+import com.google.common.base.Strings;
+
 import net.shibboleth.idp.authn.AbstractUsernamePasswordCredentialValidator;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -43,17 +52,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAft
 import net.shibboleth.utilities.java.support.codec.StringDigester;
 import net.shibboleth.utilities.java.support.codec.StringDigester.OutputFormat;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.apache.commons.codec.digest.Crypt;
-import org.apache.commons.codec.digest.Md5Crypt;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-
-import com.google.common.base.Strings;
 
 /**
  * A password validator that authenticates against Apache htpasswd files.
@@ -90,8 +89,7 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
      * @param resource resource to use
      */
     public void setResource(@Nonnull final Resource resource) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         htPasswdResource = Constraint.isNotNull(resource, "Resource cannot be null");
     }
     

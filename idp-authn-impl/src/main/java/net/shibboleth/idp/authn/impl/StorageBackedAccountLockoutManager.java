@@ -43,7 +43,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
@@ -89,8 +88,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param storage the back-end to use
      */
     public void setStorageService(@Nonnull final StorageService storage) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         storageService = Constraint.isNotNull(storage, "StorageService cannot be null");
         final StorageCapabilities caps = storageService.getCapabilities();
         if (caps instanceof StorageCapabilitiesEx) {
@@ -109,8 +107,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param strategy strategy function
      */
     public void setLockoutKeyStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         lockoutKeyStrategy = Constraint.isNotNull(strategy, "Lockout key strategy cannot be null");
     }
     
@@ -122,8 +119,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param attempts maximum failed attempts
      */
     public void setMaxAttempts(@Positive final int attempts) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         maxAttemptsLookupStrategy = FunctionSupport.constant(
                 Constraint.isGreaterThan(0, attempts, "Attempts must be greater than zero"));
     }
@@ -136,8 +132,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param strategy lookup function
      */
     public void setMaxAttemptsLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         maxAttemptsLookupStrategy = Constraint.isNotNull(strategy, "Max attempts lookup strategy cannot be null");
     }
     
@@ -149,8 +144,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param window counter window
      */
     public void setCounterInterval(@Nonnull final Duration window) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         counterIntervalLookupStrategy = FunctionSupport.constant(
                 Constraint.isNotNull(window, "Counter interval cannot be null"));
     }
@@ -163,8 +157,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param strategy lookup function
      */
     public void setCounterIntervalLookupStrategy(@Nonnull final Function<ProfileRequestContext,Duration> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         counterIntervalLookupStrategy = Constraint.isNotNull(strategy,
                 "Counter interval lookup strategy cannot be null");
     }
@@ -177,8 +170,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param duration lockout duration
      */
     public void setLockoutDuration(@Nonnull final Duration duration) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         lockoutDurationLookupStrategy = FunctionSupport.constant(
                 Constraint.isNotNull(duration, "Lockout duration cannot be null"));
     }
@@ -191,8 +183,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param strategy lookup function
      */
     public void setLockoutDurationLookupStrategy(@Nonnull final Function<ProfileRequestContext,Duration> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         lockoutDurationLookupStrategy = Constraint.isNotNull(strategy,
                 "Lockout duration lookup strategy cannot be null");
     }
@@ -203,8 +194,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param flag flag to set
      */
     public void setExtendLockoutDuration(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         extendLockoutDuration = flag;
     }
     

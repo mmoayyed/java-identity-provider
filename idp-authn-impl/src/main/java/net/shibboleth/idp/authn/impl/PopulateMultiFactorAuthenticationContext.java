@@ -27,6 +27,13 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -35,16 +42,8 @@ import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An action that creates and populates a {@link MultiFactorAuthenticationContext} with the set of
@@ -94,8 +93,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
      */
     public void setTransitionMapLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         transitionMapLookupStrategy = Constraint.isNotNull(strategy, "Transition map lookup strategy cannot be null");
     }
     
@@ -106,8 +104,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
      */
     public void setMultiFactorContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,MultiFactorAuthenticationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         multiFactorContextCreationStrategy = Constraint.isNotNull(strategy,
                 "MultiFactorAuthenticationContext creation strategy cannot be null");
     }
@@ -122,8 +119,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
      */
     public void setActiveResultLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<AuthenticationResult>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         activeResultLookupStrategy = strategy;
     }
 

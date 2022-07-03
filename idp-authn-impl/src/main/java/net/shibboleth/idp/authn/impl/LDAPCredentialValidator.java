@@ -23,17 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AbstractUsernamePasswordCredentialValidator;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.LDAPResponseContext;
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.apache.velocity.VelocityContext;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapException;
@@ -48,6 +37,16 @@ import org.ldaptive.jaas.LdapPrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.AbstractUsernamePasswordCredentialValidator;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.LDAPResponseContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A password validator that authenticates against LDAP natively.
@@ -84,8 +83,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param auth to authenticate with
      */
     public void setAuthenticator(@Nonnull final Authenticator auth) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         authenticator = Constraint.isNotNull(auth, "Authenticator cannot be null");
     }
 
@@ -104,8 +102,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param attributes attribute names
      */
     public void setReturnAttributes(@Nullable final String... attributes) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         returnAttributes = attributes;
     }
     
@@ -115,8 +112,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param strategy strategy function
      */
     public void setPasswordLookupStrategy(@Nullable final Function<ProfileRequestContext,char[]> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         passwordLookupStrategy = strategy;
     }
 

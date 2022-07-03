@@ -19,17 +19,16 @@ package net.shibboleth.idp.authn.spnego.impl;
 
 import javax.annotation.Nonnull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.CookieManager;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Component managing the auto-login state via cookie.
@@ -65,8 +64,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * @param manager the CookieManager to use.
      */
     public void setCookieManager(@Nonnull final CookieManager manager) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         cookieManager = Constraint.isNotNull(manager, "CookieManager cannot be null");
     }
 
@@ -87,8 +85,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * @since 4.2.0
      */
     public void setCookieName(@Nonnull @NotEmpty final String name) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         cookieName = Constraint.isNotEmpty(StringSupport.trimOrNull(name), "Cookie name cannot be null or empty");
     }
     

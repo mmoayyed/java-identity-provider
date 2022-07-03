@@ -23,14 +23,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -75,8 +73,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
      */
     public void setProfileRequestContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,ProfileRequestContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         profileRequestContextCreationStrategy = Constraint.isNotNull(strategy, "Creation strategy cannot be null");
     }
     
@@ -86,8 +83,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
      * @param id    profile ID to populate into the context
      */
     public void setProfileId(@Nullable final String id) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         profileId = StringSupport.trimOrNull(id);
     }
 
@@ -97,8 +93,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
      * @param id    logging ID to populate into the context
      */
     public void setLoggingId(@Nullable final String id) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         loggingId = StringSupport.trimOrNull(id);
     }
     
@@ -108,8 +103,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
      * @param browser   true iff the request is browser based
      */
     public void setBrowserProfile(final boolean browser) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         browserProfile = browser;
     }
     

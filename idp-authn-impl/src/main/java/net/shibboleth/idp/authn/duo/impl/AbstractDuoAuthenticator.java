@@ -24,9 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
@@ -37,11 +34,12 @@ import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 
 import com.duosecurity.duoweb.DuoWebException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -65,9 +63,7 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      * @param client HttpClient
      */
     public void setHttpClient(@Nonnull final HttpClient client) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
+        throwSetterPreconditionExceptions();
         httpClient = Constraint.isNotNull(client, "HTTP client cannot be null");
     }
 
@@ -77,9 +73,7 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      * @param params the new client security parameters
      */
     public void setHttpClientSecurityParameters(@Nullable final HttpClientSecurityParameters params) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
+        throwSetterPreconditionExceptions();
         httpClientSecurityParameters = params;
     }
     
@@ -89,9 +83,7 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      * @param mapper object mapper
      */
     public void setObjectMapper(@Nonnull final ObjectMapper mapper) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
+        throwSetterPreconditionExceptions();
         objectMapper = Constraint.isNotNull(mapper, "Object mapper cannot be null");
     }
 

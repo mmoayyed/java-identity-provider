@@ -49,6 +49,11 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.security.auth.Subject;
 
+import org.opensaml.security.x509.X509Support;
+import org.opensaml.storage.StorageSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.GenericPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
@@ -61,13 +66,7 @@ import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.security.x509.X509Support;
-import org.opensaml.storage.StorageSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Handles serialization of results, delegating handling of {@link Principal} objects to one or more
@@ -193,7 +192,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
 // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance) throws IOException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         try {
             final StringWriter sink = new StringWriter(128);
@@ -260,7 +259,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     @Nonnull public AuthenticationResult deserialize(final long version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
                     @Nullable final Long expiration) throws IOException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         try (final JsonReader reader = readerFactory.createReader(new StringReader(value))) {
             

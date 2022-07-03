@@ -28,25 +28,22 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.net.IPRange;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * An action that ensures that a user-agent address found within a {@link UserAgentContext}
@@ -89,8 +86,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
      * @param newMappings the IP range(s) to authenticate as particular principals
      */
     public void setMappings(@Nullable @NonnullElements final Map<String,Collection<IPRange>> newMappings) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         if (newMappings != null) {
             mappings = new HashMap<>(newMappings.size());
             for (final Map.Entry<String,Collection<IPRange>> e : newMappings.entrySet()) {

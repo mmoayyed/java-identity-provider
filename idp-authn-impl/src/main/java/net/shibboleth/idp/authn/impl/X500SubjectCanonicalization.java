@@ -27,15 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.x500.X500Principal;
 
-import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.SubjectCanonicalizationException;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.cryptacular.x509.dn.Attribute;
 import org.cryptacular.x509.dn.NameReader;
 import org.cryptacular.x509.dn.RDN;
@@ -45,6 +36,14 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.SubjectCanonicalizationException;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 
 /**
@@ -101,8 +100,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      * @param types types to search for
      */
     public void setSubjectAltNameTypes(@Nullable @NonnullElements final List<Integer> types) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         if (types != null) {
             subjectAltNameTypes = List.copyOf(types);
         } else {
@@ -116,8 +114,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      * @param ids RDN OIDs to search for
      */
     public void setObjectIds(@Nullable @NonnullElements final List<String> ids) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         objectIds = List.copyOf(StringSupport.normalizeStringCollection(ids));
     }
     

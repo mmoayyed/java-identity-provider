@@ -18,21 +18,20 @@
 package net.shibboleth.idp.authn.impl;
 
 import javax.annotation.Nonnull;
-import jakarta.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.authn.AbstractExtractionAction;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.authn.AbstractExtractionAction;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * An action that extracts a username and password from an HTTP form body or query string,
@@ -71,8 +70,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
      * @param fieldName the username parameter name
      */
     public void setUsernameFieldName(@Nonnull @NotEmpty final String fieldName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         usernameFieldName = Constraint.isNotNull(
                 StringSupport.trimOrNull(fieldName), "Username field name cannot be null or empty.");
     }
@@ -83,8 +81,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
      * @param fieldName the password parameter name
      */
     public void setPasswordFieldName(@Nonnull @NotEmpty final String fieldName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         passwordFieldName = Constraint.isNotNull(
                 StringSupport.trimOrNull(fieldName), "Password field name cannot be null or empty.");
     }
@@ -95,8 +92,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
      * @param fieldName the SSO bypass parameter name
      */
     public void setSSOBypassFieldName(@Nonnull @NotEmpty final String fieldName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         ssoBypassFieldName = Constraint.isNotNull(
                 StringSupport.trimOrNull(fieldName), "SSO Bypass field name cannot be null or empty.");
     }

@@ -47,7 +47,6 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -99,8 +98,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
      * @param mapper object mapper
      */
     public void setObjectMapper(@Nonnull final ObjectMapper mapper) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         objectMapper = Constraint.isNotNull(mapper, "ObjectMapper cannot be null");
     }
 

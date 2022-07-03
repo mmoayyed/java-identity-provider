@@ -24,7 +24,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -48,7 +47,7 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * @param principal service principal
      */
     public void setServicePrincipal(@Nonnull @NotEmpty final String principal) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         servicePrincipal = Constraint.isNotEmpty(StringSupport.trim(principal), "Principal cannot be null or empty");
     }
 
@@ -67,7 +66,7 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * @param newKeytab keytab to use
      */
     public void setKeytab(@Nullable final String newKeytab) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         keytab = StringSupport.trim(newKeytab);
     }
 
@@ -86,7 +85,7 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * @param newPassword password to use
      */
     public void setPassword(@Nullable final String newPassword) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         password = newPassword;
     }
 

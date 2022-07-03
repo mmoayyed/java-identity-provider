@@ -33,18 +33,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import net.shibboleth.idp.authn.AbstractUsernamePasswordCredentialValidator;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
@@ -54,6 +42,17 @@ import org.ietf.jgss.Oid;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.AbstractUsernamePasswordCredentialValidator;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * A password validator that authenticates against Kerberos natively, with optional service ticket verification.
@@ -98,8 +97,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param name  name of login module class
      */
     public void setLoginModuleClassName(@Nonnull final String name) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         loginModuleClassName = Constraint.isNotNull(StringSupport.trimOrNull(name),
                 "Class name cannot be null or empty");
     }
@@ -110,8 +108,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param flag  flag to set
      */
     public void setRefreshKrb5Config(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         refreshKrb5Config = flag;
     }
 
@@ -121,8 +118,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param flag  flag to set
      */
     public void setPreserveTicket(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         preserveTicket = flag;
     }
     
@@ -134,8 +130,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param name name of service principal
      */
     public void setServicePrincipal(@Nullable final String name) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         servicePrincipal = StringSupport.trimOrNull(name);
     }
 
@@ -145,8 +140,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param path path to file containing a keytab
      */
     public void setKeytabPath(@Nullable final String path) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         keytabPath = StringSupport.trimOrNull(path);
     }
     

@@ -35,7 +35,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -75,8 +74,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * @param flag value to set  
      */
     public void setCheckRemoteUser(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         checkRemoteUser = flag;
     }
 
@@ -86,8 +84,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * @param attributes    list of request attributes to check
      */
     public void setCheckAttributes(@Nullable @NonnullElements final Collection<String> attributes) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         checkAttributes = StringSupport.normalizeStringCollection(attributes);
     }
 
@@ -97,8 +94,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * @param headers list of request headers to check
      */
     public void setCheckHeaders(@Nullable @NonnullElements final Collection<String> headers) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         checkHeaders = StringSupport.normalizeStringCollection(headers);
     }
     

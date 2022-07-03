@@ -25,6 +25,10 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.config.navigate.AuthenticationFlowsLookupFunction;
@@ -32,13 +36,8 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
@@ -87,8 +86,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      * @param flows the flows known to the system
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
 
@@ -101,8 +99,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      */
     public void setPotentialFlowsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<AuthenticationFlowDescriptor>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         potentialFlowsLookupStrategy = Constraint.isNotNull(strategy, "Potential flow lookup strategy cannot be null");
     }
     
@@ -113,7 +110,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      */
     public void setActiveFlowsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         activeFlowsLookupStrategy = Constraint.isNotNull(strategy, "Flow lookup strategy cannot be null");
     }
     
@@ -133,8 +130,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      */
     public void setPrincipalEvalPredicateFactoryRegistry(
             @Nonnull final PrincipalEvalPredicateFactoryRegistry registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
     }
     
@@ -147,8 +143,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      * @since 3.4.0
      */
     public void setFixedEventLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         fixedEventLookupStrategy = strategy;
     }
 

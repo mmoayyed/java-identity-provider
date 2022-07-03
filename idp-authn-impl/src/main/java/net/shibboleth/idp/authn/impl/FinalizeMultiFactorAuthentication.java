@@ -26,6 +26,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -37,15 +44,7 @@ import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An authentication action that completes MFA by producing a final {@link AuthenticationResult}
@@ -102,8 +101,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      */
     public void setMultiFactorContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,MultiFactorAuthenticationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         multiFactorContextLookupStrategy = Constraint.isNotNull(strategy,
                 "MultiFactorAuthenticationContext lookup strategy cannot be null");
     }
@@ -115,8 +113,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      */
     public void setResultMergingStrategy(
             @Nullable final Function<ProfileRequestContext,AuthenticationResult> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         resultMergingStrategy = strategy;
     }
 
@@ -126,8 +123,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      * @param predicate predicate to apply, or null
      */
     public void setResultCachingPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         resultCachingPredicate = predicate;
     }
 
@@ -138,8 +134,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      */
     public void setRequesterLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         requesterLookupStrategy = strategy;
     }
 
@@ -150,8 +145,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      */
     public void setResponderLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         responderLookupStrategy = strategy;
     }
 

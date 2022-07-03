@@ -30,6 +30,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.duosecurity.duoweb.DuoWebException;
+
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -41,11 +43,8 @@ import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
 import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-
-import com.duosecurity.duoweb.DuoWebException;
 
 /**
  * An action that checks for a {@link DuoAuthenticationContext} and directly produces an
@@ -114,8 +113,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      */
     public void setDuoIntegrationLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,DuoIntegration> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         duoIntegrationLookupStrategy = Constraint.isNotNull(strategy, "DuoIntegration lookup strategy cannot be null");
     }
 
@@ -125,8 +123,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      * @param duo Duo integration details
      */
     public void setDuoIntegration(@Nonnull final DuoIntegration duo) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(duo, "DuoIntegration cannot be null");
         duoIntegrationLookupStrategy = FunctionSupport.constant(duo);
     }
@@ -137,8 +134,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      * @param strategy lookup strategy
      */
     public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 
@@ -148,8 +144,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      * @param authenticator a Duo AuthAPI /auth endpoint implementation
      */
     public void setAuthAuthenticator(@Nonnull final DuoAuthAuthenticator authenticator) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         authAuthenticator = Constraint.isNotNull(authenticator, "DuoAuthAuthenticator cannot be null");
     }
 
@@ -159,8 +154,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      * @param authenticator a Duo AuthAPI /preauth endpoint implementation
      */
     public void setPreauthAuthenticator(@Nonnull final DuoPreauthAuthenticator authenticator) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         preauthAuthenticator = Constraint.isNotNull(authenticator, "DuoPreauthAuthenticator cannot be null");
     }
 
