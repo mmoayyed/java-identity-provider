@@ -23,6 +23,13 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.cas.config.ConfigLookupFunction;
@@ -39,17 +46,9 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventException;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Generates and stores a CAS protocol proxy ticket. Possible outcomes:
@@ -116,8 +115,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
      * @param predicate Session validation predicate. Default is <code>Predicates.alwaysFalse()</code>.
      */
     public void setValidateIdPSessionPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         validateIdPSessionPredicate = Constraint.isNotNull(predicate, "Session validation condition cannot be null");
     }
 

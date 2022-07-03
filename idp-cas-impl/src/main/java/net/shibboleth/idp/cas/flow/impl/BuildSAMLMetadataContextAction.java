@@ -20,18 +20,17 @@ package net.shibboleth.idp.cas.flow.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.idp.cas.service.impl.ServiceEntityDescriptor;
-import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+
+import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.idp.cas.service.impl.ServiceEntityDescriptor;
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 
 /**
  * Builds a {@link SAMLMetadataContext} child of {@link RelyingPartyContext} to facilitate relying party selection
@@ -67,8 +66,7 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
      * @param flag flag to set
      */
     public void setRelyingPartyIdFromMetadata(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         relyingPartyIdFromMetadata = flag;
     }
     
