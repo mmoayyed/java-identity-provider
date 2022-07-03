@@ -30,7 +30,6 @@ import com.google.common.base.Strings;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
@@ -73,8 +72,7 @@ public class SealedPrincipalSerializer<T extends Principal> extends SimplePrinci
      * @param theSealer encrypting component to use
      */
     public void setDataSealer(@Nullable final DataSealer theSealer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sealer = theSealer;
     }
 

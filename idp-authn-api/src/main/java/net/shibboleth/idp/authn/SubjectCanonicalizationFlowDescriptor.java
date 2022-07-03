@@ -21,15 +21,14 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.FlowDescriptor;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.profile.FlowDescriptor;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A descriptor for a subject canonicalization flow.
@@ -60,7 +59,7 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableI
      * @param condition predicate that controls activation of the flow
      */
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         activationCondition = Constraint.isNotNull(condition, "Activation condition predicate cannot be null");
     }
 

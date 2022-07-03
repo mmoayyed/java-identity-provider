@@ -28,20 +28,19 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * A base class for subject canonicalization actions.
@@ -98,8 +97,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      */
     public void setLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectCanonicalizationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         scCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }
 
@@ -109,8 +107,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      * @param newTransforms collection of replacement transforms
      */
     public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String, String>> newTransforms) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         if (newTransforms != null) {
             transforms = new ArrayList<>();
             for (final Pair<String,String> p : newTransforms) {
@@ -129,8 +126,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      * @param flag  uppercase flag
      */
     public void setUppercase(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         uppercase = flag;
     }
 
@@ -140,8 +136,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      * @param flag lowercase flag
      */
     public void setLowercase(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         lowercase = flag;
     }
     
@@ -151,8 +146,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      * @param flag trim flag
      */
     public void setTrim(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         trim = flag;
     }
     

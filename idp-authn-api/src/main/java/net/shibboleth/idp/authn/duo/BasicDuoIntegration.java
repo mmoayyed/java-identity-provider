@@ -17,16 +17,6 @@
 
 package net.shibboleth.idp.authn.duo;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Set;
@@ -34,6 +24,15 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Wrapper for use of Duo.
@@ -73,8 +72,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * @param host API host
      */
     public void setAPIHost(@Nonnull @NotEmpty final String host) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         apiHost = Constraint.isNotNull(StringSupport.trimOrNull(host), "API host cannot be null or empty");
     }
 
@@ -89,8 +87,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * @param key application key
      */
     public void setApplicationKey(@Nullable @NotEmpty final String key) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         applicationKey = StringSupport.trimOrNull(key);
     }
 
@@ -105,8 +102,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * @param key integration key
      */
     public void setIntegrationKey(@Nonnull @NotEmpty final String key) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         integrationKey = Constraint.isNotNull(StringSupport.trimOrNull(key), "Integration key cannot be null or empty");
     }
 
@@ -121,8 +117,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * @param key secret key
      */
     public void setSecretKey(@Nonnull @NotEmpty final String key) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         secretKey = Constraint.isNotNull(StringSupport.trimOrNull(key), "Secret key cannot be null or empty");
     }
 
@@ -143,8 +138,8 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      */
     public <T extends Principal> void setSupportedPrincipals(
             @Nullable @NonnullElements final Collection<T> principals) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
+
         supportedPrincipals.getPrincipals().clear();
         
         if (principals != null && !principals.isEmpty()) {

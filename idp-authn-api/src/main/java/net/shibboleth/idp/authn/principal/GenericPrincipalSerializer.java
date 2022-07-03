@@ -51,7 +51,6 @@ import com.google.common.collect.ImmutableBiMap;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -94,8 +93,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
      * @param mappings  string to symbolic mappings
      */
     public void setSymbolics(@Nonnull @NonnullElements final Map<String,Integer> mappings) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Mappings cannot be null"));
     }
         
@@ -119,8 +117,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
         final StringWriter sink = new StringWriter(32);
         
         try (final JsonGenerator gen = getJsonGenerator(sink)) {
@@ -152,8 +149,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
 
     /** {@inheritDoc} */
     @Nullable public Principal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
+        throwComponentStateExceptions();
         try (final JsonReader reader = getJsonReader(new StringReader(value))) {
             final JsonStructure st = reader.read();
             if (!(st instanceof JsonObject)) {

@@ -33,6 +33,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.core.metrics.MetricsSupport;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.AuthenticationWarningContext;
@@ -47,18 +56,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.core.metrics.MetricsSupport;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 
 /**
  * A base class for authentication related actions that validate credentials and produce an
@@ -135,8 +134,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @since 3.3.0
      */
     public void setMetricName(@Nonnull @NotEmpty final String name) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         metricName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Metric name cannot be null or empty");
     }
     
@@ -158,8 +156,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param flag flag to set
      */
     public void setAddDefaultPrincipals(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         addDefaultPrincipals = flag;
     }
     
@@ -183,8 +180,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param messages the error message / event mappings to set
      */
     public void setClassifiedMessages(@Nullable @NonnullElements final Map<String,Collection<String>> messages) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         if (messages != null) {
             classifiedMessages = new LinkedHashMap<>();
             for (final Map.Entry<String, Collection<String>> entry : messages.entrySet()) {
@@ -213,8 +209,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param predicate predicate to apply, or null
      */
     public void setResultCachingPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         resultCachingPredicate = predicate;
     }
     
@@ -237,8 +232,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @since 4.1.0
      */
     public void setCleanupHook(@Nullable final Consumer<ProfileRequestContext> hook) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         cleanupHook = hook;
     }
     
@@ -259,8 +253,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param strategy lookup strategy
      */
     public void setRequesterLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         requesterLookupStrategy = strategy;
     }
     
@@ -282,8 +275,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      */
     public void setResponderLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         responderLookupStrategy = strategy;
     }
     
@@ -303,8 +295,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param principals supported principals to include
      */
     public void setSupportedPrincipals(@Nullable @NonnullElements final Collection<Principal> principals) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         getSubject().getPrincipals().clear();
         
         if (principals != null && !principals.isEmpty()) {

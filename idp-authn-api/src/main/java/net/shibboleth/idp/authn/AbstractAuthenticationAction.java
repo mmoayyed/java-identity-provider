@@ -22,14 +22,13 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
+
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A base class for authentication related actions.
@@ -66,7 +65,7 @@ public abstract class AbstractAuthenticationAction
      */
     public void setAuthenticationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AuthenticationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }

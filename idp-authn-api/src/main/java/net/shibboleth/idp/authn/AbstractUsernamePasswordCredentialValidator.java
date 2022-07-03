@@ -30,6 +30,11 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
@@ -38,14 +43,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An abstract {@link CredentialValidator} that checks for a {@link UsernamePasswordContext} and delegates
@@ -104,8 +103,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      */
     public void setUsernamePasswordContextLookupStrategy(
             @Nonnull final Function<AuthenticationContext,UsernamePasswordContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         usernamePasswordContextLookupStrategy = Constraint.isNotNull(strategy,
                 "UsernamePasswordContextLookupStrategy cannot be null");
     }
@@ -125,8 +123,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param flag  flag to set
      */
     public void setSavePasswordToCredentialSet(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         savePasswordToCredentialSet = flag;
     }
 
@@ -155,8 +152,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      */
     @Deprecated(since="4.1.0", forRemoval=true)
     public void setRemoveContextAfterValidation(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         removeContextAfterValidation = flag;
     }
 
@@ -166,8 +162,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param expression a matching expression
      */
     public void setMatchExpression(@Nullable final Pattern expression) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         if (expression != null && !expression.pattern().isEmpty()) {
             matchExpression = expression;
         } else {
@@ -181,8 +176,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param newTransforms collection of replacement transforms
      */
     public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String,String>> newTransforms) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         if (newTransforms != null) {
             transforms = new ArrayList<>();
             for (final Pair<String,String> p : newTransforms) {
@@ -201,8 +195,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param flag  uppercase flag
      */
     public void setUppercase(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         uppercase = flag;
     }
 
@@ -212,8 +205,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param flag lowercase flag
      */
     public void setLowercase(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         lowercase = flag;
     }
     
@@ -223,8 +215,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param flag trim flag
      */
     public void setTrim(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         trim = flag;
     }
     
@@ -234,7 +225,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
             @Nonnull final AuthenticationContext authenticationContext,
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         final UsernamePasswordContext upContext = usernamePasswordContextLookupStrategy.apply(authenticationContext);
         if (upContext == null) {

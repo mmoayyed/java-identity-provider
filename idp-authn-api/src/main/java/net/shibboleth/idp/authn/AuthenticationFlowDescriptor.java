@@ -34,6 +34,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageSerializer;
+import org.springframework.core.Ordered;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Predicates;
+
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.PrincipalService;
 import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
@@ -44,17 +51,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.PredicateSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageSerializer;
-import org.springframework.core.Ordered;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicates;
 
 /**
  * A descriptor for an authentication flow.
@@ -174,8 +173,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @param isSupported whether this flow supports non-browser clients
      */
     public void setNonBrowserSupported(final boolean isSupported) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         supportsNonBrowser = isSupported;
     }
 
@@ -194,8 +192,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @param isSupported whether this flow supports passive authentication
      */
     public void setPassiveAuthenticationSupported(final boolean isSupported) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         supportsPassive = isSupported;
     }
 
@@ -214,8 +211,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @param isSupported whether this flow supports forced authentication.
      */
     public void setForcedAuthenticationSupported(final boolean isSupported) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         supportsForced = isSupported;
     }
     
@@ -315,7 +311,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @since 3.4.0
      */
     public void setReuseCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
 
         // Auto-installs a guard against use of a proxied result if requester proxy count is zero.
         reuseCondition = PredicateSupport.and(new ProxyCountPredicate(),
@@ -343,8 +339,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @since 4.1.0
      */
     public void setSubjectDecorator(@Nullable final BiConsumer<ProfileRequestContext,Subject> decorator) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         subjectDecorator = decorator;
     }    
 
@@ -365,7 +360,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @param flowLifetime the lifetime for the flow
      */
     public void setLifetime(@Nullable final Duration flowLifetime) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isFalse(flowLifetime != null && (flowLifetime.isNegative() || flowLifetime.isZero()),
                 "Lifetime must be null or greater than 0");
 
@@ -391,7 +386,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @param timeout the flow inactivity timeout, must be greater than zero
      */
     public void setInactivityTimeout(@Nonnull final Duration timeout) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(timeout, "Inactivity timeout cannot be null");
         Constraint.isFalse(timeout.isNegative() || timeout.isZero(), "Inactivity timeout must be greater than 0");
 
@@ -445,7 +440,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @param principals supported principals to add
      */
     public void setSupportedPrincipals(@Nonnull @NonnullElements final Collection<Principal> principals) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(principals, "Principal collection cannot be null.");
 
         supportedPrincipals.getPrincipals().clear();
@@ -465,8 +460,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @since 4.1.0
      */
     public void setSupportedPrincipalsByString(@Nonnull @NonnullElements final Collection<String> principals) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         stringBasedPrincipals = Set.copyOf(StringSupport.normalizeStringCollection(principals));
     }
 
@@ -491,8 +485,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @param serializer the custom serializer
      */
     public void setResultSerializer(@Nonnull final StorageSerializer<AuthenticationResult> serializer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         resultSerializer = Constraint.isNotNull(serializer, "StorageSerializer cannot be null");
     }
     
@@ -508,8 +501,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @since 4.0.0
      */
     public void setPrincipalWeightMap(@Nullable @NonnullElements final Map<Principal,Integer> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         principalWeightMap = map != null ? map : Collections.emptyMap();
     }
     
@@ -521,8 +513,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @since 4.0.1
      */
     public void setPrincipalServiceManager(@Nullable final PrincipalServiceManager manager) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         principalServiceManager = manager;
     }
 
@@ -571,7 +562,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** {@inheritDoc} */
     @Override @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance)
             throws IOException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
 
         return resultSerializer.serialize(instance);
     }
@@ -581,7 +572,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
             @Nonnull @NotEmpty final String context, @Nonnull @NotEmpty final String key, 
             @Nonnull @NotEmpty final String value, @Nonnull final Long expiration)
             throws IOException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
 
         // Back the expiration off by the inactivity timeout to recover the last activity time.
         final AuthenticationResult result = resultSerializer.deserialize(version, context, key, value,

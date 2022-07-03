@@ -27,6 +27,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicates;
+
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
@@ -37,14 +43,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
 
 /**
  * An abstract {@link CredentialValidator} that handles some common behavior.
@@ -83,7 +82,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
      * @param condition condition to use
      */
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         activationCondition = Constraint.isNotNull(condition, "Activation condition cannot be null");
     }
@@ -102,7 +101,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
      * @param principals supported principals to include
      */
     public void setSupportedPrincipals(@Nullable @NonnullElements final Collection<Principal> principals) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         if (principals != null) {
             final Collection<Principal> copy = Set.copyOf(principals);
@@ -123,7 +122,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
             @Nonnull final AuthenticationContext authenticationContext,
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         if (!activationCondition.test(profileRequestContext)) {
             log.debug("{} Activation condition was false, ignoring request", getLogPrefix());
