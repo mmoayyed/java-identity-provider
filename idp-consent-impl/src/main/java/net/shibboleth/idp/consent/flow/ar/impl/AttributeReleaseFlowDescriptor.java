@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.logic.impl.AttributeValuesHashFunction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -92,8 +91,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * @param flag true if consent should not be remembered
      */
     public void setDoNotRememberConsentAllowed(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         doNotRememberConsentAllowed = flag;
     }
 
@@ -103,8 +101,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * @param flag true iff consent to any attribute and to any relying party is allowed
      */
     public void setGlobalConsentAllowed(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         globalConsentAllowed = flag;
     }
 
@@ -114,8 +111,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * @param flag true iff per-attribute consent is enabled
      */
     public void setPerAttributeConsentEnabled(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         perAttributeConsentEnabled = flag;
     }
 
@@ -126,9 +122,9 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      */
     public void setAttributeValuesHashFunction(
             @Nonnull final Function<Collection<IdPAttributeValue>, String> function) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        attributeValuesHashFunction = Constraint.isNotNull(function, "Attribute values hash function cannot be null");
+        throwSetterPreconditionExceptions();
+                attributeValuesHashFunction = Constraint.isNotNull(function, 
+                        "Attribute values hash function cannot be null");
     }
 
 }

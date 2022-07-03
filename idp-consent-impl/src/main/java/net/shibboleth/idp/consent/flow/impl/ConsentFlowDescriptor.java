@@ -22,7 +22,6 @@ import java.time.Duration;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /**
  * Descriptor for a consent flow.
@@ -103,8 +102,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param flag true if consent equality includes comparing consent values
      */
     public void setCompareValues(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         compareValues = flag;
     }
 
@@ -114,8 +112,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param consentLifetime time to expire consent storage records.  null means infinite
      */
     public void setLifetime(@Nullable final Duration consentLifetime) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         lifetime = consentLifetime;
     }
 
@@ -125,8 +122,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param maximum the maximum number of records, or &lt;=0 for no limit
      */
     public void setMaximumNumberOfStoredRecords(final int maximum) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-    
+        throwSetterPreconditionExceptions();
         maxStoredRecords = maximum;
     }
 
@@ -136,8 +132,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param maximum the maximum number of records, or &lt;=0 for no limit
      */
     public void setExpandedNumberOfStoredRecords(final int maximum) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-    
+        throwSetterPreconditionExceptions();
         expandedMaxStoredRecords = maximum;
     }
 
@@ -149,8 +144,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param size size threshold
      */
     public void setExpandedStorageThreshold(final long size) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-    
+        throwSetterPreconditionExceptions();
         expandedStorageThreshold = size;
     }
 }

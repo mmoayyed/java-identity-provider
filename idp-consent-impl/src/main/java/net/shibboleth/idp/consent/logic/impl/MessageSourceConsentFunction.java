@@ -26,6 +26,11 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.context.MessageSource;
+import org.springframework.context.MessageSourceAware;
+import org.springframework.context.NoSuchMessageException;
+
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
@@ -35,14 +40,8 @@ import net.shibboleth.utilities.java.support.codec.StringDigester;
 import net.shibboleth.utilities.java.support.codec.StringDigester.OutputFormat;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.NoSuchMessageException;
 
 /**
  * Function that returns a consent object whose id and value are resolved from a lookup function
@@ -93,8 +92,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * @param strategy lookup strategy
      */
     public void setConsentKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         consentKeyLookupStrategy = Constraint.isNotNull(strategy, "Consent key lookup strategy cannot be null");
     }
 
@@ -104,8 +102,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * @param suffix suffix of message code for the consent value
      */
     public void setConsentValueMessageCodeSuffix(@Nonnull @NotEmpty final String suffix) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         consentValueMessageCodeSuffix =
                 Constraint.isNotNull(StringSupport.trimOrNull(suffix),
                         "Consent value message code suffix cannot be null nor empty");
@@ -118,8 +115,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      */
     public void setConsentFlowDescriptorLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,ConsentFlowDescriptor> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         consentFlowDescriptorLookupStrategy =
                 Constraint.isNotNull(strategy, "Consent flow descriptor lookup strategy cannot be null");
     }
@@ -141,8 +137,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * @param function hash function
      */
     public void setHashFunction(@Nonnull final Function<String,String> function) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         hashFunction = Constraint.isNotNull(function, "Hash function cannot be null");
     }
 

@@ -53,7 +53,6 @@ import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -97,8 +96,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
      * @param mappings string to symbolic mappings
      */
     public void setSymbolics(@Nonnull @NonnullElements final Map<String, Integer> mappings) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Symbolic mappings cannot be null"));
     }
 

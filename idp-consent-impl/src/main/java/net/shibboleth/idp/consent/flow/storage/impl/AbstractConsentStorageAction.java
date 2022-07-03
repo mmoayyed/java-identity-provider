@@ -23,6 +23,12 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageSerializer;
+import org.opensaml.storage.StorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.AbstractConsentAction;
 import net.shibboleth.idp.consent.logic.impl.FlowIdLookupFunction;
@@ -31,14 +37,7 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageSerializer;
-import org.opensaml.storage.StorageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for consent actions which interact with a {@link StorageService}.
@@ -121,8 +120,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * @param serializer storage serializer
      */
     public void setStorageSerializer(@Nonnull final StorageSerializer<Map<String,Consent>> serializer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         storageSerializer = Constraint.isNotNull(serializer, "Storage serializer cannot be null");
     }
     
@@ -132,8 +130,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * @param strategy the storage context lookup strategy
      */
     public void setStorageContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         storageContextLookupStrategy = Constraint.isNotNull(strategy, "Storage context lookup strategy cannot be null");
     }
 
@@ -143,8 +140,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * @param strategy the storage key lookup strategy
      */
     public void setStorageKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         storageKeyLookupStrategy = Constraint.isNotNull(strategy, "Storage key lookup strategy cannot be null");
     }
 

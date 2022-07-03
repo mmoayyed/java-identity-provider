@@ -21,14 +21,13 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 
 /**
  * Consent action which deletes a consent record from storage.
@@ -50,8 +49,7 @@ public class RevokeConsent extends AbstractConsentIndexedStorageAction {
      * @param flag flag to set
      */
     public void setMaskStorageErrors(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         maskStorageErrors = flag;
     }
 

@@ -31,7 +31,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Predicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -61,8 +60,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * @param prompted prompted attribute IDs
      */
     public void setPromptedAttributeIds(@Nullable @NonnullElements final Collection<String> prompted) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         promptedAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(prompted));
     }
 
@@ -72,8 +70,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * @param ignored ignored attribute IDs
      */
     public void setIgnoredAttributeIds(@Nullable @NonnullElements final Collection<String> ignored) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         ignoredAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(ignored));
     }
 
@@ -83,8 +80,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * @param expression an attribute ID matching expression
      */
     public void setAttributeIdMatchExpression(@Nullable final Pattern expression) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         if (expression != null && !expression.pattern().isEmpty()) {
             matchExpression = expression;
         } else {
