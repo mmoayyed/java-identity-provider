@@ -1,8 +1,0 @@
-x = subjects[0].getPrincipals().iterator();
-while(x.hasNext()){
-    Scripted.addValue(x.next().getName());
-    }
-x = subjects[1].getPrincipals().iterator();
-while (x.hasNext()){
-    Scripted.addValue(x.next().getName());
-    }

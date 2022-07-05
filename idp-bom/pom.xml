@@ -41,21 +41,6 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>idp-attribute-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>idp-attribute-resolver-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>idp-attribute-filter-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>idp-cas-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -92,16 +77,6 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>idp-attribute-resolver-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>idp-attribute-filter-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>idp-cas-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -129,16 +104,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>idp-profile-spring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>idp-attribute-resolver-spring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>idp-attribute-filter-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
             

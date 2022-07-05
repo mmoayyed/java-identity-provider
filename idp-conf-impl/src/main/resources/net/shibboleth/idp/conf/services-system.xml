@@ -151,7 +151,7 @@
             p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor">
         <constructor-arg name="claz" value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
         <constructor-arg name="strategy">
-            <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataResolverServiceStrategy" />
+            <bean class="net.shibboleth.idp.saml.metadata.impl.MetadataResolverServiceStrategy" />
         </constructor-arg>
     </bean>
     <!-- Auto-append system config file to resource set. -->
@@ -239,7 +239,7 @@
         p:delegate-ref="shibboleth.RelyingPartyConfigurationResolver" />
         
     <bean id="shibboleth.MetadataResolver"
-        class="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider"
+        class="net.shibboleth.idp.saml.metadata.impl.ReloadableMetadataResolver"
         c:resolverService-ref="shibboleth.MetadataResolverService" />
         
     <bean id="shibboleth.RoleDescriptorResolver"

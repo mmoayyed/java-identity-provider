@@ -28,10 +28,10 @@
     <!-- TrustEngine helpers. -->
         
     <bean id="shibboleth.StaticExplicitTrustEngine" abstract="true"
-        class="net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean" />
+        class="org.opensaml.spring.trust.StaticExplicitKeyFactoryBean" />
     
     <bean id="shibboleth.StaticPKIXTrustEngine" abstract="true"
-        class="net.shibboleth.idp.profile.spring.factory.StaticPKIXFactoryBean" />
+        class="org.opensaml.spring.trust.StaticPKIXFactoryBean" />
         
     <bean id="shibboleth.X509TrustManager" abstract="true"
         class="org.opensaml.security.trust.impl.TrustEngineX509TrustManager" />

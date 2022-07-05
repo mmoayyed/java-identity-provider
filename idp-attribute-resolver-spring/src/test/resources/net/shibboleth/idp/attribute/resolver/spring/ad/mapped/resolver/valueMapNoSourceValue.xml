@@ -1,3 +1,0 @@
-<ValueMap xmlns="urn:mace:shibboleth:2.0:resolver" xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
-	<ReturnValue>return</ReturnValue>
-</ValueMap>

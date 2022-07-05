@@ -12,21 +12,21 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
+    <bean id="shibboleth.PropertySourcesPlaceholderConfigurer" destroy-method=""
         class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <!-- These are parent beans for custom HTTP clients and resources. -->
         
     <bean id="shibboleth.HttpClientFactory" abstract="true"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean" />
+        class="net.shibboleth.spring.http.HttpClientFactoryBean" />
     <bean id="shibboleth.FileCachingHttpClientFactory" abstract="true"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean" />
+        class="net.shibboleth.spring.http.FileCachingHttpClientFactoryBean" />
     <bean id="shibboleth.MemoryCachingHttpClientFactory" abstract="true"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean" />
+        class="net.shibboleth.spring.http.InMemoryCachingHttpClientFactoryBean" />
 
     <bean id="shibboleth.HTTPResource" abstract="true"
-        class="net.shibboleth.idp.profile.spring.resource.impl.HTTPResourceFactoryBean" />
+        class="net.shibboleth.spring.http.HTTPResourceFactoryBean" />
 
     <!-- Socket Factory implementations -->
 
@@ -49,7 +49,7 @@
     This is a default client for embedded system use but should NOT be used by deployers OR
     within the IdP within any reloadable service child contexts.
     -->
-    <bean id="shibboleth.InternalHttpClient" parent="shibboleth.HttpClientFactory" lazy-init="true"
+    <bean id="shibboleth.InternalHttpClient" parent="shibboleth.HttpClientFactory" lazy-init="true" destroy-method=""
         p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
         p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
         p:connectionTimeout="%{idp.httpclient.connectionTimeout:PT1M}"
@@ -57,43 +57,5 @@
         p:socketTimeout="%{idp.httpclient.socketTimeout:PT1M}" 
         p:maxConnectionsTotal="%{idp.httpclient.maxConnectionsTotal:100}"
         p:maxConnectionsPerRoute="%{idp.httpclient.maxConnectionsPerRoute:100}" />
-
-                    
-    <!-- These are deprecated because using them triggers Spring bugs when contexts reload. -->
-
-    <bean id="shibboleth.NonCachingHttpClient" lazy-init="true"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.HttpClientFactoryBean"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
-        p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
-        p:connectionTimeout="%{idp.httpclient.connectionTimeout:PT1M}"
-        p:connectionRequestTimeout="%{idp.httpclient.connectionRequestTimeout:PT1M}"
-        p:socketTimeout="%{idp.httpclient.socketTimeout:PT1M}" 
-        p:maxConnectionsTotal="%{idp.httpclient.maxConnectionsTotal:100}"
-        p:maxConnectionsPerRoute="%{idp.httpclient.maxConnectionsPerRoute:100}" />
-    
-    <bean id="shibboleth.FileCachingHttpClient" lazy-init="true"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.FileCachingHttpClientFactoryBean"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
-        p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
-        p:connectionTimeout="%{idp.httpclient.connectionTimeout:PT1M}"
-        p:connectionRequestTimeout="%{idp.httpclient.connectionRequestTimeout:PT1M}"
-        p:socketTimeout="%{idp.httpclient.socketTimeout:PT1M}" 
-        p:maxConnectionsTotal="%{idp.httpclient.maxConnectionsTotal:100}"
-        p:maxConnectionsPerRoute="%{idp.httpclient.maxConnectionsPerRoute:100}"
-        p:cacheDirectory="%{idp.httpclient.filecaching.cacheDirectory}"
-        p:maxCacheEntries="%{idp.httpclient.filecaching.maxCacheEntries:100}"
-        p:maxCacheEntrySize="%{idp.httpclient.filecaching.maxCacheEntrySize:10485760}" />
-        
-    <bean id="shibboleth.MemoryCachingHttpClient" lazy-init="true"
-        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.InMemoryCachingHttpClientFactoryBean"
-        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} or %{idp.httpclient.useSecurityEnhancedTLSSocketFactory:false} ? @'shibboleth.SecurityEnhancedTLSSocketFactory' : null }"
-        p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
-        p:connectionTimeout="%{idp.httpclient.connectionTimeout:PT1M}"
-        p:connectionRequestTimeout="%{idp.httpclient.connectionRequestTimeout:PT1M}"
-        p:socketTimeout="%{idp.httpclient.socketTimeout:PT1M}" 
-        p:maxConnectionsTotal="%{idp.httpclient.maxConnectionsTotal:100}"
-        p:maxConnectionsPerRoute="%{idp.httpclient.maxConnectionsPerRoute:100}"
-        p:maxCacheEntries="%{idp.httpclient.memorycaching.maxCacheEntries:50}"
-        p:maxCacheEntrySize="%{idp.httpclient.memorycaching.maxCacheEntrySize:1048576}" />
 
 </beans>

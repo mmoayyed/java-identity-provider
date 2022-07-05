@@ -1,1 +1,0 @@
-urn\:mace\:shibboleth\:2.0\:resolver = net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler

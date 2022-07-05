@@ -1,1 +1,0 @@
-Scripted.addValue(new (Java.type("java.lang.Integer"))(21));

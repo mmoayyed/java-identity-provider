@@ -1,8 +1,0 @@
-<AttributeEncoder 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:type="SAML2Base64"
- 	xmlns="urn:mace:shibboleth:2.0:resolver"
-	name="Base64Name"
-	activationConditionRef="shibboleth.Predicate"
-	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/> 
- 

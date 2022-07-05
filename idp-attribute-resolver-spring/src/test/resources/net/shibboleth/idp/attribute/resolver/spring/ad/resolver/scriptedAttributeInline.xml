@@ -1,8 +1,0 @@
- <AttributeDefinition 
-    xmlns="urn:mace:shibboleth:2.0:resolver"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    dependencyOnly="1"
-    xsi:type="ScriptedAttribute" id="scriptedInline"
-    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
-    <Script>foo="bar";</Script>
-</AttributeDefinition>

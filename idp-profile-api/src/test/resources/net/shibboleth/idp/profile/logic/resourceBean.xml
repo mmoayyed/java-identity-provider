@@ -7,7 +7,7 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 
-	default-init-method="initialize" default-destroy-method="destroy">
+	default-init-method="initialize">
 
 	<bean id="testBean" class="net.shibboleth.idp.profile.logic.ScriptedPredicate"
 		  factory-method="resourceScript" c:resource="classpath:/net/shibboleth/idp/profile/logic/script.js"/>

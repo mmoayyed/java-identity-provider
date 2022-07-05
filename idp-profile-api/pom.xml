@@ -23,9 +23,8 @@
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-attribute-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>net.shibboleth</groupId>
+            <artifactId>shib-attribute-api</artifactId>
         </dependency>
 
         <dependency>
@@ -106,15 +105,16 @@
 
         <!-- Test Dependencies -->
         <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core</artifactId>
             <version>${opensaml.version}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
 

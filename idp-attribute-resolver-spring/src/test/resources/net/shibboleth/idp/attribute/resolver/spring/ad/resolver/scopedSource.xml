@@ -1,7 +1,0 @@
-<AttributeDefinition xmlns="urn:mace:shibboleth:2.0:resolver"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scopeFromDependency="TheScopeSourceAttribute"
-	xsi:type="Scoped" id="scopedSource"
-	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
-	<InputAttributeDefinition ref="TheOrphan" />
-    <InputAttributeDefinition ref="TheScopeSourceAttribute" />
-</AttributeDefinition>

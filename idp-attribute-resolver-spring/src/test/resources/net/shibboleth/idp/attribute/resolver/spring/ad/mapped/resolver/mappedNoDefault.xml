@@ -1,9 +1,0 @@
-<AttributeDefintion xsi:type="Mapped"
-	xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Mapped"
-    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
-    <InputAttributeDefinition ref="TheOrphan" />                    
-	<ValueMap>
-		<ReturnValue>return</ReturnValue>
-		<SourceValue>source</SourceValue>
-	</ValueMap>
-</AttributeDefintion>

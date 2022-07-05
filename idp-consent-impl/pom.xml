@@ -24,11 +24,6 @@
         <!-- Compile Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-attribute-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>idp-consent-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -41,6 +36,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.shibboleth</groupId>
+            <artifactId>shib-attribute-api</artifactId>
         </dependency>
 
         <dependency>
@@ -94,12 +94,6 @@
 
         <!-- Test Dependencies -->
         <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-profile-api</artifactId>
             <version>${project.version}</version>
@@ -108,14 +102,15 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-saml-impl</artifactId>
+            <artifactId>idp-profile-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-impl</artifactId>
-            <version>${project.version}</version>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core</artifactId>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>

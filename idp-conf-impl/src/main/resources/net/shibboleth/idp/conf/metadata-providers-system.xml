@@ -16,10 +16,10 @@
 
     <!-- BeanPostProcessors that auto-install MetadataFilters for internal use. -->
     
-    <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ByReferenceFilterBeanPostProcessor"
+    <bean class="net.shibboleth.spring.metadata.ByReferenceFilterBeanPostProcessor"
         p:enabled="%{idp.service.metadata.enableByReferenceFilters:true}" />
     
-    <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
+    <bean class="net.shibboleth.spring.metadata.NodeProcessingAttachingBeanPostProcessor"
         p:nodeProcessors="#{getObject('shibboleth.MetadataNodeProcessors')}" />
 
     <!-- Default NodeProcessors to auto-wire. -->
@@ -27,13 +27,13 @@
     <bean class="net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor" />
     <bean class="net.shibboleth.idp.saml.metadata.impl.ScopesNodeProcessor" />
     <bean class="net.shibboleth.idp.saml.metadata.impl.UIInfoNodeProcessor" />
-    <bean class="net.shibboleth.idp.saml.metadata.impl.AttributeMappingNodeProcessor"
+    <bean class="net.shibboleth.idp.saml.attribute.impl.AttributeMappingNodeProcessor"
         c:_0-ref="shibboleth.AttributeRegistryService" />
     
     <!-- Signature Validation Criteria  -->
     
     <bean id="shibboleth.MetadataSignatureValidationStaticCriteria" 
-            class="net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SignatureValidationCriteriaSetFactoryBean" 
+            class="net.shibboleth.spring.metadata.filter.SignatureValidationCriteriaSetFactoryBean" 
             p:includeOpenSAMLGlobalConfig="true"
             p:otherCriteria="#{getObject('shibboleth.MetadataSignatureValidationOtherCriteria')}"
             p:signatureValidationParametersResolver="#{getObject('shibboleth.MetadataSignatureValidationParametersResolver')}">
