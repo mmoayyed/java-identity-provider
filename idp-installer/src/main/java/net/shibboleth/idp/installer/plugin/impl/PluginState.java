@@ -37,7 +37,6 @@ import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -108,7 +107,7 @@ public class PluginState extends AbstractInitializableComponent {
      * @param what what to set.
      */
     public void setHttpClient(@Nonnull final HttpClient what) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         httpClient = Constraint.isNotNull(what, "HttpClient cannot be null");
     }
 

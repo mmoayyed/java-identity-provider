@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -52,8 +53,12 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @param state  Where we are right now.
      */
     public CopyDistribution(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState state) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(state);
+        if (!props.isInitialized()) {
+            throw new UninitializedComponentException("Installer Properties not Initialized");
+        }
+        if (!state.isInitialized()) {
+            throw new UninitializedComponentException("Installer State not Initialized");
+        }
         installerProps = Constraint.isNotNull(props, "Installer Properties should be non null");
         installState = Constraint.isNotNull(state, "Current state should be non-null");
     }
@@ -63,7 +68,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     public void execute() throws BuildException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         deleteOld();
         copyDist();
         copyBinDocSystem();

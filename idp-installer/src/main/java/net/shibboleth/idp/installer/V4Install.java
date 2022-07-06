@@ -62,7 +62,7 @@ import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
@@ -91,8 +91,12 @@ public class V4Install extends AbstractInitializableComponent {
      * @param installState The current install.
      */
     public V4Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
+        if (!props.isInitialized()) {
+            throw new UninitializedComponentException("Installer Properties not Initialized");
+        }
+        if (!installState.isInitialized()) {
+            throw new UninitializedComponentException("Installer State not Initialized");
+        }
         installerProps = props;
         currentState = installState;
         keyManager = new KeyManagement(installerProps, currentState);
@@ -111,7 +115,7 @@ public class V4Install extends AbstractInitializableComponent {
      * @throws BuildException if unexpected badness occurs.
      */
     public void execute() throws BuildException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         handleVersioning();
         checkPreConditions();
 
@@ -133,7 +137,7 @@ public class V4Install extends AbstractInitializableComponent {
      * prior to initialization.
      */
     public void setMetadataGenerator(final MetadataGenerator what) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         metadataGenerator = what;
     }
     
@@ -602,8 +606,12 @@ public class V4Install extends AbstractInitializableComponent {
          */
         protected KeyManagement(@Nonnull final InstallerProperties props,
                 @Nonnull final CurrentInstallState installState) {
-            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
-            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
+            if (!props.isInitialized()) {
+                throw new UninitializedComponentException("Installer Properties not Initialized");
+            }
+            if (!installState.isInitialized()) {
+                throw new UninitializedComponentException("Installer State not Initialized");
+            }
             installerProps = props;
             currentState = installState;
         }
@@ -616,7 +624,7 @@ public class V4Install extends AbstractInitializableComponent {
                 log.debug("Skipping key generation");
                 return;
             }
-            ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+            throwComponentStateExceptions();
             createdSigning = generateKey("idp-signing");
             createdEncryption = generateKey("idp-encryption");
             generateKeyStore();

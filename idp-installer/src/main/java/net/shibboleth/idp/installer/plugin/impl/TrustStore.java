@@ -51,7 +51,6 @@ import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /**
  * Code to handle (load, update, check) the trust store for an individual plugin.
@@ -85,7 +84,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
      * @param what to set.
      */
     public void setPluginId(final String what) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         pluginId = what;
     }
 
@@ -94,7 +93,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
      * @param what The idpHome to set.
      */
     public void setIdpHome(final Path what) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         idpHome = what;
     }
 
@@ -102,7 +101,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
     * @param what The value to set.
     */
    public void setTrustStore(@Nullable final String what) {
-       ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+       throwSetterPreconditionExceptions();
        explicitTrustStore = what;
    }
 
@@ -170,7 +169,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
      * from {@link PGPPublicKeyRingCollection#encode(OutputStream)}
      */
     public void saveStore() throws IOException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         saveStoreInternal();
     }
 

@@ -85,7 +85,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -178,7 +177,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param home Where we are working from
      */
     public void setIdpHome(@Nonnull final Path home) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         idpHome = Constraint.isNotNull(home, "IdPHome should be non-null");
     }
 
@@ -221,7 +220,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param params what to set.
      */
     public void setModuleContextSecurityParams(@Nullable final HttpClientSecurityParameters params) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         securityParams =  params;
     }
 
@@ -652,7 +651,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** Build the Http Client if it doesn't exist. */
     private void buildHttpClient() {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         if (httpClient == null) {
             LOG.debug("No HttpClient built, creating default");
             try {

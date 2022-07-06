@@ -33,6 +33,7 @@ import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -61,8 +62,12 @@ public final class BuildWar extends AbstractInitializableComponent {
      * @param installState  Where we are right now.
      */
     public BuildWar(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(props);
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(installState);
+        if (!props.isInitialized()) {
+            throw new UninitializedComponentException("Installer Properties not initialized");
+        }
+        if (!installState.isInitialized()) {
+            throw new UninitializedComponentException("Current Install Srare not initialized");
+        }
         targetDir = props.getTargetDir();
     }
 
@@ -97,7 +102,7 @@ public final class BuildWar extends AbstractInitializableComponent {
      * @throws BuildException if unexpected badness occurs.
      */
     public void execute() throws BuildException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         final Path warFile = targetDir.resolve("war").resolve("idp.war");
 
         log.info("Rebuilding {}, Version {}", warFile.toAbsolutePath(), Version.getVersion());
