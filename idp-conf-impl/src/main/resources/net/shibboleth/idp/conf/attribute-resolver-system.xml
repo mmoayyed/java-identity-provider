@@ -12,6 +12,9 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <!-- This extends scripted plugins with access to the SubjectContext, if present. -->
+    <bean class="net.shibboleth.idp.authn.context.impl.SubjectScriptContextExtender" />
+
     <!-- Wildcard import hook for plugins. -->
     <import resource="classpath*:/META-INF/net/shibboleth/idp/service/attribute/resolver/postconfig.xml" />
     
