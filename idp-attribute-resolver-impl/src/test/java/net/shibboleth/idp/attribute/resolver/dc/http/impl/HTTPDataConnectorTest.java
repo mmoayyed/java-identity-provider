@@ -75,8 +75,8 @@ public class HTTPDataConnectorTest {
     private static final String TEST_CONNECTOR_NAME = "HTTPConnector";
     
     private static final String TEST_URL =
-            RepositorySupport.buildHTTPResourceURL("java-identity-provider",
-                    "idp-attribute-resolver-impl/src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.json", false);
+            RepositorySupport.buildHTTPResourceURL("java-shib-attribute",
+                    "shib-attribute-resolver-impl/src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.json", false);
 
     private static final String SCRIPT_PATH = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/";
     
