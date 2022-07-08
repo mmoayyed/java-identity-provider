@@ -53,8 +53,8 @@ import net.shibboleth.utilities.java.support.test.repository.RepositorySupport;
 public class HTTPDataConnectorParserTest {
 
     private static final String TEST_URL =
-            RepositorySupport.buildHTTPSResourceURL("java-identity-provider",
-                    "idp-attribute-resolver-impl/src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.json");
+            RepositorySupport.buildHTTPSResourceURL("java-shib-attribute",
+                    "shib-attribute-resolver-impl/src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.json");
 
     private static final String SCRIPT_PATH = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/";
     

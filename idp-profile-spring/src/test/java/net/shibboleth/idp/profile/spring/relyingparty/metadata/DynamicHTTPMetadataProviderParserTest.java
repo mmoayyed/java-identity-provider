@@ -50,7 +50,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     private static final String PROP_MDURL = "metadataURL";
     
-    private static final String REPO_IDP = "java-identity-provider";
+    private static final String REPO_IDP = "java-shib-metadata";
     
     private static final String REPO_OPENSAML = "java-opensaml";
     
@@ -295,7 +295,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     @Test
     public void testRegex() throws Exception {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
-                RepositorySupport.buildHTTPResourceURL(REPO_IDP, "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/$1.xml", false));
+                RepositorySupport.buildHTTPResourceURL(REPO_IDP, "shib-metadata-spring/src/test/resources/net/shibboleth/spring/metadata/$1.xml", false));
         
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 propSource, "dynamicRegex.xml", "beans.xml");
