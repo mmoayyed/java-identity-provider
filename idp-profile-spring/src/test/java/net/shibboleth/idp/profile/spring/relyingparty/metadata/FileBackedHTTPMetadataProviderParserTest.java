@@ -36,11 +36,11 @@ public class FileBackedHTTPMetadataProviderParserTest extends AbstractMetadataPa
     
     private static final String PROP_MDURL = "metadataURL";
     
-    private static final String REPO_IDP = "java-identity-provider";
+    private static final String REPO_IDP = "java-shib-metadata";
 
-    private static final String ENTITY_XML = "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entity.xml";
+    private static final String ENTITY_XML = "shib-metadata-spring/src/test/resources/net/shibboleth/spring/metadata/entity.xml";
     
-    private static final String ENTITIES_XML = "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entities.xml";
+    private static final String ENTITIES_XML = "shib-metadata-spring/src/test/resources/net/shibboleth/spring/metadata/entities.xml";
         
     @Test public void entity() throws Exception {
         MockPropertySource propSource = singletonPropertySource(PROP_MDURL,

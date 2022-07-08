@@ -45,9 +45,9 @@ public class HTTPResourceConfigurationTests {
     
     private static final String PROP_RESOURCE_URL = "resourceURL";
     
-    private static final String REPO_IDP = "java-identity-provider";
+    private static final String REPO_IDP = "java-shib-metadata";
     
-    private static final String DOC_XML = "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/document.xml";
+    private static final String DOC_XML = "shib-metadata-spring/src/test/resources/net/shibboleth/spring/http/document.xml";
     
     private File theDir = null;
     private GenericApplicationContext theContext = null;
