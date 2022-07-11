@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                        
+                            
+    
     
     
     
     
     <wb-module deploy-name="idp-war-5.0.0-SNAPSHOT">
-                                                
+                                                        
+        
         
         
         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                                                
+                                                        
+        
         
         
         
@@ -56,12 +59,6 @@
         <dependent-module archiveName="idp-profile-impl-5.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/idp-profile-impl/idp-profile-impl">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="idp-profile-spring-5.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/idp-profile-spring/idp-profile-spring">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="opensaml-spring-5.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/opensaml-spring/opensaml-spring">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="idp-saml-api-5.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/idp-saml-api/idp-saml-api">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -75,6 +72,12 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="idp-session-impl-5.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/idp-session-impl/idp-session-impl">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="idp-spring-5.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/idp-spring/idp-spring">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="opensaml-spring-5.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/opensaml-spring/opensaml-spring">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="idp-ui-5.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/idp-ui/idp-ui">
@@ -167,25 +170,29 @@
         <dependent-module archiveName="opensaml-xmlsec-impl-5.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/opensaml-xmlsec-impl/opensaml-xmlsec-impl">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-                                                
+                                                        
+        
         
         
         
         
         <property name="context-root" value="idp-war"/>
-                                                
+                                                        
+        
         
         
         
         
         <property name="java-output-path" value="/idp-war/target/classes"/>
-                                            
+                                                    
+    
     
     
     
     
     </wb-module>
-                    
+                        
+
 
 
 

@@ -11,13 +11,13 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>Shibboleth IdP :: Profile Spring Integration</name>
-    <description>Profile Spring Integration</description>
-    <artifactId>idp-profile-spring</artifactId>
+    <name>Shibboleth IdP :: Spring Integration</name>
+    <description>Spring Integration</description>
+    <artifactId>idp-spring</artifactId>
     <packaging>jar</packaging>
 
     <properties>
-        <automatic.module.name>net.shibboleth.idp.profile.spring</automatic.module.name>
+        <automatic.module.name>net.shibboleth.idp.spring</automatic.module.name>
     </properties>
 
     <dependencies>

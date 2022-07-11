@@ -81,11 +81,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-spring</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -107,6 +102,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-session-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-spring</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

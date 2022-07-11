@@ -171,7 +171,7 @@
             
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>idp-profile-spring</artifactId>
+                <artifactId>idp-spring</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>

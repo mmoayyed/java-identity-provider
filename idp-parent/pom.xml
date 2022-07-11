@@ -43,7 +43,7 @@
         <module>../idp-saml-impl</module>
         <module>../idp-session-impl</module>
 
-        <module>../idp-profile-spring</module>
+        <module>../idp-spring</module>
 
         <module>../idp-war</module>
         <module>../idp-war-distribution</module>

@@ -37,14 +37,6 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        
-        <!-- TODO: Probably historical? -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-spring</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>net.shibboleth</groupId>
