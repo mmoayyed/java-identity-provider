@@ -81,7 +81,11 @@
 	        p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
 	    <constructor-arg name="claz" value="net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry" />
 	    <constructor-arg name="strategy">
-	       <bean class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy" />
+            <bean class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy">
+                <property name="extendedConditionFactory">
+                    <bean class="net.shibboleth.idp.relyingparty.impl.RelyingPartiesActivationConditionFactory" />
+                </property>
+            </bean>
 	    </constructor-arg>
     </bean>
     <bean id ="shibboleth.DefaultAttributeRegistryResources" class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
