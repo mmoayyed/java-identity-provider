@@ -1,0 +1,10 @@
+ <AttributeDefinition xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"
+    dependencyOnly="1"
+    xsi:type="SubjectDerivedAttribute" id="PD1" principalAttributeName="Whatever">
+    
+    <AttributeEncoder xsi:type="SAML2String" name="urn:oid:0.9.2342.19200300.100.1.1" friendlyName="uid" />
+    <!--  The following line is here to throw a parsing error -->
+    <InputAttributeDefinition ref="32" />
+
+</AttributeDefinition>
