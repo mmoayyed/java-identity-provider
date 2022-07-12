@@ -41,7 +41,7 @@ import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-/** Test for {@link SubjectDataConnector}. */
+/** Test for {@link SubjectDerivedAttributesFunction}. */
 @SuppressWarnings("javadoc")
 public class SubjectDataConnectorTest {
 
