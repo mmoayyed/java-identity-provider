@@ -197,7 +197,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
             }
             
             samlContext.getEncodeMessageAction().execute(nestedPRC);
-            final EventContext eventCtx = prc.getSubcontext(EventContext.class);
+            final EventContext eventCtx = nestedPRC.getSubcontext(EventContext.class);
             if (eventCtx != null && eventCtx.getEvent() != null
                     && !EventIds.PROCEED_EVENT_ID.equals(eventCtx.getEvent())) {
                 log.error("Message encoding action signaled non-proceed event {}", eventCtx.getEvent());
