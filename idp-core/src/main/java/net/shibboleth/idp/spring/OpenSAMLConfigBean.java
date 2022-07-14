@@ -33,7 +33,6 @@ import com.codahale.metrics.MetricRegistry;
 
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 
 
@@ -70,8 +69,7 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
      * @param newParserPool the parser pool to set
      */
     public void setParserPool(@Nullable final ParserPool newParserPool) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         parserPool = newParserPool;
     }
     
@@ -90,8 +88,7 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
      * @param newParserPool the decryption parser pool to set
      */
     public void setDecryptionParserPool(@Nullable final ParserPool newParserPool) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         decryptionParserPool = newParserPool;
     }
     

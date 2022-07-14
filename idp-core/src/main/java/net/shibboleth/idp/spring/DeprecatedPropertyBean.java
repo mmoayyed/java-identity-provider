@@ -32,7 +32,6 @@ import org.springframework.context.ApplicationContextAware;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
@@ -68,7 +67,7 @@ public class DeprecatedPropertyBean extends AbstractInitializableComponent imple
      * @param map deprecated property names and replacements
      */
     public void setDeprecatedProperties(@Nonnull final Map<String,String> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(map, "Property map cannot be null");
         
         deprecatedProperties = new HashMap<>(map.size());
@@ -84,7 +83,7 @@ public class DeprecatedPropertyBean extends AbstractInitializableComponent imple
      * @param properties defunct property names
      */
     public void setDeadProperties(@Nonnull @NonnullElements final Collection<String> properties) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(properties, "Property collection cannot be null");
         
         deadProperties = StringSupport.normalizeStringCollection(properties);

@@ -59,8 +59,8 @@ import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -174,8 +174,7 @@ public class HTTPReporter extends ScheduledReporter implements InitializableComp
      * @param client client to use
      */
     public void setHttpClient(@Nonnull final HttpClient client) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        doSetterPreconditions();
         httpClient = Constraint.isNotNull(client, "HttpClient cannot be null");
     }
     
@@ -185,8 +184,7 @@ public class HTTPReporter extends ScheduledReporter implements InitializableComp
      * @param url URL to post data to
      */
     public void setCollectorURL(@Nonnull @NotEmpty final String url) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        doSetterPreconditions();
         collectorURL = Constraint.isNotNull(StringSupport.trimOrNull(url), "Collector URL cannot be null or empty");
     }
 
@@ -196,8 +194,7 @@ public class HTTPReporter extends ScheduledReporter implements InitializableComp
      * @param params the new client security parameters
      */
     public void setHttpClientSecurityParameters(@Nullable final HttpClientSecurityParameters params) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        doSetterPreconditions();
         httpClientSecurityParameters = params;
     }
     
@@ -207,9 +204,18 @@ public class HTTPReporter extends ScheduledReporter implements InitializableComp
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        doSetterPreconditions();
         dateTimeFormat = StringSupport.trimOrNull(format);
+    }
+    
+    /**
+     * Helper for a setter method to check the standard preconditions.
+     */
+    private final void doSetterPreconditions() {
+        if (!isInitialized()) {
+            throw new UninitializedComponentException(
+                    "HTTPReported has not yet been initialized and cannot be used.");
+        }
     }
     
     /** {@inheritDoc} */
