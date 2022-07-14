@@ -33,7 +33,6 @@ import net.shibboleth.idp.attribute.filter.FilterScriptContextExtender;
 import net.shibboleth.idp.attribute.resolver.scripted.ResolverScriptContextExtender;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -62,17 +61,13 @@ public class SubjectScriptContextExtender extends AbstractInitializableComponent
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-    
+        throwSetterPreconditionExceptions();
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */
     public void extendContext(@Nonnull final ScriptContext scriptContext) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
+        throwSetterPreconditionExceptions();
         final ProfileRequestContext prc = (ProfileRequestContext) scriptContext.getAttribute("profileContext");
         
         final SubjectContext sc = subjectContextLookupStrategy.apply(prc);

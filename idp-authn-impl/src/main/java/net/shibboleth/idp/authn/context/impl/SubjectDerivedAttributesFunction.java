@@ -28,6 +28,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
@@ -35,13 +40,7 @@ import net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextS
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Function which returns {@link IdPAttribute}s derived from the {@link java.security.Principal}s
@@ -84,8 +83,7 @@ public class SubjectDerivedAttributesFunction extends AbstractIdentifiableInitia
      * @param flag flag to set
      */
     public void setForCanonicalization(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         forCanonicalization = flag;
     }
 
@@ -98,8 +96,7 @@ public class SubjectDerivedAttributesFunction extends AbstractIdentifiableInitia
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
@@ -111,8 +108,7 @@ public class SubjectDerivedAttributesFunction extends AbstractIdentifiableInitia
      *            {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}
      */
     public void setSubjectLookupStrategy(@Nullable final Function<ProfileRequestContext,Subject> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         subjectLookupStrategy = strategy;
     }
     
