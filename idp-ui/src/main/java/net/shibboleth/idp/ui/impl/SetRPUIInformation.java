@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -41,13 +40,13 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -115,8 +114,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SAMLMetadataContext> strgy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         metadataContextLookupStrategy = Constraint.isNotNull(strgy, "Injected Metadata Strategy cannot be null");
     }
 
@@ -136,8 +134,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      */
     public void setRPUIContextCreateStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyUIContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         rpUIContextCreateStrategy = Constraint.isNotNull(strategy, "Injected RPUI Strategy cannot be null");
     }
 
@@ -147,8 +144,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * @param langs a semi-colon separated string.
      */
     public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
     }
 
