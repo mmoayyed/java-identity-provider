@@ -26,6 +26,11 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
@@ -34,14 +39,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An profile interceptor action that populates a {@link ProfileInterceptorContext} with
@@ -78,8 +77,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
      * @param flows the flows available for possible use
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<ProfileInterceptorFlowDescriptor> flows) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
     
@@ -90,8 +88,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
      */
     public void setActiveFlowsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         activeFlowsLookupStrategy = Constraint.isNotNull(strategy, "Flow lookup strategy cannot be null");
     }
     
@@ -103,8 +100,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
      * @since 4.2.0
      */
     public void setLoggingLabel(@Nullable @NotEmpty final String label) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         loggingLabel = StringSupport.trimOrNull(label);
     }
     

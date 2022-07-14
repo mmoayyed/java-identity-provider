@@ -25,11 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.profile.context.SpringRequestContext;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.profile.action.AbstractConditionalProfileAction;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.action.ProfileAction;
@@ -45,6 +40,10 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import net.shibboleth.idp.profile.context.SpringRequestContext;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Base class for Spring-aware profile actions.
@@ -101,7 +100,7 @@ public abstract class AbstractProfileAction
      */
     public void setProfileContextLookupStrategy(
             @Nonnull final Function<RequestContext,ProfileRequestContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
 
         profileContextLookupStrategy =
                 Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
@@ -110,7 +109,7 @@ public abstract class AbstractProfileAction
     /** {@inheritDoc} */
     @Override
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
 
         final ProfileRequestContext profileRequestContext =
                 profileContextLookupStrategy.apply(springRequestContext);

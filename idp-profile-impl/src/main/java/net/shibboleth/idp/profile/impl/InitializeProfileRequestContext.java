@@ -22,19 +22,16 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import jakarta.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
 
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Action that creates a new {@link ProfileRequestContext} and binds it to the current conversation under the
@@ -71,8 +68,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @param id    profile ID to populate into the context
      */
     public void setProfileId(@Nullable final String id) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         profileId = StringSupport.trimOrNull(id);
     }
     
@@ -84,8 +80,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @since 4.2.0
      */
     public void setLegacyProfileId(@Nullable final String id) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         legacyProfileId = StringSupport.trimOrNull(id);
     }
 
@@ -95,8 +90,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @param id    logging ID to populate into the context
      */
     public void setLoggingId(@Nullable final String id) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         loggingId = StringSupport.trimOrNull(id);
     }
     
@@ -106,8 +100,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @param browser flag to set
      */
     public void setBrowserProfile(final boolean browser) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         browserProfile = browser;
     }
 
@@ -120,8 +113,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @since 4.1.0
      */
     public void setCaptureQueryParameters(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         captureQueryParameters = flag;
     }
     
@@ -132,7 +124,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
 
         // We have to override execute() because the profile request context doesn't exist yet.
         
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         final ProfileRequestContext prc = new ProfileRequestContext();
         if (profileId != null) {

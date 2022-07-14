@@ -22,17 +22,16 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A base class for profile interceptor actions.
@@ -66,8 +65,7 @@ public abstract class AbstractProfileInterceptorAction extends
      * @param strategy lookup strategy function
      */
     public void setLookupStrategy(@Nonnull final Function<ProfileRequestContext, ProfileInterceptorContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         interceptorContextlookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }
 

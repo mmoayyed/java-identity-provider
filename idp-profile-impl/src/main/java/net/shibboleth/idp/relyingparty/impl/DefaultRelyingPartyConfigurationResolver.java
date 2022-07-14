@@ -27,6 +27,13 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.security.credential.Credential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.logic.VerifiedProfilePredicate;
@@ -39,16 +46,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.security.credential.Credential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context.
@@ -109,8 +108,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param configs list of verified relying party configurations
      */
     public void setRelyingPartyConfigurations(@Nonnull @NonnullElements final List<RelyingPartyConfiguration> configs) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         rpConfigurations = List.copyOf(Constraint.isNotNull(configs, "RelyingPartyConfiguration list cannot be null"));
     }
 
@@ -129,8 +127,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param configuration default verified configuration
      */
     public void setDefaultConfiguration(@Nonnull final RelyingPartyConfiguration configuration) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         defaultConfiguration = Constraint.isNotNull(configuration, "Default RP configuration cannot be null");
     }
 
@@ -151,8 +148,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param configuration unverified configuration
      */
     public void setUnverifiedConfiguration(@Nonnull final RelyingPartyConfiguration configuration) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         unverifiedConfiguration = Constraint.isNotNull(configuration, "Unverified RP configuration cannot be null");
     }
 
@@ -171,8 +167,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param predicate predicate to set
      */
     public void setVerificationPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         verificationPredicate = Constraint.isNotNull(predicate, "Verification predicate cannot be null");
     }
     
@@ -182,8 +177,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param config  global default
      */
     public void setDefaultSecurityConfiguration(@Nullable final SecurityConfiguration config) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         defaultSecurityConfiguration = config;
     }
 
@@ -204,7 +198,7 @@ public class DefaultRelyingPartyConfigurationResolver
     /** {@inheritDoc} */
     @Override @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(
             @Nullable final ProfileRequestContext context) throws ResolverException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
 
         if (context == null) {
             return Collections.emptyList();
@@ -244,7 +238,7 @@ public class DefaultRelyingPartyConfigurationResolver
     /** {@inheritDoc} */
     @Override @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
             throws ResolverException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
 
         if (context == null) {
             return null;
@@ -299,7 +293,7 @@ public class DefaultRelyingPartyConfigurationResolver
     @Qualifier("signing")
     public void setSigningCredentials(
             @Nullable @NonnullElements final List<RelyingPartyResolverCredentialHolder> credentials) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         if (credentials != null) {
             signingCredentials = credentials.stream()
@@ -328,7 +322,7 @@ public class DefaultRelyingPartyConfigurationResolver
     @Qualifier("encryption")
     public void setEncryptionCredentials(
             @Nullable @NonnullElements final List<RelyingPartyResolverCredentialHolder> credentials) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         
         if (credentials != null) {
             encryptionCredentials = credentials.stream()

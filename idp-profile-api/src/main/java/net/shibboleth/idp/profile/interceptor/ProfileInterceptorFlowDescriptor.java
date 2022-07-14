@@ -22,17 +22,16 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.FlowDescriptor;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageService;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.profile.FlowDescriptor;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A descriptor for a profile interceptor flow.
@@ -71,8 +70,7 @@ public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitia
      * @param condition predicate that controls activation of the flow
      */
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         activationCondition = Constraint.isNotNull(condition, "Activation condition predicate cannot be null");
     }
 
@@ -91,8 +89,7 @@ public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitia
      * @param isSupported whether this flow supports non-browser clients
      */
     public void setNonBrowserSupported(final boolean isSupported) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         supportsNonBrowser = isSupported;
     }
 
@@ -111,8 +108,7 @@ public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitia
      * @param service the storage service
      */
     public void setStorageService(@Nonnull final StorageService service) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         storageService = Constraint.isNotNull(service, "Storage service can not be null");
     }
 

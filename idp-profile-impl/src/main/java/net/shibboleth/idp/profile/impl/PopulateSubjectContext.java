@@ -22,18 +22,17 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * An action that populates a principal name obtained from a lookup function into a {@link SubjectContext}
@@ -62,8 +61,7 @@ public class PopulateSubjectContext extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setPrincipalNameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         principalNameLookupStrategy = Constraint.isNotNull(strategy, "Principal name lookup strategy cannot be null");
     }
     

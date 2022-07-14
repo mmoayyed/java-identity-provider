@@ -46,7 +46,6 @@ import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -130,8 +129,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nullable final ReloadableService<AttributeTranscoderRegistry> registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         transcoderRegistry = registry;
     }
     
@@ -141,8 +139,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         issuerLookupStrategy = strategy;
     }
 
@@ -152,8 +149,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setRecipientLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         recipientLookupStrategy = strategy;
     }
     
@@ -163,8 +159,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setPrincipalNameLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         principalNameLookupStrategy = strategy;
     }
     
@@ -175,8 +170,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      */
     public void setAttributeContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         attributeContextCreationStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext creation strategy cannot be null");
     }
@@ -188,8 +182,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      */
     public void setAttributesLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         attributesLookupStrategy = Constraint.isNotNull(strategy, "Attributes lookup strategy cannot be null");
     }
     
@@ -199,8 +192,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param attributeIds  attribute ID collection
      */
     public void setAttributesToResolve(@Nonnull @NonnullElements final Collection<String> attributeIds) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(attributeIds, "Attribute ID collection cannot be null");
         attributesLookupStrategy = FunctionSupport.constant(StringSupport.normalizeStringCollection(attributeIds));
     }
@@ -213,8 +205,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @since 4.2.0
      */
     public void setResolutionContextDecorator(@Nullable final Consumer<AttributeResolutionContext> decorator) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         resolutionContextDecorator = decorator;
     }
     
@@ -226,8 +217,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setMaskFailures(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         maskFailures = flag;
     }
     
@@ -240,6 +230,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @since 3.4.0
      */
     public void setResolutionLabel(@Nullable final String label) {
+        throwSetterPreconditionExceptions();
         resolutionLabel = StringSupport.trimOrNull(label);
     }
     
@@ -251,8 +242,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setCreateResolutionContext(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         createResolutionContext = flag;
     }
 

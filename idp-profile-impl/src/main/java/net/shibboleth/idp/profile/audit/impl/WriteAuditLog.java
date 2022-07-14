@@ -31,20 +31,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.IdPAuditFields;
-import net.shibboleth.idp.profile.context.AuditContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.net.HttpServletSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.EventIds;
@@ -53,6 +39,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.IdPAuditFields;
+import net.shibboleth.idp.profile.context.AuditContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 //import com.google.common.collect.ImmutableMap;
 
@@ -101,8 +100,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setAuditContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuditContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         auditContextLookupStrategy = Constraint.isNotNull(strategy, "AuditContext lookup strategy cannot be null");
     }
     
@@ -126,7 +124,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @param map map of categories to formatting strings
      */
     public void setFormattingMap(@Nonnull @NonnullElements final Map<String,String> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(map, "Audit formatting map cannot be null");
         
         formattingMap = new HashMap<>(map.size());
@@ -176,8 +174,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         if (format != null) {
             dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
         }
@@ -189,8 +186,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setUseDefaultTimeZone(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         useDefaultTimeZone = flag;
     }
     

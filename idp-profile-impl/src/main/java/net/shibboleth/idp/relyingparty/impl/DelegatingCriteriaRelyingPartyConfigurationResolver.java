@@ -44,7 +44,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -82,7 +81,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
      * @param resolver the resolver delegate instance
      */
     public void setDelegate(@Nullable final RelyingPartyConfigurationResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         delegate = resolver;
     }
 
@@ -108,8 +107,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
     /** {@inheritDoc} */
     @Override
     @Nullable public SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty final String profileId) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        throwComponentStateExceptions();
         return delegate.getDefaultSecurityConfiguration(profileId);
     }
     
@@ -117,9 +115,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
     @Override
     @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final CriteriaSet criteria) 
             throws ResolverException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+        throwComponentStateExceptions();
         final Iterator<RelyingPartyConfiguration> results = resolve(criteria).iterator();
         if (results.hasNext()) {
             return results.next();
@@ -131,9 +127,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
     @Override
     @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(@Nullable final CriteriaSet criteria) 
             throws ResolverException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+        throwComponentStateExceptions();
         final ProfileRequestContext prc = buildContext(criteria);
         if (prc != null) {
             return delegate.resolve(prc);

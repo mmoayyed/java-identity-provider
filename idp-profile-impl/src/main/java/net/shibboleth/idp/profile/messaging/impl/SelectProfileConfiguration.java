@@ -37,7 +37,6 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -90,8 +89,7 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<MessageContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -126,8 +124,7 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
      *         {@link MessageContext}
      */
     public void setProfiledIdLookupStrategy(@Nonnull final Function<MessageContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         profileIdLookupStrategy = strategy;
     }
 

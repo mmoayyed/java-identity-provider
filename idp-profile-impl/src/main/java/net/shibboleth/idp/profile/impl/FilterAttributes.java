@@ -47,7 +47,6 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
@@ -199,8 +198,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @since 3.4.0
      */
     public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         metadataResolver = resolver;
     }
     
@@ -210,8 +208,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         issuerLookupStrategy = strategy;
     }
 
@@ -221,8 +218,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setRecipientLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         recipientLookupStrategy = strategy;
     }
 
@@ -233,8 +229,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setFilterContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeFilterContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         filterContextCreationStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext creation strategy cannot be null");
     }
@@ -248,8 +243,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }
@@ -260,8 +254,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setPrincipalNameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         principalNameLookupStrategy = Constraint.isNotNull(strategy, "Principal name lookup strategy cannot be null");
     }
     
@@ -274,8 +267,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setIssuerMetadataContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         issuerMetadataContextLookupStrategy = strategy;
         issuerMetadataFromFilterLookupStrategy = strategy != null ?
                 issuerMetadataContextLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
@@ -290,8 +282,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         metadataContextLookupStrategy = strategy;
         metadataFromFilterLookupStrategy = strategy != null ?
                 metadataContextLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
@@ -308,8 +299,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setProxiedRequesterContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,ProxiedRequesterContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         proxiedRequesterContextLookupStrategy = strategy;
         proxiesFromFilterLookupStrategy = strategy != null ?
                 proxiedRequesterContextLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
@@ -324,8 +314,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setProxiedRequesterMetadataContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         proxiedRequesterMetadataLookupStrategy = strategy;
         proxiedMetadataFromFilterLookupStrategy = strategy != null ?
                 proxiedRequesterMetadataLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
@@ -339,8 +328,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setMaskFailures(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         maskFailures = flag;
     }
 

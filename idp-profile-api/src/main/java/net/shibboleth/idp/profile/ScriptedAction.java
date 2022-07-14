@@ -25,18 +25,17 @@ import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
-import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
-
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
+import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 /**
  * An action which calls out to a supplied script.
@@ -96,8 +95,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @param object the custom object
      */
     @Nullable public void setCustomObject(@Nullable final Object object) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         scriptEvaluator.setCustomObject(object);
     }
 
@@ -109,8 +107,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @since 3.4.0
      */
     public void setHideExceptions(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         scriptEvaluator.setHideExceptions(flag);
     }
     

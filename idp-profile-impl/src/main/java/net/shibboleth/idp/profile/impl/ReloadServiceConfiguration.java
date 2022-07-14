@@ -22,16 +22,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletResponse;
-
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.SpringRequestContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceException;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -40,6 +30,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.webflow.execution.RequestContext;
+
+import jakarta.servlet.http.HttpServletResponse;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.SpringRequestContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceException;
 
 /**
  * Action that refreshes a {@link ReloadableService} manually.
@@ -80,8 +79,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setServiceLookupStrategy(@Nonnull final Function<ProfileRequestContext,ReloadableService<?>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         serviceLookupStrategy = Constraint.isNotNull(strategy, "ReloadableService lookup strategy cannot be null");
     }
     

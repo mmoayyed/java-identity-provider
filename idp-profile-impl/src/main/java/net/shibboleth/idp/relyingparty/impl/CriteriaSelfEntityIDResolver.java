@@ -41,7 +41,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
@@ -72,7 +71,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
      */
     public void setRelyingPartyConfigurationResolver(
             @Nullable final CriteriaRelyingPartyConfigurationResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         rpcResolver = resolver;
     }
 
@@ -98,9 +97,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
     /** {@inheritDoc} */
     @Nonnull @NonnullElements public Iterable<String> resolve(
             @Nullable final CriteriaSet criteria) throws ResolverException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+        throwComponentStateExceptions();
         final String entityID = resolveSingle(criteria);
         if (entityID != null) {
             return Collections.singletonList(entityID);
@@ -110,9 +107,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
 
     /** {@inheritDoc} */
     @Nullable public String resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+        throwComponentStateExceptions();
         final ProfileRequestContext prc = buildContext(criteria);
         final CriteriaSet prcSet = new CriteriaSet(new ProfileRequestContextCriterion(prc));
         

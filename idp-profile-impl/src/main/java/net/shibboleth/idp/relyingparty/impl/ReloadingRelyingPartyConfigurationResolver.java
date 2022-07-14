@@ -34,7 +34,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
@@ -71,8 +70,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     /** {@inheritDoc} */
     @Override @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(
             @Nullable final ProfileRequestContext context) throws ResolverException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();
@@ -99,8 +97,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     /** {@inheritDoc} */
     @Override @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
             throws ResolverException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
+        throwComponentStateExceptions();
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();
@@ -122,8 +119,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
 
     /** {@inheritDoc} */
     @Override public SecurityConfiguration getDefaultSecurityConfiguration(final String profileId) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
+        throwComponentStateExceptions();
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();

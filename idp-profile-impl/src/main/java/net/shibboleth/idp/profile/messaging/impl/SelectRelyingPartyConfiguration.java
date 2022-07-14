@@ -37,7 +37,6 @@ import net.shibboleth.idp.relyingparty.CriteriaRelyingPartyConfigurationResolver
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -80,8 +79,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
      */
     public void setRelyingPartyConfigurationResolver(
             @Nonnull final CriteriaRelyingPartyConfigurationResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver cannot be null");
     }
     
@@ -94,8 +92,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<MessageContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }

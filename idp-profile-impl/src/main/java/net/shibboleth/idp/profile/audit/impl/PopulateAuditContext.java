@@ -32,6 +32,13 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.AuditContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -39,16 +46,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action that populates fields in an {@link AuditContext} using injected functions.
@@ -107,8 +106,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setAuditContextCreationStrategy(@Nonnull final Function<ProfileRequestContext,AuditContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         auditContextCreationStrategy = Constraint.isNotNull(strategy, "AuditContext lookup strategy cannot be null");
     }
     
@@ -119,7 +117,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      */
     public void setFieldExtractors(
             @Nonnull @NonnullElements final Map<String,Function<ProfileRequestContext,Object>> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(map, "Field extractor map cannot be null");
         
         fieldExtractors = new HashMap<>(map.size());
@@ -143,7 +141,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param parser the parsed map
      */
     public void setFormattingMapParser(@Nonnull final FormattingMapParser parser) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(parser, "Parsed audit formatting map cannot be null");
         
         fieldsToExtract = parser.getFieldsToExtract();
@@ -155,8 +153,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param map map of replacements
      */
     public void setFieldReplacements(@Nullable final Map<String,String> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         if (map != null) {
             fieldReplacements = new HashMap<>(map);
         } else {
@@ -170,8 +167,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         if (format != null) {
             dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
         }
@@ -183,8 +179,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setUseDefaultTimeZone(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         useDefaultTimeZone = flag;
     }
     

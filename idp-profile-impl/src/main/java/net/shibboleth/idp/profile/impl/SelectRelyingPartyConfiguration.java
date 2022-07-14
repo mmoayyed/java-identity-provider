@@ -22,9 +22,13 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.criterion.ProfileRequestContextCriterion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -34,16 +38,10 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
-import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This action attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the {@link RelyingPartyContext}
@@ -85,8 +83,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
      * @param resolver  the resolver to use
      */
     public void setRelyingPartyConfigurationResolver(@Nonnull final Resolver<RelyingPartyConfiguration,?> resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver cannot be null");
     }
     
@@ -99,8 +96,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
