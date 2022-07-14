@@ -23,6 +23,13 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -33,15 +40,7 @@ import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -93,8 +92,7 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
      * @param manager  session manager to use
      */
     public void setSessionManager(@Nonnull final SessionManager manager) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
@@ -105,8 +103,7 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
      */
     public void setSessionContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sessionContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SessionContext lookup strategy cannot be null");
     }
@@ -118,8 +115,7 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
      */
     public void setSubjectCanonicalizationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectCanonicalizationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         c14nContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SubjectCanonicalizationContext lookup strategy cannot be null");
     }

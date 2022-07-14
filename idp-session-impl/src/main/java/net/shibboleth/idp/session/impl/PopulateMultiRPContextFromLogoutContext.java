@@ -23,19 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.MultiRelyingPartyContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.idp.session.context.LogoutContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -48,6 +35,18 @@ import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.MultiRelyingPartyContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
  * Profile action that populates a {@link MultiRelyingPartyContext} with the relying party
@@ -92,8 +91,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
      * @param resolver  the resolver to use
      */
     public void setRoleDescriptorResolver(@Nonnull final RoleDescriptorResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         metadataResolver = Constraint.isNotNull(resolver, "RoleDescriptorResolver cannot be null");
     }
 
@@ -103,8 +101,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
      * @param strategy  lookup strategy
      */
     public void setLogoutContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,LogoutContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         logoutContextLookupStrategy = Constraint.isNotNull(strategy, "LogoutContext lookup strategy cannot be null");
     }
     
@@ -149,7 +146,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         final MultiRelyingPartyContext multiCtx = new MultiRelyingPartyContext();
         profileRequestContext.addSubcontext(multiCtx, true);

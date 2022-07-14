@@ -22,17 +22,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.SessionException;
-import net.shibboleth.idp.session.SessionManager;
-import net.shibboleth.idp.session.context.LogoutContext;
-import net.shibboleth.idp.session.context.SessionContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -41,6 +30,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.SessionException;
+import net.shibboleth.idp.session.SessionManager;
+import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Profile action that destroys any {@link IdPSession}s found in a {@link LogoutContext}.
@@ -88,8 +87,7 @@ public class DestroySessions extends AbstractProfileAction {
      * @param manager  session manager to use
      */
     public void setSessionManager(@Nonnull final SessionManager manager) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
@@ -100,8 +98,7 @@ public class DestroySessions extends AbstractProfileAction {
      */
     public void setSessionContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sessionContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SessionContext lookup strategy cannot be null");
     }
@@ -113,8 +110,7 @@ public class DestroySessions extends AbstractProfileAction {
      */
     public void setLogoutContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         logoutContextLookupStrategy = Constraint.isNotNull(strategy,
                 "LogoutContext lookup strategy cannot be null");
     }

@@ -21,21 +21,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.SessionException;
-import net.shibboleth.idp.session.SessionResolver;
-import net.shibboleth.idp.session.context.SessionContext;
-import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.net.HttpServletSupport;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -45,6 +30,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.SessionException;
+import net.shibboleth.idp.session.SessionResolver;
+import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.HttpServletSupport;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
  * A profile action that populates a {@link SessionContext} with an active, valid
@@ -83,8 +82,7 @@ public class PopulateSessionContext extends AbstractProfileAction {
      * @param resolver  session resolver to use
      */
     public void setSessionResolver(@Nonnull final SessionResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
     }
     
@@ -95,8 +93,7 @@ public class PopulateSessionContext extends AbstractProfileAction {
      */
     public void setSessionContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sessionContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SessionContext creation strategy cannot be null");
     }
@@ -109,8 +106,7 @@ public class PopulateSessionContext extends AbstractProfileAction {
      * @since 4.2.0
      */
     public void setAddressLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         addressLookupStrategy = strategy;
     }
     

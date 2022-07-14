@@ -23,18 +23,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.idp.session.SPSessionSerializerRegistry;
-import net.shibboleth.idp.session.context.LogoutContext;
-import net.shibboleth.idp.session.context.LogoutPropagationContext;
-import net.shibboleth.idp.session.context.LogoutPropagationContext.Result;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.security.DataSealer;
-import net.shibboleth.utilities.java.support.security.DataSealerException;
-
 import org.opensaml.messaging.MessageException;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.decoder.MessageDecodingException;
@@ -44,8 +32,18 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.webflow.execution.RequestContext;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.idp.session.SPSessionSerializerRegistry;
+import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.idp.session.context.LogoutPropagationContext;
+import net.shibboleth.idp.session.context.LogoutPropagationContext.Result;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.security.DataSealer;
+import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 /**
  * Profile action that creates a {@link LogoutPropagationContext} containing {@link SPSession} to be destroyed. The
@@ -107,8 +105,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      * @param sealer the {@link DataSealer} to use
      */
     public void setDataSealer(@Nullable final DataSealer sealer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         dataSealer = sealer;
     }
     
@@ -118,8 +115,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      * @param registry a registry of SPSession class to serializer mappings
      */
     public void setSPSessionSerializerRegistry(@Nullable final SPSessionSerializerRegistry registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         spSessionSerializerRegistry = registry;
     }
     
@@ -130,8 +126,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      */
     public void setLogoutPropagationContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext, LogoutPropagationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         contextCreationStrategy = Constraint.isNotNull(strategy,
                 "LogoutPropagationContext creation strategy cannot be null");
     }
@@ -142,8 +137,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setSessionLookupStrategy(@Nullable final Function<ProfileRequestContext,SPSession> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sessionLookupStrategy = strategy;
     }
     

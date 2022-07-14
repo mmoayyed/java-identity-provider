@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -75,7 +74,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
      */
     public void setMappings(@Nonnull @NonnullElements final
             Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> map) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(map, "Map cannot be null");
         
         for (final Map.Entry<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> entry
@@ -94,7 +93,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
      * @return a corresponding StorageSerializer, or null
      */
     @Nullable public <T extends SPSession> StorageSerializer<T> lookup(@Nonnull final Class<T> type) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         Constraint.isNotNull(type, "SPSession type cannot be null");
         
         final StorageSerializer<T> serializer = (StorageSerializer<T>) registry.get(type);

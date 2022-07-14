@@ -29,10 +29,20 @@ import java.util.function.BiPredicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
+import org.opensaml.storage.StorageService;
+import org.opensaml.storage.VersionMismatchException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -48,7 +58,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.CookieManager;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
@@ -56,16 +65,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-
-import org.opensaml.storage.StorageRecord;
-import org.opensaml.storage.StorageSerializer;
-import org.opensaml.storage.StorageService;
-import org.opensaml.storage.VersionMismatchException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 /**
  * Implementation of {@link SessionManager} and {@link SessionResolver} interfaces that relies on a
@@ -189,8 +188,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param request servlet request
      */
     public void setHttpServletRequest(@Nullable final HttpServletRequest request) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         httpRequest = request;
     }
 
@@ -200,8 +198,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param response servlet response
      */
     public void setHttpServletResponse(@Nullable final HttpServletResponse response) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         httpResponse = response;
     }
 
@@ -220,8 +217,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param timeout the policy to set
      */
     public void setSessionTimeout(@Nonnull final Duration timeout) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         sessionTimeout = Constraint.isNotNull(timeout, "Timeout cannot be null");
     }
 
@@ -240,8 +236,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param slop amount of time to defer expiration of records
      */
     public void setSessionSlop(@Nonnull final Duration slop) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         sessionSlop = Constraint.isNotNull(slop, "Slop cannot be null");
     }
 
@@ -260,8 +255,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param flag flag to set
      */
     public void setMaskStorageFailure(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         maskStorageFailure = flag;
     }
 
@@ -284,8 +278,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param flag flag to set
      */
     public void setTrackSPSessions(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         trackSPSessions = flag;
     }
 
@@ -308,8 +301,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param flag flag to set
      */
     public void setSecondaryServiceIndex(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         secondaryServiceIndex = flag;
     }
 
@@ -331,8 +323,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param flag flag to set
      */
     public void setConsistentAddress(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         consistentAddressCondition =
                 DefaultConsistentAddressConditionFactory.getDefaultConsistentAddressCondition(flag);
     }
@@ -345,8 +336,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @since 4.0.0
      */
     public void setConsistentAddressCondition(@Nonnull final BiPredicate<String,String> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         consistentAddressCondition = Constraint.isNotNull(condition, "Consistent address condition cannot be null");
     }
 
@@ -356,8 +346,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param name cookie name to use
      */
     public void setCookieName(@Nonnull @NotEmpty final String name) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         cookieName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Cookie name cannot be null or empty");
     }
 
@@ -367,8 +356,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param manager the CookieManager to use.
      */
     public void setCookieManager(@Nonnull final CookieManager manager) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         cookieManager = Constraint.isNotNull(manager, "CookieManager cannot be null");
     }
     
@@ -387,8 +375,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param storage the back-end to use
      */
     public void setStorageService(@Nonnull final StorageService storage) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         storageService = Constraint.isNotNull(storage, "StorageService cannot be null");
     }
     
@@ -400,8 +387,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @return true iff the threshold is met
      */
     public boolean storageServiceMeetsThreshold() {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
         return storageService.getCapabilities().getValueSize() >= storageServiceThreshold;
     }
     
@@ -418,8 +404,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param size  size in characters
      */
     public void setStorageServiceThreshold(final long size) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         storageServiceThreshold = size;
     }
     
@@ -429,8 +414,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param newIDGenerator the new IdentifierGenerator to use
      */
     public void setIDGenerator(@Nonnull final IdentifierGenerationStrategy newIDGenerator) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         idGenerator = Constraint.isNotNull(newIDGenerator, "IdentifierGenerationStrategy cannot be null");
     }
 
@@ -462,8 +446,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      */
     public void setAuthenticationFlowDescriptors(
             @Nonnull @NonnullElements final Iterable<AuthenticationFlowDescriptor> flows) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         flowDescriptorMap.clear();
         for (final AuthenticationFlowDescriptor desc : Constraint.isNotNull(flows, "Flow collection cannot be null")) {
             if (desc != null) { 
@@ -487,8 +470,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param registry a registry of SPSession class to serializer mappings
      */
     public void setSPSessionSerializerRegistry(@Nullable final SPSessionSerializerRegistry registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         spSessionSerializerRegistry = registry;
     }
 
@@ -516,7 +498,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     /** {@inheritDoc} */
     @Override @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName)
             throws SessionException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
 
         if (httpRequest == null) {
             throw new SessionException("No HttpServletRequest available, can't bind to client address");
@@ -556,7 +538,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     /** {@inheritDoc} */
     @Override public void destroySession(@Nonnull @NotEmpty final String sessionId, final boolean unbind)
             throws SessionException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
 
         // Note that this can leave entries in the secondary SPSession records, but those
         // will eventually expire outright, or can be cleaned up if the index is searched.
@@ -578,7 +560,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     // Checkstyle: CyclomaticComplexity OFF
     @Override @Nonnull @NonnullElements public Iterable<IdPSession> resolve(@Nullable final CriteriaSet criteria)
             throws ResolverException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
 
         // We support either session ID lookup, or secondary lookup by service ID and key, if
         // a secondary index is being maintained.
