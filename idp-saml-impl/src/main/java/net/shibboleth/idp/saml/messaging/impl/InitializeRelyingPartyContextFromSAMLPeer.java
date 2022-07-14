@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.impl.SAMLRelyingPartyIdLookupStrategy;
 import net.shibboleth.idp.saml.profile.impl.SAMLVerificationLookupStrategy;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -84,8 +83,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractMessageHa
      */
     public void setRelyingPartyContextCreationStrategy(
             @Nonnull final Function<MessageContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         relyingPartyContextCreationStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext creation strategy cannot be null");
     }
@@ -97,8 +95,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractMessageHa
      */
     public void setPeerEntityContextLookupStrategy(
             @Nonnull final Function<MessageContext,SAMLPeerEntityContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         peerEntityContextLookupStrategy =
                 Constraint.isNotNull(strategy, "SAMLPeerEntityContext lookup strategy cannot be null");
     }

@@ -30,7 +30,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.DataExpiredException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
@@ -66,8 +65,7 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
      * @param sealer the Data Sealer to use.
      */
     public void setDataSealer(@Nonnull final DataSealer sealer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }
 
@@ -82,8 +80,7 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
      */
     @Nullable @NotEmpty protected String decode(@Nonnull final String transientId,
             @Nonnull @NotEmpty final String requesterId) throws NameDecoderException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
         if (null == transientId) {
             throw new NameDecoderException(getLogPrefix() + " Transient identifier was null");
         } else if (Strings.isNullOrEmpty(requesterId)) {

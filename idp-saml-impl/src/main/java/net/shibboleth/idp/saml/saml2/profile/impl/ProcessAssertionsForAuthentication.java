@@ -48,7 +48,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /**
  * Perform processing of a SAML 2 Response's Assertions that have been validated by earlier actions
@@ -119,9 +118,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      * @param strategy the new strategy function
      */
     public void setAuthnAssertionSelectionStrategy(@Nonnull final Function<List<Assertion>, Assertion> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         authnAssertionSelectionStrategy = strategy;
     }
     
@@ -131,9 +128,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      * @param strategy the new strategy function
      */
     public void setAuthnStatementSelectionStrategy(@Nonnull final Function<Assertion, AuthnStatement> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         authnStatementSelectionStrategy = strategy;
     }
     
@@ -143,9 +138,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      * @param strategy the new strategy function
      */
     public void setResponseResolver(@Nonnull final Function<ProfileRequestContext, Response> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         responseResolver = strategy;
     }
     
@@ -156,9 +149,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      */
     public void setSAMLAuthnContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLAuthnContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         samlContextLookupStrategy = strategy;
     }
 

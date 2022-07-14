@@ -27,15 +27,26 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
+import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.SubjectLocality;
+import org.opensaml.saml.saml2.profile.SAML2ActionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.navigate.SessionLifetimeLookupFunction;
@@ -43,21 +54,7 @@ import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAsse
 import net.shibboleth.idp.saml.saml2.profile.config.logic.SuppressAuthenticatingAuthorityPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.core.xml.XMLObjectBuilderFactory;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.saml.common.SAMLObjectBuilder;
-import org.opensaml.saml.saml2.core.SubjectLocality;
-import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
-import org.opensaml.saml.saml2.core.AuthnContext;
-import org.opensaml.saml.saml2.core.AuthnStatement;
-import org.opensaml.saml.saml2.core.Response;
-import org.opensaml.saml.saml2.profile.SAML2ActionSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action that builds an {@link AuthnStatement} and adds it to an {@link Assertion} returned by a lookup
@@ -112,8 +109,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      * @param strategy strategy used to locate the {@link Assertion} to operate on
      */
     public void setAssertionLookupStrategy(@Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         assertionLookupStrategy = Constraint.isNotNull(strategy, "Assertion lookup strategy cannot be null");
     }
     
@@ -124,8 +120,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      */
     public void setClassRefLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AuthnContextClassRefPrincipal> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         classRefLookupStrategy = Constraint.isNotNull(strategy,
                 "Authentication context class reference strategy cannot be null");
     }
@@ -136,8 +131,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      * @param strategy lookup strategy
      */
     public void setSessionLifetimeLookupStrategy(@Nullable final Function<ProfileRequestContext,Duration> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         sessionLifetimeLookupStrategy = strategy;
     }
     
@@ -148,8 +142,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      */
     public void setSuppressAuthenticatingAuthorityPredicate(
             @Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         suppressAuthenticatingAuthorityPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
     }
     

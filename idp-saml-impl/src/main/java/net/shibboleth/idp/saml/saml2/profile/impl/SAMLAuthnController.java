@@ -26,18 +26,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import net.shibboleth.idp.authn.ExternalAuthentication;
-import net.shibboleth.idp.authn.ExternalAuthenticationException;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -57,6 +45,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.shibboleth.idp.authn.ExternalAuthentication;
+import net.shibboleth.idp.authn.ExternalAuthenticationException;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * MVC controller that handles outbound and inbound message I/O for
@@ -104,8 +103,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
      */
     public void setProfileRequestContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,ProfileRequestContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         profileRequestContextLookupStrategy = Constraint.isNotNull(strategy,
                 "ProfileRequestContext lookup strategy cannot be null");
     }
@@ -117,8 +115,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
      */
     public void setSAMLAuthnContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLAuthnContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         samlContextLookupStrategy = Constraint.isNotNull(strategy, "SAMLAuthnContext lookup strategy cannot be null");
     }
     
@@ -128,8 +125,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
      * @param bindings the bindings to set
      */
     public void setInboundBindings(@Nullable @NonnullElements final Collection<BindingDescriptor> bindings) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         if (bindings != null) {
             bindingMap = new HashMap<>(bindings.size());
             bindings.forEach(b -> bindingMap.put(b.getShortName(), b));

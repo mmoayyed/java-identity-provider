@@ -25,17 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -45,6 +34,16 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * Action that extracts a SAML Subject from an inbound message, and prepares a
@@ -101,8 +100,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setRequesterLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         requesterLookupStrategy = strategy;
     }
 
@@ -112,8 +110,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setResponderLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         responderLookupStrategy = strategy;
     }
     
@@ -123,8 +120,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
      * @param predicate predicate to use
      */
     public void setNameIDPolicyPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         nameIDPolicyPredicate = predicate;
     }
     

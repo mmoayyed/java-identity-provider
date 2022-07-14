@@ -22,24 +22,11 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
-
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
-import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAssertion;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-
-import org.opensaml.core.xml.XMLObjectBuilderFactory;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -48,6 +35,16 @@ import org.opensaml.saml.saml1.core.SubjectLocality;
 import org.opensaml.saml.saml1.profile.SAML1ActionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
+import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
+import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAssertion;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 /**
  * Action that builds an {@link AuthenticationStatement} and adds it to an {@link Assertion} returned by a lookup
@@ -91,8 +88,7 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
      * @param strategy strategy used to locate the {@link Assertion} to operate on
      */
     public void setAssertionLookupStrategy(@Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         assertionLookupStrategy = Constraint.isNotNull(strategy, "Assertion lookup strategy cannot be null");
     }
     
@@ -103,8 +99,7 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
      */
     public void setAuthenticationMethodLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AuthenticationMethodPrincipal> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         methodLookupStrategy = Constraint.isNotNull(strategy, "Authentication method strategy cannot be null");
     }
         

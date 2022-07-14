@@ -37,7 +37,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -73,15 +72,13 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
      * @param type bean type
      */
     public void setPropertyType(@Nonnull final Class<T> type) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         propertyType = Constraint.isNotNull(type, "Property type cannot be null");
     }
 
     /** {@inheritDoc} */
     public void setApplicationContext(final ApplicationContext context) throws BeansException {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         applicationContext = context;
     }
 

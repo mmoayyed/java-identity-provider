@@ -25,6 +25,15 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLException;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
+import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -38,18 +47,8 @@ import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLException;
-import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
-import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Generator for {@link NameID} objects based on {@link IdPAttribute} data.
@@ -91,8 +90,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
             "AttributeContext lookup strategy cannot be null");
     }
@@ -103,8 +101,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
      * @param ch scope to set
      */
     public void setScopedDelimiter(final char ch) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         delimiter = ch;
     }
 
@@ -114,8 +111,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
      * @param ids attribute IDs to pull from
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         attributeSourceIds = List.copyOf(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
     }
 

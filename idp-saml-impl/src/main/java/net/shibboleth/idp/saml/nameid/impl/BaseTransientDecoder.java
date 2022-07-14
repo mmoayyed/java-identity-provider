@@ -22,20 +22,19 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.nameid.NameDecoderException;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * An abstract action which contains the logic to do transient decoding matching (shared between SAML2 and SAML1).
@@ -66,7 +65,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
      * @param store the store to use.
      */
     public void setIdStore(@Nonnull final StorageService store) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         idStore = Constraint.isNotNull(store, "StorageService cannot be null");
     }
 
@@ -81,8 +80,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
      */
     @Nullable public String decode(@Nonnull final String transientId, @Nonnull @NotEmpty final String requesterId)
             throws NameDecoderException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
+        throwComponentStateExceptions();
         if (null == transientId) {
             throw new NameDecoderException(getLogPrefix() + " Transient identifier was null");
         } else if (Strings.isNullOrEmpty(requesterId)) {

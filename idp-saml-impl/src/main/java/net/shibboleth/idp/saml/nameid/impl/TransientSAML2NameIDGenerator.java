@@ -22,15 +22,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLException;
@@ -38,6 +29,14 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Generator for transient {@link NameID} objects.
@@ -69,8 +68,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
@@ -80,8 +78,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
      * @param generator transient ID generator
      */
     public void setTransientIdGenerator(@Nonnull final TransientIdGenerationStrategy generator) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         transientIdGenerator = Constraint.isNotNull(generator, "TransientIdGenerationStrategy cannot be null");
     }
 

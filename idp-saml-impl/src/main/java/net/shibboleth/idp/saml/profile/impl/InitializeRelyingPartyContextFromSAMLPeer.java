@@ -22,21 +22,19 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action that adds a {@link RelyingPartyContext} to the current {@link ProfileRequestContext} tree
@@ -84,8 +82,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
      */
     public void setRelyingPartyContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         relyingPartyContextCreationStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext creation strategy cannot be null");
     }
@@ -97,8 +94,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
      */
     public void setPeerEntityContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLPeerEntityContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         peerEntityContextLookupStrategy =
                 Constraint.isNotNull(strategy, "SAMLPeerEntityContext lookup strategy cannot be null");
     }

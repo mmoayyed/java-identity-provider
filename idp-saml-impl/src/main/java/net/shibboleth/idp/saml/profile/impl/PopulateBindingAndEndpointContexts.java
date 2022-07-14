@@ -27,22 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageChannelSecurityContext;
@@ -69,6 +53,21 @@ import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
  * Action that populates the outbound {@link SAMLBindingContext} and when appropriate the
@@ -186,8 +185,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * @param type  type of endpoint to resolve
      */
     public void setEndpointType(@Nullable final QName type) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         endpointType = type;
     }
     
@@ -197,8 +195,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * @param resolver endpoint resolver to use  
      */
     public void setEndpointResolver(@Nonnull final EndpointResolver<?> resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         endpointResolver = Constraint.isNotNull(resolver, "EndpointResolver cannot be null");
     }
     
@@ -211,8 +208,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setBindingDescriptorsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,List<BindingDescriptor>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         bindingDescriptorsLookupStrategy =
                 Constraint.isNotNull(strategy, "Binding descriptors lookup strategy cannot be null");
     }
@@ -224,8 +220,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -237,8 +232,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         metadataContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLMetadataContext lookup strategy cannot be null");
     }
@@ -250,8 +244,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setBindingContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLBindingContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         bindingContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLBindingContext lookup strategy cannot be null");
     }
@@ -263,8 +256,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setEndpointContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLEndpointContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         endpointContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLEndpointContext lookup strategy cannot be null");
     }
@@ -276,8 +268,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setArtifactContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLArtifactContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         artifactContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLArtifactContext lookup strategy cannot be null");
     }
@@ -289,8 +280,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setBestMatchCriterionLookupStrategy(
             @Nullable final Function<ProfileRequestContext,BestMatchLocationCriterion> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         bestMatchCriterionLookupStrategy = strategy;
     }
     
@@ -306,8 +296,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setArtifactImpliesSecureChannel(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         artifactImpliesSecureChannel = flag;
     }
     

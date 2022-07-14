@@ -27,25 +27,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.idp.saml.profile.config.navigate.QualifiedNameIDFormatsLookupFunction;
-import net.shibboleth.idp.saml.session.SAML2SPSession;
-import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.idp.session.SessionResolver;
-import net.shibboleth.idp.session.context.LogoutContext;
-import net.shibboleth.idp.session.context.SessionContext;
-import net.shibboleth.idp.session.criterion.SPSessionCriterion;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -61,6 +42,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.idp.saml.profile.config.navigate.QualifiedNameIDFormatsLookupFunction;
+import net.shibboleth.idp.saml.session.SAML2SPSession;
+import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.idp.session.SessionResolver;
+import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.idp.session.criterion.SPSessionCriterion;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
  * Profile action that processes a {@link LogoutRequest} by resolving matching sessions, and destroys them,
@@ -159,8 +158,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      * @param resolver  session resolver to use
      */
     public void setSessionResolver(@Nonnull final SessionResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
     }
     
@@ -171,8 +169,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setSubjectContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         subjectContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SubjectContext creation strategy cannot be null");
     }
@@ -184,8 +181,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setSessionContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         sessionContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SessionContext creation strategy cannot be null");
     }
@@ -197,8 +193,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setLogoutContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         logoutContextCreationStrategy = Constraint.isNotNull(strategy,
                 "LogoutContext creation strategy cannot be null");
     }
@@ -210,6 +205,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setSessionResolverCriteriaStrategy(
             @Nonnull final Function<ProfileRequestContext,CriteriaSet> strategy) {
+        throwSetterPreconditionExceptions();
         sessionResolverCriteriaStrategy = Constraint.isNotNull(strategy,
                 "SessionResolver CriteriaSet strategy cannot be null");
     }
@@ -221,8 +217,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setLogoutRequestLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutRequest> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         logoutRequestLookupStrategy = Constraint.isNotNull(strategy, "LogoutRequest lookup strategy cannot be null");
     }
     
@@ -235,8 +230,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setQualifiedNameIDFormatsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         qualifiedNameIDFormatsLookupStrategy = Constraint.isNotNull(strategy,
                 "Qualified NameID Formats lookup strategy cannot be null");
     }
@@ -250,8 +244,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setAssertingPartyLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         assertingPartyLookupStrategy = strategy;
     }
     
@@ -264,8 +257,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setRelyingPartyLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         relyingPartyLookupStrategy = strategy;
     }
     

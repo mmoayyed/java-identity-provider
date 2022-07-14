@@ -23,20 +23,19 @@ import java.time.Instant;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.saml.common.SAMLException;
+import org.opensaml.storage.StorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.impl.RandomIdentifierGenerationStrategy;
-
-import org.opensaml.saml.common.SAMLException;
-import org.opensaml.storage.StorageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Generates transients using a {@link StorageService} to manage the reverse mappings.
@@ -74,8 +73,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param store the store to use.
      */
     public void setIdStore(@Nonnull final StorageService store) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         idStore = Constraint.isNotNull(store, "StorageService cannot be null");
     }
 
@@ -85,8 +83,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param generator identifier generation strategy to use
      */
     public void setIdGenerator(@Nonnull final IdentifierGenerationStrategy generator) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         idGenerator = Constraint.isNotNull(generator, "IdentifierGenerationStrategy cannot be null");
     }
     
@@ -105,8 +102,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param size size, in bytes, of the id
      */
     public void setIdSize(@Positive final int size) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         idSize = (int) Constraint.isGreaterThan(0, size, "ID size must be positive");
     }
     
@@ -125,8 +121,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param lifetime time ids are valid
      */
     public void setIdLifetime(@Nonnull final Duration lifetime) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(lifetime, "ID lifetime cannot be null");
         Constraint.isFalse(lifetime.isNegative() || lifetime.isZero(), "ID lifetime must be greater than 0");
         
@@ -149,8 +144,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String relyingPartyId,
             @Nonnull @NotEmpty final String principalName) throws SAMLException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
         try {
             final String principalTokenId = new TransientIdParameters(relyingPartyId, principalName).encode();
     

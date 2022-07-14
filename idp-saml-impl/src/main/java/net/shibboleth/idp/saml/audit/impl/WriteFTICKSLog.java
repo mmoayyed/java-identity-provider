@@ -23,6 +23,13 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.MessageLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
+import org.opensaml.saml.common.SAMLObject;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -33,16 +40,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.StringDigester;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.MessageLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
-import org.opensaml.saml.common.SAMLObject;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action that produces F-TICKS log entries for successful SAML SSO responses. 
@@ -134,8 +133,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setRelyingPartyLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         relyingPartyLookupStrategy = Constraint.isNotNull(strategy, "Relying Party ID lookup strategy cannot be null");
     }
 
@@ -145,8 +143,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setResponderLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         responderLookupStrategy = Constraint.isNotNull(strategy, "Responder ID lookup strategy cannot be null");
     }
 
@@ -156,8 +153,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 
@@ -167,8 +163,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setAuthenticationMethodLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         authenticationMethodLookupStrategy = Constraint.isNotNull(strategy,
                 "Authentication method lookup strategy cannot be null");
     }
@@ -179,8 +174,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setStatusCodeLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         statusCodeLookupStrategy = Constraint.isNotNull(strategy, "StatusCode lookup strategy cannot be null");
     }
 

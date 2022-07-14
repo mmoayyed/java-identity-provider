@@ -25,6 +25,22 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.schema.impl.XSStringImpl;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml1.core.Assertion;
+import org.opensaml.saml.saml1.core.Attribute;
+import org.opensaml.saml.saml1.core.AttributeDesignator;
+import org.opensaml.saml.saml1.core.AttributeStatement;
+import org.opensaml.saml.saml1.core.Response;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import net.shibboleth.ext.spring.testing.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -45,22 +61,6 @@ import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTr
 import net.shibboleth.idp.saml.saml1.profile.SAML1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.test.service.MockReloadableService;
-
-import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
-import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.schema.impl.XSStringImpl;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml1.core.Assertion;
-import org.opensaml.saml.saml1.core.Attribute;
-import org.opensaml.saml.saml1.core.AttributeDesignator;
-import org.opensaml.saml.saml1.core.AttributeStatement;
-import org.opensaml.saml.saml1.core.Response;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /** {@link AddAttributeStatementToAssertion} unit test. */
 public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCase {

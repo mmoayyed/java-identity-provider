@@ -23,6 +23,14 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -34,25 +42,14 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObject;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for actions that encode an {@link AttributeContext} into a SAML attribute statement.
@@ -135,8 +132,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      *            one if it exists
      */
     public void setStatementInOwnAssertion(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         statementInOwnAssertion = flag;
     }
 
@@ -161,8 +157,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @param flag flag to set
      */
     public void setIgnoringUnencodableAttributes(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         ignoringUnencodableAttributes = flag;
     }
 
@@ -175,8 +170,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }
@@ -188,8 +182,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      */
     public void setIdentifierGeneratorLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         idGeneratorLookupStrategy =
                 Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
     }
@@ -200,8 +193,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @param strategy lookup strategy
      */
     public void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
     }
 
@@ -220,8 +212,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         transcoderRegistry = Constraint.isNotNull(registry, "AttributeTranscoderRegistry cannot be null");
     }
     

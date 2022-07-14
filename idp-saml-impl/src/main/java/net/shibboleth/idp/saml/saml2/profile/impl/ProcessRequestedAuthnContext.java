@@ -28,18 +28,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
-import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -54,6 +42,17 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * An authentication action that processes the {@link RequestedAuthnContext} in a SAML 2 {@link AuthnRequest},
@@ -101,8 +100,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -113,8 +111,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
      * @param strategy lookup strategy
      */
     public void setAuthnRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         authnRequestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
     }
     
@@ -126,8 +123,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
      * @param contexts  contexts to ignore
      */
     public void setIgnoredContexts(@Nonnull @NonnullElements final Collection<String> contexts) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         final Collection<String> trimmed = StringSupport.normalizeStringCollection(contexts);
         
         if (trimmed.isEmpty()) {
@@ -141,8 +137,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
+        throwComponentStateExceptions();
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
             return false;
         }

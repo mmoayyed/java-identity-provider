@@ -25,17 +25,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.config.navigate.ForceAuthnProfileConfigPredicate;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
-import net.shibboleth.idp.saml.saml2.profile.config.logic.IgnoreScopingProfileConfigPredicate;
-import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyCountLookupFunction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -48,6 +37,16 @@ import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Scoping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.config.navigate.ForceAuthnProfileConfigPredicate;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.logic.IgnoreScopingProfileConfigPredicate;
+import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyCountLookupFunction;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * An action that creates an {@link AuthenticationContext} and attaches it to the current {@link ProfileRequestContext}.
@@ -102,8 +101,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -116,8 +114,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @since 3.4.0
      */
     public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
     }
 
@@ -129,8 +126,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @since 4.0.0
      */
     public void setIgnoreScopingPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         ignoreScopingPredicate = Constraint.isNotNull(condition, "Ignore Scoping predicate cannot be null");
     }
 
@@ -142,8 +138,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @since 4.0.0
      */
     public void setProxyCountLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         proxyCountLookupStrategy = Constraint.isNotNull(strategy, "Proxy count lookup strategy cannot be null");
     }
     
@@ -153,8 +148,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @param strategy strategy used to locate the {@link AuthnRequest}
      */
     public void setRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         requestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
     }
     

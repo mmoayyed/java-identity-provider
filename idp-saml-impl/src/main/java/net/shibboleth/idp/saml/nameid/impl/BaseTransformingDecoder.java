@@ -27,16 +27,15 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Regular expression, etc. transform of an identifier. */
 public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitializableComponent {
@@ -66,8 +65,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
      * @since 4.1.0
      */
     public void setUppercase(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         uppercase = flag;
     }
 
@@ -79,8 +77,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
      * @since 4.1.0
      */
     public void setLowercase(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         lowercase = flag;
     }
     
@@ -90,7 +87,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
      * @param newTransforms collection of replacement transforms
      */
     public void setTransforms(@Nonnull @NonnullElements final Collection<Pair<String,String>> newTransforms) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
         
         transforms = new ArrayList<>();
@@ -108,8 +105,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
      * @return transformed value
      */
     @Nullable protected String decode(@Nonnull @NotEmpty final String id) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
         String s = id;
         
         if (lowercase) {
@@ -133,5 +129,4 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
         
         return s;
     }
-
 }

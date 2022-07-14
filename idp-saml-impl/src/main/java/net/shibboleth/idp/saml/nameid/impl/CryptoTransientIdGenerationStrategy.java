@@ -22,18 +22,17 @@ import java.time.Instant;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.saml.common.SAMLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
-
-import org.opensaml.saml.common.SAMLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Generates transients using a {@link DataSealer} to encrypt the result into a recoverable value,
@@ -62,8 +61,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param sealer object used to protect and encrypt the data
      */
     public void setDataSealer(@Nonnull final DataSealer sealer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }
     
@@ -82,8 +80,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param lifetime time ids are valid
      */
     public void setIdLifetime(@Nonnull final Duration lifetime) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(lifetime, "Lifetime cannot be null");
         Constraint.isFalse(lifetime.isNegative() || lifetime.isZero(), "Lifetime must be positive");
         
@@ -103,8 +100,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
     @Override
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String relyingPartyId,
             @Nonnull @NotEmpty final String principalName) throws SAMLException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
+        throwComponentStateExceptions();
         final StringBuilder principalTokenIdBuilder = new StringBuilder();
         principalTokenIdBuilder.append(relyingPartyId).append("!").append(principalName);
 

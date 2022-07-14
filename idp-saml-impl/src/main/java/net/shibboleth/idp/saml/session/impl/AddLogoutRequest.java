@@ -23,13 +23,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.session.SAML2SPSession;
-import net.shibboleth.idp.session.context.LogoutPropagationContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
-
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
@@ -49,6 +42,12 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.SessionIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.saml.session.SAML2SPSession;
+import net.shibboleth.idp.session.context.LogoutPropagationContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 /**
  * Action that creates a {@link LogoutRequest} based on an {@link SAML2SPSession} in a
@@ -112,8 +111,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setOverwriteExisting(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         overwriteExisting = flag;
     }
 
@@ -123,8 +121,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setIncludeSessionIndex(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         includeSessionIndex = flag;
     }
 
@@ -135,8 +132,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      */
     public void setIdentifierGeneratorLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         idGeneratorLookupStrategy =
                 Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
     }
@@ -147,8 +143,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         issuerLookupStrategy = strategy;
     }
 
@@ -159,8 +154,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      */
     public void setLogoutPropagationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutPropagationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         logoutPropContextLookupStrategy =
                 Constraint.isNotNull(strategy, "LogoutPropagationContext lookup strategy cannot be null");
     }

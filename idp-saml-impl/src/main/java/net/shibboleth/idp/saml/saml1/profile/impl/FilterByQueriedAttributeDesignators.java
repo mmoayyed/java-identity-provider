@@ -51,7 +51,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
@@ -96,8 +95,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         transcoderRegistry = Constraint.isNotNull(registry, "AttributeTranscoderRegistry cannot be null");
     }
     
@@ -107,8 +105,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,Request> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         requestLookupStrategy = Constraint.isNotNull(strategy, "Request lookup strategy cannot be null");
     }
 
@@ -120,8 +117,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }

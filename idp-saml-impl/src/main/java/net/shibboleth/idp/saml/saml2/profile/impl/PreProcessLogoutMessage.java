@@ -21,10 +21,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -41,6 +37,9 @@ import org.opensaml.saml.saml2.metadata.SSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Profile action that performs initial analysis of a {@link LogoutRequest} or {@link LogoutResponse} to
@@ -101,8 +100,7 @@ public class PreProcessLogoutMessage extends AbstractProfileAction {
      * @param flag what to set
      */
     public void setAssumeAsynchronousLogout(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         assumeAsync = flag;
     }
     
@@ -113,8 +111,7 @@ public class PreProcessLogoutMessage extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         metadataContextLookupStrategy =
                 Constraint.isNotNull(strategy, "SAMLMetadataContext lookup strategy cannot be null");
     }

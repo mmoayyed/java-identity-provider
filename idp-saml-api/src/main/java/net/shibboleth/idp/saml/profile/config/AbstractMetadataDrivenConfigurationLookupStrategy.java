@@ -54,7 +54,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.LockableClassToInstanceMultiMap;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -129,8 +128,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @param flag flag to set
      */
     public void setStrictNameFormat(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         strictNameFormat = flag;
     }
     
@@ -142,8 +140,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @param flag flag to set
      */
     public void setEnableCaching(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         enableCaching = flag;
     }
 
@@ -156,8 +153,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @param flag flag to set
      */
     public void setIgnoreUnmappedEntityAttributes(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         ignoreUnmappedEntityAttributes = flag;
     }
     
@@ -167,8 +163,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @param name base property name
      */
     public void setPropertyName(@Nonnull @NotEmpty final String name) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         propertyName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Property name cannot be null or empty");
     }
     
@@ -181,7 +176,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @param aliases alternative profile IDs
      */
     public void setProfileAliases(@Nonnull @NonnullElements final Collection<String> aliases) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(aliases, "Alias collection cannot be null");
         
         propertyAliases = List.copyOf(StringSupport.normalizeStringCollection(aliases));
@@ -193,8 +188,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @param value default value to return 
      */
     public void setDefaultValue(@Nullable final T value) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         defaultValueStrategy = FunctionSupport.constant(value);
     }
     
@@ -206,8 +200,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @since 4.0.0
      */
     public void setDefaultValueStrategy(@Nonnull final Function<BaseContext,T> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         defaultValueStrategy = Constraint.isNotNull(strategy, "Default value strategy cannot be null");
     }
     
@@ -217,8 +210,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @param strategy  lookup strategy
      */
     public void setMetadataLookupStrategy(@Nonnull final Function<BaseContext,EntityDescriptor> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         metadataLookupStrategy = Constraint.isNotNull(strategy, "Metadata lookup strategy cannot be null");
     }
 
@@ -228,8 +220,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      * @param strategy  lookup strategy
      */
     public void setProfileIdLookupStrategy(@Nonnull final Function<BaseContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         profileIdLookupStrategy = Constraint.isNotNull(strategy, "Profile ID lookup strategy cannot be null");
     }
 
@@ -254,7 +245,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     // Checkstyle: CyclomaticComplexity|MethodLength OFF    
     /** {@inheritDoc} */
     @Nullable public T apply(@Nullable final BaseContext input) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         CachedConfigurationContext cacheContext = null;
         

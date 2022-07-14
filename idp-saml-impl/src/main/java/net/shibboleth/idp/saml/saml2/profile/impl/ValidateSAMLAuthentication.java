@@ -27,6 +27,27 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.Audience;
+import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
+import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.ProxyRestriction;
+import org.opensaml.saml.saml2.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 import net.shibboleth.idp.attribute.AttributeDecodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -53,32 +74,10 @@ import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfigurati
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.Attribute;
-import org.opensaml.saml.saml2.core.AttributeStatement;
-import org.opensaml.saml.saml2.core.Audience;
-import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
-import org.opensaml.saml.saml2.core.AuthnContext;
-import org.opensaml.saml.saml2.core.ProxyRestriction;
-import org.opensaml.saml.saml2.core.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * An action that produces an {@link net.shibboleth.idp.authn.AuthenticationResult} based on an inbound
@@ -149,8 +148,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nullable final ReloadableService<AttributeTranscoderRegistry> registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         transcoderRegistry = registry;
     }
     
@@ -160,8 +158,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      * @param filterService optional filter service for inbound attributes
      */
     public void setAttributeFilter(@Nullable final ReloadableService<AttributeFilter> filterService) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         attributeFilterService = filterService;
     }
     
@@ -171,8 +168,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      * @param resolver metadata resolver
      */
     public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         metadataResolver = resolver;
     }
     
@@ -183,8 +179,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -198,8 +193,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      */
     public void setAttributeExtractionStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<IdPAttribute>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         attributeExtractionStrategy = strategy;
     }
     
@@ -211,8 +205,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      * @since 4.2.0
      */
     public void setLoggedAttributeId(@Nullable @NotEmpty final String id) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         loggedAttributeId = StringSupport.trimOrNull(id);
     }
 

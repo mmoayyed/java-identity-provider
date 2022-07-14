@@ -22,12 +22,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.saml.session.SAML2SPSession;
-import net.shibboleth.idp.session.context.LogoutPropagationContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -36,6 +30,11 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.saml.session.SAML2SPSession;
+import net.shibboleth.idp.session.context.LogoutPropagationContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Action that adds an inbound {@link MessageContext} and a {@link SAMLPeerEntityContext} to the
@@ -78,8 +77,7 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
      */
     public void setLogoutPropagationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutPropagationContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         logoutPropContextLookupStrategy =
                 Constraint.isNotNull(strategy, "LogoutPropagationContext lookup strategy cannot be null");
     }
@@ -93,8 +91,7 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
      * @since 4.0.0
      */
     public void setRelyingPartyLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         relyingPartyLookupStrategy = strategy;
     }
 

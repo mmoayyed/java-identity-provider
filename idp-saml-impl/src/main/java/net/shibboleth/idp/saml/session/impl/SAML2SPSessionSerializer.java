@@ -43,7 +43,6 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -91,8 +90,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
      * @param pool  parser source
      */
     public void setParserPool(@Nonnull final ParserPool pool) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         parserPool = Constraint.isNotNull(pool, "ParserPool cannot be null");
     }
    

@@ -25,18 +25,17 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 
 /**
@@ -67,7 +66,7 @@ public class SpringAwareMessageDecoderFactory extends AbstractInitializableCompo
      * @param mappings string to bean ID mappings
      */
     public void setBeanMappings(@Nonnull final Map<String,String> mappings) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwSetterPreconditionExceptions();
         Constraint.isNotNull(mappings, "Mappings cannot be null");
         
         beanMappings = new HashMap<>(mappings.size());
@@ -88,7 +87,7 @@ public class SpringAwareMessageDecoderFactory extends AbstractInitializableCompo
     
     /** {@inheritDoc} */
     @Nullable public MessageDecoder apply(@Nullable final String input) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         final String beanID = beanMappings.get(StringSupport.trimOrNull(input));
         

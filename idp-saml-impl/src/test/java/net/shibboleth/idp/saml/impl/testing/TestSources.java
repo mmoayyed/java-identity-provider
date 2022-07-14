@@ -48,7 +48,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /** Basic data sources for testing the attribute generators. */
 @SuppressWarnings({"javadoc", "removal"})
@@ -256,9 +255,7 @@ public final class TestSources {
          * @param newAttribute what to set.
          */
         public void setValue(@Nullable final IdPAttribute newAttribute) {
-            ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-            ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
+            throwSetterPreconditionExceptions();
             value = newAttribute;
         }
 

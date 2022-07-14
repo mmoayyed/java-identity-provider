@@ -37,7 +37,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /**
  * An abstract decoder which contains the logic to decode SAML persistent IDs that are managed with a
@@ -60,8 +59,7 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
      * @param store the id store
      */
     public void setPersistentIdStore(@Nullable final DurablePairwiseIdStore store) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         pidStore = store;
     }
 
@@ -72,8 +70,7 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
      * @param source data source
      */
     public void setDataSource(@Nullable final DataSource source) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         dataSource = source;
     }
     
@@ -101,7 +98,7 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
             @Nonnull final NameID nameID) throws NameDecoderException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
 
         if (nameID.getValue() == null) {
             throw new NameDecoderException("Persistent NameID was empty");

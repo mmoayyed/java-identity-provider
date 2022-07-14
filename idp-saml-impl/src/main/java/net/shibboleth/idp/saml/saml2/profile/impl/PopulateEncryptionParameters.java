@@ -25,6 +25,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -43,6 +45,8 @@ import org.opensaml.xmlsec.EncryptionParametersResolver;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.criterion.EncryptionConfigurationCriterion;
 import org.opensaml.xmlsec.criterion.EncryptionOptionalCriterion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -52,16 +56,10 @@ import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfigura
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
-import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Action that resolves and populates {@link EncryptionParameters} on an {@link EncryptionContext}
@@ -143,8 +141,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -156,8 +153,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setEncryptionContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,EncryptionContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        throwSetterPreconditionExceptions();
         encryptionContextLookupStrategy = Constraint.isNotNull(strategy,
                 "EncryptionContext lookup strategy cannot be null");
     }
@@ -187,8 +183,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setConfigurationLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,List<EncryptionConfiguration>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         configurationLookupStrategy = Constraint.isNotNull(strategy,
                 "EncryptionConfiguration lookup strategy cannot be null");
     }
@@ -200,8 +195,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setPeerContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLPeerEntityContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         peerContextLookupStrategy = strategy;
     }
     
@@ -212,8 +206,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setEncryptionParametersResolver(
             @Nonnull final EncryptionParametersResolver newResolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        throwSetterPreconditionExceptions();
         encParamsresolver = Constraint.isNotNull(newResolver, "EncryptionParametersResolver cannot be null");
     }
     

@@ -22,11 +22,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.saml.binding.BindingDescriptor;
-import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-
 import org.opensaml.messaging.encoder.MessageEncoder;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
@@ -35,6 +30,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import net.shibboleth.idp.saml.binding.BindingDescriptor;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 
 
 /**
@@ -57,7 +56,7 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
     
     /** {@inheritDoc} */
     @Nullable public MessageEncoder apply(@Nullable final ProfileRequestContext profileRequestContext) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        throwComponentStateExceptions();
         
         if (applicationContext == null) {
             log.warn("No Spring ApplicationContext set");
