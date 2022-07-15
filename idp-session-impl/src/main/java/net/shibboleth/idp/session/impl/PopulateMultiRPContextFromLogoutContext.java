@@ -91,7 +91,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
      * @param resolver  the resolver to use
      */
     public void setRoleDescriptorResolver(@Nonnull final RoleDescriptorResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataResolver = Constraint.isNotNull(resolver, "RoleDescriptorResolver cannot be null");
     }
 
@@ -101,7 +101,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
      * @param strategy  lookup strategy
      */
     public void setLogoutContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,LogoutContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         logoutContextLookupStrategy = Constraint.isNotNull(strategy, "LogoutContext lookup strategy cannot be null");
     }
     
@@ -146,7 +146,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         final MultiRelyingPartyContext multiCtx = new MultiRelyingPartyContext();
         profileRequestContext.addSubcontext(multiCtx, true);

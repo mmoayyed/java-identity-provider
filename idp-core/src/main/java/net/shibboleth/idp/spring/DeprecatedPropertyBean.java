@@ -67,7 +67,7 @@ public class DeprecatedPropertyBean extends AbstractInitializableComponent imple
      * @param map deprecated property names and replacements
      */
     public void setDeprecatedProperties(@Nonnull final Map<String,String> map) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(map, "Property map cannot be null");
         
         deprecatedProperties = new HashMap<>(map.size());
@@ -83,7 +83,7 @@ public class DeprecatedPropertyBean extends AbstractInitializableComponent imple
      * @param properties defunct property names
      */
     public void setDeadProperties(@Nonnull @NonnullElements final Collection<String> properties) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(properties, "Property collection cannot be null");
         
         deadProperties = StringSupport.normalizeStringCollection(properties);

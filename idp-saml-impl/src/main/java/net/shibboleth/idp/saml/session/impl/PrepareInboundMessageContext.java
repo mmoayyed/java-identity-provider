@@ -77,7 +77,7 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
      */
     public void setLogoutPropagationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutPropagationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         logoutPropContextLookupStrategy =
                 Constraint.isNotNull(strategy, "LogoutPropagationContext lookup strategy cannot be null");
     }
@@ -91,7 +91,7 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
      * @since 4.0.0
      */
     public void setRelyingPartyLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyLookupStrategy = strategy;
     }
 

@@ -72,7 +72,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * @param host API host
      */
     public void setAPIHost(@Nonnull @NotEmpty final String host) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         apiHost = Constraint.isNotNull(StringSupport.trimOrNull(host), "API host cannot be null or empty");
     }
 
@@ -87,7 +87,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * @param key application key
      */
     public void setApplicationKey(@Nullable @NotEmpty final String key) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         applicationKey = StringSupport.trimOrNull(key);
     }
 
@@ -102,7 +102,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * @param key integration key
      */
     public void setIntegrationKey(@Nonnull @NotEmpty final String key) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         integrationKey = Constraint.isNotNull(StringSupport.trimOrNull(key), "Integration key cannot be null or empty");
     }
 
@@ -117,7 +117,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * @param key secret key
      */
     public void setSecretKey(@Nonnull @NotEmpty final String key) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         secretKey = Constraint.isNotNull(StringSupport.trimOrNull(key), "Secret key cannot be null or empty");
     }
 
@@ -138,7 +138,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      */
     public <T extends Principal> void setSupportedPrincipals(
             @Nullable @NonnullElements final Collection<T> principals) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         supportedPrincipals.getPrincipals().clear();
         

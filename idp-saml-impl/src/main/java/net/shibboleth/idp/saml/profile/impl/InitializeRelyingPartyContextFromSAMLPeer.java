@@ -82,7 +82,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
      */
     public void setRelyingPartyContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextCreationStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext creation strategy cannot be null");
     }
@@ -94,7 +94,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
      */
     public void setPeerEntityContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLPeerEntityContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         peerEntityContextLookupStrategy =
                 Constraint.isNotNull(strategy, "SAMLPeerEntityContext lookup strategy cannot be null");
     }

@@ -141,7 +141,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -153,7 +153,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setEncryptionContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,EncryptionContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         encryptionContextLookupStrategy = Constraint.isNotNull(strategy,
                 "EncryptionContext lookup strategy cannot be null");
     }
@@ -183,7 +183,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setConfigurationLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,List<EncryptionConfiguration>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         configurationLookupStrategy = Constraint.isNotNull(strategy,
                 "EncryptionConfiguration lookup strategy cannot be null");
     }
@@ -195,7 +195,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setPeerContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLPeerEntityContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         peerContextLookupStrategy = strategy;
     }
     
@@ -206,7 +206,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      */
     public void setEncryptionParametersResolver(
             @Nonnull final EncryptionParametersResolver newResolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         encParamsresolver = Constraint.isNotNull(newResolver, "EncryptionParametersResolver cannot be null");
     }
     

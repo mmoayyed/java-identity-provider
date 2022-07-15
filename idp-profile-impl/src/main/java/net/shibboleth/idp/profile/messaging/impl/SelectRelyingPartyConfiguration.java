@@ -79,7 +79,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
      */
     public void setRelyingPartyConfigurationResolver(
             @Nonnull final CriteriaRelyingPartyConfigurationResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver cannot be null");
     }
     
@@ -92,7 +92,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<MessageContext, RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }

@@ -188,7 +188,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param request servlet request
      */
     public void setHttpServletRequest(@Nullable final HttpServletRequest request) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         httpRequest = request;
     }
 
@@ -198,7 +198,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param response servlet response
      */
     public void setHttpServletResponse(@Nullable final HttpServletResponse response) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         httpResponse = response;
     }
 
@@ -217,7 +217,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param timeout the policy to set
      */
     public void setSessionTimeout(@Nonnull final Duration timeout) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionTimeout = Constraint.isNotNull(timeout, "Timeout cannot be null");
     }
 
@@ -236,7 +236,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param slop amount of time to defer expiration of records
      */
     public void setSessionSlop(@Nonnull final Duration slop) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionSlop = Constraint.isNotNull(slop, "Slop cannot be null");
     }
 
@@ -255,7 +255,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param flag flag to set
      */
     public void setMaskStorageFailure(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         maskStorageFailure = flag;
     }
 
@@ -278,7 +278,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param flag flag to set
      */
     public void setTrackSPSessions(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         trackSPSessions = flag;
     }
 
@@ -301,7 +301,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param flag flag to set
      */
     public void setSecondaryServiceIndex(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         secondaryServiceIndex = flag;
     }
 
@@ -323,7 +323,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param flag flag to set
      */
     public void setConsistentAddress(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         consistentAddressCondition =
                 DefaultConsistentAddressConditionFactory.getDefaultConsistentAddressCondition(flag);
     }
@@ -336,7 +336,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @since 4.0.0
      */
     public void setConsistentAddressCondition(@Nonnull final BiPredicate<String,String> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         consistentAddressCondition = Constraint.isNotNull(condition, "Consistent address condition cannot be null");
     }
 
@@ -346,7 +346,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param name cookie name to use
      */
     public void setCookieName(@Nonnull @NotEmpty final String name) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         cookieName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Cookie name cannot be null or empty");
     }
 
@@ -356,7 +356,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param manager the CookieManager to use.
      */
     public void setCookieManager(@Nonnull final CookieManager manager) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         cookieManager = Constraint.isNotNull(manager, "CookieManager cannot be null");
     }
     
@@ -375,7 +375,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param storage the back-end to use
      */
     public void setStorageService(@Nonnull final StorageService storage) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageService = Constraint.isNotNull(storage, "StorageService cannot be null");
     }
     
@@ -387,7 +387,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @return true iff the threshold is met
      */
     public boolean storageServiceMeetsThreshold() {
-        throwComponentStateExceptions();
+        checkComponentActive();
         return storageService.getCapabilities().getValueSize() >= storageServiceThreshold;
     }
     
@@ -404,7 +404,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param size  size in characters
      */
     public void setStorageServiceThreshold(final long size) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageServiceThreshold = size;
     }
     
@@ -414,7 +414,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param newIDGenerator the new IdentifierGenerator to use
      */
     public void setIDGenerator(@Nonnull final IdentifierGenerationStrategy newIDGenerator) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idGenerator = Constraint.isNotNull(newIDGenerator, "IdentifierGenerationStrategy cannot be null");
     }
 
@@ -446,7 +446,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      */
     public void setAuthenticationFlowDescriptors(
             @Nonnull @NonnullElements final Iterable<AuthenticationFlowDescriptor> flows) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         flowDescriptorMap.clear();
         for (final AuthenticationFlowDescriptor desc : Constraint.isNotNull(flows, "Flow collection cannot be null")) {
             if (desc != null) { 
@@ -470,7 +470,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @param registry a registry of SPSession class to serializer mappings
      */
     public void setSPSessionSerializerRegistry(@Nullable final SPSessionSerializerRegistry registry) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         spSessionSerializerRegistry = registry;
     }
 
@@ -498,7 +498,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     /** {@inheritDoc} */
     @Override @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName)
             throws SessionException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         if (httpRequest == null) {
             throw new SessionException("No HttpServletRequest available, can't bind to client address");
@@ -538,7 +538,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     /** {@inheritDoc} */
     @Override public void destroySession(@Nonnull @NotEmpty final String sessionId, final boolean unbind)
             throws SessionException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         // Note that this can leave entries in the secondary SPSession records, but those
         // will eventually expire outright, or can be cleaned up if the index is searched.
@@ -560,7 +560,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     // Checkstyle: CyclomaticComplexity OFF
     @Override @Nonnull @NonnullElements public Iterable<IdPSession> resolve(@Nullable final CriteriaSet criteria)
             throws ResolverException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         // We support either session ID lookup, or secondary lookup by service ID and key, if
         // a secondary index is being maintained.

@@ -118,7 +118,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      * @param strategy the new strategy function
      */
     public void setAuthnAssertionSelectionStrategy(@Nonnull final Function<List<Assertion>, Assertion> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         authnAssertionSelectionStrategy = strategy;
     }
     
@@ -128,7 +128,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      * @param strategy the new strategy function
      */
     public void setAuthnStatementSelectionStrategy(@Nonnull final Function<Assertion, AuthnStatement> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         authnStatementSelectionStrategy = strategy;
     }
     
@@ -138,7 +138,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      * @param strategy the new strategy function
      */
     public void setResponseResolver(@Nonnull final Function<ProfileRequestContext, Response> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         responseResolver = strategy;
     }
     
@@ -149,7 +149,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      */
     public void setSAMLAuthnContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLAuthnContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         samlContextLookupStrategy = strategy;
     }
 

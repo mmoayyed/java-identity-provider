@@ -81,7 +81,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -92,7 +92,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setSelfIdentityLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         selfIdentityLookupStrategy = Constraint.isNotNull(strategy, "Self identity lookup strategy cannot be null");
     }
 

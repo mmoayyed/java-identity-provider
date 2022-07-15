@@ -86,7 +86,7 @@ public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizat
      * @param theDecoder the decoder
      */
     public void setDecoder(@Nonnull final NameIdentifierDecoder theDecoder) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         decoder = Constraint.isNotNull(theDecoder, "NameIdentifierDecoder cannot be null");
     }
     

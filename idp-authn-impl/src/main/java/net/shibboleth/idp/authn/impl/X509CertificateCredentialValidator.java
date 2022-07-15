@@ -76,7 +76,7 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
      */
     public void setCertificateContextLookupStrategy(
             @Nonnull final Function<AuthenticationContext,CertificateContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         certContextLookupStrategy = Constraint.isNotNull(strategy,
                 "CertificateContextLookupStrategy cannot be null");
     }
@@ -87,7 +87,7 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
      * @param tm trust engine to use  
      */
     public void setTrustEngine(@Nullable final TrustEngine<? super X509Credential> tm) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         trustEngine = tm;
     }
     
@@ -99,7 +99,7 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
      * @param flag flag to set
      */
     public void setSaveCertificateToCredentialSet(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         saveCertificateToCredentialSet = flag;
     }
 

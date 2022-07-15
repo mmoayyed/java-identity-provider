@@ -61,13 +61,13 @@ public class SubjectScriptContextExtender extends AbstractInitializableComponent
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */
     public void extendContext(@Nonnull final ScriptContext scriptContext) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         final ProfileRequestContext prc = (ProfileRequestContext) scriptContext.getAttribute("profileContext");
         
         final SubjectContext sc = subjectContextLookupStrategy.apply(prc);

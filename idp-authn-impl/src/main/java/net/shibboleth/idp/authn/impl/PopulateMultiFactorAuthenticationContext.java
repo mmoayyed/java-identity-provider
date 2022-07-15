@@ -93,7 +93,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
      */
     public void setTransitionMapLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         transitionMapLookupStrategy = Constraint.isNotNull(strategy, "Transition map lookup strategy cannot be null");
     }
     
@@ -104,7 +104,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
      */
     public void setMultiFactorContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,MultiFactorAuthenticationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         multiFactorContextCreationStrategy = Constraint.isNotNull(strategy,
                 "MultiFactorAuthenticationContext creation strategy cannot be null");
     }
@@ -119,7 +119,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
      */
     public void setActiveResultLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<AuthenticationResult>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         activeResultLookupStrategy = strategy;
     }
 

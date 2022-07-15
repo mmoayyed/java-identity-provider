@@ -78,7 +78,7 @@ public class ReloadMetadata extends AbstractProfileAction {
      * @param service what to set.
      */
     public void setMetadataResolver(@Nonnull final ReloadableService<MetadataResolver> service) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataResolverService = Constraint.isNotNull(service, "MetadataResolver service cannot be null");
     }
     

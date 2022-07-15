@@ -73,7 +73,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
      */
     public void setProfileRequestContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,ProfileRequestContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         profileRequestContextCreationStrategy = Constraint.isNotNull(strategy, "Creation strategy cannot be null");
     }
     
@@ -83,7 +83,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
      * @param id    profile ID to populate into the context
      */
     public void setProfileId(@Nullable final String id) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         profileId = StringSupport.trimOrNull(id);
     }
 
@@ -93,7 +93,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
      * @param id    logging ID to populate into the context
      */
     public void setLoggingId(@Nullable final String id) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         loggingId = StringSupport.trimOrNull(id);
     }
     
@@ -103,7 +103,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
      * @param browser   true iff the request is browser based
      */
     public void setBrowserProfile(final boolean browser) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         browserProfile = browser;
     }
     

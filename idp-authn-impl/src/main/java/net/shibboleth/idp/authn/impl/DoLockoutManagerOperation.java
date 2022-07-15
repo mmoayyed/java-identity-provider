@@ -98,7 +98,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
      * @param mapper object mapper
      */
     public void setObjectMapper(@Nonnull final ObjectMapper mapper) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         objectMapper = Constraint.isNotNull(mapper, "ObjectMapper cannot be null");
     }
 

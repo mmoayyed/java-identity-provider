@@ -73,7 +73,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param store the store to use.
      */
     public void setIdStore(@Nonnull final StorageService store) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idStore = Constraint.isNotNull(store, "StorageService cannot be null");
     }
 
@@ -83,7 +83,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param generator identifier generation strategy to use
      */
     public void setIdGenerator(@Nonnull final IdentifierGenerationStrategy generator) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idGenerator = Constraint.isNotNull(generator, "IdentifierGenerationStrategy cannot be null");
     }
     
@@ -102,7 +102,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param size size, in bytes, of the id
      */
     public void setIdSize(@Positive final int size) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idSize = (int) Constraint.isGreaterThan(0, size, "ID size must be positive");
     }
     
@@ -121,7 +121,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param lifetime time ids are valid
      */
     public void setIdLifetime(@Nonnull final Duration lifetime) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(lifetime, "ID lifetime cannot be null");
         Constraint.isFalse(lifetime.isNegative() || lifetime.isZero(), "ID lifetime must be greater than 0");
         
@@ -144,7 +144,7 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String relyingPartyId,
             @Nonnull @NotEmpty final String principalName) throws SAMLException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         try {
             final String principalTokenId = new TransientIdParameters(relyingPartyId, principalName).encode();
     

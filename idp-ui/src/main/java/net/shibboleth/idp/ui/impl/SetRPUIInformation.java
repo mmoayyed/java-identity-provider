@@ -114,7 +114,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SAMLMetadataContext> strgy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataContextLookupStrategy = Constraint.isNotNull(strgy, "Injected Metadata Strategy cannot be null");
     }
 
@@ -134,7 +134,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      */
     public void setRPUIContextCreateStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyUIContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         rpUIContextCreateStrategy = Constraint.isNotNull(strategy, "Injected RPUI Strategy cannot be null");
     }
 
@@ -144,7 +144,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * @param langs a semi-colon separated string.
      */
     public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
     }
 

@@ -79,7 +79,7 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
      * @param enable enabled/disable CSRF protection (default is {@literal false}).
      */
     public void setEnabled(@Nonnull final boolean enable) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         enabled = enable;
     }
     
@@ -89,7 +89,7 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
      * @param condition the condition to apply.
      */
     public void setViewRequiresCSRFTokenPredicate(@Nonnull final Predicate<RequestContext> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         viewRequiresCSRFTokenPredicate = Constraint.isNotNull(condition, 
                         "Does view require CSRF token predicate can not be null");
     }
@@ -101,7 +101,7 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
      */
     public void setEventRequiresCSRFTokenValidationPredicate(
             @Nonnull final BiPredicate<RequestContext,Event> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         eventRequiresCSRFTokenValidationPredicate = Constraint.isNotNull(condition, 
                 "Validate CSRF token condition cannot be null");
     }
@@ -113,7 +113,7 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
      * @param tokenManager the CSRF token manager.
      */
     public void setCsrfTokenManager(@Nonnull final CSRFTokenManager tokenManager) {    
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         csrfTokenManager = Constraint.isNotNull(tokenManager, "CSRF Token manager can not be null");
     }
 

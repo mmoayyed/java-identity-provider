@@ -77,7 +77,7 @@ public class UnlockDataSealers extends AbstractProfileAction {
      * @param strategies objects to unlock
      */
     public void setKeyStrategies(@Nullable @NonnullElements final Collection<BasicKeystoreKeyStrategy> strategies) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         if (strategies != null) {
             keyStrategies = List.copyOf(strategies);

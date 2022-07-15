@@ -97,7 +97,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      */
     public void setLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectCanonicalizationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         scCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      * @param newTransforms collection of replacement transforms
      */
     public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String, String>> newTransforms) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (newTransforms != null) {
             transforms = new ArrayList<>();
             for (final Pair<String,String> p : newTransforms) {
@@ -126,7 +126,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      * @param flag  uppercase flag
      */
     public void setUppercase(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         uppercase = flag;
     }
 
@@ -136,7 +136,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      * @param flag lowercase flag
      */
     public void setLowercase(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         lowercase = flag;
     }
     
@@ -146,7 +146,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      * @param flag trim flag
      */
     public void setTrim(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         trim = flag;
     }
     

@@ -60,7 +60,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * @param prompted prompted attribute IDs
      */
     public void setPromptedAttributeIds(@Nullable @NonnullElements final Collection<String> prompted) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         promptedAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(prompted));
     }
 
@@ -70,7 +70,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * @param ignored ignored attribute IDs
      */
     public void setIgnoredAttributeIds(@Nullable @NonnullElements final Collection<String> ignored) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         ignoredAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(ignored));
     }
 
@@ -80,7 +80,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * @param expression an attribute ID matching expression
      */
     public void setAttributeIdMatchExpression(@Nullable final Pattern expression) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (expression != null && !expression.pattern().isEmpty()) {
             matchExpression = expression;
         } else {

@@ -112,7 +112,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
      * @param expression a matching expression
      */
     public void setMatchExpression(@Nullable final Pattern expression) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (expression != null && !expression.pattern().isEmpty()) {
             matchExpression = expression;
         } else {
@@ -128,7 +128,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
      * @since 4.0.0
      */
     public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataResolver = resolver;
     }
     

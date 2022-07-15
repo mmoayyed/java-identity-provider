@@ -63,7 +63,7 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      * @param client HttpClient
      */
     public void setHttpClient(@Nonnull final HttpClient client) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         httpClient = Constraint.isNotNull(client, "HTTP client cannot be null");
     }
 
@@ -73,7 +73,7 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      * @param params the new client security parameters
      */
     public void setHttpClientSecurityParameters(@Nullable final HttpClientSecurityParameters params) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         httpClientSecurityParameters = params;
     }
     
@@ -83,7 +83,7 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      * @param mapper object mapper
      */
     public void setObjectMapper(@Nonnull final ObjectMapper mapper) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         objectMapper = Constraint.isNotNull(mapper, "Object mapper cannot be null");
     }
 

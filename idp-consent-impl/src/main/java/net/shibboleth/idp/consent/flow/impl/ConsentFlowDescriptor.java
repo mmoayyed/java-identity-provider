@@ -102,7 +102,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param flag true if consent equality includes comparing consent values
      */
     public void setCompareValues(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         compareValues = flag;
     }
 
@@ -112,7 +112,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param consentLifetime time to expire consent storage records.  null means infinite
      */
     public void setLifetime(@Nullable final Duration consentLifetime) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         lifetime = consentLifetime;
     }
 
@@ -122,7 +122,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param maximum the maximum number of records, or &lt;=0 for no limit
      */
     public void setMaximumNumberOfStoredRecords(final int maximum) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         maxStoredRecords = maximum;
     }
 
@@ -132,7 +132,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param maximum the maximum number of records, or &lt;=0 for no limit
      */
     public void setExpandedNumberOfStoredRecords(final int maximum) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         expandedMaxStoredRecords = maximum;
     }
 
@@ -144,7 +144,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * @param size size threshold
      */
     public void setExpandedStorageThreshold(final long size) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         expandedStorageThreshold = size;
     }
 }

@@ -115,7 +115,7 @@ public class V4Install extends AbstractInitializableComponent {
      * @throws BuildException if unexpected badness occurs.
      */
     public void execute() throws BuildException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         handleVersioning();
         checkPreConditions();
 
@@ -137,7 +137,7 @@ public class V4Install extends AbstractInitializableComponent {
      * prior to initialization.
      */
     public void setMetadataGenerator(final MetadataGenerator what) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataGenerator = what;
     }
     
@@ -624,7 +624,7 @@ public class V4Install extends AbstractInitializableComponent {
                 log.debug("Skipping key generation");
                 return;
             }
-            throwComponentStateExceptions();
+            checkComponentActive();
             createdSigning = generateKey("idp-signing");
             createdEncryption = generateKey("idp-encryption");
             generateKeyStore();

@@ -65,7 +65,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
      * @param store the store to use.
      */
     public void setIdStore(@Nonnull final StorageService store) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idStore = Constraint.isNotNull(store, "StorageService cannot be null");
     }
 
@@ -80,7 +80,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
      */
     @Nullable public String decode(@Nonnull final String transientId, @Nonnull @NotEmpty final String requesterId)
             throws NameDecoderException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         if (null == transientId) {
             throw new NameDecoderException(getLogPrefix() + " Transient identifier was null");
         } else if (Strings.isNullOrEmpty(requesterId)) {

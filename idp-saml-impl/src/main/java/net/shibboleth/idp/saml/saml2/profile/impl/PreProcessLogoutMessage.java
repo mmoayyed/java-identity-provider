@@ -100,7 +100,7 @@ public class PreProcessLogoutMessage extends AbstractProfileAction {
      * @param flag what to set
      */
     public void setAssumeAsynchronousLogout(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         assumeAsync = flag;
     }
     
@@ -111,7 +111,7 @@ public class PreProcessLogoutMessage extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataContextLookupStrategy =
                 Constraint.isNotNull(strategy, "SAMLMetadataContext lookup strategy cannot be null");
     }

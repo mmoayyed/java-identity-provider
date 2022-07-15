@@ -82,7 +82,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
      * @param condition condition to use
      */
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         activationCondition = Constraint.isNotNull(condition, "Activation condition cannot be null");
     }
@@ -101,7 +101,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
      * @param principals supported principals to include
      */
     public void setSupportedPrincipals(@Nullable @NonnullElements final Collection<Principal> principals) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         if (principals != null) {
             final Collection<Principal> copy = Set.copyOf(principals);
@@ -122,7 +122,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
             @Nonnull final AuthenticationContext authenticationContext,
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         if (!activationCondition.test(profileRequestContext)) {
             log.debug("{} Activation condition was false, ignoring request", getLogPrefix());

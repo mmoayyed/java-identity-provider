@@ -83,7 +83,7 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
      * @param flag flag to set
      */
     public void setReplaceExistingContext(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         replaceExistingContext = flag;
     }
     
@@ -96,7 +96,7 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }

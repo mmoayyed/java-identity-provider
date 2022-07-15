@@ -80,7 +80,7 @@ public class ValidateFunctionResult extends AbstractValidationAction {
      * @param strategy result strategy
      */
     public void setResultLookupStrategy(@Nonnull final Function<ProfileRequestContext,?> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         resultLookupStrategy = Constraint.isNotNull(strategy, "Result lookup strategy cannot be null");
     }
     

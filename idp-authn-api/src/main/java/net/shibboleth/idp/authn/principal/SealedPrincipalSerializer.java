@@ -72,7 +72,7 @@ public class SealedPrincipalSerializer<T extends Principal> extends SimplePrinci
      * @param theSealer encrypting component to use
      */
     public void setDataSealer(@Nullable final DataSealer theSealer) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sealer = theSealer;
     }
 

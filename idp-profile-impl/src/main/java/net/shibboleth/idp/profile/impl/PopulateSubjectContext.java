@@ -61,7 +61,7 @@ public class PopulateSubjectContext extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setPrincipalNameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         principalNameLookupStrategy = Constraint.isNotNull(strategy, "Principal name lookup strategy cannot be null");
     }
     

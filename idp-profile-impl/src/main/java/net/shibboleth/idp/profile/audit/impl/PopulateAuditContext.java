@@ -106,7 +106,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setAuditContextCreationStrategy(@Nonnull final Function<ProfileRequestContext,AuditContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         auditContextCreationStrategy = Constraint.isNotNull(strategy, "AuditContext lookup strategy cannot be null");
     }
     
@@ -117,7 +117,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      */
     public void setFieldExtractors(
             @Nonnull @NonnullElements final Map<String,Function<ProfileRequestContext,Object>> map) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(map, "Field extractor map cannot be null");
         
         fieldExtractors = new HashMap<>(map.size());
@@ -141,7 +141,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param parser the parsed map
      */
     public void setFormattingMapParser(@Nonnull final FormattingMapParser parser) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(parser, "Parsed audit formatting map cannot be null");
         
         fieldsToExtract = parser.getFieldsToExtract();
@@ -153,7 +153,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param map map of replacements
      */
     public void setFieldReplacements(@Nullable final Map<String,String> map) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (map != null) {
             fieldReplacements = new HashMap<>(map);
         } else {
@@ -167,7 +167,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (format != null) {
             dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
         }
@@ -179,7 +179,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setUseDefaultTimeZone(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         useDefaultTimeZone = flag;
     }
     

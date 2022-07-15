@@ -65,7 +65,7 @@ public abstract class AbstractAuthenticationAction
      */
     public void setAuthenticationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AuthenticationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }

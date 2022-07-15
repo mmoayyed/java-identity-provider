@@ -83,7 +83,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param auth to authenticate with
      */
     public void setAuthenticator(@Nonnull final Authenticator auth) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         authenticator = Constraint.isNotNull(auth, "Authenticator cannot be null");
     }
 
@@ -102,7 +102,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param attributes attribute names
      */
     public void setReturnAttributes(@Nullable final String... attributes) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         returnAttributes = attributes;
     }
     
@@ -112,7 +112,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param strategy strategy function
      */
     public void setPasswordLookupStrategy(@Nullable final Function<ProfileRequestContext,char[]> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         passwordLookupStrategy = strategy;
     }
 

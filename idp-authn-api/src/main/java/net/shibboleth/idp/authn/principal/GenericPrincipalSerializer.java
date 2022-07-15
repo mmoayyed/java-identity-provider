@@ -93,7 +93,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
      * @param mappings  string to symbolic mappings
      */
     public void setSymbolics(@Nonnull @NonnullElements final Map<String,Integer> mappings) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Mappings cannot be null"));
     }
         
@@ -117,7 +117,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         final StringWriter sink = new StringWriter(32);
         
         try (final JsonGenerator gen = getJsonGenerator(sink)) {
@@ -149,7 +149,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
 
     /** {@inheritDoc} */
     @Nullable public Principal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         try (final JsonReader reader = getJsonReader(new StringReader(value))) {
             final JsonStructure st = reader.read();
             if (!(st instanceof JsonObject)) {

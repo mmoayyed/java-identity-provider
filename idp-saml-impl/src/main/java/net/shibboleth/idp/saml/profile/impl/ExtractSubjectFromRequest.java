@@ -100,7 +100,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setRequesterLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         requesterLookupStrategy = strategy;
     }
 
@@ -110,7 +110,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setResponderLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         responderLookupStrategy = strategy;
     }
     
@@ -120,7 +120,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
      * @param predicate predicate to use
      */
     public void setNameIDPolicyPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         nameIDPolicyPredicate = predicate;
     }
     

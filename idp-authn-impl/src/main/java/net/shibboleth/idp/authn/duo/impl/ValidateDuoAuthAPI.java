@@ -113,7 +113,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      */
     public void setDuoIntegrationLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,DuoIntegration> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         duoIntegrationLookupStrategy = Constraint.isNotNull(strategy, "DuoIntegration lookup strategy cannot be null");
     }
 
@@ -123,7 +123,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      * @param duo Duo integration details
      */
     public void setDuoIntegration(@Nonnull final DuoIntegration duo) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(duo, "DuoIntegration cannot be null");
         duoIntegrationLookupStrategy = FunctionSupport.constant(duo);
     }
@@ -134,7 +134,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      * @param strategy lookup strategy
      */
     public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 
@@ -144,7 +144,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      * @param authenticator a Duo AuthAPI /auth endpoint implementation
      */
     public void setAuthAuthenticator(@Nonnull final DuoAuthAuthenticator authenticator) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         authAuthenticator = Constraint.isNotNull(authenticator, "DuoAuthAuthenticator cannot be null");
     }
 
@@ -154,7 +154,7 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
      * @param authenticator a Duo AuthAPI /preauth endpoint implementation
      */
     public void setPreauthAuthenticator(@Nonnull final DuoPreauthAuthenticator authenticator) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         preauthAuthenticator = Constraint.isNotNull(authenticator, "DuoPreauthAuthenticator cannot be null");
     }
 

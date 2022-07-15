@@ -72,13 +72,13 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
      * @param type bean type
      */
     public void setPropertyType(@Nonnull final Class<T> type) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         propertyType = Constraint.isNotNull(type, "Property type cannot be null");
     }
 
     /** {@inheritDoc} */
     public void setApplicationContext(final ApplicationContext context) throws BeansException {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         applicationContext = context;
     }
 

@@ -111,7 +111,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setOverwriteExisting(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         overwriteExisting = flag;
     }
 
@@ -121,7 +121,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setIncludeSessionIndex(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         includeSessionIndex = flag;
     }
 
@@ -132,7 +132,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      */
     public void setIdentifierGeneratorLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idGeneratorLookupStrategy =
                 Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
     }
@@ -143,7 +143,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         issuerLookupStrategy = strategy;
     }
 
@@ -154,7 +154,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
      */
     public void setLogoutPropagationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutPropagationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         logoutPropContextLookupStrategy =
                 Constraint.isNotNull(strategy, "LogoutPropagationContext lookup strategy cannot be null");
     }

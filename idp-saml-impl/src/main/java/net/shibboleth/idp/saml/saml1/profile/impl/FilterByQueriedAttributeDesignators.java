@@ -95,7 +95,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         transcoderRegistry = Constraint.isNotNull(registry, "AttributeTranscoderRegistry cannot be null");
     }
     
@@ -105,7 +105,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,Request> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         requestLookupStrategy = Constraint.isNotNull(strategy, "Request lookup strategy cannot be null");
     }
 
@@ -117,7 +117,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }

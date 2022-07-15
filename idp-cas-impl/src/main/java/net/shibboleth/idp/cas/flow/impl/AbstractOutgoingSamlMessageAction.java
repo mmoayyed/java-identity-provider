@@ -73,7 +73,7 @@ public abstract class AbstractOutgoingSamlMessageAction extends
      * @since 4.0.0
      */
     public void setOutgoingBinding(@Nonnull final BindingDescriptor descriptor) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         outgoingBinding = Constraint.isNotNull(descriptor, "Outgoing BindingDescriptor cannot be null");
     }
     

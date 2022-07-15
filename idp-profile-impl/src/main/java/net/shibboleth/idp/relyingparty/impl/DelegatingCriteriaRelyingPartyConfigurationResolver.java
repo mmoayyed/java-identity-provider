@@ -81,7 +81,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
      * @param resolver the resolver delegate instance
      */
     public void setDelegate(@Nullable final RelyingPartyConfigurationResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         delegate = resolver;
     }
 
@@ -107,7 +107,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
     /** {@inheritDoc} */
     @Override
     @Nullable public SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty final String profileId) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         return delegate.getDefaultSecurityConfiguration(profileId);
     }
     
@@ -115,7 +115,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
     @Override
     @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final CriteriaSet criteria) 
             throws ResolverException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         final Iterator<RelyingPartyConfiguration> results = resolve(criteria).iterator();
         if (results.hasNext()) {
             return results.next();
@@ -127,7 +127,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
     @Override
     @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(@Nullable final CriteriaSet criteria) 
             throws ResolverException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         final ProfileRequestContext prc = buildContext(criteria);
         if (prc != null) {
             return delegate.resolve(prc);

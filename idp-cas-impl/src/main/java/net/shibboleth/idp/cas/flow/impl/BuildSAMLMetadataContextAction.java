@@ -66,7 +66,7 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
      * @param flag flag to set
      */
     public void setRelyingPartyIdFromMetadata(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyIdFromMetadata = flag;
     }
     

@@ -158,7 +158,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      * @param resolver  session resolver to use
      */
     public void setSessionResolver(@Nonnull final SessionResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
     }
     
@@ -169,7 +169,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setSubjectContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         subjectContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SubjectContext creation strategy cannot be null");
     }
@@ -181,7 +181,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setSessionContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SessionContext creation strategy cannot be null");
     }
@@ -193,7 +193,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setLogoutContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         logoutContextCreationStrategy = Constraint.isNotNull(strategy,
                 "LogoutContext creation strategy cannot be null");
     }
@@ -205,7 +205,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setSessionResolverCriteriaStrategy(
             @Nonnull final Function<ProfileRequestContext,CriteriaSet> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionResolverCriteriaStrategy = Constraint.isNotNull(strategy,
                 "SessionResolver CriteriaSet strategy cannot be null");
     }
@@ -217,7 +217,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setLogoutRequestLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutRequest> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         logoutRequestLookupStrategy = Constraint.isNotNull(strategy, "LogoutRequest lookup strategy cannot be null");
     }
     
@@ -230,7 +230,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setQualifiedNameIDFormatsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         qualifiedNameIDFormatsLookupStrategy = Constraint.isNotNull(strategy,
                 "Qualified NameID Formats lookup strategy cannot be null");
     }
@@ -244,7 +244,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setAssertingPartyLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         assertingPartyLookupStrategy = strategy;
     }
     
@@ -257,7 +257,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     public void setRelyingPartyLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyLookupStrategy = strategy;
     }
     

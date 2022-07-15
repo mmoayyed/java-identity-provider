@@ -74,7 +74,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
      */
     public void setMappings(@Nonnull @NonnullElements final
             Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> map) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(map, "Map cannot be null");
         
         for (final Map.Entry<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> entry
@@ -93,7 +93,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
      * @return a corresponding StorageSerializer, or null
      */
     @Nullable public <T extends SPSession> StorageSerializer<T> lookup(@Nonnull final Class<T> type) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         Constraint.isNotNull(type, "SPSession type cannot be null");
         
         final StorageSerializer<T> serializer = (StorageSerializer<T>) registry.get(type);

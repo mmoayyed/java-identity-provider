@@ -100,7 +100,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -111,7 +111,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
      * @param strategy lookup strategy
      */
     public void setAuthnRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         authnRequestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
     }
     
@@ -123,7 +123,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
      * @param contexts  contexts to ignore
      */
     public void setIgnoredContexts(@Nonnull @NonnullElements final Collection<String> contexts) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         final Collection<String> trimmed = StringSupport.normalizeStringCollection(contexts);
         
         if (trimmed.isEmpty()) {
@@ -137,7 +137,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
             return false;
         }

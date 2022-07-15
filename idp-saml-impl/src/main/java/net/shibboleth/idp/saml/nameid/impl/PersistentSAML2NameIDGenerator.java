@@ -102,7 +102,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
@@ -113,7 +113,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }
@@ -124,7 +124,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      * @param ids attribute IDs to pull from
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeSourceIds = List.copyOf(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
     }
 
@@ -134,7 +134,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      * @param store the id store
      */
     public void setPersistentIdStore(@Nullable final PairwiseIdStore store) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         pidStore = store;
     }
 
@@ -145,7 +145,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      * @param source data source
      */
     public void setDataSource(@Nullable final DataSource source) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         dataSource = source;
     }
     

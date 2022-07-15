@@ -198,7 +198,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @since 3.4.0
      */
     public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataResolver = resolver;
     }
     
@@ -208,7 +208,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         issuerLookupStrategy = strategy;
     }
 
@@ -218,7 +218,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setRecipientLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         recipientLookupStrategy = strategy;
     }
 
@@ -229,7 +229,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setFilterContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeFilterContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         filterContextCreationStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext creation strategy cannot be null");
     }
@@ -243,7 +243,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }
@@ -254,7 +254,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setPrincipalNameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         principalNameLookupStrategy = Constraint.isNotNull(strategy, "Principal name lookup strategy cannot be null");
     }
     
@@ -267,7 +267,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setIssuerMetadataContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         issuerMetadataContextLookupStrategy = strategy;
         issuerMetadataFromFilterLookupStrategy = strategy != null ?
                 issuerMetadataContextLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
@@ -282,7 +282,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataContextLookupStrategy = strategy;
         metadataFromFilterLookupStrategy = strategy != null ?
                 metadataContextLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
@@ -299,7 +299,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setProxiedRequesterContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,ProxiedRequesterContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         proxiedRequesterContextLookupStrategy = strategy;
         proxiesFromFilterLookupStrategy = strategy != null ?
                 proxiedRequesterContextLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
@@ -314,7 +314,7 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     public void setProxiedRequesterMetadataContextLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         proxiedRequesterMetadataLookupStrategy = strategy;
         proxiedMetadataFromFilterLookupStrategy = strategy != null ?
                 proxiedRequesterMetadataLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
@@ -328,7 +328,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setMaskFailures(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         maskFailures = flag;
     }
 

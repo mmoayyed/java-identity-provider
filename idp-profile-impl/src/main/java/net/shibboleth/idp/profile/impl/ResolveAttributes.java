@@ -129,7 +129,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nullable final ReloadableService<AttributeTranscoderRegistry> registry) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         transcoderRegistry = registry;
     }
     
@@ -139,7 +139,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         issuerLookupStrategy = strategy;
     }
 
@@ -149,7 +149,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setRecipientLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         recipientLookupStrategy = strategy;
     }
     
@@ -159,7 +159,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setPrincipalNameLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         principalNameLookupStrategy = strategy;
     }
     
@@ -170,7 +170,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      */
     public void setAttributeContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeContextCreationStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext creation strategy cannot be null");
     }
@@ -182,7 +182,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      */
     public void setAttributesLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributesLookupStrategy = Constraint.isNotNull(strategy, "Attributes lookup strategy cannot be null");
     }
     
@@ -192,7 +192,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param attributeIds  attribute ID collection
      */
     public void setAttributesToResolve(@Nonnull @NonnullElements final Collection<String> attributeIds) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(attributeIds, "Attribute ID collection cannot be null");
         attributesLookupStrategy = FunctionSupport.constant(StringSupport.normalizeStringCollection(attributeIds));
     }
@@ -205,7 +205,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @since 4.2.0
      */
     public void setResolutionContextDecorator(@Nullable final Consumer<AttributeResolutionContext> decorator) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         resolutionContextDecorator = decorator;
     }
     
@@ -217,7 +217,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setMaskFailures(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         maskFailures = flag;
     }
     
@@ -230,7 +230,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @since 3.4.0
      */
     public void setResolutionLabel(@Nullable final String label) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         resolutionLabel = StringSupport.trimOrNull(label);
     }
     
@@ -242,7 +242,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setCreateResolutionContext(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         createResolutionContext = flag;
     }
 

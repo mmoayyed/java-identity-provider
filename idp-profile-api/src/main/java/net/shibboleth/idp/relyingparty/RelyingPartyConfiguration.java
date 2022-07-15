@@ -91,7 +91,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * @param responder ID to use when responding to messages
      */
     public void setResponderId(@Nonnull @NotEmpty final String responder) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         final String id =
                 Constraint.isNotNull(StringSupport.trimOrNull(responder), "ResponderId cannot be null or empty");
         responderIdLookupStrategy = FunctionSupport.constant(id);
@@ -105,7 +105,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * @since 3.4.0
      */
     public void setResponderIdLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         responderIdLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
     
@@ -126,7 +126,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * @param flag  flag to set
      */
     public void setDetailedErrors(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         detailedErrorsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
     }
     
@@ -183,7 +183,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * @param configs the configurations to set
      */
     public void setProfileConfigurations(@Nullable @NonnullElements final Collection<ProfileConfiguration> configs) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (configs == null) {
             profileConfigurationsLookupStrategy = FunctionSupport.constant(null);
         } else {
@@ -207,7 +207,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      */
     public void setProfileConfigurationsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Map<String,ProfileConfiguration>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         profileConfigurationsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
@@ -217,7 +217,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * @param condition the activation condition
      */
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         activationCondition =
                 Constraint.isNotNull(condition, "Relying party configuration activation condition cannot be null");
     }
@@ -234,7 +234,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
 
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         return activationCondition.test(input);
     }
 

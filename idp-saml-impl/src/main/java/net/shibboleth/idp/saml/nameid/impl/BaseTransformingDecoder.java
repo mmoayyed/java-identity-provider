@@ -65,7 +65,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
      * @since 4.1.0
      */
     public void setUppercase(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         uppercase = flag;
     }
 
@@ -77,7 +77,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
      * @since 4.1.0
      */
     public void setLowercase(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         lowercase = flag;
     }
     
@@ -87,7 +87,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
      * @param newTransforms collection of replacement transforms
      */
     public void setTransforms(@Nonnull @NonnullElements final Collection<Pair<String,String>> newTransforms) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
         
         transforms = new ArrayList<>();
@@ -105,7 +105,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
      * @return transformed value
      */
     @Nullable protected String decode(@Nonnull @NotEmpty final String id) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         String s = id;
         
         if (lowercase) {

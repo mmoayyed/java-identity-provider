@@ -96,7 +96,7 @@ public class ValidateCredentials extends AbstractValidationAction implements War
      * @param manager lockout manager
      */
     public void setLockoutManager(@Nullable final AccountLockoutManager manager) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         lockoutManager = manager;
     }
     
@@ -106,7 +106,7 @@ public class ValidateCredentials extends AbstractValidationAction implements War
      * @param validators validators to use
      */
     public void setValidators(@Nullable @NonnullElements final List<CredentialValidator> validators) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (validators != null) {
             credentialValidators = List.copyOf(validators);
         } else {
@@ -121,7 +121,7 @@ public class ValidateCredentials extends AbstractValidationAction implements War
      * @param flag flag to set
      */
     public void setRequireAll(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         requireAll = flag;
     }
 

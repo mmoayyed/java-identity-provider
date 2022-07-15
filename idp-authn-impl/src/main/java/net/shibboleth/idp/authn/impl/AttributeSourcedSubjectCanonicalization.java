@@ -106,7 +106,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
      * @param ch delimiter to use
      */
     public void setScopedDelimiter(final char ch) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         delimiter = ch;
     }
     
@@ -119,7 +119,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
      * @since 4.1.0
      */
     public void setResolveFromSubject(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         resolveFromSubject = flag;
     }
     
@@ -129,7 +129,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
      * @param ids   attribute IDs to read from
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeSourceIds = new ArrayList<>(StringSupport.normalizeStringCollection(ids));
     }
     
@@ -140,7 +140,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
                 "AttributeContext lookup strategy cannot be null");
     }

@@ -97,7 +97,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param name  name of login module class
      */
     public void setLoginModuleClassName(@Nonnull final String name) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         loginModuleClassName = Constraint.isNotNull(StringSupport.trimOrNull(name),
                 "Class name cannot be null or empty");
     }
@@ -108,7 +108,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param flag  flag to set
      */
     public void setRefreshKrb5Config(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         refreshKrb5Config = flag;
     }
 
@@ -118,7 +118,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param flag  flag to set
      */
     public void setPreserveTicket(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         preserveTicket = flag;
     }
     
@@ -130,7 +130,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param name name of service principal
      */
     public void setServicePrincipal(@Nullable final String name) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         servicePrincipal = StringSupport.trimOrNull(name);
     }
 
@@ -140,7 +140,7 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
      * @param path path to file containing a keytab
      */
     public void setKeytabPath(@Nullable final String path) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         keytabPath = StringSupport.trimOrNull(path);
     }
     

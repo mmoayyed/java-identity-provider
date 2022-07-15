@@ -56,7 +56,7 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
     
     /** {@inheritDoc} */
     @Nullable public MessageEncoder apply(@Nullable final ProfileRequestContext profileRequestContext) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         if (applicationContext == null) {
             log.warn("No Spring ApplicationContext set");

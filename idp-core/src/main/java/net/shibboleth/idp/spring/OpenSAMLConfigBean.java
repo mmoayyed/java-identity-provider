@@ -69,7 +69,7 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
      * @param newParserPool the parser pool to set
      */
     public void setParserPool(@Nullable final ParserPool newParserPool) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         parserPool = newParserPool;
     }
     
@@ -88,7 +88,7 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
      * @param newParserPool the decryption parser pool to set
      */
     public void setDecryptionParserPool(@Nullable final ParserPool newParserPool) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         decryptionParserPool = newParserPool;
     }
     

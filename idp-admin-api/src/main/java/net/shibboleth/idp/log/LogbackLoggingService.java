@@ -89,7 +89,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
 
     /** {@inheritDoc} */
     @Override public void setLoggingConfiguration(@Nonnull final Resource configuration) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         configurationResource = Constraint.isNotNull(configuration, "Logging configuration resource cannot be null");
     }

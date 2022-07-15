@@ -79,7 +79,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
      */
     public void setSessionContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SessionContext lookup strategy cannot be null");
     }

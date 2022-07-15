@@ -109,7 +109,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      * @param strategy strategy used to locate the {@link Assertion} to operate on
      */
     public void setAssertionLookupStrategy(@Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         assertionLookupStrategy = Constraint.isNotNull(strategy, "Assertion lookup strategy cannot be null");
     }
     
@@ -120,7 +120,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      */
     public void setClassRefLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AuthnContextClassRefPrincipal> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         classRefLookupStrategy = Constraint.isNotNull(strategy,
                 "Authentication context class reference strategy cannot be null");
     }
@@ -131,7 +131,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      * @param strategy lookup strategy
      */
     public void setSessionLifetimeLookupStrategy(@Nullable final Function<ProfileRequestContext,Duration> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionLifetimeLookupStrategy = strategy;
     }
     
@@ -142,7 +142,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
      */
     public void setSuppressAuthenticatingAuthorityPredicate(
             @Nonnull final Predicate<ProfileRequestContext> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         suppressAuthenticatingAuthorityPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
     }
     

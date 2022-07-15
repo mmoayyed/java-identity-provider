@@ -90,7 +90,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
      * @param pool  parser source
      */
     public void setParserPool(@Nonnull final ParserPool pool) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         parserPool = Constraint.isNotNull(pool, "ParserPool cannot be null");
     }
    

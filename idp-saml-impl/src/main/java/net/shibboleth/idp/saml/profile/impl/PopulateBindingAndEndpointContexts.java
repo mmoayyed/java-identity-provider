@@ -185,7 +185,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * @param type  type of endpoint to resolve
      */
     public void setEndpointType(@Nullable final QName type) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         endpointType = type;
     }
     
@@ -195,7 +195,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * @param resolver endpoint resolver to use  
      */
     public void setEndpointResolver(@Nonnull final EndpointResolver<?> resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         endpointResolver = Constraint.isNotNull(resolver, "EndpointResolver cannot be null");
     }
     
@@ -208,7 +208,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setBindingDescriptorsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,List<BindingDescriptor>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         bindingDescriptorsLookupStrategy =
                 Constraint.isNotNull(strategy, "Binding descriptors lookup strategy cannot be null");
     }
@@ -220,7 +220,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -232,7 +232,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLMetadataContext lookup strategy cannot be null");
     }
@@ -244,7 +244,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setBindingContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLBindingContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         bindingContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLBindingContext lookup strategy cannot be null");
     }
@@ -256,7 +256,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setEndpointContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLEndpointContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         endpointContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLEndpointContext lookup strategy cannot be null");
     }
@@ -268,7 +268,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setArtifactContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLArtifactContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         artifactContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLArtifactContext lookup strategy cannot be null");
     }
@@ -280,7 +280,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     public void setBestMatchCriterionLookupStrategy(
             @Nullable final Function<ProfileRequestContext,BestMatchLocationCriterion> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         bestMatchCriterionLookupStrategy = strategy;
     }
     
@@ -296,7 +296,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setArtifactImpliesSecureChannel(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         artifactImpliesSecureChannel = flag;
     }
     

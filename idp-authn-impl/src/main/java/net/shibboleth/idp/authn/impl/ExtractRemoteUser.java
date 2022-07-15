@@ -74,7 +74,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * @param flag value to set  
      */
     public void setCheckRemoteUser(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         checkRemoteUser = flag;
     }
 
@@ -84,7 +84,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * @param attributes    list of request attributes to check
      */
     public void setCheckAttributes(@Nullable @NonnullElements final Collection<String> attributes) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         checkAttributes = StringSupport.normalizeStringCollection(attributes);
     }
 
@@ -94,7 +94,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * @param headers list of request headers to check
      */
     public void setCheckHeaders(@Nullable @NonnullElements final Collection<String> headers) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         checkHeaders = StringSupport.normalizeStringCollection(headers);
     }
     

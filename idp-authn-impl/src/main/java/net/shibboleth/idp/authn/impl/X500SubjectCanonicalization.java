@@ -100,7 +100,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      * @param types types to search for
      */
     public void setSubjectAltNameTypes(@Nullable @NonnullElements final List<Integer> types) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (types != null) {
             subjectAltNameTypes = List.copyOf(types);
         } else {
@@ -114,7 +114,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      * @param ids RDN OIDs to search for
      */
     public void setObjectIds(@Nullable @NonnullElements final List<String> ids) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         objectIds = List.copyOf(StringSupport.normalizeStringCollection(ids));
     }
     

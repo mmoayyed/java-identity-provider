@@ -68,7 +68,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @param id    profile ID to populate into the context
      */
     public void setProfileId(@Nullable final String id) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         profileId = StringSupport.trimOrNull(id);
     }
     
@@ -80,7 +80,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @since 4.2.0
      */
     public void setLegacyProfileId(@Nullable final String id) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         legacyProfileId = StringSupport.trimOrNull(id);
     }
 
@@ -90,7 +90,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @param id    logging ID to populate into the context
      */
     public void setLoggingId(@Nullable final String id) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         loggingId = StringSupport.trimOrNull(id);
     }
     
@@ -100,7 +100,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @param browser flag to set
      */
     public void setBrowserProfile(final boolean browser) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         browserProfile = browser;
     }
 
@@ -113,7 +113,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
      * @since 4.1.0
      */
     public void setCaptureQueryParameters(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         captureQueryParameters = flag;
     }
     
@@ -124,7 +124,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
 
         // We have to override execute() because the profile request context doesn't exist yet.
         
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         final ProfileRequestContext prc = new ProfileRequestContext();
         if (profileId != null) {

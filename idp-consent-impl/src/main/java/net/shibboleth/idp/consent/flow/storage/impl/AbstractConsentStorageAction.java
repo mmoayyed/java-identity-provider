@@ -120,7 +120,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * @param serializer storage serializer
      */
     public void setStorageSerializer(@Nonnull final StorageSerializer<Map<String,Consent>> serializer) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageSerializer = Constraint.isNotNull(serializer, "Storage serializer cannot be null");
     }
     
@@ -130,7 +130,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * @param strategy the storage context lookup strategy
      */
     public void setStorageContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageContextLookupStrategy = Constraint.isNotNull(strategy, "Storage context lookup strategy cannot be null");
     }
 
@@ -140,7 +140,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * @param strategy the storage key lookup strategy
      */
     public void setStorageKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageKeyLookupStrategy = Constraint.isNotNull(strategy, "Storage key lookup strategy cannot be null");
     }
 

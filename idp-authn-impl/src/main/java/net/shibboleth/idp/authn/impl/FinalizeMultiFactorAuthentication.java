@@ -101,7 +101,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      */
     public void setMultiFactorContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,MultiFactorAuthenticationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         multiFactorContextLookupStrategy = Constraint.isNotNull(strategy,
                 "MultiFactorAuthenticationContext lookup strategy cannot be null");
     }
@@ -113,7 +113,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      */
     public void setResultMergingStrategy(
             @Nullable final Function<ProfileRequestContext,AuthenticationResult> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         resultMergingStrategy = strategy;
     }
 
@@ -123,7 +123,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      * @param predicate predicate to apply, or null
      */
     public void setResultCachingPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         resultCachingPredicate = predicate;
     }
 
@@ -134,7 +134,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      */
     public void setRequesterLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         requesterLookupStrategy = strategy;
     }
 
@@ -145,7 +145,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      */
     public void setResponderLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         responderLookupStrategy = strategy;
     }
 

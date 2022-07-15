@@ -105,7 +105,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
      * @param flag whether SSO should trump explicit relying party requirements preference
      */
     public void setFavorSSO(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         favorSSO = flag;
     }
 

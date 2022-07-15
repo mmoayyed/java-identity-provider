@@ -340,7 +340,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
      * This is slightly complicated because the default depends on what we are doing.
      */
     @Nonnull public Path getTargetDir() throws BuildException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         if (targetDir != null) {
             return targetDir;
         }

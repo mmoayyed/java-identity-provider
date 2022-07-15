@@ -65,7 +65,7 @@ public class PreserveAuthenticationFlowState extends AbstractAuthenticationActio
      * @param names parameter names
      */
     public void setParameterNames(@Nullable @NonnullElements final Collection<String> names) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (names == null) {
             parameterNames = Collections.emptyList();
         } else {

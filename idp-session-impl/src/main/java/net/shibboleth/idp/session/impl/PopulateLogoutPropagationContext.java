@@ -105,7 +105,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      * @param sealer the {@link DataSealer} to use
      */
     public void setDataSealer(@Nullable final DataSealer sealer) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         dataSealer = sealer;
     }
     
@@ -115,7 +115,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      * @param registry a registry of SPSession class to serializer mappings
      */
     public void setSPSessionSerializerRegistry(@Nullable final SPSessionSerializerRegistry registry) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         spSessionSerializerRegistry = registry;
     }
     
@@ -126,7 +126,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      */
     public void setLogoutPropagationContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext, LogoutPropagationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         contextCreationStrategy = Constraint.isNotNull(strategy,
                 "LogoutPropagationContext creation strategy cannot be null");
     }
@@ -137,7 +137,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setSessionLookupStrategy(@Nullable final Function<ProfileRequestContext,SPSession> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionLookupStrategy = strategy;
     }
     

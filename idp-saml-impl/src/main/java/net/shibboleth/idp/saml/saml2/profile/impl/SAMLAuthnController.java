@@ -103,7 +103,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
      */
     public void setProfileRequestContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,ProfileRequestContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         profileRequestContextLookupStrategy = Constraint.isNotNull(strategy,
                 "ProfileRequestContext lookup strategy cannot be null");
     }
@@ -115,7 +115,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
      */
     public void setSAMLAuthnContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLAuthnContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         samlContextLookupStrategy = Constraint.isNotNull(strategy, "SAMLAuthnContext lookup strategy cannot be null");
     }
     
@@ -125,7 +125,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
      * @param bindings the bindings to set
      */
     public void setInboundBindings(@Nullable @NonnullElements final Collection<BindingDescriptor> bindings) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (bindings != null) {
             bindingMap = new HashMap<>(bindings.size());
             bindings.forEach(b -> bindingMap.put(b.getShortName(), b));

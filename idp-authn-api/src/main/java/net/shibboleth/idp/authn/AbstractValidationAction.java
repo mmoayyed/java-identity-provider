@@ -134,7 +134,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @since 3.3.0
      */
     public void setMetricName(@Nonnull @NotEmpty final String name) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metricName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Metric name cannot be null or empty");
     }
     
@@ -156,7 +156,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param flag flag to set
      */
     public void setAddDefaultPrincipals(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         addDefaultPrincipals = flag;
     }
     
@@ -180,7 +180,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param messages the error message / event mappings to set
      */
     public void setClassifiedMessages(@Nullable @NonnullElements final Map<String,Collection<String>> messages) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (messages != null) {
             classifiedMessages = new LinkedHashMap<>();
             for (final Map.Entry<String, Collection<String>> entry : messages.entrySet()) {
@@ -209,7 +209,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param predicate predicate to apply, or null
      */
     public void setResultCachingPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         resultCachingPredicate = predicate;
     }
     
@@ -232,7 +232,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @since 4.1.0
      */
     public void setCleanupHook(@Nullable final Consumer<ProfileRequestContext> hook) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         cleanupHook = hook;
     }
     
@@ -253,7 +253,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param strategy lookup strategy
      */
     public void setRequesterLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         requesterLookupStrategy = strategy;
     }
     
@@ -275,7 +275,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      */
     public void setResponderLookupStrategy(
             @Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         responderLookupStrategy = strategy;
     }
     
@@ -295,7 +295,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @param principals supported principals to include
      */
     public void setSupportedPrincipals(@Nullable @NonnullElements final Collection<Principal> principals) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         getSubject().getPrincipals().clear();
         
         if (principals != null && !principals.isEmpty()) {

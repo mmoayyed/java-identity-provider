@@ -65,7 +65,7 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
      * @param sealer the Data Sealer to use.
      */
     public void setDataSealer(@Nonnull final DataSealer sealer) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }
 
@@ -80,7 +80,7 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
      */
     @Nullable @NotEmpty protected String decode(@Nonnull final String transientId,
             @Nonnull @NotEmpty final String requesterId) throws NameDecoderException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         if (null == transientId) {
             throw new NameDecoderException(getLogPrefix() + " Transient identifier was null");
         } else if (Strings.isNullOrEmpty(requesterId)) {

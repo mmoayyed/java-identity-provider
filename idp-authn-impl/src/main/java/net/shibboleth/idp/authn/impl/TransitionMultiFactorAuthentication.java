@@ -121,7 +121,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
      */
     public void setMultiFactorContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,MultiFactorAuthenticationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         multiFactorContextLookupStrategy = Constraint.isNotNull(strategy,
                 "MultiFactorAuthenticationContext lookup strategy cannot be null");
     }
@@ -132,7 +132,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
      * @param strategy lookup strategy
      */
     public void setEventContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,EventContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         eventContextLookupStrategy = Constraint.isNotNull(strategy, "EventContext lookup strategy cannot be null");
     }
     
@@ -145,7 +145,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
      * @param flag flag to set
      */
     public void setValidateLoginTransitions(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         validateLoginTransitions = flag;
     }
 

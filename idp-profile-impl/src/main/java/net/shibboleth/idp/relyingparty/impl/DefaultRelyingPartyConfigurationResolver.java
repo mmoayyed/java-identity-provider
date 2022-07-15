@@ -108,7 +108,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param configs list of verified relying party configurations
      */
     public void setRelyingPartyConfigurations(@Nonnull @NonnullElements final List<RelyingPartyConfiguration> configs) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         rpConfigurations = List.copyOf(Constraint.isNotNull(configs, "RelyingPartyConfiguration list cannot be null"));
     }
 
@@ -127,7 +127,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param configuration default verified configuration
      */
     public void setDefaultConfiguration(@Nonnull final RelyingPartyConfiguration configuration) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         defaultConfiguration = Constraint.isNotNull(configuration, "Default RP configuration cannot be null");
     }
 
@@ -148,7 +148,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param configuration unverified configuration
      */
     public void setUnverifiedConfiguration(@Nonnull final RelyingPartyConfiguration configuration) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         unverifiedConfiguration = Constraint.isNotNull(configuration, "Unverified RP configuration cannot be null");
     }
 
@@ -167,7 +167,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param predicate predicate to set
      */
     public void setVerificationPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         verificationPredicate = Constraint.isNotNull(predicate, "Verification predicate cannot be null");
     }
     
@@ -177,7 +177,7 @@ public class DefaultRelyingPartyConfigurationResolver
      * @param config  global default
      */
     public void setDefaultSecurityConfiguration(@Nullable final SecurityConfiguration config) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         defaultSecurityConfiguration = config;
     }
 
@@ -198,7 +198,7 @@ public class DefaultRelyingPartyConfigurationResolver
     /** {@inheritDoc} */
     @Override @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(
             @Nullable final ProfileRequestContext context) throws ResolverException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         if (context == null) {
             return Collections.emptyList();
@@ -238,7 +238,7 @@ public class DefaultRelyingPartyConfigurationResolver
     /** {@inheritDoc} */
     @Override @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
             throws ResolverException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         if (context == null) {
             return null;
@@ -293,7 +293,7 @@ public class DefaultRelyingPartyConfigurationResolver
     @Qualifier("signing")
     public void setSigningCredentials(
             @Nullable @NonnullElements final List<RelyingPartyResolverCredentialHolder> credentials) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         if (credentials != null) {
             signingCredentials = credentials.stream()
@@ -322,7 +322,7 @@ public class DefaultRelyingPartyConfigurationResolver
     @Qualifier("encryption")
     public void setEncryptionCredentials(
             @Nullable @NonnullElements final List<RelyingPartyResolverCredentialHolder> credentials) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         if (credentials != null) {
             encryptionCredentials = credentials.stream()

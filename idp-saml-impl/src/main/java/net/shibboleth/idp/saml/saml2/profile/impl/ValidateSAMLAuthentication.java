@@ -148,7 +148,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nullable final ReloadableService<AttributeTranscoderRegistry> registry) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         transcoderRegistry = registry;
     }
     
@@ -158,7 +158,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      * @param filterService optional filter service for inbound attributes
      */
     public void setAttributeFilter(@Nullable final ReloadableService<AttributeFilter> filterService) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeFilterService = filterService;
     }
     
@@ -168,7 +168,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      * @param resolver metadata resolver
      */
     public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataResolver = resolver;
     }
     
@@ -179,7 +179,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -193,7 +193,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      */
     public void setAttributeExtractionStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<IdPAttribute>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeExtractionStrategy = strategy;
     }
     
@@ -205,7 +205,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      * @since 4.2.0
      */
     public void setLoggedAttributeId(@Nullable @NotEmpty final String id) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         loggedAttributeId = StringSupport.trimOrNull(id);
     }
 

@@ -132,7 +132,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }

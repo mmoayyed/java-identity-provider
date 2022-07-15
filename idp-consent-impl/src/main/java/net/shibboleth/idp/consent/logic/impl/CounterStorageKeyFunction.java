@@ -77,7 +77,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
      */
     public void setInterceptorContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, ProfileInterceptorContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         interceptorContextlookupStrategy =
                 Constraint.isNotNull(strategy, "Profile interceptor context lookup strategy cannot be null");
     }
@@ -88,7 +88,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
      * @param strategy the storage context lookup strategy
      */
     public void setStorageContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageContextLookupStrategy = Constraint.isNotNull(strategy, "Storage context lookup strategy cannot be null");
     }
 

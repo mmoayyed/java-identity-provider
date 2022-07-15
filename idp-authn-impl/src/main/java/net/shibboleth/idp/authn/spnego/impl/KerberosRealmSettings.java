@@ -47,7 +47,7 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * @param principal service principal
      */
     public void setServicePrincipal(@Nonnull @NotEmpty final String principal) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         servicePrincipal = Constraint.isNotEmpty(StringSupport.trim(principal), "Principal cannot be null or empty");
     }
 
@@ -66,7 +66,7 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * @param newKeytab keytab to use
      */
     public void setKeytab(@Nullable final String newKeytab) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         keytab = StringSupport.trim(newKeytab);
     }
 
@@ -85,7 +85,7 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * @param newPassword password to use
      */
     public void setPassword(@Nullable final String newPassword) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         password = newPassword;
     }
 

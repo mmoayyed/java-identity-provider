@@ -67,7 +67,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     public void execute() throws BuildException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         deleteOld();
         copyDist();
         copyBinDocSystem();

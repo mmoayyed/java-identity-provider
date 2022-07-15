@@ -119,7 +119,7 @@ public class PrepareTicketValidationResponseAction extends
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         transcoderRegistry = Constraint.isNotNull(registry, "AttributeTranscoderRegistry cannot be null");
     }
     

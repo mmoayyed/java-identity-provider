@@ -87,7 +87,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
      * @param allowed usernames to allow
      */
     public void setAllowedUsernames(@Nullable @NonnullElements final Collection<String> allowed) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         allowedUsernames = Set.copyOf(StringSupport.normalizeStringCollection(allowed));
     }
 
@@ -97,7 +97,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
      * @param denied usernames to deny
      */
     public void setDeniedUsernames(@Nullable @NonnullElements final Collection<String> denied) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         deniedUsernames = Set.copyOf(StringSupport.normalizeStringCollection(denied));
     }
 
@@ -107,7 +107,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
      * @param expression a matching expression
      */
     public void setMatchExpression(@Nullable final Pattern expression) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (expression != null && !expression.pattern().isEmpty()) {
             matchExpression = expression;
         } else {

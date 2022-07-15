@@ -255,7 +255,7 @@ public final class TestSources {
          * @param newAttribute what to set.
          */
         public void setValue(@Nullable final IdPAttribute newAttribute) {
-            throwSetterPreconditionExceptions();
+            checkSetterPreconditions();
             value = newAttribute;
         }
 

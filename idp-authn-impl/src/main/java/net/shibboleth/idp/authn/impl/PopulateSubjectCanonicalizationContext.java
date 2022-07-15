@@ -61,7 +61,7 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
      */
     public void setAvailableFlows(
             @Nonnull @NonnullElements final Collection<SubjectCanonicalizationFlowDescriptor> flows) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
         

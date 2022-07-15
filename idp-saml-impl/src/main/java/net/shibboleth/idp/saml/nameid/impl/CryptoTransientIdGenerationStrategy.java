@@ -61,7 +61,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param sealer object used to protect and encrypt the data
      */
     public void setDataSealer(@Nonnull final DataSealer sealer) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }
     
@@ -80,7 +80,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * @param lifetime time ids are valid
      */
     public void setIdLifetime(@Nonnull final Duration lifetime) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(lifetime, "Lifetime cannot be null");
         Constraint.isFalse(lifetime.isNegative() || lifetime.isZero(), "Lifetime must be positive");
         
@@ -100,7 +100,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
     @Override
     @Nonnull @NotEmpty public String generate(@Nonnull @NotEmpty final String relyingPartyId,
             @Nonnull @NotEmpty final String principalName) throws SAMLException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         final StringBuilder principalTokenIdBuilder = new StringBuilder();
         principalTokenIdBuilder.append(relyingPartyId).append("!").append(principalName);
 

@@ -96,7 +96,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
      * @param mappings string to symbolic mappings
      */
     public void setSymbolics(@Nonnull @NonnullElements final Map<String, Integer> mappings) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Symbolic mappings cannot be null"));
     }
 

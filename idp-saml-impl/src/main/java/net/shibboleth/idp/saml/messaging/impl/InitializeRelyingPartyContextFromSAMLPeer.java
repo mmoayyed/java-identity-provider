@@ -83,7 +83,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractMessageHa
      */
     public void setRelyingPartyContextCreationStrategy(
             @Nonnull final Function<MessageContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextCreationStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext creation strategy cannot be null");
     }
@@ -95,7 +95,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractMessageHa
      */
     public void setPeerEntityContextLookupStrategy(
             @Nonnull final Function<MessageContext,SAMLPeerEntityContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         peerEntityContextLookupStrategy =
                 Constraint.isNotNull(strategy, "SAMLPeerEntityContext lookup strategy cannot be null");
     }

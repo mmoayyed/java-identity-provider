@@ -167,13 +167,13 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
 
     /** {@inheritDoc} */
     public void setOutput(@Nonnull final File file) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         output = Constraint.isNotNull(file, "provided file must be nonnull");
     }
 
     /** {@inheritDoc} */
     public void setParameters(@Nonnull final MetadataGeneratorParameters what) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         params = Constraint.isNotNull(what, "provided params must be nonnull");
     }
 
@@ -259,7 +259,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
 
     /** {@inheritDoc} */
     public void generate() throws BuildException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         try {
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writer.newLine();

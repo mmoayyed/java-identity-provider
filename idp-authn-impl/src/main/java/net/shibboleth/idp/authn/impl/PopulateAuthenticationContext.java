@@ -86,7 +86,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      * @param flows the flows known to the system
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
 
@@ -99,7 +99,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      */
     public void setPotentialFlowsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<AuthenticationFlowDescriptor>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         potentialFlowsLookupStrategy = Constraint.isNotNull(strategy, "Potential flow lookup strategy cannot be null");
     }
     
@@ -110,7 +110,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      */
     public void setActiveFlowsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         activeFlowsLookupStrategy = Constraint.isNotNull(strategy, "Flow lookup strategy cannot be null");
     }
     
@@ -130,7 +130,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      */
     public void setPrincipalEvalPredicateFactoryRegistry(
             @Nonnull final PrincipalEvalPredicateFactoryRegistry registry) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
     }
     
@@ -143,7 +143,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      * @since 3.4.0
      */
     public void setFixedEventLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         fixedEventLookupStrategy = strategy;
     }
 

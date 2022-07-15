@@ -92,7 +92,7 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
      * @param manager  session manager to use
      */
     public void setSessionManager(@Nonnull final SessionManager manager) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
@@ -103,7 +103,7 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
      */
     public void setSessionContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SessionContext lookup strategy cannot be null");
     }
@@ -115,7 +115,7 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
      */
     public void setSubjectCanonicalizationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectCanonicalizationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         c14nContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SubjectCanonicalizationContext lookup strategy cannot be null");
     }

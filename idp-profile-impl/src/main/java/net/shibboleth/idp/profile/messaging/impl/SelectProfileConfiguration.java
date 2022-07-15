@@ -89,7 +89,7 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<MessageContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -124,7 +124,7 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
      *         {@link MessageContext}
      */
     public void setProfiledIdLookupStrategy(@Nonnull final Function<MessageContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         profileIdLookupStrategy = strategy;
     }
 

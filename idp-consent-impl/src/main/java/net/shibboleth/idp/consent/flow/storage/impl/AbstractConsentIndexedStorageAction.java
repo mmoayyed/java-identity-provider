@@ -94,7 +94,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      * @param strategy the storage index key lookup strategy
      */
     public void setStorageIndexKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageIndexKeyLookupStrategy =
                 Constraint.isNotNull(strategy, "Storage index key lookup strategy cannot be null");
     }
@@ -105,7 +105,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      * @param serializer the storage keys serializer
      */
     public void setStorageKeysSerializer(@Nonnull final StorageSerializer<Collection<String>> serializer) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageKeysSerializer = Constraint.isNotNull(serializer, "Storage keys serializer cannot be null");
     }
 
@@ -116,7 +116,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      */
     public void setStorageKeysStrategy(
             @Nonnull final Function<Pair<ProfileRequestContext, List<String>>, List<String>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageKeysStrategy = Constraint.isNotNull(strategy, "Storage keys strategy cannot be null");
     }
 

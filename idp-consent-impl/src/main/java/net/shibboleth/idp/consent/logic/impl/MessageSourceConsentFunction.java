@@ -92,7 +92,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * @param strategy lookup strategy
      */
     public void setConsentKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         consentKeyLookupStrategy = Constraint.isNotNull(strategy, "Consent key lookup strategy cannot be null");
     }
 
@@ -102,7 +102,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * @param suffix suffix of message code for the consent value
      */
     public void setConsentValueMessageCodeSuffix(@Nonnull @NotEmpty final String suffix) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         consentValueMessageCodeSuffix =
                 Constraint.isNotNull(StringSupport.trimOrNull(suffix),
                         "Consent value message code suffix cannot be null nor empty");
@@ -115,7 +115,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      */
     public void setConsentFlowDescriptorLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,ConsentFlowDescriptor> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         consentFlowDescriptorLookupStrategy =
                 Constraint.isNotNull(strategy, "Consent flow descriptor lookup strategy cannot be null");
     }
@@ -137,7 +137,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * @param function hash function
      */
     public void setHashFunction(@Nonnull final Function<String,String> function) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         hashFunction = Constraint.isNotNull(function, "Hash function cannot be null");
     }
 

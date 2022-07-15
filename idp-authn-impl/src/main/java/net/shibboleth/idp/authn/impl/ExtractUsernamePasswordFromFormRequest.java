@@ -70,7 +70,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
      * @param fieldName the username parameter name
      */
     public void setUsernameFieldName(@Nonnull @NotEmpty final String fieldName) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         usernameFieldName = Constraint.isNotNull(
                 StringSupport.trimOrNull(fieldName), "Username field name cannot be null or empty.");
     }
@@ -81,7 +81,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
      * @param fieldName the password parameter name
      */
     public void setPasswordFieldName(@Nonnull @NotEmpty final String fieldName) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         passwordFieldName = Constraint.isNotNull(
                 StringSupport.trimOrNull(fieldName), "Password field name cannot be null or empty.");
     }
@@ -92,7 +92,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
      * @param fieldName the SSO bypass parameter name
      */
     public void setSSOBypassFieldName(@Nonnull @NotEmpty final String fieldName) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         ssoBypassFieldName = Constraint.isNotNull(
                 StringSupport.trimOrNull(fieldName), "SSO Bypass field name cannot be null or empty.");
     }

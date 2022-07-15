@@ -68,7 +68,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
@@ -78,7 +78,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
      * @param generator transient ID generator
      */
     public void setTransientIdGenerator(@Nonnull final TransientIdGenerationStrategy generator) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         transientIdGenerator = Constraint.isNotNull(generator, "TransientIdGenerationStrategy cannot be null");
     }
 

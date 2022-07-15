@@ -110,7 +110,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param type the type of JAAS configuration to use
      */
     public void setLoginConfigType(@Nullable final String type) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         loginConfigType = StringSupport.trimOrNull(type);
     }
 
@@ -129,7 +129,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param uri the JAAS configuration URI parameters to use
      */
     public void setLoginConfigParameters(@Nullable final URI uri) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (uri != null) {
             loginConfigParameters = new URIParameter(uri);
         } else {
@@ -145,7 +145,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @since 4.1.0
      */
     public void setLoginConfigResource(@Nullable final Resource resource) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         loginConfigResource = resource;
     }
 
@@ -156,7 +156,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param configs list of JAAS application names and custom principals to use
      */
     public void setLoginConfigurations(@Nullable final Collection<Pair<String,Collection<Principal>>> configs) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (configs != null) {
             loginConfigurations = new ArrayList<>(configs.size());
             for (final Pair<String,Collection<Principal>> config : configs) {
@@ -180,7 +180,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * @param names list of JAAS application names to use
      */
     public void setLoginConfigNames(@Nullable @NonnullElements final Collection<String> names) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         loginConfigNames = StringSupport.normalizeStringCollection(names);
     }
     
@@ -191,7 +191,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      */
     public void setLoginConfigStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<Pair<String,Subject>>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         loginConfigStrategy = strategy;
     }
     

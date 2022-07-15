@@ -81,7 +81,7 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
      * @param creds credentials to load keys into
      */
     public void setCredentials(@Nullable @NonnullElements final Collection<MutableCredential> creds) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         if (creds != null) {
             credentials = List.copyOf(creds);
@@ -96,7 +96,7 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
      * @param keys key resources to load
      */
     public void setKeyResources(@Nullable @NonnullElements final Collection<Resource> keys) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         if (keys != null) {
             keyResources = List.copyOf(keys);

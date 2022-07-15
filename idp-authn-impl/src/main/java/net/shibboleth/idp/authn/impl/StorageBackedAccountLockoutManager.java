@@ -88,7 +88,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param storage the back-end to use
      */
     public void setStorageService(@Nonnull final StorageService storage) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageService = Constraint.isNotNull(storage, "StorageService cannot be null");
         final StorageCapabilities caps = storageService.getCapabilities();
         if (caps instanceof StorageCapabilitiesEx) {
@@ -107,7 +107,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param strategy strategy function
      */
     public void setLockoutKeyStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         lockoutKeyStrategy = Constraint.isNotNull(strategy, "Lockout key strategy cannot be null");
     }
     
@@ -119,7 +119,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param attempts maximum failed attempts
      */
     public void setMaxAttempts(@Positive final int attempts) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         maxAttemptsLookupStrategy = FunctionSupport.constant(
                 Constraint.isGreaterThan(0, attempts, "Attempts must be greater than zero"));
     }
@@ -132,7 +132,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param strategy lookup function
      */
     public void setMaxAttemptsLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         maxAttemptsLookupStrategy = Constraint.isNotNull(strategy, "Max attempts lookup strategy cannot be null");
     }
     
@@ -144,7 +144,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param window counter window
      */
     public void setCounterInterval(@Nonnull final Duration window) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         counterIntervalLookupStrategy = FunctionSupport.constant(
                 Constraint.isNotNull(window, "Counter interval cannot be null"));
     }
@@ -157,7 +157,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param strategy lookup function
      */
     public void setCounterIntervalLookupStrategy(@Nonnull final Function<ProfileRequestContext,Duration> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         counterIntervalLookupStrategy = Constraint.isNotNull(strategy,
                 "Counter interval lookup strategy cannot be null");
     }
@@ -170,7 +170,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param duration lockout duration
      */
     public void setLockoutDuration(@Nonnull final Duration duration) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         lockoutDurationLookupStrategy = FunctionSupport.constant(
                 Constraint.isNotNull(duration, "Lockout duration cannot be null"));
     }
@@ -183,7 +183,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param strategy lookup function
      */
     public void setLockoutDurationLookupStrategy(@Nonnull final Function<ProfileRequestContext,Duration> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         lockoutDurationLookupStrategy = Constraint.isNotNull(strategy,
                 "Lockout duration lookup strategy cannot be null");
     }
@@ -194,7 +194,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param flag flag to set
      */
     public void setExtendLockoutDuration(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         extendLockoutDuration = flag;
     }
     

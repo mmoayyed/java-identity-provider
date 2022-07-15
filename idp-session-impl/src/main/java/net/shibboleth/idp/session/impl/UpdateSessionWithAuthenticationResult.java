@@ -96,7 +96,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
      * @param manager  session manager to use
      */
     public void setSessionManager(@Nonnull final SessionManager manager) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
@@ -107,7 +107,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
      */
     public void setSessionContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SessionContext lookup/creation strategy cannot be null");
     }
@@ -119,7 +119,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
     

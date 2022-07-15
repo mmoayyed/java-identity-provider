@@ -113,7 +113,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
      * @param flag flag to set
      */
     public void setOverwriteExisting(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         overwriteExisting = flag;
     }
 
@@ -124,7 +124,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
      */
     public void setIdentifierGeneratorLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idGeneratorLookupStrategy =
                 Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
     }
@@ -135,7 +135,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
      * @param strategy lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         issuerLookupStrategy = strategy;
     }
 

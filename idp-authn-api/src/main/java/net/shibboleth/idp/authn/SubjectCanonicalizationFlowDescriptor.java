@@ -59,7 +59,7 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableI
      * @param condition predicate that controls activation of the flow
      */
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         activationCondition = Constraint.isNotNull(condition, "Activation condition predicate cannot be null");
     }
 

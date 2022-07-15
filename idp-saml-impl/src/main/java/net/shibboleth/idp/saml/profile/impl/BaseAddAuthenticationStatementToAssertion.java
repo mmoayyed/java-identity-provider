@@ -102,7 +102,7 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      *            added to one if it exists
      */
     public void setStatementInOwnAssertion(final boolean inOwnAssertion) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         statementInOwnAssertion = inOwnAssertion;
     }
 
@@ -113,7 +113,7 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      */
     public void setIdentifierGeneratorLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idGeneratorLookupStrategy =
                 Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
     }
@@ -124,7 +124,7 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      * @param strategy lookup strategy
      */
     public void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
     }
 
@@ -147,7 +147,7 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      * @since 4.0.0
      */
     public void setAddressLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         addressLookupStrategy = strategy;
     }
     

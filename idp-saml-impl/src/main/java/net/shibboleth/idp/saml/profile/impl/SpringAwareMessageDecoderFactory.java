@@ -66,7 +66,7 @@ public class SpringAwareMessageDecoderFactory extends AbstractInitializableCompo
      * @param mappings string to bean ID mappings
      */
     public void setBeanMappings(@Nonnull final Map<String,String> mappings) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(mappings, "Mappings cannot be null");
         
         beanMappings = new HashMap<>(mappings.size());
@@ -87,7 +87,7 @@ public class SpringAwareMessageDecoderFactory extends AbstractInitializableCompo
     
     /** {@inheritDoc} */
     @Nullable public MessageDecoder apply(@Nullable final String input) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         final String beanID = beanMappings.get(StringSupport.trimOrNull(input));
         

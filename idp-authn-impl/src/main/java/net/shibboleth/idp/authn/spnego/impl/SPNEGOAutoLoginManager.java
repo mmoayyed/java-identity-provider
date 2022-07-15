@@ -64,7 +64,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * @param manager the CookieManager to use.
      */
     public void setCookieManager(@Nonnull final CookieManager manager) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         cookieManager = Constraint.isNotNull(manager, "CookieManager cannot be null");
     }
 
@@ -85,7 +85,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * @since 4.2.0
      */
     public void setCookieName(@Nonnull @NotEmpty final String name) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         cookieName = Constraint.isNotEmpty(StringSupport.trimOrNull(name), "Cookie name cannot be null or empty");
     }
     

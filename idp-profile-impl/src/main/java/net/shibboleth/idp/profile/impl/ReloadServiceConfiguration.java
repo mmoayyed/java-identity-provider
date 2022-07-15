@@ -79,7 +79,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
      * @param strategy  lookup strategy
      */
     public void setServiceLookupStrategy(@Nonnull final Function<ProfileRequestContext,ReloadableService<?>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         serviceLookupStrategy = Constraint.isNotNull(strategy, "ReloadableService lookup strategy cannot be null");
     }
     

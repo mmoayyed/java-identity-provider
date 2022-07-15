@@ -91,7 +91,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * @param flag true if consent should not be remembered
      */
     public void setDoNotRememberConsentAllowed(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         doNotRememberConsentAllowed = flag;
     }
 
@@ -101,7 +101,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * @param flag true iff consent to any attribute and to any relying party is allowed
      */
     public void setGlobalConsentAllowed(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         globalConsentAllowed = flag;
     }
 
@@ -111,7 +111,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * @param flag true iff per-attribute consent is enabled
      */
     public void setPerAttributeConsentEnabled(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         perAttributeConsentEnabled = flag;
     }
 
@@ -122,7 +122,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      */
     public void setAttributeValuesHashFunction(
             @Nonnull final Function<Collection<IdPAttributeValue>, String> function) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
                 attributeValuesHashFunction = Constraint.isNotNull(function, 
                         "Attribute values hash function cannot be null");
     }

@@ -132,7 +132,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      *            one if it exists
      */
     public void setStatementInOwnAssertion(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         statementInOwnAssertion = flag;
     }
 
@@ -157,7 +157,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @param flag flag to set
      */
     public void setIgnoringUnencodableAttributes(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         ignoringUnencodableAttributes = flag;
     }
 
@@ -170,7 +170,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }
@@ -182,7 +182,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      */
     public void setIdentifierGeneratorLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idGeneratorLookupStrategy =
                 Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
     }
@@ -193,7 +193,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @param strategy lookup strategy
      */
     public void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
     }
 
@@ -212,7 +212,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         transcoderRegistry = Constraint.isNotNull(registry, "AttributeTranscoderRegistry cannot be null");
     }
     

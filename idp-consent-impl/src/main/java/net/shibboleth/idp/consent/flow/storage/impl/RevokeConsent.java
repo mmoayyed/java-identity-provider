@@ -49,7 +49,7 @@ public class RevokeConsent extends AbstractConsentIndexedStorageAction {
      * @param flag flag to set
      */
     public void setMaskStorageErrors(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         maskStorageErrors = flag;
     }
 

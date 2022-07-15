@@ -82,7 +82,7 @@ public class PopulateSessionContext extends AbstractProfileAction {
      * @param resolver  session resolver to use
      */
     public void setSessionResolver(@Nonnull final SessionResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
     }
     
@@ -93,7 +93,7 @@ public class PopulateSessionContext extends AbstractProfileAction {
      */
     public void setSessionContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SessionContext creation strategy cannot be null");
     }
@@ -106,7 +106,7 @@ public class PopulateSessionContext extends AbstractProfileAction {
      * @since 4.2.0
      */
     public void setAddressLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         addressLookupStrategy = strategy;
     }
     

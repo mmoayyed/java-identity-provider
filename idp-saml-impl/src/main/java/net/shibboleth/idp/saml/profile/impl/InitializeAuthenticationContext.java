@@ -101,7 +101,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -114,7 +114,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @since 3.4.0
      */
     public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
     }
 
@@ -126,7 +126,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @since 4.0.0
      */
     public void setIgnoreScopingPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         ignoreScopingPredicate = Constraint.isNotNull(condition, "Ignore Scoping predicate cannot be null");
     }
 
@@ -138,7 +138,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @since 4.0.0
      */
     public void setProxyCountLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         proxyCountLookupStrategy = Constraint.isNotNull(strategy, "Proxy count lookup strategy cannot be null");
     }
     
@@ -148,7 +148,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @param strategy strategy used to locate the {@link AuthnRequest}
      */
     public void setRequestLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuthnRequest> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         requestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
     }
     

@@ -100,7 +100,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setAuditContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,AuditContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         auditContextLookupStrategy = Constraint.isNotNull(strategy, "AuditContext lookup strategy cannot be null");
     }
     
@@ -124,7 +124,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @param map map of categories to formatting strings
      */
     public void setFormattingMap(@Nonnull @NonnullElements final Map<String,String> map) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(map, "Audit formatting map cannot be null");
         
         formattingMap = new HashMap<>(map.size());
@@ -174,7 +174,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (format != null) {
             dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
         }
@@ -186,7 +186,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @param flag flag to set
      */
     public void setUseDefaultTimeZone(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         useDefaultTimeZone = flag;
     }
     

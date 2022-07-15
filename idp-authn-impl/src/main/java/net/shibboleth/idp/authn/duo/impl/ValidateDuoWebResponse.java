@@ -103,7 +103,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
      */
     public void setDuoIntegrationLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,DuoIntegration> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         duoIntegrationLookupStrategy = Constraint.isNotNull(strategy, "DuoIntegration lookup strategy cannot be null");
     }
 
@@ -113,7 +113,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
      * @param duo Duo integration details
      */
     public void setDuoIntegration(@Nonnull final DuoIntegration duo) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         Constraint.isNotNull(duo, "DuoIntegration cannot be null");
         duoIntegrationLookupStrategy = FunctionSupport.constant(duo);
     }
@@ -124,7 +124,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
      * @param strategy lookup strategy
      */
     public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 

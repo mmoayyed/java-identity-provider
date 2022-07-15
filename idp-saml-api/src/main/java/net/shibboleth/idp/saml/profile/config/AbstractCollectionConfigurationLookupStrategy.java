@@ -72,7 +72,7 @@ public abstract class AbstractCollectionConfigurationLookupStrategy<T1,T2>
      * @param type object type
      */
     public void setPropertyType(@Nonnull final Class<T1> type) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         propertyType = Constraint.isNotNull(type, "Property type cannot be null");
     }
     

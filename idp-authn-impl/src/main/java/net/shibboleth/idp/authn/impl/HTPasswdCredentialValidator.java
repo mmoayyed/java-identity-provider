@@ -89,7 +89,7 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
      * @param resource resource to use
      */
     public void setResource(@Nonnull final Resource resource) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         htPasswdResource = Constraint.isNotNull(resource, "Resource cannot be null");
     }
     

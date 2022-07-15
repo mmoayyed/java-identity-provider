@@ -192,7 +192,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
 // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final AuthenticationResult instance) throws IOException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         try {
             final StringWriter sink = new StringWriter(128);
@@ -259,7 +259,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     @Nonnull public AuthenticationResult deserialize(final long version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
                     @Nullable final Long expiration) throws IOException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         try (final JsonReader reader = readerFactory.createReader(new StringReader(value))) {
             

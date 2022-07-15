@@ -78,7 +78,7 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -89,7 +89,7 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
      * @param strategy lookup strategy
      */
     public void setDiscoveryURLLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         discoveryURLLookupStrategy = Constraint.isNotNull(strategy, "Discovery URL lookup strategy cannot be null");
     }
     

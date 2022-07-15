@@ -133,7 +133,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setRelyingPartyLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyLookupStrategy = Constraint.isNotNull(strategy, "Relying Party ID lookup strategy cannot be null");
     }
 
@@ -143,7 +143,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setResponderLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         responderLookupStrategy = Constraint.isNotNull(strategy, "Responder ID lookup strategy cannot be null");
     }
 
@@ -153,7 +153,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 
@@ -163,7 +163,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setAuthenticationMethodLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         authenticationMethodLookupStrategy = Constraint.isNotNull(strategy,
                 "Authentication method lookup strategy cannot be null");
     }
@@ -174,7 +174,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setStatusCodeLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         statusCodeLookupStrategy = Constraint.isNotNull(strategy, "StatusCode lookup strategy cannot be null");
     }
 

@@ -100,7 +100,7 @@ public abstract class AbstractProfileAction
      */
     public void setProfileContextLookupStrategy(
             @Nonnull final Function<RequestContext,ProfileRequestContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         profileContextLookupStrategy =
                 Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
@@ -109,7 +109,7 @@ public abstract class AbstractProfileAction
     /** {@inheritDoc} */
     @Override
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         final ProfileRequestContext profileRequestContext =
                 profileContextLookupStrategy.apply(springRequestContext);

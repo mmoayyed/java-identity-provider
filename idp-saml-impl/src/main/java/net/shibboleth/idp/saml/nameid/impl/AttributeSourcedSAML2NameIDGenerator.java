@@ -90,7 +90,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
             "AttributeContext lookup strategy cannot be null");
     }
@@ -101,7 +101,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
      * @param ch scope to set
      */
     public void setScopedDelimiter(final char ch) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         delimiter = ch;
     }
 
@@ -111,7 +111,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
      * @param ids attribute IDs to pull from
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeSourceIds = List.copyOf(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
     }
 

@@ -93,7 +93,7 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
      */
     public void setBindingContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLBindingContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         bindingContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLBindingContext lookup strategy cannot be null");
     }

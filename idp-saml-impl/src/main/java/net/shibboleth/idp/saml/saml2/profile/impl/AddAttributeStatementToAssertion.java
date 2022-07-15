@@ -85,7 +85,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
      * @param strategy strategy used to locate the {@link Assertion} to operate on
      */
     public void setAssertionLookupStrategy(@Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         assertionLookupStrategy = Constraint.isNotNull(strategy, "Assertion lookup strategy cannot be null");
     }
 

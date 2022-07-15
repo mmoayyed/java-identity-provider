@@ -59,7 +59,7 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
      * @param store the id store
      */
     public void setPersistentIdStore(@Nullable final DurablePairwiseIdStore store) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         pidStore = store;
     }
 
@@ -70,7 +70,7 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
      * @param source data source
      */
     public void setDataSource(@Nullable final DataSource source) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         dataSource = source;
     }
     
@@ -98,7 +98,7 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
             @Nonnull final NameID nameID) throws NameDecoderException {
-        throwComponentStateExceptions();
+        checkComponentActive();
 
         if (nameID.getValue() == null) {
             throw new NameDecoderException("Persistent NameID was empty");

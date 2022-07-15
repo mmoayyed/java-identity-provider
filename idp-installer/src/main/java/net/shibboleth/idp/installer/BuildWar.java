@@ -101,7 +101,7 @@ public final class BuildWar extends AbstractInitializableComponent {
      * @throws BuildException if unexpected badness occurs.
      */
     public void execute() throws BuildException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         final Path warFile = targetDir.resolve("war").resolve("idp.war");
 
         log.info("Rebuilding {}, Version {}", warFile.toAbsolutePath(), Version.getVersion());

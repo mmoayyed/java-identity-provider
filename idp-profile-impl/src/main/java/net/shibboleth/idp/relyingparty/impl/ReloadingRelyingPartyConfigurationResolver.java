@@ -70,7 +70,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     /** {@inheritDoc} */
     @Override @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(
             @Nullable final ProfileRequestContext context) throws ResolverException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();
@@ -97,7 +97,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     /** {@inheritDoc} */
     @Override @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
             throws ResolverException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();
@@ -119,7 +119,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
 
     /** {@inheritDoc} */
     @Override public SecurityConfiguration getDefaultSecurityConfiguration(final String profileId) {
-        throwComponentStateExceptions();
+        checkComponentActive();
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();

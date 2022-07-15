@@ -177,7 +177,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param home Where we are working from
      */
     public void setIdpHome(@Nonnull final Path home) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idpHome = Constraint.isNotNull(home, "IdPHome should be non-null");
     }
 
@@ -220,7 +220,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param params what to set.
      */
     public void setModuleContextSecurityParams(@Nullable final HttpClientSecurityParameters params) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         securityParams =  params;
     }
 
@@ -651,7 +651,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** Build the Http Client if it doesn't exist. */
     private void buildHttpClient() {
-        throwComponentStateExceptions();
+        checkComponentActive();
         if (httpClient == null) {
             LOG.debug("No HttpClient built, creating default");
             try {

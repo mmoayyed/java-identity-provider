@@ -70,7 +70,7 @@ public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitia
      * @param condition predicate that controls activation of the flow
      */
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         activationCondition = Constraint.isNotNull(condition, "Activation condition predicate cannot be null");
     }
 
@@ -89,7 +89,7 @@ public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitia
      * @param isSupported whether this flow supports non-browser clients
      */
     public void setNonBrowserSupported(final boolean isSupported) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         supportsNonBrowser = isSupported;
     }
 
@@ -108,7 +108,7 @@ public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitia
      * @param service the storage service
      */
     public void setStorageService(@Nonnull final StorageService service) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         storageService = Constraint.isNotNull(service, "Storage service can not be null");
     }
 

@@ -80,7 +80,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      * @param flag flag to set
      */
     public void setForCanonicalization(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         forCanonicalization = flag;
     }
 
@@ -93,7 +93,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
@@ -103,7 +103,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      * @param strategy strategy function
      */
     public void setAttributeValuesFunction(@Nonnull final Function<Principal,List<IdPAttributeValue>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         attributeValuesFunction = Constraint.isNotNull(strategy, "Attribute value lookup strategy cannot be null");
     }
 
@@ -116,7 +116,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      */
     public void setSubjectLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Subject> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         subjectLookupStrategy = strategy;
     }
     

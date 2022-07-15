@@ -107,7 +107,7 @@ public class PluginState extends AbstractInitializableComponent {
      * @param what what to set.
      */
     public void setHttpClient(@Nonnull final HttpClient what) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         httpClient = Constraint.isNotNull(what, "HttpClient cannot be null");
     }
 

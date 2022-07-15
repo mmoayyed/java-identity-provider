@@ -93,7 +93,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param headerName the factor header name
      */
     public void setFactorHeader(@Nonnull @NotEmpty final String headerName) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         factorHeaderName = Constraint.isNotNull(StringSupport.trimOrNull(headerName),
                 "Factor header name cannot be null or empty.");
     }
@@ -104,7 +104,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param headerName the factor header name
      */
     public void setDeviceHeader(@Nonnull @NotEmpty final String headerName) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         deviceHeaderName = Constraint.isNotNull(StringSupport.trimOrNull(headerName),
                 "Device header name cannot be null or empty.");
     }
@@ -115,7 +115,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param headerName the factor header name
      */
     public void setPasscodeHeader(@Nonnull @NotEmpty final String headerName) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         passcodeHeaderName = Constraint.isNotNull(StringSupport.trimOrNull(headerName),
                 "Passcode header name cannot be null or empty.");
     }
@@ -135,7 +135,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param flag flag to set
      */
     public void setClientAdddressTrusted(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         clientAddressTrusted = flag;
     }
     
@@ -154,7 +154,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      * @param flag flag to set
      */
     public void setAutoAuthenticationSupported(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         autoAuthenticationSupported = flag;
     }
     
@@ -165,7 +165,7 @@ public class ExtractDuoAuthenticationFromHeaders extends AbstractAuthenticationA
      */
     public void setPushInfoLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Map<String,String>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         pushInfoLookupStrategy = strategy;
     }
 

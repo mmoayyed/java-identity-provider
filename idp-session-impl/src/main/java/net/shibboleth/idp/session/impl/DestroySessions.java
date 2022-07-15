@@ -87,7 +87,7 @@ public class DestroySessions extends AbstractProfileAction {
      * @param manager  session manager to use
      */
     public void setSessionManager(@Nonnull final SessionManager manager) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
@@ -98,7 +98,7 @@ public class DestroySessions extends AbstractProfileAction {
      */
     public void setSessionContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SessionContext lookup strategy cannot be null");
     }
@@ -110,7 +110,7 @@ public class DestroySessions extends AbstractProfileAction {
      */
     public void setLogoutContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         logoutContextLookupStrategy = Constraint.isNotNull(strategy,
                 "LogoutContext lookup strategy cannot be null");
     }

@@ -100,7 +100,7 @@ public class ProcessLogout extends AbstractProfileAction {
      * @param resolver  session resolver to use
      */
     public void setSessionResolver(@Nonnull final SessionResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionResolver = Constraint.isNotNull(resolver, "SessionResolver cannot be null");
     }
     
@@ -111,7 +111,7 @@ public class ProcessLogout extends AbstractProfileAction {
      */
     public void setSubjectContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,SubjectContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         subjectContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SubjectContext creation strategy cannot be null");
     }
@@ -123,7 +123,7 @@ public class ProcessLogout extends AbstractProfileAction {
      */
     public void setSessionContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionContextCreationStrategy = Constraint.isNotNull(strategy,
                 "SessionContext creation strategy cannot be null");
     }
@@ -135,7 +135,7 @@ public class ProcessLogout extends AbstractProfileAction {
      */
     public void setLogoutContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         logoutContextCreationStrategy = Constraint.isNotNull(strategy,
                 "LogoutContext creation strategy cannot be null");
     }
@@ -159,7 +159,7 @@ public class ProcessLogout extends AbstractProfileAction {
      * @since 4.2.0
      */
     public void setAddressLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         addressLookupStrategy = strategy;
     }
     

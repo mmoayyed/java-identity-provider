@@ -77,7 +77,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
      * @param flows the flows available for possible use
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<ProfileInterceptorFlowDescriptor> flows) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
     
@@ -88,7 +88,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
      */
     public void setActiveFlowsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         activeFlowsLookupStrategy = Constraint.isNotNull(strategy, "Flow lookup strategy cannot be null");
     }
     
@@ -100,7 +100,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
      * @since 4.2.0
      */
     public void setLoggingLabel(@Nullable @NotEmpty final String label) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         loggingLabel = StringSupport.trimOrNull(label);
     }
     

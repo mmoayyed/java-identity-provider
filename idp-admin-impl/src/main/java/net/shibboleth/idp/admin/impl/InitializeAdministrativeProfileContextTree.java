@@ -67,7 +67,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
      * @param descriptor the flow descriptor to base the action on
      */
     public void setAdministrativeFlowDescriptor(@Nullable final AdministrativeFlowDescriptor descriptor) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
 
         flowDescriptor = descriptor;
     }
@@ -78,7 +78,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
      * @param langs a semi-colon separated string.
      */
     public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         if (langs != null) {
             fallbackLanguages = List.copyOf(langs);

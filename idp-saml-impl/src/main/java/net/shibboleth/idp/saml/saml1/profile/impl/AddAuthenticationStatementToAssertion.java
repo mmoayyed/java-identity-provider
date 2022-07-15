@@ -88,7 +88,7 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
      * @param strategy strategy used to locate the {@link Assertion} to operate on
      */
     public void setAssertionLookupStrategy(@Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         assertionLookupStrategy = Constraint.isNotNull(strategy, "Assertion lookup strategy cannot be null");
     }
     
@@ -99,7 +99,7 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
      */
     public void setAuthenticationMethodLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,AuthenticationMethodPrincipal> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         methodLookupStrategy = Constraint.isNotNull(strategy, "Authentication method strategy cannot be null");
     }
         

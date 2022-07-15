@@ -81,7 +81,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -96,7 +96,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
      * @since 4.2.0
      */
     public void setProfileId(@Nullable @NotEmpty final String id) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         profileId = StringSupport.trimOrNull(id);
     }
     
@@ -110,7 +110,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
      * @since 4.2.0
      */
     public void setFailIfMissing(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         failIfMissing = flag;
     }
 

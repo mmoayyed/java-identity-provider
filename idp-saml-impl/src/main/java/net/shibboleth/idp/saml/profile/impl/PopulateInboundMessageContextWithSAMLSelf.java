@@ -63,7 +63,7 @@ public class PopulateInboundMessageContextWithSAMLSelf extends AbstractProfileAc
      * @param strategy lookup strategy
      */
     public void setSelfIdentityLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         selfIdentityLookupStrategy = Constraint.isNotNull(strategy, "Self identity lookup strategy cannot be null");
     }
 

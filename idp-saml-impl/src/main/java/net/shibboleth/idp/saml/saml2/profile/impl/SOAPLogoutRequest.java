@@ -142,7 +142,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
      */
     public void setLogoutRequestLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutRequest> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         logoutRequestLookupStrategy = Constraint.isNotNull(strategy, "LogoutRequest lookup strategy cannot be null");
     }
 
@@ -153,7 +153,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
      */
     public void setPropagationContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,LogoutPropagationContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         propagationContextLookupStrategy =
                 Constraint.isNotNull(strategy, "LogoutPropagationContext lookup strategy cannot be null");
     }
@@ -165,7 +165,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         metadataContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLMetadataContext lookup strategy cannot be null");
     }
@@ -177,7 +177,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
      */
     public void setEndpointContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLEndpointContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         endpointContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SAMLEndpointContext lookup strategy cannot be null");
     }
@@ -188,7 +188,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
      * @param client the SOAP client
      */
     public void setSOAPClient(@Nonnull final SOAPClient client) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         soapClient = Constraint.isNotNull(client, "SOAPClient cannot be null");
     }
     
@@ -199,7 +199,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
      * @param name the pipeline name, or null
      */
     public void setSOAPPipelineName(@Nullable @NotEmpty final String name) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         soapPipelineName = StringSupport.trimOrNull(name);
     }
     

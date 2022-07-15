@@ -84,7 +84,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
      * @param what to set.
      */
     public void setPluginId(final String what) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         pluginId = what;
     }
 
@@ -93,7 +93,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
      * @param what The idpHome to set.
      */
     public void setIdpHome(final Path what) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         idpHome = what;
     }
 
@@ -101,7 +101,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
     * @param what The value to set.
     */
    public void setTrustStore(@Nullable final String what) {
-       throwSetterPreconditionExceptions();
+       checkSetterPreconditions();
        explicitTrustStore = what;
    }
 
@@ -169,7 +169,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
      * from {@link PGPPublicKeyRingCollection#encode(OutputStream)}
      */
     public void saveStore() throws IOException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         saveStoreInternal();
     }
 

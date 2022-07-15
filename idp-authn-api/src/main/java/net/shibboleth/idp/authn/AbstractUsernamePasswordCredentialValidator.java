@@ -103,7 +103,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      */
     public void setUsernamePasswordContextLookupStrategy(
             @Nonnull final Function<AuthenticationContext,UsernamePasswordContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         usernamePasswordContextLookupStrategy = Constraint.isNotNull(strategy,
                 "UsernamePasswordContextLookupStrategy cannot be null");
     }
@@ -123,7 +123,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param flag  flag to set
      */
     public void setSavePasswordToCredentialSet(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         savePasswordToCredentialSet = flag;
     }
 
@@ -152,7 +152,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      */
     @Deprecated(since="4.1.0", forRemoval=true)
     public void setRemoveContextAfterValidation(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         removeContextAfterValidation = flag;
     }
 
@@ -162,7 +162,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param expression a matching expression
      */
     public void setMatchExpression(@Nullable final Pattern expression) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (expression != null && !expression.pattern().isEmpty()) {
             matchExpression = expression;
         } else {
@@ -176,7 +176,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param newTransforms collection of replacement transforms
      */
     public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String,String>> newTransforms) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         if (newTransforms != null) {
             transforms = new ArrayList<>();
             for (final Pair<String,String> p : newTransforms) {
@@ -195,7 +195,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param flag  uppercase flag
      */
     public void setUppercase(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         uppercase = flag;
     }
 
@@ -205,7 +205,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param flag lowercase flag
      */
     public void setLowercase(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         lowercase = flag;
     }
     
@@ -215,7 +215,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * @param flag trim flag
      */
     public void setTrim(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         trim = flag;
     }
     
@@ -225,7 +225,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
             @Nonnull final AuthenticationContext authenticationContext,
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
-        throwComponentStateExceptions();
+        checkComponentActive();
         
         final UsernamePasswordContext upContext = usernamePasswordContextLookupStrategy.apply(authenticationContext);
         if (upContext == null) {

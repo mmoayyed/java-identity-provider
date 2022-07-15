@@ -115,7 +115,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
      * @param predicate Session validation predicate. Default is <code>Predicates.alwaysFalse()</code>.
      */
     public void setValidateIdPSessionPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         validateIdPSessionPredicate = Constraint.isNotNull(predicate, "Session validation condition cannot be null");
     }
 

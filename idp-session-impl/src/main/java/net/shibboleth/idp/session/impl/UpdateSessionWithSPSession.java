@@ -95,7 +95,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
      * @param manager  session manager to use
      */
     public void setSessionManager(@Nonnull final SessionManager manager) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
     }
     
@@ -106,7 +106,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
      */
     public void setSessionContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         sessionContextLookupStrategy = Constraint.isNotNull(strategy,
                 "SessionContext lookup strategy cannot be null");
     }

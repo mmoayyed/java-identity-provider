@@ -65,7 +65,7 @@ public abstract class AbstractProfileInterceptorAction extends
      * @param strategy lookup strategy function
      */
     public void setLookupStrategy(@Nonnull final Function<ProfileRequestContext, ProfileInterceptorContext> strategy) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         interceptorContextlookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }
 

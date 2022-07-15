@@ -115,7 +115,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param filter metric filter
      */
     public void setMetricFilter(@Nullable final MetricFilter filter) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         metricFilter = filter;
     }
@@ -126,7 +126,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param registry metric registry
      */
     public void setMetricRegistry(@Nonnull final MetricRegistry registry) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         metricRegistry = Constraint.isNotNull(registry, "MetricRegistry cannot be null");
     }
@@ -137,7 +137,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param origin header value
      */
     public void setAllowedOrigin(@Nullable final String origin) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         allowedOrigin = StringSupport.trimOrNull(origin);
     }
@@ -148,7 +148,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param callbackName callback function name.
      */
     public void setJSONPCallbackName(@Nullable final String callbackName) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         jsonpCallbackName = StringSupport.trimOrNull(callbackName);
     }
@@ -159,7 +159,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param format formatting string
      */
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         if (format != null) {
             dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
@@ -174,7 +174,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @since 4.1.0
      */
     public void setUseDefaultTimeZone(final boolean flag) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         useDefaultTimeZone = flag;
     }
@@ -185,7 +185,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * @param map group to filter map
      */
     public void setMetricFilterMap(@Nonnull @NonnullElements final Map<String,MetricFilter> map) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         
         Constraint.isNotNull(map, "MetricFilter map cannot be null");
         metricFilterMap = new HashMap<>(map.size());

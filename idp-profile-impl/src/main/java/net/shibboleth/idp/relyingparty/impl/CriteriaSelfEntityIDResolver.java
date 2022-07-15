@@ -71,7 +71,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
      */
     public void setRelyingPartyConfigurationResolver(
             @Nullable final CriteriaRelyingPartyConfigurationResolver resolver) {
-        throwSetterPreconditionExceptions();
+        checkSetterPreconditions();
         rpcResolver = resolver;
     }
 
@@ -97,7 +97,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
     /** {@inheritDoc} */
     @Nonnull @NonnullElements public Iterable<String> resolve(
             @Nullable final CriteriaSet criteria) throws ResolverException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         final String entityID = resolveSingle(criteria);
         if (entityID != null) {
             return Collections.singletonList(entityID);
@@ -107,7 +107,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
 
     /** {@inheritDoc} */
     @Nullable public String resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
-        throwComponentStateExceptions();
+        checkComponentActive();
         final ProfileRequestContext prc = buildContext(criteria);
         final CriteriaSet prcSet = new CriteriaSet(new ProfileRequestContextCriterion(prc));
         
