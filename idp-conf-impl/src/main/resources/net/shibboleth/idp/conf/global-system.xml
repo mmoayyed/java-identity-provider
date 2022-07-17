@@ -103,6 +103,7 @@
         </property>
         <property name="deadProperties">
             <list>
+                <value>idp.service.attribute.resolver.suppressDisplayInfo</value>
                 <value>idp.authn.flows.initial</value>
                 <value>idp.authn.resolveAttribute</value>
                 <value>idp.nameid.saml1.legacyGenerator</value>
