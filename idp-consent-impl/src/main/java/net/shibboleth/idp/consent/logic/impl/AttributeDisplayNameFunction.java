@@ -23,11 +23,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
@@ -37,9 +34,6 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
  * attribute ID if the attribute has no display name.
  */
 public class AttributeDisplayNameFunction extends AbstractAttributeDisplayFunction {
-
-    /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeDisplayNameFunction.class);
 
     /**
      * Constructor.
@@ -58,12 +52,6 @@ public class AttributeDisplayNameFunction extends AbstractAttributeDisplayFuncti
     @Override @Nonnull protected Map<Locale, String> getDisplayInfo(
             @Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final IdPAttribute attribute) {
-        @SuppressWarnings("removal")
-        final Map<Locale, String>  fromAttribute = attribute.getDisplayNames();
-        if (fromAttribute != null && !fromAttribute.isEmpty()) {
-            log.debug("Attribute {} carried locally defined names, skipping the registry", attribute.getId());
-            return fromAttribute;
-        }
         return  registry.getDisplayNames(attribute);
     }
 }
