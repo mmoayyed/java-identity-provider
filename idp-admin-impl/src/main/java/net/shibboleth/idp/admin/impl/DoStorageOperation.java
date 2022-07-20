@@ -104,7 +104,7 @@ public class DoStorageOperation extends AbstractProfileAction {
      * @param storage storage service
      */
     public void setStorageService(@Nullable final StorageService storage) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         
         storageService = storage;
     }
