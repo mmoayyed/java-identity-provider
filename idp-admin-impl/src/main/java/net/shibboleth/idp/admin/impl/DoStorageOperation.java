@@ -18,7 +18,6 @@
 package net.shibboleth.idp.admin.impl;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
@@ -39,13 +38,15 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
+import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jasminb.jsonapi.models.errors.Error;
 import com.github.jasminb.jsonapi.models.errors.Errors;
@@ -96,6 +97,19 @@ public class DoStorageOperation extends AbstractProfileAction {
         
         objectMapper = Constraint.isNotNull(mapper, "ObjectMapper cannot be null");
     }
+    
+    /**
+     * Sets the {@link StorageService} to use.
+     * 
+     * <p>Primarily for testing, to bypass use of Spring to obtain the service to use.</p>
+     * 
+     * @param storage storage service
+     */
+    public void setStorageService(@Nullable final StorageService storage) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        storageService = storage;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -107,6 +121,7 @@ public class DoStorageOperation extends AbstractProfileAction {
         }
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
@@ -137,11 +152,13 @@ public class DoStorageOperation extends AbstractProfileAction {
                 return false;
             }
             
-            storageService = getStorageService(requestContext);
             if (storageService == null) {
-                sendError(HttpServletResponse.SC_NOT_FOUND,
-                        "Invalid Storage Service", "Invalid storage service identifier in path.");
-                return false;
+                storageService = getStorageService(requestContext);
+                if (storageService == null) {
+                    sendError(HttpServletResponse.SC_NOT_FOUND,
+                            "Invalid Storage Service", "Invalid storage service identifier in path.");
+                    return false;
+                }
             }
             
             context = (String) requestContext.getFlowScope().get(CONTEXT);
@@ -160,6 +177,7 @@ public class DoStorageOperation extends AbstractProfileAction {
 
         return true;
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
@@ -172,52 +190,18 @@ public class DoStorageOperation extends AbstractProfileAction {
             response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
             
             if ("GET".equals(request.getMethod())) {
-                final StorageRecord<?> record;
-                try {
-                    record = storageService.read(context, key);
-                    if (record != null) {
-                        response.setStatus(HttpServletResponse.SC_OK);
-                        final JsonFactory jsonFactory = new JsonFactory();
-                        try (final JsonGenerator g = jsonFactory.createGenerator(
-                                response.getOutputStream()).useDefaultPrettyPrinter()) {
-                            g.setCodec(objectMapper);
-                            g.writeStartObject();
-                            g.writeObjectFieldStart("data");
-                            g.writeStringField("type", "records");
-                            g.writeStringField("id", storageService.getId() + '/' + context +'/' + key);
-                            g.writeObjectFieldStart("attributes");
-                            g.writeStringField("value", record.getValue());
-                            g.writeNumberField("version", record.getVersion());
-                            if (record.getExpiration() != null) {
-                                g.writeFieldName("expiration");
-                                g.writeObject(Instant.ofEpochMilli(record.getExpiration()));
-                            }
-                        }
-                    } else {
-                        sendError(HttpServletResponse.SC_NOT_FOUND,
-                                "Record Not Found", "The specified record was not present or has expired.");
-                    }
-                } catch (final IOException e) {
-                    sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error", "Storage error.");
-                }
+                doRead();
+            } else if ("PUT".equals(request.getMethod())) {
+                doCreate();
+            } else if ("POST".equals(request.getMethod())) {
+                doUpdate();
             } else if ("DELETE".equals(request.getMethod())) {
-                try {
-                    if (storageService.delete(context, key)) {
-                        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                    } else {
-                        sendError(HttpServletResponse.SC_NOT_FOUND,
-                                "Record Not Found", "The specified record was not present or has expired.");
-                    }
-                } catch (final IOException e) {
-                    sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error", "Storage error.");
-                }
-                
+                doDelete();
             } else {
                 log.warn("{} Invalid method: {}", getLogPrefix(), request.getMethod());
                 sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED,
-                        "Unknown Operation", "Only GET and DELETE are supported.");
+                        "Unknown Operation", "GET, PUT, POST, DELETE are supported.");
             }
-                        
         } catch (final IOException e) {
             log.error("{} I/O error responding to request", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
@@ -239,17 +223,158 @@ public class DoStorageOperation extends AbstractProfileAction {
             return null;
         }
         
+        return getBean(requestContext, id, StorageService.class);
+    }
+    
+    /**
+     * Perform read operation.
+     * 
+     * @throws IOException if an error is raised
+     */
+    private void doRead() throws IOException {
+        final StorageRecord<?> record;
         try {
-            final Object bean = requestContext.getActiveFlow().getApplicationContext().getBean(id);
-            if (bean != null && bean instanceof StorageService) {
-                return (StorageService) bean;
+            record = storageService.read(context, key);
+            if (record != null) {
+                getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+                final JsonFactory jsonFactory = new JsonFactory();
+                try (final JsonGenerator g = jsonFactory.createGenerator(
+                        getHttpServletResponse().getOutputStream()).useDefaultPrettyPrinter()) {
+                    g.setCodec(objectMapper);
+                    g.writeStartObject();
+                    g.writeObjectFieldStart("data");
+                    g.writeStringField("type", "records");
+                    g.writeStringField("id", storageService.getId() + '/' + context +'/' + key);
+                    g.writeObjectFieldStart("attributes");
+                    g.writeStringField("value", record.getValue());
+                    g.writeNumberField("version", record.getVersion());
+                    if (record.getExpiration() != null) {
+                        g.writeFieldName("expiration");
+                        g.writeObject(record.getExpiration());
+                    }
+                }
+            } else {
+                sendError(HttpServletResponse.SC_NOT_FOUND,
+                        "Record Not Found", "The specified record was not present or has expired.");
             }
-        } catch (final BeansException e) {
-            
+        } catch (final IOException e) {
+            sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error", "Storage error.");
+        }
+    }
+    
+    
+    /**
+     * Perform create operation.
+     * 
+     * @throws IOException if an error is raised
+     */
+    private void doCreate() throws IOException {
+        final JsonFactory jsonFactory = new JsonFactory();
+        final JsonParser parser = jsonFactory.createParser(getHttpServletRequest().getInputStream());
+        
+        if (parser.nextToken() != JsonToken.START_OBJECT) {
+            throw new IOException("Expected data to start with an Object");
         }
         
-        log.warn("{} No bean of the correct type found named {}", getLogPrefix(), id);
-        return null;
+        String value = null;
+        Long exp = null;
+        
+        while (parser.nextToken() != JsonToken.END_OBJECT) {
+            final String fieldName = parser.getCurrentName();
+            parser.nextToken();
+            if ("value".equals(fieldName)) {
+                value = parser.getText();
+            } else if ("expiration".equals(fieldName)) {
+                exp = parser.getLongValue();
+            }
+        }
+        
+        if (value == null) {
+            throw new IOException("Input missing 'val' field");
+        }
+        
+        if (storageService.create(context, key, value, exp)) {
+            getHttpServletResponse().setStatus(HttpServletResponse.SC_CREATED);
+        } else {
+            sendError(HttpServletResponse.SC_CONFLICT, "Duplicate Record",
+                    "Context and key matched an existing record.");
+        }
+    }
+
+// Checkstyle: CyclomaticComplexity OFF
+    /**
+     * Perform update operation.
+     * 
+     * @throws IOException if an error is raised
+     */
+    private void doUpdate() throws IOException {
+        final JsonFactory jsonFactory = new JsonFactory();
+        final JsonParser parser = jsonFactory.createParser(getHttpServletRequest().getInputStream());
+        
+        if (parser.nextToken() != JsonToken.START_OBJECT) {
+            throw new IOException("Expected data to start with an Object");
+        }
+        
+        String value = null;
+        Long version = null;
+        Long exp = null;
+        
+        while (parser.nextToken() != JsonToken.END_OBJECT) {
+            final String fieldName = parser.getCurrentName();
+            parser.nextToken();
+            if ("value".equals(fieldName)) {
+                value = parser.getText();
+            } else if ("expiration".equals(fieldName)) {
+                exp = parser.getLongValue();
+            } else if ("version".equals(fieldName)) {
+                version = parser.getLongValue();
+            }
+        }
+        
+        if (value == null) {
+            throw new IOException("Input missing 'value' field");
+        }
+        
+        if (version != null) {
+            try {
+                version = storageService.updateWithVersion(version, context, key, value, exp);
+                if (version != null) {
+                    getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    sendError(HttpServletResponse.SC_NOT_FOUND, "Not Found", "Record to update was absent.");
+                }
+            } catch (final VersionMismatchException e) {
+                sendError(HttpServletResponse.SC_CONFLICT, "Version Mismatch", "Record version did not match.");
+            }
+        } else {
+            if (storageService.update(context, key, value, exp)) {
+                getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+            } else if (storageService.create(context, key, value, exp)) {
+                getHttpServletResponse().setStatus(HttpServletResponse.SC_CREATED);
+            } else {
+                sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                        "Record to update was absent and create attempt failed.");
+            }
+        }
+    }
+// Checkstyle: CyclomaticComplexity ON
+    
+    /**
+     * Perform delete operation.
+     * 
+     * @throws IOException if an error is raised
+     */
+    private void doDelete() throws IOException {
+        try {
+            if (storageService.delete(context, key)) {
+                getHttpServletResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+            } else {
+                sendError(HttpServletResponse.SC_NOT_FOUND,
+                        "Record Not Found", "The specified record was not present or has expired.");
+            }
+        } catch (final IOException e) {
+            sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error", "Storage error.");
+        }
     }
 
     /**
