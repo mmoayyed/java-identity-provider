@@ -23,7 +23,7 @@ import java.time.Duration;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.joda.time.Instant;
 import org.opensaml.storage.StorageRecord;
