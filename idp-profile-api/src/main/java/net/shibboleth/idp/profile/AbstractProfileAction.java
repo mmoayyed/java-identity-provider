@@ -27,6 +27,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -37,6 +38,8 @@ import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.MessageSourceResolvable;
@@ -180,12 +183,74 @@ public abstract class AbstractProfileAction
             } else if (event instanceof String) {
                 return ActionSupport.buildEvent(action, (String) eventCtx.getEvent());
             } else if (event instanceof AttributeMap) {
+                @SuppressWarnings("unchecked")
                 final AttributeMap<Object> map = (AttributeMap<Object>) eventCtx.getEvent();
                 return ActionSupport.buildEvent(action, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map); 
             }
         }
         
         // A null value can be used to implicitly continue evaluating an action-state until the last step.
+        return null;
+    }
+    
+    /**
+     * Utilizes the active flow's {@link ApplicationContext} to obtain a bean of a given name and class.
+     * 
+     * @param <T> the bean type
+     * 
+     * @param profileRequestContext the profile request context
+     * @param name bean name
+     * @param claz bean type
+     * 
+     * @return the bean or null
+     * 
+     * @since 4.3.0
+     */
+    @Nullable protected <T> T getBean(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull @NotEmpty final String name, @Nonnull final Class<T> claz) {
+        
+        final SpringRequestContext springRequestContext =
+                profileRequestContext.getSubcontext(SpringRequestContext.class);
+        if (springRequestContext == null) {
+            log.warn("{} Spring request context not found in profile request context", getLogPrefix());
+            return null;
+        }
+
+        final RequestContext requestContext = springRequestContext.getRequestContext();
+        if (requestContext == null) {
+            log.warn("{} Web Flow request context not found in Spring request context", getLogPrefix());
+            return null;
+        }
+
+        return getBean(requestContext, name, claz);
+    }
+
+    /**
+     * Utilizes the active flow's {@link ApplicationContext} to obtain a bean of a given name and class. 
+     * 
+     * @param <T> the bean type
+     * 
+     * @param flowRequestContext the active flow's request context
+     * @param name bean name
+     * @param claz bean type
+     * 
+     * @return the bean or null
+     * 
+     * @since 4.3.0
+     */
+    @Nullable protected <T> T getBean(@Nonnull final RequestContext flowRequestContext,
+            @Nonnull @NotEmpty final String name, @Nonnull final Class<T> claz) {
+        
+        try {
+            final Object bean = flowRequestContext.getActiveFlow().getApplicationContext().getBean(name);
+            if (bean != null && claz.isInstance(bean)) {
+                return claz.cast(bean);
+            }
+        } catch (final BeansException e) {
+            
+        }
+        
+        log.warn("{} No bean of the correct type found named {}", getLogPrefix(), name);
         return null;
     }
 
