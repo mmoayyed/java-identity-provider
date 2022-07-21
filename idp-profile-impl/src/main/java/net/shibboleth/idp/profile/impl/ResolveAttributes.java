@@ -35,7 +35,6 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -44,7 +43,6 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
@@ -68,9 +66,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
     /** Service used to get the resolver used to fetch attributes. */
     @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
 
-    /** Transcoder registry service object. */
-    @NonnullAfterInit private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
-    
     /** Strategy used to locate the identity of the issuer associated with the attribute resolution. */
     @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
 
@@ -123,16 +118,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
         createResolutionContext = true;
     }
 
-    /**
-     * Sets the registry of transcoding rules to apply to supply attribute display metadata.
-     * 
-     * @param registry registry service interface
-     */
-    public void setTranscoderRegistry(@Nullable final ReloadableService<AttributeTranscoderRegistry> registry) {
-        checkSetterPreconditions();
-        transcoderRegistry = registry;
-    }
-    
     /**
      * Set the strategy used to lookup the issuer for this attribute resolution.
      * 
@@ -319,9 +304,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
     private void populateResolutionContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeResolutionContext resolutionContext) {
 
-        resolutionContext
-            .setResolutionLabel(resolutionLabel)
-            .setTranscoderRegistry(transcoderRegistry);
+        resolutionContext.setResolutionLabel(resolutionLabel);
         
         // Populate requested attributes, if not already set.
         if (resolutionContext.getRequestedIdPAttributeNames() == null

@@ -56,7 +56,6 @@
 
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
         c:resolverService-ref="shibboleth.AttributeResolverService"
-        p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
         p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
 
     <bean id="PopulatePostAuthnInterceptContext"
