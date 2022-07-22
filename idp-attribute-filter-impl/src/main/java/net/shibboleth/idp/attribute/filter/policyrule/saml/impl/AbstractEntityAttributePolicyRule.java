@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -179,7 +179,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
             return Tristate.FALSE;
         }
 
-        final Set<String> attributeValues = new HashSet<>();
+        final Set<String> attributeValues = new LinkedHashSet<>();
         
         getEntityAttributeValues(entityDescriptor, entityDescriptor.getEntityID(), attributeValues);
 

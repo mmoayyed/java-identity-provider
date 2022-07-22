@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.filter.matcher.saml.impl;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -354,7 +353,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             return Set.copyOf(attribute.getValues());
         }
 
-        final Set<IdPAttributeValue> result = new HashSet<>(attribute.getValues().size()); 
+        final Set<IdPAttributeValue> result = new LinkedHashSet<>(attribute.getValues().size());
                 
         for (final IdPAttributeValue attributeValue : attribute.getValues()) {
             if (attributeValue instanceof StringAttributeValue) {
