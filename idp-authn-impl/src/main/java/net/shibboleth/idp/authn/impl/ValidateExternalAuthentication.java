@@ -294,16 +294,12 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             attributeContext.setIdPAttributes(null);
             return;
         }
-        
-        
         final AttributeFilterContext filterContext = extContext.getSubcontext(AttributeFilterContext.class, true);
         
         populateFilterContext(filterContext);
         
-        ServiceableComponent<AttributeFilter> component = null;
-
-        try {
-            component = attributeFilterService.getServiceableComponent();
+        try (final ServiceableComponent<AttributeFilter> component
+                    = attributeFilterService.getServiceableComponent()) {
             if (null == component) {
                 log.error("{} Error while filtering inbound attributes: Invalid Attribute Filter configuration",
                         getLogPrefix());
@@ -317,11 +313,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         } catch (final AttributeFilterException e) {
             log.error("{} Error while filtering inbound attributes", getLogPrefix(), e);
             attributeContext.setIdPAttributes(null);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
-        }        
+        }
     }
     
     /**

@@ -137,9 +137,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
 
         final ArrayList<Attribute> encodedAttributes = new ArrayList<>(attributes.size());
         
-        ServiceableComponent<AttributeTranscoderRegistry> component = null;
-        try {
-            component = getTranscoderRegistry().getServiceableComponent();
+        try (final ServiceableComponent<AttributeTranscoderRegistry> component = getTranscoderRegistry().getServiceableComponent()) {
             if (component == null) {
                 throw new AttributeEncodingException("Attribute transoding service unavailable");
             }
@@ -147,10 +145,6 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
                 if (attributes != null && !attribute.getValues().isEmpty()) {
                     encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
                 }
-            }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
             }
         }
 

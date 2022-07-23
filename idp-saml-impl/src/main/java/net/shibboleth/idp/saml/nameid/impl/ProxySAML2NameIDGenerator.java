@@ -55,17 +55,12 @@ public class ProxySAML2NameIDGenerator implements SAML2NameIDGenerator {
     @Nullable public NameID generate(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull @NotEmpty final String format) throws SAMLException {
         
-        ServiceableComponent<NameIdentifierGenerationService> component = null;
-        try {
-            component = generatorService.getServiceableComponent();
+        try (final ServiceableComponent<NameIdentifierGenerationService>
+                component = generatorService.getServiceableComponent()) {
             if (component == null) {
                 throw new SAMLException("Invalid NameIdentifierGenerationService configuration");
             }
             return component.getComponent().getSAML2NameIDGenerator().generate(profileRequestContext, format);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }
     }
 

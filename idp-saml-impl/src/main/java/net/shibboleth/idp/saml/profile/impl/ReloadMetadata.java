@@ -154,8 +154,9 @@ public class ReloadMetadata extends AbstractProfileAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         log.debug("{} Reloading metadata from '{}'", getLogPrefix(), id);
 
-        final ServiceableComponent<MetadataResolver> component = metadataResolverService.getServiceableComponent();
-        try {
+        try (final ServiceableComponent<MetadataResolver>
+                    component = metadataResolverService.getServiceableComponent()) {
+
             final MetadataResolver toProcess = findProvider(component.getComponent());
 
             if (toProcess != null) {
@@ -184,10 +185,6 @@ public class ReloadMetadata extends AbstractProfileAction {
         } catch (final IOException e) {
             log.error("{} I/O error responding to request", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }
     }
     

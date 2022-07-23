@@ -172,6 +172,7 @@ public class PrepareTicketValidationResponseAction extends
         return true;
     }    
     
+    // Checkstyle: CyclomaticComplexity OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
@@ -210,10 +211,9 @@ public class PrepareTicketValidationResponseAction extends
         
         final Collection<IdPAttribute> inputAttributes = attributeContext.getIdPAttributes().values();
         final ArrayList<Attribute> encodedAttributes = new ArrayList<>(inputAttributes.size());
-        
-        ServiceableComponent<AttributeTranscoderRegistry> component = null;
-        try {
-            component = transcoderRegistry.getServiceableComponent();
+
+        try (final ServiceableComponent<AttributeTranscoderRegistry> component =
+                    transcoderRegistry.getServiceableComponent()) {
             if (component == null) {
                 log.error("{} Attribute transoding service unavailable", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
@@ -227,14 +227,10 @@ public class PrepareTicketValidationResponseAction extends
                             attribute.getId());
                 }
             }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }
-        
         encodedAttributes.forEach(a -> response.addAttribute(a));
     }
+    // Checkstyle: CyclomaticComplexity ON
 
     /**
      * Access the registry of transcoding rules to transform the input attribute into a target type.

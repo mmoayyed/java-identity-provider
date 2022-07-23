@@ -283,9 +283,8 @@ public final class ResolveAttributes extends AbstractProfileAction {
             }
         }
 
-        ServiceableComponent<AttributeResolver> component = null;
-        try {
-            component = attributeResolverService.getServiceableComponent();
+        try (final ServiceableComponent<AttributeResolver> component
+                = attributeResolverService.getServiceableComponent()) {
             if (null == component) {
                 log.error("{} Error resolving attributes: Invalid Attribute resolver configuration", getLogPrefix());
                 if (!maskFailures) {
@@ -307,10 +306,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
             log.error("{} Error resolving attributes", getLogPrefix(), e);
             if (!maskFailures) {
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
-            }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
             }
         }
     }

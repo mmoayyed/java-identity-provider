@@ -374,10 +374,8 @@ public class FilterAttributes extends AbstractProfileAction {
         
         populateFilterContext(profileRequestContext, filterContext);
 
-        ServiceableComponent<AttributeFilter> component = null;
-
-        try {
-            component = attributeFilterService.getServiceableComponent();
+        try (final ServiceableComponent<AttributeFilter> component =
+                    attributeFilterService.getServiceableComponent()) {
             if (null == component) {
                 log.error("{} Error encountered while filtering attributes : Invalid Attribute Filter configuration",
                         getLogPrefix());
@@ -400,10 +398,6 @@ public class FilterAttributes extends AbstractProfileAction {
                 attributeContext.setIdPAttributes(Collections.emptySet());
             } else {
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
-            }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
             }
         }
     }

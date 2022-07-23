@@ -57,18 +57,13 @@ public class ReloadingServiceRegistry extends AbstractIdentifiableInitializableC
     @Nullable
     @Override
     public Service lookup(@Nonnull final String serviceURL) {
-        ServiceableComponent<ServiceRegistry> component = null;
-        try {
-            component = service.getServiceableComponent();
+        try (final ServiceableComponent<ServiceRegistry>
+            component = service.getServiceableComponent()) {
             if (null == component) {
                 log.error("ServiceRegistry '{}': error looking up service registry: Invalid configuration.", getId());
                 return null;
             }
             return component.getComponent().lookup(serviceURL);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }
     }
 }

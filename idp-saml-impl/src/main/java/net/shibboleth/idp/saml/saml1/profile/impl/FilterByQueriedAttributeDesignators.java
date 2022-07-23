@@ -167,12 +167,11 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        
+
         final Set<String> decodedAttributeIds = new HashSet<>();
 
-        ServiceableComponent<AttributeTranscoderRegistry> component = null;
-        try {
-            component = transcoderRegistry.getServiceableComponent();
+        try (final ServiceableComponent<AttributeTranscoderRegistry>
+                    component = transcoderRegistry.getServiceableComponent()) {
             if (component == null) {
                 log.error("Attribute transcoder service unavailable");
                 ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
@@ -187,13 +186,8 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
                     log.warn("{} Error decoding AttributeDesignators", getLogPrefix(), e);
                 }
             }
-        } finally {
-            if (component != null) {
-                component.unpinComponent();
-            }
         }
-                
-        
+
         final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributeDesignators().size());
         log.debug("Query content mapped to attribute IDs: {}", decodedAttributeIds);
         

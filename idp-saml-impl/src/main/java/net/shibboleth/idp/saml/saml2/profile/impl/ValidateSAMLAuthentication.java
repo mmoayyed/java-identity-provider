@@ -446,9 +446,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         final Multimap<String,IdPAttribute> mapped = HashMultimap.create();
 
-        ServiceableComponent<AttributeTranscoderRegistry> component = null;
-        try {
-            component = transcoderRegistry.getServiceableComponent();
+        try (final ServiceableComponent<AttributeTranscoderRegistry>
+                component = transcoderRegistry.getServiceableComponent()) {
             if (component == null) {
                 log.error("Attribute transcoder service unavailable");
                 return;
@@ -466,14 +465,10 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                     }
                 }
             }
-        } finally {
-            if (component != null) {
-                component.unpinComponent();
-            }
         }
-                
+
         log.debug("{} Incoming SAML Attributes mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());
-        
+
         if (!mapped.isEmpty()) {
             attributeContext = profileRequestContext
                     .getSubcontext(RelyingPartyContext.class)
@@ -525,17 +520,13 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             log.warn("{} No AttributeFilter service provided", getLogPrefix());
             return;
         }
-        
-        
+
         final AttributeFilterContext filterContext =
                 profileRequestContext.getSubcontext(AttributeFilterContext.class, true);
-        
-        populateFilterContext(profileRequestContext, filterContext);
-        
-        ServiceableComponent<AttributeFilter> component = null;
 
-        try {
-            component = attributeFilterService.getServiceableComponent();
+        populateFilterContext(profileRequestContext, filterContext);
+
+        try (final ServiceableComponent<AttributeFilter> component = attributeFilterService.getServiceableComponent()) {
             if (null == component) {
                 log.error("{} Error while filtering inbound attributes: Invalid Attribute Filter configuration",
                         getLogPrefix());
@@ -547,10 +538,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             }
         } catch (final AttributeFilterException e) {
             log.error("{} Error while filtering inbound attributes", getLogPrefix(), e);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }        
     }
     

@@ -169,9 +169,8 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
                 
         final Multimap<String,IdPAttribute> mapped = HashMultimap.create();
 
-        ServiceableComponent<AttributeTranscoderRegistry> component = null;
-        try {
-            component = transcoderRegistry.getServiceableComponent();
+        try (final ServiceableComponent<AttributeTranscoderRegistry>
+                    component = transcoderRegistry.getServiceableComponent()) {
             if (component == null) {
                 log.error("Attribute transcoder service unavailable");
                 ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
@@ -184,10 +183,6 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
                 } catch (final AttributeDecodingException e) {
                     log.error("{} Error decoding queried Attribute", getLogPrefix(), e);
                 }
-            }
-        } finally {
-            if (component != null) {
-                component.unpinComponent();
             }
         }
                 

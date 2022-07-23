@@ -94,15 +94,10 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
 
         Map<Locale, String> displayInfo = cachedInfo.get(input);
         if (displayInfo == null) {
-            ServiceableComponent<AttributeTranscoderRegistry> component = null;
-            try {
-                component = transcoder.getServiceableComponent();
+            try (final ServiceableComponent<AttributeTranscoderRegistry> component =
+                    transcoder.getServiceableComponent()) {
                 if (component != null) {
                     displayInfo = getDisplayInfo(component.getComponent(), input);
-                }
-            } finally {
-                if (component != null) {
-                    component.unpinComponent();
                 }
             }
             cachedInfo.put(input, displayInfo);
