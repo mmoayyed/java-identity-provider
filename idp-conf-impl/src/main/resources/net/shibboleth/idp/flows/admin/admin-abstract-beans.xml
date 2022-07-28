@@ -35,7 +35,7 @@
     -->
     <bean id="InitializeAdministrativeProfileContextTree"
             class="net.shibboleth.idp.admin.impl.InitializeAdministrativeProfileContextTree" scope="prototype"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
             p:administrativeFlowDescriptor="#{@'shibboleth.AdministrativeFlowDescriptorManager'.getComponents().?[id == @'shibboleth.AdminProfileId']}">
         <property name="fallbackLanguages">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
@@ -75,7 +75,7 @@
     
     <bean id="CheckAccess"
         class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:accessControlService-ref="shibboleth.AccessControlService"
         p:policyNameLookupStrategy-ref="DescriptorPolicyLookupStrategy"
         p:operationLookupStrategy="#{getObject('shibboleth.AdminOperationLookupStrategy') ?: getObject('DefaultOperationLookupStrategy')}"
@@ -116,7 +116,7 @@
         p:formattingMap-ref="shibboleth.AuditFormattingMap"
         p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
     
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
