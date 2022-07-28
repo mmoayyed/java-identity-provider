@@ -53,8 +53,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-//import com.google.common.collect.ImmutableMap;
-
 /**
  * Action that produces audit log entries based on an {@link AuditContext} and one or more formatting strings. 
  * 
@@ -83,9 +81,6 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** The AuditContext to operate on. */
     @Nullable private AuditContext auditCtx;
 
-    /** HttpServletRequest object. */
-    @Nullable private HttpServletRequest httpRequest;
-    
     /** Constructor. */
     public WriteAuditLog() {
         auditContextLookupStrategy = new ChildContextLookup<>(AuditContext.class);
@@ -221,7 +216,6 @@ public class WriteAuditLog extends AbstractProfileAction {
         }
         
         auditCtx = auditContextLookupStrategy.apply(profileRequestContext);
-        httpRequest = getHttpServletRequest();
         return true;
     }
     
@@ -240,6 +234,7 @@ public class WriteAuditLog extends AbstractProfileAction {
                         record.append('%');
                     } else {
                         final String field = token.substring(1);
+                        final HttpServletRequest httpRequest = getHttpServletRequest();
                         
                         if (IdPAuditFields.EVENT_TIME.equals(field)) {
                             record.append(dateTimeFormatter.format(Instant.now()));
