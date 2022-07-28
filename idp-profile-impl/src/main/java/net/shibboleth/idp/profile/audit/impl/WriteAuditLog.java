@@ -33,6 +33,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.profile.context.AuditContext;
@@ -45,14 +53,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 //import com.google.common.collect.ImmutableMap;
 
@@ -84,9 +84,6 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** The AuditContext to operate on. */
     @Nullable private AuditContext auditCtx;
 
-    /** HttpServletRequest object. */
-    @Nullable private HttpServletRequest httpRequest;
-    
     /** Constructor. */
     public WriteAuditLog() {
         auditContextLookupStrategy = new ChildContextLookup<>(AuditContext.class);
@@ -225,7 +222,6 @@ public class WriteAuditLog extends AbstractProfileAction {
         }
         
         auditCtx = auditContextLookupStrategy.apply(profileRequestContext);
-        httpRequest = getHttpServletRequest();
         return true;
     }
     
@@ -244,6 +240,7 @@ public class WriteAuditLog extends AbstractProfileAction {
                         record.append('%');
                     } else {
                         final String field = token.substring(1);
+                        final HttpServletRequest httpRequest = getHttpServletRequest();
                         
                         if (IdPAuditFields.EVENT_TIME.equals(field)) {
                             record.append(dateTimeFormatter.format(Instant.now()));
