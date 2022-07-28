@@ -18,11 +18,9 @@
 package net.shibboleth.idp.admin.impl;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -37,7 +35,6 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
 
 /**
  * An action that processes settings from a supplied {@link AdministrativeFlowDescriptor} to prepare
@@ -124,16 +121,8 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
         
         final RelyingPartyUIContext uiCtx = rpCtx.getSubcontext(RelyingPartyUIContext.class, true);
         uiCtx.setRPUInfo(flowDescriptor.getUIInfo());
-        final HttpServletRequest request = getHttpServletRequest();
-        uiCtx.setBrowserLanguageRanges(SpringSupport.getLanguageRange(request));
-        if (request instanceof ThreadLocalHttpServletRequestProxy) {
-            // The request is delegated so can be put into a Supplier
-            uiCtx.setRequestSupplier(new Supplier<HttpServletRequest>() {
-                public HttpServletRequest get() {
-                    return request;
-                }
-            });
-        }
+        uiCtx.setBrowserLanguageRanges(SpringSupport.getLanguageRange(getHttpServletRequest()));
+        uiCtx.setRequestSupplier(getHttpServletRequestSupplier());
         
         if (null != fallbackLanguages) {
             uiCtx.setFallbackLanguages(fallbackLanguages);
