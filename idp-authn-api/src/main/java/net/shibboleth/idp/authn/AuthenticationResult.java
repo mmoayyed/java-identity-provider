@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -54,7 +55,7 @@ import com.google.common.base.MoreObjects;
  * that make up a single overall result, but the IdP always acts on a single result as the
  * product of a given request for a login.</p>
  */
-public class AuthenticationResult implements PrincipalSupportingComponent {
+public class AuthenticationResult implements PrincipalSupportingComponent, Predicate<ProfileRequestContext> {
     
     /** The Subject established by the authentication result. */
     @Nonnull private final Subject subject;
@@ -76,6 +77,9 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     
     /** Whether this result can be reused. */
     @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
+    
+    /** Whether this result should be considered revoked. */
+    @Nonnull private BiPredicate<ProfileRequestContext,AuthenticationResult> revocationCondition;
     
     /**
      * Constructor.
@@ -109,7 +113,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
     
     /**
-     * Get condition controlling whether this result should be reused for SSO.
+     * Gets condition controlling whether this result should be reused for SSO.
      * 
      * @return condition controlling whether result should be reused for SSO
      * 
@@ -120,7 +124,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
     
     /**
-     * Set condition controlling whether this result should be reused for SSO.
+     * Sets condition controlling whether this result should be reused for SSO.
      * 
      * @param condition condition to set
      * 
@@ -131,7 +135,28 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
     
     /**
-     * Get the Subject identifying the authenticated entity.
+     * Sets condition controlling whether this result has been revoked subsequent to creation.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.3.0
+     */
+    public void setRevocationCondition(
+            @Nullable final BiPredicate<ProfileRequestContext,AuthenticationResult> condition) {
+        revocationCondition = condition;
+    }
+    
+    /** {@inheritDoc} */
+    public boolean test(@Nullable final ProfileRequestContext input) {
+        if (reuseCondition.test(input)) {
+            return revocationCondition != null ? !revocationCondition.test(input, this) : true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Gets the Subject identifying the authenticated entity.
      * 
      * @return a Subject identifying the authenticated entity
      */
@@ -341,4 +366,5 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         }
         
     }
+
 }

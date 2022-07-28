@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -98,6 +99,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
 
     /** Whether this flow allows reuse of its results. */
     @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
+    
+    /** Whether a result from this flow should be considered revoked. */
+    @Nullable private BiPredicate<ProfileRequestContext,AuthenticationResult> revocationCondition;
 
     /** Maximum amount of time since first usage that a flow should be considered active. */
     @Nullable private Duration lifetime;
@@ -303,7 +307,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     @Nonnull public Predicate<ProfileRequestContext> getReuseCondition() {
         return reuseCondition;
     }
-
+    
     /**
      * Set condition controlling whether results from this flow should be reused for SSO.
      * 
@@ -320,6 +324,31 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         // Auto-installs a guard against use of a proxied result if requester proxy count is zero.
         reuseCondition = PredicateSupport.and(new ProxyCountPredicate(),
                 Constraint.isNotNull(condition, "Predicate cannot be null"));
+    }
+
+    /**
+     * Get condition controlling whether a result from this flow should be considered revoked.
+     * 
+     * @return condition
+     * 
+     * @since 4.3.0
+     */
+    @Nonnull public BiPredicate<ProfileRequestContext,AuthenticationResult> getRevocationCondition() {
+        return revocationCondition;
+    }
+    
+    /**
+     * Set condition controlling whether a result from this flow should be considered revoked.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.3.0
+     */
+    public void setRevocationCondition(
+            @Nullable final BiPredicate<ProfileRequestContext,AuthenticationResult> condition) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        revocationCondition = condition;
     }
 
     /**
@@ -565,6 +594,8 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         } else {
             result.setReuseCondition(reuseCondition);
         }
+        
+        result.setRevocationCondition(revocationCondition);
         return result;
     }
     
@@ -593,6 +624,8 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         } else {
             result.setReuseCondition(reuseCondition);
         }
+        
+        result.setRevocationCondition(revocationCondition);
         return result;
     }
 

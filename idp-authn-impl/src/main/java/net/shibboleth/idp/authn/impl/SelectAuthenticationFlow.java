@@ -201,7 +201,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         AuthenticationResult activeResult = null;
         if (!authenticationContext.isForceAuthn()) {
             activeResult = authenticationContext.getActiveResults().get(flow.getId());
-            if (!activeResult.getReuseCondition().test(profileRequestContext)) {
+            if (!activeResult.test(profileRequestContext)) {
                 log.debug("{} Active result for flow {} not reusable, ignoring", getLogPrefix(),
                         activeResult.getAuthenticationFlowId());
                 activeResult = null;
@@ -293,7 +293,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         AuthenticationResult resultToSelect = null;
         
         for (final AuthenticationResult activeResult : authenticationContext.getActiveResults().values()) {
-            if (activeResult.getReuseCondition().test(profileRequestContext)) {
+            if (activeResult.test(profileRequestContext)) {
                 resultToSelect = activeResult;
                 if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(activeResult)) {
                     break;
@@ -482,7 +482,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
                 if (predicate != null) {
                     for (final AuthenticationResult result : activeResults.values()) {
-                        if (result.getReuseCondition().test(profileRequestContext) && predicate.test(result)) {
+                        if (result.test(profileRequestContext) &&
+                                predicate.test(result)) {
                             selectActiveResult(profileRequestContext, authenticationContext, result);
                             return;
                         }
@@ -520,7 +521,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                         // Now check for an active result we can use from this flow. Not all results from a flow
                         // will necessarily match the request just because the flow might.
                         final AuthenticationResult result = activeResults.get(descriptor.getId());
-                        if (result == null || !result.getReuseCondition().test(profileRequestContext)
+                        if (result == null || !result.test(profileRequestContext)
                                 || !predicate.test(result)) {
                             if (result != null) {
                                 log.debug("{} Active result for flow {} not usable, ignoring", getLogPrefix(),
