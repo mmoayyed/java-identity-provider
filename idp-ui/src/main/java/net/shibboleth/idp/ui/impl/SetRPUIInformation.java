@@ -19,7 +19,6 @@ package net.shibboleth.idp.ui.impl;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,7 +47,6 @@ import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLooku
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -212,16 +210,8 @@ public class SetRPUIInformation extends AbstractProfileAction {
         rpUIContext.setRPSPSSODescriptor(spSSODescriptor);
         rpUIContext.setRPAttributeConsumingService(acsDesriptor);
         rpUIContext.setRPUInfo(getRPUInfo());
-        final HttpServletRequest request = getHttpServletRequest();
-        rpUIContext.setBrowserLanguageRanges(SpringSupport.getLanguageRange(request));
-        if (request instanceof ThreadLocalHttpServletRequestProxy) {
-            // The request is delegated so can be put into a Supplier
-            rpUIContext.setRequestSupplier(new Supplier<HttpServletRequest>() {
-                public HttpServletRequest get() {
-                    return request;
-                }
-            });
-        }
+        rpUIContext.setBrowserLanguageRanges(SpringSupport.getLanguageRange(getHttpServletRequest()));
+        rpUIContext.setRequestSupplier(getHttpServletRequestSupplier());
    }
 
 }
