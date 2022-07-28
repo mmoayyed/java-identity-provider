@@ -27,7 +27,8 @@
             p:lifetime="%{idp.authn.defaultLifetime:PT60M}"
             p:inactivityTimeout="%{idp.authn.defaultTimeout:PT30M}"
             p:principalWeightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap') ?: getObject('shibboleth.DefaultAuthenticationPrincipalWeightMap')}"
-            p:principalServiceManager-ref="shibboleth.PrincipalServiceManager">
+            p:principalServiceManager-ref="shibboleth.PrincipalServiceManager"
+            p:revocationCondition="#{%{idp.authn.revocation:false} ? getObject('%{idp.authn.revocation.Condition:shibboleth.RevocationCondition}'.trim()) : null}">
         <property name="supportedPrincipals">
             <list>
                 <bean parent="shibboleth.SAML2AuthnContextClassRef"
@@ -533,4 +534,20 @@
     <bean id="shibboleth.SAMLACDeclRefBetter" parent="shibboleth.Pair"
         p:first="#{ T(net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal) }" p:second="better"/>
     
+    <!-- Revocation feature. -->
+    
+    <bean id="shibboleth.RevocationCondition" class="net.shibboleth.idp.authn.context.logic.RevocationCondition" lazy-init="true"
+        p:revocationCache-ref="%{idp.authn.revocation.cache:shibboleth.AuthnRevocationCache}"
+        p:httpServletRequest="#{%{idp.authn.revocation.addressBased:false} ? getObject('shibboleth.HttpServletRequest') : null}"
+        p:principalNameLookupStrategy-ref="shibboleth.RevocationPrincipalLookupStrategy" />
+        
+    <bean id="shibboleth.RevocationPrincipalLookupStrategy" parent="shibboleth.Functions.Compose" lazy-init="true"
+        c:g-ref="shibboleth.PrincipalNameLookup.Session"
+        c:f-ref="shibboleth.ChildLookup.SessionContext" />
+    
+    <bean id="shibboleth.AuthnRevocationCache" class="org.opensaml.storage.RevocationCache" lazy-init="true"
+        p:entryExpiration="#{'%{idp.authn.revocation.lifetime:%{idp.authn.defaultLifetime:PT12H}}'}"
+        p:storage-ref="#{'%{idp.authn.revocation.StorageService:shibboleth.StorageService}'.trim()}"
+        p:strict="%{idp.authn.revocation.strict:false}" />
+
 </beans>
