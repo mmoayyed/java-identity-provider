@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.context.logic;
+package net.shibboleth.idp.authn.revocation.impl;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -27,13 +28,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.RevocationCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.context.RevocationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -42,11 +43,11 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * A condition for login flows that checks for revocation.
+ * A condition for login flows that checks for revocation against a {@link RevocationCache}.
  * 
  * @since 4.3.0
  */
-public class RevocationCondition extends AbstractInitializableComponent
+public class RevocationCacheCondition extends AbstractInitializableComponent
         implements BiPredicate<ProfileRequestContext,AuthenticationResult> {
 
     /** Revocation context. */
@@ -59,7 +60,7 @@ public class RevocationCondition extends AbstractInitializableComponent
     @Nonnull @NotEmpty public static final String ADDRESS_REVOCATION_PREFIX = "addr:";
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(RevocationCondition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(RevocationCacheCondition.class);
     
     /** Cache to use. */
     @NonnullAfterInit private RevocationCache revocationCache;
@@ -132,8 +133,8 @@ public class RevocationCondition extends AbstractInitializableComponent
         log.debug("Checking revocation for principal name {} for {} result", principal,
                 input2.getAuthenticationFlowId());
         
-        RevocationContext context = input.getSubcontext(RevocationContext.class);
-        if (context == null) {
+        final ScratchContext context = input.getSubcontext(ScratchContext.class, true);
+        if (!context.getMap().containsKey(getClass())) {
             try {
                 final String principalRecord = revocationCache.getRevocationRecord(REVOCATION_CONTEXT,
                         PRINCIPAL_REVOCATION_PREFIX + principal);
@@ -141,13 +142,14 @@ public class RevocationCondition extends AbstractInitializableComponent
                         revocationCache.getRevocationRecord(REVOCATION_CONTEXT,
                                 ADDRESS_REVOCATION_PREFIX + httpServletRequest.getRemoteAddr()) :
                             null;
-                context = input.getSubcontext(RevocationContext.class, true);
+                final Collection<String> records = new ArrayList<>(2);
                 if (principalRecord != null) {
-                    context.getRevocationRecords().add(principalRecord);
+                    records.add(principalRecord);
                 }
                 if (addressRecord != null) {
-                    context.getRevocationRecords().add(addressRecord);
+                    records.add(addressRecord);
                 }
+                context.getMap().put(getClass(), records);
             } catch (final IOException e) {
                 log.error("Error checking revocation cache for principal {}, treating as revoked",
                         principal, e);
@@ -155,7 +157,7 @@ public class RevocationCondition extends AbstractInitializableComponent
             }
         }
         
-        return isRevoked(principal, input2, context.getRevocationRecords());
+        return isRevoked(principal, input2, (Collection<String>) context.getMap().get(getClass()));
     }
 
     /**

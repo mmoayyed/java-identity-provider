@@ -19,4 +19,4 @@
  * Predicates related to authentication.
  */
 
-package net.shibboleth.idp.authn.context.logic;
+package net.shibboleth.idp.authn.revocation.impl;
