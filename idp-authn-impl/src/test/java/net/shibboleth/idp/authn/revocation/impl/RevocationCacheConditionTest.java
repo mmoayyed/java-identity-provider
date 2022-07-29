@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl;
+package net.shibboleth.idp.authn.revocation.impl;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -24,7 +24,6 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.logic.RevocationCondition;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
@@ -37,12 +36,12 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link RevocationCondition} unit test. */
-public class RevocationConditionTest extends BaseAuthenticationContextTest {
+/** {@link RevocationCacheCondition} unit test. */
+public class RevocationCacheConditionTest extends BaseAuthenticationContextTest {
     
     private MemoryStorageService storageService;
     private RevocationCache revocationCache;
-    private RevocationCondition condition; 
+    private RevocationCacheCondition condition; 
 
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
@@ -58,7 +57,7 @@ public class RevocationConditionTest extends BaseAuthenticationContextTest {
         revocationCache.setId("test");
         revocationCache.initialize();
 
-        condition = new RevocationCondition();
+        condition = new RevocationCacheCondition();
         condition.setRevocationCache(revocationCache);
         condition.setPrincipalNameLookupStrategy(FunctionSupport.constant("jdoe"));
         condition.initialize();
@@ -87,8 +86,8 @@ public class RevocationConditionTest extends BaseAuthenticationContextTest {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setActiveResults(Arrays.asList(active));
 
-        revocationCache.revoke(RevocationCondition.REVOCATION_CONTEXT,
-                RevocationCondition.PRINCIPAL_REVOCATION_PREFIX + "jdoe",
+        revocationCache.revoke(RevocationCacheCondition.REVOCATION_CONTEXT,
+                RevocationCacheCondition.PRINCIPAL_REVOCATION_PREFIX + "jdoe",
                 Long.toString(Instant.now().getMillis() / 1000 + 3600L),
                 Duration.ofDays(1));
         
@@ -100,8 +99,8 @@ public class RevocationConditionTest extends BaseAuthenticationContextTest {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setActiveResults(Arrays.asList(active));
 
-        revocationCache.revoke(RevocationCondition.REVOCATION_CONTEXT,
-                RevocationCondition.PRINCIPAL_REVOCATION_PREFIX + "jdoe",
+        revocationCache.revoke(RevocationCacheCondition.REVOCATION_CONTEXT,
+                RevocationCacheCondition.PRINCIPAL_REVOCATION_PREFIX + "jdoe",
                 Long.toString(Instant.now().getMillis() / 1000 - 3600L),
                 Duration.ofDays(1));
         
