@@ -18,8 +18,10 @@
 package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import java.time.Instant;
+import java.util.function.Supplier;
 
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -66,7 +68,8 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
 
         action = new AddAuthenticationStatementToAssertion();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

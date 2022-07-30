@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -130,7 +133,8 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         mappings.put("ExpiringPassword", Collections.singleton("ACCOUNT_WARNING"));
         mappings.put("ExpiredPassword", Arrays.asList("PASSWORD_EXPIRED", "CHANGE_AFTER_RESET"));
         action.setClassifiedMessages(mappings);
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testBadUsername() throws ComponentInitializationException {
@@ -340,7 +344,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
 
     private void doExtract() throws ComponentInitializationException {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
-        extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setHttpServletRequestSupplier(action.getHttpServletRequestSupplier());
         extract.initialize();
         extract.execute(src);
     }

@@ -21,8 +21,10 @@ package net.shibboleth.idp.authn.impl;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
+import java.util.function.Supplier;
 
 import javax.security.auth.x500.X500Principal;
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -102,7 +104,8 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         
         action = new ValidateCredentials();
         action.setValidators(Collections.singletonList(validator));
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
 
@@ -191,7 +194,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
     
     private void doExtract() throws ComponentInitializationException, CertificateException {
         final ExtractX509CertificateFromRequest extract = new ExtractX509CertificateFromRequest();
-        extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setHttpServletRequestSupplier(action.getHttpServletRequestSupplier());
 
         extract.initialize();
         extract.execute(src);

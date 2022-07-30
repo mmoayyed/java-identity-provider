@@ -26,9 +26,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import javax.security.auth.login.LoginException;
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -107,7 +109,8 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         mappings.put("InvalidPassword", Collections.singleton("INVALID_CREDENTIALS"));
         action.setClassifiedMessages(mappings);
         
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testMissingFlow() throws ComponentInitializationException {
@@ -403,7 +406,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
     
     private void doExtract() throws ComponentInitializationException {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
-        extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setHttpServletRequestSupplier(action.getHttpServletRequestSupplier());
         extract.initialize();
         extract.execute(src);
     }

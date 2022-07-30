@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -72,7 +73,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         
         final ReloadMetadata action = new ReloadMetadata();
         action.setMetadataResolver(service);
-        action.setHttpServletResponse(response);
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
         action.initialize();
 
         final Event event = action.execute(src);
@@ -85,7 +86,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         
         final ReloadMetadata action = new ReloadMetadata();
         action.setMetadataResolver(service);
-        action.setHttpServletResponse(response);
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
         action.initialize();
 
         src.getFlowScope().put(ReloadMetadata.RESOLVER_ID, "foo");
@@ -100,7 +101,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         src.getFlowScope().put(ReloadMetadata.RESOLVER_ID, "fileEntity");
         
         final ReloadMetadata action = new ReloadMetadata();
-        action.setHttpServletResponse(response);
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
         action.setMetadataResolver(service);
         action.initialize();
 
@@ -116,7 +117,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         src.getFlowScope().put(ReloadMetadata.RESOLVER_ID, "fileEntity2");
         
         final ReloadMetadata action = new ReloadMetadata();
-        action.setHttpServletResponse(response);
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
         action.setMetadataResolver(chainingservice);
         action.initialize();
 

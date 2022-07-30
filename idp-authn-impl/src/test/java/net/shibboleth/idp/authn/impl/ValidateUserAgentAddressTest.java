@@ -22,6 +22,9 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -52,7 +55,8 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
         action.setMappings(Collections.<String,Collection<IPRange>>singletonMap(
                 "foo", Arrays.asList(IPRange.parseCIDRBlock("192.168.1.0/24"))));
         action.setSupportedPrincipals(Arrays.asList(new TestPrincipal("UserAgentAuthentication")));
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
 
@@ -132,7 +136,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
     
     private void doExtract() throws ComponentInitializationException {
         final ExtractUserAgentAddress extract = new ExtractUserAgentAddress();
-        extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setHttpServletRequestSupplier(action.getHttpServletRequestSupplier());
         extract.initialize();
         extract.execute(src);
     }

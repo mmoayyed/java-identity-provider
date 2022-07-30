@@ -20,8 +20,10 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -73,7 +75,8 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
 
         action = new AddAuthnStatementToAssertion();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

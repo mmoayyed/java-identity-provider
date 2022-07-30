@@ -22,6 +22,10 @@ import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.opensaml.profile.action.EventIds;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
@@ -57,7 +61,8 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
 
     @Test public void testNoUserInput() throws Exception {
         action = new ExtractConsent();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
 
         final Event event = action.execute(src);
@@ -79,7 +84,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
         httpServletRequest.setParameter(ExtractConsent.CONSENT_IDS_REQUEST_PARAMETER, "consent1");
 
         action = new ExtractConsent();
-        action.setHttpServletRequest(httpServletRequest);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return httpServletRequest;}});
         action.initialize();
 
         final Event event = action.execute(src);
@@ -102,7 +107,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
         httpServletRequest.addParameter(ExtractConsent.CONSENT_IDS_REQUEST_PARAMETER, "consent2");
 
         action = new ExtractConsent();
-        action.setHttpServletRequest(httpServletRequest);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return httpServletRequest;}});
         action.initialize();
 
         final Event event = action.execute(src);

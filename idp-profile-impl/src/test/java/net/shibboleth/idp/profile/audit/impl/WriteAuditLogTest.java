@@ -19,8 +19,10 @@ package net.shibboleth.idp.profile.audit.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -60,7 +62,7 @@ public class WriteAuditLogTest {
         mock.setRequestURI("/path/to/foo");
         
         action = new FilteringAction();
-        action.setHttpServletRequest(mock);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return mock;}});
     }
     
     @Test public void testNoRules() throws Exception {

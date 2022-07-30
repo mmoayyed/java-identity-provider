@@ -20,6 +20,9 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -89,7 +92,8 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         super.setUp();
         
         action = new ExtractX509CertificateFromRequest();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

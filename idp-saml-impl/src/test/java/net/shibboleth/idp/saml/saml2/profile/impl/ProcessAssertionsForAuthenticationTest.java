@@ -22,6 +22,10 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -70,8 +74,8 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         httpResponse = new MockHttpServletResponse();
         
         action = new ProcessAssertionsForAuthentication();
-        action.setHttpServletRequest(httpRequest);
-        action.setHttpServletResponse(httpResponse);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return httpRequest;}});
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return httpResponse;}});
         
         
         samlResponse = SAML2ActionTestingSupport.buildResponse();

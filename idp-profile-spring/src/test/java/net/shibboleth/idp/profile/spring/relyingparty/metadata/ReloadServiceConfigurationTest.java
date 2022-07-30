@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -77,7 +78,7 @@ public class ReloadServiceConfigurationTest extends AbstractMetadataParserTest {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
         final ReloadServiceConfiguration action = new ReloadServiceConfiguration();
-        action.setHttpServletResponse(response);
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
         action.setServiceLookupStrategy(FunctionSupport.constant(null));
         action.initialize();
 
@@ -93,7 +94,7 @@ public class ReloadServiceConfigurationTest extends AbstractMetadataParserTest {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
         final ReloadServiceConfiguration action = new ReloadServiceConfiguration();
-        action.setHttpServletResponse(response);
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
         action.setServiceLookupStrategy(FunctionSupport.constant(service));
         action.initialize();
 

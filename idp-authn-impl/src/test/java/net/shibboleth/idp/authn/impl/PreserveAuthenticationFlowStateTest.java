@@ -24,6 +24,9 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
@@ -40,7 +43,8 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         super.setUp();
         
         action = new PreserveAuthenticationFlowState();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.setParameterNames(Arrays.asList("foo", "foo2"));
         action.initialize();
     }
@@ -57,7 +61,8 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
 
     @Test public void testNoParameters() throws ComponentInitializationException {
         action = new PreserveAuthenticationFlowState();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
         
         final Event event = action.execute(src);

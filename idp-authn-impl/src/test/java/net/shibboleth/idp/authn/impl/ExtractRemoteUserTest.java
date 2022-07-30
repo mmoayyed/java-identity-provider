@@ -19,6 +19,9 @@ package net.shibboleth.idp.authn.impl;
 
 
 import java.util.Arrays;
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -43,7 +46,8 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         super.setUp();
         
         action = new ExtractRemoteUser();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testNoConfig() {
@@ -57,7 +61,7 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
     }
     
     @Test public void testNoServlet() throws ComponentInitializationException {
-        action.setHttpServletRequest(null);
+        action.setHttpServletRequestSupplier(null);
         action.initialize();
         
         final Event event = action.execute(src);

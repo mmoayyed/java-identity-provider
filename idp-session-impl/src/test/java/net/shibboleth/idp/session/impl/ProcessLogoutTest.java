@@ -20,8 +20,11 @@ package net.shibboleth.idp.session.impl;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.function.Supplier;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
@@ -65,8 +68,8 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         
         action = new ProcessLogout();
-        action.setHttpServletRequest(requestProxy);
-        action.setHttpServletResponse(responseProxy);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
         action.setSessionResolver(sessionManager);
         action.initialize();
     }
@@ -188,8 +191,8 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
 
     @Test public void testAddressLookup() throws ComponentInitializationException, SessionException, ResolverException {
         action = new ProcessLogout();
-        action.setHttpServletRequest(requestProxy);
-        action.setHttpServletResponse(responseProxy);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
         action.setSessionResolver(sessionManager);
         action.setAddressLookupStrategy(input -> requestProxy.getHeader("User-Agent"));
         action.initialize();

@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -37,6 +38,7 @@ import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -57,7 +59,8 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         ext = new ExternalAuthenticationImpl();
 
         action = new ValidateExternalAuthentication();
-        action.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
 

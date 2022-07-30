@@ -23,6 +23,7 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -179,7 +180,7 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         rpcContext.setRelyingPartyIdContextTree(peerContext);
         
         action = new DecorateDelegatedAssertion();
-        action.setHttpServletRequest(servletRequest);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return servletRequest;}});
         action.setLibertySSOSEndpointURL(ssosURL);
         action.setKeyInfoGeneratorManager(DefaultSecurityConfigurationBootstrap.buildBasicKeyInfoGeneratorManager());
         
