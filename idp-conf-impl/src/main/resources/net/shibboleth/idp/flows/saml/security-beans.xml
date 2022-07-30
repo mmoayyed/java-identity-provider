@@ -92,7 +92,7 @@
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler" scope="prototype"
-                p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+                p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
         </constructor-arg>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_AUTHN_ERROR" />
