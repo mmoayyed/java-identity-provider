@@ -32,8 +32,8 @@
     <!--  Work beans. -->
     
     <bean id="DoLockoutManagerOperation" class="net.shibboleth.idp.authn.impl.DoLockoutManagerOperation" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
+        p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
         p:objectMapper-ref="shibboleth.JSONObjectMapper" />
         
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />

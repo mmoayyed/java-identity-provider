@@ -22,7 +22,7 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:profileId="http://shibboleth.net/ns/profiles/logout"
         p:loggingId="%{idp.service.logging.logout:Logout}"
         p:browserProfile="true"
@@ -37,7 +37,7 @@
 
     <bean id="PopulateUserAgentContext"
           class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext" scope="prototype"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+          p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
 
     <bean id="PopulateClientStorageLoadContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext" scope="prototype"
@@ -45,7 +45,7 @@
 
     <bean id="ProcessLogout"
         class="net.shibboleth.idp.session.impl.ProcessLogout" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:sessionResolver-ref="shibboleth.SessionManager"
         p:addressLookupStrategy="#{getObject('shibboleth.SessionAddressLookupStrategy')}" />
     
@@ -68,7 +68,7 @@
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
             p:activationCondition="%{idp.logout.elaboration:false}"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier">
         <property name="fallbackLanguages">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
         </property>
@@ -118,7 +118,7 @@
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"

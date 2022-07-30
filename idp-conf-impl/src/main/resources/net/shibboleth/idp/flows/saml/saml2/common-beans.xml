@@ -30,7 +30,7 @@
 
     <bean id="AddAuthnStatementToAssertion"
             class="net.shibboleth.idp.saml.saml2.profile.impl.AddAuthnStatementToAssertion" scope="prototype"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
             p:addressLookupStrategy="#{getObject('shibboleth.SubjectLocalityAddressStrategy')}">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"

@@ -31,7 +31,7 @@
 
     <bean id="OutputMetrics"
         class="net.shibboleth.idp.admin.impl.OutputMetrics" scope="prototype"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
         p:metricFilter-ref="shibboleth.metrics.LoggerDrivenMetricFilter"
         p:metricRegistry-ref="shibboleth.metrics.MetricRegistry"
         p:metricFilterMap-ref="shibboleth.metrics.MetricGroups"

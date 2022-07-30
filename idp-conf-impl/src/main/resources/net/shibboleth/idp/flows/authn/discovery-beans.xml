@@ -33,6 +33,6 @@
 
     <bean id="ExtractDiscoveryResponse"
         class="net.shibboleth.idp.authn.proxy.impl.ExtractDiscoveryResponse" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
 
 </beans>

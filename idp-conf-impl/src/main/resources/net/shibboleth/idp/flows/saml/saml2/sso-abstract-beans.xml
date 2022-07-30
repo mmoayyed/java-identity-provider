@@ -85,7 +85,7 @@
 
     <bean id="AddSubjectConfirmationToSubjects"
         class="org.opensaml.saml.saml2.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:method="urn:oasis:names:tc:SAML:2.0:cm:bearer"
         p:addressLookupStrategy="#{getObject('shibboleth.SubjectLocalityAddressStrategy')}" />
 
@@ -164,5 +164,4 @@
     <bean id="InitializeOutboundMessageContextForSOAPFault"
         class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype"
         p:outboundBinding-ref="shibboleth.Binding.SAML2SOAP" />
-
 </beans>

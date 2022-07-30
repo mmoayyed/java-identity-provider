@@ -102,7 +102,7 @@
           p:formattingMap-ref="shibboleth.AuditFormattingMap"
           p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
           p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+          p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
 
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
           p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />

@@ -171,7 +171,7 @@
         p:formattingMap-ref="shibboleth.AuditFormattingMap"
         p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
 
     <!-- These beans are stashed into the context tree to be picked up and run outside SWF by the SAML controller. -->
     
@@ -415,7 +415,7 @@
         <constructor-arg>
             <bean class="org.opensaml.saml.saml2.profile.impl.ValidateAssertions" scope="prototype"
                   p:invalidFatal="false"
-                  p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                  p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
                   p:validationContextBuilder-ref="AssertionValidationContextBuilder"
                   p:assertionValidator-ref="AssertionValidator" />
         </constructor-arg>

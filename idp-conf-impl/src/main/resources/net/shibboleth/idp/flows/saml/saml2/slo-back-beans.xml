@@ -41,7 +41,7 @@
 
     <bean id="InitializeMessageChannelSecurityContext"
         class="org.opensaml.profile.action.impl.HttpServletRequestMessageChannelSecurity" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:defaultPortInsecure="%{idp.security.defaultPortInsecure:true}" />
 
     <bean id="ProcessLogoutRequest"

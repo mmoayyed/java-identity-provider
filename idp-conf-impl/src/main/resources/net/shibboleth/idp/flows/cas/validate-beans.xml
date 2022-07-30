@@ -11,12 +11,12 @@
     <bean id="WriteValidateSuccess"
           class="net.shibboleth.idp.cas.flow.impl.WriteValidateResponseAction" scope="prototype"
           c:successFlag="true"
-          p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
+          p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier" />
 
     <bean id="WriteValidateFailure"
           class="net.shibboleth.idp.cas.flow.impl.WriteValidateResponseAction" scope="prototype"
           c:successFlag="false"
-          p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
+          p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier" />
 
     <bean id="RecordResponseComplete"
           class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />

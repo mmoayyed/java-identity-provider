@@ -28,6 +28,6 @@
 
     <bean id="LogLocalStorageSaveResults"
         class="org.opensaml.storage.impl.client.LogLocalStorageSaveResults" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
 
 </beans>
