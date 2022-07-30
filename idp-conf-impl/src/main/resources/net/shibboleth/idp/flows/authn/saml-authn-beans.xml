@@ -306,7 +306,7 @@
                               p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
                               p:copyContextStrategy-ref="OutboundSAMLMetadataContextLookup" />
                         <bean class="org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler" scope="prototype"
-                            p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+                            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
                         <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype"
                             p:replayCache-ref="shibboleth.ReplayCache"
                             p:expires="%{idp.policy.messageLifetime:PT3M}" />
