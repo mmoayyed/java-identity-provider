@@ -85,7 +85,7 @@
 
     <bean id="AddSubjectConfirmationToSubjects"
         class="org.opensaml.saml.saml2.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:method="urn:oasis:names:tc:SAML:2.0:cm:bearer"
         p:addressLookupStrategy="#{getObject('shibboleth.SubjectLocalityAddressStrategy')}" />
 
@@ -98,7 +98,7 @@
     
     <bean id="DecorateDelegatedAssertion"
             class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.DecorateDelegatedAssertion" scope="prototype"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
             p:libertySSOSEndpointURL="%{idp.delegation.saml2.libertySSOSEndpointURL:#{null}}">
         <property name="keyInfoGeneratorManager">
             <bean factory-method="buildBasicKeyInfoGeneratorManager" class="org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap" />
@@ -177,7 +177,7 @@
     <bean id="AddAuthnStatementToAssertionFromInboundAssertionToken"
         class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.AddAuthnStatementToAssertionFromInboundAssertionToken"
         scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />

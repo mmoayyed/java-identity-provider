@@ -27,11 +27,11 @@
     <!--  Work beans. -->
         
     <bean id="UnlockDataSealers" class="net.shibboleth.idp.admin.impl.UnlockDataSealers" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:keyStrategies="#{getObject('shibboleth.unlock-keys.KeyStrategies')}" />
 
     <bean id="UnlockPrivateKeys" class="net.shibboleth.idp.admin.impl.UnlockPrivateKeys" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:credentials="#{getObject('shibboleth.unlock-keys.Credentials')}"
         p:keyResources="#{getObject('shibboleth.unlock-keys.PrivateKeys')}" />
         

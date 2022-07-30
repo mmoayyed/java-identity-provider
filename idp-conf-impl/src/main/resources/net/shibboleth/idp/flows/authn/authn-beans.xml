@@ -34,14 +34,14 @@
     <bean id="PopulateSessionContext"
         class="net.shibboleth.idp.session.impl.PopulateSessionContext" scope="prototype"
         p:activationCondition="%{idp.session.enabled:true}"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:sessionResolver-ref="shibboleth.SessionManager"
         p:addressLookupStrategy="#{getObject('shibboleth.SessionAddressLookupStrategy')}" />
     
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
             p:activationCondition="%{idp.authn.rpui:true}"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier">
         <property name="fallbackLanguages">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
         </property>

@@ -22,7 +22,7 @@
     
     <bean id="ExtractX509CertificateFromRequest"
         class="net.shibboleth.idp.authn.impl.ExtractX509CertificateFromRequest" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
         
     <bean id="ValidateX509Certificate"
             class="net.shibboleth.idp.authn.impl.ValidateCredentials" scope="prototype"

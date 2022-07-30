@@ -53,7 +53,7 @@
 
     <bean id="ValidateDuoWebResponse" scope="prototype"
         class="net.shibboleth.idp.authn.duo.impl.ValidateDuoWebResponse"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:usernameLookupStrategy-ref="shibboleth.authn.Duo.UsernameLookupStrategy"
         p:duoIntegrationLookupStrategy-ref="shibboleth.authn.Duo.DuoIntegrationStrategy"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: %{idp.authn.Duo.addDefaultPrincipals:true}}"
@@ -61,7 +61,7 @@
 
     <bean id="ExtractDuoAuthenticationFromHeaders" scope="prototype"
         class="net.shibboleth.idp.authn.duo.impl.ExtractDuoAuthenticationFromHeaders"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:autoAuthenticationSupported="%{idp.duo.nonbrowser.auto:true}"
         p:clientAdddressTrusted="%{idp.duo.nonbrowser.clientAddressTrusted:true}"
         p:factorHeader="%{idp.duo.nonbrowser.header.factor:X-Shibboleth-Duo-Factor}"

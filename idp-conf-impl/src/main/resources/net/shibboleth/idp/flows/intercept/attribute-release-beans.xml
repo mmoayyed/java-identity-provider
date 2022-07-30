@@ -153,7 +153,7 @@
 
     <bean id="ExtractConsent"
         class="net.shibboleth.idp.consent.flow.impl.ExtractConsent" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
 
     <bean id="CreateResult"
         class="net.shibboleth.idp.consent.flow.storage.impl.CreateResult" scope="prototype"
@@ -175,6 +175,6 @@
         p:formattingMap="#{getObject('shibboleth.consent.attribute-release.AuditFormattingMap') ?: getObject('DefaultAuditFormattingMap')}"
         p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
 
 </beans>

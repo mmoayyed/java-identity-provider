@@ -33,7 +33,7 @@
 
     <bean id="ReloadMetadata"
         class="net.shibboleth.idp.saml.profile.impl.ReloadMetadata" scope="prototype"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
         p:metadataResolver-ref="shibboleth.MetadataResolverService" />
         
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />

@@ -40,7 +40,7 @@
     </bean>
     
     <bean id="ExtractRemoteUser" class="net.shibboleth.idp.authn.impl.ExtractRemoteUser" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:checkRemoteUser="#{getObject('shibboleth.authn.RemoteUser.checkRemoteUser') ?: %{idp.authn.RemoteUserInternal.checkRemoteUser:true}}"
         p:checkHeaders="#{getObject('shibboleth.authn.RemoteUser.checkHeaders')}"
         p:checkAttributes="#{getObject('shibboleth.authn.RemoteUser.checkAttributes')}"

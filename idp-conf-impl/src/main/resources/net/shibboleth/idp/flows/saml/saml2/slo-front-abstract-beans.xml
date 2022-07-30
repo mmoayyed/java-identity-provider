@@ -54,7 +54,7 @@
     <bean id="SetIssuerRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
             p:activationCondition="%{idp.logout.elaboration:false}"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier">
         <property name="fallbackLanguages">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
         </property>
@@ -78,7 +78,7 @@
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
             p:activationCondition="%{idp.logout.elaboration:false}"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier">
         <property name="fallbackLanguages">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
         </property>

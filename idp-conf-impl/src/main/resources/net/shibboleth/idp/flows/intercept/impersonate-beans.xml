@@ -23,14 +23,14 @@
 
     <bean id="CheckGeneralAccess"
         class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:accessControlService-ref="shibboleth.AccessControlService"
         p:policyName="#{getObject('shibboleth.impersonate.GeneralPolicy') ?: '%{idp.impersonate.generalPolicy:GeneralImpersonationPolicy}'.trim()}"
         p:operation="impersonate" />
 
     <bean id="CheckSpecificAccess"
         class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:accessControlService-ref="shibboleth.AccessControlService"
         p:policyName="#{getObject('shibboleth.impersonate.SpecificPolicy') ?: '%{idp.impersonate.specificPolicy:SpecificImpersonationPolicy}'.trim()}"
         p:operation="impersonate"
