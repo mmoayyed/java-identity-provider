@@ -26,6 +26,10 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import java.util.function.Supplier;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -41,7 +45,8 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         super.setUp();
         
         action = new ExtractDuoAuthenticationFromHeaders();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     
@@ -60,7 +65,8 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
 
     @Test public void testNoAuto() throws ComponentInitializationException {
         action = new ExtractDuoAuthenticationFromHeaders();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.setAutoAuthenticationSupported(false);
         action.initialize();
         final Event event = action.execute(src);

@@ -18,17 +18,20 @@
 package net.shibboleth.idp.authn.proxy.impl;
 
 
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import java.util.function.Supplier;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** {@link ExtractDiscoveryResponse} unit test. */
 public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest {
@@ -39,7 +42,8 @@ public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest 
         super.setUp();
         
         action = new ExtractDiscoveryResponse();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

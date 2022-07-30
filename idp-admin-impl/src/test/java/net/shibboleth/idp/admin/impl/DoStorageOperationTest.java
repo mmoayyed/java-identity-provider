@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.joda.time.Instant;
 import org.opensaml.storage.StorageRecord;
@@ -89,8 +91,8 @@ public class DoStorageOperationTest {
         mapper.setSerializationInclusion(Include.NON_NULL);
         
         action = new DoStorageOperation();
-        action.setHttpServletRequest(request);
-        action.setHttpServletResponse(response);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() {return response;}});
         action.setStorageService(storageService);
         action.setObjectMapper(mapper);
         action.initialize();

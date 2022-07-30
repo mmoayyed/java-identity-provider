@@ -22,10 +22,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import javax.security.auth.login.LoginException;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
@@ -37,14 +47,6 @@ import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactor
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /** Unit test for htpasswd file validation. */
 public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTest {
@@ -70,7 +72,8 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         mappings.put(AuthnEventIds.UNKNOWN_USERNAME, Collections.singleton(AuthnEventIds.UNKNOWN_USERNAME));
         action.setClassifiedMessages(mappings);
         
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testMissingFlow() throws ComponentInitializationException {
@@ -326,7 +329,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
     
     private void doExtract() throws ComponentInitializationException {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
-        extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setHttpServletRequestSupplier(action.getHttpServletRequestSupplier());
         extract.initialize();
         extract.execute(src);
     }

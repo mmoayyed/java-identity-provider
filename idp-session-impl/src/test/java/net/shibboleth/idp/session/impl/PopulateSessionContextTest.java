@@ -17,16 +17,7 @@
 
 package net.shibboleth.idp.session.impl;
 
-import jakarta.servlet.http.Cookie;
-
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.session.SessionException;
-import net.shibboleth.idp.session.context.SessionContext;
-import net.shibboleth.idp.session.impl.testing.SessionManagerBaseTestCase;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
+import java.util.function.Supplier;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -36,6 +27,18 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.session.SessionException;
+import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.idp.session.impl.testing.SessionManagerBaseTestCase;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 
 /** {@link PopulateSessionContext} unit test. */
 @SuppressWarnings("javadoc")
@@ -52,8 +55,8 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         
         action = new PopulateSessionContext();
-        action.setHttpServletRequest(requestProxy);
-        action.setHttpServletResponse(responseProxy);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
         action.setSessionResolver(sessionManager);
         action.initialize();
     }
@@ -121,8 +124,8 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
     
     @Test public void testAddressLookup() throws ComponentInitializationException, SessionException {
         action = new PopulateSessionContext();
-        action.setHttpServletRequest(requestProxy);
-        action.setHttpServletResponse(responseProxy);
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
+        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
         action.setSessionResolver(sessionManager);
         action.setAddressLookupStrategy(input -> requestProxy.getHeader("User-Agent"));
         action.initialize();

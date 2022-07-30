@@ -18,6 +18,8 @@
 package net.shibboleth.idp.authn.impl;
 
 
+import java.util.function.Supplier;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -26,6 +28,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.net.HttpHeaders;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
@@ -42,7 +45,8 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthentication
         super.setUp();
         
         action = new ExtractUsernamePasswordFromBasicAuth();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});        action.initialize();
         action.initialize();
     }
     

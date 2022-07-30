@@ -21,14 +21,9 @@ package net.shibboleth.idp.authn.impl;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
+import java.util.function.Supplier;
 
 import javax.security.auth.x500.X500Principal;
-
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.security.credential.CredentialResolver;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
@@ -42,6 +37,13 @@ import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** {@link X509CertificateCredentialValidator} unit test. */
 public class X509CertificateCredentialValidatorTest extends BaseAuthenticationContextTest {
@@ -102,7 +104,8 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         
         action = new ValidateCredentials();
         action.setValidators(Collections.singletonList(validator));
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
 
@@ -191,7 +194,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
     
     private void doExtract() throws ComponentInitializationException, CertificateException {
         final ExtractX509CertificateFromRequest extract = new ExtractX509CertificateFromRequest();
-        extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setHttpServletRequestSupplier(action.getHttpServletRequestSupplier());
 
         extract.initialize();
         extract.execute(src);

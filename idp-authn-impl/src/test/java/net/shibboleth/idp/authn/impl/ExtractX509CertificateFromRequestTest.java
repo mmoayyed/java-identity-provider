@@ -20,13 +20,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.CertificateContext;
-import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import java.util.function.Supplier;
 
 import org.opensaml.security.x509.X509Support;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,6 +28,14 @@ import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.CertificateContext;
+import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** {@link ExtractX509CertificateFromRequest} unit test. */
 public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationContextTest {
@@ -89,7 +91,8 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         super.setUp();
         
         action = new ExtractX509CertificateFromRequest();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

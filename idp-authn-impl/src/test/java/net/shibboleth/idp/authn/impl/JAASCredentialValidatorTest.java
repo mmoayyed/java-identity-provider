@@ -26,23 +26,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import javax.security.auth.login.LoginException;
-
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
-import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
-import net.shibboleth.idp.authn.testing.TestPrincipal;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.net.URISupport;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -57,6 +44,21 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.testing.TestPrincipal;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.net.URISupport;
 
 /** Unit test for JAAS validation. */
 public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
@@ -107,7 +109,8 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         mappings.put("InvalidPassword", Collections.singleton("INVALID_CREDENTIALS"));
         action.setClassifiedMessages(mappings);
         
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testMissingFlow() throws ComponentInitializationException {
@@ -403,7 +406,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
     
     private void doExtract() throws ComponentInitializationException {
         final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
-        extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setHttpServletRequestSupplier(action.getHttpServletRequestSupplier());
         extract.initialize();
         extract.execute(src);
     }

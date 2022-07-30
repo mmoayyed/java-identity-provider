@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -47,7 +48,8 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
         action.setAllowedUsernames(Arrays.asList("bar", "baz"));
         action.setDeniedUsernames(Arrays.asList("foo"));
         action.setMatchExpression(Pattern.compile("^ba(r|z|n)$"));
-        action.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
 
@@ -128,7 +130,7 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     
     private void doExtract() throws ComponentInitializationException {
         final ExtractRemoteUser extract = new ExtractRemoteUser();
-        extract.setHttpServletRequest(action.getHttpServletRequest());
+        extract.setHttpServletRequestSupplier(action.getHttpServletRequestSupplier());
         extract.initialize();
         extract.execute(src);
     }

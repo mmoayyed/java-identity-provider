@@ -20,31 +20,13 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.security.auth.Subject;
-
-import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
-import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
-import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -56,6 +38,24 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
+import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** {@link AddAuthnStatementToAssertion} unit test. */
 @SuppressWarnings("javadoc")
@@ -73,7 +73,8 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
 
         action = new AddAuthnStatementToAssertion();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     
