@@ -15,7 +15,7 @@
         <constructor-arg>
             <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder" scope="prototype"
                 p:parserPool-ref="shibboleth.ParserPool"
-                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
                 p:bindingDescriptor-ref="shibboleth.Binding.SAML2POSTSimpleSign" />
         </constructor-arg>
     </bean>

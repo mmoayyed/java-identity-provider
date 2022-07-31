@@ -14,7 +14,7 @@
 
     <bean id="SoapDecoder" 
           class="org.opensaml.saml.saml1.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+          p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
 
     <bean id="ProcessSamlMessage"
           class="net.shibboleth.idp.cas.flow.impl.ProcessSamlMessageAction" scope="prototype" />

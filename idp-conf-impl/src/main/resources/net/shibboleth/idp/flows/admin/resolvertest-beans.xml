@@ -33,7 +33,7 @@
         <constructor-arg>
             <bean class="%{idp.resolvertest.decoderClass:net.shibboleth.idp.profile.impl.ResolverTestRequestDecoder}"
                     scope="prototype">
-                <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
+                <property name="httpServletRequestSupplier" ref="shibboleth.HttpServletRequestSupplier" />
             </bean>
         </constructor-arg>
     </bean>
