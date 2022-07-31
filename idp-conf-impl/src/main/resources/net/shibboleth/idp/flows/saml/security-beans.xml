@@ -139,7 +139,7 @@
             p:activationCondition-ref="NotIgnoreRequestSignaturesPredicate">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPRedirectDeflateSignatureSecurityHandler" scope="prototype"
-                p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+                p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
         </constructor-arg>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_AUTHN_ERROR" />
@@ -152,7 +152,7 @@
             p:activationCondition-ref="NotIgnoreRequestSignaturesPredicate">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPPostSimpleSignSecurityHandler" scope="prototype"
-                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
                 p:parser-ref="shibboleth.ParserPool"
                 p:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
         </constructor-arg>
