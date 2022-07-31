@@ -315,7 +315,7 @@
                             p:clockSkew="%{idp.policy.clockSkew:PT3M}" />
                         <bean class="org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler" scope="prototype" />
                         <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPPostSimpleSignSecurityHandler" scope="prototype"
-                            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
                             p:parser-ref="shibboleth.ParserPool"
                             p:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
                         <bean class="org.opensaml.messaging.handler.impl.CheckMandatoryIssuer" scope="prototype"
