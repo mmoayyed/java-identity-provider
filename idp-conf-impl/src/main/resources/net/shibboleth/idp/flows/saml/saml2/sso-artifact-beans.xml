@@ -21,7 +21,7 @@
         <constructor-arg>
             <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPArtifactDecoder" scope="prototype"
                 p:parserPool-ref="shibboleth.ParserPool"
-                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
                 p:bindingDescriptor-ref="shibboleth.Binding.SAML2Artifact"
                 p:peerEntityRole="#{T(org.opensaml.saml.saml2.metadata.SPSSODescriptor).DEFAULT_ELEMENT_NAME}"
                 p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"

@@ -20,7 +20,7 @@
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
             <bean class="net.shibboleth.idp.saml.saml2.profile.impl.IdPInitiatedSSORequestMessageDecoder" scope="prototype"
-                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
                 p:bindingDescriptor-ref="shibboleth.Binding.SAML2Unsolicited" />
         </constructor-arg>
     </bean>

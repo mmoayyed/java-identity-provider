@@ -215,7 +215,7 @@
     <bean id="SAMLAuthnPostDecoder"
         class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder" scope="prototype" init-method=""
         p:parserPool-ref="shibboleth.ParserPool"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:bindingDescriptor-ref="shibboleth.Binding.SAML2POST" />
 
     <bean id="ContinueSAMLAuthentication"

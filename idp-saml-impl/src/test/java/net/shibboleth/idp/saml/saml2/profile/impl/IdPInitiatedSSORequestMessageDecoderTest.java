@@ -22,6 +22,9 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
@@ -66,7 +69,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
         request.setRequestedSessionId(sessionID);
         
         decoder = new IdPInitiatedSSORequestMessageDecoder();
-        decoder.setHttpServletRequest(request);
+        decoder.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return request;}});
         decoder.initialize();
     }
     

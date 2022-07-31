@@ -19,6 +19,10 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl;
 
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.MarshallingException;
@@ -46,7 +50,7 @@ public class LibertyHTTPSOAP11DecoderTest extends XMLObjectBaseTestCase {
         
         decoder = new LibertyHTTPSOAP11Decoder();
         decoder.setParserPool(parserPool);
-        decoder.setHttpServletRequest(httpRequest);
+        decoder.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return httpRequest;}});
         decoder.initialize();
     }
 
