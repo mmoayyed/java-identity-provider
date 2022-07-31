@@ -20,7 +20,7 @@
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.security.impl.SAMLMDClientCertAuthSecurityHandler" scope="prototype"
-                    p:httpServletRequest-ref="shibboleth.HttpServletRequest" 
+                    p:httpServletRequestSuplier-ref="shibboleth.HttpServletRequestSupplier"
                     p:entityContextClass="org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext" />
         </constructor-arg>
         <property name="activationCondition">
