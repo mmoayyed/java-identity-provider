@@ -46,7 +46,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
@@ -90,8 +89,7 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
      * @param strategy lookup strategy
      */
     public void setPrincipalNameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        checkSetterPreconditions();
         
         principalNameLookupStrategy = Constraint.isNotNull(strategy, "Principal name lookup strategy cannot be null");
     }
@@ -102,9 +100,8 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
      * @param strategy  lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
+        checkSetterPreconditions();
+        
         issuerLookupStrategy = strategy;
     }
 
@@ -114,8 +111,7 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
      * @param strategy  lookup strategy
      */
     public void setRecipientLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        checkSetterPreconditions();
 
         recipientLookupStrategy = strategy;
     }
@@ -126,8 +122,7 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
      * @param service attribute resolver service
      */
     public void setAttributeResolver(@Nonnull final ReloadableService<AttributeResolver> service) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        checkSetterPreconditions();
         
         attributeResolver = Constraint.isNotNull(service, "ReloadableService<AttributeResolver> cannot be null");
     }
@@ -138,8 +133,7 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
      * @param id attribute ID to resolve
      */
     public void setAttributeId(@Nonnull @NotEmpty final String id) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        checkSetterPreconditions();
         
         attributeId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Attribute ID cannot be null or empty");
     }
@@ -160,6 +154,7 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
 
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input,  @Nullable final AuthenticationResult input2) {
+        checkComponentActive();
         
         if (input == null || input2 == null) {
             log.error("Called with null inputs");
