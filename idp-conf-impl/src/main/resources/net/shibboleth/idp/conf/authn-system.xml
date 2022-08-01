@@ -28,7 +28,7 @@
             p:inactivityTimeout="%{idp.authn.defaultTimeout:PT30M}"
             p:principalWeightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap') ?: getObject('shibboleth.DefaultAuthenticationPrincipalWeightMap')}"
             p:principalServiceManager-ref="shibboleth.PrincipalServiceManager"
-            p:revocationCondition="#{%{idp.authn.revocation:false} ? getObject('%{idp.authn.revocation.Condition:shibboleth.RevocationCondition}'.trim()) : null}">
+            p:revocationCondition="#{%{idp.authn.revocation:false} ? getObject('%{idp.authn.revocation.Condition:shibboleth.RevocationCacheCondition}'.trim()) : null}">
         <property name="supportedPrincipals">
             <list>
                 <bean parent="shibboleth.SAML2AuthnContextClassRef"
@@ -536,10 +536,15 @@
     
     <!-- Revocation feature. -->
     
-    <bean id="shibboleth.RevocationCondition" class="net.shibboleth.idp.authn.revocation.impl.RevocationCacheCondition" lazy-init="true"
+    <bean id="shibboleth.RevocationCacheCondition" class="net.shibboleth.idp.authn.revocation.impl.RevocationCacheCondition" lazy-init="true"
         p:revocationCache-ref="%{idp.authn.revocation.cache:shibboleth.AuthnRevocationCache}"
         p:httpServletRequest="#{%{idp.authn.revocation.addressBased:false} ? getObject('shibboleth.HttpServletRequest') : null}"
         p:principalNameLookupStrategy-ref="shibboleth.RevocationPrincipalLookupStrategy" />
+
+    <bean id="shibboleth.AttributeRevocationCondition" class="net.shibboleth.idp.authn.revocation.impl.AttributeRevocationCondition" lazy-init="true"
+        p:principalNameLookupStrategy-ref="shibboleth.RevocationPrincipalLookupStrategy"
+        p:attributeResolver-ref="shibboleth.AttributeResolverService"
+        p:attributeId="#{'%{idp.authn.revocation.attributeId:revocation}'.trim()}" />
         
     <bean id="shibboleth.RevocationPrincipalLookupStrategy" parent="shibboleth.Functions.Compose" lazy-init="true"
         c:g-ref="shibboleth.PrincipalNameLookup.Session"
