@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.revocation.impl;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 
 import javax.security.auth.Subject;
@@ -28,7 +29,6 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import org.joda.time.Instant;
 import org.opensaml.storage.RevocationCache;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
@@ -88,7 +88,7 @@ public class RevocationCacheConditionTest extends BaseAuthenticationContextTest 
 
         revocationCache.revoke(RevocationCacheCondition.REVOCATION_CONTEXT,
                 RevocationCacheCondition.PRINCIPAL_REVOCATION_PREFIX + "jdoe",
-                Long.toString(Instant.now().getMillis() / 1000 + 3600L),
+                Long.toString(Instant.now().getEpochSecond() + 3600L),
                 Duration.ofDays(1));
         
         Assert.assertFalse(active.test(prc));
@@ -101,7 +101,7 @@ public class RevocationCacheConditionTest extends BaseAuthenticationContextTest 
 
         revocationCache.revoke(RevocationCacheCondition.REVOCATION_CONTEXT,
                 RevocationCacheCondition.PRINCIPAL_REVOCATION_PREFIX + "jdoe",
-                Long.toString(Instant.now().getMillis() / 1000 - 3600L),
+                Long.toString(Instant.now().getEpochSecond() - 3600L),
                 Duration.ofDays(1));
         
         Assert.assertTrue(active.test(prc));
