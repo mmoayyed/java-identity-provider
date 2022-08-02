@@ -20,7 +20,7 @@
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.security.impl.SAMLMDClientCertAuthSecurityHandler" scope="prototype"
-                    p:httpServletRequestSuplier-ref="shibboleth.HttpServletRequestSupplier"
+                    p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
                     p:entityContextClass="org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext" />
         </constructor-arg>
         <property name="activationCondition">
@@ -92,7 +92,7 @@
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.saml2.wssecurity.messaging.impl.WSSecuritySAML20AssertionTokenSecurityHandler" scope="prototype"
                     p:invalidFatal="true" 
-                    p:httpServletRequest-ref="shibboleth.HttpServletRequest" 
+                    p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
                     p:assertionValidator-ref="shibboleth.Delegation.SAML2AssertionTokenValidator" />
         </constructor-arg>
         <property name="activationCondition">
