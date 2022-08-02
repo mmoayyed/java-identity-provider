@@ -21,6 +21,9 @@ import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
 
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
+import java.util.function.Supplier;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
@@ -93,7 +96,7 @@ public class LibertyHTTPSOAP11EncoderTest extends XMLObjectBaseTestCase {
         
         LibertyHTTPSOAP11Encoder encoder = new LibertyHTTPSOAP11Encoder();
         encoder.setMessageContext(messageContext);
-        encoder.setHttpServletResponse(response);
+        encoder.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() {return response;}});
         
         encoder.initialize();
         encoder.prepareContext();
