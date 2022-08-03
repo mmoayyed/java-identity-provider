@@ -21,16 +21,16 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -91,7 +91,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
     /** Revocation key to operate on. */
     @Nullable @NotEmpty private String key;
 
-    /** {@link AccountLockoutManager} to operate on. */
+    /** {@link RevocationCache} to operate on. */
     @Nullable private RevocationCache revocationCache;
 
     /**
@@ -100,8 +100,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
      * @param mapper object mapper
      */
     public void setObjectMapper(@Nonnull final ObjectMapper mapper) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        checkSetterPreconditions();
         
         objectMapper = Constraint.isNotNull(mapper, "ObjectMapper cannot be null");
     }
