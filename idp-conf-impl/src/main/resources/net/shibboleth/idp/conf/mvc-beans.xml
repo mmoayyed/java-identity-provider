@@ -19,6 +19,7 @@
             <list>
                 <value>admin/metrics</value>
                 <value>admin/lockout</value>
+                <value>admin/revocation</value>
                 <value>admin/storage</value>
             </list>
         </property>

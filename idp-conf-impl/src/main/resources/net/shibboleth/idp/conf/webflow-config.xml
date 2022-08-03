@@ -30,6 +30,7 @@
                 <entry key="admin/lockout" value="classpath:/net/shibboleth/idp/flows/admin/lockout-flow.xml" />
                 <entry key="admin/mdquery" value="classpath:/net/shibboleth/idp/flows/admin/mdquery-flow.xml" />
                 <entry key="admin/metrics" value="classpath:/net/shibboleth/idp/flows/admin/metrics-flow.xml" />
+                <entry key="admin/revocation" value="classpath:/net/shibboleth/idp/flows/admin/revocation-flow.xml" />
                 <entry key="admin/storage" value="classpath:/net/shibboleth/idp/flows/admin/storage-flow.xml" />
                 <entry key="admin/unlock-keys" value="classpath:/net/shibboleth/idp/flows/admin/unlock-keys-flow.xml" />
                         
