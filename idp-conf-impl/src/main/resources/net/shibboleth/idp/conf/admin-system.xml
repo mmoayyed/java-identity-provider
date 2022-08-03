@@ -161,6 +161,23 @@
     </bean>
 
     <bean parent="shibboleth.AdminFlow"
+            c:id="http://shibboleth.net/ns/profiles/revocation"
+            p:loggingId="%{idp.revocation.logging:Revocation}"
+            p:policyName="%{idp.revocation.accessPolicy:AccessDenied}"
+            p:nonBrowserSupported="%{idp.revocation.nonBrowserSupported:false}"
+            p:authenticated="%{idp.revocation.authenticated:false}"
+            p:resolveAttributes="%{idp.revocation.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.revocation.postAuthenticationFlows:}'.trim()}" />
+        </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.revocation.defaultAuthenticationMethods:}'.trim()}" />
+        </property>
+    </bean>
+
+    <bean parent="shibboleth.AdminFlow"
             c:id="http://shibboleth.net/ns/profiles/storage"
             p:loggingId="%{idp.storage.logging:Storage}"
             p:policyName="%{idp.storage.accessPolicy:AccessDenied}"

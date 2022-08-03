@@ -55,10 +55,10 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
     @Nonnull @NotEmpty public static final String REVOCATION_CONTEXT = "LoginFlowRevocation";
 
     /** Prefix of keys for principal-based revocation. */
-    @Nonnull @NotEmpty public static final String PRINCIPAL_REVOCATION_PREFIX = "prin:";
+    @Nonnull @NotEmpty public static final String PRINCIPAL_REVOCATION_PREFIX = "prin!";
 
     /** Prefix of keys for address-based revocation. */
-    @Nonnull @NotEmpty public static final String ADDRESS_REVOCATION_PREFIX = "addr:";
+    @Nonnull @NotEmpty public static final String ADDRESS_REVOCATION_PREFIX = "addr!";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(RevocationCacheCondition.class);

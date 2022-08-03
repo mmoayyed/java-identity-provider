@@ -45,6 +45,7 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -254,6 +255,65 @@ public abstract class AbstractProfileAction
         return null;
     }
 
+    /**
+     * Return a casted parameter of a given name from the flow's flow or conversation scope (in that order). 
+     * 
+     * @param <T> the parameter type
+     * 
+     * @param profileRequestContext profile request context
+     * @param name parameter name
+     * 
+     * @return the parameter or null
+     * 
+     * @since 4.3.0
+     */
+    @Nullable protected <T> T getParameter(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull @NotEmpty final String name) {
+        
+        final SpringRequestContext springRequestContext =
+                profileRequestContext.getSubcontext(SpringRequestContext.class);
+        if (springRequestContext == null) {
+            log.warn("{} Spring request context not found in profile request context", getLogPrefix());
+            return null;
+        }
+
+        final RequestContext requestContext = springRequestContext.getRequestContext();
+        if (requestContext == null) {
+            log.warn("{} Web Flow request context not found in Spring request context", getLogPrefix());
+            return null;
+        }
+
+        return getParameter(requestContext, name);
+    }
+
+    /**
+     * Return a casted parameter of a given name from the flow's flow or conversation scope (in that order). 
+     * 
+     * @param <T> the parameter type
+     * 
+     * @param flowRequestContext the active flow's request context
+     * @param name parameter name
+     * 
+     * @return the parameter or null
+     * 
+     * @since 4.3.0
+     */
+    @Nullable protected <T> T getParameter(@Nonnull final RequestContext flowRequestContext,
+            @Nonnull @NotEmpty final String name) {
+        
+        MutableAttributeMap<Object> scope = flowRequestContext.getFlowScope();
+        if (scope != null && scope.contains(name)) {
+            return (T) scope.get(name);
+        }
+        
+        scope = flowRequestContext.getConversationScope();
+        if (scope != null && scope.contains(name)) {
+            return (T) scope.get(name);
+        }
+        
+        return null;
+    }
+    
     /** {@inheritDoc} */
     @Override
     public void setMessageSource(final MessageSource source) {
