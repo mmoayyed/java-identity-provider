@@ -27,7 +27,7 @@
         
     <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"
-        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('context')" />
+        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('key')" />
     
     <!--  Work beans. -->
     
