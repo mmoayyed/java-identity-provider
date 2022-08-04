@@ -91,7 +91,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
     /** Revocation key to operate on. */
     @Nullable @NotEmpty private String key;
 
-    /** {@link AccountLockoutManager} to operate on. */
+    /** {@link RevocationCache} to operate on. */
     @Nullable private RevocationCache revocationCache;
 
     /**
