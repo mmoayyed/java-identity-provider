@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -244,20 +245,35 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
         final String value = getHttpServletRequest().getParameter("value");
         final String duration = getHttpServletRequest().getParameter("duration");
         
-        if (value == null || duration == null) {
-            sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request", "Request missing value/duration parameters.");
+        if (value == null) {
+            sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request", "Request missing value parameter.");
             return;
         }
         
-        final Long durationSeconds;
-        try {
-            durationSeconds = Long.valueOf(duration);
-        } catch (final NumberFormatException e) {
-            sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request", "Duration parameter was not a long integer.");
-            return;
+        Duration durationSeconds = null;
+        
+        if (duration != null) {
+            if (duration.startsWith("P")) {
+                durationSeconds = DOMTypeSupport.stringToDuration(duration);
+            } else {
+                try {
+                    durationSeconds = Duration.ofSeconds(Long.valueOf(duration));
+                } catch (final NumberFormatException e) {
+                    sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request",
+                            "Duration parameter was not a long integer.");
+                    return;
+                }
+            }
         }
         
-        if (revocationCache.revoke(context, key, value, Duration.ofSeconds(durationSeconds))) {
+        final boolean result;
+        if (durationSeconds != null) {
+            result = revocationCache.revoke(context, key, value, durationSeconds);
+        } else {
+            result = revocationCache.revoke(context, key, value);
+        }
+        
+        if (result) {
             getHttpServletResponse().setStatus(HttpServletResponse.SC_ACCEPTED);
         } else {
             sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
