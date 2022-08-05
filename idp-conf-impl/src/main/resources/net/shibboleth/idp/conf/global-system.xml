@@ -259,7 +259,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache"
+    <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.impl.StorageServiceReplayCache"
         p:storage-ref="#{'%{idp.replayCache.StorageService:shibboleth.StorageService}'.trim()}"
         p:strict="%{idp.replayCache.strict:true}" />
 

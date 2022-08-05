@@ -86,6 +86,9 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
     /** JSON object mapper. */
     @NonnullAfterInit private ObjectMapper objectMapper;
 
+    /** Revocation Cache ID. */
+    @Nullable @NotEmpty private String cacheId;
+    
     /** Revocation context to operate on. */
     @Nullable @NotEmpty private String context;
     
@@ -148,18 +151,18 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
             }
             
             
-            final String id = getParameter(requestContext, CACHE_ID);
+            cacheId = getParameter(requestContext, CACHE_ID);
             context = getParameter(requestContext, CONTEXT);
             key = getParameter(requestContext, KEY);
             
-            if (Strings.isNullOrEmpty(id) || Strings.isNullOrEmpty(context) || Strings.isNullOrEmpty(key)) {
+            if (Strings.isNullOrEmpty(cacheId) || Strings.isNullOrEmpty(context) || Strings.isNullOrEmpty(key)) {
                 sendError(HttpServletResponse.SC_NOT_FOUND,
                         "Missing revocation cache ID, context, or key",
                         "No revocation cache ID, context, key specified.");
                 return false;
             }
 
-            revocationCache = getBean(requestContext, id, RevocationCache.class);
+            revocationCache = getBean(requestContext, cacheId, RevocationCache.class);
             if (revocationCache == null) {
                 sendError(HttpServletResponse.SC_NOT_FOUND,
                         "Invalid Revocation Cache", "Invalid revocation cache identifier in path.");
@@ -222,7 +225,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
                     g.writeStartObject();
                     g.writeObjectFieldStart("data");
                     g.writeStringField("type", "revocation-records");
-                    g.writeStringField("id", revocationCache.getId() + '/' + context + '/' + key);
+                    g.writeStringField("id", cacheId + '/' + context + '/' + key);
                     g.writeObjectFieldStart("attributes");
                     g.writeStringField("revocation", revocation);
                 }

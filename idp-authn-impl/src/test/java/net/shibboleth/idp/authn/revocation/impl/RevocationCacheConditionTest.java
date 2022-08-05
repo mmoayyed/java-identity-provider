@@ -29,8 +29,8 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import org.opensaml.storage.RevocationCache;
 import org.opensaml.storage.impl.MemoryStorageService;
+import org.opensaml.storage.impl.StorageServiceRevocationCache;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 public class RevocationCacheConditionTest extends BaseAuthenticationContextTest {
     
     private MemoryStorageService storageService;
-    private RevocationCache revocationCache;
+    private StorageServiceRevocationCache revocationCache;
     private RevocationCacheCondition condition; 
 
     @BeforeMethod
@@ -52,7 +52,7 @@ public class RevocationCacheConditionTest extends BaseAuthenticationContextTest 
         storageService.setCleanupInterval(Duration.ZERO);
         storageService.initialize();
         
-        revocationCache = new RevocationCache();
+        revocationCache = new StorageServiceRevocationCache();
         revocationCache.setStorage(storageService);
         revocationCache.setId("test");
         revocationCache.initialize();

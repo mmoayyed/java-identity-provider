@@ -550,7 +550,7 @@
         c:g-ref="shibboleth.PrincipalNameLookup.Session"
         c:f-ref="shibboleth.ChildLookup.SessionContext" />
     
-    <bean id="shibboleth.AuthnRevocationCache" class="org.opensaml.storage.RevocationCache" lazy-init="true"
+    <bean id="shibboleth.AuthnRevocationCache" class="org.opensaml.storage.impl.StorageServiceRevocationCache" lazy-init="true"
         p:entryExpiration="#{'%{idp.authn.revocation.lifetime:%{idp.authn.defaultLifetime:PT12H}}'}"
         p:storage-ref="#{'%{idp.authn.revocation.StorageService:shibboleth.StorageService}'.trim()}"
         p:strict="%{idp.authn.revocation.strict:false}" />
