@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -119,7 +120,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
 
     /** Servlet request to read from. */
-    @Nullable private HttpServletRequest httpRequest;
+    @Nullable private Supplier<HttpServletRequest> httpRequestSupplier;
 
     /** Inactivity timeout for sessions. */
     @Nonnull private Duration sessionTimeout;
@@ -179,13 +180,14 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Set the servlet request to read from.
+     * Set the {@link Supplier} for the servlet request to read from.
      * 
-     * @param request servlet request
+     * @param requestSupplier servlet request Supplier
      */
-    public void setHttpServletRequest(@Nullable final HttpServletRequest request) {
+    public void setHttpServletRequestSupplier(@Nullable final Supplier<HttpServletRequest> requestSupplier) {
         checkSetterPreconditions();
-        httpRequest = request;
+
+        httpRequestSupplier = requestSupplier;
     }
 
     /**
@@ -486,6 +488,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             throws SessionException {
         checkComponentActive();
 
+        final HttpServletRequest httpRequest = httpRequestSupplier == null?null:httpRequestSupplier.get();
         if (httpRequest == null) {
             throw new SessionException("No HttpServletRequest available, can't bind to client address");
         }
@@ -554,6 +557,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         if (criteria != null) {
             final HttpServletRequestCriterion requestCriterion = criteria.get(HttpServletRequestCriterion.class);
             if (requestCriterion != null) {
+                final HttpServletRequest httpRequest = httpRequestSupplier == null?null:httpRequestSupplier.get();
                 if (httpRequest != null) {
                     final Cookie[] cookies = httpRequest.getCookies();
                     if (cookies != null) {

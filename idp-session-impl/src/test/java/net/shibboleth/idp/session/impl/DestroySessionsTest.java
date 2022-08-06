@@ -20,8 +20,17 @@ package net.shibboleth.idp.session.impl;
 import java.time.Duration;
 import java.util.Collections;
 
-import jakarta.servlet.http.Cookie;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageSerializer;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
+import jakarta.servlet.http.Cookie;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -39,16 +48,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageSerializer;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /** {@link DestroySessions} unit test. */
 public class DestroySessionsTest extends SessionManagerBaseTestCase {

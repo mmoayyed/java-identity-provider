@@ -76,7 +76,8 @@ public class StorageBackedIdPSessionSerializerTest {
         manager = new StorageBackedSessionManager();
         manager.setStorageService(storageService);
         manager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
-        manager.setHttpServletRequest(new ThreadLocalHttpServletRequestProxy());
+        final HttpServletRequest requestProxy = new ThreadLocalHttpServletRequestProxy();
+        manager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return requestProxy;}});
         manager.setCookieManager(cookieManager);
         manager.setId("Test Session Manager");
         manager.setTrackSPSessions(true);

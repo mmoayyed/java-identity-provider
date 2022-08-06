@@ -17,15 +17,9 @@
 
 package net.shibboleth.idp.saml.saml1.profile.impl;
 
-import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
-import net.shibboleth.idp.saml.profile.impl.IdPInitiatedSSORequest;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.function.Supplier;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
@@ -36,6 +30,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
+import net.shibboleth.idp.saml.profile.impl.IdPInitiatedSSORequest;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * Test the {@link IdPInitiatedSSORequestMessageDecoder}.

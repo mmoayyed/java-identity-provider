@@ -57,7 +57,7 @@
           class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
           p:cookieManager-ref="shibboleth.CookieManager"
           p:storageService-ref="shibboleth.StorageService"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+          p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
           p:consistentAddress="true"
           p:sessionTimeout="PT60M"
           p:sessionSlop="0"
