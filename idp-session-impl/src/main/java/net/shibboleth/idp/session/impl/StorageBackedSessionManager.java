@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -121,10 +122,10 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
 
     /** Servlet request to read from. */
-    @Nullable private HttpServletRequest httpRequest;
+    @Nullable private Supplier<HttpServletRequest> httpRequestSupplier;
 
     /** Servlet response to write to. */
-    @Nullable private HttpServletResponse httpResponse;
+    @Nullable private Supplier<HttpServletResponse> httpResponseSupplier;
 
     /** Inactivity timeout for sessions. */
     @Nonnull private Duration sessionTimeout;
@@ -184,25 +185,25 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Set the servlet request to read from.
+     * Set the {@link Supplier} for the servlet request to read from.
      * 
-     * @param request servlet request
+     * @param requestSupplier servlet request Supplier
      */
-    public void setHttpServletRequest(@Nullable final HttpServletRequest request) {
+    public void setHttpServletRequestSupplier(@Nullable final Supplier<HttpServletRequest> requestSupplier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        httpRequest = request;
+        httpRequestSupplier = requestSupplier;
     }
 
     /**
-     * Set the servlet response to write to.
+     * Set the {@link Supplier} for the servlet response to write to.
      * 
-     * @param response servlet response
+     * @param responseSupplier servlet response Supplier
      */
-    public void setHttpServletResponse(@Nullable final HttpServletResponse response) {
+    public void setHttpServletResponseSupplier(@Nullable final Supplier<HttpServletResponse> responseSupplier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        httpResponse = response;
+        httpResponseSupplier = responseSupplier;
     }
 
     /**
@@ -518,6 +519,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
+        final HttpServletRequest httpRequest = httpRequestSupplier == null?null:httpRequestSupplier.get();
         if (httpRequest == null) {
             throw new SessionException("No HttpServletRequest available, can't bind to client address");
         }
@@ -586,6 +588,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         if (criteria != null) {
             final HttpServletRequestCriterion requestCriterion = criteria.get(HttpServletRequestCriterion.class);
             if (requestCriterion != null) {
+                final HttpServletRequest httpRequest = httpRequestSupplier == null?null:httpRequestSupplier.get();
                 if (httpRequest != null) {
                     final Cookie[] cookies = httpRequest.getCookies();
                     if (cookies != null) {

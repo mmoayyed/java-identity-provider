@@ -18,9 +18,12 @@
 package net.shibboleth.idp.session.impl.testing;
 
 import java.time.Duration;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
@@ -66,8 +69,8 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
         sessionManager.setSessionTimeout(Duration.ofSeconds(15));
         sessionManager.setStorageService(storageService);
         sessionManager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
-        sessionManager.setHttpServletRequest(requestProxy);
-        sessionManager.setHttpServletResponse(responseProxy);
+        sessionManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return requestProxy;}});
+        sessionManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() {return responseProxy;}});
         sessionManager.setCookieManager(cookieManager);
         sessionManager.setId("Test Session Manager");
 

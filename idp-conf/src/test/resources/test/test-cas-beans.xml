@@ -11,8 +11,8 @@
 
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
           depends-on="shibboleth.OpenSAMLConfig"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
+          p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
           p:authenticationFlowDescriptors="#{@'shibboleth.AuthenticationFlowDescriptorManager'.getComponents().?[id matches 'authn/(' + '%{idp.authn.flows:Password}'.trim() + ')']}"
           p:cookieManager-ref="shibboleth.CookieManager"
           p:storageService-ref="shibboleth.StorageService"

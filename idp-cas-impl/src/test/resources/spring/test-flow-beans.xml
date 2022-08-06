@@ -31,6 +31,12 @@
     <bean id="shibboleth.StorageService"
           class="org.opensaml.storage.impl.MemoryStorageService" />
 
+    <bean id="shibboleth.HttpServletRequestSupplier"
+          class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy" />
+
+    <bean id="shibboleth.HttpServletResponseSupplier"
+          class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy" />
+
     <bean id="shibboleth.HttpServletRequest"
           class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy" />
 
@@ -51,8 +57,8 @@
           class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
           p:cookieManager-ref="shibboleth.CookieManager"
           p:storageService-ref="shibboleth.StorageService"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
+          p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
           p:consistentAddress="true"
           p:sessionTimeout="PT60M"
           p:sessionSlop="0"
