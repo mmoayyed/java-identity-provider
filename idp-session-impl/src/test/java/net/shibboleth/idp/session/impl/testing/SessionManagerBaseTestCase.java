@@ -18,10 +18,12 @@
 package net.shibboleth.idp.session.impl.testing;
 
 import java.time.Duration;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import jakarta.servlet.http.Cookie;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -58,8 +60,8 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
         storageService.setId("TestStorageService");
 
         CookieManager cookieManager = new CookieManager();
-        cookieManager.setHttpServletRequest(requestProxy);
-        cookieManager.setHttpServletResponse(responseProxy);
+        cookieManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return requestProxy;}});
+        cookieManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() { return responseProxy;}});
         cookieManager.initialize();
         
         sessionManager = new StorageBackedSessionManager();

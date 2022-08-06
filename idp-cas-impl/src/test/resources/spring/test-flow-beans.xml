@@ -37,10 +37,16 @@
     <bean id="shibboleth.HttpServletResponse" destroy-method=""
         class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy" />
 
+    <bean id="shibboleth.HttpServletRequestSupplier" destroy-method=""
+        class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestSupplier" />
+
+    <bean id="shibboleth.HttpServletResponseSupplier" destroy-method=""
+        class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseSupplier" />
+
     <bean id="shibboleth.CookieManager"
         class="net.shibboleth.utilities.java.support.net.CookieManager"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
+        p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
         p:secure="false" />
 
     <bean id="shibboleth.SessionIDGenerator" destroy-method=""
