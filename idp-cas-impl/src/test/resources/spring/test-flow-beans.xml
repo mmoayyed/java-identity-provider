@@ -31,23 +31,23 @@
     <bean id="shibboleth.StorageService"
           class="org.opensaml.storage.impl.MemoryStorageService" />
 
+    <bean id="shibboleth.HttpServletRequest" destroy-method=""
+          class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy" />
+
+    <bean id="shibboleth.HttpServletResponse"  destroy-method=""
+          class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy" />
+
     <bean id="shibboleth.HttpServletRequestSupplier"
-          class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy" />
+        class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestSupplier" />
 
-    <bean id="shibboleth.HttpServletResponseSupplier"
-          class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy" />
-
-    <bean id="shibboleth.HttpServletRequest"
-          class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy" />
-
-    <bean id="shibboleth.HttpServletResponse"
-          class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy" />
+    <bean id="shibboleth.HttpServletResponseSupplier" destroy-method=""
+        class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseSupplier" />
 
     <bean id="shibboleth.CookieManager"
-          class="net.shibboleth.utilities.java.support.net.CookieManager"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
-          p:secure="false" />
+        class="net.shibboleth.utilities.java.support.net.CookieManager"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
+        p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
+        p:secure="false" />
 
     <bean id="shibboleth.SessionIDGenerator"
           class="net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy"

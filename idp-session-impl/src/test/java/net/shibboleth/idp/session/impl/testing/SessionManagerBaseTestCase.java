@@ -25,6 +25,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
+import org.opensaml.storage.impl.MemoryStorageService;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -34,13 +41,6 @@ import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseConte
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy;
 import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
-
-import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
-import org.opensaml.storage.impl.MemoryStorageService;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 
 /** Base class for tests requiring a SessionManager component to be set up. */
 public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
@@ -61,8 +61,8 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
         storageService.setId("TestStorageService");
 
         CookieManager cookieManager = new CookieManager();
-        cookieManager.setHttpServletRequest(requestProxy);
-        cookieManager.setHttpServletResponse(responseProxy);
+        cookieManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return requestProxy;}});
+        cookieManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() { return responseProxy;}});
         cookieManager.initialize();
         
         sessionManager = new StorageBackedSessionManager();

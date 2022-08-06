@@ -23,11 +23,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.function.Supplier;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.storage.impl.MemoryStorageService;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -65,8 +66,10 @@ public class StorageBackedIdPSessionSerializerTest {
         storageService.initialize();
 
         CookieManager cookieManager = new CookieManager();
-        cookieManager.setHttpServletRequest(new ThreadLocalHttpServletRequestProxy());
-        cookieManager.setHttpServletResponse(new ThreadLocalHttpServletResponseProxy());
+        final HttpServletRequest request = new MockHttpServletRequest();
+        final HttpServletResponse response =  new MockHttpServletResponse();
+        cookieManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return request;}});
+        cookieManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() { return response;}});
         cookieManager.initialize();
         
         manager = new StorageBackedSessionManager();

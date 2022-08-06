@@ -18,8 +18,11 @@
 package net.shibboleth.idp.authn.spnego.impl;
 
 import javax.servlet.http.Cookie;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.utilities.java.support.net.CookieManager;
+
+import java.util.function.Supplier;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -46,8 +49,10 @@ public class SPNEGOAutoLoginManagerTest {
     protected SPNEGOAutoLoginManager createAutoLoginManager(MockHttpServletRequest req, MockHttpServletResponse res)
             throws Exception {
         CookieManager cookieManager = new CookieManager();
-        cookieManager.setHttpServletRequest(req != null ? req : new MockHttpServletRequest());
-        cookieManager.setHttpServletResponse(res != null ? res : new MockHttpServletResponse());
+        final HttpServletRequest request = req != null ? req : new MockHttpServletRequest();
+        final HttpServletResponse response = res != null ? res : new MockHttpServletResponse();
+        cookieManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return request;}});
+        cookieManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() { return response;}});
         cookieManager.initialize();
 
         SPNEGOAutoLoginManager autoLoginManager = new SPNEGOAutoLoginManager();
