@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 
 import java.time.Duration;
+import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,7 +48,8 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         ss.initialize();
         
         final UsernameIPLockoutKeyStrategy keyStrategy = new UsernameIPLockoutKeyStrategy();
-        keyStrategy.setHttpServletRequest((HttpServletRequest) src.getExternalContext().getNativeRequest());
+        final HttpServletRequest request = (HttpServletRequest) src.getExternalContext().getNativeRequest();
+        keyStrategy.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return request;}});
         manager = new StorageBackedAccountLockoutManager();
         manager.setId("test");
         manager.setStorageService(ss);
