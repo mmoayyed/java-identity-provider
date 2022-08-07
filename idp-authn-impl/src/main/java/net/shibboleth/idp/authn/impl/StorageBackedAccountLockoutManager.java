@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -375,16 +376,28 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      */
     public static class UsernameIPLockoutKeyStrategy implements Function<ProfileRequestContext,String> { 
         
-        /** Servlet request to pull client ip from. **/
-        @Nullable private HttpServletRequest httpRequest;
+        /** Supplier for the Servlet request to pull client ip from. **/
+        @Nullable private Supplier<HttpServletRequest> httpRequestSupplier;
         
         /**
-         * Set the servlet request to read from.
+         * Set the Supplier for the servlet request to read from.
          * 
-         * @param request servlet request
+         * @param requestSupplier servlet request Supplier
          */
-        public void setHttpServletRequest(@Nonnull final HttpServletRequest request) {
-            httpRequest = Constraint.isNotNull(request, "HttpServletRequest cannot be null");
+        public void setHttpServletRequestSupplier(@Nonnull final Supplier<HttpServletRequest> requestSupplier) {
+            httpRequestSupplier = Constraint.isNotNull(requestSupplier, "HttpServletRequest cannot be null");
+        }
+
+        /**
+         * Get the current HTTP request if available.
+         *
+         * @return current HTTP request
+         */
+        @Nullable private HttpServletRequest getHttpServletRequest() {
+            if (httpRequestSupplier == null) {
+                return null;
+            }
+            return httpRequestSupplier.get();
         }
 
         /** {@inheritDoc} */
@@ -399,7 +412,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
                 return lockoutManagerContext.getKey();
             }
 
-            if (httpRequest == null) {
+            if (getHttpServletRequest() == null) {
                 return null;
             }
 
@@ -416,7 +429,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             }
             
             final String username = upContext.getUsername();
-            final String ipAddr = HttpServletSupport.getRemoteAddr(httpRequest);
+            final String ipAddr = HttpServletSupport.getRemoteAddr(getHttpServletRequest());
             if (username == null || username.isEmpty() || ipAddr == null || ipAddr.isEmpty()) {
                 return null;
             }

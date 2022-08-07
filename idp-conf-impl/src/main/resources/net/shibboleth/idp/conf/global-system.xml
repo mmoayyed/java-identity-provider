@@ -274,7 +274,7 @@
             p:storageService-ref="shibboleth.StorageService">
         <property name="lockoutKeyStrategy">
             <bean class="net.shibboleth.idp.authn.impl.StorageBackedAccountLockoutManager.UsernameIPLockoutKeyStrategy"
-                p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+                p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
         </property>
     </bean>
 
