@@ -234,14 +234,14 @@
 
     <bean id="shibboleth.ClientSessionStorageService" lazy-init="true"
         class="org.opensaml.storage.impl.client.ClientStorageService"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:cookieManager-ref="shibboleth.CookieManager"
         p:storageName="%{idp.storage.clientSessionStorageName:shib_idp_session_ss}"
         p:dataSealer-ref="shibboleth.DataSealer" />
 
     <bean id="shibboleth.ClientPersistentStorageService" lazy-init="true"
         class="org.opensaml.storage.impl.client.ClientStorageService"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:cookieManager-ref="shibboleth.PersistentCookieManager"
         p:storageName="%{idp.storage.clientPersistentStorageName:shib_idp_persistent_ss}"
         p:dataSealer-ref="shibboleth.DataSealer"
