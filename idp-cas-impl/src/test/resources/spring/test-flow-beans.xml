@@ -58,7 +58,6 @@
           p:cookieManager-ref="shibboleth.CookieManager"
           p:storageService-ref="shibboleth.StorageService"
           p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
           p:consistentAddress="true"
           p:sessionTimeout="PT60M"
           p:sessionSlop="0"
