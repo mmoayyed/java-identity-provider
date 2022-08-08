@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.attribute.transcoding;
 
+import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
@@ -28,12 +30,14 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.codec.EncodingException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSBase64Binary;
+import org.opensaml.core.xml.schema.XSDateTime;
 import org.opensaml.core.xml.schema.XSString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,4 +225,47 @@ public final class SAMLEncoderSupport {
 
         return encodeStringValue(attribute, attributeValueElementName, builder.toString(), withType);
     }
+
+
+    /**
+     * Encodes a date/time value into a SAML attribute value element.
+     * 
+     * @param attribute attribute to be encoded
+     * @param attributeValueElementName the element name to create
+     * @param value value to encoded
+     * @param withType whether to include xsi:type
+     * 
+     * @return the attribute value element or null if the given value was null or empty
+     * 
+     * @since 4.3.0
+     */
+    @Nullable public static XMLObject encodeDateTimeValue(@Nonnull final IdPAttribute attribute,
+            @Nonnull final QName attributeValueElementName, @Nullable final Instant value, final boolean withType) {
+        Constraint.isNotNull(attribute, "Attribute cannot be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
+
+        if (value == null) {
+            LOG.debug("Skipping null value for attribute {}", attribute.getId());
+            return null;
+        }
+
+        LOG.debug("Encoding value {} of attribute {}", value, attribute.getId());
+        
+        if (withType) {
+            final XMLObjectBuilder<XSDateTime> dateTimeBuilder =
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().<XSDateTime>getBuilderOrThrow(
+                            XSDateTime.TYPE_NAME);
+            final XSDateTime samlAttributeValue =
+                    dateTimeBuilder.buildObject(attributeValueElementName, XSDateTime.TYPE_NAME);
+            samlAttributeValue.setValue(value);
+            return samlAttributeValue;
+        }
+        
+        final XMLObjectBuilder<XSAny> anyBuilder =
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(XSAny.TYPE_NAME);
+        final XSAny samlAttributeValue = anyBuilder.buildObject(attributeValueElementName);
+        samlAttributeValue.setTextContent(DOMTypeSupport.instantToString(value));
+        return samlAttributeValue;
+    }
+
 }
