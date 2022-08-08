@@ -42,7 +42,6 @@ import com.google.common.collect.ImmutableList;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -122,9 +121,6 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     /** Servlet request to read from. */
     @Nullable private HttpServletRequest httpRequest;
 
-    /** Servlet response to write to. */
-    @Nullable private HttpServletResponse httpResponse;
-
     /** Inactivity timeout for sessions. */
     @Nonnull private Duration sessionTimeout;
 
@@ -190,16 +186,6 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     public void setHttpServletRequest(@Nullable final HttpServletRequest request) {
         checkSetterPreconditions();
         httpRequest = request;
-    }
-
-    /**
-     * Set the servlet response to write to.
-     * 
-     * @param response servlet response
-     */
-    public void setHttpServletResponse(@Nullable final HttpServletResponse response) {
-        checkSetterPreconditions();
-        httpResponse = response;
     }
 
     /**
