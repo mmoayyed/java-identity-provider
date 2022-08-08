@@ -6,6 +6,10 @@
     <!-- Start action. -->
         
     <action-state id="InitializeProfileRequestContext">
+        <on-entry>
+            <evaluate expression="T(net.shibboleth.utilities.java.support.primitive.DeprecationSupport).atRiskOnce(T(net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType).WEBFLOW, 'Attended Restart unlock-keys flow', null)" />
+        </on-entry>
+
         <evaluate expression="InitializeProfileRequestContext" />
         <evaluate expression="FlowStartPopulateAuditContext" />
         <evaluate expression="'proceed'" />
