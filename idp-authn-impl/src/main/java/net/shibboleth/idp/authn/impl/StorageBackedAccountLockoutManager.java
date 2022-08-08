@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageCapabilities;
-import org.opensaml.storage.StorageCapabilitiesEx;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
@@ -91,11 +90,9 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         checkSetterPreconditions();
         storageService = Constraint.isNotNull(storage, "StorageService cannot be null");
         final StorageCapabilities caps = storageService.getCapabilities();
-        if (caps instanceof StorageCapabilitiesEx) {
-            Constraint.isTrue(((StorageCapabilitiesEx) caps).isServerSide(), "StorageService cannot be client-side");
-            if (!((StorageCapabilitiesEx) caps).isClustered()) {
-                log.info("Use of non-clustered storage service will result in per-node lockout behavior");
-            }
+        Constraint.isTrue(caps.isServerSide(), "StorageService cannot be client-side");
+        if (!caps.isClustered()) {
+            log.info("Use of non-clustered storage service will result in per-node lockout behavior");
         }
     }
 
