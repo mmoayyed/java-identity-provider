@@ -20,6 +20,8 @@
         class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ByteAttributeTranscoder" />
     <bean id="SAML2XMLObjectTranscoder"
         class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2XMLObjectAttributeTranscoder" />
+    <bean id="SAML2DateTimeTranscoder"
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2DateTimeAttributeTranscoder" />
         
     <bean id="SAML1StringTranscoder"
         class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder" />
