@@ -1,5 +1,5 @@
 <AttributeEncoder 
-    xsi:type="enc:SAML2ScopedString"
+    xsi:type="SAML2ScopedString"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
 	xmlns="urn:mace:shibboleth:2.0:resolver"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
