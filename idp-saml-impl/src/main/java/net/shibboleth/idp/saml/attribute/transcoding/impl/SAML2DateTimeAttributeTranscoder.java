@@ -80,7 +80,14 @@ public class SAML2DateTimeAttributeTranscoder extends AbstractSAML2AttributeTran
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final Attribute attribute,
             @Nonnull final TranscodingRule rule, @Nullable final XMLObject value) {
         
-        return value != null ? new DateTimeAttributeValue(getDateTimeValue(rule, value)) : null;
+        if (value != null) {
+            final Instant retVal = getDateTimeValue(rule, value);
+            if (retVal != null) {
+                return new DateTimeAttributeValue(retVal);
+            }
+        }
+        
+        return null;
     }
     
     /**
