@@ -36,6 +36,8 @@
         class="net.shibboleth.idp.cas.attribute.transcoding.impl.CASStringAttributeTranscoder" />
     <bean id="CASScopedStringTranscoder"
         class="net.shibboleth.idp.cas.attribute.transcoding.impl.CASScopedStringAttributeTranscoder" />
+    <bean id="CASDateTimeTranscoder"
+        class="net.shibboleth.idp.cas.attribute.transcoding.impl.CASDateTimeAttributeTranscoder" />
     
     <bean id="shibboleth.TranscodingRule"
         class="net.shibboleth.idp.attribute.transcoding.TranscodingRule" abstract="true" />

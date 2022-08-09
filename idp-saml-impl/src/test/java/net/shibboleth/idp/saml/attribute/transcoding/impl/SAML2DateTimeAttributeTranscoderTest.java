@@ -149,6 +149,32 @@ public class SAML2DateTimeAttributeTranscoderTest extends OpenSAMLInitBaseTestCa
         Assert.assertTrue(attr.getValues().isEmpty());
     }
 
+
+    @Test public void invalidDecode() throws Exception {
+        
+        final XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        stringValue.setValue(STRING_INVALID);
+
+        final XSString stringValue2 = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        stringValue2.setValue(STRING_ISO);
+
+        final Attribute samlAttribute = attributeBuilder.buildObject();
+        samlAttribute.setName(ATTR_NAME);
+        samlAttribute.setNameFormat(ATTR_NAMEFORMAT);
+        samlAttribute.getAttributeValues().add(stringValue);
+        samlAttribute.getAttributeValues().add(stringValue2);
+
+        final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(samlAttribute);
+        Assert.assertEquals(rulesets.size(), 1);
+        final TranscodingRule ruleset = rulesets.iterator().next();
+        
+        final IdPAttribute attr = TranscoderSupport.<Attribute>getTranscoder(ruleset).decode(null, samlAttribute, ruleset);
+        
+        Assert.assertNotNull(attr);
+        Assert.assertEquals(attr.getId(), ATTR_NAME);
+        Assert.assertEquals(attr.getValues().size(), 1);
+    }
+
     @Test public void emptyRequestedDecode() throws Exception {
         
         final RequestedAttribute samlAttribute = reqAttributeBuilder.buildObject();

@@ -3,7 +3,7 @@
     xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
     xmlns:sec="urn:mace:shibboleth:2.0:security"
     targetNamespace="urn:mace:shibboleth:2.0:resolver"
-    elementFormDefault="qualified" version="4.1">
+    elementFormDefault="qualified" version="4.3">
 
     <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
     <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
@@ -507,7 +507,7 @@
                         <documentation>The SAML 1 NameFormat of the NameID.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="nameIdQualifier" type="resolver:string" use="optional">
+                <attribute name="nameIdQualifier" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 1 NameQualifier of the NameID.</documentation>
                     </annotation>
@@ -534,12 +534,12 @@
                         <documentation>The SAML 2 NameFormat of the NameID.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="nameIdQualifier" type="resolver:string" use="optional">
+                <attribute name="nameIdQualifier" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 NameQualifier of the NameID.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="nameIdSPQualifier" type="resolver:string" use="optional">
+                <attribute name="nameIdSPQualifier" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 SPNameQualifier of the NameID.</documentation>
                     </annotation>
@@ -2068,7 +2068,27 @@
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="friendlyName" type="resolver:string" use="optional">
+                <attribute name="friendlyName" type="resolver:string">
+                    <annotation>
+                        <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2DateTime">
+        <annotation>
+            <documentation>Defines a SAML 2 date/time encoder for an attribute.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="nameFormat" type="resolver:string">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="friendlyName" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>
@@ -2088,7 +2108,7 @@
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="friendlyName" type="resolver:string" use="optional">
+                <attribute name="friendlyName" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>
@@ -2108,7 +2128,7 @@
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="friendlyName" type="resolver:string" use="optional">
+                <attribute name="friendlyName" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>
@@ -2123,7 +2143,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="scopeType" type="resolver:string" use="optional">
+                <attribute name="scopeType" type="resolver:string">
                     <annotation>
                         <documentation>
                             The type of scoping to use for the encoded attribute. Valid values are "inline" or
@@ -2131,7 +2151,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeDelimiter" type="resolver:string" use="optional">
+                <attribute name="scopeDelimiter" type="resolver:string">
                     <annotation>
                         <documentation>
                             If scopeType is "inline", this is the delimeter used between the attribute value and
@@ -2139,7 +2159,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeAttribute" type="resolver:string" use="optional">
+                <attribute name="scopeAttribute" type="resolver:string">
                     <annotation>
                         <documentation>
                             If scopeType is "attribute", this is the name of the name of the attribute used to carry the
@@ -2177,7 +2197,7 @@
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="friendlyName" type="resolver:string" use="optional">
+                <attribute name="friendlyName" type="resolver:string">
                     <annotation>
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>

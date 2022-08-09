@@ -15,21 +15,14 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.attribute.transcoding.impl;
+package net.shibboleth.idp.cas.attribute.transcoding.impl;
 
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.schema.XSAny;
-import org.opensaml.core.xml.schema.XSDateTime;
-import org.opensaml.core.xml.schema.XSInteger;
-import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml2.core.Attribute;
-import org.opensaml.saml.saml2.core.AttributeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,24 +33,23 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
-import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML2AttributeTranscoder;
-import net.shibboleth.idp.saml.attribute.transcoding.SAMLEncoderSupport;
+import net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder;
+import net.shibboleth.idp.cas.attribute.Attribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 /**
- * {@link AttributeTranscoder} that supports {@link Attribute} and {@link DateTimeAttributeValue} objects.
- * 
- * @since 4.3.0
+ * {@link AttributeTranscoder} that supports {@link Attribute} and
+ * {@link DateTimeAttributeValue} objects.
  */
-public class SAML2DateTimeAttributeTranscoder extends AbstractSAML2AttributeTranscoder<DateTimeAttributeValue> {
+public class CASDateTimeAttributeTranscoder extends AbstractCASAttributeTranscoder<DateTimeAttributeValue> {
 
     /** One of "ms" or "s", controlling the unit to use when converting to an epoch. */
-    @Nonnull @NotEmpty public static final String PROP_EPOCH_UNITS = "saml2.epochUnits";
+    @Nonnull @NotEmpty public static final String PROP_EPOCH_UNITS = "cas.epochUnits";
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2DateTimeAttributeTranscoder.class);
-    
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CASDateTimeAttributeTranscoder.class);
+
     /** {@inheritDoc} */
     @Override protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final IdPAttributeValue value) {
@@ -65,20 +57,17 @@ public class SAML2DateTimeAttributeTranscoder extends AbstractSAML2AttributeTran
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable protected XMLObject encodeValue(@Nullable final ProfileRequestContext profileRequestContext,
+    @Override @Nullable protected String encodeValue(@Nullable final ProfileRequestContext profileRequestContext,
             @Nonnull final IdPAttribute attribute, @Nonnull final TranscodingRule rule,
             @Nonnull final DateTimeAttributeValue value) throws AttributeEncodingException {
         
-        final Boolean encodeType = rule.getOrDefault(PROP_ENCODE_TYPE, Boolean.class, Boolean.TRUE);
-        
-        return SAMLEncoderSupport.encodeDateTimeValue(attribute, AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue(),
-                encodeType);
+        return DOMTypeSupport.instantToString(value.getValue());
     }
 
     /** {@inheritDoc} */
     @Override @Nullable protected IdPAttributeValue decodeValue(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final Attribute attribute,
-            @Nonnull final TranscodingRule rule, @Nullable final XMLObject value) {
+            @Nonnull final TranscodingRule rule, @Nullable final String value) {
         
         if (value != null) {
             final Instant retVal = getDateTimeValue(rule, value);
@@ -90,43 +79,6 @@ public class SAML2DateTimeAttributeTranscoder extends AbstractSAML2AttributeTran
         return null;
     }
     
-    /**
-     * Function to return an XML object in date/time form.
-     * 
-     * @param rule transcoding rule
-     * @param object object to decode
-     * 
-     * @return decoded date/time, or null
-     */
-    @Nullable protected Instant getDateTimeValue(@Nonnull final TranscodingRule rule, @Nonnull final XMLObject object) {
-        Instant retVal = null;
-
-        if (object instanceof XSString) {
-            
-            return getDateTimeValue(rule, ((XSString) object).getValue());
-            
-        } else if (object instanceof XSInteger && ((XSInteger) object).getValue() != null) {
-
-            return getDateTimeValue(rule, ((XSInteger) object).getValue().longValue());
-
-        } else if (object instanceof XSDateTime) {
-
-            retVal = ((XSDateTime) object).getValue();
-
-        } else if (object instanceof XSAny) {
-
-            final XSAny wc = (XSAny) object;
-            if (wc.getUnknownAttributes().isEmpty() && wc.getUnknownXMLObjects().isEmpty()) {
-                return getDateTimeValue(rule, wc.getTextContent());
-            }
-        }
-
-        if (null == retVal) {
-            log.info("Value of type {} could not be converted", object.getClass().getSimpleName());
-        }
-        return retVal;
-    }
-
     /**
      * Convert a string value into an {@link Instant}.
      * 

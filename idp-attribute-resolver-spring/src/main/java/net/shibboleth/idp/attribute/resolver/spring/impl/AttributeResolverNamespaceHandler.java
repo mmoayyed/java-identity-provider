@@ -52,6 +52,7 @@ import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1ScopedStringAt
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1XMLObjectAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2Base64AttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2DateTimeAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2ScopedStringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
@@ -141,7 +142,10 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
         registerBeanDefinitionParser(SAML2StringAttributeEncoderParser.TYPE_NAME_RESOLVER,
                 new SAML2StringAttributeEncoderParser());
 
-         registerBeanDefinitionParser(SAML2XMLObjectAttributeEncoderParser.TYPE_NAME_RESOLVER,
+        registerBeanDefinitionParser(SAML2DateTimeAttributeEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML2DateTimeAttributeEncoderParser());
+
+        registerBeanDefinitionParser(SAML2XMLObjectAttributeEncoderParser.TYPE_NAME_RESOLVER,
                 new SAML2XMLObjectAttributeEncoderParser());
     }
     // Checkstyle: MethodLength ON
