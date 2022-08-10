@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2DateTimeAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.testing.BaseEncoderDefinitionParserTest;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.saml.attribute.transcoding.SAML2AttributeTranscoder;
