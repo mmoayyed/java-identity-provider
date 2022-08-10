@@ -538,7 +538,7 @@
     
     <bean id="shibboleth.RevocationCacheCondition" class="net.shibboleth.idp.authn.revocation.impl.RevocationCacheCondition" lazy-init="true"
         p:revocationCache-ref="%{idp.authn.revocation.cache:shibboleth.AuthnRevocationCache}"
-        p:httpServletRequest="#{%{idp.authn.revocation.addressBased:false} ? getObject('shibboleth.HttpServletRequest') : null}"
+        p:httpServletRequestSupplier="#{%{idp.authn.revocation.addressBased:false} ? getObject('shibboleth.HttpServletRequestSupplier') : null}"
         p:principalNameLookupStrategy-ref="shibboleth.RevocationPrincipalLookupStrategy" />
 
     <bean id="shibboleth.AttributeRevocationCondition" class="net.shibboleth.idp.authn.revocation.impl.AttributeRevocationCondition" lazy-init="true"
