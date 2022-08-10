@@ -22,8 +22,8 @@
 
     <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"
-        c:expression="#custom.getMethod()"
-        p:customObject-ref="shibboleth.HttpServletRequest" />
+        c:expression="#custom.get().getMethod()"
+        p:customObject-ref="shibboleth.HttpServletRequestSupplier" />
         
     <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"
