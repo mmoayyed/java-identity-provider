@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -35,8 +36,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * A {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that creates an attribute whose values are the
- * values the values of all its dependencies.
+ * An {@link AttributeDefinition} that creates an attribute whose values are the
+ * values of all its dependencies.
  */
 @ThreadSafe
 public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
@@ -72,7 +73,7 @@ public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
         if (isStripNulls()) {
             result.setValues(
                     values.stream().
-                    filter(e -> (e!=null) && !(e instanceof EmptyAttributeValue)).
+                    filter(e -> e != null && !(e instanceof EmptyAttributeValue)).
                     collect(Collectors.toUnmodifiableList()));
         } else {
             result.setValues(values);
