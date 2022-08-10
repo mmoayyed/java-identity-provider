@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,8 +69,8 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
     /** Lookup strategy for principal name. */
     @NonnullAfterInit private Function<ProfileRequestContext,String> principalNameLookupStrategy;
 
-    /** Servlet request. */
-    @Nullable private HttpServletRequest httpServletRequest; 
+    /** Servlet request Supplier. */
+    @Nullable private Supplier<HttpServletRequest> httpServletRequestSupplier;
     
     /**
      * Set {@link RevocationCache} to use.
@@ -95,12 +96,11 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
     /**
      * Set {@link HttpServletRequest} in order to obtain client address.
      * 
-     * @param request servlet request interface
+     * @param supplier servlet request interface
      */
-    public void setHttpServletRequest(@Nullable final HttpServletRequest request) {
+    public void setHttpServletRequestSupplier(@Nullable final Supplier<HttpServletRequest> supplier) {
         checkSetterPreconditions();
-        
-        httpServletRequest = request;
+        httpServletRequestSupplier = supplier;
     }
     
     /** {@inheritDoc} */
@@ -138,9 +138,11 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
             try {
                 final String principalRecord = revocationCache.getRevocationRecord(REVOCATION_CONTEXT,
                         PRINCIPAL_REVOCATION_PREFIX + principal);
-                final String addressRecord = httpServletRequest != null ?
+                final HttpServletRequest request = httpServletRequestSupplier == null? null :
+                    httpServletRequestSupplier.get();
+                final String addressRecord = request != null ?
                         revocationCache.getRevocationRecord(REVOCATION_CONTEXT,
-                                ADDRESS_REVOCATION_PREFIX + httpServletRequest.getRemoteAddr()) :
+                                ADDRESS_REVOCATION_PREFIX + request.getRemoteAddr()) :
                             null;
                 final Collection<String> records = new ArrayList<>(2);
                 if (principalRecord != null) {
