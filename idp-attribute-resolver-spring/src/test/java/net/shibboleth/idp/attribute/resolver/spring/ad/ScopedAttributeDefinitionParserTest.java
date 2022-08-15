@@ -27,12 +27,11 @@ import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScopedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML1NameIdentifierAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * Test for {@link SAML1NameIdentifierAttributeDefinitionParser}.
+ * Test for {@link ScopedAttributeDefinitionParser}.
  */
 @SuppressWarnings("javadoc")
 public class ScopedAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {

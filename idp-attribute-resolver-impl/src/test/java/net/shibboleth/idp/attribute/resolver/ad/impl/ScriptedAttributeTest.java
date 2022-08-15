@@ -69,7 +69,7 @@ import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
-/** test for {@link net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl}. */
+/** Unit test for {@link ScriptedIdPAttributeImpl}. */
 @SuppressWarnings("javadoc")
 public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 

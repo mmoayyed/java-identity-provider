@@ -23,6 +23,7 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.DateTimeAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrincipalNameAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.RegexSplitAttributeDefinitionParser;
@@ -104,6 +105,8 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
         registerBeanDefinitionParser(ValueMapParser.TYPE_NAME_RESOLVER, new ValueMapParser());
         registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new MappedAttributeDefinitionParser());
+        registerBeanDefinitionParser(DateTimeAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new DateTimeAttributeDefinitionParser());
         
         // Data Connectors
         registerBeanDefinitionParser(ComputedIdDataConnectorParser.TYPE_NAME_RESOLVER, 

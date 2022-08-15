@@ -648,6 +648,40 @@
             </extension>
         </complexContent>
     </complexType>
+
+    <complexType name="DateTime">
+        <annotation>
+            <documentation>An attribute definition producing date/time values.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <choice maxOccurs="unbounded" minOccurs="0">
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
+                </choice>
+                <attribute name="ignoreConversionErrors" type="resolver:string">
+                    <annotation>
+                        <documentation>Are conversion errors ignored? (default: FALSE)</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="epochInSeconds" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Use seconds as epoch unit instead of millseconds when converting numeric data (default: TRUE)
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="formattingString" type="resolver:string">
+                    <annotation>
+                        <documentation>A formatting string to use converting string data.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
     
     <complexType name="Decrypted">
         <annotation>

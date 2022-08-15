@@ -1,0 +1,10 @@
+
+<AttributeDefinition xmlns="urn:mace:shibboleth:2.0:resolver"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:type="DateTime" id="datetime"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"
+    epochInSeconds="false"
+    ignoreConversionErrors="true"
+    formattingString="YYYY">
+	<InputAttributeDefinition ref="TheOrphan" />
+</AttributeDefinition>

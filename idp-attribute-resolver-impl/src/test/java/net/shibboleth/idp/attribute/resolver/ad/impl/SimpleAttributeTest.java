@@ -49,7 +49,7 @@ import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-/** test for {@link net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition}. */
+/** Unit test for {@link SimpleAttributeDefinition}. */
 @SuppressWarnings("javadoc")
 public class SimpleAttributeTest {
 
