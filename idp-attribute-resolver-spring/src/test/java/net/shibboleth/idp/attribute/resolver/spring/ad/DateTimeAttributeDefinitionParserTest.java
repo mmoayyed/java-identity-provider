@@ -29,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.DateTimeAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.DateTimeAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 
 /**
