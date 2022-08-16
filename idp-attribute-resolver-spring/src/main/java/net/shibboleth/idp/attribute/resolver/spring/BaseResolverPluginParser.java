@@ -37,6 +37,8 @@ import net.shibboleth.idp.attribute.resolver.spring.impl.InputDataConnectorParse
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.PredicateSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -89,6 +91,8 @@ public abstract class BaseResolverPluginParser extends AbstractCustomBeanDefinit
         }
 
         if (config.hasAttributeNS(null, "profileContextStrategyRef")) {
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "profileContextStrategyRef",
+                    parserContext.getReaderContext().getResource().getDescription(), "(will be removed)");
             builder.addPropertyReference("profileContextStrategy",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "profileContextStrategyRef")));
         }
