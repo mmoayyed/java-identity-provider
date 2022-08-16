@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.logic;
 
+import net.shibboleth.idp.attribute.DateTimeAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -26,6 +27,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,16 +92,37 @@ public class DateAttributePredicateTest {
             final String attribute,
             final String[] values,
             final boolean expected) throws Exception {
-        assertEquals(predicate.test(createProfileRequestContext(attribute, values)), expected);
+        assertEquals(predicate.test(createProfileRequestContext(attribute, values, null)), expected);
     }
 
-    private ProfileRequestContext createProfileRequestContext(final String name, final String[] values) {
+    @Test
+    public void testDateTimeValues() {
+        final DateAttributePredicate predicate = new DateAttributePredicate("test");
+        
+        assertTrue(predicate.test(createProfileRequestContext("test", null,
+                new Instant[] {Instant.now().plus(java.time.Duration.ofMinutes(5))})));
+        
+        predicate.setOffset(java.time.Duration.ofMinutes(-10));
+        
+        assertFalse(predicate.test(createProfileRequestContext("test", null,
+                new Instant[] {Instant.now().plus(java.time.Duration.ofMinutes(5))})));
+    }
+    
+    
+    private ProfileRequestContext createProfileRequestContext(final String name, final String[] values, final Instant[] dtvalues) {
         final ProfileRequestContext prc = new ProfileRequestContext();
         final RelyingPartyContext rpc = new RelyingPartyContext();
         final IdPAttribute attribute = new IdPAttribute(name);
         final List<IdPAttributeValue> attributeValues = new ArrayList<>();
-        for (String value : values) {
-            attributeValues.add(new StringAttributeValue(value));
+        if (values != null) {
+            for (String value : values) {
+                attributeValues.add(new StringAttributeValue(value));
+            }
+        }
+        if (dtvalues != null) {
+            for (Instant value : dtvalues) {
+                attributeValues.add(new DateTimeAttributeValue(value));
+            }
         }
         attribute.setValues(attributeValues);
         final AttributeContext ac = new AttributeContext();

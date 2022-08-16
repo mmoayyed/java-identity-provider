@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.logic;
 
+import net.shibboleth.idp.attribute.DateTimeAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -63,6 +64,21 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
 
     /**
      * Create a new instance that performs date comparisons against the given attribute
+<<<<<<< HEAD
+=======
+     * using ISO date/time format parser by default.
+     *
+     * @param attribute Attribute name that provides candidate date values to test.
+     */
+    public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute) {
+        attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
+        dateTimeFormatter = null;
+        systemTimeOffset = java.time.Duration.ZERO;
+    }
+
+    /**
+     * Create a new instance that performs date comparisons against the given attribute
+>>>>>>> 2f5e2a606 (IDP-1995 - Add support for DateTimeAttributeValue to supporting classes)
      * using the given date parser.
      *
      * @param attribute Attribute name that provides candidate date values to test.
@@ -135,7 +151,14 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
         
         String dateString;
         for (final IdPAttributeValue value : attribute.getValues()) {
-            if (value instanceof StringAttributeValue) {
+            if (value instanceof DateTimeAttributeValue &&
+                    ((DateTimeAttributeValue) value).getValue().plus(systemTimeOffset).isAfter(now)) {
+                    return true;
+            } else if (value instanceof StringAttributeValue) {
+                if (dateTimeFormatter == null) {
+                    log.warn("No DateTimeFormatter configured, ignoring string value");
+                    continue;
+                }
                 dateString = ((StringAttributeValue) value).getValue();
                 try {
                     if (Instant.from(dateTimeFormatter.parse(dateString)).plus(systemTimeOffset).isAfter(now)) {
@@ -144,6 +167,8 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
                 } catch (final DateTimeException e) {
                     log.warn("{} is not a valid date for the configured formatting string", dateString, e);
                 }
+            } else {
+                log.warn("Ignoring unsupported value type: {}", value.getClass().getName());
             }
         }
         return false;
