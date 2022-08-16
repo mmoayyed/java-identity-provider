@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.logic;
 
+import net.shibboleth.idp.attribute.DateTimeAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -69,15 +70,13 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     /**
      * Create a new instance that performs date comparisons against the given attribute
      * using ISO date/time format parser by default.
-     * 
-     * <p>This is deprecated in favor of the Java 8 API version.</p>
      *
      * @param attribute Attribute name that provides candidate date values to test.
      */
-    @Deprecated
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute) {
         // This isn't easily reproducible with Java 8's API, so I'm just going to
-        // deprecate the "no formatter supplied" scenario.
+        // deprecate the "no formatter supplied" scenario. In V5, this will stay, but
+        // null out the formatter so that only DateTime values are supported.
         this(attribute, ISODateTimeFormat.dateOptionalTimeParser());
     }
 
@@ -192,7 +191,10 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
         
         String dateString;
         for (final IdPAttributeValue value : attribute.getValues()) {
-            if (value instanceof StringAttributeValue) {
+            if (value instanceof DateTimeAttributeValue &&
+                    ((DateTimeAttributeValue) value).getValue().plus(systemTimeOffset).isAfter(now)) {
+                    return true;
+            } else if (value instanceof StringAttributeValue) {
                 dateString = ((StringAttributeValue) value).getValue();
                 try {
                     if (dateTimeFormatter != null) {
