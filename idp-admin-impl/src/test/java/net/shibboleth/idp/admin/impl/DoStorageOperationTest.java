@@ -20,6 +20,7 @@ package net.shibboleth.idp.admin.impl;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -27,7 +28,6 @@ import javax.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.joda.time.Instant;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -160,7 +160,7 @@ public class DoStorageOperationTest {
     @Test
     public void successGet() throws IOException, ParseException {
         
-        final long exp = Instant.now().getMillis() + Duration.ofMinutes(15).toMillis();
+        final long exp = Instant.now().plus(Duration.ofMinutes(15)).toEpochMilli();
         
         storageService.create(CONTEXT, KEY, VALUE, exp);
         

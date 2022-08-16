@@ -26,7 +26,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.security.auth.Subject;
 
-import org.joda.time.DateTime;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -41,8 +40,6 @@ import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.idp.consent.context.ConsentManagementContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Implementation of the {@link ExternalAuthentication} API that handles moving information in and out
@@ -137,12 +134,7 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         }
         
         attr = request.getAttribute(AUTHENTICATION_INSTANT_KEY);
-        if (attr != null && attr instanceof DateTime) {
-            // This is a V4 deprecation, do not remove until V5.
-            DeprecationSupport.warn(ObjectType.CLASS, DateTime.class.getName(), "ExternalAuthentication",
-                    Instant.class.getName());
-            extContext.setAuthnInstant(Instant.ofEpochMilli(((DateTime) attr).getMillis()));
-        } else if (attr != null && attr instanceof Instant) {
+        if (attr != null && attr instanceof Instant) {
             extContext.setAuthnInstant((Instant) attr);
         }
         
