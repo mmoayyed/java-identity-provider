@@ -48,6 +48,8 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
@@ -143,7 +145,8 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     public void setProfileContextStrategy(final Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setProfileContextStrategy",
+                getLogPrefix(), "(will be removed)");
         profileContextStrategy = Constraint.isNotNull(strategy, "Profile Context Strategy cannot be null");
     }
 

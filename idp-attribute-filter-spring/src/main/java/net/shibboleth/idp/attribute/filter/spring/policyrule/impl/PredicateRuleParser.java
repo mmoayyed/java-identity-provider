@@ -27,7 +27,9 @@ import org.w3c.dom.Element;
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.PredicatePolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Bean definition parser for {@link PredicatePolicyRule}.
@@ -51,6 +53,8 @@ public class PredicateRuleParser extends BasePolicyRuleParser {
         if (element.hasAttributeNS(null, "contextStrategyRef")) {
             builder.addPropertyReference("profileContextStrategy",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "contextStrategyRef")));
+            DeprecationSupport.warnOnce(ObjectType.ACTION, "profileContextStrategy",
+                    parserContext.getReaderContext().getResource().getDescription(), "(removed)");
         }
     }
 }

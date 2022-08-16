@@ -67,6 +67,8 @@ import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
  * A component that resolves the attributes for a particular subject.
@@ -215,6 +217,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     public void setProfileContextLookupStrategy(
             @Nonnull final Function<AttributeResolutionContext,ProfileRequestContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setProfileContextLookupStrategy",
+                "AttributeResolverImpl", "(will be removed)");
         
         profileContextStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
     }

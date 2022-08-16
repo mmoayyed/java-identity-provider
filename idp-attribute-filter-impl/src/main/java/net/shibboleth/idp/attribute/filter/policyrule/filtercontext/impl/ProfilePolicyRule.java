@@ -26,6 +26,8 @@ import net.shibboleth.idp.attribute.filter.policyrule.impl.AbstractStringPolicyR
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -68,6 +70,8 @@ public class ProfilePolicyRule extends AbstractStringPolicyRule {
      * @param strategy what to set.
      */
     public void setProfileContextStrategy(final Function<AttributeFilterContext,ProfileRequestContext> strategy) {
+        DeprecationSupport.warnOnce(ObjectType.METHOD, "setProfileContextStrategy",
+                getLogPrefix(), "(will be removed)");
         profileContextStrategy = Constraint.isNotNull(strategy, "ProfileContext lookup strategy cannot be null");
     }
     
