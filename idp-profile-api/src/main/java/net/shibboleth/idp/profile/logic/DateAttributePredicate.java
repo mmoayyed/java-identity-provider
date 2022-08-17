@@ -63,10 +63,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     private boolean resultIfMissing;
 
     /**
-     * Create a new instance that performs date comparisons against the given attribute
-<<<<<<< HEAD
-=======
-     * using ISO date/time format parser by default.
+     * Create a new instance that performs date comparisons against the given attribute.
      *
      * @param attribute Attribute name that provides candidate date values to test.
      */
@@ -78,7 +75,6 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
 
     /**
      * Create a new instance that performs date comparisons against the given attribute
->>>>>>> 2f5e2a606 (IDP-1995 - Add support for DateTimeAttributeValue to supporting classes)
      * using the given date parser.
      *
      * @param attribute Attribute name that provides candidate date values to test.
