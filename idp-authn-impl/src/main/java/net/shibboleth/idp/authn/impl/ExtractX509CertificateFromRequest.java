@@ -80,7 +80,7 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
         
         final X509Certificate cert = certs[0];
         log.debug("{} End-entity X.509 certificate found with subject '{}', issued by '{}'", getLogPrefix(),
-                cert.getSubjectDN().getName(), cert.getIssuerDN().getName());
+                cert.getSubjectX500Principal().getName(), cert.getIssuerX500Principal().getName());
 
         certCtx.setCertificate(cert);
 
