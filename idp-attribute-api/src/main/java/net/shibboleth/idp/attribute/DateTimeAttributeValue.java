@@ -68,7 +68,7 @@ public class DateTimeAttributeValue implements IdPAttributeValue {
     /** Return the value.
      * @return the value
      */
-    @Nonnull @NotEmpty public final Instant getValue() {
+    @Nonnull public final Instant getValue() {
         return value;
     }
 

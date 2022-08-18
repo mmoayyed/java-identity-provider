@@ -33,6 +33,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.attribute.DateTimeAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -185,7 +186,9 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
             if (resolutionContext.getResolvedIdPAttributes().containsKey(attributeId)) {
                 for (final IdPAttributeValue value :
                         resolutionContext.getResolvedIdPAttributes().get(attributeId).getValues()) {
-                    if (value instanceof StringAttributeValue) {
+                    if (value instanceof DateTimeAttributeValue) {
+                        records.add(((DateTimeAttributeValue) value).getValue());
+                    } else if (value instanceof StringAttributeValue) {
                         try {
                             records.add(Instant.ofEpochSecond(Long.valueOf(((StringAttributeValue) value).getValue())));
                             
