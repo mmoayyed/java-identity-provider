@@ -21,19 +21,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
-import java.util.function.BiPredicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -227,56 +227,78 @@ public class IdPPropertiesApplicationContextInitializer
         }
     }
 
-   /** Find out all the additional property files we need to load.  
+// Checkstyle: AnonInnerLength OFF
+    /** 
+     * Find out all the additional property files we need to load.
+     *   
      * @param searchLocation Where to search from
      * @param properties the content of idp.properties so far
+     * 
      * @return a collection of paths
      */
     public static Collection<String> getAdditionalSources(@Nonnull final String searchLocation,
                             @Nonnull final Properties properties) {
-       final Collection<String> sources = new ArrayList<>();
+        
+        final Collection<String> sources = new ArrayList<>();
        
-       final Boolean autosearch = Boolean.valueOf(properties.getProperty(IDP_AUTOSEARCH_PROPERTY, "false"));
-       if (autosearch) {
-           final Path searchRoot = Path.of(searchLocation).resolve("conf");
-           if (searchRoot.toFile().isDirectory()) {
-               final Path registryRoot = searchRoot.resolve("attributes");
-               final String idpPropertiesNative = Path.of(IDP_PROPERTIES).toString();
-               try (final Stream<Path> paths = Files.find(searchRoot, Integer.MAX_VALUE,
-                       new BiPredicate<Path,BasicFileAttributes>() {
-                               public boolean test(final Path path, final BasicFileAttributes u) {
-                                   final String pathAsString = path.toString();
-                                   // convert back and forth to handle different dir separators
-                                   if (u.isRegularFile()
-                                           && path.getFileName().toString().endsWith(".properties")
-                                           && !pathAsString.endsWith(idpPropertiesNative)
-                                           && !pathAsString.startsWith(registryRoot.toString())) {
-                                       LOG.info("Including auto-located properties in {}", path);
-                                       return true;
-                                   }
-                                   return false;
-                               }
-                       }, FileVisitOption.FOLLOW_LINKS)) {
-                   
-                   sources.addAll(paths.map(Path::toString).collect(Collectors.toUnmodifiableList()));
-               } catch (final IOException e) {
-                   LOG.error("Error searching for additional properties", e);
-               }
-           }
-       }
+        final Boolean autosearch = Boolean.valueOf(properties.getProperty(IDP_AUTOSEARCH_PROPERTY, "false"));
+        if (autosearch) {
+            final Path searchRoot = Path.of(searchLocation).resolve("conf");
+            if (searchRoot.toFile().isDirectory()) {
+                final Path registryRoot = searchRoot.resolve("attributes");
+                final String idpPropertiesNative = Path.of(IDP_PROPERTIES).toString();
+               
+                try {
+                    Files.walkFileTree(searchRoot, Collections.singleton(FileVisitOption.FOLLOW_LINKS),
+                            Integer.MAX_VALUE,
+                            new FileVisitor<Path>() {
+
+                            public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) {
+                                if (dir.equals(registryRoot)) {
+                                    return FileVisitResult.SKIP_SUBTREE;
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+
+                            public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {
+                                if (attrs.isRegularFile()
+                                        && file.getFileName().toString().endsWith(".properties")
+                                        && !file.toString().endsWith(idpPropertiesNative)) {
+                                    sources.add(file.toString());
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+
+                            public FileVisitResult visitFileFailed(final Path file, final IOException exc) {
+                                LOG.error("Error accessing {}", file.toString(), exc);
+                                return FileVisitResult.CONTINUE;
+                            }
+
+                            public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) {
+                                return FileVisitResult.CONTINUE;
+                            }
+
+                    });
+                } catch (final IOException e) {
+                    LOG.error("Error searching for additional properties", e);
+                }
+            }
+        }
        
-       final String additionalSources = properties.getProperty(IDP_ADDITIONAL_PROPERTY);
-       if (additionalSources != null) {
-           final String[] split = additionalSources.split(",");
-           for (final String s : split) {
-               final String trimmedSource = StringSupport.trimOrNull(s);
-               if (trimmedSource != null) {
-                   sources.add(searchLocation + trimmedSource);
-               }
-           }
-       }
-       return sources;
-   }
+        final String additionalSources = properties.getProperty(IDP_ADDITIONAL_PROPERTY);
+        if (additionalSources != null) {
+            final String[] split = additionalSources.split(",");
+            for (final String s : split) {
+                final String trimmedSource = StringSupport.trimOrNull(s);
+                if (trimmedSource != null) {
+                    sources.add(searchLocation + trimmedSource);
+                }
+            }
+        }
+        return sources;
+    }
+// Checkstyle: AnonInnerLength ON
+
     
     /**
      * Load additional property sources.
