@@ -208,6 +208,20 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <!--
+                    Adding attachClasses to the maven-war-plugin will create a -classes jar as a
+                    build artifact for all war modules. This will provide an easy mechanism for
+                    downstream projects to use the <type>jar</type> and <classifier>classes</classifier>
+                    so Maven dependencyManagement can be used to override war dependencies if necessary.
+                    -->
+                    <attachClasses>true</attachClasses>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
