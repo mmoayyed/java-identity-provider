@@ -196,7 +196,7 @@
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
-            <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2AuthnRequestsSignedSecurityHandler" scope="prototype" />
+            <bean class="net.shibboleth.idp.saml.messaging.impl.SAML2AuthnRequestsSignedSecurityHandler" scope="prototype" />
         </constructor-arg>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_AUTHN_ERROR" />

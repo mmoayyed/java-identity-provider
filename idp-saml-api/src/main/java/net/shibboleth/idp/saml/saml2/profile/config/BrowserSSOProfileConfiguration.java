@@ -94,6 +94,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      */
     @Nonnull private Predicate<ProfileRequestContext> suppressAuthenticatingAuthorityPredicate;
     
+    /** Whether to require requests be signed. */
+    @Nonnull private Predicate<ProfileRequestContext> requireSignedRequestsPredicate;
+    
     /** Lookup function to supply maximum session lifetime. */
     @Nonnull private Function<ProfileRequestContext,Duration> maximumSPSessionLifetimeLookupStrategy;
 
@@ -154,6 +157,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
         proxiedAuthnInstantPredicate = Predicates.alwaysTrue();
         suppressAuthenticatingAuthorityPredicate = Predicates.alwaysFalse();
+        requireSignedRequestsPredicate = Predicates.alwaysFalse();
         maximumSPSessionLifetimeLookupStrategy = FunctionSupport.constant(null);
         maximumTimeSinceAuthnLookupStrategy = FunctionSupport.constant(null);
         maximumTokenDelegationChainLengthLookupStrategy = FunctionSupport.constant(DEFAULT_DELEGATION_CHAIN_LENGTH);
@@ -436,6 +440,41 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         proxiedAuthnInstantPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
     }
 
+    /**
+     * Get whether to require signed requests.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return whether to require signed requests
+     * 
+     * @since 4.3.0
+     */
+    public boolean isRequireSignedRequests(@Nullable final ProfileRequestContext profileRequestContext) {
+        return requireSignedRequestsPredicate.test(profileRequestContext);
+    }
+    
+    /**
+     * Set whether to require signed requests.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.3.0
+     */
+    public void setRequireSignedRequests(final boolean flag) {
+        requireSignedRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+    }
+    
+    /**
+     * Set a condition to determine whether to require signed requests.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 4.3.0
+     */
+    public void setRequireSignedRequestsPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        requireSignedRequestsPredicate = Constraint.isNotNull(condition, "Signed requests predicate cannot be null");
+    }
+    
     /**
      * Get the maximum amount of time the service provider should maintain a session for the user
      * based on the authentication assertion. A null or 0 is interpreted as an unlimited lifetime.
