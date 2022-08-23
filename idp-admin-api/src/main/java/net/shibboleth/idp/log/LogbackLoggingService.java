@@ -115,7 +115,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
             throw new ComponentInitializationException("Logging configuration must be specified.");
         }
     
-        fallbackConfiguration = new ClassPathResource("/net/shibboleth/idp/conf/logback.xml");
+        fallbackConfiguration = new ClassPathResource("/logback.xml");
         loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         statusManager = loggerContext.getStatusManager();
         if (!fallbackConfiguration.exists()) {
