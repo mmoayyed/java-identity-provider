@@ -87,7 +87,9 @@
         depends-on="systemPrereqs,shibboleth.LoggingService"
         p:parserPool-ref="shibboleth.ParserPool"
         p:metricRegistry-ref="shibboleth.metrics.MetricRegistry" />
-        
+
+    <bean class="net.shibboleth.idp.admin.impl.LogImplementationDetails" c:_0="%{idp.home}" />
+
     <bean class="net.shibboleth.idp.spring.DeprecatedPropertyBean">
         <property name="deprecatedProperties">
             <map>
