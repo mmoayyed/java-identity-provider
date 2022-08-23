@@ -17,9 +17,11 @@
 
 package net.shibboleth.idp.attribute.filter.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -105,29 +107,30 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
         final boolean timerStarted = startTimer(filterContext);
         try {        
             final Map<String, IdPAttribute> prefilteredAttributes = filterContext.getPrefilteredIdPAttributes();
-    
+
             // Create work context to hold intermediate results.
             filterContext.getSubcontext(AttributeFilterWorkContext.class, true);
-    
+
             log.debug("{} Beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
                     prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
-    
+
             final List<AttributeFilterPolicy> policies = getFilterPolicies();
             for (final AttributeFilterPolicy policy : policies) {
                 policy.apply(filterContext);
             }
-    
-            IdPAttribute filteredAttribute;
-            for (final String attributeId : filterContext.getPrefilteredIdPAttributes().keySet()) {
-                final Collection<IdPAttributeValue> filteredAttributeValues =
-                        getFilteredValues(attributeId, filterContext);
+
+            for (Entry<String, IdPAttribute> entry : filterContext.getPrefilteredIdPAttributes().entrySet()) {
+                final Collection<IdPAttributeValue> filteredAttributeValues = getFilteredValues(entry.getKey(), filterContext);
                 if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
+                    final IdPAttribute filteredAttribute;
                     try {
-                        filteredAttribute = prefilteredAttributes.get(attributeId).clone();
+                        filteredAttribute = entry.getValue().clone();
                     } catch (final CloneNotSupportedException e) {
                         throw new AttributeFilterException(e);
                     }
-                    filteredAttribute.setValues(List.copyOf(filteredAttributeValues));
+                    final List<IdPAttributeValue> values = new ArrayList<>(filteredAttribute.getValues());
+                    values.retainAll(filteredAttributeValues);
+                    filteredAttribute.setValues(values);
                     filterContext.getFilteredIdPAttributes().put(filteredAttribute.getId(), filteredAttribute);
                 }
             }
