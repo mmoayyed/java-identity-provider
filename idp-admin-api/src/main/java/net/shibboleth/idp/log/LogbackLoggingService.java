@@ -19,23 +19,17 @@ package net.shibboleth.idp.log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.time.Instant;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import com.google.common.base.StandardSystemProperty;
 import com.google.common.io.Closeables;
 
 import ch.qos.logback.classic.LoggerContext;
@@ -44,10 +38,6 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.status.ErrorStatus;
 import ch.qos.logback.core.status.InfoStatus;
 import ch.qos.logback.core.status.StatusManager;
-import net.shibboleth.idp.Version;
-import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleContext;
-import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -60,6 +50,7 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
  * Simple {@link LoggingService} that watches for logback configuration file changes
  * and reloads the file when a change occurs.
  */
+@SuppressWarnings("removal")
 public class LogbackLoggingService extends AbstractReloadableService<Object>
         implements LoggingService, ApplicationContextAware {
     
@@ -209,7 +200,6 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
             configurator.setContext(loggerContext);
             configurator.doConfigure(loggingConfig);
             loggerContext.start();
-            logImplementationDetails();
         } catch (final JoranException e) {
             throw new ServiceException(e);
         }
@@ -234,67 +224,4 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
         }
     }
 
-    /**
-     * Log the IdP version and Java version and vendor at INFO level.
-     * 
-     * Log system properties defined by {@link StandardSystemProperty} at DEBUG level.
-     */
-    protected void logImplementationDetails() {
-        final Logger logger = LoggerFactory.getLogger(LogbackLoggingService.class);
-        logger.info("Shibboleth IdP Version {}", Version.getVersion());
-        logger.info("Java version='{}' vendor='{}'", StandardSystemProperty.JAVA_VERSION.value(),
-                StandardSystemProperty.JAVA_VENDOR.value());
-        if (logger.isDebugEnabled()) {
-            for (final StandardSystemProperty standardSystemProperty : StandardSystemProperty.values()) {
-                logger.debug("{}", standardSystemProperty);
-            }
-        }
-        final List<IdPPlugin> plugins = ServiceLoader.
-                load(IdPPlugin.class).
-                stream().
-                map(e->e.get()).
-                collect(Collectors.toList());
-        if (plugins.isEmpty()) {
-            logger.info("No Plugins Loaded");
-        } else {
-            logger.info("Plugins:");
-            for (final IdPPlugin idpPlugin : plugins) {
-                logger.info("\t\t{} : v{}.{}.{}",  idpPlugin.getPluginId(), idpPlugin.getMajorVersion(),
-                        idpPlugin.getMajorVersion(), idpPlugin.getPatchVersion());
-            }
-        }
-        Path idpHome;
-        final String homeAsString =
-                loggerContext.getProperty(IdPPropertiesApplicationContextInitializer.IDP_HOME_PROPERTY);
-        try {
-            if (homeAsString != null) {
-                idpHome = Path.of(homeAsString);
-            } else {
-                idpHome = null;
-            }
-        } catch (final RuntimeException e) {
-            logger.info("Could not resolve idpHome {} ", homeAsString, e);
-            idpHome = null;
-        }
-
-        if (idpHome != null) {
-            final ModuleContext context = new ModuleContext(idpHome);
-            final List<IdPModule> modules = ServiceLoader.
-                    load(IdPModule.class).
-                    stream().
-                    map(e->e.get()).
-                    filter(f->f.isEnabled(context)).
-                    collect(Collectors.toList());
-            if (modules.isEmpty()) {
-                logger.info("No Modules Enabled");
-            } else {
-                logger.info("Enabled Modules:");
-                for (final IdPModule module : modules) {
-                    logger.info("\t\t{}",  module.getName(context));
-                }
-            }
-        } else {
-            logger.info("Could not enumerate Modules");
-        }
-    }
 }
