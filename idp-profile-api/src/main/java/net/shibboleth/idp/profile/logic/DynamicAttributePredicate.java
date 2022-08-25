@@ -45,6 +45,11 @@ import java.util.function.Function;
  * Predicate over an {@link AttributeContext} that derives the value(s) to match based
  * on one or more supplied Functions instead of static values.
  * 
+ * <p>Each function installed must return a value that matches a value of the attribute
+ * corresponding to the map key.</p>
+ * 
+ * <p>Functions may return a {@link String} or a {@link Collection} containing them.</p>
+ * 
  * @since 3.4.0
  */
 public class DynamicAttributePredicate extends AbstractAttributePredicate {
@@ -53,7 +58,7 @@ public class DynamicAttributePredicate extends AbstractAttributePredicate {
     @Nonnull private final Logger log = LoggerFactory.getLogger(DynamicAttributePredicate.class);
 
     /** Map of attribute IDs to functions. */
-    @Nonnull @NonnullElements private ListMultimap<String,Function<ProfileRequestContext,String>> attributeFunctionMap;
+    @Nonnull @NonnullElements private ListMultimap<String,Function<ProfileRequestContext,Object>> attributeFunctionMap;
     
     /** Constructor. */
     public DynamicAttributePredicate() {
@@ -66,11 +71,11 @@ public class DynamicAttributePredicate extends AbstractAttributePredicate {
      * @param map   map of attribute/function pairs
      */
     public void setAttributeFunctionMap(
-            @Nonnull @NonnullElements final Map<String,Collection<Function<ProfileRequestContext,String>>> map) {
+            @Nonnull @NonnullElements final Map<String,Collection<Function<ProfileRequestContext,Object>>> map) {
         Constraint.isNotNull(map, "Attribute/value map cannot be null");
         
         attributeFunctionMap.clear();
-        for (final Map.Entry<String,Collection<Function<ProfileRequestContext,String>>> entry : map.entrySet()) {
+        for (final Map.Entry<String,Collection<Function<ProfileRequestContext,Object>>> entry : map.entrySet()) {
             final String attributeId = StringSupport.trimOrNull(entry.getKey());
             attributeFunctionMap.putAll(attributeId, List.copyOf(entry.getValue()));
         }
@@ -103,6 +108,7 @@ public class DynamicAttributePredicate extends AbstractAttributePredicate {
         return false;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Implementation of the condition to evaluate.
      * 
@@ -125,9 +131,31 @@ public class DynamicAttributePredicate extends AbstractAttributePredicate {
 
             boolean matched = false;
 
-            for (final Function<ProfileRequestContext,String> fn : attributeFunctionMap.get(id)) {
-                if (findMatch(fn.apply(profileRequestContext), attribute)) {
-                    matched = true;
+            for (final Function<ProfileRequestContext,Object> fn : attributeFunctionMap.get(id)) {
+                
+                final Object candidate = fn.apply(profileRequestContext);
+                
+                if (candidate instanceof String) {
+                    matched = findMatch((String) candidate, attribute);
+                } else if (candidate instanceof Collection<?>) {
+                    for (final Object subcandidate : (Collection<?>) candidate) {
+                        if (subcandidate instanceof String) {
+                            if (findMatch((String) subcandidate, attribute)) {
+                                matched = true;
+                                break;
+                            }
+                        } else {
+                            log.error(
+                                  "Collection returned by function for attribute {} contained an unsupported type: {}",
+                                    id, subcandidate.getClass().getName());
+                        }
+                    }
+                } else {
+                    log.error("Function for attribute {} returned an unsupported type: {}", id,
+                            candidate.getClass().getName());
+                }
+                
+                if (matched) {
                     break;
                 }
             }
@@ -140,6 +168,7 @@ public class DynamicAttributePredicate extends AbstractAttributePredicate {
         
         return true;
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Look for a matching value in an attribute.
