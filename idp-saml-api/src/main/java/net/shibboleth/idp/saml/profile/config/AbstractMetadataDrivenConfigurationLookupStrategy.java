@@ -99,6 +99,9 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     /** Examine only decoded/mapped tags in object metadata. */
     private boolean ignoreUnmappedEntityAttributes;
     
+    /** Prevents prefixing of property name by profile/aliases. */
+    private boolean explicitPropertyName;
+    
     /** Base name of property to produce. */
     @NonnullAfterInit @NotEmpty private String propertyName;
     
@@ -129,6 +132,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      */
     public void setStrictNameFormat(final boolean flag) {
         checkSetterPreconditions();
+
         strictNameFormat = flag;
     }
     
@@ -141,6 +145,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      */
     public void setEnableCaching(final boolean flag) {
         checkSetterPreconditions();
+        
         enableCaching = flag;
     }
 
@@ -154,7 +159,25 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      */
     public void setIgnoreUnmappedEntityAttributes(final boolean flag) {
         checkSetterPreconditions();
+        
         ignoreUnmappedEntityAttributes = flag;
+    }
+    
+    /**
+     * Sets whether to treat the property name as absolute instead of auto-prefixed
+     * by profile or alias values.
+     * 
+     * <p>Used to allow for direct lookup of a specific tag instead implicitly prefixing the 
+     * tag name based on configuration "context".</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.3.0
+     */
+    public void setExplicitPropertyName(final boolean flag) {
+        checkSetterPreconditions();
+        
+        explicitPropertyName = flag;
     }
     
     /**
@@ -164,6 +187,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      */
     public void setPropertyName(@Nonnull @NotEmpty final String name) {
         checkSetterPreconditions();
+        
         propertyName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Property name cannot be null or empty");
     }
     
@@ -177,8 +201,8 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      */
     public void setProfileAliases(@Nonnull @NonnullElements final Collection<String> aliases) {
         checkSetterPreconditions();
-        Constraint.isNotNull(aliases, "Alias collection cannot be null");
         
+        Constraint.isNotNull(aliases, "Alias collection cannot be null");
         propertyAliases = List.copyOf(StringSupport.normalizeStringCollection(aliases));
     }
     
@@ -189,6 +213,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      */
     public void setDefaultValue(@Nullable final T value) {
         checkSetterPreconditions();
+        
         defaultValueStrategy = FunctionSupport.constant(value);
     }
     
@@ -201,6 +226,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      */
     public void setDefaultValueStrategy(@Nonnull final Function<BaseContext,T> strategy) {
         checkSetterPreconditions();
+        
         defaultValueStrategy = Constraint.isNotNull(strategy, "Default value strategy cannot be null");
     }
     
@@ -211,6 +237,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      */
     public void setMetadataLookupStrategy(@Nonnull final Function<BaseContext,EntityDescriptor> strategy) {
         checkSetterPreconditions();
+        
         metadataLookupStrategy = Constraint.isNotNull(strategy, "Metadata lookup strategy cannot be null");
     }
 
@@ -221,6 +248,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
      */
     public void setProfileIdLookupStrategy(@Nonnull final Function<BaseContext,String> strategy) {
         checkSetterPreconditions();
+        
         profileIdLookupStrategy = Constraint.isNotNull(strategy, "Profile ID lookup strategy cannot be null");
     }
 
@@ -275,18 +303,23 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             return defaultValueStrategy.apply(input);
         }
         
-        if (profileIdLookupStrategy != null) {
-            profileId = profileIdLookupStrategy.apply(input);
-        } else if (input instanceof ProfileRequestContext) {
-            profileId = DEFAULT_PRC_PROFILE_ID_LOOKUP.apply((ProfileRequestContext) input);
-        } else if (input instanceof MessageContext) {
-            profileId = DEFAULT_MC_PROFILE_ID_LOOKUP.apply((MessageContext) input);
+        if (!explicitPropertyName) {
+            if (profileIdLookupStrategy != null) {
+                profileId = profileIdLookupStrategy.apply(input);
+            } else if (input instanceof ProfileRequestContext) {
+                profileId = DEFAULT_PRC_PROFILE_ID_LOOKUP.apply((ProfileRequestContext) input);
+            } else if (input instanceof MessageContext) {
+                profileId = DEFAULT_MC_PROFILE_ID_LOOKUP.apply((MessageContext) input);
+            } else {
+                profileId = "";
+            }
         } else {
-            profileId = "";
+            profileId = null;
         }
         
         // Look for "primary" tag name based on profile/property using mapped tags.
-        IdPAttribute idpAttribute = findMatchingMappedTag(entity, profileId + '/' + propertyName);
+        IdPAttribute idpAttribute = findMatchingMappedTag(entity,
+                profileId != null ? profileId + '/' + propertyName : propertyName);
         if (idpAttribute != null) {
             log.debug("Found matching tag '{}' for property '{}'", idpAttribute.getId(), propertyName);
             final T result = translate(idpAttribute);
@@ -319,7 +352,8 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         }
         
         // Look for "primary" tag name based on profile/property.
-        Attribute attribute = findMatchingTag(entity, profileId + '/' + propertyName);
+        Attribute attribute = findMatchingTag(entity,
+                profileId != null ? profileId + '/' + propertyName : propertyName);
         if (attribute != null) {
             log.debug("Found matching tag '{}' for property '{}'", attribute.getName(), propertyName);
             final T result = translate(attribute);
