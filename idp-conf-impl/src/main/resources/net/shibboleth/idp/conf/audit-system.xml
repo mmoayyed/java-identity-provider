@@ -1372,6 +1372,16 @@
             <map>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROTOCOL"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Constant">
+                        <constructor-arg>
+                            <util:constant static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.PROTOCOL_URI" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.AUTHN_FLOW_ID"/>
                     </key>
                     <bean class="net.shibboleth.idp.authn.audit.impl.AuthenticationFlowAuditExtractor" />
@@ -1470,6 +1480,16 @@
             <map>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROTOCOL"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Constant">
+                        <constructor-arg>
+                            <util:constant static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.PROTOCOL_URI" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
                     </key>
                     <bean parent="shibboleth.Functions.Compose"
@@ -1548,6 +1568,16 @@
           parent="shibboleth.DefaultCASValidationAuditExtractors">
         <property name="sourceMap">
             <map merge="true">
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROTOCOL"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Constant">
+                        <constructor-arg>
+                            <util:constant static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.PROTOCOL_URI" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.GRANTING_TICKET"/>
