@@ -29,6 +29,7 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
+import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -54,7 +55,6 @@ import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
-import net.shibboleth.utilities.java.support.test.resource.TestResourceConverter;
 
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -147,8 +147,8 @@ public class DefaultAuthenticationResultSerializerTest {
         strategy.setKeyAlias("secret");
         strategy.setKeyPassword("kpassword");
         strategy.setKeystorePassword("password");
-        strategy.setKeystoreResource(TestResourceConverter.of(keystoreResource));
-        strategy.setKeyVersionResource(TestResourceConverter.of(versionResource));
+        strategy.setKeystoreResource(ResourceHelper.of(keystoreResource));
+        strategy.setKeyVersionResource(ResourceHelper.of(versionResource));
 
         final DataSealer sealer = new DataSealer();
         sealer.setKeyStrategy(strategy);

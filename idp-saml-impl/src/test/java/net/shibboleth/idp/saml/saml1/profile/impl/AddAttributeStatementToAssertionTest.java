@@ -41,7 +41,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import net.shibboleth.ext.spring.testing.MockApplicationContext;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -60,7 +59,8 @@ import net.shibboleth.idp.saml.attribute.transcoding.SAML1AttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder;
 import net.shibboleth.idp.saml.saml1.profile.SAML1ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.test.service.MockReloadableService;
+import net.shibboleth.utilities.java.support.testing.MockApplicationContext;
+import net.shibboleth.utilities.java.support.testing.MockReloadableService;
 
 /** {@link AddAttributeStatementToAssertion} unit test. */
 public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCase {

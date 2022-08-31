@@ -59,12 +59,11 @@
     </modules>
 
     <properties>
-        <java-support.version>9.0.0-SNAPSHOT</java-support.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>5.0.0-SNAPSHOT</opensaml.version>
-        <spring-extensions.version>7.0.0-SNAPSHOT</spring-extensions.version>
         <shib-attribute.version>5.0.0-SNAPSHOT</shib-attribute.version>
         <shib-metadata.version>5.0.0-SNAPSHOT</shib-metadata.version>
+        <shib-shared.version>9.0.0-SNAPSHOT</shib-shared.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
         <idp-parent.site.url>${shibboleth.site.deploy.url}java-identity-provider/${project.version}/</idp-parent.site.url>
         <idp-module.site.url>${idp-parent.site.url}${project.artifactId}</idp-module.site.url>
@@ -163,17 +162,26 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Import Dependencies:  Shared -->
+            <dependency>
+                <groupId>net.shibboleth.shared</groupId>
+                <artifactId>shib-shared-bom</artifactId>
+                <version>${shib-shared.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Compile Dependencies -->
 
             <dependency>
                 <groupId>net.shibboleth.utilities</groupId>
                 <artifactId>java-support</artifactId>
-                <version>${java-support.version}</version>
+                <version>${shib-shared.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.shibboleth.ext</groupId>
                 <artifactId>spring-extensions</artifactId>
-                <version>${spring-extensions.version}</version>
+                <version>${shib-shared.version}</version>
             </dependency>
 
             <!-- Provided Dependencies -->
@@ -181,20 +189,6 @@
             <!-- Runtime Dependencies -->
 
             <!-- Test Dependencies -->
-            <dependency>
-                <groupId>net.shibboleth.ext</groupId>
-                <artifactId>spring-extensions</artifactId>
-                <version>${spring-extensions.version}</version>
-                <type>test-jar</type>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.shibboleth.utilities</groupId>
-                <artifactId>java-support</artifactId>
-                <version>${java-support.version}</version>
-                <type>test-jar</type>
-                <scope>test</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

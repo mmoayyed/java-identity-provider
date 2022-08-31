@@ -66,7 +66,7 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
+import net.shibboleth.utilities.java.support.testing.VelocityEngine;
 
 /** Unit test for LDAP credential validation. */
 public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {

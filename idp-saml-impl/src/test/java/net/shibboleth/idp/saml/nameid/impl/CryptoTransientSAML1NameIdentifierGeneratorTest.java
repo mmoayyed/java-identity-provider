@@ -20,13 +20,13 @@ package net.shibboleth.idp.saml.nameid.impl;
 import java.io.IOException;
 import java.time.Duration;
 
+import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
-import net.shibboleth.utilities.java.support.test.resource.TestResourceConverter;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -62,8 +62,8 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         kstrategy.setKeyAlias("secret");
         kstrategy.setKeyPassword("kpassword");
         kstrategy.setKeystorePassword("password");
-        kstrategy.setKeystoreResource(TestResourceConverter.of(keyStore));
-        kstrategy.setKeyVersionResource(TestResourceConverter.of(version));
+        kstrategy.setKeystoreResource(ResourceHelper.of(keyStore));
+        kstrategy.setKeyVersionResource(ResourceHelper.of(version));
         kstrategy.initialize();
         
         sealer = new DataSealer();
