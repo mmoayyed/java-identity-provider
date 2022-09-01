@@ -61,6 +61,11 @@
         </dependency>
 
         <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-service</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.cryptacular</groupId>
             <artifactId>cryptacular</artifactId>
         </dependency>

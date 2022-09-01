@@ -12,7 +12,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.idp.security.ReloadingAccessControlService">
+    <bean class="net.shibboleth.shared.service.security.impl.ReloadingAccessControlService">
         <constructor-arg>
             <bean class="net.shibboleth.utilities.java.support.security.impl.BasicAccessControlService"
                 p:id="shibboleth.AccessControlService"

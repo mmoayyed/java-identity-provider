@@ -20,7 +20,7 @@
     -->
 
     <bean id="shibboleth.LoggingService"
-        class="%{idp.service.logging.class:net.shibboleth.idp.log.LogbackLoggingService}"
+        class="%{idp.service.logging.class:net.shibboleth.shared.service.impl.LogbackLoggingService}"
         p:loggingConfiguration="%{idp.service.logging.resource:%{idp.home}/conf/logback.xml}"
         p:reloadCheckDelay="%{idp.service.logging.checkInterval:PT0S}"
         p:failFast="%{idp.service.logging.failFast:%{idp.service.failFast:true}}" />
@@ -250,7 +250,7 @@
         c:mdResolver-ref="shibboleth.MetadataResolver" />   
         
     <bean id="shibboleth.AccessControlService"
-        class="net.shibboleth.utilities.java.support.security.impl.DelegatingAccessControlService"
+        class="net.shibboleth.shared.service.security.impl.DelegatingAccessControlService"
         c:acService-ref="shibboleth.ReloadableAccessControlService" />
 
     <bean id="shibboleth.CASServiceRegistry"

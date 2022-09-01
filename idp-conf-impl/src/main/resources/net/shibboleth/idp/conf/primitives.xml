@@ -22,7 +22,7 @@
     <!-- Parent bean for indirecting a lookup into a managed/reloadable bean. -->
     
     <bean id="shibboleth.ManagedBean" abstract="true"
-        class="net.shibboleth.ext.spring.factory.ProxiedFactoryBean"
+        class="net.shibboleth.shared.service.reloadable.ProxiedFactoryBean"
         c:service-ref="shibboleth.ManagedBeanService" />
 
     <!-- TrustEngine helpers. -->

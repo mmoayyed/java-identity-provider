@@ -63,6 +63,7 @@
         <opensaml.version>5.0.0-SNAPSHOT</opensaml.version>
         <shib-attribute.version>5.0.0-SNAPSHOT</shib-attribute.version>
         <shib-metadata.version>5.0.0-SNAPSHOT</shib-metadata.version>
+        <shib-shared.groupId>net.shibboleth.shared</shib-shared.groupId>
         <shib-shared.version>9.0.0-SNAPSHOT</shib-shared.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
         <idp-parent.site.url>${shibboleth.site.deploy.url}java-identity-provider/${project.version}/</idp-parent.site.url>

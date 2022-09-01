@@ -51,6 +51,11 @@
         </dependency>
 
         <dependency>
+            <groupId>net.shibboleth.shared</groupId>
+            <artifactId>shib-velocity</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>net.shibboleth.utilities</groupId>
             <artifactId>java-support</artifactId>
         </dependency>
