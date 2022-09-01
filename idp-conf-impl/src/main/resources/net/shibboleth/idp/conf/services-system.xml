@@ -21,7 +21,9 @@
 
     <bean id="shibboleth.LoggingService"
         class="%{idp.service.logging.class:net.shibboleth.shared.service.impl.LogbackLoggingService}"
+        p:homePropertyName="idp.home"
         p:loggingConfiguration="%{idp.service.logging.resource:%{idp.home}/conf/logback.xml}"
+        p:fallbackConfiguration="classpath:/logback.xml"
         p:reloadCheckDelay="%{idp.service.logging.checkInterval:PT0S}"
         p:failFast="%{idp.service.logging.failFast:%{idp.service.failFast:true}}" />
     
