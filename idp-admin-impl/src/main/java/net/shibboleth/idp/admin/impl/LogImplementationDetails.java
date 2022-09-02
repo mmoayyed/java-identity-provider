@@ -71,7 +71,7 @@ public final class LogImplementationDetails {
             logger.info("Plugins:");
             for (final IdPPlugin idpPlugin : plugins) {
                 logger.info("\t\t{} : v{}.{}.{}",  idpPlugin.getPluginId(), idpPlugin.getMajorVersion(),
-                        idpPlugin.getMajorVersion(), idpPlugin.getPatchVersion());
+                        idpPlugin.getMinorVersion(), idpPlugin.getPatchVersion());
             }
         }
         Path idpHome;
