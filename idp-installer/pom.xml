@@ -45,14 +45,8 @@
         </dependency>
         
         <dependency>
-            <groupId>net.shibboleth.ext</groupId>
-            <artifactId>spring-extensions</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-spring</artifactId>
             <scope>provided</scope>
         </dependency>
         
@@ -122,12 +116,6 @@
             <artifactId>bcprov-jdk15on</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <scope>provided</scope>
-	   </dependency>
 
        <dependency>
             <groupId>com.google.guava</groupId>

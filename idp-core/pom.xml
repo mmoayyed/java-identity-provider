@@ -46,11 +46,6 @@
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-json</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>net.shibboleth.ext</groupId>
-            <artifactId>spring-extensions</artifactId>
-        </dependency>
         
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
@@ -75,11 +70,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -90,8 +80,8 @@
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-spring</artifactId>
         </dependency>
 
         <!-- Provided Dependencies -->

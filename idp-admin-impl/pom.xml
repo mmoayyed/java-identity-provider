@@ -52,17 +52,8 @@
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth.ext</groupId>
-            <artifactId>spring-extensions</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-spring</artifactId>
         </dependency>
 
         <dependency>

@@ -61,11 +61,6 @@
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
-        </dependency>
-
-        <dependency>
           <groupId>commons-codec</groupId>
           <artifactId>commons-codec</artifactId>
         </dependency>
@@ -73,11 +68,6 @@
         <dependency>
             <groupId>${spring-webflow.groupId}</groupId>
             <artifactId>spring-webflow</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
         </dependency>
 
         <dependency>

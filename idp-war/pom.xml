@@ -167,10 +167,6 @@
             <artifactId>shib-metadata-spring</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth.ext</groupId>
-            <artifactId>spring-extensions</artifactId>
-        </dependency>
-        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core</artifactId>
         </dependency>
@@ -229,6 +225,26 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-xmlsec-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-networking</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-support</artifactId>
         </dependency>
 
         <!-- Provided Dependencies -->

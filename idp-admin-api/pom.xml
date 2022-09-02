@@ -62,18 +62,13 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-core</artifactId>
         </dependency>
 
         <!-- Provided Dependencies -->
@@ -87,7 +82,7 @@
 
         <!-- Test Dependencies -->
         <dependency>
-            <groupId>net.shibboleth.shared</groupId>
+            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-testing</artifactId>
             <scope>test</scope>
         </dependency>

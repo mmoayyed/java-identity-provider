@@ -97,11 +97,6 @@
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>
@@ -131,17 +126,12 @@
             <artifactId>httpcore</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth.ext</groupId>
-            <artifactId>spring-extensions</artifactId>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-spring</artifactId>
         </dependency>
         <dependency>
             <groupId>org.cryptacular</groupId>
             <artifactId>cryptacular</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
         </dependency>
 
         <dependency>
@@ -215,7 +205,7 @@
         </dependency>
         
         <dependency>
-            <groupId>net.shibboleth.shared</groupId>
+            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-testing</artifactId>
             <scope>test</scope>
         </dependency>

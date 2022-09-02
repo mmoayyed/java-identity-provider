@@ -94,6 +94,17 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-support</artifactId>
+            <version>${shib-shared.version}</version>
+        </dependency>
+
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
@@ -165,7 +176,7 @@
 
             <!-- Import Dependencies:  Shared -->
             <dependency>
-                <groupId>net.shibboleth.shared</groupId>
+            <groupId>${shib-shared.groupId}</groupId>
                 <artifactId>shib-shared-bom</artifactId>
                 <version>${shib-shared.version}</version>
                 <type>pom</type>
@@ -173,17 +184,6 @@
             </dependency>
 
             <!-- Compile Dependencies -->
-
-            <dependency>
-                <groupId>net.shibboleth.utilities</groupId>
-                <artifactId>java-support</artifactId>
-                <version>${shib-shared.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.shibboleth.ext</groupId>
-                <artifactId>spring-extensions</artifactId>
-                <version>${shib-shared.version}</version>
-            </dependency>
 
             <!-- Provided Dependencies -->
 
