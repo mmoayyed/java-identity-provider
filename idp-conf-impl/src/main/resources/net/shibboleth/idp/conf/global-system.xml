@@ -126,7 +126,7 @@
         <entry key="runtime.strict_mode.enable" value="%{idp.velocity.runtime.strictmode:false}" />
     </util:map>
 
-    <bean id="shibboleth.VelocityEngine" class="net.shibboleth.ext.spring.velocity.VelocityEngineFactoryBean"
+    <bean id="shibboleth.VelocityEngine" class="net.shibboleth.shared.spring.velocity.VelocityEngineFactoryBean"
         depends-on="shibboleth.LoggingService"
         p:velocityPropertiesMap="#{getObject('shibboleth.VelocityEngineProperties') ?: getObject('shibboleth.DefaultVelocityEngineProperties')}" />
 

@@ -78,7 +78,7 @@
         <property name="order" value="1" />
     </bean>
             
-    <bean id="shibboleth.VelocityViewResolver" class="net.shibboleth.ext.spring.velocity.VelocityViewResolver">
+    <bean id="shibboleth.VelocityViewResolver" class="net.shibboleth.shared.spring.velocity.VelocityViewResolver">
         <property name="order" value="2" />
         <property name="cache" value="true"/>
         <property name="prefix" value=""/>
@@ -95,7 +95,7 @@
     </bean>
 
     <!-- Note that non-file paths are passed through to Spring's DefaultResourceLoader, thus can be targeted classpath trees. -->
-    <bean class="net.shibboleth.ext.spring.velocity.VelocityConfigurer">
+    <bean class="net.shibboleth.shared.spring.velocity.VelocityConfigurer">
         <property name="resourceLoaderPath"
             value="#{'%{idp.views:%{idp.home}/views}'.trim()},classpath:/net/shibboleth/idp/views,classpath:/META-INF/net/shibboleth/idp/views" />
     </bean>
