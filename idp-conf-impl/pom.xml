@@ -93,6 +93,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-velocity-spring</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Test Dependencies -->
 
         <!-- Managed Dependencies -->

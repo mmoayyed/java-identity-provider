@@ -246,6 +246,14 @@
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-velocity</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-velocity-spring</artifactId>
+        </dependency>
 
         <!-- Provided Dependencies -->
 
