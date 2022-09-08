@@ -102,6 +102,11 @@
 
         <dependency>
             <groupId>net.shibboleth</groupId>
+            <artifactId>shib-attribute-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth</groupId>
             <artifactId>shib-saml-attribute-impl</artifactId>
             <scope>test</scope>
         </dependency>
