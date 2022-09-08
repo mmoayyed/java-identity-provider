@@ -92,6 +92,14 @@
 
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-networking</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-spring</artifactId>
         </dependency>
 
@@ -238,7 +246,8 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
-
+        
+        <!-- Required despite dependency:analyze. -->
         <dependency>
             <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-resolver-spring</artifactId>
@@ -268,12 +277,6 @@
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-saml-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-security-impl</artifactId>
             <scope>test</scope>
         </dependency>
@@ -284,6 +287,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-security</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-testing</artifactId>

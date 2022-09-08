@@ -64,20 +64,21 @@
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
         </dependency>
-        
+
         <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-core</artifactId>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-security</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-spring</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>${spring-webflow.groupId}</groupId>
             <artifactId>spring-webflow</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
         <!-- Provided Dependencies -->
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
@@ -99,12 +100,19 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Needed for XMLObject providers. -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-core</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-test</artifactId>

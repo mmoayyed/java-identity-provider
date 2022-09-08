@@ -39,6 +39,11 @@
         </dependency>
 
         <dependency>
+            <groupId>net.shibboleth</groupId>
+            <artifactId>shib-attribute-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
         </dependency>
@@ -56,16 +61,19 @@
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-security-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-soap-api</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-xmlsec-api</artifactId>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-spring</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-beans</artifactId>
@@ -78,20 +86,7 @@
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>${spring-webflow.groupId}</groupId>
-            <artifactId>spring-webflow</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-spring</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
@@ -107,18 +102,7 @@
 
         <dependency>
             <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth</groupId>
             <artifactId>shib-saml-attribute-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-metadata-api</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -134,10 +118,15 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-        <!-- Needed despite what dependency:analyze says -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-service</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -148,11 +137,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Needed despite what dependency:analyze says -->
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-test</artifactId>
-        <scope>test</scope>
+            <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>${spring-webflow.groupId}</groupId>
+            <artifactId>spring-webflow</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- Needed despite what dependency:analyze says -->
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
