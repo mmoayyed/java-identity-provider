@@ -46,13 +46,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.installer.plugin.impl.PluginState.VersionInfo;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
+import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;

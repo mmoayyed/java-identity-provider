@@ -30,13 +30,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
- * An extension to {@link net.shibboleth.ext.spring.cli.AbstractCommandLineArguments}
+ * An extension to {@link net.shibboleth.shared.cli.AbstractCommandLineArguments}
  * that allows idp.home override and includes HTTP client support.
  * 
  * @since 4.1.0
  */
 public abstract class AbstractIdPHomeAwareCommandLineArguments
-        extends net.shibboleth.ext.spring.cli.AbstractCommandLineArguments {
+        extends net.shibboleth.shared.cli.AbstractCommandLineArguments {
 
     /** IdP location. */
     @Parameter(names = "--home")

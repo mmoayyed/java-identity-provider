@@ -24,8 +24,8 @@ import org.apache.http.client.HttpClient;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
-import net.shibboleth.ext.spring.cli.AbstractCommandLine;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.shared.cli.AbstractCommandLine;
 
 /**
  * An extension to {@link AbstractCommandLine} that auto-adds our context initializer for idp.home
