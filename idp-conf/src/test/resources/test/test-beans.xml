@@ -9,17 +9,6 @@
 
     default-init-method="initialize" default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.ext.spring.util.RelocatedBeanFactoryPostProcessor">
-        <property name="classes">
-            <map>
-                <entry key="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
-                    value="net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean" />
-                <entry key="net.shibboleth.ext.spring.factory.PrivateKeyFactoryBean"
-                    value="net.shibboleth.shared.spring.security.factory.PrivateKeyFactoryBean" />
-            </map>
-        </property>
-    </bean>
-
     <bean id="test.sp.X509Certificate" class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
         p:resource="classpath:/credentials/sp.crt" />
 
