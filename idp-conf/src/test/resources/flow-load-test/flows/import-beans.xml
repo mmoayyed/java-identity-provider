@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
     default-init-method="initialize" default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
 
     <!-- ensure this bean gets imported and loaded -->
     <bean id="LoadThisBean" class="net.shibboleth.idp.test.flows.load.LoadThisBean"

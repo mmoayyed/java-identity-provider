@@ -59,11 +59,11 @@
     <bean id="shibboleth.SPNEGOAuthnController" class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAuthnController" />
     <bean id="shibboleth.SAMLAuthnPOSTController" class="net.shibboleth.idp.saml.saml2.profile.impl.SAMLAuthnController"
         p:inboundBindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
-    <bean id="shibboleth.RaiseErrorController" class="net.shibboleth.ext.spring.error.ErrorRaisingController" />
+    <bean id="shibboleth.RaiseErrorController" class="net.shibboleth.shared.spring.error.ErrorRaisingController" />
 
     <!-- Exception handling -->
     
-    <bean id="shibboleth.ExceptionResolver" class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver"
+    <bean id="shibboleth.ExceptionResolver" class="net.shibboleth.shared.spring.error.ExtendedMappingExceptionResolver"
         c:_0="#{getObject('shibboleth.ExceptionResolverViewExtenderFunction')}"
         p:defaultErrorView="%{idp.errors.defaultView:error}"
         p:excludedExceptions="#{getObject('%{idp.errors.excludedExceptions:undefined}')}"

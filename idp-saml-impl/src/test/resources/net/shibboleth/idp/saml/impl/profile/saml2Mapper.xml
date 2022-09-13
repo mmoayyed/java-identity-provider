@@ -10,7 +10,7 @@
     default-destroy-method="destroy">
 
     <bean id="shibboleth.IdentifiableBeanPostProcessor"
-        class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+        class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
 
     <bean id="SAML2StringTranscoder"
         class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTranscoder" />

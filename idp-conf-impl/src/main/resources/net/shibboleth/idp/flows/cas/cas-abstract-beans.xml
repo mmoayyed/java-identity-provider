@@ -13,7 +13,7 @@
           p:placeholderPrefix="%{"
           p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <!-- These are beans that are common to all CAS protocol flows. -->

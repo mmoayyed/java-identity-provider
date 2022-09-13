@@ -10,7 +10,7 @@
 
 	<!-- Beans from the standard flows -->
 
-	<bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+	<bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
 
 	<bean id="InitializeProfileRequestContext"
 		class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"

@@ -32,10 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 
-import net.shibboleth.ext.spring.config.StringToDurationConverter;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.shared.spring.config.StringToDurationConverter;
 
 /**
  * A strategy function that examines SAML metadata associated with a relying party and derives Long-valued
