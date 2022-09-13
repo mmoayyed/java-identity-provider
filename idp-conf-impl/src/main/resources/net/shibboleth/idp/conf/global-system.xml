@@ -44,6 +44,8 @@
             class="net.shibboleth.ext.spring.util.RelocatedBeanFactoryPostProcessor">
         <property name="classes">
             <map>
+                <entry key="net.shibboleth.ext.spring.factory.KeyStoreFactoryBean"
+                    value="net.shibboleth.shared.spring.security.factory.KeyStoreFactoryBean" />
                 <entry key="net.shibboleth.ext.spring.factory.PKCS11PrivateKeyFactoryBean"
                     value="net.shibboleth.shared.spring.security.factory.PKCS11PrivateKeyFactoryBean" />
                 <entry key="net.shibboleth.ext.spring.factory.PrivateKeyFactoryBean"
