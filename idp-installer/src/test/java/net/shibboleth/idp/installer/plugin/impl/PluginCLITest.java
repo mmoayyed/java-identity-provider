@@ -33,8 +33,8 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import net.shibboleth.ext.spring.cli.AbstractCommandLine;
-import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.installer.ProgressReportingOutputStream;
+import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 
 @SuppressWarnings("javadoc")

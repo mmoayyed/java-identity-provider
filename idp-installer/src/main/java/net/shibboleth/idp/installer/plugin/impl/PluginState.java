@@ -29,10 +29,10 @@ import org.slf4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
+import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;

@@ -67,7 +67,6 @@ import org.slf4j.Logger;
 
 import com.google.common.base.Predicates;
 
-import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.InstallerSupport;
@@ -81,6 +80,7 @@ import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;

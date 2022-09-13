@@ -232,6 +232,10 @@
         </dependency>
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-networking-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-security</artifactId>
         </dependency>
         <dependency>
