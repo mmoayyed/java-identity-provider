@@ -56,6 +56,11 @@
                     value="net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean" />
                 <entry key="net.shibboleth.ext.spring.factory.X509CertificateChainFactoryBean"
                     value="net.shibboleth.shared.spring.security.factory.X509CertificateChainFactoryBean" />
+                    
+                <entry key="net.shibboleth.ext.spring.resource.HTTPResource"
+                    value="net.shibboleth.shared.spring.httpclient.resource.HTTPResource" />
+                <entry key="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
+                    value="net.shibboleth.shared.spring.httpclient.resource.FileBackedHTTPResource" />
             </map>
         </property>
     </bean>
