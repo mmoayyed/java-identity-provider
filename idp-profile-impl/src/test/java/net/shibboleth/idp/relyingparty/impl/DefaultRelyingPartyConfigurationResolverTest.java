@@ -23,8 +23,8 @@ import java.util.List;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.shared.testing.MockApplicationContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.testing.MockApplicationContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;

@@ -46,10 +46,10 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport;
+import net.shibboleth.shared.testing.MockApplicationContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-import net.shibboleth.utilities.java.support.testing.MockApplicationContext;
 
 /** Unit tests for {@link DelegatingCriteriaRelyingPartyConfigurationResolver}. */
 public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase {

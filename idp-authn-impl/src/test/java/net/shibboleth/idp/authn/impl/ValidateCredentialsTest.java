@@ -55,8 +55,8 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.testing.VelocityEngine;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.testing.VelocityEngine;
 
 /** Unit test for multiple credential validation. */
 public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
