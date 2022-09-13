@@ -70,12 +70,12 @@ import com.unboundid.ldap.sdk.LDAPException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import net.shibboleth.ext.spring.factory.X509CertificateFactoryBean;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.idp.test.InMemoryDirectory;
 import net.shibboleth.idp.test.PreferFileSystemApplicationContextInitializer;
 import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.idp.test.TestEnvironmentApplicationContextInitializer;
+import net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
