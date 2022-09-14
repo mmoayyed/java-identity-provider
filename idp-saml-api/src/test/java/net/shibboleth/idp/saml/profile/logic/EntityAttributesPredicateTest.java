@@ -41,10 +41,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.saml.attribute.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.shared.spring.config.StringToDurationConverter;
+import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.service.ReloadableService;

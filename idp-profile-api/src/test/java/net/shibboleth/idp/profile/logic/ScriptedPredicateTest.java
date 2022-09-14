@@ -19,8 +19,8 @@ package net.shibboleth.idp.profile.logic;
 
 import javax.script.ScriptException;
 
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.context.support.GenericApplicationContext;

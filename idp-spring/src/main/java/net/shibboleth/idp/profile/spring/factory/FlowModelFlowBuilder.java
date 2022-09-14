@@ -37,9 +37,9 @@ import org.springframework.webflow.scope.FlashScope;
 import org.springframework.webflow.scope.FlowScope;
 import org.springframework.webflow.scope.ViewScope;
 
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.shared.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.shared.spring.context.FilesystemGenericWebApplicationContext;
+import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
 
 /**
  * This is subclassed in order to customize the Spring {@link ApplicationContext} used for flow configuration.
