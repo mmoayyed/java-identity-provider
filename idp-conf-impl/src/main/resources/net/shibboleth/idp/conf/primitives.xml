@@ -25,6 +25,16 @@
         class="net.shibboleth.ext.spring.factory.ProxiedFactoryBean"
         c:service-ref="shibboleth.ManagedBeanService" />
 
+    <!-- List combiner factory bean. -->
+
+    <bean id="shibboleth.ListCombiner" abstract="true"
+        class="net.shibboleth.ext.spring.factory.CombiningListFactoryBean" />
+
+    <!-- Resource beans. -->    
+
+    <bean id="shibboleth.RunnableFileSystemResource" abstract="true"
+        class="net.shibboleth.ext.spring.resource.RunnableFileSystemResource" />
+
     <!-- TrustEngine helpers. -->
         
     <bean id="shibboleth.StaticExplicitTrustEngine" abstract="true"
