@@ -32,7 +32,7 @@ import org.springframework.expression.EvaluationContext;
  * @author Daniel Lutz
  */
 public class SpringExpressionPredicate
-    extends net.shibboleth.ext.spring.util.SpringExpressionPredicate<ProfileRequestContext> {
+    extends net.shibboleth.shared.spring.expression.SpringExpressionPredicate<ProfileRequestContext> {
 
     /**
      * Constructor.

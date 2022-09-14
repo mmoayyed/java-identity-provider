@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.context.navigate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.util.SpringExpressionFunction;
+import net.shibboleth.shared.spring.expression.SpringExpressionFunction;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;

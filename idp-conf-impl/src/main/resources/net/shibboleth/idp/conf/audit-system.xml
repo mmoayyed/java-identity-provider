@@ -142,7 +142,7 @@
                         <constructor-arg name="g">
                             <bean class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="forPredicate">
                                 <constructor-arg>
-                                    <bean class="net.shibboleth.ext.spring.util.SpringExpressionPredicate"
+                                    <bean class="net.shibboleth.shared.spring.expression.SpringExpressionPredicate"
                                         c:_0="#input != null ? T(org.opensaml.saml.common.binding.SAMLBindingSupport).isMessageSigned(#input) : false" />
                                 </constructor-arg>
                             </bean>
@@ -374,7 +374,7 @@
                         <constructor-arg name="g">
                             <bean class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="forPredicate">
                                 <constructor-arg>
-                                    <bean class="net.shibboleth.ext.spring.util.SpringExpressionPredicate"
+                                    <bean class="net.shibboleth.shared.spring.expression.SpringExpressionPredicate"
                                         c:_0="#input != null ? T(org.opensaml.saml.common.binding.SAMLBindingSupport).isMessageSigned(#input) : false" />
                                 </constructor-arg>
                             </bean>
@@ -676,7 +676,7 @@
                         <constructor-arg name="g">
                             <bean class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="forPredicate">
                                 <constructor-arg>
-			                        <bean class="net.shibboleth.ext.spring.util.SpringExpressionPredicate"
+			                        <bean class="net.shibboleth.shared.spring.expression.SpringExpressionPredicate"
 			                            c:_0="#input != null and #input.getAssertionEncryptionParameters() != null" />
 			                    </constructor-arg>
 	                        </bean>
@@ -957,7 +957,7 @@
                     </key>
                     <bean parent="shibboleth.Functions.Compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.ext.spring.util.SpringExpressionFunction"
+                            <bean class="net.shibboleth.shared.spring.expression.SpringExpressionFunction"
                                 p:inputType="org.opensaml.messaging.context.MessageContext" p:outputType="java.net.URI" p:hideExceptions="true"
                                 c:_0="#input != null ? T(org.opensaml.saml.common.binding.SAMLBindingSupport).getEndpointURL(#input) : null" />
                         </constructor-arg>

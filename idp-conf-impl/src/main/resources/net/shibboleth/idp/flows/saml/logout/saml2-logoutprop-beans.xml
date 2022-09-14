@@ -29,7 +29,7 @@
         static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
 
     <bean id="shibboleth.OutgoingBindingsLookupStrategy"
-            class="net.shibboleth.ext.spring.util.SpringExpressionFunction"
+            class="net.shibboleth.shared.spring.expression.SpringExpressionFunction"
             c:expression="#custom[#input.isBrowserProfile() ? 'full' : 'soap']">
         <property name="customObject">
             <map>
