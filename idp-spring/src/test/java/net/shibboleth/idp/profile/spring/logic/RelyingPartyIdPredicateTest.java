@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.profile.spring.logic;
 
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
+import net.shibboleth.shared.spring.context.FilesystemGenericApplicationContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.context.support.GenericApplicationContext;

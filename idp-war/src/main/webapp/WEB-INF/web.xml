@@ -13,7 +13,7 @@
     
     <context-param>
         <param-name>contextClass</param-name>
-        <param-value>net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext</param-value>
+        <param-value>net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext</param-value>
     </context-param>
     
     <context-param>
@@ -130,7 +130,7 @@
         </init-param>
         <init-param>
             <param-name>contextClass</param-name>
-            <param-value>net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext</param-value>
+            <param-value>net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
