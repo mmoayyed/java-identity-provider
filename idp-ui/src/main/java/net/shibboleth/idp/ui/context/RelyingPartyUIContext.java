@@ -47,11 +47,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
-import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.ACSUIInfo;
 import net.shibboleth.idp.saml.metadata.IdPUIInfo;
 import net.shibboleth.idp.saml.metadata.OrganizationUIInfo;
+import net.shibboleth.shared.spring.util.SpringSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;

@@ -26,7 +26,7 @@
 
     <import resource="conditional:%{idp.home}/conf/authn/remoteuser-internal-authn-config.xml" />
 
-    <bean class="net.shibboleth.ext.spring.util.DeprecatedBeanDetector" c:_1="remoteuser-internal-authn-config.xml">
+    <bean class="net.shibboleth.shared.spring.config.DeprecatedBeanDetector" c:_1="remoteuser-internal-authn-config.xml">
         <constructor-arg index="0">
             <map>
                 <entry key="shibboleth.authn.RemoteUser.whitelistedUsernames">

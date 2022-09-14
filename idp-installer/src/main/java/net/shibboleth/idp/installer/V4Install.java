@@ -48,7 +48,6 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.installer.plugin.impl.PluginState;
@@ -60,6 +59,7 @@ import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext;
 import net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext;
+import net.shibboleth.shared.spring.util.ApplicationContextBuilder;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;

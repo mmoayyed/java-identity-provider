@@ -31,10 +31,10 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParametersImpl;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.shared.spring.util.ApplicationContextBuilder;
 
 /**
  * Task to generate metadata.

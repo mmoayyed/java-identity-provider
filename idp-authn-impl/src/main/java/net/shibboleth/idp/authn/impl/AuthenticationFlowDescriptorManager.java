@@ -23,8 +23,8 @@ import javax.annotation.Nullable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.shibboleth.ext.spring.util.IdentifiedComponentManager;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
+import net.shibboleth.shared.spring.config.IdentifiedComponentManager;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /**

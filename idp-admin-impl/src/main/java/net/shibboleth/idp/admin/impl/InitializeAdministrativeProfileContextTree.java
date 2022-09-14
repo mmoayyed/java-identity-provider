@@ -27,12 +27,12 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.admin.AdministrativeFlowDescriptor;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
+import net.shibboleth.shared.spring.util.SpringSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /**
