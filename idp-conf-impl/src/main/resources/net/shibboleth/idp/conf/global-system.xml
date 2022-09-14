@@ -61,6 +61,19 @@
                     value="net.shibboleth.shared.spring.httpclient.resource.HTTPResource" />
                 <entry key="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
                     value="net.shibboleth.shared.spring.httpclient.resource.FileBackedHTTPResource" />
+                    
+                <entry key="net.shibboleth.ext.spring.util.SpringExpressionBiConsumer"
+                    value="net.shibboleth.shared.spring.expression.SpringExpressionBiConsumer" />
+                <entry key="net.shibboleth.ext.spring.util.SpringExpressionBiFunction"
+                    value="net.shibboleth.shared.spring.expression.SpringExpressionBiFunction" />
+                <entry key="net.shibboleth.ext.spring.util.SpringExpressionBiPredicate"
+                    value="net.shibboleth.shared.spring.expression.SpringExpressionBiPredicate" />
+                <entry key="net.shibboleth.ext.spring.util.SpringExpressionConsumer"
+                    value="net.shibboleth.shared.spring.expression.SpringExpressionConsumer" />
+                <entry key="net.shibboleth.ext.spring.util.SpringExpressionFunction"
+                    value="net.shibboleth.shared.spring.expression.SpringExpressionFunction" />
+                <entry key="net.shibboleth.ext.spring.util.SpringExpressionPredicate"
+                    value="net.shibboleth.shared.spring.expression.SpringExpressionPredicate" />
             </map>
         </property>
     </bean>
