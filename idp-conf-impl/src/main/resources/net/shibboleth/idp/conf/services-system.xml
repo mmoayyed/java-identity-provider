@@ -47,7 +47,7 @@
         </constructor-arg>
     </bean>
     <!-- Auto-append system config file to resource set. -->
-    <bean id ="ExtendedAttributeFilterResources" class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean"
+    <bean id ="ExtendedAttributeFilterResources" parent="shibboleth.ListCombiner"
           p:firstList="#{getObject('%{idp.service.attribute.filter.resources:shibboleth.AttributeFilterResources}'.trim())}" >
         <property name="secondList">
             <util:list >
@@ -71,7 +71,7 @@
         </constructor-arg>
     </bean>
     <!-- Auto-append system config file to resource set. -->
-    <bean id ="ExtendedAttributeResolverResources" class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean"
+    <bean id ="ExtendedAttributeResolverResources" parent="shibboleth.ListCombiner"
           p:firstList="#{getObject('%{idp.service.attribute.resolver.resources:shibboleth.AttributeResolverResources}'.trim())}" >
         <property name="secondList">
             <util:list >
@@ -95,7 +95,7 @@
             </bean>
 	    </constructor-arg>
     </bean>
-    <bean id ="shibboleth.DefaultAttributeRegistryResources" class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean"
+    <bean id ="shibboleth.DefaultAttributeRegistryResources" parent="shibboleth.ListCombiner"
           p:firstList-ref="#{'%{idp.service.attribute.resolver.resources:shibboleth.AttributeResolverResources}'.trim()}" >
         <property name="secondList">
             <util:list >
@@ -104,7 +104,7 @@
         </property>
     </bean>
     <!-- Auto-append system config file to resource set. -->
-    <bean id ="ExtendedAttributeRegistryResources" class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean"
+    <bean id ="ExtendedAttributeRegistryResources" parent="shibboleth.ListCombiner"
           p:firstList="#{getObject('%{idp.service.attribute.registry.resources:shibboleth.AttributeRegistryResources}'.trim()) ?:
                 getObject('shibboleth.DefaultAttributeRegistryResources')}" >
         <property name="secondList">
@@ -122,7 +122,7 @@
         p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
         p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors" />
     <!-- Auto-append system config file to resource set. -->
-    <bean id ="ExtendedNameIdentifierGenerationResources" class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean"
+    <bean id ="ExtendedNameIdentifierGenerationResources" parent="shibboleth.ListCombiner"
           p:firstList-ref="#{'%{idp.service.nameidGeneration.resources:shibboleth.NameIdentifierGenerationResources}'.trim()}" >
         <property name="secondList">
             <util:list >
@@ -144,7 +144,7 @@
         </constructor-arg>
     </bean>
     <!-- Auto-append system config file to resource set. -->
-    <bean id ="ExtendedRelyingPartyResolverResources" class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean"
+    <bean id ="ExtendedRelyingPartyResolverResources" parent="shibboleth.ListCombiner"
           p:firstList-ref="#{'%{idp.service.relyingparty.resources:shibboleth.RelyingPartyResolverResources}'.trim()}" >
         <property name="secondList">
             <util:list >
@@ -166,7 +166,7 @@
         </constructor-arg>
     </bean>
     <!-- Auto-append system config file to resource set. -->
-    <bean id ="ExtendedMetadataResolverResources" class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean"
+    <bean id ="ExtendedMetadataResolverResources" parent="shibboleth.ListCombiner"
           p:firstList-ref="#{'%{idp.service.metadata.resources:shibboleth.MetadataResolverResources}'.trim()}" >
         <property name="secondList">
             <util:list >
@@ -183,7 +183,7 @@
         p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
         p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors" />
     <!-- Auto-append system config file to resource set. -->
-    <bean id ="ExtendedAccessControlResources" class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean"
+    <bean id ="ExtendedAccessControlResources" parent="shibboleth.ListCombiner"
           p:firstList-ref="#{'%{idp.service.access.resources:shibboleth.AccessControlResources}'.trim()}" >
         <property name="secondList">
             <util:list >

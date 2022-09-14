@@ -90,7 +90,7 @@
     </bean>
 
     <!-- This extends the original user-space resource list with the classpath-embedded message tree. -->
-    <bean id ="ExtendedMessageSourceResources" class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean"
+    <bean id ="ExtendedMessageSourceResources" parent="shibboleth.ListCombiner"
           p:firstList-ref="#{'%{idp.message.resources:shibboleth.MessageSourceResources}'.trim()}" >
         <property name="secondList">
             <util:list >

@@ -25,6 +25,10 @@
         class="net.shibboleth.shared.service.reloadable.ProxiedFactoryBean"
         c:service-ref="shibboleth.ManagedBeanService" />
 
+    <!-- List combiner factory bean. -->
+    <bean id="shibboleth.ListCombiner" abstract="true"
+        class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean" />
+
     <!-- TrustEngine helpers. -->
         
     <bean id="shibboleth.StaticExplicitTrustEngine" abstract="true"
