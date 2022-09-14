@@ -2,7 +2,7 @@
 
 <configuration>
 
-    <logger name="net.shibboleth.ext.spring.resource" level="DEBUG"/>
+    <logger name="net.shibboleth.shared.spring.resource" level="DEBUG"/>
     <logger name="net.shibboleth.idp.profile.spring" level="DEBUG"/>
 
 

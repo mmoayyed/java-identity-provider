@@ -19,9 +19,9 @@ package net.shibboleth.idp.test;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.ext.spring.resource.ConditionalResourceResolver;
-import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.shared.spring.resource.ConditionalResourceResolver;
+import net.shibboleth.shared.spring.resource.PreferFileSystemResourceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -29,7 +29,6 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -52,6 +51,7 @@ import net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
+import net.shibboleth.shared.spring.resource.ResourceHelper;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;

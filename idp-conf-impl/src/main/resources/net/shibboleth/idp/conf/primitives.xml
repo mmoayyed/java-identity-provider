@@ -26,8 +26,17 @@
         c:service-ref="shibboleth.ManagedBeanService" />
 
     <!-- List combiner factory bean. -->
+
     <bean id="shibboleth.ListCombiner" abstract="true"
         class="net.shibboleth.shared.spring.factory.CombiningListFactoryBean" />
+
+    <!-- Resource beans. -->    
+
+    <bean id="shibboleth.ConditionalReesource" abstract="true"
+        class="net.shibboleth.shared.spring.resource.ConditionalResource" />
+
+    <bean id="shibboleth.RunnableFileSystemResource" abstract="true"
+        class="net.shibboleth.shared.spring.resource.RunnableFileSystemResource" />
 
     <!-- TrustEngine helpers. -->
         

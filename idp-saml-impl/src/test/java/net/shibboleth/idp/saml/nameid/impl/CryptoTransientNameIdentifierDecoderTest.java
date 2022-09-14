@@ -22,13 +22,13 @@ import java.util.Collections;
 
 import javax.security.auth.Subject;
 
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
+import net.shibboleth.shared.spring.resource.ResourceHelper;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 

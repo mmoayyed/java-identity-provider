@@ -85,6 +85,11 @@
                     value="net.shibboleth.shared.spring.factory.EvaluableScriptFactoryBean" />
                 <entry key="net.shibboleth.ext.spring.factory.PatternFactoryBean"
                     value="net.shibboleth.shared.spring.factory.PatternFactoryBean" />
+
+                <entry key="net.shibboleth.ext.spring.resource.ConditionalResource"
+                    value="net.shibboleth.shared.spring.resource.ConditionalResource" />
+                <entry key="net.shibboleth.ext.spring.resource.RunnableFileSystemResource"
+                    value="net.shibboleth.shared.spring.resource.RunnableFileSystemResource" />
             </map>
         </property>
     </bean>

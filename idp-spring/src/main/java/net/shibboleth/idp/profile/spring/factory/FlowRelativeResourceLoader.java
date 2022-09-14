@@ -25,7 +25,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
-import net.shibboleth.ext.spring.resource.ConditionalResourceResolver;
+import net.shibboleth.shared.spring.resource.ConditionalResourceResolver;
 
 /**
  * This code is extended from org.springframework.webflow.engine.builder.model.FlowRelativeResourceLoader

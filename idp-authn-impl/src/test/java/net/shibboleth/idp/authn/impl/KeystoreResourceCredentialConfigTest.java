@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import java.io.File;
 import java.net.URISyntaxException;
 
-import net.shibboleth.ext.spring.resource.ResourceHelper;
+import net.shibboleth.shared.spring.resource.ResourceHelper;
 import net.shibboleth.utilities.java.support.resource.Resource;
 
 import org.ldaptive.ssl.SSLContextInitializer;

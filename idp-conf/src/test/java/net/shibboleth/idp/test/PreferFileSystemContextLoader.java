@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.test;
 
-import net.shibboleth.ext.spring.resource.ConditionalResourceResolver;
-import net.shibboleth.ext.spring.resource.PreferFileSystemResourceLoader;
-
 import org.springframework.test.context.web.GenericXmlWebContextLoader;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 import org.springframework.web.context.support.GenericWebApplicationContext;
+
+import net.shibboleth.shared.spring.resource.ConditionalResourceResolver;
+import net.shibboleth.shared.spring.resource.PreferFileSystemResourceLoader;
 
 /**
  * An extension of {@link GenericXmlWebContextLoader} which sets the resource loader used by the application context to
