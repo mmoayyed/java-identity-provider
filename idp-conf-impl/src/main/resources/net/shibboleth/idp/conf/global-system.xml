@@ -41,7 +41,7 @@
 
     <!-- This BeanFactoryPostProcessor rewrites class and parent references to relocated classes or beans. -->
     <bean id="shibboleth.RelocatedBeanFactoryPostProcessor"
-            class="net.shibboleth.ext.spring.util.RelocatedBeanFactoryPostProcessor">
+            class="net.shibboleth.shared.spring.config.RelocatedBeanFactoryPostProcessor">
         <property name="classes">
             <map>
                 <!-- At present all of these are being added for V5 and would be removable for V6. -->
