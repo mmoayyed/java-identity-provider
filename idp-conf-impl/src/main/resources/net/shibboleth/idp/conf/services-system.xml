@@ -192,7 +192,7 @@
     
     <!-- This default populates the service with an empty CAS registry as a substitute for a real config. -->
     <util:list id="shibboleth.DefaultCASServiceRegistryResources">
-        <bean class="net.shibboleth.ext.spring.resource.ConditionalResource" c:wrapped="%{idp.home}/conf/cas-protocol.xml">
+        <bean parent="shibboleth.ConditionalReesource" c:wrapped="%{idp.home}/conf/cas-protocol.xml">
             <property name="defaultContent">
                 <value>
                 <![CDATA[

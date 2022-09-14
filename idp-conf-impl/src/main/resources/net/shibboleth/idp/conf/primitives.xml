@@ -32,6 +32,9 @@
 
     <!-- Resource beans. -->    
 
+    <bean id="shibboleth.ConditionalReesource" abstract="true"
+        class="net.shibboleth.ext.spring.resource.ConditionalResource" />
+
     <bean id="shibboleth.RunnableFileSystemResource" abstract="true"
         class="net.shibboleth.ext.spring.resource.RunnableFileSystemResource" />
 
