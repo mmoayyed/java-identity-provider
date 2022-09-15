@@ -104,8 +104,12 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-testing</artifactId>
-            <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
 
