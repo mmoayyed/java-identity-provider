@@ -40,7 +40,7 @@
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core</artifactId>
+            <artifactId>opensaml-core-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
@@ -107,13 +107,12 @@
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core</artifactId>
-            <type>test-jar</type>
+            <artifactId>opensaml-storage-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-storage-impl</artifactId>
+            <artifactId>opensaml-testing</artifactId>
             <scope>test</scope>
         </dependency>
 

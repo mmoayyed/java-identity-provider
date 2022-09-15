@@ -29,7 +29,7 @@
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core</artifactId>
+            <artifactId>opensaml-core-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
@@ -104,9 +104,8 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core</artifactId>
+            <artifactId>opensaml-testing</artifactId>
             <version>${opensaml.version}</version>
-            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 

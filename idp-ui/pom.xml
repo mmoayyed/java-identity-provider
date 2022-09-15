@@ -50,11 +50,11 @@
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-messaging-api</artifactId>
+            <artifactId>opensaml-core-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core</artifactId>
+            <artifactId>opensaml-messaging-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
@@ -94,19 +94,18 @@
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        
         <!-- Needed for XMLObject providers. -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
 
         <dependency>
             <groupId>${spring.groupId}</groupId>

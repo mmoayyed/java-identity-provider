@@ -238,7 +238,7 @@
     
     <!-- MetricRegistry we can control with logging categories. -->
     <bean id="shibboleth.metrics.MetricRegistry"
-        class="org.opensaml.core.metrics.FilteredMetricRegistry"
+        class="org.opensaml.core.metrics.impl.FilteredMetricRegistry"
         p:metricFilter-ref="shibboleth.metrics.LoggerDrivenMetricFilter" />
         
     <bean id="shibboleth.metrics.LoggerDrivenMetricFilter"
