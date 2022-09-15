@@ -136,6 +136,11 @@
         
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
             <scope>test</scope>
         </dependency>
