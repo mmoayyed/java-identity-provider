@@ -119,8 +119,7 @@
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-saml-api</artifactId>
-            <type>test-jar</type>
+            <artifactId>opensaml-testing</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
