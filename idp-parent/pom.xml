@@ -55,7 +55,6 @@
         <module>../idp-ui</module>
 
         <module>../idp-bom</module>
-        <module>../idp-tests-bom</module>
     </modules>
 
     <properties>

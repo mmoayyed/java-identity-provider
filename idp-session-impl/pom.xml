@@ -146,12 +146,6 @@
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-profile-api</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-testing</artifactId>
             <scope>test</scope>
         </dependency>
