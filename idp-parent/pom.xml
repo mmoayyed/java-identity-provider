@@ -166,13 +166,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>${opensaml.groupId}</groupId>
-                <artifactId>opensaml-tests-bom</artifactId>
-                <version>${opensaml.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Import Dependencies:  Shared -->
             <dependency>
