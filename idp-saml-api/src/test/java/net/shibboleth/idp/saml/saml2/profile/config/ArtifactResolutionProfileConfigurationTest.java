@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

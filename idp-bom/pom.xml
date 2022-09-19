@@ -100,7 +100,12 @@
                 <artifactId>idp-session-impl</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>idp-ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>idp-spring</artifactId>
@@ -140,10 +145,12 @@
                 <version>${project.version}</version>
             </dependency>
             
+
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>idp-ui</artifactId>
+                <artifactId>idp-testing</artifactId>
                 <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -58,6 +58,10 @@
 
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-cli</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-security</artifactId>
         </dependency>
         <dependency>
@@ -149,9 +153,8 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-api</artifactId>
+            <artifactId>idp-testing</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 

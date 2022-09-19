@@ -57,10 +57,6 @@
 
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-cli</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-networking</artifactId>
         </dependency>
 

@@ -102,20 +102,16 @@
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
+        <!-- Needed for XMLObject providers. -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-core-impl</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-testing</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
 

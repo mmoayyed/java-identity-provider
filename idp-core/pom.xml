@@ -46,11 +46,6 @@
         </dependency>
 
         <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-spring</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
@@ -98,18 +93,6 @@
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>

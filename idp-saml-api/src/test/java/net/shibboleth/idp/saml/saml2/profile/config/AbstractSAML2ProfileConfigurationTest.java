@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.shibboleth.idp.saml.saml2.profile.config.AbstractSAML2ProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;

@@ -141,7 +141,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws IOException if the file doesn't exist.
      */
     @SuppressWarnings("removal")
-    static ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource)
+    static public ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource)
             throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript();
@@ -160,7 +160,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedAction resourceScript(@Nonnull final Resource resource) throws ScriptException, IOException {
+    static public ScriptedAction resourceScript(@Nonnull final Resource resource) throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
@@ -173,7 +173,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws ScriptException if the compile fails
      */
     @SuppressWarnings("removal")
-    static ScriptedAction inlineScript(@Nonnull @NotEmpty final String engineName,
+    static public ScriptedAction inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript();
                 script.setEngineName(engineName);
@@ -189,7 +189,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @return the predicate
      * @throws ScriptException if the compile fails
      */
-    static ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+    static public ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         return inlineScript(DEFAULT_ENGINE, scriptSource);
     }
 

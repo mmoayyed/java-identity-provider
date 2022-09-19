@@ -93,10 +93,6 @@
             <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <dependency>
             <groupId>${spring-webflow.groupId}</groupId>
             <artifactId>spring-webflow</artifactId>
         </dependency>
@@ -117,14 +113,13 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-api</artifactId>
+            <artifactId>idp-saml-impl</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-saml-impl</artifactId>
+            <artifactId>idp-testing</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

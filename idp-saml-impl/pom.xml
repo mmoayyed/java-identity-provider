@@ -125,11 +125,11 @@
         </dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-core</artifactId>
+            <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-context</artifactId>
+            <artifactId>spring-core</artifactId>
         </dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
@@ -162,13 +162,6 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-core</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>idp-session-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -181,32 +174,16 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-api</artifactId>
+            <artifactId>idp-testing</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-saml-api</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-session-impl</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>        
-
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-resolver-api</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
@@ -226,17 +203,6 @@
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-testing</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-matchers</artifactId>
             <scope>test</scope>
         </dependency>
 

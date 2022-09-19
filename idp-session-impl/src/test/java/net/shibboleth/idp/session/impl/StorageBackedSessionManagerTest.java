@@ -45,7 +45,6 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
-import net.shibboleth.idp.session.impl.testing.SessionManagerBaseTestCase;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;

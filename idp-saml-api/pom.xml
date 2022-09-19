@@ -92,69 +92,23 @@
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
+        <!-- Needed for XMLObject providers. -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-api</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core-impl</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-saml-attribute-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-testing</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-service</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Needed despite what dependency:analyze says -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Needed despite what dependency:analyze says -->
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${spring-webflow.groupId}</groupId>
-            <artifactId>spring-webflow</artifactId>
-            <scope>test</scope>
-        </dependency>
-        
-        <!-- Needed despite what dependency:analyze says -->
-        <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <scm>

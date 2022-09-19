@@ -108,27 +108,8 @@
         </dependency>
 
         <!-- Runtime Dependencies -->
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>jakarta.json</artifactId>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- Test Dependencies -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-api</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
-    
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <scm>
