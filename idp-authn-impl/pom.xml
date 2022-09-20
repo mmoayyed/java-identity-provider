@@ -229,26 +229,16 @@
             <artifactId>shib-attribute-resolver-impl</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-resolver-api</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
-        
         <!-- Required despite dependency:analyze. -->
         <dependency>
             <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-resolver-spring</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-resolver-spring</artifactId>
+            <artifactId>shib-attribute-testing</artifactId>
             <scope>test</scope>
-            <type>test-jar</type>
         </dependency>
 
         <dependency>

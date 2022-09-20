@@ -126,24 +126,17 @@
 
         <dependency>
             <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-filter-api</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-filter-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-resolver-api</artifactId>
-            <type>test-jar</type>
+            <artifactId>shib-attribute-resolver-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-resolver-impl</artifactId>
+            <artifactId>shib-attribute-testing</artifactId>
             <scope>test</scope>
         </dependency>
 

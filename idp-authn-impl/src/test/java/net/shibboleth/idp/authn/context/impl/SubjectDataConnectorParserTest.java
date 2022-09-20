@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.dc.impl.ContextDerivedDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.SubjectDataConnectorParser;
-import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 
 /**
  * test for {@link SubjectDataConnectorParser}

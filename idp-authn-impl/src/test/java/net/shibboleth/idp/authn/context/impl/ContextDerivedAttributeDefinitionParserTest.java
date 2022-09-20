@@ -38,7 +38,6 @@ import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefi
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.testing.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.testing.TestSources;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
