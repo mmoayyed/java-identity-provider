@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.shibboleth.utilities.java.support.velocity.Template;
-
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.event.EventCartridge;
@@ -32,6 +30,8 @@ import org.apache.velocity.exception.VelocityException;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.auth.AbstractSearchDnResolver;
 import org.ldaptive.auth.User;
+
+import net.shibboleth.shared.velocity.Template;
 
 /**
  * Base class for {@link Template} based search dn resolvers.

@@ -26,7 +26,7 @@ import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
 
 /**
- * {@link net.shibboleth.utilities.java.support.velocity.Template}-based search dn resolver.
+ * {@link net.shibboleth.shared.velocity.Template}-based search dn resolver.
  */
 public class TemplateSearchDnResolver extends AbstractTemplateSearchDnResolver implements ConnectionFactoryManager {
 
