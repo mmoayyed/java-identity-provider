@@ -33,7 +33,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.SubjectDataConnector
 public class SubjectDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void simple() {
-        final ContextDerivedDataConnector connector = getDataConnector("resolver/subjectAttributes.xml", ContextDerivedDataConnector.class);
+        final ContextDerivedDataConnector connector = getDataConnector("subjectAttributes.xml", ContextDerivedDataConnector.class);
 
         assertEquals(connector.getExportAttributes().size(), 2);
         assertTrue(connector.getExportAttributes().contains("foo"));
@@ -46,7 +46,7 @@ public class SubjectDataConnectorParserTest extends BaseAttributeDefinitionParse
     }
     
     @Test(expectedExceptions = {BeanCreationException.class}) public void emptyNoResultIsError() {
-        getDataConnector("resolver/subjectAttributesNull.xml", ContextDerivedDataConnector.class);
+        getDataConnector("subjectAttributesNull.xml", ContextDerivedDataConnector.class);
     }
     
 }
