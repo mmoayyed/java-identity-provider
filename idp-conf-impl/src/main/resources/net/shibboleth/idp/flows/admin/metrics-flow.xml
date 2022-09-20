@@ -9,7 +9,7 @@
         <!-- Extract PATH_INFO containing metric identifier. -->
         <evaluate expression="externalContext.getNativeRequest().getPathInfo()" result="flowScope.pathInfo" />
         <evaluate expression="flowRequestContext.getActiveFlow().getId()" result="flowScope.flowId" />
-        <evaluate expression="pathInfo.length() gt flowId.length() + 2 ? T(net.shibboleth.utilities.java.support.net.URISupport).doURLDecode(pathInfo.substring(flowId.length() + 2)) : 'all'" result="flowScope.metricId" />
+        <evaluate expression="pathInfo.length() gt flowId.length() + 2 ? T(net.shibboleth.shared.net.URISupport).doURLDecode(pathInfo.substring(flowId.length() + 2)) : 'all'" result="flowScope.metricId" />
     </on-start>
     
     <action-state id="InitializeProfileRequestContext">

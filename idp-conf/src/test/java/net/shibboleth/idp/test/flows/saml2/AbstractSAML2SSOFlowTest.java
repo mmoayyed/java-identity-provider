@@ -49,8 +49,8 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
-import net.shibboleth.utilities.java.support.net.SimpleURLCanonicalizer;
-import net.shibboleth.utilities.java.support.net.URLBuilder;
+import net.shibboleth.shared.net.SimpleURLCanonicalizer;
+import net.shibboleth.shared.net.URLBuilder;
 
 /**
  * Abstract SAML 2 SSO flow test.

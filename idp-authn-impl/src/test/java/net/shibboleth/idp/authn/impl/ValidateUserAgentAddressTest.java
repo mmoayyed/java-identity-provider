@@ -39,8 +39,8 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.net.IPRange;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.net.IPRange;
 
 /** {@link ValidateUserAgentAddress} unit test. */
 public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest {

@@ -32,8 +32,8 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import net.shibboleth.idp.Version;
+import net.shibboleth.shared.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 
 /**

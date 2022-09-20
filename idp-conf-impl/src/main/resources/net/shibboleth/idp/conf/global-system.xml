@@ -231,10 +231,10 @@
         <value>#{'classpath:' + T(net.shibboleth.idp.saml.xmlobject.ExtensionsConstants).SHIB_MDEXT10_SCHEMA_LOCATION }</value>
     </util:list>
 
-    <bean id="shibboleth.HttpServletRequest" class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy" />
-    <bean id="shibboleth.HttpServletRequestSupplier" class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestSupplier" />
-    <bean id="shibboleth.HttpServletResponse" class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy" />
-    <bean id="shibboleth.HttpServletResponseSupplier" class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseSupplier" />
+    <bean id="shibboleth.HttpServletRequest" class="net.shibboleth.shared.net.impl.ThreadLocalHttpServletRequestProxy" />
+    <bean id="shibboleth.HttpServletRequestSupplier" class="net.shibboleth.shared.net.impl.ThreadLocalHttpServletRequestSupplier" />
+    <bean id="shibboleth.HttpServletResponse" class="net.shibboleth.shared.net.impl.ThreadLocalHttpServletResponseProxy" />
+    <bean id="shibboleth.HttpServletResponseSupplier" class="net.shibboleth.shared.net.impl.ThreadLocalHttpServletResponseSupplier" />
 
     <bean id="shibboleth.DefaultResponseHeaderMap"
             class="org.springframework.beans.factory.config.MapFactoryBean">
@@ -262,7 +262,7 @@
     <bean id="shibboleth.MarshallerFactory" factory-method="getMarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
     <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
 
-    <bean id="shibboleth.CookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
+    <bean id="shibboleth.CookieManager" class="net.shibboleth.shared.net.CookieManager"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
         p:secure="%{idp.cookie.secure:true}"
@@ -271,7 +271,7 @@
         p:cookiePath="%{idp.cookie.path:}"
         p:maxAge="-1" />
 
-    <bean id="shibboleth.PersistentCookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
+    <bean id="shibboleth.PersistentCookieManager" class="net.shibboleth.shared.net.CookieManager"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
         p:secure="%{idp.cookie.secure:true}"
@@ -280,7 +280,7 @@
         p:cookiePath="%{idp.cookie.path:}"
         p:maxAge="%{idp.cookie.maxAge:31536000}" />
 
-    <bean id="shibboleth.UserPrefsCookieManager" class="net.shibboleth.utilities.java.support.net.CookieManager"
+    <bean id="shibboleth.UserPrefsCookieManager" class="net.shibboleth.shared.net.CookieManager"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
         p:secure="%{idp.cookie.secure:true}"

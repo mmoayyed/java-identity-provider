@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn.spnego.impl;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import net.shibboleth.utilities.java.support.net.CookieManager;
+import net.shibboleth.shared.net.CookieManager;
 
 import java.util.function.Supplier;
 

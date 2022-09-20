@@ -38,10 +38,10 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSessionSerializerRegistry;
+import net.shibboleth.shared.net.CookieManager;
+import net.shibboleth.shared.net.impl.ThreadLocalHttpServletRequestProxy;
+import net.shibboleth.shared.net.impl.ThreadLocalHttpServletResponseProxy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.net.CookieManager;
-import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
-import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy;
 import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 /** {@link StorageBackedIdPSessionSerializer} unit test. */

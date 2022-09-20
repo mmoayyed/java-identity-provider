@@ -19,10 +19,10 @@ package net.shibboleth.idp.authn.proxy.impl;
 
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.net.URISupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-import net.shibboleth.utilities.java.support.net.URISupport;
 
 import java.net.MalformedURLException;
 import java.net.URL;

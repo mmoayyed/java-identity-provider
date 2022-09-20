@@ -58,7 +58,7 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
-import net.shibboleth.utilities.java.support.net.URISupport;
+import net.shibboleth.shared.net.URISupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 /**

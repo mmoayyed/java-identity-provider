@@ -38,6 +38,7 @@ import net.shibboleth.idp.authn.AccountLockoutManager;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.LockoutManagerContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.shared.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
@@ -45,7 +46,6 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 
 /**
  * Implementation of {@link AccountLockoutManager} interface that relies on a {@link StorageService}

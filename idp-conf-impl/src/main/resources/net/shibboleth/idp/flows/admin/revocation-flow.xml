@@ -8,9 +8,9 @@
         <evaluate expression="flowRequestContext.getActiveFlow().getId()" result="flowScope.flowId" />
         <evaluate expression="externalContext.getNativeRequest().getPathInfo().length() gt flowId.length() + 2 ? externalContext.getNativeRequest().getPathInfo().substring(flowId.length() + 2) : ''" result="flowScope.pathInfo" />
         <evaluate expression="pathInfo.split('/')" result="flowScope.pathInfoArray" />
-        <evaluate expression="pathInfoArray.length gt 0 ? T(net.shibboleth.utilities.java.support.net.URISupport).doURLDecode(pathInfoArray[0]) : null" result="flowScope.revocationCacheId" />
-        <evaluate expression="pathInfoArray.length gt 1 ? T(net.shibboleth.utilities.java.support.net.URISupport).doURLDecode(pathInfoArray[1]) : null" result="flowScope.context" />
-        <evaluate expression="pathInfoArray.length gt 2 ? T(net.shibboleth.utilities.java.support.net.URISupport).doURLDecode(pathInfoArray[2]) : null" result="flowScope.key" />
+        <evaluate expression="pathInfoArray.length gt 0 ? T(net.shibboleth.shared.net.URISupport).doURLDecode(pathInfoArray[0]) : null" result="flowScope.revocationCacheId" />
+        <evaluate expression="pathInfoArray.length gt 1 ? T(net.shibboleth.shared.net.URISupport).doURLDecode(pathInfoArray[1]) : null" result="flowScope.context" />
+        <evaluate expression="pathInfoArray.length gt 2 ? T(net.shibboleth.shared.net.URISupport).doURLDecode(pathInfoArray[2]) : null" result="flowScope.key" />
     </on-start>
 
     <!-- Start action. -->

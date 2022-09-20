@@ -38,10 +38,10 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
+import net.shibboleth.shared.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
