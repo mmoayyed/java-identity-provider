@@ -144,13 +144,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>net.shibboleth</groupId>
-                <artifactId>shib-metadata-tests-bom</artifactId>
-                <version>${shib-metadata.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- Import Dependencies:  OpenSAML -->
             <dependency>
