@@ -34,8 +34,8 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.shared.cli.AbstractCommandLine;
+import net.shibboleth.shared.httpclient.HttpClientBuilder;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
-import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 
 @SuppressWarnings("javadoc")
 public class PluginCLITest extends BasePluginTest {

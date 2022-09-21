@@ -55,8 +55,8 @@ import org.testng.annotations.Test;
 import com.google.common.io.ByteStreams;
 
 import net.shibboleth.idp.module.IdPModule.ModuleResource;
+import net.shibboleth.shared.httpclient.HttpClientBuilder;
 import net.shibboleth.shared.testing.RepositorySupport;
-import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 
 /**
  * Unit tests exercising module code.
