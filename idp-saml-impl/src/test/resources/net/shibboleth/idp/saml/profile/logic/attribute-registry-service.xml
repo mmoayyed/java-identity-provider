@@ -26,7 +26,7 @@
     <bean id="RegistryServiceStrategy" class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy"
         p:id="shibboleth.AttributeRegistryService" />
 
-    <bean id="shibboleth.AttributeRegistryService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
+    <bean id="shibboleth.AttributeRegistryService" class="net.shibboleth.shared.spring.service.ReloadableSpringService"
             c:claz="net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry"
             c:strategy-ref="RegistryServiceStrategy"
             p:failFast="true"

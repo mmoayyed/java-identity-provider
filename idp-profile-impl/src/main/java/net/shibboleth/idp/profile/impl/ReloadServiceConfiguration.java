@@ -34,11 +34,11 @@ import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceException;
 
 /**
  * Action that refreshes a {@link ReloadableService} manually.

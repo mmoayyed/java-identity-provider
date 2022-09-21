@@ -25,8 +25,8 @@
 <%@ page import="net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.DataConnector" %>
 <%@ page import="net.shibboleth.utilities.java.support.component.IdentifiedComponent" %>
-<%@ page import="net.shibboleth.utilities.java.support.service.ReloadableService" %>
-<%@ page import="net.shibboleth.utilities.java.support.service.ServiceableComponent" %>
+<%@ page import="net.shibboleth.shared.service.ReloadableService" %>
+<%@ page import="net.shibboleth.shared.service.ServiceableComponent" %>
 <%
 final RequestContext requestContext = (RequestContext) request.getAttribute("flowRequestContext");
 final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;

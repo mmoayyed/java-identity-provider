@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.shared.service.ReloadableService;
 
 /**
  * Function which returns the locale-aware display description of an attribute, defaulting to the

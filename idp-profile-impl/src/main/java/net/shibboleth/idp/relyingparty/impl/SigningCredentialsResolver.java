@@ -22,15 +22,15 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.service.ReloadableSpringService;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.shared.service.ServiceableComponent;
+import net.shibboleth.shared.spring.service.ReloadableSpringService;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.CredentialResolver;

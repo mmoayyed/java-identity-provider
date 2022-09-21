@@ -25,14 +25,14 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
- * Service registry wrapper around a {@link net.shibboleth.utilities.java.support.service.ReloadableService}.
+ * Service registry wrapper around a {@link net.shibboleth.shared.service.ReloadableService}.
  *
  * @author Marvin S. Addison
  */

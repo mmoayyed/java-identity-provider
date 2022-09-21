@@ -272,12 +272,12 @@
         p:exposedProperties="#{getObject('shibboleth.metrics.ExposedProperties')}" />
     
     <bean id="shibboleth.metrics.LoggingGaugeSet"
-        class="net.shibboleth.utilities.java.support.service.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="logging"
         p:service-ref="shibboleth.LoggingService" />
     
     <bean id="shibboleth.metrics.AccessControlGaugeSet"
-        class="net.shibboleth.utilities.java.support.service.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="accesscontrol"
         p:service-ref="shibboleth.ReloadableAccessControlService" />
 
@@ -287,17 +287,17 @@
         p:service-ref="shibboleth.MetadataResolverService" />
 
     <bean id="shibboleth.metrics.RelyingPartyGaugeSet"
-        class="net.shibboleth.utilities.java.support.service.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="relyingparty"
         p:service-ref="shibboleth.RelyingPartyResolverService" />
 
     <bean id="shibboleth.metrics.NameIdentifierGaugeSet"
-        class="net.shibboleth.utilities.java.support.service.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="nameid"
         p:service-ref="shibboleth.NameIdentifierGenerationService" />
 
     <bean id="shibboleth.metrics.AttributeRegistryGaugeSet"
-        class="net.shibboleth.utilities.java.support.service.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="attribute.registry"
         p:service-ref="shibboleth.AttributeRegistryService" />
 
@@ -307,17 +307,17 @@
         p:service-ref="shibboleth.AttributeResolverService" />
 
     <bean id="shibboleth.metrics.AttributeFilterGaugeSet"
-        class="net.shibboleth.utilities.java.support.service.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="attribute.filter"
         p:service-ref="shibboleth.AttributeFilterService" />
 
     <bean id="shibboleth.metrics.CASServiceRegistryGaugeSet"
-        class="net.shibboleth.utilities.java.support.service.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="cas.registry"
         p:service-ref="shibboleth.ReloadableCASServiceRegistry" />
 
     <bean id="shibboleth.metrics.ManagedBeanGaugeSet"
-        class="net.shibboleth.utilities.java.support.service.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="managedbean"
         p:service-ref="shibboleth.ManagedBeanService" />
         

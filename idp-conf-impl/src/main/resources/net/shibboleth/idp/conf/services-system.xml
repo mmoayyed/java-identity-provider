@@ -14,6 +14,13 @@
 
     <import resource="${idp.home}/conf/services.xml" />
 
+    <bean id="shibboleth.ReloadableService" abstract="true"
+        class="net.shibboleth.shared.spring.service.ReloadableSpringService" 
+        p:failFast="%{idp.service.failFast:false}"
+        p:reloadCheckDelay="PT0S"
+        p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
+        p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors" />
+
     <!--
     These are beans that define reloadable services. The actual Spring resources that configure the
     services are generally defined in the services.xml file edited by deployers.
@@ -33,13 +40,11 @@
         <ref bean="shibboleth.RelocatedBeanFactoryPostProcessor" />
     </util:list>
     
-    <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
+    <bean id="shibboleth.AttributeFilterService" parent="shibboleth.ReloadableService"
             depends-on="shibboleth.VelocityEngine"
             p:serviceConfigurations-ref="ExtendedAttributeFilterResources"
             p:failFast="%{idp.service.attribute.filter.failFast:%{idp.service.failFast:false}}"
-            p:reloadCheckDelay="%{idp.service.attribute.filter.checkInterval:PT0S}"
-            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
-            p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors">
+            p:reloadCheckDelay="%{idp.service.attribute.filter.checkInterval:PT0S}">
         <constructor-arg name="claz" value="net.shibboleth.idp.attribute.filter.AttributeFilter" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.attribute.filter.spring.impl.AttributeFilterServiceStrategy"
@@ -56,13 +61,11 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
+    <bean id="shibboleth.AttributeResolverService" parent="shibboleth.ReloadableService" 
             depends-on="shibboleth.VelocityEngine"
             p:serviceConfigurations-ref="ExtendedAttributeResolverResources"
             p:failFast="%{idp.service.attribute.resolver.failFast:%{idp.service.failFast:false}}"
-            p:reloadCheckDelay="%{idp.service.attribute.resolver.checkInterval:PT0S}"
-            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
-            p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors">
+            p:reloadCheckDelay="%{idp.service.attribute.resolver.checkInterval:PT0S}">
         <constructor-arg name="claz" value="net.shibboleth.idp.attribute.resolver.AttributeResolver" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverServiceStrategy"
@@ -80,12 +83,10 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.AttributeRegistryService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
+    <bean id="shibboleth.AttributeRegistryService" parent="shibboleth.ReloadableService" 
             p:serviceConfigurations-ref="ExtendedAttributeRegistryResources"
 	        p:failFast="%{idp.service.attribute.registry.failFast:%{idp.service.failFast:false}}"
-	        p:reloadCheckDelay="%{idp.service.attribute.registry.checkInterval:PT0S}"
-	        p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
-	        p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors">
+	        p:reloadCheckDelay="%{idp.service.attribute.registry.checkInterval:PT0S}">
 	    <constructor-arg name="claz" value="net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry" />
 	    <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy">
@@ -114,13 +115,11 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
+    <bean id="shibboleth.NameIdentifierGenerationService" parent="shibboleth.ReloadableService" 
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"
         p:serviceConfigurations-ref="ExtendedNameIdentifierGenerationResources"
         p:failFast="%{idp.service.nameidGeneration.failFast:%{idp.service.failFast:false}}"
-        p:reloadCheckDelay="%{idp.service.nameidGeneration.checkInterval:PT0S}"
-        p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
-        p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors" />
+        p:reloadCheckDelay="%{idp.service.nameidGeneration.checkInterval:PT0S}"/>
     <!-- Auto-append system config file to resource set. -->
     <bean id ="ExtendedNameIdentifierGenerationResources" parent="shibboleth.ListCombiner"
           p:firstList-ref="#{'%{idp.service.nameidGeneration.resources:shibboleth.NameIdentifierGenerationResources}'.trim()}" >
@@ -131,15 +130,13 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
+    <bean id="shibboleth.RelyingPartyResolverService" parent="shibboleth.ReloadableService"
             p:serviceConfigurations-ref="ExtendedRelyingPartyResolverResources"
             p:failFast="%{idp.service.relyingparty.failFast:%{idp.service.failFast:false}}"
-            p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:PT0S}"
-            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
-            p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors">
+            p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:PT0S}">
         <constructor-arg name="claz" value="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver" />
         <constructor-arg name="strategy">
-            <bean class="net.shibboleth.ext.spring.service.ClassBasedServiceStrategy"
+            <bean class="net.shibboleth.shared.spring.service.ClassBasedServiceStrategy"
                 c:serviceableClaz="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver" />
         </constructor-arg>
     </bean>
@@ -153,13 +150,11 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
+    <bean id="shibboleth.MetadataResolverService" parent="shibboleth.ReloadableService"
             depends-on="shibboleth.AttributeRegistryService" 
             p:serviceConfigurations-ref="ExtendedMetadataResolverResources"
             p:failFast="%{idp.service.metadata.failFast:%{idp.service.failFast:false}}"
-            p:reloadCheckDelay="%{idp.service.metadata.checkInterval:PT0S}"
-            p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors"
-            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor">
+            p:reloadCheckDelay="%{idp.service.metadata.checkInterval:PT0S}">
         <constructor-arg name="claz" value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.saml.metadata.impl.MetadataResolverServiceStrategy" />
@@ -175,13 +170,11 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.ReloadableAccessControlService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
+    <bean id="shibboleth.ReloadableAccessControlService" parent="shibboleth.ReloadableService"
         c:claz="net.shibboleth.utilities.java.support.security.AccessControlService" 
         p:serviceConfigurations-ref="ExtendedAccessControlResources"
         p:failFast="%{idp.service.access.failFast:%{idp.service.failFast:true}}"
-        p:reloadCheckDelay="%{idp.service.access.checkInterval:PT0S}"
-        p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
-        p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors" />
+        p:reloadCheckDelay="%{idp.service.access.checkInterval:PT0S}"/>
     <!-- Auto-append system config file to resource set. -->
     <bean id ="ExtendedAccessControlResources" parent="shibboleth.ListCombiner"
           p:firstList-ref="#{'%{idp.service.access.resources:shibboleth.AccessControlResources}'.trim()}" >
@@ -192,14 +185,12 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.ReloadableCASServiceRegistry" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
+    <bean id="shibboleth.ReloadableCASServiceRegistry" parent="shibboleth.ReloadableService"
           c:claz="net.shibboleth.idp.cas.service.ServiceRegistry"
           p:serviceConfigurations="#{getObject('%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}'.trim()) ?:
                 getObject('shibboleth.DefaultCASServiceRegistryResources')}"
           p:failFast="%{idp.service.cas.registry.failFast:%{idp.service.failFast:false}}"
-          p:reloadCheckDelay="%{idp.service.cas.registry.checkInterval:PT0S}"
-          p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
-          p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors" />
+          p:reloadCheckDelay="%{idp.service.cas.registry.checkInterval:PT0S}" />
     
     <!-- This default populates the service with an empty CAS registry as a substitute for a real config. -->
     <util:list id="shibboleth.DefaultCASServiceRegistryResources">
@@ -220,16 +211,14 @@
         </bean>
     </util:list>
 
-    <bean id="shibboleth.ManagedBeanService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
+    <bean id="shibboleth.ManagedBeanService" parent="shibboleth.ReloadableService" 
             c:claz="org.springframework.context.ApplicationContext"
             p:serviceConfigurations="#{getObject('%{idp.service.managedBean.resources:shibboleth.ManagedBeanResources}'.trim()) ?:
                 getObject('shibboleth.DefaultManagedBeanResources')}"
             p:failFast="%{idp.service.managedBean.failFast:%{idp.service.failFast:false}}"
-            p:reloadCheckDelay="%{idp.service.managedBean.checkInterval:PT0S}"
-            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
-            p:beanFactoryPostProcessors-ref="shibboleth.BeanFactoryPostProcessors">
+            p:reloadCheckDelay="%{idp.service.managedBean.checkInterval:PT0S}">
         <constructor-arg name="strategy">
-            <bean class="net.shibboleth.ext.spring.service.ApplicationContextServiceStrategy" />
+            <bean class="net.shibboleth.shared.spring.service.ApplicationContextServiceStrategy" />
         </constructor-arg>
     </bean>
     <util:list id="shibboleth.DefaultManagedBeanResources">

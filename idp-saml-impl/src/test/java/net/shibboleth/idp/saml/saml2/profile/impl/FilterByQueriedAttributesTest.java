@@ -47,10 +47,10 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.shared.testing.MockReloadableService;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
 /** Tests for {@link FilterByQueriedAttributes} */
