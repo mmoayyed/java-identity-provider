@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.utilities.java.support.annotation.Prototype;
-
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.annotation.Prototype;
 
 /** {@link ProfileActionBeanFactoryPostProcessor} unit test. */
 @ContextConfiguration({"ProfileActionBeanFactoryPostProcessorTest.xml"})

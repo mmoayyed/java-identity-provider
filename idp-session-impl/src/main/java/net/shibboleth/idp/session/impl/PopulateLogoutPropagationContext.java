@@ -40,9 +40,9 @@ import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.idp.session.context.LogoutPropagationContext.Result;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.DataSealerException;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**

@@ -28,7 +28,7 @@ import javax.json.JsonObject;
 import net.shibboleth.idp.saml.session.SAML1SPSession;
 import net.shibboleth.idp.session.AbstractSPSessionSerializer;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.annotation.ParameterName;
+import net.shibboleth.shared.annotation.ParameterName;
 
 /**
  * A serializer for {@link SAML1SPSession} objects.

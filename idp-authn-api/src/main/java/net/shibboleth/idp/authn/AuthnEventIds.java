@@ -19,7 +19,7 @@ package net.shibboleth.idp.authn;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Constants to use for {@link org.opensaml.profile.action.ProfileAction}

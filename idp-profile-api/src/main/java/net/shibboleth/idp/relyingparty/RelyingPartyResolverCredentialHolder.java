@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.security.credential.Credential;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
 
 /**
  * This is a utility class used as an auto-wiring source for collections of

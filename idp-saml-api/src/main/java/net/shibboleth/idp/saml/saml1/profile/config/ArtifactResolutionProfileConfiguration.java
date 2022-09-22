@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 1 artifact resolution requests. */
 public class ArtifactResolutionProfileConfiguration

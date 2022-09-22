@@ -41,7 +41,7 @@ import net.shibboleth.idp.module.IdPModule.ModuleResource;
 import net.shibboleth.idp.module.IdPModule.ResourceResult;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 

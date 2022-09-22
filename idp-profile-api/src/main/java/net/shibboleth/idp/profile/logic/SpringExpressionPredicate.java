@@ -20,8 +20,8 @@ package net.shibboleth.idp.profile.logic;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.ParameterName;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.expression.EvaluationContext;

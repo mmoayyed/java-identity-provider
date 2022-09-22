@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /** Mock implementation of {@link ProfileConfiguration}. */
 public class MockProfileConfiguration extends AbstractProfileConfiguration {

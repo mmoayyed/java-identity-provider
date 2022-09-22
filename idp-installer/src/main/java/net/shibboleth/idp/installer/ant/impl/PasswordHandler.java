@@ -28,7 +28,7 @@ import org.apache.tools.ant.input.InputRequest;
 import org.apache.tools.ant.input.SecureInputHandler;
 
 import net.shibboleth.idp.installer.PropertiesWithComments;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /** Ant helper class to ask for passwords, rejecting zero length passwords and asking for confirmation. */
 public class PasswordHandler extends SecureInputHandler {

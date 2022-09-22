@@ -26,12 +26,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.net.CookieManager;
 import net.shibboleth.shared.net.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.net.impl.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.shared.net.impl.ThreadLocalHttpServletResponseProxy;
 import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;

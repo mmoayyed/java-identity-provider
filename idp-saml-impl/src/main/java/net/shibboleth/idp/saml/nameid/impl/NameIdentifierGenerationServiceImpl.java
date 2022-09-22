@@ -23,8 +23,8 @@ import org.opensaml.saml.saml1.profile.SAML1NameIdentifierGenerator;
 import org.opensaml.saml.saml2.profile.SAML2NameIDGenerator;
 
 import net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.spring.service.AbstractServiceableComponent;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 

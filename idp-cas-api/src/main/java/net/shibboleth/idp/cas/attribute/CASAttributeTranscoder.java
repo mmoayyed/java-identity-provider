@@ -20,7 +20,7 @@ package net.shibboleth.idp.cas.attribute;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoder;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Marker interface for transcoders that support CAS attributes.

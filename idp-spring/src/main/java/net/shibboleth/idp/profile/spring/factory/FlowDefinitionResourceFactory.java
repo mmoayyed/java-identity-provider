@@ -37,7 +37,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.config.FlowDefinitionResource;
 import org.springframework.webflow.core.collection.AttributeMap;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**

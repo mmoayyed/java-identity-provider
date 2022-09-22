@@ -23,8 +23,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.utilities.java.support.annotation.constraint.Live;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.Live;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
 
 import org.opensaml.messaging.context.BaseContext;
 

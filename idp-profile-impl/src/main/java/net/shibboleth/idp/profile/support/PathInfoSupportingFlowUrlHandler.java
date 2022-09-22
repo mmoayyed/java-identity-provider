@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**

@@ -29,8 +29,8 @@ import javax.security.auth.Subject;
 import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.idp.authn.ExternalAuthentication;
-import net.shibboleth.utilities.java.support.annotation.constraint.Live;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.Live;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**

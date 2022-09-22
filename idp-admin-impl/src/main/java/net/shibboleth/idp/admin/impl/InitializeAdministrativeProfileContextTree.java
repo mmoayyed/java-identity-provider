@@ -32,8 +32,8 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.spring.util.SpringSupport;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /**
  * An action that processes settings from a supplied {@link AdministrativeFlowDescriptor} to prepare

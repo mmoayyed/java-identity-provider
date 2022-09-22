@@ -39,7 +39,7 @@ import javax.json.stream.JsonGeneratorFactory;
 
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketState;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;

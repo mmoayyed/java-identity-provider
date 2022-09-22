@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import org.opensaml.saml.common.SAMLException;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Generates and manages transient identifiers according to specific strategies.

@@ -26,8 +26,8 @@ import javax.annotation.Nullable;
 
 import com.google.common.net.InetAddresses;
 
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.net.IPRange;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** A {@link BiPredicate} that checks if a pair of addresses are either equal, or share an {@link IPRange}. */

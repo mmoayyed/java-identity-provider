@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import org.opensaml.saml.common.xml.SAMLConstants;
 
 import net.shibboleth.idp.session.BasicSPSession;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Marker subtype for a SAML 1 session, adds no actual information other than its identity as

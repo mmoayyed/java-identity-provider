@@ -29,7 +29,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.profile.FlowDescriptor;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 

@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 2 attribute query requests. */
 public class AttributeQueryProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration {

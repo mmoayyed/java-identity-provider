@@ -42,8 +42,8 @@ import net.shibboleth.idp.authn.CredentialValidator.ErrorHandler;
 import net.shibboleth.idp.authn.CredentialValidator.WarningHandler;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * An action that processes a list of {@link CredentialValidator} objects to produce an {@link AuthenticationResult}.

@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Principal serializer for {@link LdapPrincipal}.

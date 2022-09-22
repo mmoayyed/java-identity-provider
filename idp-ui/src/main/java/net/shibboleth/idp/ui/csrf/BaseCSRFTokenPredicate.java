@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 
 import org.springframework.webflow.definition.StateDefinition;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 
 /**

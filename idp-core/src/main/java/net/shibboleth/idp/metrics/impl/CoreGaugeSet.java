@@ -22,7 +22,7 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricSet;
 import com.codahale.metrics.RatioGauge;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

@@ -19,7 +19,7 @@ package net.shibboleth.idp.cas.config;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * CAS protocol configuration that applies to the <code>/proxy</code> URI.

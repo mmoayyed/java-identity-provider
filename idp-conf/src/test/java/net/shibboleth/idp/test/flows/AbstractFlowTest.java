@@ -75,11 +75,11 @@ import net.shibboleth.idp.test.InMemoryDirectory;
 import net.shibboleth.idp.test.PreferFileSystemApplicationContextInitializer;
 import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.idp.test.TestEnvironmentApplicationContextInitializer;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.net.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.security.impl.Type4UUIDIdentifierGenerationStrategy;
 import net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 

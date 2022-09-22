@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 // TODO: move attribute related events into that module?
 

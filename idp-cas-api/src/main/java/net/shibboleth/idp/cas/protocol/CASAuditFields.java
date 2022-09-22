@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.cas.protocol;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-
 import javax.annotation.Nonnull;
+
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Constants to use for audit logging fields stored in an {@link net.shibboleth.idp.profile.context.AuditContext}.

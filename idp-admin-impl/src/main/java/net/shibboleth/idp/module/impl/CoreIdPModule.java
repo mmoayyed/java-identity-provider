@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.PropertyDrivenIdPModule;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Implementation base class for {@link IdPModule} that lives within the core code

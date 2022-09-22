@@ -26,8 +26,8 @@ import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
-import net.shibboleth.utilities.java.support.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.ParameterName;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.profile.context.ProfileRequestContext;

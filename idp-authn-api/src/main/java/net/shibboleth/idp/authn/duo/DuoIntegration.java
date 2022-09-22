@@ -18,7 +18,7 @@
 package net.shibboleth.idp.authn.duo;
 
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

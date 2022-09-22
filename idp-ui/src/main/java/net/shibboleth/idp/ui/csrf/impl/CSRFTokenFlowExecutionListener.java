@@ -33,7 +33,7 @@ import org.springframework.webflow.execution.View;
 import net.shibboleth.idp.ui.csrf.CSRFToken;
 import net.shibboleth.idp.ui.csrf.CSRFTokenManager;
 import net.shibboleth.idp.ui.csrf.InvalidCSRFTokenException;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;

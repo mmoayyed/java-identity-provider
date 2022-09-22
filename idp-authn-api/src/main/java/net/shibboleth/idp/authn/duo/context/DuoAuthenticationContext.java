@@ -26,8 +26,8 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.Live;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.Live;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
 
 /**
  * Context that carries Duo factor and device or passcode to be used in validation.
