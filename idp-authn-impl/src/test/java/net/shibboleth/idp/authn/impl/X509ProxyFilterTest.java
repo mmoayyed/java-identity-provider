@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletResponse;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link X509ProxyFilter} unit test. */
 public class X509ProxyFilterTest extends BaseAuthenticationContextTest {

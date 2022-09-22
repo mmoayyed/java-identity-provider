@@ -36,13 +36,13 @@ import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverServiceStrategy;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.shared.spring.config.StringToDurationConverter;
 import net.shibboleth.shared.spring.config.StringToIPRangeConverter;
 import net.shibboleth.shared.spring.config.StringToResourceConverter;
 import net.shibboleth.shared.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
  * Base class for tests for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.

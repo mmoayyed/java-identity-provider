@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import org.apache.tools.ant.BuildException;
 
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.shared.component.InitializableComponent;
 
 /** Tells the installers about the current install state. */
 public interface CurrentInstallState extends InitializableComponent {

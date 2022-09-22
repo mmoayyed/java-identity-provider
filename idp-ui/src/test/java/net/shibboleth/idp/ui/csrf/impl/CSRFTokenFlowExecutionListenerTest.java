@@ -40,7 +40,7 @@ import net.shibboleth.idp.ui.csrf.BaseCSRFTokenPredicate;
 import net.shibboleth.idp.ui.csrf.CSRFToken;
 import net.shibboleth.idp.ui.csrf.CSRFTokenManager;
 import net.shibboleth.idp.ui.csrf.InvalidCSRFTokenException;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /**

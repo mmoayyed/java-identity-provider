@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.profile;
 
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.shared.component.DestructableComponent;
+import net.shibboleth.shared.component.IdentifiableComponent;
+import net.shibboleth.shared.component.InitializableComponent;
 
 /**
  * Marker interface for a descriptor for a webflow allowing managed injection of configuration settings.

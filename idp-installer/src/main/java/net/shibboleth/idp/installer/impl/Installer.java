@@ -25,7 +25,7 @@ import net.shibboleth.idp.installer.CurrentInstallState;
 import net.shibboleth.idp.installer.InstallerProperties;
 import net.shibboleth.idp.installer.InstallerPropertiesImpl;
 import net.shibboleth.idp.installer.V4Install;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /**
  * Entry point to run the main classes.

@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import net.shibboleth.idp.saml.binding.BindingDescriptor;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.shared.component.AbstractInitializableComponent;
 
 
 /**

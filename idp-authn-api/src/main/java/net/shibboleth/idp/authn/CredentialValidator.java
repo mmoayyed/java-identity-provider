@@ -26,7 +26,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.shared.component.IdentifiableComponent;
 
 /**
  * High-level API for validating credentials and producing a Java Subject as a result.

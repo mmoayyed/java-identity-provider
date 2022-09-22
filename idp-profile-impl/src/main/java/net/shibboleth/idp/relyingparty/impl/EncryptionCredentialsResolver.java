@@ -24,9 +24,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.component.IdentifiableComponent;
 import net.shibboleth.shared.service.ServiceableComponent;
 import net.shibboleth.shared.spring.service.ReloadableSpringService;
-import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;

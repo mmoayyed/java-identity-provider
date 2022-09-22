@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
+import net.shibboleth.shared.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 
 import org.opensaml.profile.context.ProfileRequestContext;

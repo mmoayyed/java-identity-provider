@@ -26,7 +26,7 @@ import java.time.Instant;
 
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

@@ -47,7 +47,7 @@ import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** Basic data sources for testing the attribute generators. */
 @SuppressWarnings({"javadoc", "removal"})

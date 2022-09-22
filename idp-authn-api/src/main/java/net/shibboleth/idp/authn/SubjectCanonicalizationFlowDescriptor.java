@@ -27,7 +27,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.profile.FlowDescriptor;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**

@@ -36,8 +36,8 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.impl.HttpServletRequestResponseContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** {@link PopulateSessionContext} unit test. */
 @SuppressWarnings("javadoc")

@@ -37,7 +37,7 @@ import net.shibboleth.idp.consent.logic.impl.PreferExplicitOrderComparator;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;

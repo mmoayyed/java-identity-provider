@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
 import org.opensaml.profile.action.ProfileAction;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.webflow.execution.Action;
+
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /**
  * Post-processes {@link ProfileAction} beans by wrapping them in a Spring Web Flow adaptor.

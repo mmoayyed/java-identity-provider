@@ -41,9 +41,9 @@ import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.codec.EncodingException;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSException;

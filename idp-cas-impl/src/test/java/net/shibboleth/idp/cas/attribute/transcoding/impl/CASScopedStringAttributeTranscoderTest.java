@@ -39,8 +39,8 @@ import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistry
 import net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder;
 import net.shibboleth.idp.cas.attribute.Attribute;
 import net.shibboleth.idp.cas.attribute.CASAttributeTranscoder;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockApplicationContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;

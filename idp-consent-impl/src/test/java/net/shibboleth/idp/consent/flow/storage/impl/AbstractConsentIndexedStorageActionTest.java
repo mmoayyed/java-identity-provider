@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import net.shibboleth.idp.consent.storage.impl.CollectionSerializer;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.shared.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;

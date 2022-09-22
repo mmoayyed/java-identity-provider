@@ -43,8 +43,8 @@ import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.impl.HttpServletRequestResponseContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 

@@ -27,7 +27,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest.SubjectNameLookupFunction;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;

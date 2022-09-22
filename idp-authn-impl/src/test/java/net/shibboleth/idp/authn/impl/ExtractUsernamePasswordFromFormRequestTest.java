@@ -32,7 +32,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link ExtractUsernamePasswordFromFormRequest} unit test. */
 public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticationContextTest {

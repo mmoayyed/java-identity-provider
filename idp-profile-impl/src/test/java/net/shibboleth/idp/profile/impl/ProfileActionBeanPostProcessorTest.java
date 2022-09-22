@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link ProfileActionBeanPostProcessor} unit test. */
 @ContextConfiguration({"ProfileActionBeanPostProcessorTest.xml"})

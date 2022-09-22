@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.shared.component.UninitializedComponentException;
 
 import org.opensaml.profile.context.PreviousEventContext;
 import org.opensaml.profile.context.ProfileRequestContext;

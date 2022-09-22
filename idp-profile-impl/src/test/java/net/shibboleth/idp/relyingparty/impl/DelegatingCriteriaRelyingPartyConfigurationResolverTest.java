@@ -46,8 +46,8 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockApplicationContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 

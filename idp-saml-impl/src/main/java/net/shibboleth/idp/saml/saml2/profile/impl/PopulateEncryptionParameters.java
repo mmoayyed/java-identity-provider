@@ -55,7 +55,7 @@ import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;

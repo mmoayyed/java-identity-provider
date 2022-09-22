@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
+import net.shibboleth.shared.component.IdentifiedComponent;
 
 /**
  * Describes a session with a service in turn associated with an {@link IdPSession}.

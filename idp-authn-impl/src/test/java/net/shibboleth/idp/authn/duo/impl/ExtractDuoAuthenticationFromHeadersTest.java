@@ -24,7 +24,7 @@ import net.shibboleth.idp.authn.duo.DuoAuthAPI;
 import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 import java.util.function.Supplier;
 

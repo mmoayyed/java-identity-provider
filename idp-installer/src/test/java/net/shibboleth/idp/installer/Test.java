@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /**
  *

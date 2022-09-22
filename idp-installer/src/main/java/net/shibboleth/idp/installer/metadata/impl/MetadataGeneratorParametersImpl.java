@@ -29,8 +29,8 @@ import javax.annotation.Nullable;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.installer.MetadataGeneratorParameters;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.AbstractInitializableComponent;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /**
  * Implementation of {@link MetadataGeneratorParameters}.

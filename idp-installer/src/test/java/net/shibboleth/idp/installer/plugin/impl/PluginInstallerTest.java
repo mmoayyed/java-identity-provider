@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.plugin.AbstractIdPPlugin;
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")
 public class PluginInstallerTest extends BasePluginTest {

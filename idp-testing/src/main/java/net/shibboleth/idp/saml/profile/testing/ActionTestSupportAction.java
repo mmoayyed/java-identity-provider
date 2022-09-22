@@ -18,7 +18,7 @@
 package net.shibboleth.idp.saml.profile.testing;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 

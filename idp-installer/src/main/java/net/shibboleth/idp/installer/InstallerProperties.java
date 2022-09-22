@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.shared.component.InitializableComponent;
 
 /** Interface to describe simply parameterization and status of the installation.
  */

@@ -30,7 +30,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
+import net.shibboleth.shared.component.IdentifiedComponent;
 
 /**
  * This interface is exported (via the service API) by every IdP module.

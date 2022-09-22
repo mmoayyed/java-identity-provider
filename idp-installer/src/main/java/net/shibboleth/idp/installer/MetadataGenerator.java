@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.tools.ant.BuildException;
 
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.shared.component.InitializableComponent;
 
 /**
  * Interface to define Metadata Generation.

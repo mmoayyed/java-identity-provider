@@ -22,7 +22,7 @@ import java.security.Principal;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**

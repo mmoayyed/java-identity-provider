@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
+import net.shibboleth.shared.component.IdentifiedComponent;
 
 /**
  * Represents the result of a profile interceptor flow intended for storage by a

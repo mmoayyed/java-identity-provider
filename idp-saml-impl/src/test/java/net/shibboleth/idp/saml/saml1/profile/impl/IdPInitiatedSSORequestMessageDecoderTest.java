@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
 import net.shibboleth.idp.saml.profile.impl.IdPInitiatedSSORequest;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /**
  * Test the {@link IdPInitiatedSSORequestMessageDecoder}.

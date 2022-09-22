@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.attribute.filter.FilterScriptContextExtender;
 import net.shibboleth.idp.attribute.resolver.scripted.ResolverScriptContextExtender;
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**

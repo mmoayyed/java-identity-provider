@@ -37,7 +37,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")
 public class TrustStoreTest {

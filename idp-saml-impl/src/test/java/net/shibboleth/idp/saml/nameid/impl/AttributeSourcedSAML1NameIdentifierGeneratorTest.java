@@ -39,7 +39,7 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** Unit test for {@link AttributeSourcedSAML1NameIdentifierGenerator}. */
 public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {

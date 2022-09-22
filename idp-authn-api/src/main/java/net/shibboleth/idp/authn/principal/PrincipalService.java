@@ -21,7 +21,7 @@ import java.security.Principal;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
+import net.shibboleth.shared.component.IdentifiedComponent;
 
 /**
  * Interface that provides services for a {@link Principal} of a given type.

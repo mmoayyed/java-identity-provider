@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.impl;
 
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
