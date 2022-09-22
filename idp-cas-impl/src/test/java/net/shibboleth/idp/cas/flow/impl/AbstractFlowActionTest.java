@@ -36,8 +36,9 @@ import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.shared.security.DataSealerKeyStrategy;
 import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.security.DataSealerKeyStrategy;
+
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.profile.context.ProfileRequestContext;

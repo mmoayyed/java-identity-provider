@@ -32,11 +32,11 @@ import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
+import net.shibboleth.shared.security.DataSealer;
+import net.shibboleth.shared.security.DataSealerException;
+import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
 import net.shibboleth.shared.spring.resource.ResourceHelper;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.security.DataSealer;
-import net.shibboleth.utilities.java.support.security.DataSealerException;
-import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;

@@ -14,14 +14,14 @@
 
     <bean class="net.shibboleth.shared.service.security.impl.ReloadingAccessControlService">
         <constructor-arg>
-            <bean class="net.shibboleth.utilities.java.support.security.impl.BasicAccessControlService"
+            <bean class="net.shibboleth.shared.security.impl.BasicAccessControlService"
                 p:id="shibboleth.AccessControlService"
                 p:policyMap-ref="shibboleth.AccessControlPolicies" />
         </constructor-arg>
     </bean>
 
     <bean id="shibboleth.IPRangeAccessControl" abstract="true"
-        class="net.shibboleth.utilities.java.support.security.impl.IPRangeAccessControl" />
+        class="net.shibboleth.shared.security.impl.IPRangeAccessControl" />
 
     <bean id="shibboleth.PredicateAccessControl" abstract="true"
         class="org.opensaml.profile.logic.PredicateAccessControl" />

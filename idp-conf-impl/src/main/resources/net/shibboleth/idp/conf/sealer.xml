@@ -19,7 +19,7 @@
     <!-- Isolated for potential reusability. -->
 
     <bean id="shibboleth.DataSealerKeyStrategy" lazy-init="true"
-            class="net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy"
+            class="net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy"
         p:keystoreType="%{idp.sealer.storeType:JCEKS}"
         p:keystoreResource="%{idp.sealer.storeResource:}"
         p:keyVersionResource="%{idp.sealer.versionResource:}"
@@ -29,7 +29,7 @@
         p:updateInterval="%{idp.sealer.updateInterval:PT15M}" />
 
     <bean id="shibboleth.DataSealer" name="shibboleth.TransientIDDataSealer" lazy-init="true"
-        class="net.shibboleth.utilities.java.support.security.DataSealer"
+        class="net.shibboleth.shared.security.DataSealer"
         p:keyStrategy-ref="#{ '%{idp.sealer.keyStrategy:shibboleth.DataSealerKeyStrategy}'.trim() }"
         p:lockedAtStartup="#{!environment.containsProperty('idp.sealer.keyStrategy') and (!environment.containsProperty('idp.sealer.storePassword') or !environment.containsProperty('idp.sealer.keyPassword')) }" />
 

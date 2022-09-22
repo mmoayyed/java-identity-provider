@@ -4,4 +4,4 @@ declare LOCATION
 
 LOCATION=$(dirname $0)
 
-$LOCATION/runclass.sh net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategyTool "$@"
+$LOCATION/runclass.sh net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategyTool "$@"

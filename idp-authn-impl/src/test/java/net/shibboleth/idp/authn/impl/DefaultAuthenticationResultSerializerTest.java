@@ -51,10 +51,10 @@ import net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.ProxyAuthenticationPrincipalSerializer;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
+import net.shibboleth.shared.security.DataSealer;
+import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
 import net.shibboleth.shared.spring.resource.ResourceHelper;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.security.DataSealer;
-import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;

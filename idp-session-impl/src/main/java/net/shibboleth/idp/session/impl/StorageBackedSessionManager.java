@@ -55,6 +55,7 @@ import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.shared.net.CookieManager;
 import net.shibboleth.shared.net.HttpServletSupport;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -64,7 +65,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 /**
  * Implementation of {@link SessionManager} and {@link SessionResolver} interfaces that relies on a

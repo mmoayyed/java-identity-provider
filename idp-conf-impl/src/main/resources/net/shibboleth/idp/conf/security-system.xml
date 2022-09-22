@@ -13,7 +13,7 @@
        default-destroy-method="destroy">
 
     <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
-        class="net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy" />
+        class="net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy" />
 
     <!-- Principally used in relying-party.xml to define new security configurations. -->
 

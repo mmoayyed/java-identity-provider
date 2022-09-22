@@ -30,9 +30,9 @@ import net.shibboleth.shared.net.CookieManager;
 import net.shibboleth.shared.net.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.net.impl.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.shared.net.impl.ThreadLocalHttpServletResponseProxy;
+import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.storage.impl.MemoryStorageService;

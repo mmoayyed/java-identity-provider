@@ -171,7 +171,7 @@
     </bean>
 
     <bean id="shibboleth.ReloadableAccessControlService" parent="shibboleth.ReloadableService"
-        c:claz="net.shibboleth.utilities.java.support.security.AccessControlService" 
+        c:claz="net.shibboleth.shared.security.AccessControlService" 
         p:serviceConfigurations-ref="ExtendedAccessControlResources"
         p:failFast="%{idp.service.access.failFast:%{idp.service.failFast:true}}"
         p:reloadCheckDelay="%{idp.service.access.checkInterval:PT0S}"/>

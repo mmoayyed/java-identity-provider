@@ -34,9 +34,9 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
 
 /**
  * Action that sets keystore and key passwords for one or more DataSealer KeyStrategy

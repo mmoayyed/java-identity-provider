@@ -13,7 +13,7 @@
        default-destroy-method="destroy">
 
     <bean id="shibboleth.SessionIDGenerator"
-        class="net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy"
+        class="net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy"
         c:identifierSize="%{idp.session.idSize:32}" />
 
     <!-- Dummy bean for compatibility, this is no longer a supported extensions point. -->

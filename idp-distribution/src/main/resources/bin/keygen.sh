@@ -4,4 +4,4 @@ declare LOCATION
 
 LOCATION=$(dirname $0)
 
-$LOCATION/runclass.sh net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator "$@"
+$LOCATION/runclass.sh net.shibboleth.shared.security.impl.SelfSignedCertificateGenerator "$@"

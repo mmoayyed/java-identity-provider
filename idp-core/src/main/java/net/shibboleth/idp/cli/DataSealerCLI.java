@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.Version;
+import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.security.DataSealer;
 
 /**
  * Command line utility for {@link DataSealer}.

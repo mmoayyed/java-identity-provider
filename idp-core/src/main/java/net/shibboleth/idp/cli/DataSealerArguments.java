@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.Parameter;
 
-import net.shibboleth.utilities.java.support.security.DataSealer;
+import net.shibboleth.shared.security.DataSealer;
 
 /**
  * Arguments for DataSealer CLI.

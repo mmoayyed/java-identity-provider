@@ -27,11 +27,11 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.cas.ticket.TicketState;
+import net.shibboleth.shared.security.DataSealer;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
+import net.shibboleth.shared.security.impl.RandomIdentifierGenerationStrategy;
 import net.shibboleth.shared.spring.resource.ResourceHelper;
-import net.shibboleth.utilities.java.support.security.DataSealer;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
-import net.shibboleth.utilities.java.support.security.impl.RandomIdentifierGenerationStrategy;
 
 import org.apache.commons.codec.binary.Base32;
 import org.opensaml.storage.impl.MemoryStorageService;

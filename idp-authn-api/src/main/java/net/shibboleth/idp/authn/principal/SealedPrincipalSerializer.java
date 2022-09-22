@@ -28,10 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import net.shibboleth.shared.security.DataSealer;
+import net.shibboleth.shared.security.DataSealerException;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.security.DataSealer;
-import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 /**
  * Principal serializer that encrypts/decrypts the data when serializing.

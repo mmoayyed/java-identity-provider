@@ -41,8 +41,8 @@ import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.shared.net.CookieManager;
 import net.shibboleth.shared.net.impl.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.shared.net.impl.ThreadLocalHttpServletResponseProxy;
+import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 /** {@link StorageBackedIdPSessionSerializer} unit test. */
 @SuppressWarnings("javadoc")

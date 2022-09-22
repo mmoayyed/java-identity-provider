@@ -698,7 +698,7 @@
         </property>
         <property name="pGTIOUGeneratorLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="pGTIOUGenerator"
-                p:propertyType="#{T(net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy)}" />
+                p:propertyType="#{T(net.shibboleth.shared.security.IdentifierGenerationStrategy)}" />
         </property>
         <property name="userAttributeLookupStrategy">
             <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="userAttribute" />
