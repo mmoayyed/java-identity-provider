@@ -587,7 +587,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     }
 
     /** Predicate to ask the user if they want to install the trust store provided. */
-    private static class InstallerQuery implements Predicate<String> {
+    private class InstallerQuery implements Predicate<String> {
 
         /** What to say. */
         @Nonnull
@@ -603,6 +603,10 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
         /** {@inheritDoc} */
         public boolean test(final String keyString) {
+        	if (System.console() == null) {
+        		log.error("No Console Attached to installer");
+        		return false;
+        	}
             System.console().printf("%s:\n%s [yN] ", promptText, keyString);
             System.console().flush();
             final String result  = StringSupport.trimOrNull(System.console().readLine());
