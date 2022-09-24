@@ -58,10 +58,6 @@
 
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-cli</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-security</artifactId>
         </dependency>
         <dependency>
@@ -130,18 +126,6 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.beust</groupId>
-            <artifactId>jcommander</artifactId>
-	    <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <!--  Only used in a command line --> 
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <scope>provided</scope>
-         </dependency>
 
         <!-- Runtime Dependencies -->
         <dependency>

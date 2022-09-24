@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.shibboleth.idp</groupId>
+        <artifactId>idp-parent</artifactId>
+        <version>5.0.0-SNAPSHOT</version>
+        <relativePath>../idp-parent</relativePath>
+    </parent>
+
+    <name>Shibboleth IdP :: Command Line</name>
+    <description>Command Line Tools</description>
+    <artifactId>idp-cli</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <automatic.module.name>net.shibboleth.idp.cli</automatic.module.name>
+    </properties>
+
+    <dependencies>
+        <!-- Provided Dependencies - All dependencies are provided, reflecting the fact that
+             IdP Distribution has to pull them together and all the installer stuff has a carefully
+             constructed classpath. -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-admin-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+	<dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-cli</artifactId>
+           <scope>provided</scope>
+        </dependency>
+
+	<dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+           <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <scope>provided</scope>
+         </dependency>
+    </dependencies>
+
+    <scm>
+        <connection>${shibboleth.scm.connection}java-identity-provider</connection>
+        <developerConnection>${shibboleth.scm.developerConnection}java-identity-provider</developerConnection>
+        <url>${shibboleth.scm.url}java-identity-provider.git</url>
+    </scm>
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>scp:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
+</project>

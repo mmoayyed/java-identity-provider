@@ -33,6 +33,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-cli</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Required if using classes with command line support. -->
         <dependency>
             <groupId>com.beust</groupId>
@@ -175,6 +181,10 @@
                         </goals>
                         <configuration>
                             <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>idp-cli</artifactId>
+                                </artifactItem>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>idp-installer</artifactId>

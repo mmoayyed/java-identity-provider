@@ -47,6 +47,7 @@
 
         <module>../idp-war</module>
         <module>../idp-war-distribution</module>
+	<module>../idp-cli</module>
         <module>../idp-installer</module>
         <module>../idp-conf</module>
         <module>../idp-conf-impl</module>

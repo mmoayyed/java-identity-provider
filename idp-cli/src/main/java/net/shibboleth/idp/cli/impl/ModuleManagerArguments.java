@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.module.impl;
+package net.shibboleth.idp.cli.impl;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
