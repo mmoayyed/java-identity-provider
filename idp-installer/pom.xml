@@ -24,9 +24,10 @@
         <!-- Provided Dependencies - All dependencies are provided, reflecting the fact that
              IdP Distribution has to pull them together and all the installer stuff has a carefully
              constructed classpath. -->
+
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-core</artifactId>
+            <artifactId>idp-cli</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
