@@ -51,7 +51,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.shared.testing.MockReloadableService;
-import net.shibboleth.utilities.java.support.xml.XMLParserException;
+import net.shibboleth.shared.xml.XMLParserException;
 
 /** Tests for {@link FilterByQueriedAttributes} */
 public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {

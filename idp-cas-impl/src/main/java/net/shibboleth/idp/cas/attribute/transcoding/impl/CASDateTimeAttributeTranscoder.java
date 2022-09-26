@@ -36,7 +36,7 @@ import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder;
 import net.shibboleth.idp.cas.attribute.Attribute;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
+import net.shibboleth.shared.xml.DOMTypeSupport;
 
 /**
  * {@link AttributeTranscoder} that supports {@link Attribute} and

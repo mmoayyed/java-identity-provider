@@ -21,8 +21,6 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
-
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
@@ -33,6 +31,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
+
+import net.shibboleth.shared.xml.SerializeSupport;
 
 /**
  * SAML 2 ECP SSO flow test.

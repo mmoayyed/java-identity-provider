@@ -33,9 +33,9 @@ import com.google.common.base.MoreObjects;
 
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.xml.SerializeSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 /**
  * Extends a {@link BasicSPSession} with SAML 2.0 information required for

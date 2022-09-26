@@ -63,9 +63,9 @@ import net.shibboleth.idp.saml.xmlobject.Scope;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.xml.DOMTypeSupport;
+import net.shibboleth.shared.xml.XMLConstants;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
-import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 /**
  * This class gathers information which it then uses to generate IdP Metadata. Loosely based on the SP metadata

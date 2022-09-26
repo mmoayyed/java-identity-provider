@@ -131,7 +131,7 @@
           depends-on="shibboleth.ParserPool"
           p:parserPool-ref="shibboleth.ParserPool" />
 
-    <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+    <bean id="shibboleth.ParserPool" class="net.shibboleth.shared.xml.impl.BasicParserPool"
           p:maxPoolSize="100"
           p:coalescing="true"
           p:ignoreComments="true"

@@ -43,9 +43,9 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.xml.SerializeSupport;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.codec.EncodingException;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 /**
  * Function to calculate the hash of the values of an IdP attribute.

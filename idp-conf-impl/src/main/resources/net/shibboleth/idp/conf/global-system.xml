@@ -190,7 +190,7 @@
 
     <alias name="%{idp.xml.parserPool:shibboleth.DefaultParserPool}" alias="shibboleth.ParserPool"/>
 
-    <bean id="shibboleth.DefaultParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+    <bean id="shibboleth.DefaultParserPool" class="net.shibboleth.shared.xml.impl.BasicParserPool"
             depends-on="shibboleth.LoggingService" lazy-init="true"
             p:maxPoolSize="100"
             p:coalescing="true"
@@ -217,10 +217,10 @@
     <bean id="shibboleth.SchemaBuilder" lazy-init="true"
         class="org.opensaml.saml.common.xml.SAMLSchemaBuilder" c:ver="SAML_11" c:strict="%{idp.schemaValidation.strict:false}">
         <property name="schemaBuilder">
-            <bean class="net.shibboleth.utilities.java.support.xml.SchemaBuilder"
+            <bean class="net.shibboleth.shared.xml.SchemaBuilder"
                     p:schemaResources="#{getObject('shibboleth.ExtensionSchemas') ?: getObject('shibboleth.DefaultExtensionSchemas')}">
                 <property name="resourceResolver">
-                    <bean class="net.shibboleth.utilities.java.support.xml.ClasspathResolver" />
+                    <bean class="net.shibboleth.shared.xml.ClasspathResolver" />
                 </property>
             </bean>
         </property>

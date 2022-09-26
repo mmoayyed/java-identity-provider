@@ -8,7 +8,7 @@
             <set name="viewScope.logoutPropCtx"
                  value="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext))" />
             <set name="viewScope.messageID" value="T(java.util.UUID).randomUUID()" />
-            <set name="viewScope.issueInstant" value="T(net.shibboleth.utilities.java.support.xml.DOMTypeSupport).instantToString(T(java.time.Instant).now())" />
+            <set name="viewScope.issueInstant" value="T(net.shibboleth.shared.xml.DOMTypeSupport).instantToString(T(java.time.Instant).now())" />
         </on-render>
         <transition on="proceed" to="proceed" />
     </view-state>

@@ -80,8 +80,8 @@ import net.shibboleth.shared.net.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.security.impl.Type4UUIDIdentifierGenerationStrategy;
 import net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean;
+import net.shibboleth.shared.xml.ParserPool;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 
 /**
  * Abstract flow test.
