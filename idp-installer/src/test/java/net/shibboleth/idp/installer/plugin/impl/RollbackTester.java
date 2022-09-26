@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
-import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.shared.collection.Pair;
 
 /** Tests for {@link RollbackPluginInstall}. */
 @SuppressWarnings("javadoc")

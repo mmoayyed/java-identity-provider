@@ -27,13 +27,11 @@ import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.shared.collection.Pair;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import net.shibboleth.utilities.java.support.collection.Pair;
-
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;

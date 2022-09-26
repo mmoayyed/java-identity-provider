@@ -42,7 +42,7 @@ import net.shibboleth.idp.module.IdPModule.ResourceResult;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** An object which does installation rollback in its {@link AutoCloseable#close()} method. 

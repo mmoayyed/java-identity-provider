@@ -14,7 +14,7 @@
 
     <!-- Low-level helpers. -->
 
-    <bean id="shibboleth.Pair" class="net.shibboleth.utilities.java.support.collection.Pair" abstract="true" />
+    <bean id="shibboleth.Pair" class="net.shibboleth.shared.collection.Pair" abstract="true" />
     
     <bean id="shibboleth.CommaDelimStringArray"
         class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray" abstract="true" />

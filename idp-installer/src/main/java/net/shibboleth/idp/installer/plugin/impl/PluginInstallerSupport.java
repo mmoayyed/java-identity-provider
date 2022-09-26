@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.shared.collection.Pair;
 
 /**
  * Support for copying files during plugin manipulation.

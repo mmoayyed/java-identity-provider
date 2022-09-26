@@ -20,8 +20,8 @@ package net.shibboleth.idp.saml.nameid.impl;
 import java.util.Arrays;
 import java.util.Collections;
 
+import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.UninitializedComponentException;
-import net.shibboleth.utilities.java.support.collection.Pair;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
