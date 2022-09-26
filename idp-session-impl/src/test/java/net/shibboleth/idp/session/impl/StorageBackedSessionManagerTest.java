@@ -47,9 +47,9 @@ import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.impl.HttpServletRequestResponseContext;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;

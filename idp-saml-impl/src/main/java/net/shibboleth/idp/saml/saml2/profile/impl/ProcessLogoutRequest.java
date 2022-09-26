@@ -57,9 +57,9 @@ import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
  * Profile action that processes a {@link LogoutRequest} by resolving matching sessions, and destroys them,

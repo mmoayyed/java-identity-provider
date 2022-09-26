@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.session.criterion;
 
-import net.shibboleth.utilities.java.support.resolver.Criterion;
+import net.shibboleth.shared.resolver.Criterion;
 
 /**
  * {@link Criterion} representing a session bound to a servlet request,

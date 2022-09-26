@@ -23,8 +23,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.IdentifiedComponent;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.Resolver;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.Resolver;
 
 /** Resolves a {@link RelyingPartyConfiguration} for a given {@link CriteriaSet}. */
 public interface CriteriaRelyingPartyConfigurationResolver extends Resolver<RelyingPartyConfiguration,CriteriaSet>,

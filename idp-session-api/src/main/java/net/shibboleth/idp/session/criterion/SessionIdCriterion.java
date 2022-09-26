@@ -22,9 +22,9 @@ import javax.annotation.Nonnull;
 import com.google.common.base.MoreObjects;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.resolver.Criterion;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.resolver.Criterion;
 
 /** {@link Criterion} representing a session ID. */
 public final class SessionIdCriterion implements Criterion {

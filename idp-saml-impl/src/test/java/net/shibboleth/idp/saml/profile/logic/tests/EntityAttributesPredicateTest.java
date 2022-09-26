@@ -44,11 +44,11 @@ import org.w3c.dom.Document;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.saml.attribute.impl.AttributeMappingNodeProcessor;
 import net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.spring.config.StringToDurationConverter;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
  * Unit test for {@link EntityAttributesPredicate} and {@link MappedEntityAttributesPredicate}.

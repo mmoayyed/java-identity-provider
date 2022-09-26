@@ -28,8 +28,9 @@ import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
+
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.criterion.EndpointCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;

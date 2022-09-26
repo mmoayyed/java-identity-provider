@@ -19,8 +19,8 @@ package net.shibboleth.idp.session;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.Resolver;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.Resolver;
 
 /** A resolver that is capable of finding {@link IdPSession} objects that meet certain criteria. */
 @ThreadSafe
