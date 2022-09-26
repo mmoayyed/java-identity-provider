@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Predicate;
+import java.util.function.Predicate;
 
 /**
  * Predicate to determine whether consent should be obtained for an attribute.

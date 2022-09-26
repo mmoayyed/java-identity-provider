@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.logic.messaging;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -28,7 +29,6 @@ import org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.Predicate;
 
 /**
  * Abstract base class for a predicate that evaluates a {@link MessageContext} 

@@ -41,7 +41,7 @@ import com.google.common.collect.Multimap;
 import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
-import net.shibboleth.utilities.java.support.logic.Predicate;
+import java.util.function.Predicate;
 
 /**
  * Predicate that determines whether an IdP attribute is required by the requester.
