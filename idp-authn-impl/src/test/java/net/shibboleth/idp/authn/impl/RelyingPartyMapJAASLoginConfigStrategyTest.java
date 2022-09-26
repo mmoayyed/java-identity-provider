@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.collection.Pair;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 public class RelyingPartyMapJAASLoginConfigStrategyTest {
 

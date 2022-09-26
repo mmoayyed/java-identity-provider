@@ -33,7 +33,7 @@ import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.UninitializedComponentException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Code to build the war file during an install or on request.

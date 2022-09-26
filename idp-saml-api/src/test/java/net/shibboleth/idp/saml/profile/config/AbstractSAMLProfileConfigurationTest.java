@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.FunctionSupport;
 
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

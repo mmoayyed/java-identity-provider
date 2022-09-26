@@ -24,9 +24,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 

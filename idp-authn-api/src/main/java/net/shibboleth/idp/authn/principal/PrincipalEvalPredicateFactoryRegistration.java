@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.collection.Pair;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Wraps the association of a {@link PrincipalEvalPredicateFactory} against a particular

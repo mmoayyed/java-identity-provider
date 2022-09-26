@@ -26,8 +26,8 @@ import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.attribute.impl.AttributeMappingNodeProcessor;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;

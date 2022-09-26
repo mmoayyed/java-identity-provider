@@ -21,8 +21,8 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.net.URISupport;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import java.net.MalformedURLException;
 import java.net.URL;

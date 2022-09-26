@@ -58,13 +58,13 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.net.CookieManager;
 import net.shibboleth.shared.net.HttpServletSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Implementation of {@link SessionManager} and {@link SessionResolver} interfaces that relies on a

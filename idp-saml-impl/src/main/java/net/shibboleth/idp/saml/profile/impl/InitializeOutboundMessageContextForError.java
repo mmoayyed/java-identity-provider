@@ -42,7 +42,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Action that prepares an outbound {@link MessageContext} and related SAML contexts

@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Profile action that performs initial analysis of a {@link LogoutRequest} or {@link LogoutResponse} to

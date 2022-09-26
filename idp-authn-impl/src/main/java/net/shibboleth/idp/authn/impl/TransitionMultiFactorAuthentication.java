@@ -38,7 +38,7 @@ import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * An authentication action that acts as the driver regulating execution of transitions

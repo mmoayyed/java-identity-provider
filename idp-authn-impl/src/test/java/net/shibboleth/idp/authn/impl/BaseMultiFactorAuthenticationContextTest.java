@@ -25,7 +25,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 import java.util.Collections;
 import java.util.HashMap;

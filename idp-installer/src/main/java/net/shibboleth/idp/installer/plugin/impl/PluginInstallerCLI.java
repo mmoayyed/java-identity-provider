@@ -55,10 +55,10 @@ import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 import net.shibboleth.idp.plugin.PluginVersion;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Command line for Plugin Installation.

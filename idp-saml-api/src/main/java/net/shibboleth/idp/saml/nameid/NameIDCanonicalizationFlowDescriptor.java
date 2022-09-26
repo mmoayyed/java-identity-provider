@@ -27,8 +27,8 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A class used to describe flow descriptors for {@link net.shibboleth.idp.saml.authn.principal.NameIDPrincipal} and

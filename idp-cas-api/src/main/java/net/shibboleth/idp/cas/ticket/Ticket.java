@@ -22,7 +22,7 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Generic CAS ticket that has a natural identifier and expiration. All CAS tickets are bound to an IdP session ID

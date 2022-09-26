@@ -23,7 +23,7 @@ import com.google.common.base.MoreObjects;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A descriptor for a logout propagation flow.

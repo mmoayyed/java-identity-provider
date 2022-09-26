@@ -25,7 +25,7 @@
     <!-- Controls which profiles get audited. -->
     <bean id="shibboleth.ProfileAuditingCondition" parent="shibboleth.Conditions.NOT">
         <constructor-arg>
-            <bean class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+            <bean class="net.shibboleth.shared.logic.StrategyIndirectedPredicate">
                 <constructor-arg name="objectStrategy">
                     <bean class="org.opensaml.profile.context.navigate.ProfileIdLookup" />
                 </constructor-arg>
@@ -140,7 +140,7 @@
                     </key>
                     <bean parent="shibboleth.Functions.Compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="forPredicate">
+                            <bean class="net.shibboleth.shared.logic.FunctionSupport" factory-method="forPredicate">
                                 <constructor-arg>
                                     <bean class="net.shibboleth.shared.spring.expression.SpringExpressionPredicate"
                                         c:_0="#input != null ? T(org.opensaml.saml.common.binding.SAMLBindingSupport).isMessageSigned(#input) : false" />
@@ -372,7 +372,7 @@
                     </key>
                     <bean parent="shibboleth.Functions.Compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="forPredicate">
+                            <bean class="net.shibboleth.shared.logic.FunctionSupport" factory-method="forPredicate">
                                 <constructor-arg>
                                     <bean class="net.shibboleth.shared.spring.expression.SpringExpressionPredicate"
                                         c:_0="#input != null ? T(org.opensaml.saml.common.binding.SAMLBindingSupport).isMessageSigned(#input) : false" />
@@ -674,7 +674,7 @@
                     </key>
                     <bean parent="shibboleth.Functions.Compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="forPredicate">
+                            <bean class="net.shibboleth.shared.logic.FunctionSupport" factory-method="forPredicate">
                                 <constructor-arg>
 			                        <bean class="net.shibboleth.shared.spring.expression.SpringExpressionPredicate"
 			                            c:_0="#input != null and #input.getAssertionEncryptionParameters() != null" />

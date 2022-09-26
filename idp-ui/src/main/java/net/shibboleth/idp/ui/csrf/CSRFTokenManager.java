@@ -25,9 +25,9 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.ui.csrf.impl.SimpleCSRFToken;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A thread-safe helper class for dealing with cross-site request forgery tokens. 

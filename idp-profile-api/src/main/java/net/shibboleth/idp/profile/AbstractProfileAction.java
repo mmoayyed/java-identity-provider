@@ -29,7 +29,7 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.profile.action.AbstractConditionalProfileAction;
 import org.opensaml.profile.action.EventIds;

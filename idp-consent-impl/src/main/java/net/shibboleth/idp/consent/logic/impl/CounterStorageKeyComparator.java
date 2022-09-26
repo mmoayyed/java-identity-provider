@@ -23,10 +23,10 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A {@link Comparator} used to order storage keys so that the least used and oldest storage keys are returned first.

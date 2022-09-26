@@ -42,7 +42,7 @@ import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Base class for all actions that build SAML {@link Response} messages for output.

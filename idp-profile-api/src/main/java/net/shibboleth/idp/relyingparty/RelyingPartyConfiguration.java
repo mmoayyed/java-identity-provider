@@ -42,9 +42,9 @@ import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.IdentifiedComponent;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /** The configuration that applies to a given relying party. */
 public class RelyingPartyConfiguration extends AbstractIdentifiableInitializableComponent implements

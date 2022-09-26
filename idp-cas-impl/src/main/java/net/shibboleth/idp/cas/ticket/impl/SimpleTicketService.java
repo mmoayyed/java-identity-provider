@@ -27,7 +27,7 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.storage.StorageService;
 

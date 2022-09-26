@@ -30,8 +30,8 @@ import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 

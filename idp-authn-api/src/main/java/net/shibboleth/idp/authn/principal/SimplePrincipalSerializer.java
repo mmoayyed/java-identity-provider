@@ -41,8 +41,8 @@ import com.google.common.base.Strings;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Principal serializer for string-based principals that serialize to a simple JSON structure.

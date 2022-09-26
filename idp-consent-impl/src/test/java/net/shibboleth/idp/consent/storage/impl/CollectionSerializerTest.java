@@ -23,11 +23,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** Unit tests for {@link CollectionSerializer}. */
 public class CollectionSerializerTest {

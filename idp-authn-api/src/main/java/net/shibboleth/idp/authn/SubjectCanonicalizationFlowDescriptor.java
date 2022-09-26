@@ -28,7 +28,7 @@ import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.profile.FlowDescriptor;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A descriptor for a subject canonicalization flow.

@@ -26,8 +26,8 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.testing.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;

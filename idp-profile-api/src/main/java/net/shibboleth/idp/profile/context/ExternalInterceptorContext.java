@@ -24,7 +24,7 @@ import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.action.EventIds;
 
 import net.shibboleth.idp.profile.interceptor.ExternalInterceptor;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A context representing the state of an externalized interceptor flow.

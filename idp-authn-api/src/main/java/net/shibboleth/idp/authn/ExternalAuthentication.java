@@ -38,7 +38,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** Public interface supporting external authentication outside the webflow engine. */
 public abstract class ExternalAuthentication {

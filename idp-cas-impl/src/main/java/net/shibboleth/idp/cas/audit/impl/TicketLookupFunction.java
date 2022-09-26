@@ -26,7 +26,8 @@ import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
+
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 

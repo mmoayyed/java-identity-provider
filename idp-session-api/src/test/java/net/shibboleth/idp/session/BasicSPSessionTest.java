@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.session;
 
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
 import java.time.Instant;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** {@link BasicSPSession} unit test. */
 public class BasicSPSessionTest {

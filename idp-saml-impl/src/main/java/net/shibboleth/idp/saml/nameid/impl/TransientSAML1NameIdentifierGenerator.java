@@ -36,7 +36,7 @@ import net.shibboleth.idp.saml.xml.SAMLConstants;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Generator for transient {@link org.opensaml.saml.saml1.core.NameIdentifier} objects.

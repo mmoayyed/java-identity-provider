@@ -31,7 +31,7 @@ import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.consent.logic.impl.AttributeValuesHashFunction;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

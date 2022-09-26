@@ -46,7 +46,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.logic.IgnoreScopingProfileConfigPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyCountLookupFunction;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * An action that creates an {@link AuthenticationContext} and attaches it to the current {@link ProfileRequestContext}.

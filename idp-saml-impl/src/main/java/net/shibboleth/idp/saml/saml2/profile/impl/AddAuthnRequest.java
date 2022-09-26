@@ -55,9 +55,9 @@ import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Action that creates an {@link AuthnRequest} and sets it as the message returned by

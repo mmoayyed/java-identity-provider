@@ -32,7 +32,7 @@ import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the Name Identifier from a request or response. */
 public class NameIDAuditExtractor implements Function<ProfileRequestContext,String> {

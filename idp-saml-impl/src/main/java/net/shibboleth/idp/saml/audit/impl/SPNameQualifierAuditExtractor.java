@@ -31,7 +31,7 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SubjectQuery;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the SPNameQualifier from a SAML Subject. */
 public class SPNameQualifierAuditExtractor implements Function<ProfileRequestContext,String> {

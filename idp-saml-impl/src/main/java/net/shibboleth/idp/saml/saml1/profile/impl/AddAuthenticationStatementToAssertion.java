@@ -43,8 +43,8 @@ import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAssertion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Action that builds an {@link AuthenticationStatement} and adds it to an {@link Assertion} returned by a lookup

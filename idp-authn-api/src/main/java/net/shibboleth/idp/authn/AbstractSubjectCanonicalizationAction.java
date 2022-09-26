@@ -39,8 +39,8 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.Pair;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A base class for subject canonicalization actions.

@@ -41,7 +41,7 @@ import net.shibboleth.idp.ui.csrf.CSRFToken;
 import net.shibboleth.idp.ui.csrf.CSRFTokenManager;
 import net.shibboleth.idp.ui.csrf.InvalidCSRFTokenException;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /**
  * Test the {@link CSRFTokenFlowExecutionListener}.

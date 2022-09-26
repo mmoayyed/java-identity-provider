@@ -30,7 +30,7 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the lower-level StatusCode(s) from a response. */
 public class SubStatusCodeAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {

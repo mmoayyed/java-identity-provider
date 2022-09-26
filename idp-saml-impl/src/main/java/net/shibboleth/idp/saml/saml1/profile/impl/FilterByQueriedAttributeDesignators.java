@@ -51,9 +51,9 @@ import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Action that filters a set of attributes against the {@link org.opensaml.saml.saml1.core.AttributeDesignator}

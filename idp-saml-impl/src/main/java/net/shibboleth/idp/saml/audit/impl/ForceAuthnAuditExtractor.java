@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the ForceAuthn attribute from an {@link AuthnRequest}. */
 public class ForceAuthnAuditExtractor implements Function<ProfileRequestContext,Boolean> {

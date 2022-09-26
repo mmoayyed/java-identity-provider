@@ -35,8 +35,8 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.StrategyIndirectedPredicate;
 
 /**
  * Support functions for building {@link RelyingPartyConfiguration} objects with SAML functionality.

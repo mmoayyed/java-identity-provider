@@ -19,7 +19,7 @@ package net.shibboleth.idp.consent.logic.impl;
 
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 import java.util.function.Function;
 

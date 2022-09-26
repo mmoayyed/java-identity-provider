@@ -27,8 +27,8 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.context.MessageSource;

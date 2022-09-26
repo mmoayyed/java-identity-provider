@@ -18,7 +18,7 @@
 package net.shibboleth.idp.saml.authn.principal;
 
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.testng.Assert;

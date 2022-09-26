@@ -18,7 +18,7 @@
 package net.shibboleth.idp.consent.impl;
 
 import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

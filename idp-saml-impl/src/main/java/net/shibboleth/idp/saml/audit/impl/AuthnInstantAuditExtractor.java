@@ -29,7 +29,7 @@ import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the first authentication timestamp from an assertions in a response. */
 public class AuthnInstantAuditExtractor implements Function<ProfileRequestContext,Instant> {

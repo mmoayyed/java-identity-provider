@@ -49,7 +49,7 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Action that implements a JSON REST API for accessing {@link StorageService} records.

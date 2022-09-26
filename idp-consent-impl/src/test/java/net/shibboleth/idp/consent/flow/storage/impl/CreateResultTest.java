@@ -38,7 +38,7 @@ import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.consent.storage.impl.ConsentSerializer;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 /** {@link CreateResult} unit test. */
 @SuppressWarnings("javadoc")

@@ -21,8 +21,8 @@ import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.shared.logic.FunctionSupport;
 
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;

@@ -29,7 +29,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.ProxyRestriction;
 import org.opensaml.saml.saml2.core.Response;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Base class for {@link Function} that returns content from the {@link ProxyRestriction} element.

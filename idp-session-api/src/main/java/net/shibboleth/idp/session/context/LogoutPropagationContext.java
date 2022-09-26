@@ -18,7 +18,8 @@
 package net.shibboleth.idp.session.context;
 
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
+
 import org.opensaml.messaging.context.BaseContext;
 
 import javax.annotation.Nonnull;

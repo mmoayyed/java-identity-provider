@@ -34,10 +34,10 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context. The

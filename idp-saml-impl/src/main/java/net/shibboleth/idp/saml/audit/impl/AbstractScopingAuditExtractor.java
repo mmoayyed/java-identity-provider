@@ -26,7 +26,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Scoping;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Base class for {@link Function} that returns content from the {@link Scoping} element from an {@link AuthnRequest}.

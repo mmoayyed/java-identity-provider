@@ -45,7 +45,7 @@ import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.shared.collection.Pair;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A function to create a {@link SAML2SPSession} based on profile execution state.

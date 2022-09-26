@@ -29,8 +29,8 @@ import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.DataSealer;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;

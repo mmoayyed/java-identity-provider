@@ -30,7 +30,7 @@ import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;

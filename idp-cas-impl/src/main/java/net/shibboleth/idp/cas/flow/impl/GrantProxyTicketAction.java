@@ -46,9 +46,9 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Generates and stores a CAS protocol proxy ticket. Possible outcomes:

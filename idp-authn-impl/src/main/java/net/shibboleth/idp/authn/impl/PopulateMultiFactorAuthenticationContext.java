@@ -42,8 +42,8 @@ import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 /**
  * An action that creates and populates a {@link MultiFactorAuthenticationContext} with the set of

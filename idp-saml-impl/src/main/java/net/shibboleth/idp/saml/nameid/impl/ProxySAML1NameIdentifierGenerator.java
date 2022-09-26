@@ -22,9 +22,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLException;

@@ -34,7 +34,7 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SessionIndex;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns SessionIndex values from assertions in a response or a logout request. */
 public class SessionIndexAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {

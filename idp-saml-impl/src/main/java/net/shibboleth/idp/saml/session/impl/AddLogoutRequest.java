@@ -45,9 +45,9 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Action that creates a {@link LogoutRequest} based on an {@link SAML2SPSession} in a

@@ -27,7 +27,7 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.ResponseAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the InResponseTo attribute from a response. */
 public class InResponseToAuditExtractor implements Function<ProfileRequestContext,String> {

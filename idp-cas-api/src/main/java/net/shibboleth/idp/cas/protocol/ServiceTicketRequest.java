@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.cas.protocol;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import javax.annotation.Nonnull;
+
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Describes a request for a ticket to access a service.

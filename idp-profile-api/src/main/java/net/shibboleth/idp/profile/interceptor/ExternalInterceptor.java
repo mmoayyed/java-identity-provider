@@ -37,7 +37,7 @@ import com.google.common.net.UrlEscapers;
 import net.shibboleth.idp.profile.context.ExternalInterceptorContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Public interface supporting external interceptor flows outside the webflow engine.

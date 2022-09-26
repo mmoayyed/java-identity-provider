@@ -37,8 +37,8 @@ import com.codahale.metrics.SlidingTimeWindowMovingAverages;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 /**
  * A condition that relies on a {@link Meter} to detect looping SPs. 

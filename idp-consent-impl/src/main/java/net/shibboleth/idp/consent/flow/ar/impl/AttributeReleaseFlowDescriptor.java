@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.logic.impl.AttributeValuesHashFunction;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Descriptor for an attribute release flow.

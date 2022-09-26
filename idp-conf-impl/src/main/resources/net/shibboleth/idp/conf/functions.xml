@@ -13,34 +13,34 @@
        default-destroy-method="destroy">
 
     <bean id="shibboleth.Functions.Constant"
-        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant" abstract="true" />
+        class="net.shibboleth.shared.logic.FunctionSupport" factory-method="constant" abstract="true" />
     <bean id="shibboleth.Functions.Compose"
-        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="compose" abstract="true" />
+        class="net.shibboleth.shared.logic.FunctionSupport" factory-method="compose" abstract="true" />
 
     <bean id="shibboleth.Functions.PredicateDriven"
-        class="net.shibboleth.utilities.java.support.logic.PredicateDrivenFunction" abstract="true" />
+        class="net.shibboleth.shared.logic.PredicateDrivenFunction" abstract="true" />
 
     <bean id="shibboleth.Functions.Scripted"
-        class="net.shibboleth.utilities.java.support.logic.ScriptedFunction" abstract="true" />
+        class="net.shibboleth.shared.logic.ScriptedFunction" abstract="true" />
     <bean id="shibboleth.Functions.Expression"
         class="net.shibboleth.shared.spring.expression.SpringExpressionFunction" abstract="true" />
 
     <bean id="shibboleth.BiFunctions.Constant"
-        class="net.shibboleth.utilities.java.support.logic.BiFunctionSupport" factory-method="constant" abstract="true" />
+        class="net.shibboleth.shared.logic.BiFunctionSupport" factory-method="constant" abstract="true" />
     <bean id="shibboleth.BiFunctions.Compose"
-        class="net.shibboleth.utilities.java.support.logic.BiFunctionSupport" factory-method="compose" abstract="true" />
+        class="net.shibboleth.shared.logic.BiFunctionSupport" factory-method="compose" abstract="true" />
 
     <bean id="shibboleth.BiFunctions.Scripted"
-        class="net.shibboleth.utilities.java.support.logic.ScriptedBiFunction" abstract="true" />
+        class="net.shibboleth.shared.logic.ScriptedBiFunction" abstract="true" />
     <bean id="shibboleth.BiFunctions.Expression"
         class="net.shibboleth.shared.spring.expression.SpringExpressionBiFunction" abstract="true" />
 
     <bean id="shibboleth.Consumers.Scripted"
-        class="net.shibboleth.utilities.java.support.logic.ScriptedConsumer" abstract="true" />
+        class="net.shibboleth.shared.logic.ScriptedConsumer" abstract="true" />
     <bean id="shibboleth.Consumers.Expression"
         class="net.shibboleth.shared.spring.expression.SpringExpressionConsumer" abstract="true" />
     <bean id="shibboleth.BiConsumers.Scripted"
-        class="net.shibboleth.utilities.java.support.logic.ScriptedBiConsumer" abstract="true" />
+        class="net.shibboleth.shared.logic.ScriptedBiConsumer" abstract="true" />
     <bean id="shibboleth.BiConsumers.Expression"
         class="net.shibboleth.shared.spring.expression.SpringExpressionBiConsumer" abstract="true" />
 

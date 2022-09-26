@@ -36,8 +36,7 @@
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:defaultPortInsecure="%{idp.security.defaultPortInsecure:true}" />
 
-    <bean id="shibboleth.OutgoingBindingsLookupStrategy"
-        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant"
+    <bean id="shibboleth.OutgoingBindingsLookupStrategy" parent="shibboleth.Functions.Constant"
         c:_0-ref="shibboleth.OutgoingSOAPBindings" />
 
     <bean id="ResolveArtifacts"

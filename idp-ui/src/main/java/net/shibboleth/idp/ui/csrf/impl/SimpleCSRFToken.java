@@ -22,7 +22,7 @@ import javax.annotation.concurrent.Immutable;
 
 import net.shibboleth.idp.ui.csrf.CSRFToken;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 
 /**

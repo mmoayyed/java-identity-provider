@@ -30,7 +30,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the attribute IDs from an {@link AttributeContext}. */
 public class AttributesAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {

@@ -23,7 +23,7 @@ import java.util.function.Function;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.consent.logic.impl.AttributeValuesHashFunction;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

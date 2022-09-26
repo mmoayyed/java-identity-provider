@@ -33,7 +33,7 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;

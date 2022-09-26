@@ -40,8 +40,8 @@ import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

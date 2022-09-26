@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 /** Unit test for {@link SingleLogoutProfileConfiguration}. */
 public class SingleLogoutProfileConfigurationTest {

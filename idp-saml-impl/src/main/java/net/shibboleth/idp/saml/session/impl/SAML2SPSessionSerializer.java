@@ -43,10 +43,10 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.xml.ParserPool;
 import net.shibboleth.shared.xml.SerializeSupport;
 import net.shibboleth.shared.xml.XMLParserException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A serializer for {@link SAML2SPSession} objects.

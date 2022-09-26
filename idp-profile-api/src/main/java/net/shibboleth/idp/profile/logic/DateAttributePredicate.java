@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

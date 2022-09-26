@@ -22,8 +22,8 @@ import java.security.Principal;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.MoreObjects;
 

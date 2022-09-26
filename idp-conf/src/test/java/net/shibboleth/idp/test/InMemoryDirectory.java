@@ -36,7 +36,7 @@ import com.unboundid.ldif.LDIFReader;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Manages an instance of the in-memory directory server.

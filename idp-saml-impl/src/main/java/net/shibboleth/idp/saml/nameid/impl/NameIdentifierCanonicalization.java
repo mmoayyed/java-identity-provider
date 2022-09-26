@@ -42,7 +42,7 @@ import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Action to perform subject canonicalization, transforming the input {@link javax.security.auth.Subject}

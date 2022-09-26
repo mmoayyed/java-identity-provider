@@ -40,7 +40,7 @@ import org.springframework.core.io.Resource;
  */
 @SuppressWarnings("removal")
 public class ScriptedPredicate
-        extends net.shibboleth.utilities.java.support.logic.ScriptedPredicate<ProfileRequestContext> {
+        extends net.shibboleth.shared.logic.ScriptedPredicate<ProfileRequestContext> {
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedPredicate.class);

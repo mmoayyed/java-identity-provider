@@ -29,7 +29,7 @@ import org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Abstract base class for a function that requires a {@link ProfileRequestContext} obtained

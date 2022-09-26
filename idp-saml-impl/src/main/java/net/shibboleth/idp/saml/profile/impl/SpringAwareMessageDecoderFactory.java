@@ -34,8 +34,8 @@ import org.springframework.context.ApplicationContextAware;
 
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 
 /**

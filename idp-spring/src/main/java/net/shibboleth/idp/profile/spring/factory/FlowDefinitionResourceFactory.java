@@ -38,7 +38,7 @@ import org.springframework.webflow.config.FlowDefinitionResource;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Derivation of SWF-supplied resource factory for flow definitions.

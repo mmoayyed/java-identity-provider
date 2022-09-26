@@ -29,8 +29,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Action that creates a new {@link ProfileRequestContext} via a creation strategy,

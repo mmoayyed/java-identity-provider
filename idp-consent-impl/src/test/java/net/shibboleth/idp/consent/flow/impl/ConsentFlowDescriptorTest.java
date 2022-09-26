@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.consent.flow.impl;
 
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
 import java.time.Duration;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** {@link ConsentFlowDescriptor} unit test. */
 @SuppressWarnings("javadoc")

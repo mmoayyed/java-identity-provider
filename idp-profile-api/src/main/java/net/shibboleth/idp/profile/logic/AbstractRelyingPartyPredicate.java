@@ -22,7 +22,8 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
+
 import java.util.function.Predicate;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;

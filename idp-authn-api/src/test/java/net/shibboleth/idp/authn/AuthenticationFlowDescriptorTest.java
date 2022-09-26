@@ -21,7 +21,7 @@ import java.time.Duration;
 import java.util.Arrays;
 
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;

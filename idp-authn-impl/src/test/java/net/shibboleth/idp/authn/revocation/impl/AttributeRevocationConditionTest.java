@@ -34,9 +34,9 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceableComponent;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;

@@ -44,8 +44,8 @@ import net.shibboleth.idp.authn.duo.DuoIntegration;
 import net.shibboleth.idp.authn.duo.DuoPrincipal;
 import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 /**
  * An action that validates a DuoWeb response message and produces an

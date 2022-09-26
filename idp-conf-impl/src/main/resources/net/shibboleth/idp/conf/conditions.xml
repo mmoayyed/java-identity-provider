@@ -18,18 +18,18 @@
         class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
     
     <bean id="shibboleth.Conditions.AND"
-        class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="and" abstract="true" />
+        class="net.shibboleth.shared.logic.PredicateSupport" factory-method="and" abstract="true" />
     <bean id="shibboleth.Conditions.NOT"
-        class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="not" abstract="true" />
+        class="net.shibboleth.shared.logic.PredicateSupport" factory-method="not" abstract="true" />
     <bean id="shibboleth.Conditions.OR"
-        class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="or" abstract="true" />
+        class="net.shibboleth.shared.logic.PredicateSupport" factory-method="or" abstract="true" />
 
     <bean id="shibboleth.BiConditions.AND"
-        class="net.shibboleth.utilities.java.support.logic.BiPredicateSupport" factory-method="and" abstract="true" />
+        class="net.shibboleth.shared.logic.BiPredicateSupport" factory-method="and" abstract="true" />
     <bean id="shibboleth.BiConditions.NOT"
-        class="net.shibboleth.utilities.java.support.logic.BiPredicateSupport" factory-method="not" abstract="true" />
+        class="net.shibboleth.shared.logic.BiPredicateSupport" factory-method="not" abstract="true" />
     <bean id="shibboleth.BiConditions.OR"
-        class="net.shibboleth.utilities.java.support.logic.BiPredicateSupport" factory-method="or" abstract="true" />
+        class="net.shibboleth.shared.logic.BiPredicateSupport" factory-method="or" abstract="true" />
     
     <bean id="shibboleth.Conditions.BrowserProfile"
         class="org.opensaml.profile.logic.BrowserProfilePredicate" />
@@ -42,18 +42,18 @@
         class="net.shibboleth.idp.profile.logic.SpringExpressionPredicate" abstract="true" />
 
     <bean id="shibboleth.BiConditions.Scripted"
-        class="net.shibboleth.utilities.java.support.logic.ScriptedBiPredicate" abstract="true" />
+        class="net.shibboleth.shared.logic.ScriptedBiPredicate" abstract="true" />
     <bean id="shibboleth.BiConditions.Expression"
         class="net.shibboleth.shared.spring.expression.SpringExpressionBiPredicate" abstract="true" />
 
     <!-- Parent bean for building custom predicates that act on a RP's EntityDescriptor. -->
     <bean id="shibboleth.Conditions.EntityDescriptor" abstract="true"
-        class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate"
+        class="net.shibboleth.shared.logic.StrategyIndirectedPredicate"
         c:objectStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty" />
 
     <!-- Parent bean for building predicates acting over a candidate c14n Subject based on proxy authn. -->
     <bean id="shibboleth.Conditions.ProxyAuthentication" abstract="true"
-            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+            class="net.shibboleth.shared.logic.StrategyIndirectedPredicate">
         <constructor-arg name="objectStrategy">
             <bean parent="shibboleth.Functions.Compose">
                 <constructor-arg name="g">
@@ -75,7 +75,7 @@
 
     <!-- Parent bean for building custom predicates that act on the principal name of the Subject. -->
     <bean id="shibboleth.Conditions.SubjectName" abstract="true"
-            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+            class="net.shibboleth.shared.logic.StrategyIndirectedPredicate">
         <constructor-arg name="objectStrategy">
             <bean parent="shibboleth.Functions.Compose"
                 c:g-ref="shibboleth.PrincipalNameLookup.Subject"

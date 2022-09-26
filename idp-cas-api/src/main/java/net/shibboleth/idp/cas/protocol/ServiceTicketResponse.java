@@ -17,8 +17,9 @@
 
 package net.shibboleth.idp.cas.protocol;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import net.shibboleth.shared.logic.Constraint;
 
 import javax.annotation.Nonnull;
 

@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.authn.principal;
 
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
 import javax.security.auth.Subject;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** {@link UsernamePrincipal} unit test. */
 public class UsernamePrincipalTest {

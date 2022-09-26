@@ -36,9 +36,9 @@ import com.google.common.base.Predicates;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /** Configuration support for SAML 2 Single Logout. */
 public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration {

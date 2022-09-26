@@ -24,8 +24,8 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resource.Resource;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.SSLContextInitializer;

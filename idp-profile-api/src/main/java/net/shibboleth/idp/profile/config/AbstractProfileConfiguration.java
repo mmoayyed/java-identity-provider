@@ -32,11 +32,11 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;

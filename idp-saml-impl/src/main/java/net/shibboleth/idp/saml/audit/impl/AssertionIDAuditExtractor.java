@@ -30,7 +30,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the ID attribute from the assertions in a response. */
 public class AssertionIDAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {

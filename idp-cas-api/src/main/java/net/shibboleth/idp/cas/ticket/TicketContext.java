@@ -17,8 +17,9 @@
 
 package net.shibboleth.idp.cas.ticket;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.BaseContext;
+
+import net.shibboleth.shared.logic.Constraint;
 
 import javax.annotation.Nonnull;
 

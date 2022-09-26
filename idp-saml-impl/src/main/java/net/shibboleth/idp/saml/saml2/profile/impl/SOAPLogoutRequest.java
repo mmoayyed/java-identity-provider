@@ -53,8 +53,8 @@ import net.shibboleth.idp.session.context.LogoutPropagationContext.Result;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Profile action that propagates a prepared {@link LogoutRequest} message to an SP via the SOAP

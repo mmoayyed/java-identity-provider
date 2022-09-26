@@ -25,7 +25,7 @@ import net.shibboleth.idp.consent.flow.impl.AbstractConsentActionTest;
 import net.shibboleth.idp.consent.storage.impl.ConsentSerializer;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;

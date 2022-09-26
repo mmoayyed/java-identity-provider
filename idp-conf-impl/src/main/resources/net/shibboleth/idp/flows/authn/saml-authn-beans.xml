@@ -125,8 +125,7 @@
     <util:constant id="shibboleth.EndpointType"
         static-field="org.opensaml.saml.saml2.metadata.SingleSignOnService.DEFAULT_ELEMENT_NAME" />
 
-    <bean id="shibboleth.OutgoingBindingsLookupStrategy"
-        class="net.shibboleth.utilities.java.support.logic.FunctionSupport" factory-method="constant"
+    <bean id="shibboleth.OutgoingBindingsLookupStrategy" parent="shibboleth.Functions.Constant"
         c:_0-ref="shibboleth.OutgoingSAML2SSORequestBindings" />
 
     <bean id="PopulateBindingAndEndpointContexts"

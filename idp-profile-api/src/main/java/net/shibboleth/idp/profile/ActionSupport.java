@@ -20,8 +20,8 @@ package net.shibboleth.idp.profile;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Event;

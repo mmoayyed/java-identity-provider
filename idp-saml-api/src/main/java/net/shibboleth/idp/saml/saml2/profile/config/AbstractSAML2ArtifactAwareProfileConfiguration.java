@@ -33,8 +33,8 @@ import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfigurat
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 
 /**
  * Configuration support for artifact-aware profiles.

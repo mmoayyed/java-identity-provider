@@ -31,7 +31,7 @@ import org.opensaml.saml.saml2.core.StatusCode;
 
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.LogoutContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A strategy function for determining the status of a logout based on the content of

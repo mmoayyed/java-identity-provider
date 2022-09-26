@@ -36,7 +36,8 @@ import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.serialization.impl.ProxyGrantingTicketSerializer;
 import net.shibboleth.idp.cas.ticket.serialization.impl.ProxyTicketSerializer;
 import net.shibboleth.idp.cas.ticket.serialization.impl.ServiceTicketSerializer;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
+
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.StorageService;

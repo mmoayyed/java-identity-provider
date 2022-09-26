@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * {@link PrincipalEvalPredicateFactory} that implements exact matching of principals,

@@ -30,9 +30,9 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.DataSealerException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Generates transients using a {@link DataSealer} to encrypt the result into a recoverable value,

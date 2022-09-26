@@ -36,9 +36,9 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.httpclient.HttpClientBuilder;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 import net.shibboleth.idp.plugin.PluginVersion;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A class which will answer questions about a plugin state as of now

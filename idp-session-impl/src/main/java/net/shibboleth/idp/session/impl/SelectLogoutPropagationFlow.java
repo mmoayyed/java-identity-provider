@@ -26,7 +26,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.LogoutPropagationFlowDescriptor;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;

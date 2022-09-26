@@ -44,11 +44,11 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /**
  * Action that invokes the {@link AttributeResolver} for the current request.

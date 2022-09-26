@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.cas.proxy;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import javax.annotation.Nonnull;
+
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Container for identifiers used in authenticating a proxy callback endpoint.

@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * {@link PrincipalService} for most principal types that just exposes the proper {@link PrincipalSerializer}.

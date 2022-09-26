@@ -41,7 +41,7 @@ import net.shibboleth.idp.session.AbstractIdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;

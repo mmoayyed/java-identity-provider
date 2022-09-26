@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A function to create a {@link BasicSPSession} based on profile execution state.

@@ -35,7 +35,7 @@ import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.flow.ar.impl.AttributeReleaseFlowDescriptor;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;

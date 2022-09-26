@@ -32,11 +32,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceableComponent;
 import net.shibboleth.shared.spring.util.SpringSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Abstract Function which returns {@link Locale}-aware information about an attribute. The abstract method

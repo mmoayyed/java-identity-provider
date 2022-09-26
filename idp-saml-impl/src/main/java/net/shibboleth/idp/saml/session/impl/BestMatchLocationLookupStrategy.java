@@ -29,7 +29,7 @@ import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A strategy function for establishing an appropriate {@link BestMatchLocationCriterion}

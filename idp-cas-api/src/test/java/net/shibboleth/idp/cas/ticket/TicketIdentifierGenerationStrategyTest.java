@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;

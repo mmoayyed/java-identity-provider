@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.UninitializedComponentException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Copy the distribution to the final location.  Prior to doing so

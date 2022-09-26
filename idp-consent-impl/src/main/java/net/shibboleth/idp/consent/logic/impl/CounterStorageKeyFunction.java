@@ -42,8 +42,8 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /**
  * Function to order storage keys by least-used and oldest first during pruning of storage records.
@@ -99,7 +99,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
      * 
      * @param profileRequestContext the profile request context
      * @return the storage service
-     * @throws net.shibboleth.utilities.java.support.logic.ConstraintViolationException if the lookup strategy returns
+     * @throws net.shibboleth.shared.logic.ConstraintViolationException if the lookup strategy returns
      *             <code>null</code>, the interceptor flow descriptor is <code>null</code>, or the storage service is
      *             <code>null</code>
      */
@@ -124,7 +124,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
      * 
      * @param profileRequestContext the profile request context
      * @return the storage context
-     * @throws net.shibboleth.utilities.java.support.logic.ConstraintViolationException if the lookup strategy returns
+     * @throws net.shibboleth.shared.logic.ConstraintViolationException if the lookup strategy returns
      *             <code>null</code>
      */
     @Nonnull protected String getStorageContext(@Nonnull final ProfileRequestContext profileRequestContext) {

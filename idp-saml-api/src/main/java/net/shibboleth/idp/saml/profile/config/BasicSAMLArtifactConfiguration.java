@@ -21,8 +21,8 @@ import java.nio.ByteBuffer;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /**
  * Interface for outbound SAML artifact configuration.

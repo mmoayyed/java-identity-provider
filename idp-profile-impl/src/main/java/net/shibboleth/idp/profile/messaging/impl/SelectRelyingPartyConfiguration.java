@@ -37,9 +37,9 @@ import net.shibboleth.idp.relyingparty.CriteriaRelyingPartyConfigurationResolver
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * This message handler attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the 

@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;

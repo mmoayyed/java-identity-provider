@@ -32,7 +32,7 @@
                 p:propertyType="#{T(java.util.Map)}" />
         </property>
         <property name="detailedErrorsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="detailedErrors" />
                 </constructor-arg>
@@ -122,7 +122,7 @@
     
     <bean id="AbstractMDDrivenSAMLProfile" parent="AbstractMDDrivenProfile" abstract="true">
         <property name="signRequestsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signRequests" />
                 </constructor-arg>
@@ -130,7 +130,7 @@
             </bean>
         </property>
         <property name="signResponsesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
                 </constructor-arg>
@@ -138,7 +138,7 @@
             </bean>
         </property>
         <property name="signAssertionsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signAssertions" />
                 </constructor-arg>
@@ -146,7 +146,7 @@
             </bean>
         </property>
         <property name="includeConditionsNotBeforePredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="includeConditionsNotBefore" />
                 </constructor-arg>
@@ -168,7 +168,7 @@
     
     <bean id="AbstractMDDrivenSAML2Profile" parent="AbstractMDDrivenSAMLProfile" abstract="true">
         <property name="ignoreRequestSignaturesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="ignoreRequestSignatures" />
                 </constructor-arg>
@@ -176,7 +176,7 @@
             </bean>
         </property>
         <property name="encryptionOptionalPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptionOptional" />
                 </constructor-arg>
@@ -184,7 +184,7 @@
             </bean>
         </property>
         <property name="encryptAssertionsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAssertions" />
                 </constructor-arg>
@@ -192,7 +192,7 @@
             </bean>
         </property>
         <property name="encryptNameIDsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptNameIDs" />
                 </constructor-arg>
@@ -200,7 +200,7 @@
             </bean>
         </property>
         <property name="encryptAttributesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAttributes" />
                 </constructor-arg>
@@ -217,7 +217,7 @@
 
     <bean id="AbstractMDDrivenCASProfile" parent="AbstractMDDrivenProfile" abstract="true">
         <property name="resolveAttributesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="resolveAttributes" />
                 </constructor-arg>
@@ -244,7 +244,7 @@
                 p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
         </property>
         <property name="signResponsesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
                 </constructor-arg>
@@ -252,7 +252,7 @@
             </bean>
         </property>
         <property name="resolveAttributesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="resolveAttributes" />
                 </constructor-arg>
@@ -260,7 +260,7 @@
             </bean>
         </property>
         <property name="includeAttributeStatementPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="includeAttributeStatement" />
                 </constructor-arg>
@@ -268,7 +268,7 @@
             </bean>
         </property>
         <property name="forceAuthnPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="forceAuthn" />
                 </constructor-arg>
@@ -293,7 +293,7 @@
     <bean id="SAML1.AttributeQuery.MDDriven" parent="AbstractMDDrivenSAMLProfile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration">
         <property name="signResponsesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
                 </constructor-arg>
@@ -307,7 +307,7 @@
     <bean id="SAML1.ArtifactResolution.MDDriven" parent="AbstractMDDrivenSAMLProfile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration">
         <property name="signResponsesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
                 </constructor-arg>
@@ -326,7 +326,7 @@
                 p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
         </property>
         <property name="signArtifactRequestsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signArtifactRequests" />
                 </constructor-arg>
@@ -336,7 +336,7 @@
             </bean>
         </property>
         <property name="clientTLSArtifactRequestsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="clientTLSArtifactRequests" />
                 </constructor-arg>
@@ -350,7 +350,7 @@
             </bean>
         </property>
         <property name="signResponsesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
                 </constructor-arg>
@@ -358,7 +358,7 @@
             </bean>
         </property>
         <property name="encryptAssertionsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAssertions" />
                 </constructor-arg>
@@ -366,7 +366,7 @@
             </bean>
         </property>
         <property name="resolveAttributesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="resolveAttributes" />
                 </constructor-arg>
@@ -374,7 +374,7 @@
             </bean>
         </property>
         <property name="includeAttributeStatementPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="includeAttributeStatement" />
                 </constructor-arg>
@@ -382,7 +382,7 @@
             </bean>
         </property>
         <property name="ignoreScopingPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="ignoreScoping" />
                 </constructor-arg>
@@ -390,7 +390,7 @@
             </bean>
         </property>
         <property name="forceAuthnPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="forceAuthn" />
                 </constructor-arg>
@@ -400,7 +400,7 @@
             </bean>
         </property>
         <property name="checkAddressPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="checkAddress" />
                 </constructor-arg>
@@ -408,7 +408,7 @@
             </bean>
         </property>
         <property name="skipEndpointValidationWhenSignedPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="skipEndpointValidationWhenSigned" />
                 </constructor-arg>
@@ -416,7 +416,7 @@
             </bean>
         </property>
         <property name="proxiedAuthnInstantPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="proxiedAuthnInstant" />
                 </constructor-arg>
@@ -424,7 +424,7 @@
             </bean>
         </property>
         <property name="suppressAuthenticatingAuthorityPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="suppressAuthenticatingAuthority" />
                 </constructor-arg>
@@ -432,7 +432,7 @@
             </bean>
         </property>
         <property name="requireSignedRequestsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="requireSignedRequests" />
                 </constructor-arg>
@@ -482,7 +482,7 @@
             <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="maximumTimeSinceAuthn" />
         </property>
         <property name="allowDelegationPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="allowDelegation" />
                 </constructor-arg>
@@ -514,7 +514,7 @@
                 p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
         </property>
         <property name="signArtifactRequestsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signArtifactRequests" />
                 </constructor-arg>
@@ -524,7 +524,7 @@
             </bean>
         </property>
         <property name="clientTLSArtifactRequestsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="clientTLSArtifactRequests" />
                 </constructor-arg>
@@ -538,7 +538,7 @@
             </bean>
         </property>
         <property name="signSOAPRequestsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signSOAPRequests" />
                 </constructor-arg>
@@ -548,7 +548,7 @@
             </bean>
         </property>
         <property name="clientTLSSOAPRequestsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="clientTLSSOAPRequests" />
                 </constructor-arg>
@@ -562,7 +562,7 @@
             </bean>
         </property>
         <property name="signRequestsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signRequests" />
                 </constructor-arg>
@@ -572,7 +572,7 @@
             </bean>
         </property>
         <property name="signResponsesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
                 </constructor-arg>
@@ -582,7 +582,7 @@
             </bean>
         </property>
         <property name="encryptNameIDsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptNameIDs" />
                 </constructor-arg>
@@ -599,7 +599,7 @@
     <bean id="SAML2.AttributeQuery.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration">
         <property name="signResponsesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
                 </constructor-arg>
@@ -609,7 +609,7 @@
             </bean>
         </property>
         <property name="encryptAssertionsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAssertions" />
                 </constructor-arg>
@@ -623,7 +623,7 @@
     <bean id="SAML2.ArtifactResolution.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"
             class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration">
         <property name="signResponsesPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="signResponses" />
                 </constructor-arg>
@@ -633,7 +633,7 @@
             </bean>
         </property>
         <property name="encryptAssertionsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAssertions" />
                 </constructor-arg>
@@ -658,7 +658,7 @@
             <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="postAuthenticationFlows" />
         </property>
         <property name="forceAuthnPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="forceAuthn" />
                 </constructor-arg>
@@ -666,7 +666,7 @@
             </bean>
         </property>
         <property name="storeConsentInTicketsPredicate">
-            <bean class="net.shibboleth.utilities.java.support.logic.PredicateSupport" factory-method="fromFunction">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="storeConsentInTickets" />
                 </constructor-arg>

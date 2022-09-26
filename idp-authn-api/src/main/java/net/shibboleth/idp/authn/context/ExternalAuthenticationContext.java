@@ -31,7 +31,7 @@ import org.opensaml.messaging.context.BaseContext;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A context representing the state of an externalized authentication attempt,

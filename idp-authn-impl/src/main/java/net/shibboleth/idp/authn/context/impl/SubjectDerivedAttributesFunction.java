@@ -40,7 +40,7 @@ import net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextS
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A Function which returns {@link IdPAttribute}s derived from the {@link java.security.Principal}s

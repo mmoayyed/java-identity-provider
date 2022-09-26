@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Action that adds an inbound {@link MessageContext} and a {@link SAMLPeerEntityContext} to the

@@ -29,7 +29,7 @@ import org.opensaml.profile.action.ProfileAction;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Subject;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Manages state during proxied SAML authentication.

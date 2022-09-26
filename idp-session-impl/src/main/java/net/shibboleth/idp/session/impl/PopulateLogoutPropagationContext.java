@@ -41,9 +41,9 @@ import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.idp.session.context.LogoutPropagationContext.Result;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.DataSealerException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Profile action that creates a {@link LogoutPropagationContext} containing {@link SPSession} to be destroyed. The

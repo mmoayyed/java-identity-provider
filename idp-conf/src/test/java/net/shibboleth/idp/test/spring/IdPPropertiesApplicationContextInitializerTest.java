@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
 
 import jakarta.servlet.ServletContextEvent;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** {@link IdPPropertiesApplicationContextInitializer} unit test. */
 public class IdPPropertiesApplicationContextInitializerTest {

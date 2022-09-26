@@ -39,7 +39,7 @@ import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * An action that establishes a record of an {@link SPSession} in an existing {@link IdPSession} for the client.

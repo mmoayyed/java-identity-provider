@@ -47,9 +47,9 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.service.ReloadableService;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Base class for actions that encode an {@link AttributeContext} into a SAML attribute statement.

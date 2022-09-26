@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.session;
 
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
 import java.time.Instant;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -26,6 +24,8 @@ import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameID;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** {@link SAML2SPSession} unit test. */
 public class SAML2SPSessionTest extends OpenSAMLInitBaseTestCase {

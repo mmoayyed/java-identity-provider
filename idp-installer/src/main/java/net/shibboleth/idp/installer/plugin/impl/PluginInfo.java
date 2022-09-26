@@ -34,9 +34,9 @@ import net.shibboleth.idp.installer.plugin.impl.PluginState.VersionInfo;
 import net.shibboleth.idp.plugin.PluginSupport;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.shared.collection.Pair;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.idp.plugin.PluginVersion;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Class which encapsulates the information about a given plugin as downloaded

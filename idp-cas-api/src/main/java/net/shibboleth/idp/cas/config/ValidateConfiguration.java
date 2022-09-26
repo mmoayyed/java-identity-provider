@@ -29,9 +29,9 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.cas.service.DefaultServiceComparator;
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 /**
  * CAS protocol configuration. Applies to the following ticket validation URIs:

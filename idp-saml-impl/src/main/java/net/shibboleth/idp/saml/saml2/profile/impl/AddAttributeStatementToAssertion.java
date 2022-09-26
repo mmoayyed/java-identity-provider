@@ -47,8 +47,8 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAttributeStatementToAssertion;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ServiceableComponent;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Action that builds an {@link AttributeStatement} and adds it to an {@link Assertion} returned by a lookup

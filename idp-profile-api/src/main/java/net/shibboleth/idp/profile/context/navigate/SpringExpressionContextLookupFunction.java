@@ -22,8 +22,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.spring.expression.SpringExpressionFunction;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
