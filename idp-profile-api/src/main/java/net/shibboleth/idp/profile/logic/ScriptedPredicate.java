@@ -28,7 +28,7 @@ import javax.script.ScriptException;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
+import net.shibboleth.shared.scripting.EvaluableScript;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;

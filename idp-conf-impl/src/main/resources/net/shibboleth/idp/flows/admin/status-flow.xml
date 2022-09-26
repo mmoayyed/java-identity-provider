@@ -33,7 +33,7 @@
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.metrics.AttributeResolverGaugeSet')" result="requestScope.attributeResolverGaugeSet" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.metrics.MetadataGaugeSet')" result="requestScope.metadataResolverGaugeSet" />            
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="requestScope.custom" />

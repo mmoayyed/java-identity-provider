@@ -39,7 +39,7 @@
     <!-- Reusable bean for extracting a username and hashing it for F-TICKS. -->
     <bean id="shibboleth.UsernameHasher" parent="shibboleth.Functions.Compose">
         <constructor-arg name="g">
-            <bean class="net.shibboleth.utilities.java.support.codec.StringDigester"
+            <bean class="net.shibboleth.shared.codec.StringDigester"
                 c:algorithm="#{'%{idp.fticks.algorithm:%{idp.audit.hashAlgorithm:SHA-256}}'.trim()}" c:format="HEX_LOWER"
                 p:salt="%{idp.fticks.salt:%{idp.audit.salt:}}" p:requireSalt="true" />
         </constructor-arg>
@@ -58,7 +58,7 @@
     <!-- Reusable bean for extracting a session id and hashing it. -->
     <bean id="shibboleth.SessionIDHasher" parent="shibboleth.Functions.Compose">
         <constructor-arg name="g">
-            <bean class="net.shibboleth.utilities.java.support.codec.StringDigester"
+            <bean class="net.shibboleth.shared.codec.StringDigester"
                 c:algorithm="#{'%{idp.fticks.algorithm:%{idp.audit.hashAlgorithm:SHA-256}}'.trim()}" c:format="HEX_LOWER"
                 p:salt="%{idp.fticks.salt:%{idp.audit.salt:}}" p:requireSalt="true" />
         </constructor-arg>

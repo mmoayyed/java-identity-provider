@@ -40,7 +40,7 @@
             <evaluate expression="userAgentContext.isInstance(T(eu.bitwalker.useragentutils.Browser).IE)
                 ? externalContext.nativeResponse.setContentType('text/plain')
                 : externalContext.nativeResponse.setContentType('application/json')" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="WriteAuditLog" />
         </on-entry>
     </end-state>

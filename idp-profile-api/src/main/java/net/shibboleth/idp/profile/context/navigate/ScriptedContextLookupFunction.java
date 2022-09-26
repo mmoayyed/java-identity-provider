@@ -26,9 +26,9 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.scripting.AbstractScriptEvaluator;
+import net.shibboleth.shared.scripting.EvaluableScript;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
-import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;

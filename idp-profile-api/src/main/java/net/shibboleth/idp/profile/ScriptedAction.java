@@ -34,8 +34,8 @@ import org.springframework.core.io.Resource;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
-import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
+import net.shibboleth.shared.scripting.AbstractScriptEvaluator;
+import net.shibboleth.shared.scripting.EvaluableScript;
 
 /**
  * An action which calls out to a supplied script.

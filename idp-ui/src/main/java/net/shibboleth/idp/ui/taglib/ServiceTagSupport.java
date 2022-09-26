@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
-import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
+import net.shibboleth.shared.codec.HTMLEncoder;
 
 /**
  * Display the serviceName.

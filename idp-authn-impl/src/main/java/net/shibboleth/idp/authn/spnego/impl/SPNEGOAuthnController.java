@@ -33,7 +33,7 @@ import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
+import net.shibboleth.shared.codec.HTMLEncoder;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ietf.jgss.GSSException;

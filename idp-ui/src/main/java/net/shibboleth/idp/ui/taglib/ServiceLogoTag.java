@@ -25,8 +25,7 @@ import javax.annotation.Nullable;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
-
-import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
+import net.shibboleth.shared.codec.HTMLEncoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

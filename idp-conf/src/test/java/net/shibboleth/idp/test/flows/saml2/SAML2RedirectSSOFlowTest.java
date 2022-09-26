@@ -24,9 +24,9 @@ import java.util.zip.DeflaterOutputStream;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.shared.codec.Base64Support;
+import net.shibboleth.shared.codec.EncodingException;
 import net.shibboleth.shared.xml.SerializeSupport;
-import net.shibboleth.utilities.java.support.codec.Base64Support;
-import net.shibboleth.utilities.java.support.codec.EncodingException;
 
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;

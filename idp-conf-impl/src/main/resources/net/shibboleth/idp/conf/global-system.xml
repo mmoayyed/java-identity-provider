@@ -46,6 +46,9 @@
             <map>
                 <!-- At present all of these are being added for V5 and would be removable for V6. -->
                 
+                <entry key="net.shibboleth.utilities.java.support.codec.StringDigester"
+                    value="net.shibboleth.shared.codec.StringDigester" />
+                
                 <entry key="net.shibboleth.utilities.java.support.velocity.Template"
                     value="net.shibboleth.shared.velocity.Template" />
                 
