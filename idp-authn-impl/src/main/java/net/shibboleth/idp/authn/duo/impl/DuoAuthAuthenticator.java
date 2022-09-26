@@ -39,7 +39,7 @@ import com.google.common.net.UrlEscapers;
 import net.shibboleth.idp.authn.duo.DuoAuthAPI;
 import net.shibboleth.idp.authn.duo.DuoIntegration;
 import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Implementation of the the Duo AuthApi /v2/auth endpoint.

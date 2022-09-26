@@ -34,7 +34,7 @@ import com.beust.jcommander.Parameter;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.plugin.PluginVersion;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Arguments for Plugin Installer CLI.

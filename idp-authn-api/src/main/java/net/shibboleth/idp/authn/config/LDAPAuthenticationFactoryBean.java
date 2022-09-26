@@ -26,8 +26,8 @@ import com.google.common.base.MoreObjects;
 import net.shibboleth.idp.authn.PooledTemplateSearchDnResolver;
 import net.shibboleth.idp.authn.TemplateSearchDnResolver;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.ActivePassiveConnectionStrategy;

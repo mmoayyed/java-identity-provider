@@ -19,8 +19,8 @@ package net.shibboleth.idp.cas.service.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 
 /**
  * Default comparator implementation for comparing CAS service URLs. URL comparison is case-insensitive and supports

@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.cas.protocol;
 
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import javax.annotation.Nonnull;
+
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Ticket validation request message.

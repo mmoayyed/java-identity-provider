@@ -20,8 +20,8 @@ package net.shibboleth.idp.saml.profile.config.logic;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.logic.ResolveAttributesPredicate;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 

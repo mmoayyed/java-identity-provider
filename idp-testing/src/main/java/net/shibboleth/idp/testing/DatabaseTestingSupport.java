@@ -28,13 +28,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.CharStreams;
+
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  *

@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.binding;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Subclass that adds awareness of a Spring bean ID for a binding's

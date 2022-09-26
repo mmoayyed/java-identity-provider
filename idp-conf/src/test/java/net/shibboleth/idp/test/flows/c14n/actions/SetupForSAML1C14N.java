@@ -41,7 +41,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.nameid.impl.TransientSAML1NameIdentifierGenerator;
 import net.shibboleth.idp.saml.xml.SAMLConstants;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Action to mock up a Subject for C14N.

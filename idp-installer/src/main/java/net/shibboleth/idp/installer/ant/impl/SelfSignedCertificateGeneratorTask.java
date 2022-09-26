@@ -26,8 +26,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.Positive;
+import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.security.impl.SelfSignedCertificateGenerator;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;

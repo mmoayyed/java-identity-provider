@@ -32,7 +32,7 @@ import net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileCon
 import net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 

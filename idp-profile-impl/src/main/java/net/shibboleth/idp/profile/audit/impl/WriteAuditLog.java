@@ -50,8 +50,8 @@ import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.HttpServletSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Action that produces audit log entries based on an {@link AuditContext} and one or more formatting strings. 

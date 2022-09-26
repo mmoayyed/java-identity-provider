@@ -22,9 +22,9 @@ import javax.annotation.Nonnull;
 import com.google.common.base.MoreObjects;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resolver.Criterion;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** {@link Criterion} representing a service ID and an implementation-specific service session key. */
 public final class SPSessionCriterion implements Criterion {

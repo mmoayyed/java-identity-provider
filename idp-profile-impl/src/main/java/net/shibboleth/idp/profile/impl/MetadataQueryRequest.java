@@ -23,7 +23,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.opensaml.saml.metadata.resolver.DetectDuplicateEntityIDs;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 import com.google.common.base.MoreObjects;
 

@@ -60,12 +60,12 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.UninitializedComponentException;
+import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategyTool;
 import net.shibboleth.shared.security.impl.SelfSignedCertificateGenerator;
 import net.shibboleth.shared.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext;
 import net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext;
 import net.shibboleth.shared.spring.util.ApplicationContextBuilder;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Code to do most of the V4 Install.
  */

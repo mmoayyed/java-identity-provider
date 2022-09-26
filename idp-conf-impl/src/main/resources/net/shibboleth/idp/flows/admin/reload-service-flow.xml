@@ -7,7 +7,7 @@
 
     <on-start>
         <!-- Extract 'id' parameter in case authentication disturbs the URL. -->
-        <evaluate expression="T(net.shibboleth.utilities.java.support.primitive.StringSupport).trimOrNull(externalContext.getNativeRequest().getParameter('id'))" result="flowScope.serviceId" />
+        <evaluate expression="T(net.shibboleth.shared.primitive.StringSupport).trimOrNull(externalContext.getNativeRequest().getParameter('id'))" result="flowScope.serviceId" />
     </on-start>
     
     <action-state id="InitializeProfileRequestContext">

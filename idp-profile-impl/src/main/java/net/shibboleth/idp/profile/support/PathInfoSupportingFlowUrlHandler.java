@@ -26,7 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Extension of standard SWF URL handler that checks for requests in which a valid flow ID
