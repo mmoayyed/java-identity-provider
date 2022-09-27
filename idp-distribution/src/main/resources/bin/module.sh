@@ -4,4 +4,4 @@ declare LOCATION
 
 LOCATION=$(dirname $0)
 
-$LOCATION/runclass.sh net.shibboleth.idp.module.impl.ModuleManagerCLI --ansi --home "$LOCATION/.." "$@"
+$LOCATION/runclass.sh net.shibboleth.idp.cli.impl.ModuleManagerCLI --ansi --home "$LOCATION/.." "$@"

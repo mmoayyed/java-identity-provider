@@ -1,4 +1,4 @@
 @echo off
 setlocal
 
-"%~dp0\runclass.bat" net.shibboleth.idp.module.impl.ModuleManagerCLI --home "%~dp0\.." %*
+"%~dp0\runclass.bat" net.shibboleth.idp.cli.impl.ModuleManagerCLI --home "%~dp0\.." %*
