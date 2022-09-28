@@ -296,7 +296,7 @@
                                     <zipFiles>${project.build.directory}/${idp.finalName}.zip</zipFiles>
                                     <tgzFiles>${project.build.directory}/${idp.finalName}.tar.gz</tgzFiles>
                                     <checkSignatures>false</checkSignatures>
-                                    <checkDependencies>true</checkDependencies>
+                                    <checkDependencies>false</checkDependencies>
                                     <compileRuntimeArtifactFatal>false</compileRuntimeArtifactFatal>
                                     <versionExtensions>-SNAPSHOT -GA -jre -empty-to-avoid-conflict-with-guava -M6</versionExtensions>
                                     <listJarSources>false</listJarSources>
