@@ -71,9 +71,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     @Override @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(
             @Nullable final ProfileRequestContext context) throws ResolverException {
         checkComponentActive();
-        ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
-        try {
-            component = service.getServiceableComponent();
+        try (final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()) {
             if (null == component) {
                 log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration", getId());
             } else {
@@ -86,10 +84,6 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
             }
         } catch (final ResolverException e) {
             log.error("RelyingPartyResolver '{}': error in resolution", getId(), e);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }
         return Collections.emptySet();
     }
@@ -98,9 +92,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     @Override @Nullable public RelyingPartyConfiguration resolveSingle(@Nullable final ProfileRequestContext context)
             throws ResolverException {
         checkComponentActive();
-        ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
-        try {
-            component = service.getServiceableComponent();
+        try (final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()){
             if (null == component) {
                 log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration", getId());
             } else {
@@ -109,10 +101,6 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
             }
         } catch (final ResolverException e) {
             log.error("RelyingPartyResolver '{}': error in resolution", getId(), e);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }
         return null;
     }
@@ -120,19 +108,13 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     /** {@inheritDoc} */
     @Override public SecurityConfiguration getDefaultSecurityConfiguration(final String profileId) {
         checkComponentActive();
-        ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
-        try {
-            component = service.getServiceableComponent();
+        try (final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()){
             if (null == component) {
                 log.error("RelyingPartyResolver '{}': error looking up default security config:"
                         + " Invalid configuration", getId());
             } else {
                 final RelyingPartyConfigurationResolver resolver = component.getComponent();
                 return resolver.getDefaultSecurityConfiguration(profileId);
-            }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
             }
         }
         return null;

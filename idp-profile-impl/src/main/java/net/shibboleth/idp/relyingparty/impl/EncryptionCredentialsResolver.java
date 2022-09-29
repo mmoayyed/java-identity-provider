@@ -84,9 +84,7 @@ public class EncryptionCredentialsResolver implements CredentialResolver, Identi
     /** {@inheritDoc} */
     @Nonnull public Iterable<Credential> resolve(@Nullable final CriteriaSet criteria) 
             throws ResolverException {
-        ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
-        try {
-            component = service.getServiceableComponent();
+        try(final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()) {
             if (null == component) {
                 log.error("EncryptionCredentialsResolver '{}': error looking up relying party configuration service:"
                         + " Invalid configuration.", getId());
@@ -98,10 +96,6 @@ public class EncryptionCredentialsResolver implements CredentialResolver, Identi
                 }
                 log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
                 return Collections.emptyList();
-            }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
             }
         }
         return null;

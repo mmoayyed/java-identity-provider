@@ -84,9 +84,7 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
     /** {@inheritDoc} */
     @Nonnull public Iterable<Credential> resolve(@Nullable final CriteriaSet criteria) 
             throws ResolverException {
-        ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
-        try {
-            component = service.getServiceableComponent();
+        try (final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()) {
             if (null == component) {
                 log.error("SigningCredentialsResolver '{}': error looking up relying party configuration service:"
                         + " Invalid configuration.", getId());
@@ -98,10 +96,6 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
                 }
                 log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
                 return Collections.emptyList();
-            }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
             }
         }
         return null;
