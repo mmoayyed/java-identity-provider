@@ -156,14 +156,9 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
                     };
                 }
 
-                public void pinComponent() {
+                public void close() {
                 }
 
-                public void unpinComponent() {
-                }
-
-                public void unloadComponent() {
-                }
             };
         }
         

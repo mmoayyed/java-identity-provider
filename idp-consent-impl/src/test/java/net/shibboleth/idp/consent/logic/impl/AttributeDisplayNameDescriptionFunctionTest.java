@@ -200,15 +200,7 @@ public class AttributeDisplayNameDescriptionFunctionTest {
         }
 
         /** {@inheritDoc} */
-        public void pinComponent() {
-        }
-
-        /** {@inheritDoc} */
-        public void unpinComponent() {
-        }
-
-        /** {@inheritDoc} */
-        public void unloadComponent() {
+        public void close() {
         }
     }
 }
