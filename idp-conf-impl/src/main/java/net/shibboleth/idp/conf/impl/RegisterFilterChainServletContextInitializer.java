@@ -30,6 +30,7 @@ import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * A {@link ServletContainerInitializer} implementation that registers a filter chain embedded in
@@ -44,8 +45,15 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 public class RegisterFilterChainServletContextInitializer implements ServletContainerInitializer {
 
     /** System property name for the activation of this class. */
-    public static final String SYSTEM_PROPERTY_ACTIVATION =
+    @Nonnull @NotEmpty public static final String SYSTEM_PROPERTY_ACTIVATION =
             RegisterFilterChainServletContextInitializer.class.getCanonicalName();
+
+    /** System property name for the activation of this class. */
+    @Nonnull @NotEmpty public static final String SYSTEM_PROPERTY_SERVLET =
+            RegisterFilterChainServletContextInitializer.class.getCanonicalName() + ".servlet";
+
+    /** Name of servlet that MUST be registered for us to run. */
+    @Nonnull @NotEmpty public static final String DEFAULT_SERVLET_TO_CHECK = "idp";
 
     /** The filter name for the embedded filter chain. */
     @Nonnull @NotEmpty public static final String FILTER_NAME = "ShibbolethFilterChain";
@@ -60,18 +68,17 @@ public class RegisterFilterChainServletContextInitializer implements ServletCont
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
         
-        if (ctx.getServletRegistration("idp") == null) {
-            log.debug("Ignoring invocation outside IdP context");
-            return;
-        }
-        
         final String flag = System.getProperty(SYSTEM_PROPERTY_ACTIVATION);
         log.debug("The value of the flag {}: {}", SYSTEM_PROPERTY_ACTIVATION, flag);
         if ("disabled".equalsIgnoreCase(flag)) {
             log.info("Filter registration is disabled according to the system properties");
             return;
+        } else if (ctx.getServletRegistration(StringSupport.trimOrNull(
+                System.getProperty(SYSTEM_PROPERTY_SERVLET, DEFAULT_SERVLET_TO_CHECK))) == null) {
+            log.debug("Ignoring invocation outside IdP context");
+            return;
         }
-
+        
         log.debug("Attempting to register filter '{}'", FILTER_NAME);
         final FilterRegistration.Dynamic headerFilter = ctx.addFilter(FILTER_NAME, DelegatingFilterProxy.class);
         headerFilter.addMappingForUrlPatterns(null, false, "/*");
