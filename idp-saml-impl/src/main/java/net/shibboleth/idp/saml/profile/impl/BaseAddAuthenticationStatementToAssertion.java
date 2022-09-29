@@ -37,8 +37,8 @@ import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.net.HttpServletSupport;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.servlet.HttpServletSupport;
 
 /**
  * Base class for actions that encode authentication information into a SAML 1 or SAML 2 statement.

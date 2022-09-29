@@ -41,9 +41,9 @@ import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.net.HttpServletSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
+import net.shibboleth.shared.servlet.HttpServletSupport;
 
 /**
  * A profile action that populates a {@link SessionContext} with an active, valid

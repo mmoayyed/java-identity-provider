@@ -70,6 +70,11 @@
                 <entry key="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate"
                     value="net.shibboleth.shared.logic.StrategyIndirectedPredicate" />
                 
+                <entry key="net.shibboleth.utilities.java.support.net.DynamicResponseHeaderFilter"
+                    value="net.shibboleth.shared.net.impl.DynamicResponseHeaderFilter" />
+                <entry key="net.shibboleth.utilities.java.support.net.SameSiteCookieHeaderFilter"
+                    value="net.shibboleth.shared.net.impl.SameSiteCookieHeaderFilter" />
+                
                 <entry key="net.shibboleth.utilities.java.support.velocity.Template"
                     value="net.shibboleth.shared.velocity.Template" />
                 
@@ -255,10 +260,10 @@
         <value>#{'classpath:' + T(net.shibboleth.idp.saml.xmlobject.ExtensionsConstants).SHIB_MDEXT10_SCHEMA_LOCATION }</value>
     </util:list>
 
-    <bean id="shibboleth.HttpServletRequest" class="net.shibboleth.shared.net.impl.ThreadLocalHttpServletRequestProxy" />
-    <bean id="shibboleth.HttpServletRequestSupplier" class="net.shibboleth.shared.net.impl.ThreadLocalHttpServletRequestSupplier" />
-    <bean id="shibboleth.HttpServletResponse" class="net.shibboleth.shared.net.impl.ThreadLocalHttpServletResponseProxy" />
-    <bean id="shibboleth.HttpServletResponseSupplier" class="net.shibboleth.shared.net.impl.ThreadLocalHttpServletResponseSupplier" />
+    <bean id="shibboleth.HttpServletRequest" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestProxy" />
+    <bean id="shibboleth.HttpServletRequestSupplier" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier" />
+    <bean id="shibboleth.HttpServletResponse" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseProxy" />
+    <bean id="shibboleth.HttpServletResponseSupplier" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseSupplier" />
 
     <bean id="shibboleth.DefaultResponseHeaderMap"
             class="org.springframework.beans.factory.config.MapFactoryBean">
@@ -271,17 +276,61 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.ResponseHeaderFilter"
-        class="net.shibboleth.utilities.java.support.net.DynamicResponseHeaderFilter"
-        p:headers="#{getObject('shibboleth.ResponseHeaderMap') ?: getObject('shibboleth.DefaultResponseHeaderMap')}"
-        p:callbacks="#{getObject('shibboleth.ResponseHeaderCallbacks')}" />
-        
-    <bean id="shibboleth.SameSiteCookieFilter"
-        class="net.shibboleth.utilities.java.support.net.SameSiteCookieHeaderFilter"
+    <!-- These are stubbed out to emit warnings when not removed from web.xml. -->
+    <bean id="shibboleth.SameSiteCookieFilter" class="net.shibboleth.shared.servlet.impl.StubbedFilter"
+        c:_0="Servlet Filter 'shibboleth.SameSiteCookieFilter'" />
+    <bean id="shibboleth.ResponseHeaderFilter" class="net.shibboleth.shared.servlet.impl.StubbedFilter"
+        c:_0="Servlet Filter 'shibboleth.ResponseHeaderFilter'" />
+
+    <!-- Default path prefixes for user-facing non-logout activity. -->
+    <util:list id="shibboleth.DefaultUserFacingPrefixes">
+        <value>/profile/admin/</value>
+        <value>/profile/Shibboleth/SSO</value>
+        <value>/profile/SAML2/Unsolicited/SSO</value>
+        <value>/profile/SAML2/Redirect/SSO</value>
+        <value>/profile/SAML2/POST/SSO</value>
+        <value>/profile/SAML2/POST-SimpleSign/SSO</value>
+        <value>/profile/SAML2/Artifact/SSO</value>
+        <value>/profile/cas/login</value>
+        <value>/Authn/</value>
+    </util:list>
+
+    <!--
+    This is the chain of our filters installed by a ServletContextListener, via Spring delegating filter.
+    Any filter beans defined that extend ChainableFilter will be auto-wired in.
+    -->
+    <bean id="shibboleth.ChainingFilter" class="net.shibboleth.shared.spring.servlet.impl.ChainingFilter" />
+
+    <!-- These filters will be auto-wired into the chaining filter bean. -->
+
+    <!-- Mapped to all requests but runs conditionally. -->
+    <bean class="net.shibboleth.shared.spring.servlet.impl.SameSiteCookieHeaderFilter"
         p:activationCondition-ref="#{'%{idp.cookie.sameSiteCondition:shibboleth.Conditions.FALSE}'.trim()}"
         p:defaultValue="%{idp.cookie.sameSite:None}"
         p:sameSiteCookies="#{getObject('shibboleth.SameSiteCookieMap')}" />
 
+    <!--
+    This was, Scott thinks, needed for client storage to work, but if it runs, it
+    has to be after the SameSite filter; i.e. it needs to execute on the response
+    before that one does, so is later in the chain.
+    -->
+    <bean class="net.shibboleth.shared.spring.servlet.impl.CookieBufferingFilter"
+        p:activationCondition-ref="#{'%{idp.cookie.bufferingCondition:shibboleth.Conditions.TRUE}'.trim()}" />
+        
+    <!-- Handles response header customization so must run conditionally. -->
+    <bean class="net.shibboleth.shared.spring.servlet.impl.DynamicResponseHeaderFilter"
+            p:headers="#{getObject('shibboleth.ResponseHeaderMap') ?: getObject('shibboleth.DefaultResponseHeaderMap')}"
+            p:callbacks="#{getObject('shibboleth.ResponseHeaderCallbacks')}">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.shared.servlet.impl.RequestURLPrefixPredicate"
+                p:matchingPrefixes="#{getObject('shibboleth.UserFacingPrefixes') ?: getObject('shibboleth.DefaultUserFacingPrefixes')}" />
+        </property>
+    </bean>
+
+    <!-- Can't be disabled. -->
+    <bean class="net.shibboleth.shared.spring.servlet.impl.RequestResponseContextFilter" />
+
+        
     <bean id="shibboleth.BuilderFactory" factory-method="getBuilderFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
     <bean id="shibboleth.MarshallerFactory" factory-method="getMarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
     <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />

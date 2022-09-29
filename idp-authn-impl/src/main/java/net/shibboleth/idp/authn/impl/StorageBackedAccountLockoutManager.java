@@ -45,7 +45,7 @@ import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponen
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
-import net.shibboleth.shared.net.HttpServletSupport;
+import net.shibboleth.shared.servlet.HttpServletSupport;
 
 /**
  * Implementation of {@link AccountLockoutManager} interface that relies on a {@link StorageService}

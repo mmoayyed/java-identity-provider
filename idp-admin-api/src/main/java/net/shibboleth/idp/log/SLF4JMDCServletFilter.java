@@ -33,7 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import net.shibboleth.idp.Version;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.net.HttpServletSupport;
+import net.shibboleth.shared.servlet.HttpServletSupport;
 
 
 /**

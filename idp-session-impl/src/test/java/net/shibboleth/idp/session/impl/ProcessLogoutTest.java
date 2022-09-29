@@ -47,9 +47,9 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.net.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
+import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 
 /** {@link ProcessLogout} unit test. */
 @SuppressWarnings("javadoc")

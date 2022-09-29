@@ -34,9 +34,9 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.net.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
+import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;

@@ -40,9 +40,9 @@ import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.CookieManager;
-import net.shibboleth.shared.net.impl.ThreadLocalHttpServletRequestProxy;
-import net.shibboleth.shared.net.impl.ThreadLocalHttpServletResponseProxy;
 import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestProxy;
+import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseProxy;
 
 /** {@link StorageBackedIdPSessionSerializer} unit test. */
 @SuppressWarnings("javadoc")
