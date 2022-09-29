@@ -282,19 +282,6 @@
     <bean id="shibboleth.ResponseHeaderFilter" class="net.shibboleth.shared.servlet.impl.StubbedFilter"
         c:_0="Servlet Filter 'shibboleth.ResponseHeaderFilter'" />
 
-    <!-- Default path prefixes for user-facing non-logout activity. -->
-    <util:list id="shibboleth.DefaultUserFacingPrefixes">
-        <value>/profile/admin/</value>
-        <value>/profile/Shibboleth/SSO</value>
-        <value>/profile/SAML2/Unsolicited/SSO</value>
-        <value>/profile/SAML2/Redirect/SSO</value>
-        <value>/profile/SAML2/POST/SSO</value>
-        <value>/profile/SAML2/POST-SimpleSign/SSO</value>
-        <value>/profile/SAML2/Artifact/SSO</value>
-        <value>/profile/cas/login</value>
-        <value>/Authn/</value>
-    </util:list>
-
     <!--
     This is the chain of our filters installed by a ServletContextListener, via Spring delegating filter.
     Any filter beans defined that extend ChainableFilter will be auto-wired in.
@@ -316,21 +303,30 @@
     -->
     <bean class="net.shibboleth.shared.spring.servlet.impl.CookieBufferingFilter"
         p:activationCondition-ref="#{'%{idp.cookie.bufferingCondition:shibboleth.Conditions.TRUE}'.trim()}" />
-        
+
     <!-- Handles response header customization so must run conditionally. -->
     <bean class="net.shibboleth.shared.spring.servlet.impl.DynamicResponseHeaderFilter"
-            p:headers="#{getObject('shibboleth.ResponseHeaderMap') ?: getObject('shibboleth.DefaultResponseHeaderMap')}"
-            p:callbacks="#{getObject('shibboleth.ResponseHeaderCallbacks')}">
-        <property name="activationCondition">
-            <bean class="net.shibboleth.shared.servlet.impl.RequestURLPrefixPredicate"
-                p:matchingPrefixes="#{getObject('shibboleth.UserFacingPrefixes') ?: getObject('shibboleth.DefaultUserFacingPrefixes')}" />
-        </property>
-    </bean>
+        p:activationCondition-ref="UserFacingPrefixPredicate"
+        p:headers="#{getObject('shibboleth.ResponseHeaderMap') ?: getObject('shibboleth.DefaultResponseHeaderMap')}"
+        p:callbacks="#{getObject('shibboleth.ResponseHeaderCallbacks')}" />
+
+    <bean id="UserFacingPrefixPredicate" class="net.shibboleth.shared.spring.servlet.RequestURLPrefixPredicate" />
+
+    <!-- Path prefixes for user-facing non-logout activity. -->
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/admin/" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/Shibboleth/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/Unsolicited/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/Redirect/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/POST/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/POST-SimpleSign/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/Artifact/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/cas/login" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/Authn/" />
 
     <!-- Can't be disabled. -->
     <bean class="net.shibboleth.shared.spring.servlet.impl.RequestResponseContextFilter" />
 
-        
+
     <bean id="shibboleth.BuilderFactory" factory-method="getBuilderFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
     <bean id="shibboleth.MarshallerFactory" factory-method="getMarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
     <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
