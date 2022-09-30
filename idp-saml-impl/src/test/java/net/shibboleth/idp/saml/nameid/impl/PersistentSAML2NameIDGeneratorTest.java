@@ -31,7 +31,7 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
-import net.shibboleth.idp.testing.DatabaseTestingSupport;
+import net.shibboleth.shared.testing.DatabaseTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;

@@ -23,19 +23,6 @@ import java.util.Collections;
 
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.impl.testing.TestSources;
-import net.shibboleth.idp.saml.nameid.NameDecoderException;
-import net.shibboleth.idp.testing.DatabaseTestingSupport;
-import net.shibboleth.shared.component.ComponentInitializationException;
-
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
@@ -46,6 +33,19 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.saml.impl.testing.TestSources;
+import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.testing.DatabaseTestingSupport;
 
 /** Test for {@link StoredPersistentIdDecoder}. */
 public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {

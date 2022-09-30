@@ -43,7 +43,6 @@ import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML2NameIDAttributeDefinition;
-import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
@@ -108,11 +107,11 @@ public final class TestSources {
     /** Authentication method for Principal method tests */
     public static final String TEST_AUTHN_METHOD = "AuthNmEthod";
 
-    public static final String IDP_ENTITY_ID = DatabaseTestingSupport.IDP_ENTITY_ID;
+    public static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
 
-    public static final String PRINCIPAL_ID = DatabaseTestingSupport.PRINCIPAL_ID;
+    public static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
 
-    public static final String SP_ENTITY_ID = DatabaseTestingSupport.SP_ENTITY_ID;
+    public static final String SP_ENTITY_ID = "https://sp.example.org/sp";
 
     /** Constructor. */
     private TestSources() {
