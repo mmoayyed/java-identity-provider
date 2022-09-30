@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!-- Beans related to servlet/filter installation and use. -->
+
+    <bean id="shibboleth.HttpServletRequest" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestProxy" />
+    <bean id="shibboleth.HttpServletRequestSupplier" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier" />
+    <bean id="shibboleth.HttpServletResponse" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseProxy" />
+    <bean id="shibboleth.HttpServletResponseSupplier" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseSupplier" />
+
+    <bean id="shibboleth.DefaultResponseHeaderMap"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="Strict-Transport-Security" value="%{idp.hsts:max-age=0}" />
+                <entry key="X-Frame-Options" value="%{idp.frameoptions:DENY}" />
+                <entry key="Content-Security-Policy" value="%{idp.csp:frame-ancestors 'none';}"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- These are stubbed out to emit warnings when not removed from web.xml. -->
+    <bean id="shibboleth.SameSiteCookieFilter" class="net.shibboleth.shared.servlet.impl.StubbedFilter"
+        c:_0="Servlet Filter 'shibboleth.SameSiteCookieFilter'" />
+    <bean id="shibboleth.ResponseHeaderFilter" class="net.shibboleth.shared.servlet.impl.StubbedFilter"
+        c:_0="Servlet Filter 'shibboleth.ResponseHeaderFilter'" />
+
+    <!--
+    This is the chain of our filters installed by a ServletContextListener, via Spring delegating filter.
+    Any filter beans defined that extend ChainableFilter will be auto-wired in.
+    -->
+    <bean id="shibboleth.ChainingFilter" class="net.shibboleth.shared.spring.servlet.impl.ChainingFilter" />
+
+    <!-- These filters will be auto-wired into the chaining filter bean. -->
+
+    <!-- Can't be disabled, runs "LATEST" so that the TLS-stored objects are wrapped by other filters. -->
+    <bean class="net.shibboleth.shared.spring.servlet.impl.RequestResponseContextFilter" />
+  
+    <!-- Mapped to all requests but runs conditionally, and runs EARLIEST to ensure a last look at cookies. -->
+    <bean class="net.shibboleth.shared.spring.servlet.impl.SameSiteCookieHeaderFilter"
+        p:activationCondition-ref="#{'%{idp.cookie.sameSiteCondition:shibboleth.Conditions.FALSE}'.trim()}"
+        p:defaultValue="%{idp.cookie.sameSite:None}"
+        p:sameSiteCookies="#{getObject('shibboleth.SameSiteCookieMap')}" />
+
+    <!--
+    This was, Scott thinks, needed for client storage to work, but if it runs, it has to be after the
+    SameSite filter; i.e. it needs to execute on the response before that one does, so runs NEUTRAL.
+    -->
+    <bean class="net.shibboleth.shared.spring.servlet.impl.CookieBufferingFilter"
+        p:activationCondition-ref="#{'%{idp.cookie.bufferingCondition:shibboleth.Conditions.TRUE}'.trim()}" />
+
+    <!-- Handles response header customization so must run conditionally based on path prefix. -->
+    <bean class="net.shibboleth.shared.spring.servlet.impl.DynamicResponseHeaderFilter"
+        p:activationCondition-ref="UserFacingPrefixPredicate"
+        p:headers="#{getObject('shibboleth.ResponseHeaderMap') ?: getObject('shibboleth.DefaultResponseHeaderMap')}"
+        p:callbacks="#{getObject('shibboleth.ResponseHeaderCallbacks')}" />
+
+    <!-- Evaluates auto-wired paths against a requested URL. -->
+    <bean id="UserFacingPrefixPredicate" class="net.shibboleth.shared.spring.servlet.RequestURLPrefixPredicate" />
+
+    <!-- Path prefixes for user-facing non-logout activity. -->
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/admin/" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/Shibboleth/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/Unsolicited/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/Redirect/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/POST/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/POST-SimpleSign/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/SAML2/Artifact/SSO" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/cas/login" />
+    <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/Authn/" />
+
+</beans>
