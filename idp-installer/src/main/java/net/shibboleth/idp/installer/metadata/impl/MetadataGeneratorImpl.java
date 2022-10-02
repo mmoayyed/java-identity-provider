@@ -77,15 +77,30 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
      * The end points we understand.
      */
     enum Endpoints {
-        /** IDPSSODescriptor. Artfact */
-        SAML1Artifact, SAML2Artifact,
-        /** IDPSSODescriptor. SLO */
-        RedirectSLO, POSTSLO, POSTSimpleSignSLO, SOAPSLO,
-        /** IDPSSODescriptor. SSO */
-        ShibbolethSSO, POSTSSO, POSTSimpleSignSSO, RedirectSSO,
-
-        /** AttributeAuthorityDescriptor. */
-        SAML1Query, SAML2Query,
+        /** IDPSSODescriptor. Artifact (SAML1). */
+        SAML1Artifact,
+        /** IDPSSODescriptor. Artifact (SAML2). */
+        SAML2Artifact,
+        /** IDPSSODescriptor. SLO (Redirect) */
+        RedirectSLO,
+        /** IDPSSODescriptor. SLO (Post) */
+        POSTSLO,
+        /** IDPSSODescriptor. SLO (Post Simple Sign) */
+        POSTSimpleSignSLO,
+        /** IDPSSODescriptor. SLO (Soap) */
+        SOAPSLO,
+        /** IDPSSODescriptor. SSO (Shibboleth protocol)*/
+        ShibbolethSSO,
+        /** IDPSSODescriptor. SSO (SAML2 Post)*/
+        POSTSSO,
+        /** IDPSSODescriptor. SSO (SAML2 Post Simple Sign)*/
+        POSTSimpleSignSSO,
+        /** IDPSSODescriptor. SSO (SAML2 Redirectr)*/
+        RedirectSSO,
+        /** AttributeAuthorityDescriptor. (SAML1=)*/
+        SAML1Query,
+        /** AttributeAuthorityDescriptor. (SAML2) */
+        SAML2Query,
     }
 
     /**

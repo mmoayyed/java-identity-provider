@@ -50,6 +50,7 @@ class FlowRelativeResourceLoader extends DefaultResourceLoader {
         getProtocolResolvers().add(new ConditionalResourceResolver());
     }
 
+    /** {@inheritDoc} */
     public ClassLoader getClassLoader() {
         return flowResource.getClass().getClassLoader();
     }
@@ -74,6 +75,10 @@ class FlowRelativeResourceLoader extends DefaultResourceLoader {
         return createFlowRelativeResource(location);
     }
 
+    /** Return resource relative to the {@linkplain #flowResource}
+     * @param location the resource location
+     * @return a corresponding Resource handle
+     */
     private Resource createFlowRelativeResource(final String location) {
         try {
             return flowResource.createRelative(location);

@@ -94,9 +94,8 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
         }));
     }
     
-    /** Check for the same file in two places and if asked for.
-     * output the sorted list
-     * @param args
+    /** Check for the same file in two places.
+     * @param args the arguments to check
      */
     private void listAndExactCheck(final JarCheckArguments args) {
         final Map<String, String> allNames = new HashMap<>(distJars.size() + pluginJars.size() + webAppJars.size());
@@ -159,7 +158,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     }
 
     /** Do a general test.
-     * @param args
+     * @param args the arguments to check
      */
     private void fileNamesOnly(final JarCheckArguments args) {
         final Map<String, String> allNames = new HashMap<>(distJars.size() + pluginJars.size() + webAppJars.size());
@@ -171,7 +170,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     }
     
     /** make the file names look more 'usual'.
-     * @param fileNames
+     * @param fileNames the files to look at
      * @return the processed names
      */
     private List<String> normalize(final List<String> fileNames) {
@@ -189,7 +188,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     }
 
     /** Do a detailed check.
-     * @param args 
+     * @param args the arguments to check
      */
     private void detailed(final JarCheckArguments args) {
         final Map<String, String> allNames = new HashMap<>();
