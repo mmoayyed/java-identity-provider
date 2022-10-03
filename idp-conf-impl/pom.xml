@@ -33,6 +33,11 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-networking-spring</artifactId>
+        </dependency>
+
         <!-- Provided Dependencies -->
         <dependency>
             <groupId>jakarta.servlet</groupId>

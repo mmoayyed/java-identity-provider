@@ -59,6 +59,11 @@
         p:encoding="UTF-8"
         p:forceEncoding="true" />
 
+    <!-- Runs NEUTRAL, can be disabled if desired. -->
+    <bean class="net.shibboleth.idp.conf.impl.SLF4JMDCServletFilter"
+        p:activationCondition="%{idp.logging.MDC.enabled:true}"
+        p:createSession="%{idp.logging.MDC.createSession:true}" />
+
     <!--
     This was, Scott thinks, needed for client storage to work, but if it runs, it has to be after the
     SameSite filter; i.e. it needs to execute on the response before that one does, so runs NEUTRAL.
