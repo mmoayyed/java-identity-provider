@@ -1,1 +1,3 @@
+net.shibboleth.idp.conf.impl.SpringConfigServletContextInitializer
+net.shibboleth.idp.conf.impl.ServletConfigServletContextInitializer
 net.shibboleth.idp.conf.impl.RegisterFilterChainServletContextInitializer

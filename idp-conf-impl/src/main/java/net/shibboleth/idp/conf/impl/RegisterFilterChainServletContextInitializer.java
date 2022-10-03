@@ -30,28 +30,21 @@ import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * A {@link ServletContainerInitializer} implementation that registers a filter chain embedded in
  * our Spring configuration.
  *
- * The filter registration can be disabled by setting the system property
- * {@link RegisterFilterChainServletContextInitializer#SYSTEM_PROPERTY_ACTIVATION} to <pre>disabled</pre>.
+ * <p>The filter registration is on by default but can be disabled by setting the context init-param
+ * {@link RegisterFilterChainServletContextInitializer#INIT_PARAMETER_ACTIVATION} to <pre>false</pre>.</p>
  * 
- * The chain is always mapped to all requests because it is expected that any further granularity is
- * configured via Spring.
+ * <p>The chain is always mapped to all requests because it is expected that any further granularity is
+ * configured via Spring.</p>
  */
 public class RegisterFilterChainServletContextInitializer implements ServletContainerInitializer {
 
     /** System property name for the activation of this class. */
-    @Nonnull @NotEmpty public static final String SYSTEM_PROPERTY_ACTIVATION = "idp.autoRegisterFilterChain";
-
-    /** System property name for the activation of this class. */
-    @Nonnull @NotEmpty public static final String SYSTEM_PROPERTY_SERVLET = SYSTEM_PROPERTY_ACTIVATION + ".servlet";
-
-    /** Name of servlet that MUST be registered for us to run. */
-    @Nonnull @NotEmpty public static final String DEFAULT_SERVLET_TO_CHECK = "idp";
+    @Nonnull @NotEmpty public static final String INIT_PARAMETER_ACTIVATION = "net.shibboleth.idp.registerFilterChain";
 
     /** The filter name for the embedded filter chain. */
     @Nonnull @NotEmpty public static final String FILTER_NAME = "ShibbolethFilterChain";
@@ -66,14 +59,9 @@ public class RegisterFilterChainServletContextInitializer implements ServletCont
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
         
-        final String flag = System.getProperty(SYSTEM_PROPERTY_ACTIVATION);
-        log.debug("The value of the flag {}: {}", SYSTEM_PROPERTY_ACTIVATION, flag);
+        final String flag = ctx.getInitParameter(INIT_PARAMETER_ACTIVATION);
         if ("false".equalsIgnoreCase(flag)) {
             log.info("Filter registration is disabled");
-            return;
-        } else if (ctx.getServletRegistration(StringSupport.trimOrNull(
-                System.getProperty(SYSTEM_PROPERTY_SERVLET, DEFAULT_SERVLET_TO_CHECK))) == null) {
-            log.debug("Ignoring invocation outside IdP context");
             return;
         }
         

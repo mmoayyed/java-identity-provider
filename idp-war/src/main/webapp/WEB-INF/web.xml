@@ -4,21 +4,31 @@
  
     <display-name>Shibboleth Identity Provider</display-name>
 
-    <!-- Spring application context files. Files are loaded in the order they appear with subsequent files overwriting 
-        same named beans in previous files. -->
+    <!-- Auto-registers Java filter chain required by IdP. -->
     <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>classpath*:/META-INF/net.shibboleth.idp/preconfig.xml,classpath:/net/shibboleth/idp/conf/global-system.xml,classpath*:/META-INF/net.shibboleth.idp/postconfig.xml</param-value>
+        <param-name>net.shibboleth.idp.registerFilterChain</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <!-- Auto-registers IdP dispatcher servlet. -->
+    <context-param>
+        <param-name>net.shibboleth.idp.registerIdPServlet</param-name>
+        <param-value>true</param-value>
     </context-param>
     
     <context-param>
-        <param-name>contextClass</param-name>
-        <param-value>net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext</param-value>
+        <param-name>net.shibboleth.idp.registerRemoteUserServlet</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>net.shibboleth.idp.registerX509Servlet</param-name>
+        <param-value>false</param-value>
     </context-param>
     
+    <!-- Registers /shibboleth to return metadata file. -->
     <context-param>
-        <param-name>contextInitializerClasses</param-name>
-        <param-value>net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer</param-value>
+        <param-name>net.shibboleth.idp.registerMetadataServlet</param-name>
+        <param-value>true</param-value>
     </context-param>
 
     <!-- Spring listener used to load up the configuration -->
@@ -27,24 +37,6 @@
     </listener>
     
     <!-- Servlets and servlet mappings -->    
-    <servlet>
-        <servlet-name>idp</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>classpath*:/META-INF/net/shibboleth/idp/mvc/preconfig.xml,classpath:/net/shibboleth/idp/conf/mvc-beans.xml,classpath:/net/shibboleth/idp/conf/webflow-config.xml,classpath*:/META-INF/net/shibboleth/idp/mvc/postconfig.xml</param-value>
-        </init-param>
-        <init-param>
-            <param-name>contextClass</param-name>
-            <param-value>net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext</param-value>
-        </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>idp</servlet-name>
-        <url-pattern>/status</url-pattern>
-        <url-pattern>/profile/*</url-pattern>
-    </servlet-mapping>
 
     <!-- Servlet protected by container used for RemoteUser authentication -->
     <servlet>
@@ -68,16 +60,6 @@
         <url-pattern>/Authn/X509</url-pattern>
     </servlet-mapping>
 
-    <!-- Send request for the EntityID to the SAML metadata echoing JSP. -->
-    <servlet>
-        <servlet-name>shibboleth_jsp</servlet-name>
-        <jsp-file>/WEB-INF/jsp/metadata.jsp</jsp-file>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>shibboleth_jsp</servlet-name>
-        <url-pattern>/shibboleth</url-pattern>
-    </servlet-mapping>
-    
     <!-- Send servlet errors through the IdP's MVC error handling. -->
     <error-page>
         <exception-type>net.shibboleth.idp.authn.ExternalAuthenticationException</exception-type>
