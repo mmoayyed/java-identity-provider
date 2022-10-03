@@ -27,30 +27,13 @@
     </listener>
     
     <!-- Filters and filter mappings -->
-    
-    <!-- Try and force I18N, probably won't help much. -->
-    <filter>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-        <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-        <init-param>
-            <param-name>forceEncoding</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
+
     <!-- Manages logging MDC. -->
     <filter>
         <filter-name>SLF4JMDCServletFilter</filter-name>
         <filter-class>net.shibboleth.idp.log.SLF4JMDCServletFilter</filter-class>
     </filter>
     
-    <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
     <filter-mapping>
         <filter-name>SLF4JMDCServletFilter</filter-name>
         <url-pattern>/*</url-pattern>

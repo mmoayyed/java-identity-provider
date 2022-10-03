@@ -53,6 +53,12 @@
         p:defaultValue="%{idp.cookie.sameSite:None}"
         p:sameSiteCookies="#{getObject('shibboleth.SameSiteCookieMap')}" />
 
+    <!-- Runs NEUTRAL, can be disabled if desired. -->
+    <bean class="net.shibboleth.shared.spring.servlet.impl.CharacterEncodingFilter"
+        p:activationCondition="%{idp.encoding.forceUTF8:true}"
+        p:encoding="UTF-8"
+        p:forceEncoding="true" />
+
     <!--
     This was, Scott thinks, needed for client storage to work, but if it runs, it has to be after the
     SameSite filter; i.e. it needs to execute on the response before that one does, so runs NEUTRAL.
@@ -65,7 +71,7 @@
         p:activationCondition-ref="UserFacingPrefixPredicate"
         p:headers="#{getObject('shibboleth.ResponseHeaderMap') ?: getObject('shibboleth.DefaultResponseHeaderMap')}"
         p:callbacks="#{getObject('shibboleth.ResponseHeaderCallbacks')}" />
-
+    
     <!-- Evaluates auto-wired paths against a requested URL. -->
     <bean id="UserFacingPrefixPredicate" class="net.shibboleth.shared.spring.servlet.RequestURLPrefixPredicate" />
 
