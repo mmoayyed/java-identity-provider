@@ -45,12 +45,10 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class RegisterFilterChainServletContextInitializer implements ServletContainerInitializer {
 
     /** System property name for the activation of this class. */
-    @Nonnull @NotEmpty public static final String SYSTEM_PROPERTY_ACTIVATION =
-            RegisterFilterChainServletContextInitializer.class.getCanonicalName();
+    @Nonnull @NotEmpty public static final String SYSTEM_PROPERTY_ACTIVATION = "idp.autoRegisterFilterChain";
 
     /** System property name for the activation of this class. */
-    @Nonnull @NotEmpty public static final String SYSTEM_PROPERTY_SERVLET =
-            RegisterFilterChainServletContextInitializer.class.getCanonicalName() + ".servlet";
+    @Nonnull @NotEmpty public static final String SYSTEM_PROPERTY_SERVLET = SYSTEM_PROPERTY_ACTIVATION + ".servlet";
 
     /** Name of servlet that MUST be registered for us to run. */
     @Nonnull @NotEmpty public static final String DEFAULT_SERVLET_TO_CHECK = "idp";
@@ -70,8 +68,8 @@ public class RegisterFilterChainServletContextInitializer implements ServletCont
         
         final String flag = System.getProperty(SYSTEM_PROPERTY_ACTIVATION);
         log.debug("The value of the flag {}: {}", SYSTEM_PROPERTY_ACTIVATION, flag);
-        if ("disabled".equalsIgnoreCase(flag)) {
-            log.info("Filter registration is disabled according to the system properties");
+        if ("false".equalsIgnoreCase(flag)) {
+            log.info("Filter registration is disabled");
             return;
         } else if (ctx.getServletRegistration(StringSupport.trimOrNull(
                 System.getProperty(SYSTEM_PROPERTY_SERVLET, DEFAULT_SERVLET_TO_CHECK))) == null) {
