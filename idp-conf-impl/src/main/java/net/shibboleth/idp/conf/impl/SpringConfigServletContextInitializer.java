@@ -23,11 +23,13 @@ import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.ContextLoaderListener;
 
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext;
 
 /**
@@ -38,35 +40,27 @@ public class SpringConfigServletContextInitializer implements ServletContainerIn
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SpringConfigServletContextInitializer.class);
-    
+
+    /** System property name for the activation of this class. */
+    @Nonnull @NotEmpty public static final String INIT_PARAMETER_ACTIVATION = "net.shibboleth.idp.registerSpringConfig";
+
     /** {@inheritDoc} */
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
 
-        String param = ctx.getInitParameter("contextClass");
-        if (param == null) {
-            log.info("Setting init parameter contextClass");
-            ctx.setInitParameter("contextClass", DelimiterAwareApplicationContext.class.getName());
-        } else {
-            log.info("Init parameter contextClass already set to {}", param);
+        final String flag = ctx.getInitParameter(INIT_PARAMETER_ACTIVATION);
+        if (!"true".equalsIgnoreCase(flag)) {
+            log.info("Spring config registration is disabled");
+            return;
         }
 
-        param = ctx.getInitParameter("contextInitializerClasses");
-        if (param == null) {
-            log.info("Setting init parameter contextInitializerClasses");
-            ctx.setInitParameter("contextInitializerClasses", IdPPropertiesApplicationContextInitializer.class.getName());
-        } else {
-            log.info("Init parameter contextInitializerClasses already set to {}", param);
-        }
-
-        param = ctx.getInitParameter("contextConfigLocation");
-        if (param == null) {
-            log.info("Setting init parameter contextConfigLocation");
-            ctx.setInitParameter("contextConfigLocation",
-                    "classpath*:/META-INF/net.shibboleth.idp/preconfig.xml,classpath:/net/shibboleth/idp/conf/global-system.xml,classpath*:/META-INF/net.shibboleth.idp/postconfig.xml");
-        } else {
-            log.info("Init parameter contextConfigLocation already set to {}", param);
-        }
+        log.info("Setting init parameters and installing Spring listener");
+        ctx.setInitParameter("contextClass", DelimiterAwareApplicationContext.class.getName());
+        ctx.setInitParameter("contextInitializerClasses", IdPPropertiesApplicationContextInitializer.class.getName());
+        ctx.setInitParameter("contextConfigLocation",
+                "classpath*:/META-INF/net.shibboleth.idp/preconfig.xml,classpath:/net/shibboleth/idp/conf/global-system.xml,classpath*:/META-INF/net.shibboleth.idp/postconfig.xml");
+        
+        ctx.addListener(ContextLoaderListener.class.getName());
     }
 
 }

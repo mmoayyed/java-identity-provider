@@ -4,6 +4,19 @@
  
     <display-name>Shibboleth Identity Provider</display-name>
 
+    <!--
+    The context parameters below control V5+ auto-registration support.
+    Those desiring complete control over all of these steps can disable them
+    but this is not generally recommended, apart from toggling the optional
+    servlets that may not be needed.
+    -->
+
+    <!-- Registers Spring support. -->
+    <context-param>
+        <param-name>net.shibboleth.idp.registerSpringConfig</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
     <!-- Auto-registers Java filter chain required by IdP. -->
     <context-param>
         <param-name>net.shibboleth.idp.registerFilterChain</param-name>
@@ -31,11 +44,6 @@
         <param-name>net.shibboleth.idp.registerMetadataServlet</param-name>
         <param-value>true</param-value>
     </context-param>
-
-    <!-- Spring listener used to load up the configuration -->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
     
     <!-- Send servlet errors through the IdP's MVC error handling. -->
     <error-page>
