@@ -59,7 +59,7 @@ public class X509AuthServlet extends HttpServlet {
     @Nonnull @NotEmpty private static final String TRUST_ENGINE_PARAM = "trustEngine";
 
     /** Init parameter controlling certificate preservation. */
-    @Nonnull @NotEmpty private static final String SAVECERT_ENGINE_PARAM = "saveCertificateToCredentialSet";
+    @Nonnull @NotEmpty private static final String SAVECERT_PARAM = "saveCertificateToCredentialSet";
 
     /** Parameter/cookie for bypassing prompt page. */
     @Nonnull @NotEmpty private static final String PASSTHROUGH_PARAM = "x509passthrough";
@@ -120,7 +120,7 @@ public class X509AuthServlet extends HttpServlet {
             }
         }
         
-        param = config.getInitParameter(SAVECERT_ENGINE_PARAM);
+        param = config.getInitParameter(SAVECERT_PARAM);
         if (param != null) {
             setSaveCertificateToCredentialSet(Boolean.valueOf(param));
         }
@@ -138,9 +138,8 @@ public class X509AuthServlet extends HttpServlet {
             X509Certificate[] certs =
                     (X509Certificate[]) httpRequest.getAttribute("jakarta.servlet.request.X509Certificate");
             if (certs == null || certs.length == 0) {
-                // Check for newer Jakarta variant.
-                // TODO: Once Jakarta is "common", probably reverse these checks.
-                certs = (X509Certificate[]) httpRequest.getAttribute("jakarta.servlet.request.X509Certificate");
+                // Check for older variant.
+                certs = (X509Certificate[]) httpRequest.getAttribute("javax.servlet.request.X509Certificate");
             }
             log.debug("{} X.509 Certificate(s) found in request", certs != null ? certs.length : 0);
 
@@ -153,7 +152,7 @@ public class X509AuthServlet extends HttpServlet {
 
             final X509Certificate cert = certs[0];
             log.debug("End-entity X.509 certificate found with subject '{}', issued by '{}'",
-                    cert.getSubjectDN().getName(), cert.getIssuerDN().getName());
+                    cert.getSubjectX500Principal().getName(), cert.getIssuerX500Principal().getName());
             
             if (trustEngine != null) {
                 try {
