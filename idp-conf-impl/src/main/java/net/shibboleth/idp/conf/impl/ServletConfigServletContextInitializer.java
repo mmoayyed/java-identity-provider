@@ -33,6 +33,7 @@ import jakarta.servlet.ServletRegistration;
 //import net.shibboleth.idp.authn.impl.X509AuthServlet;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext;
+import net.shibboleth.shared.spring.servlet.impl.DelegatingServletProxy;
 
 /**
  * A {@link ServletContainerInitializer} implementation that registers the servlets used by the IdP.
@@ -80,25 +81,24 @@ public class ServletConfigServletContextInitializer implements ServletContainerI
                     "classpath*:/META-INF/net/shibboleth/idp/mvc/preconfig.xml,classpath:/net/shibboleth/idp/conf/mvc-beans.xml,classpath:/net/shibboleth/idp/conf/webflow-config.xml,classpath*:/META-INF/net/shibboleth/idp/mvc/postconfig.xml");
         }
 
-        /*
         if ("true".equalsIgnoreCase(remoteUserFlag)) {
             log.info("Registering RemoteUser authentication servlet");
-            ServletRegistration.Dynamic registration = ctx.addServlet("RemoteUserAuthHandler", RemoteUserAuthServlet.class);
+            ServletRegistration.Dynamic registration = ctx.addServlet("RemoteUserAuthHandler",
+                    new DelegatingServletProxy("shibboleth.RemoteUserAuthServlet"));
             registration.addMapping("/Authn/RemoteUser");
-            registration.setLoadOnStartup(2);
         }
         
         if ("true".equalsIgnoreCase(x509Flag)) {
             log.info("Registering X.509 authentication servlet");
-            ServletRegistration.Dynamic registration = ctx.addServlet("X509AuthHandler", X509AuthServlet.class);
+            ServletRegistration.Dynamic registration = ctx.addServlet("X509AuthHandler",
+                    new DelegatingServletProxy("shibboleth.X509AuthServlet"));
             registration.addMapping("/Authn/X509");
-            registration.setLoadOnStartup(3);
         }
-        */
         
         if ("true".equals(metadataFlag)) {
             log.info("Registering metadata endpoint servlet");
-            final ServletRegistration.Dynamic registration = ctx.addJspFile("MetadataAccessHandler", "/WEB-INF/jsp/metadata.jsp");
+            final ServletRegistration.Dynamic registration =
+                    ctx.addJspFile("MetadataAccessHandler", "/WEB-INF/jsp/metadata.jsp");
             registration.addMapping("/shibboleth");
         }
     }

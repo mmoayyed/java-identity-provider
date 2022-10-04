@@ -554,5 +554,25 @@
         p:entryExpiration="#{'%{idp.authn.revocation.lifetime:%{idp.authn.defaultLifetime:PT12H}}'}"
         p:storage-ref="#{'%{idp.authn.revocation.StorageService:shibboleth.StorageService}'.trim()}"
         p:strict="%{idp.authn.revocation.strict:false}" />
+        
+    <!-- Servlet beans for RemoteUser and X509 flows. -->
+
+    <bean id="checkAttributes" parent="shibboleth.CommaDelimStringArray"
+        c:_0="#{'%{idp.authn.RemoteUser.checkAttributes:}'.trim()}" />
+    
+    <bean id="checkHeaders" parent="shibboleth.CommaDelimStringArray"
+        c:_0="#{'%{idp.authn.RemoteUser.checkHeaders:}'.trim()}" />
+
+    <bean id="shibboleth.RemoteUserAuthServlet" class="net.shibboleth.idp.authn.impl.RemoteUserAuthServlet" lazy-init="true"
+        p:checkRemoteUser="%{idp.authn.RemoteUser.checkRemoteUser:true}"
+        p:checkAttributes="#{getObject('checkAttributes')}"
+        p:checkHeaders="#{getObject('checkHeaders')}"
+        p:subjectAttribute="#{'%{idp.authn.RemoteUser.subjectAttribute:}'.trim()}"
+        p:authnMethodHeader="#{'%{idp.authn.RemoteUser.authnMethodHeader:}'.trim()}"
+        p:authnAuthorityHeader="#{'%{idp.authn.RemoteUser.authnAuthorityHeader:}'.trim()}" />
+        
+    <bean id="shibboleth.X509AuthServlet" class="net.shibboleth.idp.authn.impl.X509AuthServlet" lazy-init="true"
+        p:saveCertificateToCredentialSet="%{idp.authn.X509.saveCertificateToCredentialSet:true}"
+        p:trustEngine="#{getObject('shibboleth.authn.X509.TrustEngine')}" />
 
 </beans>
