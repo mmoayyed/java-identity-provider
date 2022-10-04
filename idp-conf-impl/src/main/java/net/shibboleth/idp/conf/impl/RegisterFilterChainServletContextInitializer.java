@@ -36,7 +36,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
  * our Spring configuration.
  *
  * <p>The filter registration is on by default but can be disabled by setting the context init-param
- * {@link RegisterFilterChainServletContextInitializer#INIT_PARAMETER_ACTIVATION} to <pre>false</pre>.</p>
+ * {@link RegisterFilterChainServletContextInitializer#INIT_PARAMETER_ACTIVATION} to false.</p>
  * 
  * <p>The chain is always mapped to all requests because it is expected that any further granularity is
  * configured via Spring.</p>
