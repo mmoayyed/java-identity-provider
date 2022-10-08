@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.MoreObjects;
-import net.shibboleth.idp.authn.PooledTemplateSearchDnResolver;
 import net.shibboleth.idp.authn.TemplateSearchDnResolver;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.primitive.DeprecationSupport;
@@ -32,22 +31,21 @@ import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
-import org.ldaptive.BindRequest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.LdapURL;
+import org.ldaptive.FilterTemplate;
+import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.RandomConnectionStrategy;
 import org.ldaptive.RoundRobinConnectionStrategy;
-import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
+import org.ldaptive.SimpleBindRequest;
 import org.ldaptive.auth.Authenticator;
-import org.ldaptive.auth.BindAuthenticationHandler;
 import org.ldaptive.auth.FormatDnResolver;
-import org.ldaptive.auth.PooledBindAuthenticationHandler;
-import org.ldaptive.auth.PooledSearchEntryResolver;
+import org.ldaptive.auth.SimpleBindAuthenticationHandler;
 import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
@@ -55,13 +53,9 @@ import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationRequestHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
-import org.ldaptive.pool.BindPassivator;
-import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.BindConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
-import org.ldaptive.pool.Passivator;
-import org.ldaptive.pool.PoolConfig;
-import org.ldaptive.pool.PooledConnectionFactory;
-import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.pool.ConnectionPassivator;
 import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.SslConfig;
@@ -200,9 +194,6 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
   /** Whether to use startTLS for connections. */
   private boolean useStartTLS;
 
-  /** Whether to use LDAPS for connections. */
-  private boolean useSSL;
-
   /** Whether to use the allow-all hostname verifier. */
   private boolean disableHostnameVerification;
 
@@ -334,10 +325,6 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     useStartTLS = b;
   }
 
-  public void setUseSSL(final boolean b) {
-    useSSL = b;
-  }
-  
   public void setDisableHostnameVerification(final boolean b) {
       disableHostnameVerification = b;
   }
@@ -539,25 +526,26 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     }
     config.setSslConfig(createSslConfig());
     if (initializer != null) {
-      config.setConnectionInitializer(initializer);
+      config.setConnectionInitializers(initializer);
     }
     return config;
   }
 
   /**
-   * Returns a new blocking connection pool. Wires a {@link SearchValidator} by default.
+   * Returns a new pooled connection factory. Wires a {@link SearchConnectionValidator} by default.
    *
    * @param name of the connection pool
    * @param config to assign to the pool
    *
    * @return new blocking connection pool
    */
-  protected BlockingConnectionPool createConnectionPool(final String name, final ConnectionConfig config) {
-    return createConnectionPool(name, config, new SearchValidator());
+  protected PooledConnectionFactory createPooledConnectionFactory(final String name, final ConnectionConfig config) {
+    return createPooledConnectionFactory(
+      name, config, SearchConnectionValidator.builder().period(validatePeriod).build());
   }
 
   /**
-   * Returns a new blocking connection pool using the supplied search validator.
+   * Returns a new pooled connection factory using the supplied search validator.
    *
    * @param name of the connection pool
    * @param config to assign to the pool
@@ -565,13 +553,13 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
    *
    * @return new blocking connection pool
    */
-  protected BlockingConnectionPool createConnectionPool(final String name, final ConnectionConfig config,
-                                                        final SearchValidator validator) {
-    return createConnectionPool(name, config, validator, null);
+  protected PooledConnectionFactory createPooledConnectionFactory(
+    final String name, final ConnectionConfig config, final SearchConnectionValidator validator) {
+    return createPooledConnectionFactory(name, config, validator, null);
   }
 
   /**
-   * Returns a new blocking connection pool using the supplied search validator and passivator type. Note that a {@link
+   * Returns a new pooled connection factory using the supplied search validator and passivator. Note that a {@link
    * PassivatorType#BIND} uses the configured {@link #bindDn} and {@link #bindDnCredential}.
    *
    * @param name of the connection pool
@@ -581,28 +569,30 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
    *
    * @return new blocking connection pool
    */
-  protected BlockingConnectionPool createConnectionPool(final String name, final ConnectionConfig config,
-                                                        final SearchValidator validator, final Passivator passivator) {
-    final PoolConfig poolConfig = new PoolConfig();
-    poolConfig.setMinPoolSize(minPoolSize);
-    poolConfig.setMaxPoolSize(maxPoolSize);
-    poolConfig.setValidateOnCheckOut(validateOnCheckout);
-    poolConfig.setValidatePeriodically(validatePeriodically);
-    poolConfig.setValidatePeriod(validatePeriod);
-    final BlockingConnectionPool pool = new BlockingConnectionPool();
-    pool.setName(name);
-    pool.setBlockWaitTime(blockWaitTime);
-    pool.setPoolConfig(poolConfig);
-    pool.setPruneStrategy(new IdlePruneStrategy(prunePeriod, idleTime));
-    pool.setValidator(validator);
-    pool.setPassivator(passivator);
-    pool.setFailFastInitialize(false);
-    pool.setConnectionFactory(new DefaultConnectionFactory(config));
-    pool.initialize();
-    return pool;
+  protected PooledConnectionFactory createPooledConnectionFactory(
+    final String name,
+    final ConnectionConfig config,
+    final SearchConnectionValidator validator,
+    final ConnectionPassivator passivator) {
+    final PooledConnectionFactory factory = new PooledConnectionFactory();
+    factory.setConnectionConfig(config);
+    factory.setMinPoolSize(minPoolSize);
+    factory.setMaxPoolSize(maxPoolSize);
+    factory.setValidateOnCheckOut(validateOnCheckout);
+    factory.setValidatePeriodically(validatePeriodically);
+    factory.setName(name);
+    factory.setBlockWaitTime(blockWaitTime);
+    factory.setPruneStrategy(new IdlePruneStrategy(prunePeriod, idleTime));
+    factory.setValidator(validator);
+    if (passivator != null) {
+      factory.setPassivator(passivator);
+    }
+    factory.setFailFastInitialize(false);
+    factory.initialize();
+    return factory;
   }
 
-  protected SearchValidator createSearchValidator(final String baseDn, final String filter) {
+  protected SearchConnectionValidator createSearchConnectionValidator(final String baseDn, final String filter) {
     final SearchRequest searchRequest = new SearchRequest();
     searchRequest.setReturnAttributes("1.1");
     searchRequest.setSearchScope(SearchScope.OBJECT);
@@ -612,22 +602,22 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     } else {
       searchRequest.setBaseDn("");
     }
-    final SearchFilter searchFilter = new SearchFilter();
+    final FilterTemplate searchFilter = new FilterTemplate();
     if (filter != null) {
       searchFilter.setFilter(filter);
     } else {
       searchFilter.setFilter("(objectClass=*)");
     }
-    searchRequest.setSearchFilter(searchFilter);
-    return new SearchValidator(searchRequest);
+    searchRequest.setFilter(searchFilter);
+    return SearchConnectionValidator.builder().request(searchRequest).period(validatePeriod).build();
   }
 
-  protected Passivator createPoolPassivator(final PassivatorType type) {
+  protected ConnectionPassivator createConnectionPassivator(final PassivatorType type) {
     switch(type) {
       case BIND:
-        return new BindPassivator(new BindRequest(bindDn, new Credential(bindDnCredential)));
+        return new BindConnectionPassivator(new SimpleBindRequest(bindDn, new Credential(bindDnCredential)));
       case ANONYMOUS_BIND:
-        return new BindPassivator();
+        return new BindConnectionPassivator();
       case NONE:
       default:
         return null;
@@ -637,30 +627,18 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
 // Checkstyle: CyclomaticComplexity|MethodLength OFF
   @Override
   protected Authenticator createInstance() throws Exception {
-    // check for deprecated useSSL property
-    if (useSSL) {
-      DeprecationSupport.warn(ObjectType.PROPERTY, "useSSL", "LDAP authentication",
-              "use of ldaps:// scheme in connection URL");
-      final LdapURL url = new LdapURL(ldapUrl);
-      for (final String s : url.getHostnamesWithSchemeAndPort()) {
-        if (!s.startsWith("ldaps://")) {
-          throw new IllegalArgumentException("useSSL property specified but URL scheme is not ldaps:// for " + s);
-        }
-      }
-    }
     final Authenticator authenticator = new Authenticator();
     if (disablePooling) {
       authenticator.setAuthenticationHandler(
-        new BindAuthenticationHandler(new DefaultConnectionFactory(createConnectionConfig())));
+        new SimpleBindAuthenticationHandler(new DefaultConnectionFactory(createConnectionConfig())));
     } else {
       authenticator.setAuthenticationHandler(
-        new PooledBindAuthenticationHandler(
-          new PooledConnectionFactory(
-            createConnectionPool(
-              "bind-pool",
-              createConnectionConfig(),
-              createSearchValidator(validateDn, validateFilter),
-              createPoolPassivator(bindPoolPassivatorType)))));
+        new SimpleBindAuthenticationHandler(
+          createPooledConnectionFactory(
+            "bind-pool",
+            createConnectionConfig(),
+            createSearchConnectionValidator(validateDn, validateFilter),
+            createConnectionPassivator(bindPoolPassivatorType))));
     }
     switch(authenticatorType) {
     case BIND_SEARCH:
@@ -674,16 +652,15 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
             createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential)))));
         authenticator.setDnResolver(bindSearchDnResolver);
       } else {
-        final PooledTemplateSearchDnResolver bindSearchDnResolver =
-          new PooledTemplateSearchDnResolver(velocityEngine, userFilter);
+        final TemplateSearchDnResolver bindSearchDnResolver =
+          new TemplateSearchDnResolver(velocityEngine, userFilter);
         bindSearchDnResolver.setBaseDn(baseDn);
         bindSearchDnResolver.setSubtreeSearch(subtreeSearch);
         bindSearchDnResolver.setConnectionFactory(
-          new PooledConnectionFactory(
-            createConnectionPool(
-              "dn-search-pool",
-              createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))),
-              createSearchValidator(validateDn, validateFilter))));
+          createPooledConnectionFactory(
+            "dn-search-pool",
+            createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))),
+            createSearchConnectionValidator(validateDn, validateFilter)));
         authenticator.setDnResolver(bindSearchDnResolver);
       }
       authenticator.setResolveEntryOnFailure(resolveEntryOnFailure);
@@ -695,7 +672,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     case AD:
       authenticator.setDnResolver(new FormatDnResolver(dnFormat));
       authenticator.setResolveEntryOnFailure(resolveEntryOnFailure);
-      authenticator.setAuthenticationResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler());
+      authenticator.setResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler());
       break;
     case ANON_SEARCH:
       if (disablePooling) {
@@ -706,16 +683,15 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         anonSearchDnResolver.setConnectionFactory(new DefaultConnectionFactory(createConnectionConfig()));
         authenticator.setDnResolver(anonSearchDnResolver);
       } else {
-        final PooledTemplateSearchDnResolver anonSearchDnResolver =
-          new PooledTemplateSearchDnResolver(velocityEngine, userFilter);
+        final TemplateSearchDnResolver anonSearchDnResolver =
+          new TemplateSearchDnResolver(velocityEngine, userFilter);
         anonSearchDnResolver.setBaseDn(baseDn);
         anonSearchDnResolver.setSubtreeSearch(subtreeSearch);
         anonSearchDnResolver.setConnectionFactory(
-          new PooledConnectionFactory(
-            createConnectionPool(
-              "dn-search-pool",
-              createConnectionConfig(),
-              createSearchValidator(validateDn, validateFilter))));
+          createPooledConnectionFactory(
+            "dn-search-pool",
+            createConnectionConfig(),
+            createSearchConnectionValidator(validateDn, validateFilter)));
         authenticator.setDnResolver(anonSearchDnResolver);
       }
       authenticator.setResolveEntryOnFailure(resolveEntryOnFailure);
@@ -732,28 +708,27 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
             createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential)))));
         authenticator.setEntryResolver(searchEntryResolver);
       } else {
-        final PooledSearchEntryResolver searchEntryResolver = new PooledSearchEntryResolver();
+        final SearchEntryResolver searchEntryResolver = new SearchEntryResolver();
         searchEntryResolver.setConnectionFactory(
-          new PooledConnectionFactory(
-            createConnectionPool(
-              "entry-search-pool",
-              createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))),
-              createSearchValidator(validateDn, validateFilter))));
+          createPooledConnectionFactory(
+            "entry-search-pool",
+            createConnectionConfig(new BindConnectionInitializer(bindDn, new Credential(bindDnCredential))),
+            createSearchConnectionValidator(validateDn, validateFilter)));
         authenticator.setEntryResolver(searchEntryResolver);
       }
     }
 
     if (usePasswordPolicy) {
-      authenticator.setAuthenticationRequestHandlers(new PasswordPolicyAuthenticationRequestHandler());
-      authenticator.setAuthenticationResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
+      authenticator.setRequestHandlers(new PasswordPolicyAuthenticationRequestHandler());
+      authenticator.setResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
     } else if (usePasswordExpiration) {
-      authenticator.setAuthenticationResponseHandlers(new PasswordExpirationAuthenticationResponseHandler());
+      authenticator.setResponseHandlers(new PasswordExpirationAuthenticationResponseHandler());
     } else if (isActiveDirectory) {
-      authenticator.setAuthenticationResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler(accountStateExpirationPeriod, accountStateWarningPeriod));
+      authenticator.setResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler(accountStateExpirationPeriod, accountStateWarningPeriod));
     } else if (isEDirectory) {
-      authenticator.setAuthenticationResponseHandlers(new EDirectoryAuthenticationResponseHandler(accountStateWarningPeriod));
+      authenticator.setResponseHandlers(new EDirectoryAuthenticationResponseHandler(accountStateWarningPeriod));
     } else if (isFreeIPA) {
-      authenticator.setAuthenticationResponseHandlers(new FreeIPAAuthenticationResponseHandler(accountStateExpirationPeriod, accountStateWarningPeriod, accountStateLoginFailures));
+      authenticator.setResponseHandlers(new FreeIPAAuthenticationResponseHandler(accountStateExpirationPeriod, accountStateWarningPeriod, accountStateLoginFailures));
     }
     log.debug("Created {} from {}", authenticator, this);
     return authenticator;
@@ -768,7 +743,6 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
             .add("connectionStrategyType", connectionStrategyType)
             .add("ldapUrl", ldapUrl)
             .add("useStartTLS", useStartTLS)
-            .add("useSSL", useSSL)
             .add("disableHostnameVerification", disableHostnameVerification)
             .add("connectTimeout", connectTimeout)
             .add("responseTimeout", responseTimeout)

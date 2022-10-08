@@ -58,7 +58,6 @@ import net.shibboleth.shared.spring.resource.ResourceHelper;
 
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SortBehavior;
 import org.ldaptive.jaas.LdapPrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.testing.RequestContextBuilder;
@@ -339,17 +338,17 @@ public class DefaultAuthenticationResultSerializerTest {
         flowDescriptor.initialize();
         
         final AuthenticationResult result = createResult(flowDescriptor, new Subject());
-        final LdapEntry entry = new LdapEntry(SortBehavior.SORTED);
+        final LdapEntry entry = new LdapEntry();
         entry.setDn("uid=1234,ou=people,dc=shibboleth,dc=net");
-        final LdapAttribute givenName = new LdapAttribute(SortBehavior.SORTED);
+        final LdapAttribute givenName = new LdapAttribute();
         givenName.setName("givenName");
-        givenName.addStringValue("Bob", "Robert");
-        entry.addAttribute(
+        givenName.addStringValues("Bob", "Robert");
+        entry.addAttributes(
                 new LdapAttribute("cn", "Bob Cobb"),
                 givenName,
                 new LdapAttribute("sn", "Cobb"),
                 new LdapAttribute("mail", "bob@shibboleth.net"));
-        result.getSubject().getPrincipals().add(new LdapPrincipal("bob", entry));
+        result.getSubject().getPrincipals().add(new LdapPrincipal("bob", LdapEntry.sort(entry)));
 
         final ProfileRequestContext prc = getProfileRequestContext(Collections.singletonList(flowDescriptor));
         assertTrue(result.getReuseCondition().test(prc));

@@ -33,6 +33,7 @@ import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.User;
+import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.jaas.LdapPrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -137,70 +138,71 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
         
         final String username = usernamePasswordContext.getTransformedUsername();
         
-        String eventToSignal = AuthnEventIds.INVALID_CREDENTIALS;
-        
-        // The error handling is squonky. We log at info to generically record the failure.
-        // Known conditions are not explicitly logged but are wrapped with an exception and
-        // reported out to the caller. Last ditch, an exception is logged on warn and then
-        // reported out.
-        
+        log.debug("{} Attempting to authenticate user {}", getLogPrefix(), username);
+        final VelocityContext context = new VelocityContext();
+        context.put("usernamePasswordContext", usernamePasswordContext);
+        final char[] password = passwordLookupStrategy != null ?
+          passwordLookupStrategy.apply(profileRequestContext) :
+          usernamePasswordContext.getPassword().toCharArray();
+        final AuthenticationRequest request = new AuthenticationRequest(
+          new User(username, context), new Credential(password), returnAttributes);
+        final AuthenticationResponse response;
         try {
-            log.debug("{} Attempting to authenticate user {}", getLogPrefix(), username);
-            final VelocityContext context = new VelocityContext();
-            context.put("usernamePasswordContext", usernamePasswordContext);
-            final char[] password = passwordLookupStrategy != null ?
-                    passwordLookupStrategy.apply(profileRequestContext) :
-                        usernamePasswordContext.getPassword().toCharArray();
-            final AuthenticationRequest request = new AuthenticationRequest(
-                    new User(username, context), new Credential(password), returnAttributes);
-            final AuthenticationResponse response = authenticator.authenticate(request);
-            log.trace("{} Authentication response {}", getLogPrefix(), response);
-            if (response.getResult()) {
-                log.info("{} Login by '{}' succeeded", getLogPrefix(), username);
-                authenticationContext.getSubcontext(
-                        LDAPResponseContext.class, true).setAuthenticationResponse(response);
-                if (response.getAccountState() != null) {
-                    final AccountState.Error error = response.getAccountState().getError();
-                    if (warningHandler != null) {
-                        warningHandler.handleWarning(
-                                profileRequestContext,
-                                authenticationContext,
-                                String.format("%s:%s:%s", error != null ? error : "ACCOUNT_WARNING",
-                                        response.getResultCode(), response.getMessage()),
-                                AuthnEventIds.ACCOUNT_WARNING);
-                    }
-                }
-                return populateSubject(usernamePasswordContext, response);
-            }
-            
-            authenticationContext.getSubcontext(
-                    LDAPResponseContext.class, true).setAuthenticationResponse(response);
-            if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()
-                    || AuthenticationResultCode.INVALID_CREDENTIAL == response.getAuthenticationResultCode()) {
-                throw new LdapException(
-                        String.format("%s:%s", response.getAuthenticationResultCode(), response.getMessage()));
-            } else if (response.getAccountState() != null) {
-                final AccountState state = response.getAccountState();
-                eventToSignal = AuthnEventIds.ACCOUNT_ERROR;
-                throw new LdapException(
-                        String.format("%s:%s:%s", state.getError(), response.getResultCode(), response.getMessage())
-                        );
-            } else if (response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
-                throw new LdapException(String.format("%s:%s", response.getResultCode(), response.getMessage()));
-            } else {
-                eventToSignal = AuthnEventIds.AUTHN_EXCEPTION;
-                final LdapException e =
-                        new LdapException(response.getMessage(), response.getResultCode(), response.getMatchedDn(),
-                        response.getControls(), response.getReferralURLs(), response.getMessageId());
-                throw e;
-            }
+            // authenticator should only throw for communication errors
+            response = authenticator.authenticate(request);
         } catch (final LdapException e) {
-            log.info("{} Login by '{}' failed", getLogPrefix(), username, e);
+            log.error("{} Error attempting LDAP authentication for '{}'", getLogPrefix(), username, e);
             if (errorHandler != null) {
-                errorHandler.handleError(profileRequestContext, authenticationContext, e, eventToSignal);
+                errorHandler.handleError(
+                    profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
             }
             throw e;
         }
+
+        log.debug("{} Authentication response {}", getLogPrefix(), response);
+        authenticationContext.getSubcontext(LDAPResponseContext.class, true).setAuthenticationResponse(response);
+        if (response.isSuccess()) {
+            log.info("{} Login by '{}' succeeded", getLogPrefix(), username);
+            if (response.getAccountState() != null) {
+                final AccountState.Error error = response.getAccountState().getError();
+                if (warningHandler != null) {
+                    warningHandler.handleWarning(
+                      profileRequestContext,
+                      authenticationContext,
+                      String.format("%s:%s:%s", error != null ? error : "ACCOUNT_WARNING",
+                        response.getResultCode(), response.getDiagnosticMessage()),
+                      AuthnEventIds.ACCOUNT_WARNING);
+                }
+            }
+            return populateSubject(usernamePasswordContext, response);
+        }
+
+        String eventToSignal;
+        LdapException authException;
+        if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()
+                || AuthenticationResultCode.INVALID_CREDENTIAL == response.getAuthenticationResultCode()) {
+            eventToSignal = AuthnEventIds.INVALID_CREDENTIALS;
+            authException = new LdapException(
+              String.format("%s:%s", response.getAuthenticationResultCode(), response.getDiagnosticMessage()));
+        } else if (response.getAccountState() != null) {
+            final AccountState state = response.getAccountState();
+            eventToSignal = AuthnEventIds.ACCOUNT_ERROR;
+            authException = new LdapException(
+                String.format("%s:%s:%s", state.getError(), response.getResultCode(), response.getDiagnosticMessage()));
+        } else if (response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
+            eventToSignal = AuthnEventIds.INVALID_CREDENTIALS;
+            authException = new LdapException(
+                String.format("%s:%s", response.getResultCode(), response.getDiagnosticMessage()));
+        } else {
+            eventToSignal = AuthnEventIds.AUTHN_EXCEPTION;
+            authException = new LdapException(response);
+        }
+
+        log.info("{} Login by '{}' failed", getLogPrefix(), username, authException);
+        if (errorHandler != null) {
+            errorHandler.handleError(profileRequestContext, authenticationContext, authException, eventToSignal);
+        }
+        throw authException;
     }
 // Checkstyle: CyclomaticComplexity ON
 

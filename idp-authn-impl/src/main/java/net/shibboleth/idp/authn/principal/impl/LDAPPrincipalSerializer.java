@@ -135,9 +135,9 @@ public class LDAPPrincipalSerializer extends AbstractPrincipalSerializer<String>
                             } else {
                                 final LdapAttribute attr = new LdapAttribute(e.getKey());
                                 for (final JsonValue v : (JsonArray) e.getValue()) {
-                                    attr.addStringValue(((JsonString) v).getString());
+                                    attr.addStringValues(((JsonString) v).getString());
                                 }
-                                entry.addAttribute(attr);
+                                entry.addAttributes(attr);
                             }
                         }
                     }

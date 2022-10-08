@@ -30,9 +30,6 @@ import org.ldaptive.LdapException;
  */
 public class TemplateSearchDnResolver extends AbstractTemplateSearchDnResolver implements ConnectionFactoryManager {
 
-    /** Connection factory. */
-    private ConnectionFactory factory;
-
     /**
      * Creates a new template search DN resolver.
      *
@@ -60,25 +57,11 @@ public class TemplateSearchDnResolver extends AbstractTemplateSearchDnResolver i
         setConnectionFactory(cf);
     }
 
-    @Override public ConnectionFactory getConnectionFactory() {
-        return factory;
-    }
-
-    @Override public void setConnectionFactory(final ConnectionFactory cf) {
-        factory = cf;
-    }
-
-    @Override protected Connection getConnection() throws LdapException {
-        final Connection conn = factory.getConnection();
-        conn.open();
-        return conn;
-    }
-
     @Override public String toString() {
         return String.format(
                 "[%s@%d::factory=%s, templateName=%s, baseDn=%s, userFilter=%s, userFilterParameters=%s, "
                         + "allowMultipleDns=%s, subtreeSearch=%s, derefAliases=%s]",
-                getClass().getName(), hashCode(), factory, getTemplate().getTemplateName(), getBaseDn(),
+                getClass().getName(), hashCode(), getConnectionFactory(), getTemplate().getTemplateName(), getBaseDn(),
                 getUserFilter(), Arrays.toString(getUserFilterParameters()), getAllowMultipleDns(), getSubtreeSearch(),
                 getDerefAliases());
     }

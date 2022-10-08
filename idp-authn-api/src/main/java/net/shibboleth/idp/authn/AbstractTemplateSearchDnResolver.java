@@ -27,8 +27,8 @@ import org.apache.velocity.app.event.EventCartridge;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.VelocityException;
-import org.ldaptive.SearchFilter;
-import org.ldaptive.auth.AbstractSearchDnResolver;
+import org.ldaptive.FilterTemplate;
+import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.User;
 
 import net.shibboleth.shared.velocity.Template;
@@ -36,7 +36,7 @@ import net.shibboleth.shared.velocity.Template;
 /**
  * Base class for {@link Template} based search dn resolvers.
  */
-public abstract class AbstractTemplateSearchDnResolver extends AbstractSearchDnResolver {
+public abstract class AbstractTemplateSearchDnResolver extends SearchDnResolver {
 
     /** Template. */
     private final Template template;
@@ -66,8 +66,8 @@ public abstract class AbstractTemplateSearchDnResolver extends AbstractSearchDnR
         return template;
     }
 
-    @Override protected SearchFilter createSearchFilter(final User user) {
-        final SearchFilter filter = new SearchFilter();
+    @Override protected FilterTemplate createFilterTemplate(final User user) {
+        final FilterTemplate filter = new FilterTemplate();
         if (user != null && user.getContext() != null) {
             final VelocityContext context = (VelocityContext) user.getContext();
             final EventCartridge cartridge = new EventCartridge();
@@ -116,7 +116,7 @@ public abstract class AbstractTemplateSearchDnResolver extends AbstractSearchDnR
         }
 
         /**
-         * Returns {@link SearchFilter#encodeValue} if value is a string or byte array.
+         * Returns {@link FilterTemplate#encodeValue} if value is a string or byte array.
          * 
          * @param value to encode
          *
@@ -124,9 +124,9 @@ public abstract class AbstractTemplateSearchDnResolver extends AbstractSearchDnR
          */
         private Object encode(final Object value) {
             if (value instanceof String){ 
-                return SearchFilter.encodeValue((String) value);
+                return FilterTemplate.encodeValue((String) value);
             } else if (value instanceof byte[]) {
-                return SearchFilter.encodeValue((byte[]) value);
+                return FilterTemplate.encodeValue((byte[]) value);
             }
             return value;
         }
