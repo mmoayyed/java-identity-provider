@@ -259,14 +259,14 @@
         p:targetMethod="register" />
         
     <bean id="shibboleth.metrics.HTTPReporter" abstract="true" destroy-method="stop"
-        class="net.shibboleth.idp.metrics.impl.HTTPReporter"
+        class="org.opensaml.core.metrics.impl.HTTPReporter"
         c:registry-ref="shibboleth.metrics.MetricRegistry"
         c:filter="#{null}"
         p:httpClient-ref="shibboleth.InternalHttpClient" />
     
     <!-- Some predefined metric sets, only created if installed by user. -->
     
-    <bean id="shibboleth.metrics.CoreGaugeSet" class="net.shibboleth.idp.metrics.impl.CoreGaugeSet" lazy-init="true" />
+    <bean id="shibboleth.metrics.CoreGaugeSet" class="org.opensaml.core.metrics.impl.CoreGaugeSet" lazy-init="true" />
     
     <bean id="shibboleth.metrics.IdPGaugeSet" class="net.shibboleth.idp.metrics.impl.IdPGaugeSet" lazy-init="true"
         p:exposedProperties="#{getObject('shibboleth.metrics.ExposedProperties')}" />

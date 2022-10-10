@@ -28,31 +28,9 @@
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-security-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-xmlsec-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-security</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-core</artifactId>
@@ -62,20 +40,8 @@
           <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>    
-        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-json</artifactId>
         </dependency>
         
         <!-- Provided Dependencies -->
