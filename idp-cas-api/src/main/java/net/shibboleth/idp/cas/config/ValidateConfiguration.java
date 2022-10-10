@@ -49,7 +49,7 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
     @Nonnull @NotEmpty public static final String PROFILE_ID = PROTOCOL_URI + "/serviceValidate";
 
     /** Default ticket validity. */
-    @Nonnull public static final Duration DEFAULT_TICKET_VALIDITY_PERIOD = Duration.ofSeconds(15);
+    @Nonnull public static final Duration DEFAULT_TICKET_VALIDITY_PERIOD = Duration.ofHours(12);
     
     /** Default ticket prefix. */
     @Nonnull @NotEmpty public static final String DEFAULT_TICKET_PREFIX = "PGT";
