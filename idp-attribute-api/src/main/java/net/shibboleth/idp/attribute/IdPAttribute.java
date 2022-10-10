@@ -249,6 +249,24 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
             values = Collections.emptyList();
         }
     }
+    
+    /**
+     * Check for a string value amongst this object's value collection.
+     * 
+     * @param value value to check for
+     * 
+     * @return true iff a {@link StringAttributeValue} exists with the input value
+     * 
+     * @since 4.3.0
+     */
+    public boolean contains(@Nonnull @NotEmpty final String value) {
+        for (final IdPAttributeValue v : values) {
+            if (v instanceof StringAttributeValue && ((StringAttributeValue) v).getValue().equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /** {@inheritDoc} */
     @Override
