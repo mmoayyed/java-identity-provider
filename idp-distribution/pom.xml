@@ -300,6 +300,7 @@
                                     <checkDependencies>true</checkDependencies>
                                     <compileRuntimeArtifactFatal>false</compileRuntimeArtifactFatal>
                                     <versionExtensions>-SNAPSHOT -GA -jre -empty-to-avoid-conflict-with-guava -M6</versionExtensions>
+                                    <classifiers>-linux-x86_64 -osx-x86_64</classifiers>
                                     <listJarSources>false</listJarSources>
                                     <checkM2>false</checkM2>
                                 </jarEnforcer>
