@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -90,6 +91,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         rp.initialize();
         rpc.setConfiguration(rp);
         rpc.setProfileConfig(new BrowserSSOProfileConfiguration());
+        ((BrowserSSOProfileConfiguration) rpc.getProfileConfig()).setSecurityConfiguration(new SecurityConfiguration());
         
         action = new AddAuthnRequest();
         action.setProfileContextLookupStrategy(
