@@ -54,8 +54,11 @@
                     <Directory Id="INSTALLDIR" Name="IdP">
                         <Directory Id="CredsFolder" Name="credentials" />
                         <Directory Id="ConfFolder" Name="conf" />
+                        <Directory Id="LogsFolder" Name="logs" />
                         <Directory Id="JettyBaseFolder" Name="jetty-base">
                             <Directory Id="StartDotD" Name="start.d" />
+                            <Directory Id="JettyLogs" Name="logs" />
+                            <Directory Id="JettyTmp" Name="tmp" />
                         </Directory>
                         <Directory Id="BinFolder" Name="bin">
                             <Component Id="Shibd_idpw" Guid="{30E1130E-BEBF-4167-83A0-BBDE083968C4}" Win64="no">
@@ -67,17 +70,40 @@
                             <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
                             <CreateFolder Directory="CredsFolder">
                                 <Permission User="Administrators" GenericAll="yes" />
+                                <Permission User="SYSTEM" GenericAll="yes" />
+                                <Permission User="SHIBD_USER" ReadPermission="yes" GenericRead="yes" GenericExecute="yes" Read="yes" />
                             </CreateFolder>
                             <CreateFolder Directory="ConfFolder">
                                 <Permission User="Administrators" GenericAll="yes" />
+                                <Permission User="SYSTEM" GenericAll="yes" />
+                                <Permission User="SHIBD_USER" ReadPermission="yes" Read="yes" GenericRead="yes" GenericExecute="yes" />
                             </CreateFolder>
+                            <CreateFolder Directory="LogsFolder">
+                                <Permission User="Administrators" GenericAll="yes" />
+                                <Permission User="SYSTEM" GenericAll="yes" />
+                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
+                                            GenericAll="yes"/>
+                            </CreateFolder>
+
                         </Component>
                         <Component Id="JettyPermissions" Guid="{900980C5-CF3D-4816-9922-6142C12F6D13}" Win64="no">
                             <RegistryValue Id="SetPermissionsJetty" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissionsJetty" Value="TRUE" Type="string" KeyPath="yes" />
                             <CreateFolder Directory="StartDotD">
                                 <Permission User="Administrators" GenericAll="yes" />
+                                <Permission User="SYSTEM" GenericAll="yes" />
+                                <Permission User="SHIBD_USER" ReadPermission="yes" GenericRead="yes" Read="yes" GenericExecute="yes" />
                             </CreateFolder>
-                        </Component>
+                            <CreateFolder Directory="JettyLogs">
+                                <Permission User="Administrators" GenericAll="yes" />
+                                <Permission User="SYSTEM" GenericAll="yes" />
+                                <Permission User="SHIBD_USER" GenericAll="yes"/>
+                            </CreateFolder>
+                            <CreateFolder Directory="JettyTmp">
+                                <Permission User="Administrators" GenericAll="yes" />
+                                <Permission User="SYSTEM" GenericAll="yes" />
+                                <Permission User="SHIBD_USER" GenericAll="yes"/>
+                            </CreateFolder>
+                       </Component>
                     </Directory>
                 </Directory>
             </Directory>
@@ -89,7 +115,7 @@
             </DirectorySearch>
         </Property>
 
-	<Property Id="UCRTBASE_DLL" Secure="yes">
+        <Property Id="UCRTBASE_DLL" Secure="yes">
             <DirectorySearch Id="UcrtBaseSearch" Depth="0" Path="[System64Folder]">
                 <FileSearch Id="UcrtnSearch" Name="ucrtbase.dll" />
             </DirectorySearch>

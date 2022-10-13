@@ -35,11 +35,7 @@
             <!-- Jetty Configuration-->
             <Component Id="JettyConfig" Directory="INSTALLDIR" Guid="{FE729EF2-8293-493A-80C9-69CF54DC4565}" KeyPath="yes" Win64="no">
                 <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Java" Root="HKLM" ForceCreateOnInstall="yes">
-                    <Permission User="Administrators" GenericAll="yes" />
-                    <Permission User="SYSTEM" GenericAll="yes" />
                     <RegistryValue Name="Options" Type="multiString">
-                        <Permission User="Administrators" GenericAll="yes" />
-                        <Permission User="SYSTEM" GenericAll="yes" />
                         <MultiStringValue>-Didp.home=[JAVA_IDP_HOME]</MultiStringValue>
                         <MultiStringValue>-Djdk.tls.ephemeralDHKeySize=2048</MultiStringValue>
                         <MultiStringValue>-Dorg.eclipse.jetty.util.log.class=org.eclipse.jetty.util.log.Slf4jLog</MultiStringValue>
@@ -48,28 +44,18 @@
                     </RegistryValue>
                     <RegistryValue Name="JvmMx" Value="[JAVA_JVMMX]" Type="string">
                         <!-- Its an integer, but we added the # -->
-                        <Permission User="Administrators" GenericAll="yes" />
-                        <Permission User="SYSTEM" GenericAll="yes" />
                     </RegistryValue>
                 </RegistryKey>
                 <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Start" Root="HKLM" ForceCreateOnInstall="yes">
-                    <Permission User="Administrators" GenericAll="yes" />
-                    <Permission User="SYSTEM" GenericAll="yes" />
                     <RegistryValue Name="Params" Type="multiString" Action="append">
-                        <Permission User="Administrators" GenericAll="yes" />
-                        <Permission User="SYSTEM" GenericAll="yes" />
-			<MultiStringValue>jetty.http.compliance=RFC7230_NO_AMBIGUOUS_URIS</MultiStringValue>
+                        <MultiStringValue>jetty.http.compliance=RFC7230_NO_AMBIGUOUS_URIS</MultiStringValue>
                         <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
                         <MultiStringValue>jetty.logging.dir=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
                     </RegistryValue>
                     <RegistryValue Name="WorkingPath" Type="string" Value="[INSTALLDIR]\jetty-base\"/>
                 </RegistryKey>
                 <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Stop" Root="HKLM" ForceCreateOnInstall="yes">
-                    <Permission User="Administrators" GenericAll="yes" />
-                    <Permission User="SYSTEM" GenericAll="yes" />
                     <RegistryValue Name="Params" Type="multiString" Action="append">
-                        <Permission User="Administrators" GenericAll="yes" />
-                        <Permission User="SYSTEM" GenericAll="yes" />
                         <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
                         <MultiStringValue>jetty.logging.dir=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
                     </RegistryValue>
