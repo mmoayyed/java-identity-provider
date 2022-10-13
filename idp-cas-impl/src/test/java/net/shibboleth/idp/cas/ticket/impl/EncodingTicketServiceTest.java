@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.cas.ticket.impl;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -29,8 +27,9 @@ import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
+import net.shibboleth.shared.security.RandomIdentifierParameterSpec;
 import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
-import net.shibboleth.shared.security.impl.RandomIdentifierGenerationStrategy;
 import net.shibboleth.shared.spring.resource.ResourceHelper;
 
 import org.apache.commons.codec.binary.Base32;
@@ -50,23 +49,16 @@ public class EncodingTicketServiceTest {
 
     private EncodingTicketService ticketService;
 
-    private IdentifierGenerationStrategy sessionIdGenerator = new RandomIdentifierGenerationStrategy(32);
+    private IdentifierGenerationStrategy sessionIdGenerator;
 
-    private IdentifierGenerationStrategy pgtIdGenerator = new TicketIdentifierGenerationStrategy("PGT", 32);
-
-    private SecureRandom secureRandom;
-
-
-    public EncodingTicketServiceTest() {
-        try {
-            secureRandom = SecureRandom.getInstance("SHA1PRNG");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Secure random creation failed", e);
-        }
-    }
+    private IdentifierGenerationStrategy pgtIdGenerator;
 
     @BeforeClass
     public void setUp() throws Exception {
+        pgtIdGenerator = new TicketIdentifierGenerationStrategy("PGT", 32);
+        sessionIdGenerator = IdentifierGenerationStrategy.getInstance(ProviderType.RANDOM,
+                new RandomIdentifierParameterSpec(null, 32, null));
+        
         final BasicKeystoreKeyStrategy strategy = new BasicKeystoreKeyStrategy();
         strategy.setKeystoreResource(ResourceHelper.of(new ClassPathResource("credentials/sealer.jks")));
         strategy.setKeyVersionResource(ResourceHelper.of(new ClassPathResource("credentials/sealer.kver")));
@@ -77,7 +69,6 @@ public class EncodingTicketServiceTest {
         final Base32 codec = new Base32(0, null, false, (byte) '-');
         final DataSealer sealer = new DataSealer();
         sealer.setKeyStrategy(strategy);
-        sealer.setRandom(secureRandom);
         sealer.setEncoder(codec);
         sealer.setDecoder(codec);
         sealer.initialize();

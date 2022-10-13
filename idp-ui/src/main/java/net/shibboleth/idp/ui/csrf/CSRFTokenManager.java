@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.ui.csrf;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 import java.util.function.BiPredicate;
 
 import javax.annotation.Nonnull;
@@ -25,15 +27,18 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.ui.csrf.impl.SimpleCSRFToken;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.component.AbstractInitializableComponent;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
+import net.shibboleth.shared.security.RandomIdentifierParameterSpec;
 
 /**
  * A thread-safe helper class for dealing with cross-site request forgery tokens. 
  */
 @ThreadSafe
-public final class CSRFTokenManager {
+public final class CSRFTokenManager extends AbstractInitializableComponent {
         
     /** The name of the HTTP parameter that contains the anti-csrf token.*/
    @Nonnull private String csrfParameterName;
@@ -44,16 +49,9 @@ public final class CSRFTokenManager {
    /** Predicate to validate the CSRF token.*/
    @Nonnull private BiPredicate<CSRFToken,String> csrfTokenValidationPredicate;
     
-    /**
-     * public Constructor.
-     * 
-     * <p>A 20 byte {@link SecureRandomIdentifierGenerationStrategy} is 
-     * default to guarantee a strong token entropy.</p>
-     *
-     */
+    /** Constructor. */
     public CSRFTokenManager() {
         csrfParameterName = "csrf_token";
-        tokenGenerationStrategy = new SecureRandomIdentifierGenerationStrategy(20);
         csrfTokenValidationPredicate = new DefaultCSRFTokenValidationPredicate();
     }
     
@@ -62,7 +60,8 @@ public final class CSRFTokenManager {
      * 
      * @param tokenStrategy CSRF token generation strategy
      */
-    public void setTokenGenerationStrategy(@Nonnull final IdentifierGenerationStrategy tokenStrategy) {          
+    public void setTokenGenerationStrategy(@Nonnull final IdentifierGenerationStrategy tokenStrategy) {
+        checkSetterPreconditions();
         tokenGenerationStrategy = Constraint.isNotNull(tokenStrategy, "tokenGenerationStrategy cannot be null");
     }
     
@@ -71,8 +70,8 @@ public final class CSRFTokenManager {
      * 
      * @param tokenValidationPredicate the CSRF token validation predicate.
      */
-    public void setCsrfTokenValidationPredicate(
-            @Nonnull final BiPredicate<CSRFToken,String> tokenValidationPredicate) {       
+    public void setCsrfTokenValidationPredicate(@Nonnull final BiPredicate<CSRFToken,String> tokenValidationPredicate) {
+        checkSetterPreconditions();
         csrfTokenValidationPredicate = Constraint.isNotNull(tokenValidationPredicate, 
                 "CSRF token validation predicate can not be null");
     }
@@ -82,17 +81,34 @@ public final class CSRFTokenManager {
      * 
      * @param parameterName CSRF parameter name
      */
-    public void setCsrfParameterName(@Nonnull @NotEmpty final String parameterName) {           
+    public void setCsrfParameterName(@Nonnull @NotEmpty final String parameterName) {
+        checkSetterPreconditions();
         csrfParameterName = Constraint.isNotEmpty(parameterName, "CsrfParameterName cannot be null or empty");
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (tokenGenerationStrategy == null) {
+            try {
+                tokenGenerationStrategy = IdentifierGenerationStrategy.getInstance(ProviderType.SECURE,
+                        new RandomIdentifierParameterSpec(null, 20, null));
+            } catch (final InvalidAlgorithmParameterException | NoSuchAlgorithmException e) {
+                throw new ComponentInitializationException(e);
+            }
+        }
+    }
+
     /**
      * Generate a {@link CSRFToken} using the token generation strategy derived token value. Set
      * the HTTP parameter name from the <code>csrfParameterName</code> field.
      * 
      * @return a CSRF token
      */
-    @Nonnull public CSRFToken generateCSRFToken() {       
+    @Nonnull public CSRFToken generateCSRFToken() {
+        checkComponentActive();
         return new SimpleCSRFToken(tokenGenerationStrategy.generateIdentifier(),csrfParameterName);        
         
     }
@@ -105,7 +121,8 @@ public final class CSRFTokenManager {
      * @return true iff the CSRF token value matches the request CSRF token. False if they do not match.
      */
     public boolean isValidCSRFToken(@Nullable final CSRFToken csrfToken, 
-            @Nullable final String requestCsrfToken) {        
+            @Nullable final String requestCsrfToken) {
+        checkComponentActive();
         return csrfTokenValidationPredicate.test(csrfToken, requestCsrfToken);       
     }
     

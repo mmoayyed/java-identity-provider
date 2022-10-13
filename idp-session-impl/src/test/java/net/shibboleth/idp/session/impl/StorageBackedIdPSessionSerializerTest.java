@@ -40,9 +40,9 @@ import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.CookieManager;
-import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestProxy;
-import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseProxy;
 
 /** {@link StorageBackedIdPSessionSerializer} unit test. */
 @SuppressWarnings("javadoc")
@@ -75,7 +75,7 @@ public class StorageBackedIdPSessionSerializerTest {
         
         manager = new StorageBackedSessionManager();
         manager.setStorageService(storageService);
-        manager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
+        manager.setIDGenerator(IdentifierGenerationStrategy.getInstance(ProviderType.SECURE));
         final HttpServletRequest requestProxy = new ThreadLocalHttpServletRequestProxy();
         manager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return requestProxy;}});
         manager.setCookieManager(cookieManager);

@@ -78,7 +78,7 @@ import net.shibboleth.idp.test.TestEnvironmentApplicationContextInitializer;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.shared.security.impl.Type4UUIDIdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean;
 import net.shibboleth.shared.xml.ParserPool;
@@ -172,7 +172,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     @NonnullAfterInit protected static UnmarshallerFactory unmarshallerFactory;
 
     /** UUID identifier generation strategy. */
-    @Nonnull protected IdentifierGenerationStrategy idGenerator = new Type4UUIDIdentifierGenerationStrategy();
+    @Nonnull protected IdentifierGenerationStrategy idGenerator;
 
     /** IdP credential wired via test/test-beans.xml. */
     @Qualifier("test.idp.Credential") @Autowired protected Credential idpCredential;
@@ -228,6 +228,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
         builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
         marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
         unmarshallerFactory = XMLObjectProviderRegistrySupport.getUnmarshallerFactory();
+        idGenerator = IdentifierGenerationStrategy.getInstance(ProviderType.UUID);
     }
 
     /**

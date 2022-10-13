@@ -50,8 +50,12 @@
         p:secure="false" />
 
     <bean id="shibboleth.SessionIDGenerator" destroy-method=""
-        class="net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy"
-        c:identifierSize="32" />
+            class="net.shibboleth.shared.security.IdentifierGenerationStrategy" factory-method="getInstance">
+        <constructor-arg>
+            <util:constant
+                static-field="net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType.SECURE" />
+        </constructor-arg>
+    </bean>
 
     <bean id="shibboleth.SessionManager"
           class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"

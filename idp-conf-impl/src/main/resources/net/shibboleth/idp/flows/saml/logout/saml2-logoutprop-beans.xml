@@ -59,12 +59,12 @@
         p:bestMatchCriterionLookupStrategy-ref="BestMatchCriterionLookupStrategy" />
     <bean id="BestMatchCriterionLookupStrategy" class="net.shibboleth.idp.saml.session.impl.BestMatchLocationLookupStrategy" />
 
-    <bean id="AddLogoutRequest"
-        class="net.shibboleth.idp.saml.session.impl.AddLogoutRequest" scope="prototype"
+    <bean id="AddLogoutRequest" class="net.shibboleth.idp.saml.session.impl.AddLogoutRequest" scope="prototype"
             p:overwriteExisting="true"
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+                p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>
     </bean>

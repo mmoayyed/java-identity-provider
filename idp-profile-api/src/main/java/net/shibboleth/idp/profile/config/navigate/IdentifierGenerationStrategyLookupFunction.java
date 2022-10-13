@@ -23,6 +23,7 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -36,6 +37,18 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class IdentifierGenerationStrategyLookupFunction
         extends AbstractRelyingPartyLookupFunction<IdentifierGenerationStrategy> {
     
+    /** A resolver for default security configurations. */
+    @Nullable private RelyingPartyConfigurationResolver rpResolver;
+
+    /**
+     * Set the resolver for default security configurations.
+     * 
+     * @param resolver the resolver to use
+     */
+    public void setRelyingPartyConfigurationResolver(@Nullable final RelyingPartyConfigurationResolver resolver) {
+        rpResolver = resolver;
+    }
+
     /** Default strategy to return. */
     @Nullable private IdentifierGenerationStrategy defaultGenerator;
     
@@ -63,7 +76,16 @@ public class IdentifierGenerationStrategyLookupFunction
                 }
             }
         }
-        
+
+        // Check for a per-profile default (relying party independent) config.
+        if (input != null && rpResolver != null) {
+            final SecurityConfiguration defaultConfig =
+                    rpResolver.getDefaultSecurityConfiguration(input.getProfileId());
+            if (defaultConfig != null && defaultConfig.getIdGenerator() != null) {
+                return defaultConfig.getIdGenerator();
+            }
+        }
+
         return defaultGenerator;
     }
 

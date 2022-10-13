@@ -43,11 +43,11 @@ import org.opensaml.saml.saml2.core.SessionIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 /**
  * Action that creates a {@link LogoutRequest} based on an {@link SAML2SPSession} in a
@@ -95,11 +95,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
     /** Constructor. */
     public AddLogoutRequest() {
         // Default strategy is a 16-byte secure random source.
-        idGeneratorLookupStrategy = new Function<>() {
-            public IdentifierGenerationStrategy apply(final ProfileRequestContext input) {
-                return new SecureRandomIdentifierGenerationStrategy();
-            }
-        };
+        idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
         
         logoutPropContextLookupStrategy = new ChildContextLookup<>(LogoutPropagationContext.class);
         includeSessionIndex = true;

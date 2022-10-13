@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
@@ -57,7 +58,6 @@ import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfigurati
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 /**
  * Action that creates an {@link AuthnRequest} and sets it as the message returned by
@@ -101,7 +101,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     /** Constructor. */
     public AddAuthnRequest() {
         // Default strategy is a 16-byte secure random source.
-        idGeneratorLookupStrategy = prc -> new SecureRandomIdentifierGenerationStrategy();
+        idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
         
         // Fool the parent class into looking above instead of below the PRC for the context.
         setAuthenticationContextLookupStrategy(new ParentContextLookup<>(AuthenticationContext.class));

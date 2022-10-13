@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 
 import org.opensaml.security.httpclient.HttpClientSecurityConfiguration;
 import org.opensaml.security.x509.tls.ClientTLSValidationConfiguration;
@@ -63,12 +63,11 @@ public class SecurityConfiguration {
     /**
      * Constructor.
      * 
-     * Initializes the clock skew to 5 minutes and the identifier generator to
-     * {@link SecureRandomIdentifierGenerationStrategy} using the SHA1PRNG algorithm.
+     * Initializes the clock skew to 5 minutes and the identifier generator to {@link ProviderType#SECURE}.
      */
     public SecurityConfiguration() {
         clockSkew = Duration.ofMinutes(5);
-        idGenerator = new SecureRandomIdentifierGenerationStrategy();
+        idGenerator = IdentifierGenerationStrategy.getInstance(ProviderType.SECURE);
     }
 
     /**

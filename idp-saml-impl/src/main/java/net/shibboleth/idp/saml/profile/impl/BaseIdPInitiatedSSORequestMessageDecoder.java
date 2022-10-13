@@ -26,7 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.shared.security.impl.Type4UUIDIdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;
@@ -65,7 +65,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
     @Nonnull private final Logger protocolMessageLog = LoggerFactory.getLogger("PROTOCOL_MESSAGE");
     
     /** ID generator. */
-    @Nonnull private final IdentifierGenerationStrategy idGenerator = new Type4UUIDIdentifierGenerationStrategy();
+    @Nonnull private final IdentifierGenerationStrategy idGenerator = IdentifierGenerationStrategy.getInstance(ProviderType.UUID);
     
     /**
      * Get an optional {@link BindingDescriptor} to inject into

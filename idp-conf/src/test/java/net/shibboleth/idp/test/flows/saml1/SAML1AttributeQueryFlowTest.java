@@ -24,7 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.xml.SAMLConstants;
-import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 import net.shibboleth.shared.xml.SerializeSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -147,7 +148,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         final Request attributeQuery = SAML1ActionTestingSupport.buildAttributeQueryRequest(subject);
         attributeQuery.setIssueInstant(Instant.now());
         attributeQuery.getAttributeQuery().setResource(SP_ENTITY_ID);
-        attributeQuery.setID(new SecureRandomIdentifierGenerationStrategy().generateIdentifier());
+        attributeQuery.setID(IdentifierGenerationStrategy.getInstance(ProviderType.SECURE).generateIdentifier());
         
         if (includeDesignators) {
             final SAMLObjectBuilder<AttributeDesignator> designatorBuilder = (SAMLObjectBuilder<AttributeDesignator>)

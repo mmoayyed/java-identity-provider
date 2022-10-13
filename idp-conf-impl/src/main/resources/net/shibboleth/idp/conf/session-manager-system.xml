@@ -12,9 +12,24 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="shibboleth.SessionIDGenerator"
-        class="net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy"
-        c:identifierSize="%{idp.session.idSize:32}" />
+    <bean id="shibboleth.SessionIDGenerator" destroy-method=""
+            class="net.shibboleth.shared.security.IdentifierGenerationStrategy" factory-method="getInstance">
+        <constructor-arg>
+            <util:constant
+                static-field="net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType.SECURE" />
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="net.shibboleth.shared.security.RandomIdentifierParameterSpec"
+                    c:identifierSize="%{idp.session.idSize:32}">
+                <constructor-arg name="source">
+                    <null/>
+                </constructor-arg>
+                <constructor-arg name="identifierEncoding">
+                    <null/>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
 
     <!-- Dummy bean for compatibility, this is no longer a supported extensions point. -->
     <bean id="shibboleth.DefaultSessionTypeProtocolMap" lazy-init="true"

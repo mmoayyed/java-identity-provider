@@ -29,7 +29,8 @@ import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.CookieManager;
-import net.shibboleth.shared.security.impl.SecureRandomIdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseProxy;
@@ -67,7 +68,7 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
         sessionManager = new StorageBackedSessionManager();
         sessionManager.setSessionTimeout(Duration.ofSeconds(15));
         sessionManager.setStorageService(storageService);
-        sessionManager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
+        sessionManager.setIDGenerator(IdentifierGenerationStrategy.getInstance(ProviderType.SECURE));
         sessionManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return requestProxy;}});
         sessionManager.setCookieManager(cookieManager);
         sessionManager.setId("Test Session Manager");

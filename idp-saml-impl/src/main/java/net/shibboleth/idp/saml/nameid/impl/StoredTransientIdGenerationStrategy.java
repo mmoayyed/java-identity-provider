@@ -18,6 +18,8 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -35,7 +37,8 @@ import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponen
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.shared.security.impl.RandomIdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
+import net.shibboleth.shared.security.RandomIdentifierParameterSpec;
 
 /**
  * Generates transients using a {@link StorageService} to manage the reverse mappings.
@@ -137,7 +140,12 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
         }
 
         if (idGenerator == null) {
-            idGenerator = new RandomIdentifierGenerationStrategy(idSize);
+            try {
+                idGenerator = IdentifierGenerationStrategy.getInstance(ProviderType.RANDOM,
+                        new RandomIdentifierParameterSpec(null, idSize, null));
+            } catch (final InvalidAlgorithmParameterException|NoSuchAlgorithmException e) {
+                throw new ComponentInitializationException(e);
+            }
         }
     }
     
