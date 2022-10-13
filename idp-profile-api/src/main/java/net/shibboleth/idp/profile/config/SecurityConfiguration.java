@@ -22,191 +22,42 @@ import java.time.Duration;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
-
 import org.opensaml.security.httpclient.HttpClientSecurityConfiguration;
 import org.opensaml.security.x509.tls.ClientTLSValidationConfiguration;
-import org.opensaml.xmlsec.DecryptionConfiguration;
-import org.opensaml.xmlsec.EncryptionConfiguration;
-import org.opensaml.xmlsec.SignatureSigningConfiguration;
-import org.opensaml.xmlsec.SignatureValidationConfiguration;
 
-/** Configuration for security behavior of profiles. */
-public class SecurityConfiguration {
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 
-    /** Acceptable clock skew. */
-    @Nonnull private final Duration clockSkew;
-
-    /** Generator used to generate various secure IDs (e.g., message identifiers). */
-    @Nonnull private final IdentifierGenerationStrategy idGenerator;
-
-    /** Configuration used when validating protocol message signatures. */
-    @Nullable private SignatureValidationConfiguration sigValidateConfig;
-
-    /** Configuration used when generating protocol message signatures. */
-    @Nullable private SignatureSigningConfiguration sigSigningConfig;
-
-    /** Configuration used when decrypting protocol message information. */
-    @Nullable private DecryptionConfiguration decryptConfig;
-
-    /** Configuration used when encrypting protocol message information. */
-    @Nullable private EncryptionConfiguration encryptConfig;
-    
-    /** Configuration used when validating client TLS X509Credentials. */
-    @Nullable private ClientTLSValidationConfiguration clientTLSConfig;
-
-    /** Configuration used when executing HttpClient requests. */
-    @Nullable private HttpClientSecurityConfiguration httpClientConfig;
-    
-    /**
-     * Constructor.
-     * 
-     * Initializes the clock skew to 5 minutes and the identifier generator to {@link ProviderType#SECURE}.
-     */
-    public SecurityConfiguration() {
-        clockSkew = Duration.ofMinutes(5);
-        idGenerator = IdentifierGenerationStrategy.getInstance(ProviderType.SECURE);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param skew the clock skew, must be greater than 0
-     * @param generator the identifier generator, must not be null
-     */
-    public SecurityConfiguration(@Nonnull final Duration skew, @Nonnull final IdentifierGenerationStrategy generator) {
-        Constraint.isNotNull(skew, "Clock skew cannot be null");
-        Constraint.isFalse(skew.isNegative() || skew.isZero(), "Clock skew must be greater than 0");
-        
-        clockSkew = skew;
-        idGenerator = Constraint.isNotNull(generator, "Identifier generator cannot be null");
-    }
+/**
+ * General security settings for profiles.
+ */
+public interface SecurityConfiguration {
 
     /**
      * Get the acceptable clock skew.
      * 
      * @return acceptable clock skew
      */
-    @Nonnull public Duration getClockSkew() {
-        return clockSkew;
-    }
+    @Nonnull Duration getClockSkew();
 
     /**
      * Get the generator used to generate secure identifiers.
      * 
      * @return generator used to generate secure identifiers
      */
-    @Nonnull public IdentifierGenerationStrategy getIdGenerator() {
-        return idGenerator;
-    }
-
-    /**
-     * Get the configuration used when validating protocol message signatures.
-     * 
-     * @return configuration used when validating protocol message signatures, or null
-     */
-    @Nullable public SignatureValidationConfiguration getSignatureValidationConfiguration() {
-        return sigValidateConfig;
-    }
-
-    /**
-     * Set the configuration used when validating protocol message signatures.
-     * 
-     * @param config configuration used when validating protocol message signatures, or null
-     */
-    public void setSignatureValidationConfiguration(@Nullable final SignatureValidationConfiguration config) {
-        sigValidateConfig = config;
-    }
-
-    /**
-     * Get the configuration used when generating protocol message signatures.
-     * 
-     * @return configuration used when generating protocol message signatures, or null
-     */
-    @Nullable public SignatureSigningConfiguration getSignatureSigningConfiguration() {
-        return sigSigningConfig;
-    }
-
-    /**
-     * Set the configuration used when generating protocol message signatures.
-     * 
-     * @param config configuration used when generating protocol message signatures, or null
-     */
-    public void setSignatureSigningConfiguration(@Nullable final SignatureSigningConfiguration config) {
-        sigSigningConfig = config;
-    }
-
-    /**
-     * Get the configuration used when decrypting protocol message information.
-     * 
-     * @return configuration used when decrypting protocol message information, or null
-     */
-    @Nullable public DecryptionConfiguration getDecryptionConfiguration() {
-        return decryptConfig;
-    }
-
-    /**
-     * Set the configuration used when decrypting protocol message information.
-     * 
-     * @param config configuration used when decrypting protocol message information, or null
-     */
-    public void setDecryptionConfiguration(@Nullable final DecryptionConfiguration config) {
-        decryptConfig = config;
-    }
-
-    /**
-     * Get the configuration used when encrypting protocol message information.
-     * 
-     * @return configuration used when encrypting protocol message information, or null
-     */
-    @Nullable public EncryptionConfiguration getEncryptionConfiguration() {
-        return encryptConfig;
-    }
-
-    /**
-     * Set the configuration used when encrypting protocol message information.
-     * 
-     * @param config configuration used when encrypting protocol message information, or null
-     */
-    public void setEncryptionConfiguration(@Nullable final EncryptionConfiguration config) {
-        encryptConfig = config;
-    }
+    @Nonnull IdentifierGenerationStrategy getIdGenerator();
 
     /**
      * Get the configuration used when validating client TLS X509Credentials.
      * 
      * @return configuration used when validating client TLS X509Credentials, or null
      */
-    @Nullable public ClientTLSValidationConfiguration getClientTLSValidationConfiguration() {
-        return clientTLSConfig;
-    }
+    @Nullable ClientTLSValidationConfiguration getClientTLSValidationConfiguration();
 
-    /**
-     * Set the configuration used when validating client TLS X509Credentials.
-     * 
-     * @param config configuration used when validating client TLS X509Credentials, or null
-     */
-    public void setClientTLSValidationConfiguration(final ClientTLSValidationConfiguration config) {
-        clientTLSConfig = config;
-    }
-    
     /**
      * Get the configuration used when executing HttpClient requests.
      * 
      * @return configuration used when executing HttpClient requests, or null
      */
-    @Nullable public HttpClientSecurityConfiguration getHttpClientSecurityConfiguration() {
-        return httpClientConfig;
-    }
+    @Nullable HttpClientSecurityConfiguration getHttpClientSecurityConfiguration();
 
-    /**
-     * Set the configuration used when executing HttpClient requests.
-     * 
-     * @param config configuration used when executing HttpClient requests, or null
-     */
-    public void setHttpClientSecurityConfiguration(final HttpClientSecurityConfiguration config) {
-        httpClientConfig = config;
-    }
 }

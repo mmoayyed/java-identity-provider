@@ -23,6 +23,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.config.BasicXMLSecurityConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -73,7 +74,7 @@ public final class SAML1ActionTestingSupport extends org.opensaml.saml.saml1.tes
         rpConfig.setProfileConfigurations(buildProfileConfigurations());
         rpConfig.initialize();
 
-        RelyingPartyContext subcontext = parent.getSubcontext(RelyingPartyContext.class, true);
+        final RelyingPartyContext subcontext = parent.getSubcontext(RelyingPartyContext.class, true);
         subcontext.setRelyingPartyId(id);
         subcontext.setProfileConfig(rpConfig.getProfileConfiguration(null, BrowserSSOProfileConfiguration.PROFILE_ID));
         subcontext.setConfiguration(rpConfig);
@@ -88,19 +89,19 @@ public final class SAML1ActionTestingSupport extends org.opensaml.saml.saml1.tes
      * @return the constructed {@link ProfileConfiguration}
      */
     public static Collection<ProfileConfiguration> buildProfileConfigurations() {
-        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<>();
+        final ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<>();
 
-        SecurityConfiguration securityConfig = new SecurityConfiguration();
+        final SecurityConfiguration securityConfig = new BasicXMLSecurityConfiguration();
 
-        ArtifactResolutionProfileConfiguration artifactConfig = new ArtifactResolutionProfileConfiguration();
+        final ArtifactResolutionProfileConfiguration artifactConfig = new ArtifactResolutionProfileConfiguration();
         artifactConfig.setSecurityConfiguration(securityConfig);
         profileConfigs.add(artifactConfig);
 
-        AttributeQueryProfileConfiguration attributeConfig = new AttributeQueryProfileConfiguration();
+        final AttributeQueryProfileConfiguration attributeConfig = new AttributeQueryProfileConfiguration();
         attributeConfig.setSecurityConfiguration(securityConfig);
         profileConfigs.add(attributeConfig);
 
-        BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
+        final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
         ssoConfig.setSecurityConfiguration(securityConfig);
         profileConfigs.add(ssoConfig);
 

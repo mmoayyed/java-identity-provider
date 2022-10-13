@@ -28,6 +28,7 @@ import org.opensaml.xmlsec.SignatureSigningConfiguration;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.config.XMLSecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.messaging.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
@@ -65,8 +66,8 @@ public class SignatureSigningConfigurationLookupFunction
             if (pc != null) {
                 final SecurityConfiguration sc =
                         pc.getSecurityConfiguration(this.getProfileRequestContextLookupStrategy().apply(input));
-                if (sc != null && sc.getSignatureSigningConfiguration() != null) {
-                    configs.add(sc.getSignatureSigningConfiguration());
+                if (sc instanceof XMLSecurityConfiguration xsc && xsc.getSignatureSigningConfiguration() != null) {
+                    configs.add(xsc.getSignatureSigningConfiguration());
                 }
             }
             
@@ -74,8 +75,9 @@ public class SignatureSigningConfigurationLookupFunction
             if (pc != null && rpResolver != null) {
                 final SecurityConfiguration defaultConfig =
                         rpResolver.getDefaultSecurityConfiguration(pc.getId());
-                if (defaultConfig != null && defaultConfig.getSignatureSigningConfiguration() != null) {
-                    configs.add(defaultConfig.getSignatureSigningConfiguration());
+                if (defaultConfig instanceof XMLSecurityConfiguration xsc &&
+                        xsc.getSignatureSigningConfiguration() != null) {
+                    configs.add(xsc.getSignatureSigningConfiguration());
                 }
             }
         }

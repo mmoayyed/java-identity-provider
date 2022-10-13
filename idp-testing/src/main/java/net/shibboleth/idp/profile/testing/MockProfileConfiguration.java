@@ -20,8 +20,8 @@ package net.shibboleth.idp.profile.testing;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.idp.profile.config.BasicSecurityConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /** Mock implementation of {@link ProfileConfiguration}. */
@@ -34,7 +34,7 @@ public class MockProfileConfiguration extends AbstractProfileConfiguration {
      */
     public MockProfileConfiguration(@Nonnull @NotEmpty final String id) {
         super(id);
-        setSecurityConfiguration(new SecurityConfiguration());
+        setSecurityConfiguration(new BasicSecurityConfiguration());
     }
     
 }

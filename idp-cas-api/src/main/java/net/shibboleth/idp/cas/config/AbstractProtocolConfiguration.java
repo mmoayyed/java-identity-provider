@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
 import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
+import net.shibboleth.idp.profile.config.BasicSecurityConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.InitializableComponent;
@@ -71,7 +72,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
         resolveAttributesPredicate = Predicates.alwaysTrue();
         ticketValidityPeriodLookupStrategy = FunctionSupport.constant(DEFAULT_TICKET_VALIDITY_PERIOD);
         
-        defaultSecurityConfiguration = new SecurityConfiguration(Duration.ofMinutes(5),
+        defaultSecurityConfiguration = new BasicSecurityConfiguration(Duration.ofMinutes(5),
                 new TicketIdentifierGenerationStrategy(getDefaultTicketPrefix(), getDefaultTicketLength()));
     }
 

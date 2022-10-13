@@ -33,7 +33,7 @@ import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.config.BasicXMLSecurityConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -88,7 +88,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractProfileConfi
             @Nonnull @NonnullElements final Collection<String> flows,
             @Nonnull @NonnullElements final List<String> formats) {
         super(id);
-        setSecurityConfiguration(new SecurityConfiguration());
+        setSecurityConfiguration(new BasicXMLSecurityConfiguration());
         setDefaultAuthenticationMethods(methods);
         setAuthenticationFlows(flows);
         setNameIDFormatPrecedence(formats);

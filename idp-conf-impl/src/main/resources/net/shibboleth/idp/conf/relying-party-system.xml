@@ -155,8 +155,7 @@
     and loads the default credentials used.
     -->
 
-    <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
-    
+    <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.BasicXMLSecurityConfiguration">
         <property name="signatureSigningConfiguration">
             <ref bean="#{'%{idp.signing.config:shibboleth.SigningConfiguration.SHA256}'.trim()}" />
         </property>
@@ -186,7 +185,6 @@
                 p:KEKKeyInfoCredentialResolver-ref="defaultKeyEncryptionCredentialResolver"
                 p:encryptedKeyResolver-ref="defaultEncryptedKeyResolver" />
         </property>
-
     </bean>
     
     <!-- KeyInfoGeneration machinery. Former gets injected into the signing and encryption configs. -->

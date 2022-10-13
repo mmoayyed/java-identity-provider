@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.config.tests;
 
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.idp.profile.config.BasicSecurityConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.testing.MockProfileConfiguration;
 import net.shibboleth.shared.logic.ConstraintViolationException;
@@ -57,7 +58,7 @@ public class AbstractProfileConfigurationTest {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         Assert.assertNotNull(config.getSecurityConfiguration(null));
         
-        SecurityConfiguration securityConfig = new SecurityConfiguration();
+        SecurityConfiguration securityConfig = new BasicSecurityConfiguration();
         config.setSecurityConfiguration(securityConfig);
         Assert.assertSame(config.getSecurityConfiguration(null), securityConfig);
     }
@@ -66,7 +67,7 @@ public class AbstractProfileConfigurationTest {
     public void testIndirectSecurityConfiguration() {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         config.setSecurityConfiguration(null);
-        final SecurityConfiguration securityConfig = new SecurityConfiguration();
+        final SecurityConfiguration securityConfig = new BasicSecurityConfiguration();
         config.setSecurityConfigurationLookupStrategy(FunctionSupport.constant(securityConfig));
         Assert.assertSame(config.getSecurityConfiguration(null), securityConfig);
     }
@@ -83,7 +84,7 @@ public class AbstractProfileConfigurationTest {
     public void testIndirectInboundFlows() {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         final List<String> flows = Arrays.asList("foo", "bar");
-        config.setInboundFlowsLookupStrategy(FunctionSupport.constant(flows));
+        config.setInboundInterceptorFlowsLookupStrategy(FunctionSupport.constant(flows));
         Assert.assertEquals(config.getInboundInterceptorFlows(null), flows);
     }
 
@@ -99,7 +100,7 @@ public class AbstractProfileConfigurationTest {
     public void testIndirectOutboundFlows() {
         final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         final List<String> flows = Arrays.asList("foo", "bar");
-        config.setOutboundFlowsLookupStrategy(FunctionSupport.constant(flows));
+        config.setOutboundInterceptorFlowsLookupStrategy(FunctionSupport.constant(flows));
         Assert.assertEquals(config.getOutboundInterceptorFlows(null), flows);
     }
 

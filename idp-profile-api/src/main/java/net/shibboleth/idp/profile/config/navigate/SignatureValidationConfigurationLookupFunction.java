@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.config.XMLSecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
@@ -63,8 +64,8 @@ public class SignatureValidationConfigurationLookupFunction
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null) {
                 final SecurityConfiguration sc = pc.getSecurityConfiguration(input);
-                if (sc != null && sc.getSignatureValidationConfiguration() != null) {
-                    configs.add(sc.getSignatureValidationConfiguration());
+                if (sc instanceof XMLSecurityConfiguration xsc && xsc.getSignatureValidationConfiguration() != null) {
+                    configs.add(xsc.getSignatureValidationConfiguration());
                 }
             }
         }
@@ -73,8 +74,9 @@ public class SignatureValidationConfigurationLookupFunction
         if (input != null && rpResolver != null) {
             final SecurityConfiguration defaultConfig =
                     rpResolver.getDefaultSecurityConfiguration(input.getProfileId());
-            if (defaultConfig != null && defaultConfig.getSignatureValidationConfiguration() != null) {
-                configs.add(defaultConfig.getSignatureValidationConfiguration());
+            if (defaultConfig instanceof XMLSecurityConfiguration xsc &&
+                    xsc.getSignatureValidationConfiguration() != null) {
+                configs.add(xsc.getSignatureValidationConfiguration());
             }
         }
 

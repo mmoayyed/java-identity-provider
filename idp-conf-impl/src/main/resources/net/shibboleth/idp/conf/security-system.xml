@@ -65,11 +65,6 @@
     <bean id="shibboleth.ClientTLSValidationConfigurationLookup" lazy-init="true"
         class="net.shibboleth.idp.profile.config.navigate.ClientTLSValidationConfigurationLookupFunction"
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
-    <bean id="shibboleth.SelfEncryptionConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.idp.profile.config.navigate.SelfEncryptionConfigurationLookupFunction"
-        p:selfConfiguration="#{getObject('shibboleth.SelfEncryptionConfiguration')}"
-        p:includeProfileDefaultConfiguration="%{idp.encryption.self.includeProfileDefaultConfiguration:false}"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
     <!-- Beans that implement the mashing of security configurations into final parameter sets. -->
     

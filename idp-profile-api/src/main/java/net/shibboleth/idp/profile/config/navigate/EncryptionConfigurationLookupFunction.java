@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.config.XMLSecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
@@ -63,8 +64,8 @@ public class EncryptionConfigurationLookupFunction
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null) {
                 final SecurityConfiguration sc = pc.getSecurityConfiguration(input);
-                if (sc != null && sc.getEncryptionConfiguration() != null) {
-                    configs.add(sc.getEncryptionConfiguration());
+                if (sc instanceof XMLSecurityConfiguration xsc && xsc.getEncryptionConfiguration() != null) {
+                    configs.add(xsc.getEncryptionConfiguration());
                 }
             }
         }
@@ -73,8 +74,8 @@ public class EncryptionConfigurationLookupFunction
         if (input != null && rpResolver != null) {
             final SecurityConfiguration defaultConfig =
                     rpResolver.getDefaultSecurityConfiguration(input.getProfileId());
-            if (defaultConfig != null && defaultConfig.getEncryptionConfiguration() != null) {
-                configs.add(defaultConfig.getEncryptionConfiguration());
+            if (defaultConfig instanceof XMLSecurityConfiguration xsc && xsc.getEncryptionConfiguration() != null) {
+                configs.add(xsc.getEncryptionConfiguration());
             }
         }
 

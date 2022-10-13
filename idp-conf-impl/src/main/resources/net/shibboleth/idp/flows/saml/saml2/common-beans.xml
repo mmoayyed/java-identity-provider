@@ -95,17 +95,6 @@
             <bean class="net.shibboleth.idp.profile.context.navigate.SpringStatusMessageLookupFunction" />
         </property>
     </bean>
-    
-    <bean id="EncryptToSelfParametersStrategy" class="org.opensaml.saml.security.impl.InlineSelfEncryptionParametersStrategy">
-        <constructor-arg>
-            <bean class="net.shibboleth.idp.relyingparty.impl.EncryptionCredentialsResolver" 
-                c:_0-ref="shibboleth.RelyingPartyResolverService" />
-        </constructor-arg>
-        <constructor-arg>
-            <bean class="org.opensaml.xmlsec.impl.BasicEncryptionParametersResolver" />
-        </constructor-arg>
-        <constructor-arg ref="shibboleth.SelfEncryptionConfigurationLookup" />
-    </bean>
 
     <!-- Default formats not to encrypt. -->
     <util:set id="DefaultPlaintextNameIDFormats">

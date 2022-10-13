@@ -47,7 +47,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.config.BasicXMLSecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -173,7 +173,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     @Test public void testSessionNotOnOrAfter() {
         final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
         ssoConfig.setMaximumSPSessionLifetime(Duration.ofHours(1));
-        ssoConfig.setSecurityConfiguration(new SecurityConfiguration());
+        ssoConfig.setSecurityConfiguration(new BasicXMLSecurityConfiguration());
         prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(ssoConfig);
         
         prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
@@ -242,7 +242,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     @Test public void testSuppressedAuthenticatingAuthorities() {
         final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
         ssoConfig.setSuppressAuthenticatingAuthority(true);
-        ssoConfig.setSecurityConfiguration(new SecurityConfiguration());
+        ssoConfig.setSecurityConfiguration(new BasicXMLSecurityConfiguration());
         prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(ssoConfig);
 
         prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
