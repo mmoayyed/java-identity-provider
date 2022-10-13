@@ -55,10 +55,11 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
     private CSRFTokenFlowExecutionListener listener;
 
     
-    @BeforeMethod public void setup() {
+    @BeforeMethod public void setup() throws ComponentInitializationException {
         
         CSRFTokenManager manager = new CSRFTokenManager();
         manager.setCsrfParameterName(CSRF_PARAM_NAME);
+        manager.initialize();
         listener = new CSRFTokenFlowExecutionListener();
         listener.setCsrfTokenManager(manager);
         listener.setEnabled(true);
