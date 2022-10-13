@@ -34,9 +34,7 @@ import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
-import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -133,23 +131,6 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
      *
      * @param strategy  lookup strategy
      * 
-     * @since 3.3.0
-     * 
-     * @deprecated
-     */
-    @Deprecated(since="4.2.0", forRemoval=true)
-    public void setInboundFlowsLookupStrategy(@Nonnull final Function<ProfileRequestContext,List<String>> strategy) {
-        DeprecationSupport.warn(ObjectType.METHOD, "setInboundFlowsLookupStrategy", "relying-party.xml",
-                "setInboundInterceptorFlowsLookupStrategy");
-        setInboundInterceptorFlowsLookupStrategy(strategy);
-    }
-
-
-    /**
-     * Set a lookup strategy for the inbound interceptor flows to enable.
-     *
-     * @param strategy  lookup strategy
-     * 
      * @since 4.2.0
      */
     public void setInboundInterceptorFlowsLookupStrategy(
@@ -179,22 +160,6 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
         } else {
             outboundFlowsLookupStrategy = FunctionSupport.constant(null);
         }
-    }
-
-    /**
-     * Set a lookup strategy for the outbound interceptor flows to enable.
-     *
-     * @param strategy  lookup strategy
-     * 
-     * @since 3.3.0
-     * 
-     * @deprecated
-     */
-    @Deprecated(since="4.2.0", forRemoval=true)
-    public void setOutboundFlowsLookupStrategy(@Nonnull final Function<ProfileRequestContext,List<String>> strategy) {
-        DeprecationSupport.warn(ObjectType.METHOD, "setOutboundFlowsLookupStrategy", "relying-party.xml",
-                "setOutboundInterceptorFlowsLookupStrategy");
-        outboundFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
     
     /**
