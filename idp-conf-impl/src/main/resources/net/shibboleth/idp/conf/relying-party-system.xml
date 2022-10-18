@@ -400,7 +400,7 @@
     
     <!-- Defines how the system locates EncryptedKey elements sent in messages containing encrypted objects. -->
     <bean id="defaultEncryptedKeyResolver" class="org.opensaml.xmlsec.encryption.support.ChainingEncryptedKeyResolver"
-            c:recipient-ref="entityID">
+            c:recipients="#{getObject('shibboleth.DecryptionRecipients') ?: getObject('entityID')}">
         <constructor-arg name="encKeyResolvers">
             <list>
                 <bean class="org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver" />
