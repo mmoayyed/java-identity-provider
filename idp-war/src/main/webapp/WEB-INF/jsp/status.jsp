@@ -20,13 +20,8 @@
 <%@ page import="net.shibboleth.idp.module.IdPModule" %>
 <%@ page import="net.shibboleth.idp.plugin.IdPPlugin" %>
 <%@ page import="net.shibboleth.idp.module.ModuleContext" %>
-<%@ page import="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider" %>
-<%@ page import="net.shibboleth.idp.attribute.resolver.AttributeResolver" %>
-<%@ page import="net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl" %>
-<%@ page import="net.shibboleth.idp.attribute.resolver.DataConnector" %>
 <%@ page import="net.shibboleth.utilities.java.support.component.IdentifiedComponent" %>
 <%@ page import="net.shibboleth.utilities.java.support.service.ReloadableService" %>
-<%@ page import="net.shibboleth.utilities.java.support.service.ServiceableComponent" %>
 <%
 final RequestContext requestContext = (RequestContext) request.getAttribute("flowRequestContext");
 final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
