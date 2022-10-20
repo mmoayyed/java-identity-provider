@@ -19,7 +19,7 @@ package net.shibboleth.idp.session;
 
 import javax.annotation.Nullable;
 
-/** Exception indicating a problem authenticating a user. */
+/** Exception indicating a problem with the session layer. */
 public class SessionException extends Exception {
 
     /** Serial version UID. */
