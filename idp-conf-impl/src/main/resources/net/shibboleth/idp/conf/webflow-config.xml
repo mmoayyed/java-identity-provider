@@ -217,8 +217,9 @@
           p:viewRequiresCSRFTokenPredicate-ref="shibboleth.DefaultViewRequiresCSRFTokenPredicate"
           p:eventRequiresCSRFTokenValidationPredicate-ref="shibboleth.DefaultEventRequiresCSRFTokenValidationPredicate"/>
     
-   	<bean id="shibboleth.CSRFTokenManager" class="net.shibboleth.idp.ui.csrf.CSRFTokenManager"
-       p:csrfParameterName="%{idp.csrf.token.parameter:csrf_token}"/>
+   	<bean id="shibboleth.CSRFTokenManager" init-method="initialize" destroy-method="destroy"
+        class="net.shibboleth.idp.ui.csrf.CSRFTokenManager"
+        p:csrfParameterName="%{idp.csrf.token.parameter:csrf_token}"/>
    	
 	<bean id="shibboleth.DefaultViewRequiresCSRFTokenPredicate" 
 		class="net.shibboleth.idp.ui.csrf.impl.DefaultViewRequiresCSRFTokenPredicate"/>
