@@ -17,8 +17,17 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
-import java.time.Duration;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 import java.time.Instant;
+
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
@@ -28,13 +37,6 @@ import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.shared.component.ComponentInitializationException;
-
-import org.springframework.webflow.execution.RequestContext;
-import org.testng.annotations.Test;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
 
 /**
  * Unit test for {@link ValidateTicketAction} class.
