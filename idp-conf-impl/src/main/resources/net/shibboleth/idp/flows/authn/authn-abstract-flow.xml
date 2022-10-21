@@ -53,7 +53,11 @@
     </subflow-state>
   
     <action-state id="LogRuntimeException">
-        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
+        <on-entry>
+            <evaluate expression="LogRuntimeException.log('net.shibboleth.idp.authn', flowExecutionException)" />
+        </on-entry>
+        <evaluate expression="'RuntimeException'" />
+        
         <transition to="RuntimeException" />
     </action-state>
 
