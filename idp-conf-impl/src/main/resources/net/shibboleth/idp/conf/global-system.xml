@@ -397,6 +397,9 @@
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
         p:fieldReplacements="#{getObject('shibboleth.AuditFieldReplacementMap')}" />
 
+    <!-- Bean used internally to flows to log uncaught exceptions. -->
+    <bean id="LogRuntimeException" class="net.shibboleth.idp.profile.LogRuntimeException" />
+
     <!-- Default attribute mapping support for registry service, exposed here for extension use. -->
 
     <bean id="shibboleth.RegistryNamingFunction" abstract="true"

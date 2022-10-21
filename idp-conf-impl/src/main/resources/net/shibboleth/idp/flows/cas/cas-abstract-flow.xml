@@ -9,9 +9,10 @@
 
     <action-state id="LogRuntimeException">
         <on-entry>
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.cas').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
+            <evaluate expression="LogRuntimeException.log('net.shibboleth.idp.cas', flowExecutionException)" />
         </on-entry>
         <evaluate expression="'RuntimeException'" />
+        
         <transition to="HandleError" />
     </action-state>
 

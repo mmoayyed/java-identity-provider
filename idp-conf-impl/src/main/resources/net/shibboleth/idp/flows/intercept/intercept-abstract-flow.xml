@@ -28,7 +28,11 @@
     <end-state id="UpdateSecurityParameters" />
 
     <action-state id="LogRuntimeException">
-        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
+        <on-entry>
+            <evaluate expression="LogRuntimeException.log('net.shibboleth.idp.profile.interceptor', flowExecutionException)" />
+        </on-entry>
+        <evaluate expression="'RuntimeException'" />
+        
         <transition to="RuntimeException" />
     </action-state>
 
