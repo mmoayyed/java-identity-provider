@@ -19,9 +19,9 @@ package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Dedicated bean used to log flow exceptions, to get around issues with Spring Expressions
