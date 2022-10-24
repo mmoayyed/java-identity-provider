@@ -78,6 +78,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
 
     /**
      * Whether to export all attributes.
+     *
      */
     @Nonnull @NotEmpty public static final String ATTR_EXPORT_ALL = "exportAllAttributes";
 
@@ -174,17 +175,23 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             builder.setInitMethodName(null);
             builder.setDestroyMethodName(null);
             if (config.hasAttributeNS(null, ATTR_SPRING_RESOURCE)) {
+                DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, ATTR_SPRING_RESOURCE,
+                        parserContext.getReaderContext().getResource().getDescription(), "<will be removed>");
                 final String[] resources =
                         StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_SPRING_RESOURCE)).split(";");
                 log.debug("{} Native configuration from {}", getLogPrefix(), resources);
                 builder.addPropertyValue("resources", resources);
             } else {
+                DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, ATTR_SPRING_RESOURCE_REF,
+                        parserContext.getReaderContext().getResource().getDescription(), "<will be removed>");
                 final String resourceRef =
                         StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_SPRING_RESOURCE_REF));
                 log.debug("{} Native configuration from bean {}", getLogPrefix(), resourceRef);
                 builder.addPropertyReference("resources", resourceRef);
             }
             if (config.hasAttributeNS(null, ATTR_FACTORY_POSTPROCESSORS_REF)) {
+                DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, ATTR_FACTORY_POSTPROCESSORS_REF,
+                        parserContext.getReaderContext().getResource().getDescription(), "<will be removed>");
                 final String factoryPostProcessorsRef =
                         StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_FACTORY_POSTPROCESSORS_REF));
                 log.debug("{} Factory Bean Post Processors {}", getLogPrefix(), factoryPostProcessorsRef);
@@ -196,6 +203,8 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
                         "shibboleth.PropertySourcesPlaceholderConfigurer");
             }
             if (config.hasAttributeNS(null, ATTR_POSTPROCESSORS_REF)) {
+                DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, ATTR_POSTPROCESSORS_REF,
+                        parserContext.getReaderContext().getResource().getDescription(), "<will be removed>");
                 final String postProcessorsRef =
                         StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_POSTPROCESSORS_REF));
                 log.debug("{} Bean Post Processors {}", getLogPrefix(), postProcessorsRef);
