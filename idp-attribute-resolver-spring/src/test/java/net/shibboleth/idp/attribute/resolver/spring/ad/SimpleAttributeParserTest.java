@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 import static org.testng.Assert.*;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -60,7 +61,8 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         assertFalse(attrDef.isPreRequested());
         assertEquals(attrDef.getAttributeDependencies().size(), 1);
         
-        assertTrue(pendingTeardownContext.getBeansOfType(Collection.class).isEmpty());
+        final Map<String, Collection> beans = pendingTeardownContext.getBeansOfType(Collection.class);
+        assertTrue(beans.isEmpty() || (beans.size() == 1  && beans.containsKey("StaticConnectorValues")));
     }
 
     @Test public void simplePopulated() throws ComponentInitializationException {
