@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="urn:mace:shibboleth:2.0:security"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
+                            urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
+
+    <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
+        executableSearchBuilderRef="LDAPTSearchBuilder"
+        noRetryDelay="PT5M"
+        mappingStrategyRef="LDAPTESTmappings"
+        connectionFactoryRef="LDAPTESTconnectionFactory"
+        searchExecutorRef="LDAPTESTsearchExecutor"
+        validatorRef="LDAPTESTvalidator">
+        
+        <FailoverDataConnector ref="2123"/>
+                
+        <ResultCache cacheManagerRef="LDAPTESTcache"/>
+        
+    </DataConnector>
+    
+</AttributeResolver>

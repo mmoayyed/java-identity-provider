@@ -147,10 +147,6 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         
         final V2Parser v2Parser = new V2Parser(config, getLogPrefix());
 
-        final BeanDefinitionBuilder connectionFactory =
-                BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.class);
-        connectionFactory.addConstructorArgValue(v2Parser.createConnectionConfig(parserContext));
-
         final String searchBuilderID = v2Parser.getBeanSearchBuilderID();
         if (searchBuilderID != null) {
             builder.addPropertyReference("executableSearchBuilder", searchBuilderID);
@@ -161,19 +157,34 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
         }
 
-        final BeanDefinition connectionPool = v2Parser.createConnectionPool(connectionFactory.getBeanDefinition());
+        final String connectionFactoryID = v2Parser.getBeanConnectionFactoryID();
         BeanDefinitionBuilder pooledConnectionFactory = null;
-        if (connectionPool != null) {
-            pooledConnectionFactory = BeanDefinitionBuilder.genericBeanDefinition(PooledConnectionFactory.class);
-            pooledConnectionFactory.addConstructorArgValue(connectionPool);
-            builder.addPropertyValue("connectionFactory", pooledConnectionFactory.getBeanDefinition());
+        BeanDefinitionBuilder connectionFactory = null;
+        if (connectionFactoryID != null) {
+            builder.addPropertyReference("connectionFactory", connectionFactoryID);
         } else {
-            builder.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
+            connectionFactory =
+                    BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.class);
+            connectionFactory.addConstructorArgValue(v2Parser.createConnectionConfig(parserContext));
+
+            final BeanDefinition connectionPool = v2Parser.createConnectionPool(connectionFactory.getBeanDefinition());
+            if (connectionPool != null) {
+                pooledConnectionFactory = BeanDefinitionBuilder.genericBeanDefinition(PooledConnectionFactory.class);
+                pooledConnectionFactory.addConstructorArgValue(connectionPool);
+                builder.addPropertyValue("connectionFactory", pooledConnectionFactory.getBeanDefinition());
+            } else {
+                builder.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
+            }
         }
 
-        final BeanDefinition searchExecutor = v2Parser.createSearchExecutor();
-        builder.addPropertyValue("searchExecutor", searchExecutor);
-
+        final String searchExecutorID = v2Parser.getBeanSearchExecutorID();
+        if (searchExecutorID!= null) {
+            builder.addPropertyReference("searchExecutor", searchExecutorID);
+        } else {
+            final BeanDefinition searchExecutor = v2Parser.createSearchExecutor();
+            builder.addPropertyValue("searchExecutor", searchExecutor);
+        }
+        
         final String mappingStrategyID = AttributeSupport.getAttributeValue(config, new QName("mappingStrategyRef"));
         if (mappingStrategyID != null) {
             builder.addPropertyReference("mappingStrategy", mappingStrategyID);
@@ -188,7 +199,10 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         if (validatorID != null) {
             builder.addPropertyReference("validator", validatorID);
         } else {
-            if (pooledConnectionFactory != null) {
+            if (connectionFactoryID != null) {
+                builder.addPropertyValue("validator", v2Parser.createValidator(connectionFactoryID));
+            }
+            else if (pooledConnectionFactory != null) {
                 builder.addPropertyValue("validator",
                         v2Parser.createValidator(pooledConnectionFactory.getBeanDefinition()));
             } else {
@@ -436,13 +450,31 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
         /**
          * Get the bean ID of an externally defined search builder.
-         * 
+         *
          * @return search builder bean ID
          */
         @Nullable public String getBeanSearchBuilderID() {
             return AttributeSupport.getAttributeValue(configElement, null, "executableSearchBuilderRef");
         }
         
+        /**
+         * Get the bean ID of an externally defined Connection Factory
+         *
+         * @return Connection Factory bean ID
+         */
+        @Nullable public String getBeanConnectionFactoryID() {
+            return AttributeSupport.getAttributeValue(configElement, null, "connectionFactoryRef");
+        }
+
+        /**
+         * Get the bean ID of an externally defined Search Executor
+         *
+         * @return Search Executor bean ID
+         */
+        @Nullable public String getBeanSearchExecutorID() {
+            return AttributeSupport.getAttributeValue(configElement, null, "searchExecutorRef");
+        }
+
         /**
          * Construct the definition of the template driven search builder.
          * 
@@ -813,6 +845,22 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                     BeanDefinitionBuilder.genericBeanDefinition(ConnectionFactoryValidator.class);
 
             validator.addPropertyValue("connectionFactory", connectionFactory);
+            return validator.getBeanDefinition();
+        }
+
+        /**
+         * Create the validator. See {@link net.shibboleth.idp.attribute.resolver.dc.Validator}.
+         *
+         * @param connectionFactoryId reference to provide to the validator
+         *
+         * @return validator
+         */
+        @Nullable public BeanDefinition createValidator(final String connectionFactoryId) {
+
+            final BeanDefinitionBuilder validator =
+                    BeanDefinitionBuilder.genericBeanDefinition(ConnectionFactoryValidator.class);
+
+            validator.addPropertyReference("connectionFactory", connectionFactoryId);
             return validator.getBeanDefinition();
         }
 

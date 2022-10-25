@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-    xmlns:sec="urn:mace:shibboleth:2.0:security"
-    targetNamespace="urn:mace:shibboleth:2.0:resolver"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+    xmlns:sec="urn:mace:shibboleth:2.0:security" targetNamespace="urn:mace:shibboleth:2.0:resolver"
     elementFormDefault="qualified" version="4.3">
 
     <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
@@ -1057,6 +1055,20 @@
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the MappingStrategy implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="connectionFactoryRef" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the Connection Factory implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="searchExecutorRef" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the Search Executor implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>

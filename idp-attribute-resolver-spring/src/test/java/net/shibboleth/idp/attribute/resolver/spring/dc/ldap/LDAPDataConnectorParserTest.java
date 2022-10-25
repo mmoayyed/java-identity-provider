@@ -38,7 +38,6 @@ import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.RandomConnectionStrategy;
-import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
@@ -484,6 +483,22 @@ public class LDAPDataConnectorParserTest {
         final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         assertNotNull(attrs);
     }
+
+    @Test public void refConfig() throws Exception {
+        final LDAPDataConnector dataConnector =
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-ref.xml",
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-ref-beans.xml"});
+        assertNotNull(dataConnector);
+        doTest(dataConnector);
+
+        dataConnector.initialize();
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        assertNotNull(attrs);
+    }
+
 
     @Test public void springPropsConfig() throws Exception,
             ResolutionException {
