@@ -61,6 +61,22 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
     @Test public void hybrid() {
         final StaticDataConnector connector = getDataConnector("resolver/staticAttributesHybrid.xml", StaticDataConnector.class);
         assertTrue(connector.isExportAllAttributes());
+
+        assertEquals(connector.getAttributes().keySet().size(), 2);
+        final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
+        List<IdPAttributeValue> values = epe.getValues();
+        assertEquals(values.size(), 2);
+        assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
+        assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
+
+        values = connector.getAttributes().get("staticEpA").getValues();
+        assertEquals(values.size(), 1);
+        assertTrue(values.contains(new StringAttributeValue("member")));
+    }
+
+    @Test public void ref() {
+        final StaticDataConnector connector = getDataConnector("resolver/staticAttributesRef.xml", StaticDataConnector.class);
+        assertTrue(connector.isExportAllAttributes());
         
         assertEquals(connector.getAttributes().keySet().size(), 2);
         final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");

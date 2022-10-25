@@ -63,6 +63,15 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
         
         final List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME_RESOLVER);
         final List<BeanDefinition> attributes = new ManagedList<>(children.size());
+        final String attrListRef = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeListRef"));
+        if (null != attrListRef) {
+            if (children.size() > 0) {
+                log.error("{} : 'attributeListRef' is incompatible with <Attribute/> elements, ignoring them",
+                        getLogPrefix());
+            }
+            builder.addPropertyReference("values", attrListRef);
+            return;
+        }
 
         for (final Element child : children) {
 

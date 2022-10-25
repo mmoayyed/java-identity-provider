@@ -1523,6 +1523,13 @@
                         </complexType>
                     </element>
                 </choice>
+                <attribute name="attributeListRef" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            The name of a bean defined somewhere else which describes a List of IdPAttributes
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

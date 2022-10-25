@@ -47,6 +47,22 @@
     <bean id="SAML1XMLObjectTranscoder"
         class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1XMLObjectAttributeTranscoder" />
 
+    <util:list id="StaticConnectorValues">
+        <bean class="net.shibboleth.idp.attribute.IdPAttribute" c:attributeId="staticEpA">
+            <property name="values">
+                <bean class="net.shibboleth.idp.attribute.StringAttributeValue" c:attributeValue="member" />
+            </property>
+        </bean>
+        <bean class="net.shibboleth.idp.attribute.IdPAttribute" c:attributeId="eduPersonEntitlement">
+            <property name="values">
+                <list>
+                    <bean class="net.shibboleth.idp.attribute.StringAttributeValue" c:attributeValue="urn:example.org:entitlement:entitlement1" />
+                    <bean class="net.shibboleth.idp.attribute.StringAttributeValue" c:attributeValue="urn:mace:dir:entitlement:common-lib-terms" />
+                </list>
+            </property>
+        </bean>
+    </util:list>
+
 </beans>
 
        
