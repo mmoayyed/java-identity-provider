@@ -35,10 +35,15 @@ public class ProxyGrantingTicketSerializer extends AbstractTicketSerializer<Prox
     /** Parent PGT ID field name. */
     private static final String PARENT_FIELD = "parent";
 
+    /** PGT URL field name. */
+    private static final String PGTURL_FIELD = "pgtUrl";
+
+
 
     @Override
     protected void serializeInternal(@Nonnull final JsonGenerator generator,
             @Nonnull final ProxyGrantingTicket ticket) {
+        generator.write(PGTURL_FIELD, ticket.getProxyCallbackUrl());
         if (ticket.getParentId() != null) {
             generator.write(PARENT_FIELD, ticket.getParentId());
         }
@@ -50,6 +55,6 @@ public class ProxyGrantingTicketSerializer extends AbstractTicketSerializer<Prox
             @Nonnull final String id,
             @Nonnull final String service,
             @Nonnull final Instant expiry) {
-        return new ProxyGrantingTicket(id, service, expiry, o.getString(PARENT_FIELD, null));
+        return new ProxyGrantingTicket(id, service, expiry, o.getString(PGTURL_FIELD), o.getString(PARENT_FIELD, null));
     }
 }

@@ -128,12 +128,12 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
         return ticketService.createProxyTicket(generateProxyTicketId(), expiry(), pgt, service);
     }
 
-    protected ProxyGrantingTicket createProxyGrantingTicket(final ServiceTicket st) {
-        return ticketService.createProxyGrantingTicket(generateProxyGrantingTicketId(), expiry(), st);
+    protected ProxyGrantingTicket createProxyGrantingTicket(final ServiceTicket st, final String pgtUrl) {
+        return ticketService.createProxyGrantingTicket(generateProxyGrantingTicketId(), expiry(), st, pgtUrl);
     }
 
-    protected ProxyGrantingTicket createProxyGrantingTicket(final ProxyTicket pt) {
-        return ticketService.createProxyGrantingTicket(generateProxyGrantingTicketId(), expiry(), pt);
+    protected ProxyGrantingTicket createProxyGrantingTicket(final ProxyTicket pt, final String pgtUrl) {
+        return ticketService.createProxyGrantingTicket(generateProxyGrantingTicketId(), expiry(), pt, pgtUrl);
     }
 
     /**

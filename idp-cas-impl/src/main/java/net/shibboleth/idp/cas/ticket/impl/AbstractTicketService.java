@@ -99,12 +99,14 @@ public abstract class AbstractTicketService implements TicketService {
     public ProxyGrantingTicket createProxyGrantingTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
-            @Nonnull final ServiceTicket serviceTicket) {
+            @Nonnull final ServiceTicket serviceTicket,
+            @Nonnull final String pgtUrl) {
         Constraint.isNotNull(serviceTicket, "ServiceTicket cannot be null");
         final ProxyGrantingTicket pgt = new ProxyGrantingTicket(
                 Constraint.isNotNull(id, "ID cannot be null"),
                 serviceTicket.getService(),
                 Constraint.isNotNull(expiry, "Expiry cannot be null"),
+                Constraint.isNotNull(pgtUrl, "pgtURL cannot be null"),
                 null);
         pgt.setTicketState(serviceTicket.getTicketState());
         store(pgt);
@@ -116,12 +118,14 @@ public abstract class AbstractTicketService implements TicketService {
     public ProxyGrantingTicket createProxyGrantingTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
-            @Nonnull final ProxyTicket proxyTicket) {
+            @Nonnull final ProxyTicket proxyTicket,
+            @Nonnull final String pgtUrl) {
         Constraint.isNotNull(proxyTicket, "ProxyTicket cannot be null");
         final ProxyGrantingTicket pgt = new ProxyGrantingTicket(
                 Constraint.isNotNull(id, "ID cannot be null"),
                 proxyTicket.getService(),
                 Constraint.isNotNull(expiry, "Expiry cannot be null"),
+            Constraint.isNotNull(pgtUrl, "pgtURL cannot be null"),
                 proxyTicket.getPgtId());
         pgt.setTicketState(proxyTicket.getTicketState());
         store(pgt);

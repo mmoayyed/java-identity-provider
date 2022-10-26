@@ -105,7 +105,7 @@ public class BuildProxyChainAction
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.BrokenProxyChain.event(this));
                 return;
             }
-            response.addProxy(pgt.getService());
+            response.addProxy(pgt.getProxyCallbackUrl());
             pgtId = pgt.getParentId();
         } while (pgtId != null);
     }

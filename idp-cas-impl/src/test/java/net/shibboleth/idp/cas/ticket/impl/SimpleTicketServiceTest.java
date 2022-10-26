@@ -42,6 +42,8 @@ public class SimpleTicketServiceTest {
 
     private static final String TEST_SERVICE = "https://example.com/widget";
 
+    private static final String TEST_PGTURL = "https://proxy.example.com/";
+
     private SimpleTicketService ticketService;
 
     @BeforeClass
@@ -77,6 +79,7 @@ public class SimpleTicketServiceTest {
         assertEquals(pgt, pgt2);
         assertEquals(pgt.getExpirationInstant(), pgt2.getExpirationInstant());
         assertEquals(pgt.getService(), pgt2.getService());
+        assertEquals(pgt.getProxyCallbackUrl(), pgt2.getProxyCallbackUrl());
         assertEquals(pgt.getTicketState(), pgt2.getTicketState());
         assertEquals(ticketService.removeProxyGrantingTicket(pgt.getId()), pgt);
         assertNull(ticketService.removeProxyGrantingTicket(pgt.getId()));
@@ -113,7 +116,8 @@ public class SimpleTicketServiceTest {
         return ticketService.createProxyGrantingTicket(
                 new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
                 expiry(),
-                createServiceTicket());
+                createServiceTicket(),
+                TEST_PGTURL);
     }
 
     private static Instant expiry() {

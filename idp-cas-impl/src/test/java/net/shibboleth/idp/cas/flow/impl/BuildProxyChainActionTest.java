@@ -41,10 +41,12 @@ public class BuildProxyChainActionTest extends AbstractFlowActionTest {
 
     @Test
     public void testBuildChainLength2() throws Exception {
-        final ServiceTicket st = createServiceTicket("proxyA", true);
-        final ProxyGrantingTicket pgtA = createProxyGrantingTicket(st);
+        final ServiceTicket st = createServiceTicket("alpha", true);
+        final String pgtUrlA = "https://proxya.example.com/";
+        final ProxyGrantingTicket pgtA = createProxyGrantingTicket(st, pgtUrlA);
         final ProxyTicket ptA = createProxyTicket(pgtA, "proxiedByA");
-        final ProxyGrantingTicket pgtB = createProxyGrantingTicket(ptA);
+        final String pgtUrlB = "https://proxyb.example.com/";
+        final ProxyGrantingTicket pgtB = createProxyGrantingTicket(ptA, pgtUrlB);
         final ProxyTicket ptB = createProxyTicket(pgtB, "proxiedByB");
         final TicketValidationRequest request = new TicketValidationRequest("proxiedByB", ptB.getId());
         final TicketValidationResponse response = new TicketValidationResponse();
@@ -54,19 +56,22 @@ public class BuildProxyChainActionTest extends AbstractFlowActionTest {
                 .build();
         assertNull(action.execute(context));
         assertEquals(response.getProxies().size(), 2);
-        assertEquals(response.getProxies().get(0), "proxiedByA");
-        assertEquals(response.getProxies().get(1), "proxyA");
+        assertEquals(response.getProxies().get(0), pgtUrlB);
+        assertEquals(response.getProxies().get(1), pgtUrlA);
     }
 
 
     @Test
     public void testBrokenProxyChain() throws Exception {
-        final ServiceTicket st = createServiceTicket("proxyA", true);
-        final ProxyGrantingTicket pgtA = createProxyGrantingTicket(st);
+        final ServiceTicket st = createServiceTicket("beta", true);
+        final String pgtUrlA = "https://proxya.example.com/";
+        final ProxyGrantingTicket pgtA = createProxyGrantingTicket(st, pgtUrlA);
         final ProxyTicket ptA = createProxyTicket(pgtA, "proxiedByA");
-        final ProxyGrantingTicket pgtB = createProxyGrantingTicket(ptA);
+        final String pgtUrlB = "https://proxyb.example.com/";
+        final ProxyGrantingTicket pgtB = createProxyGrantingTicket(ptA, pgtUrlB);
         final ProxyTicket ptB = createProxyTicket(pgtB, "proxiedByB");
-        final ProxyGrantingTicket pgtC = createProxyGrantingTicket(ptB);
+        final String pgtUrlC = "https://proxyc.example.com/";
+        final ProxyGrantingTicket pgtC = createProxyGrantingTicket(ptB, pgtUrlC);
         final ProxyTicket ptC = createProxyTicket(pgtC, "proxiedByC");
         final TicketValidationRequest request = new TicketValidationRequest("proxiedByC", ptC.getId());
         final TicketValidationResponse response = new TicketValidationResponse();

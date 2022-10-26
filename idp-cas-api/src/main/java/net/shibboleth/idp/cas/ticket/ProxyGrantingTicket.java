@@ -31,6 +31,9 @@ import net.shibboleth.shared.primitive.StringSupport;
  */
 public class ProxyGrantingTicket extends Ticket {
 
+    /** Proxy callback URL that uniquely identifies the proxying party to which the PGT was issued. */
+    private String proxyCallbackUrl;
+
     /** The ID of the parent proxy-granting ticket. */
     @Nullable
     private String parentPgTicketId;
@@ -41,15 +44,23 @@ public class ProxyGrantingTicket extends Ticket {
      * @param id Ticket ID.
      * @param service Service that requested the ticket.
      * @param expiration Expiration instant.
+     * @param pgtUrl Proxy callback URL that uniquely identifies the proxying party to which the PGT was issued.
      * @param parentId ID of parent proxy-granting ticket or null if this is first proxy in chain.
      */
     public ProxyGrantingTicket(
             @Nonnull final String id,
             @Nonnull final String service,
             @Nonnull final Instant expiration,
+            @Nonnull final String pgtUrl,
             @Nullable final String parentId) {
         super(id, service, expiration);
+        proxyCallbackUrl = pgtUrl;
         parentPgTicketId = StringSupport.trimOrNull(parentId);
+    }
+
+    /** @return Proxy callback URL that uniquely identifies the proxying party to which the PGT was issued. */
+    @Nonnull public String getProxyCallbackUrl() {
+        return proxyCallbackUrl;
     }
 
     /**
@@ -72,7 +83,8 @@ public class ProxyGrantingTicket extends Ticket {
 
     @Override
     protected Ticket newInstance(final String newId) {
-        return new ProxyGrantingTicket(newId, getService(), getExpirationInstant(), parentPgTicketId);
+        return new ProxyGrantingTicket(
+            newId, getService(), getExpirationInstant(), getProxyCallbackUrl(), parentPgTicketId);
     }
 
 }

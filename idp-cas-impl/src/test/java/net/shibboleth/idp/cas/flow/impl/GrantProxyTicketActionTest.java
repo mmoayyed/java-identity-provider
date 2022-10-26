@@ -41,7 +41,8 @@ public class GrantProxyTicketActionTest extends AbstractFlowActionTest {
     @Test
     public void testGrantProxyTicketSuccess() throws Exception {
         final String service = "https://s.example.org/";
-        final ProxyGrantingTicket pgt = createProxyGrantingTicket(createServiceTicket(service, false));
+        final ProxyGrantingTicket pgt = createProxyGrantingTicket(
+            createServiceTicket(service, false), service + "proxy");
         final RequestContext context = new TestContextBuilder(ProxyConfiguration.PROFILE_ID)
                 .addProtocolContext(new ProxyTicketRequest(pgt.getId(), service), null)
                 .addTicketContext(pgt)

@@ -186,12 +186,14 @@ public class EncodingTicketService extends AbstractTicketService {
     public ProxyGrantingTicket createProxyGrantingTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
-            @Nonnull final ServiceTicket serviceTicket) {
+            @Nonnull final ServiceTicket serviceTicket,
+            @Nonnull final String pgtUrl) {
         Constraint.isNotNull(serviceTicket, "ServiceTicket cannot be null");
         final ProxyGrantingTicket pgt = new ProxyGrantingTicket(
                 NOT_USED,
                 serviceTicket.getService(),
                 Constraint.isNotNull(expiry, "Expiry cannot be null"),
+                Constraint.isNotNull(pgtUrl, "pgtUrl cannot be null"),
                 null);
         pgt.setTicketState(serviceTicket.getTicketState());
         return encode(ProxyGrantingTicket.class, pgt, proxyGrantingTicketPrefix);

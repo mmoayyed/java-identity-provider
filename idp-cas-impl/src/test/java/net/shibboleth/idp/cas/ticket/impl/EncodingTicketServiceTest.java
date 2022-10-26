@@ -160,7 +160,8 @@ public class EncodingTicketServiceTest {
     @Test
     public void testCreateFetchRemoveEncodedProxyGrantingTicket() {
         final String principal = "aleph";
-        final String serviceUrl = "https://www.example.com/pgt1/";
+        final String serviceUrl = "https://www.example.com/service1";
+        final String pgtUrl = "https://www.example.com/pgt1";
         final ServiceTicket st = ticketService.createServiceTicket(
             String.valueOf(System.currentTimeMillis()),
             Instant.now().plusSeconds(5),
@@ -168,15 +169,17 @@ public class EncodingTicketServiceTest {
             newState(principal),
             true);
         final Instant expiry = Instant.now().plusSeconds(3600);
-        final ProxyGrantingTicket pgt = ticketService.createProxyGrantingTicket("notused", expiry, st);
+        final ProxyGrantingTicket pgt = ticketService.createProxyGrantingTicket("notused", expiry, st, pgtUrl);
         assertTrue(pgt.getId().startsWith("PGT-E-"));
         final ProxyGrantingTicket pgt2 = ticketService.fetchProxyGrantingTicket(pgt.getId());
         assertNotNull(pgt2);
         assertEquals(pgt2.getService(), serviceUrl);
+        assertEquals(pgt2.getProxyCallbackUrl(), pgtUrl);
         assertEquals(pgt2.getTicketState().getPrincipalName(), principal);
         final ProxyGrantingTicket pgt3 = ticketService.removeProxyGrantingTicket(pgt.getId());
         assertNotNull(pgt3);
         assertEquals(pgt3.getService(), serviceUrl);
+        assertEquals(pgt2.getProxyCallbackUrl(), pgtUrl);
         assertEquals(pgt3.getTicketState().getPrincipalName(), principal);
         // Removing encoded tickets is the same as fetching so they are still available (no backing storage)
         assertNotNull(ticketService.fetchProxyGrantingTicket(pgt.getId()));
@@ -189,7 +192,11 @@ public class EncodingTicketServiceTest {
 
     private ProxyGrantingTicket newPGT(final TicketState state, final String service) {
         final ProxyGrantingTicket pgt = new ProxyGrantingTicket(
-                pgtIdGenerator.generateIdentifier(), service, Instant.now().plusSeconds(300), "PGT-12345");
+            pgtIdGenerator.generateIdentifier(),
+            service,
+            Instant.now().plusSeconds(300),
+            service + "/proxy",
+            "PGT-12345");
         pgt.setTicketState(state);
         return pgt;
     }

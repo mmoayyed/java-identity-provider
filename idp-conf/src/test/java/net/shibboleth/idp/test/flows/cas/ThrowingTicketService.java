@@ -46,12 +46,14 @@ public class ThrowingTicketService implements TicketService {
     }
 
     @Nonnull
-    public ProxyGrantingTicket createProxyGrantingTicket(@Nonnull String id, @Nonnull Instant expiry, @Nonnull ServiceTicket serviceTicket) {
+    public ProxyGrantingTicket createProxyGrantingTicket(
+        @Nonnull String id, @Nonnull Instant expiry, @Nonnull ServiceTicket serviceTicket, @Nonnull String pgtUrl) {
         throw new RuntimeException("createProxyGrantingTicket failed for ticket " + id);
     }
 
     @Nonnull
-    public ProxyGrantingTicket createProxyGrantingTicket(@Nonnull String id, @Nonnull Instant expiry, @Nonnull ProxyTicket proxyTicket) {
+    public ProxyGrantingTicket createProxyGrantingTicket(
+        @Nonnull String id, @Nonnull Instant expiry, @Nonnull ProxyTicket proxyTicket, @Nonnull String pgtUrl) {
         throw new RuntimeException("createProxyGrantingTicket failed for ticket " + id);
     }
 

@@ -63,6 +63,7 @@ public interface TicketService {
      * @param id ID of proxy-granting ticket to create.
      * @param expiry Expiration date of proxy-granting ticket.
      * @param serviceTicket Successfully-validated service ticket.
+     * @param pgtUrl Proxy callback URL used to authenticate and identify the proxying service.
      *
      * @return Created proxy-granting ticket.
      */
@@ -70,7 +71,8 @@ public interface TicketService {
     ProxyGrantingTicket createProxyGrantingTicket(
             @Nonnull String id,
             @Nonnull Instant expiry,
-            @Nonnull ServiceTicket serviceTicket);
+            @Nonnull ServiceTicket serviceTicket,
+            @Nonnull String pgtUrl);
 
     /**
      * Creates a chained proxy-granting ticket from a proxy ticket. The value of {@link ProxyTicket#getPgtId()}
@@ -79,6 +81,7 @@ public interface TicketService {
      * @param id ID of proxy-granting ticket to create.
      * @param expiry Expiration date of proxy-granting ticket.
      * @param proxyTicket Successfully-validated proxy ticket.
+     * @param pgtUrl Proxy callback URL used to authenticate and identify the proxying service.
      *
      * @return Created proxy-granting ticket.
      */
@@ -86,7 +89,8 @@ public interface TicketService {
     ProxyGrantingTicket createProxyGrantingTicket(
             @Nonnull String id,
             @Nonnull Instant expiry,
-            @Nonnull ProxyTicket proxyTicket);
+            @Nonnull ProxyTicket proxyTicket,
+            @Nonnull String pgtUrl);
 
     /**
      * Retrieves a proxy-granting ticket by its ID.

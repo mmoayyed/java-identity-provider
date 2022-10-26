@@ -54,7 +54,7 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
     @Test
     public void testRenewIncompatibleWithProxy() throws Exception {
         final ServiceTicket st = createServiceTicket(TEST_SERVICE, false);
-        final ProxyGrantingTicket pgt = createProxyGrantingTicket(st);
+        final ProxyGrantingTicket pgt = createProxyGrantingTicket(st, TEST_SERVICE + "/proxy");
         final ProxyTicket pt = createProxyTicket(pgt, "https://foo.example.org");
         final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, pt.getId());
         request.setRenew(true);
@@ -80,7 +80,7 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
     @Test
     public void testSuccessWithoutRenewAndProxyTicket() throws Exception {
         final ServiceTicket st = createServiceTicket(TEST_SERVICE, false);
-        final ProxyGrantingTicket pgt = createProxyGrantingTicket(st);
+        final ProxyGrantingTicket pgt = createProxyGrantingTicket(st, TEST_SERVICE + "/proxy");
         final ProxyTicket pt = createProxyTicket(pgt, "https://foo.example.org");
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, pt.getId()), null)

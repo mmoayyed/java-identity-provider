@@ -173,6 +173,7 @@ public class ProxyFlowTest extends AbstractFlowTest {
         return ticketService.createProxyGrantingTicket(
                 new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
                 Instant.now().plus(1, ChronoUnit.HOURS),
-                st);
+                st,
+                "https://service.example.org/proxy");
     }
 }

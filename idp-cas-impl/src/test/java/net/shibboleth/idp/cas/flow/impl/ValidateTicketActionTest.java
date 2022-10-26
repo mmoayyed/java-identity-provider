@@ -121,7 +121,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
     @Test
     public void testProxyTicketValidateSuccess() throws Exception {
         final ServiceTicket st = createServiceTicket(TEST_SERVICE, false);
-        final ProxyGrantingTicket pgt = createProxyGrantingTicket(st);
+        final ProxyGrantingTicket pgt = createProxyGrantingTicket(st, TEST_SERVICE + "/proxy");
         final ProxyTicket pt = createProxyTicket(pgt, "proxyA");
         final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest("proxyA", pt.getId()), null)

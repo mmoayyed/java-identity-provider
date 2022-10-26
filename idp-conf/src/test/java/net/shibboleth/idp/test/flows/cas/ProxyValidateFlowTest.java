@@ -81,7 +81,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
-        assertTrue(responseBody.contains("<cas:proxy>https://service.example.org/</cas:proxy>"));
+        assertTrue(responseBody.contains("<cas:proxy>https://service.example.org/proxy</cas:proxy>"));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertTrue(responseBody.contains("<cas:proxyGrantingTicket>"));
-        assertTrue(responseBody.contains("<cas:proxy>https://service.example.org/</cas:proxy>"));
+        assertTrue(responseBody.contains("<cas:proxy>https://service.example.org/proxy</cas:proxy>"));
     }
 
     // This test must execute after testSuccessWithProxy to prevent concurrency problems
@@ -155,21 +155,23 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         final ProxyGrantingTicket pgt1 = ticketService.createProxyGrantingTicket(
             new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
             Instant.now().plusMillis(pgtTTLMillis),
-            st);
+            st,
+            "https://proxy1.example.org/");
         final ProxyTicket pt1 = ticketService.createProxyTicket(
             new TicketIdentifierGenerationStrategy("PT", 25).generateIdentifier(),
             Instant.now().plusSeconds(5),
             pgt1,
-            "https://proxy1.example.org/");
+            "https://proxied1.example.org/");
         final ProxyGrantingTicket pgt2 = ticketService.createProxyGrantingTicket(
             new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
             Instant.now().plusSeconds(3600),
-            pt1);
+            pt1,
+            "https://proxy2.example.org/");
         final ProxyTicket pt2 = ticketService.createProxyTicket(
             new TicketIdentifierGenerationStrategy("PT", 25).generateIdentifier(),
             Instant.now().plusSeconds(5),
             pgt2,
-            "https://proxy2.example.org/");
+            "https://proxied2.example.org/");
 
         externalContext.getMockRequestParameterMap().put("service", pt2.getService());
         externalContext.getMockRequestParameterMap().put("ticket", pt2.getId());
@@ -195,11 +197,12 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         final ProxyGrantingTicket pgt = ticketService.createProxyGrantingTicket(
                 new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
                 Instant.now().plusSeconds(10),
-                st);
+                st,
+                "https://service.example.org/proxy");
         return ticketService.createProxyTicket(
                 new TicketIdentifierGenerationStrategy("PT", 25).generateIdentifier(),
                 Instant.now().plusSeconds(5),
                 pgt,
-                "https://proxyA.example.org/");
+                "https://proxiedA.example.org/");
     }
 }
