@@ -18,6 +18,7 @@
 package net.shibboleth.idp.test;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 
@@ -71,7 +72,8 @@ public class InMemoryDirectory {
                 CredentialConfigFactory.createKeyStoreCredentialConfig(ks, ksPass).createSSLContextInitializer();
             final SSLUtil sslUtil = new SSLUtil(sslInit.getKeyManagers(), sslInit.getTrustManagers());
             config.setListenerConfigs(
-                InMemoryListenerConfig.createLDAPConfig("default", null, port, sslUtil.createSSLSocketFactory()));
+                InMemoryListenerConfig.createLDAPConfig(
+                    "default", InetAddress.getByName("localhost"), port, sslUtil.createSSLSocketFactory()));
         } catch (final GeneralSecurityException e) {
             throw new IOException("Error reading keystore", e);
         }
