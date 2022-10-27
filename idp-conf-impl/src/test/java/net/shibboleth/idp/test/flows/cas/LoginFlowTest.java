@@ -142,7 +142,9 @@ public class LoginFlowTest extends AbstractFlowTest {
 
     @Test
     public void testLoginStartSession() throws Exception {
-        final String service = "https://start.example.org/";
+        // The service below is registered for single logout,
+        // which triggers attaching an SPSession to the IdPSession
+        final String service = "https://slo.example.org/";
         externalContext.getMockRequestParameterMap().put("service", service);
         overrideEndStateOutput(FLOW_ID, "RedirectToService");
 
@@ -158,6 +160,8 @@ public class LoginFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.resolveSingle(
                 new CriteriaSet(new SessionIdCriterion(sid)));
         assert session!=null;
+        assertEquals(session.getSPSessions().size(), 1);
+        assertEquals(session.getSPSessions().iterator().next().getId(), service);
         
         final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
         assertNotNull(prc.getSubcontext(SubjectContext.class));

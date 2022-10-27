@@ -109,10 +109,13 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
             if (!service.isSingleLogoutParticipant()) {
                 return false;
             }
-            
             ticket = getCASTicket(profileRequestContext);
         } catch (final EventException e) {
             ActionSupport.buildEvent(profileRequestContext, e.getEventID());
+            return false;
+        }
+        if (ticket.getSessionId() == null) {
+            log.debug("{} Cannot update IdP session because the ticket is not bound to a session", getLogPrefix());
             return false;
         }
 

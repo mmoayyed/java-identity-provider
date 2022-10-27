@@ -180,40 +180,6 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     }
 
     @Test
-    public void testSuccessWithSLOParticipant() throws Exception {
-        final String principal = "john";
-        final IdPSession session = sessionManager.createSession(principal);
-        final String sid = session.getId();
-        assert sid!=null;
-        final ServiceTicket ticket = ticketService.createServiceTicket(
-                "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
-                Instant.now().plusSeconds(5),
-                "https://slo.example.org/",
-                new TicketState(sid, principal, Instant.now(), "Password"),
-                false);
-
-        externalContext.getMockRequestParameterMap().put("service", ticket.getService());
-        externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
-        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
-
-        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
-
-        final String responseBody = response.getContentAsString();
-        final FlowExecutionOutcome outcome = result.getOutcome();
-        assertEquals(outcome.getId(), "ValidateSuccess");
-        assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
-        assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
-        assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
-        assertFalse(responseBody.contains("<cas:proxies>"));
-        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
-
-        final IdPSession updatedSession = sessionResolver.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(sid)));
-        assert updatedSession!=null;
-        assertEquals(updatedSession.getSPSessions().size(), 1);
-    }
-
-    @Test
     public void testFailureTicketExpired() throws Exception {
         externalContext.getMockRequestParameterMap().put("service", "https://test.example.org/");
         externalContext.getMockRequestParameterMap().put("ticket", "ST-123-ABC");

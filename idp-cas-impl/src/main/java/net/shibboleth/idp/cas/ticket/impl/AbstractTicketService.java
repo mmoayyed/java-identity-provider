@@ -40,6 +40,7 @@ import net.shibboleth.idp.cas.ticket.serialization.impl.ProxyTicketSerializer;
 import net.shibboleth.idp.cas.ticket.serialization.impl.ServiceTicketSerializer;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
+
 /**
  * Abstract base class for ticket services that rely on {@link StorageService} for ticket storage.
  *
@@ -170,17 +171,22 @@ public abstract class AbstractTicketService implements TicketService {
      * @param <T> Type of ticket.
      */
     protected <T extends Ticket> void store(@Nonnull final T ticket) {
-        final String context = Constraint.isNotNull(context(ticket.getClass()),
-                "Could not find context for ticket of type " + ticket.getClass());
         try {
-            final String sessionId = Constraint.isNotNull(ticket.getSessionId(), "No session Id");
+            final String sessionId = ticket.getSessionId();
             final long expiry = ticket.getExpirationInstant().toEpochMilli();
-            log.debug("Storing mapping of {} to {} in context {}", ticket, sessionId, context);
-            if (!storageService.create(context, ticket.getId(), sessionId, expiry)) {
-                throw new RuntimeException("Failed to store ticket " + ticket);
+            final String ticketCtx;
+            if (sessionId != null) {
+                final String context = context(ticket.getClass());
+                log.debug("Storing mapping of {} to {} in context {}", ticket, sessionId, context);
+                if (!storageService.create(context, ticket.getId(), sessionId, expiry)) {
+                    throw new RuntimeException("Failed to store ticket " + ticket);
+                }
+                ticketCtx = sessionId;
+            } else {
+                ticketCtx = ticket.getId();
             }
-            log.debug("Storing {} in context {}", ticket, sessionId);
-            if (!storageService.create(sessionId, ticket.getId(), ticket,
+            log.debug("Storing {} in context {}", ticket, ticketCtx);
+            if (!storageService.create(ticketCtx, ticket.getId(), ticket,
                     (StorageSerializer<T>) serializer(ticket.getClass()), expiry)) {
                 throw new RuntimeException("Failed to store ticket " + ticket);
             }
@@ -202,20 +208,21 @@ public abstract class AbstractTicketService implements TicketService {
         log.debug("Reading {}", id);
         final T ticket;
         try {
-            final String context = Constraint.isNotNull(context(clazz),
-                    "Could not find context for ticket of type " + clazz);
-            final StorageRecord<T> sessionRecord = storageService.read(context, id);
-            if (sessionRecord == null) {
+            final String context;
+            final StorageRecord<T> sessionRecord = storageService.read(context(clazz), id);
+            if (sessionRecord != null) {
+                context = sessionRecord.getValue();
+                log.debug("{} bound to session {}", id, context);
+            } else {
+                log.debug("{} not bound to any session. Using ticket ID for context.", id);
+                context = id;
+            }
+            final StorageRecord<T> ticketRecord = storageService.read(context, id);
+            if (ticketRecord == null) {
                 log.debug("{} not found in context {}", id, context);
                 return null;
             }
-            final String sessionId = sessionRecord.getValue();
-            final StorageRecord<T> ticketRecord = storageService.read(sessionId, id);
-            if (ticketRecord == null) {
-                log.debug("{} not found in context {}", id, sessionId);
-                return null;
-            }
-            ticket = ticketRecord.getValue(serializer(clazz), sessionId, id);
+            ticket = ticketRecord.getValue(serializer(clazz), context, id);
         } catch (final IOException e) {
             throw new RuntimeException("Error reading ticket.");
         }
@@ -237,16 +244,21 @@ public abstract class AbstractTicketService implements TicketService {
             return null;
         }
         try {
-            final String context = Constraint.isNotNull(context(clazz),
-                    "Could not find context for ticket of type " + clazz);
-            log.debug("Attempting to delete {} from context {}", id, context);
-            if (!storageService.delete(context, id)) {
-                log.info("Failed deleting {} from context {}.", id, context);
+            final String context = context(clazz);
+            final String sessionId = ticket.getSessionId();
+            final String ticketCtx;
+            if (sessionId != null) {
+                log.debug("Attempting to delete {} from context {}", id, context);
+                if (!storageService.delete(context, id)) {
+                    log.info("Failed deleting {} from context {}.", id, context);
+                }
+                ticketCtx = sessionId;
+            } else {
+                ticketCtx = id;
             }
-            final String sessionId = Constraint.isNotNull(ticket.getSessionId(), "No session Id");
-            log.debug("Attempting to delete {} from context {}", id, sessionId);
-            if (!storageService.delete(sessionId, id)) {
-                log.info("Failed deleting {} from context {}.", id, sessionId);
+            log.debug("Attempting to delete {} from context {}", id, ticketCtx);
+            if (!storageService.delete(ticketCtx, id)) {
+                log.info("Failed deleting {} from context {}.", id, ticketCtx);
             }
         } catch (final IOException e) {
             throw new RuntimeException("Error deleting ticket " + id, e);

@@ -98,6 +98,7 @@
 
     <action-state id="GrantServiceTicket">
         <evaluate expression="GrantServiceTicket" />
+        <evaluate expression="UpdateIdPSessionWithSPSession" />
         <evaluate expression="PublishProtocolResponse" />
         <evaluate expression="PopulateOutboundInterceptContext" />
         <evaluate expression="PopulateClientStorageSaveContext" />

@@ -167,30 +167,40 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
         }
         
         if (validateIdPSessionPredicate.test(profileRequestContext)) {
-            IdPSession session = null;
-            try {
-                log.debug("{} Attempting to retrieve session {}", getLogPrefix(), proxyGrantingTicket.getSessionId());
-                session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(
-                        Constraint.isNotNull(proxyGrantingTicket.getSessionId(),
-                                "ProxyGrantingTicket session id was null"))));
-            } catch (final ResolverException e) {
-                log.warn("{} IdPSession resolution error: {}", getLogPrefix(), e);
-            }
-            boolean expired = true;
-            if (session == null) {
-                log.info("{} IdPSession {} not found", getLogPrefix(), proxyGrantingTicket.getSessionId());
-            } else {
+            final String sessionId = proxyGrantingTicket.getSessionId();
+            if (sessionId != null) {
+                IdPSession session;
                 try {
-                    expired = !session.checkTimeout();
-                    log.debug("{} Session {} expired={}", getLogPrefix(), proxyGrantingTicket.getSessionId(), expired);
-                } catch (final SessionException e) {
-                    log.warn("{} Error performing session timeout check: {}. Assuming session has expired.",
-                            getLogPrefix(), e);
+                    log.debug("{} Attempting to retrieve session {}", getLogPrefix(), sessionId);
+                    session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId)));
+                } catch (final ResolverException e) {
+                    log.info("{} Failed resolving IdP session {}: {}", getLogPrefix(), sessionId, e.getMessage());
+                    ActionSupport.buildEvent(profileRequestContext, ProtocolError.SessionExpired.event(this));
+                    return;
                 }
-            }
-            if (expired) {
-                ActionSupport.buildEvent(profileRequestContext, ProtocolError.SessionExpired.event(this));
-                return;
+                if (session == null) {
+                    log.info("{} IdPSession {} not found", getLogPrefix(), sessionId);
+                    ActionSupport.buildEvent(profileRequestContext, ProtocolError.SessionExpired.event(this));
+                    return;
+                } else {
+                    boolean expired = true;
+                    try {
+                        expired = !session.checkTimeout();
+                        log.debug("{} IdPSession {} expired={}", getLogPrefix(), sessionId, expired);
+                    } catch (final SessionException e) {
+                        log.warn("{} Error performing session timeout check: {}. Assuming session has expired.",
+                                getLogPrefix(), e);
+                    }
+                    if (expired) {
+                        ActionSupport.buildEvent(profileRequestContext, ProtocolError.SessionExpired.event(this));
+                        return;
+                    }
+                }
+            } else {
+                log.warn("{} Cannot validate session because the PGT is not bound to a session. " +
+                        "This is likely a sign of a configuration problem. The validateIdPSessionPredicate is " +
+                        "configured to return true, but the session storage mechanism is configured such that " +
+                        "IdP sessions are not available to CAS tickets.", getLogPrefix());
             }
         }
         final ProxyTicket pt;

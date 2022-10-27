@@ -36,7 +36,7 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class TicketState {
 
     /** ID of session in which ticket is created. */
-    @Nonnull private String sessId;
+    @Nullable private String sessId;
 
     /** Canonical authenticated principal name. */
     @Nonnull private String authenticatedPrincipalName;
@@ -59,11 +59,11 @@ public class TicketState {
      * @param authnMethod principal authentication method ID/name/description
      */
     public TicketState(
-            @Nonnull final String sessionId,
+            @Nullable final String sessionId,
             @Nonnull final String principalName,
             @Nonnull final Instant authnInstant,
             @Nonnull final String authnMethod) {
-        sessId = Constraint.isNotNull(sessionId, "SessionID cannot be null");
+        sessId = sessionId;
         authenticatedPrincipalName = Constraint.isNotNull(principalName, "PrincipalName cannot be null");
         authenticationInstant = Constraint.isNotNull(authnInstant, "AuthnInstant cannot be null");
         authenticationMethod = Constraint.isNotNull(authnMethod, "AuthnMethod cannot be null");
@@ -74,7 +74,7 @@ public class TicketState {
      *
      * @return IdP session ID.
      */
-    @Nonnull public String getSessionId() {
+    @Nullable public String getSessionId() {
         return sessId;
     }
 
@@ -135,7 +135,7 @@ public class TicketState {
     public boolean equals(final Object o) {
         if (o instanceof TicketState) {
             final TicketState other = (TicketState) o;
-            return sessId.equals(other.sessId) &&
+            return Objects.equals(sessId, other.sessId) &&
                     authenticatedPrincipalName.equals(other.authenticatedPrincipalName) &&
                     authenticationInstant.equals(other.authenticationInstant) &&
                     authenticationMethod.equals(other.authenticationMethod);

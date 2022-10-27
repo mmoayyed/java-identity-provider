@@ -111,7 +111,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             final String ticketId = request.getTicket();
             log.debug("Attempting to validate {}", ticketId);
             if (ticketId.startsWith(LoginConfiguration.DEFAULT_TICKET_PREFIX)) {
-                ticket = casTicketService.removeServiceTicket(request.getTicket());
+                ticket = casTicketService.removeServiceTicket(ticketId);
             } else if (ticketId.startsWith(ProxyConfiguration.DEFAULT_TICKET_PREFIX)) {
                 ticket = casTicketService.removeProxyTicket(ticketId);
             } else {
@@ -119,8 +119,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
                 return;
             }
             if (ticket != null) {
-                log.debug("{} Found and removed {}/{} from ticket store", getLogPrefix(), ticket,
-                        ticket.getSessionId());
+                log.debug("{} Found and removed {} from ticket store", getLogPrefix(), ticketId);
             }
         } catch (final RuntimeException e) {
             log.debug("{} CAS ticket retrieval failed with error: {}", getLogPrefix(), e);

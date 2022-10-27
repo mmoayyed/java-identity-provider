@@ -22,6 +22,7 @@ import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
 
+import net.shibboleth.idp.session.IdPSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.DataProvider;
@@ -53,10 +54,12 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
 
     @Test(dataProvider = "messages")
     public void testExecute(final ServiceTicketRequest request) throws Exception {
+        final IdPSession session = mockSession("1234567890", true);
+        final AuthenticationResult result = new AuthenticationResult("Password", new UsernamePrincipal("bob"));
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(request, null)
-                .addAuthenticationContext(new AuthenticationResult("Password", new UsernamePrincipal("bob")))
-                .addSessionContext(mockSession("1234567890", true))
+                .addAuthenticationContext(result)
+                .addSessionContext(session)
                 .addSubjectContext(TEST_PRINCIPAL_NAME)
                 .addRelyingPartyContext(request.getService(), true, new LoginConfiguration())
                 .build();

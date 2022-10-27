@@ -40,6 +40,11 @@
           class="net.shibboleth.idp.cas.flow.impl.GrantServiceTicketAction" scope="prototype"
           c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
+    <bean id="UpdateIdPSessionWithSPSession"
+          class="net.shibboleth.idp.cas.flow.impl.UpdateIdPSessionWithSPSessionAction" scope="prototype"
+          c:lifetime="%{idp.session.defaultSPlifetime:PT2H}"
+          c:resolver-ref="shibboleth.SessionManager" />
+
     <bean id="LoginConfigLookup"
           class="net.shibboleth.idp.cas.config.ConfigLookupFunction" scope="prototype"
           c:clazz="net.shibboleth.idp.cas.config.LoginConfiguration" />

@@ -87,10 +87,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     
     /** Security config. */
     @NonnullBeforeExec private SecurityConfiguration securityConfig;
-    
-    /** IdP's session. */
-    @NonnullBeforeExec private IdPSession session;
-    
+
     /** Authentication result. */
     @NonnullBeforeExec private AuthenticationResult authnResult;
 
@@ -167,21 +164,11 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             return false;
         }
 
-        session = getIdPSession(profileRequestContext);
-        if (session == null) {
-            // TODO: I think this should be revisited, unclear why the TicketState later needs this.
-            // It may be needed specifically if the check below for an active AuthnResult fails, but that's
-            // a secondary requirement that would only happen when absolutely needed.
-            log.warn("{} No IdP session found", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
         final AuthenticationContext authnCtx = authnCtxLookupFunction.apply(profileRequestContext);
         if (authnCtx != null) {
             authnResult = authnCtx.getAuthenticationResult();
         } else {
-            authnResult = getLatestAuthenticationResult();
+            authnResult = getLatestAuthenticationResult(profileRequestContext);
         }
         
         if (authnResult == null) {
@@ -213,8 +200,9 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
 
         try {
             log.debug("{} Granting service ticket for {}", getLogPrefix(), request.getService());
+            final IdPSession session = getIdPSession(profileRequestContext);
             final TicketState state = new TicketState(
-                    Constraint.isNotNull(session.getId(), "Session ID was non null"),
+                    session != null ? session.getId() : null,
                     getPrincipalName(profileRequestContext),
                     authnResult.getAuthenticationInstant(),
                     authnResult.getAuthenticationFlowId());
@@ -244,6 +232,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         }
         
         try {
+            setCASTicket(profileRequestContext, ticket);
             setCASResponse(profileRequestContext, response);
         } catch (final EventException e) {
             ActionSupport.buildEvent(profileRequestContext, e.getEventID());
@@ -257,7 +246,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      * Get the IdP session.
      *
      * @param prc profile request context
-     * 
+     *
      * @return IdP session
      */
     @Nullable private IdPSession getIdPSession(@Nonnull final ProfileRequestContext prc) {
@@ -280,21 +269,23 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     }
 
     /**
-     * Gets the most recent authentication result from the IdP session.
+     * Gets the most recent authentication result from the current IdP session.
      *
+     * @param prc Profile request context.
      * @return Latest authentication result.
      *
      * @throws IllegalStateException If no authentication results are found.
      */
-    @Nullable private AuthenticationResult getLatestAuthenticationResult() {
+    @Nullable private AuthenticationResult getLatestAuthenticationResult(final ProfileRequestContext prc) {
         AuthenticationResult latest = null;
-
-        for (final AuthenticationResult result : session.getAuthenticationResults()) {
-            if (latest == null || result.getAuthenticationInstant().isAfter(latest.getAuthenticationInstant())) {
-                latest = result;
+        final IdPSession session = getIdPSession(prc);
+        if (session != null) {
+            for (final AuthenticationResult result : session.getAuthenticationResults()) {
+                if (latest == null || result.getAuthenticationInstant().isAfter(latest.getAuthenticationInstant())) {
+                    latest = result;
+                }
             }
         }
-        
         return latest;
     }
 

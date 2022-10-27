@@ -105,17 +105,22 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
         final StringWriter buffer = new StringWriter(200);
         try (final JsonGenerator gen = generatorFactory.createGenerator(buffer)) {
             gen.writeStartObject()
-                    .write(SERVICE_FIELD, ticket.getService())
-                    .write(EXPIRATION_FIELD, ticket.getExpirationInstant().toEpochMilli());
-            final TicketState state = ticket.getTicketState();
-            if (state != null) {
-                gen.writeStartObject(STATE_FIELD)
-                        .write(SESSION_FIELD, state.getSessionId())
-                        .write(PRINCIPAL_FIELD, state.getPrincipalName())
-                        .write(AUTHN_INSTANT_FIELD, state.getAuthenticationInstant().toEpochMilli())
-                        .write(AUTHN_METHOD_FIELD, state.getAuthenticationMethod());
-                
-                final Set<String> consentedIds = state.getConsentedAttributeIds(); 
+                .write(SERVICE_FIELD, ticket.getService())
+                .write(EXPIRATION_FIELD, ticket.getExpirationInstant().toEpochMilli());
+            
+            if (ticket.getTicketState() != null) {
+                final TicketState state = ticket.getTicketState();
+                gen.writeStartObject(STATE_FIELD);
+                if (state.getSessionId() != null) {
+                    gen.write(SESSION_FIELD, state.getSessionId());
+                } else {
+                    gen.writeNull(SESSION_FIELD);
+                }
+                gen.write(PRINCIPAL_FIELD, state.getPrincipalName())
+                    .write(AUTHN_INSTANT_FIELD, state.getAuthenticationInstant().toEpochMilli())
+                    .write(AUTHN_METHOD_FIELD, state.getAuthenticationMethod());
+
+                final Set<String> consentedIds = state.getConsentedAttributeIds();
                 if (consentedIds != null) {
                     gen.writeStartArray(CONSENTED_ATTRS_FIELD);
                     for (final String id : consentedIds) {
@@ -154,8 +159,13 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
             final JsonObject so = to.getJsonObject(STATE_FIELD);
             final TicketState state;
             if (so != null) {
-                final String sessionField =
-                        Constraint.isNotNull(so.getString(SESSION_FIELD), "Session field was not present");
+                final JsonValue sessionField = so.get(SESSION_FIELD);
+                final String sessionId;
+                if (!JsonValue.NULL.equals(sessionField)) {
+                    sessionId = ((JsonString) sessionField).getString();
+                } else {
+                    sessionId = null;
+                }
                 final String principalField =
                         Constraint.isNotNull(so.getString(PRINCIPAL_FIELD), "Principal field was not present");
                 final JsonNumber authnInstantField =
@@ -166,7 +176,7 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
                 final String authnMethodField =
                         Constraint.isNotNull(so.getString(AUTHN_METHOD_FIELD), "Authn Method field was not present");
                 state = new TicketState(
-                        sessionField, 
+                        sessionId,
                         principalField,
                         authnInstant,
                         authnMethodField);

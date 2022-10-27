@@ -70,6 +70,24 @@ public class ServiceTicketSerializerTest {
     }
 
     @Test
+    public void testSerializeWithTicketStateNullSessionId() throws Exception {
+        final ServiceTicket st1 = new ServiceTicket(
+            "ST-0123456789-e6342d467a4414e599aa3c323528e96f",
+            "https://nobody.example.org",
+            Instant.now().truncatedTo(ChronoUnit.MILLIS),
+            true);
+        st1.setTicketState(new TicketState(null, "bob", Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password"));
+        final String serialized = serializer.serialize(st1);
+        final ServiceTicket st2 = serializer.deserialize(1, "notused", st1.getId(), serialized, null);
+        assertNull(st2.getSessionId());
+        assertEquals(st2.getId(), st1.getId());
+        assertEquals(st2.getService(), st1.getService());
+        assertEquals(st2.getExpirationInstant(), st1.getExpirationInstant());
+        assertEquals(st2.isRenew(), st1.isRenew());
+        assertEquals(st2.getTicketState(), st1.getTicketState());
+    }
+
+    @Test
     public void testSerializeWithConsent() throws Exception {
         final ServiceTicket st1 = new ServiceTicket(
                 "ST-0123456789-e6342d467a4414e599aa3c323528e96f",

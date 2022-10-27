@@ -50,11 +50,6 @@
           class="net.shibboleth.idp.cas.flow.impl.PrepareTicketValidationResponseAction" scope="prototype"
           p:transcoderRegistry-ref="shibboleth.AttributeRegistryService" />
 
-    <bean id="UpdateIdPSessionWithSPSession"
-          class="net.shibboleth.idp.cas.flow.impl.UpdateIdPSessionWithSPSessionAction" scope="prototype"
-          c:lifetime="%{idp.session.defaultSPlifetime:PT2H}"
-          c:resolver-ref="shibboleth.SessionManager" />
-
     <bean id="PopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
           p:fieldExtractors="#{getObject('shibboleth.CASValidationAuditExtractors') ?: getObject('shibboleth.DefaultCASValidationAuditExtractors')}" />
 

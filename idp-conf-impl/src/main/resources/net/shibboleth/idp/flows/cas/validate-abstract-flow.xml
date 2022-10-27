@@ -66,7 +66,7 @@
     <decision-state id="CheckResolveAttributes">
         <if test="ValidateConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes(opensamlProfileRequestContext)"
             then="ResolveAttributes"
-            else="UpdateIdPSessionWithSPSession" />
+            else="PopulateOutboundInterceptContext" />
     </decision-state>
 
     <action-state id="ResolveAttributes">
@@ -79,7 +79,7 @@
 
     <decision-state id="CheckConsentCondition">
         <if test="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.consent.AttributeQuery.Condition') and flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.consent.AttributeQuery.Condition').apply(opensamlProfileRequestContext)"
-            then="ConsentSetup" else="UpdateIdPSessionWithSPSession" />
+            then="ConsentSetup" else="PopulateOutboundInterceptContext" />
     </decision-state>
 
     <action-state id="ConsentSetup">
@@ -90,11 +90,10 @@
 
     <subflow-state id="ConsentFlow" subflow="intercept/attribute-release-query">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="UpdateIdPSessionWithSPSession"/>
+        <transition on="proceed" to="PopulateOutboundInterceptContext"/>
     </subflow-state>
 
-    <action-state id="UpdateIdPSessionWithSPSession">
-        <evaluate expression="UpdateIdPSessionWithSPSession" />
+    <action-state id="PopulateOutboundInterceptContext">
         <evaluate expression="PopulateOutboundInterceptContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="CheckOutboundInterceptContext" />
