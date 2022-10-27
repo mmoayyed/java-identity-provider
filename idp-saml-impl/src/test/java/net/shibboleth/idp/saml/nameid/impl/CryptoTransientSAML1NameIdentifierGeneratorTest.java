@@ -51,11 +51,11 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
     
     @BeforeMethod public void setUp() throws ComponentInitializationException, IOException {
         final Resource keyStore =
-                new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.jks");
+                new ClassPathResource("/net/shibboleth/idp/saml/impl/nameid/SealerKeyStore.jks");
         Assert.assertTrue(keyStore.exists());
         
         final Resource version =
-                new ClassPathResource("/net/shibboleth/idp/saml/impl/attribute/resolver/SealerKeyStore.kver");
+                new ClassPathResource("/net/shibboleth/idp/saml/impl/nameid/SealerKeyStore.kver");
         Assert.assertTrue(version.exists());
 
         final BasicKeystoreKeyStrategy kstrategy = new BasicKeystoreKeyStrategy();
