@@ -46,7 +46,10 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * </p>
  * 
  * @param <T> the custom Principal type to locate
+ * 
+ * @deprecated
  */
+@Deprecated(since="4.3.0", forRemoval=true)
 public class DefaultPrincipalDeterminationStrategy<T extends Principal> implements Function<ProfileRequestContext,T> {
 
     /** Type of Principal to return. */
