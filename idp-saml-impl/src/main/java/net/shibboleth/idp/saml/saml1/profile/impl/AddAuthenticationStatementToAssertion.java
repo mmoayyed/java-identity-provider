@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
+import net.shibboleth.idp.authn.impl.DefaultPrincipalDeterminationStrategy;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAssertion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;

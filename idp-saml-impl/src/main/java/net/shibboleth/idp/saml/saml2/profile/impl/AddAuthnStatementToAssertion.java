@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
+import net.shibboleth.idp.authn.impl.DefaultPrincipalDeterminationStrategy;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
