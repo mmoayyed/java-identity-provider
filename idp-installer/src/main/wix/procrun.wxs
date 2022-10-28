@@ -21,7 +21,7 @@
     <Fragment>
         <DirectoryRef Id="PROCRUNROOT">
             <Directory Id="dir64" Name="amd64" />
-	    <Directory Id="procrunLogFolder" Name="log" />
+            <Directory Id="procrunLogFolder" Name="log" />
         </DirectoryRef>
         <Binary Id="DoRandomSrc" SourceFile="scripts\shib_random.vbs" />
         <CustomAction Id="MakeRandom" BinaryKey="DoRandomSrc" VBScriptCall="" Execute="immediate" />
@@ -47,14 +47,14 @@
                  <RegistryKey ForceCreateOnInstall="yes" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)" Root="HKLM">
                     <Permission User="Administrators" GenericAll="yes" />
                     <Permission User="SYSTEM" GenericAll="yes" />
-                    <Permission User="SHIBD_USER" GenericRead="yes" GenericExecute="yes" Read="yes" />
-		 </RegistryKey>
-	        <CreateFolder Directory="procrunLogFolder">
+                    <Permission Domain="[JETTYD_DOMAIN]" User="[PERMISSION_USER]" GenericRead="yes" GenericExecute="yes" Read="yes" />
+                 </RegistryKey>
+                <CreateFolder Directory="procrunLogFolder">
                     <Permission User="Administrators" GenericAll="yes" />
                     <Permission User="SYSTEM" GenericAll="yes" />
-                    <Permission User="SHIBD_USER" GenericAll="yes" />
+                    <Permission Domain="[JETTYD_DOMAIN]" User="[PERMISSION_USER]" GenericAll="yes" />
                 </CreateFolder>
-	    </Component>
+            </Component>
 
             <!-- Install the service. -->
 
@@ -71,7 +71,7 @@
                 <File Id="file_procrun_AMD64_service" KeyPath="yes" Source="$(var.ProcrunSrc)\amd64\prunsrv.exe" Name="$(var.ServiceName).exe" />
                 <ServiceInstall Id="ServiceX64" Name="$(var.ServiceName)" DisplayName="Shibboleth IdP Daemon" Description="Runs the Jetty Container"
                                 Arguments="service $(var.ServiceName)" Type="ownProcess" Start="$(var.ServiceStart)" ErrorControl="ignore"
-                                Account=".\SHIBD_USER" Password="********">
+                                Account="[SERVICE_USER]" Password="[JETTYD_PASSWORD]">
                     <util:ServiceConfig FirstFailureActionType="none" SecondFailureActionType="none" ThirdFailureActionType="none"/>
                 </ServiceInstall>
             </Component>

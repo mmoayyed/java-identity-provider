@@ -80,5 +80,19 @@
             <RegistrySearch Id="OldQIDir" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{D54EF89F-F134-450C-A64D-593F5602F175}" Name="InstallLocation" Type="raw" Win64="no" />
         </Property>
 
+	<!-- Should be in Mergemodule -->
+        <Property Id="INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Secure="yes"/>
+        <Property Id="JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Secure="yes"/>
+        <Property Id="JETTYD_PASSWORD.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Secure="yes" Hidden="yes"/>
+        <Property Id="OLD_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Secure="yes">
+            <RegistrySearch Id="OldJettydUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydUser" Type="raw" Win64="no" />
+        </Property>
+        <Property Id="OLD_JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Secure="yes">
+            <RegistrySearch Id="OldJettydDomain" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydDomain" Type="raw" Win64="no" />
+        </Property>
+        <Property Id="OLD_INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Secure="yes">
+            <RegistrySearch Id="OldInstallJettydUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJettydUser" Type="raw" Win64="no" />
+        </Property>
     </Fragment>
-</Wix>
+</Wix> <!--msiexec /lv* log.log /i idp-x64.msi JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7=SHIBD_USER JETTYD_PASSSWORD.684B3207_0D64_43E6_9E6A_3ACB8B7672D7=Gold12! -->
+

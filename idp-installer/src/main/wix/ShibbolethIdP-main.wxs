@@ -71,12 +71,14 @@
                             <CreateFolder Directory="CredsFolder">
                                 <Permission User="Administrators" GenericAll="yes" />
                                 <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission User="SHIBD_USER" ReadPermission="yes" GenericRead="yes" GenericExecute="yes" Read="yes" />
+                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
+                                            ReadPermission="yes" GenericRead="yes" GenericExecute="yes" Read="yes" />
                             </CreateFolder>
                             <CreateFolder Directory="ConfFolder">
                                 <Permission User="Administrators" GenericAll="yes" />
                                 <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission User="SHIBD_USER" ReadPermission="yes" Read="yes" GenericRead="yes" GenericExecute="yes" />
+                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
+                                            ReadPermission="yes" Read="yes" GenericRead="yes" GenericExecute="yes" />
                             </CreateFolder>
                             <CreateFolder Directory="LogsFolder">
                                 <Permission User="Administrators" GenericAll="yes" />
@@ -91,17 +93,20 @@
                             <CreateFolder Directory="StartDotD">
                                 <Permission User="Administrators" GenericAll="yes" />
                                 <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission User="SHIBD_USER" ReadPermission="yes" GenericRead="yes" Read="yes" GenericExecute="yes" />
+                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
+                                            ReadPermission="yes" GenericRead="yes" Read="yes" GenericExecute="yes" />
                             </CreateFolder>
                             <CreateFolder Directory="JettyLogs">
                                 <Permission User="Administrators" GenericAll="yes" />
                                 <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission User="SHIBD_USER" GenericAll="yes"/>
+                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
+                                            GenericAll="yes"/>
                             </CreateFolder>
                             <CreateFolder Directory="JettyTmp">
                                 <Permission User="Administrators" GenericAll="yes" />
                                 <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission User="SHIBD_USER" GenericAll="yes"/>
+                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
+                                            GenericAll="yes"/>
                             </CreateFolder>
                        </Component>
                     </Directory>
