@@ -19,12 +19,43 @@
     <Module Id="Jetty" Language="1033" Version="3.2.2.0">
         <Package Id="684b3207-0d64-43e6-9e6a-3acb8b7672d7" Manufacturer="The Shibboleth Consortium" InstallerVersion="310" Description="Merge Module for Jetty" Comments="This module is built by the Shibboleth Consortium.  Includes Jetty (from Eclipse) and Procrun (from Apache)" Platform="x64" />
         <Directory Id="TARGETDIR" Name="SourceDir">
+            <Component Id="SaveTarget" Guid="{B5B909A2-E246-4069-808D-7F3AC98D062B}" Win64="no">
+                <RegistryValue Id="targetRegShibUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydUser" Value="[JETTYD_USER]" Type="string" />
+                <RegistryValue Id="targetRegShibDomain" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydDomain" Value="[JETTYD_DOMAIN]" Type="string" />
+                <RegistryValue Id="targetRegInstallShibUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJettydUser" Value="[INSTALL_JETTYD_USER]" Type="string" />
+            </Component>
             <Directory Id="JETTYROOT" Name="Jetty" />
             <Directory Id="PROCRUNROOT" Name="ProcRun" />
         </Directory>
 
+        <CustomAction Id="InheritJettydUser" Property="JETTYD_USER" Value="[OLD_JETTYD_USER]" />
+        <CustomAction Id="InheritJettydDomain" Property="JETTYD_DOMAIN" Value="[OLD_JETTYD_DOMAIN]" />
+        <CustomAction Id="SetJettydDomain" Property="JETTYD_DOMAIN" Value="[%USERDOMAIN]" />
+        <CustomAction Id="InheritInstallJettydUser" Property="INSTALL_JETTYD_USER" Value="[OLD_INSTALL_JETTYD_USER]" />
+        <CustomAction Id="SetInstallJettydUser" Property="INSTALL_JETTYD_USER" Value="TRUE" />
+
+        <InstallUISequence>
+            <!-- inherit JettydUser stuff-->
+            <Custom Action="InheritJettydUser" After="AppSearch">OLD_JETTYD_USER AND NOT JETTYD_USER</Custom>
+            <Custom Action="InheritJettydDomain" After="AppSearch">OLD_JETTYD_DOMAIN AND NOT JETTYD_DOMAIN</Custom>
+            <Custom Action="SetJettydDomain" After="AppSearch">NOT OLD_JETTYD_DOMAIN AND NOT JETTYD_DOMAIN</Custom>
+            <Custom Action="InheritInstallJettydUser" After="AppSearch">OLD_INSTALL_JETTYD_USER AND NOT JETTYD_USER</Custom>
+            <Custom Action="SetInstallJettydUser" After="AppSearch">JETTYD_USER</Custom>
+        </InstallUISequence>
+
+        <CustomAction Id="UserSpecified" Property="PERMISSION_USER" Value="[JETTYD_USER]"/>
+        <CustomAction Id="UserDefault" Property="PERMISSION_USER" Value="Administrators"/>
+        <CustomAction Id="DomainDefault" Property="JETTYD_DOMAIN" Value=""/>
+        <CustomAction Id="ServiceUser" Property="SERVICE_USER" Value="[JETTYD_DOMAIN]\[JETTYD_USER]"/>
+
+        <InstallExecuteSequence>
+            <Custom Action="UserSpecified" Before="CreateFolders">INSTALL_JETTYD_USER</Custom>
+            <Custom Action="UserDefault" Before="CreateFolders">NOT INSTALL_JETTYD_USER</Custom>
+            <Custom Action="DomainDefault" Before="CreateFolders">NOT INSTALL_JETTYD_USER</Custom>
+            <Custom Action="ServiceUser" Before="InstallServices">INSTALL_JETTYD_USER</Custom>
+        </InstallExecuteSequence>
+
         <ComponentGroupRef Id="JettyGroup" />
         <ComponentGroupRef Id="ProcrunGroup" />
-
     </Module>
 </Wix>
