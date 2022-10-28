@@ -33,7 +33,6 @@ import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.User;
-import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.jaas.LdapPrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -127,7 +126,15 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
         }
     }
 
-// Checkstyle: CyclomaticComplexity OFF    
+    /** {@inheritDoc} */
+    @Override
+    protected void doDestroy() {
+        if (authenticator != null) {
+            authenticator.close();
+        }
+        super.doDestroy();
+    }
+
     /** {@inheritDoc} */
     @Override
     @Nullable protected Subject doValidate(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -204,7 +211,6 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
         }
         throw authException;
     }
-// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Builds a new {@link Subject} populated with the necessary data.

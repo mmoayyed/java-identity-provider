@@ -27,6 +27,8 @@ import javax.annotation.Nonnull;
 import com.unboundid.util.ssl.SSLUtil;
 import org.ldaptive.ssl.CredentialConfigFactory;
 import org.ldaptive.ssl.SSLContextInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
@@ -43,6 +45,9 @@ import net.shibboleth.shared.logic.Constraint;
  * Manages an instance of the in-memory directory server.
  */
 public class InMemoryDirectory {
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(InMemoryDirectory.class);
 
     /** Directory server. */
     @Nonnull private final InMemoryDirectoryServer directoryServer;
@@ -89,12 +94,15 @@ public class InMemoryDirectory {
      */
     public void start() throws LDAPException {
         directoryServer.startListening();
+        log.info("In-memory directory server started");
     }
 
     /**
-     * Stops the directory server.
+     * Stops the directory server without closing existing connections. Resources should be configured so that LDAP
+     * connections are closed when the spring application context shuts down.
      */
     public void stop() {
-        directoryServer.shutDown(true);
+        directoryServer.shutDown(false);
+        log.info("In-memory directory server stopped");
     }
 }

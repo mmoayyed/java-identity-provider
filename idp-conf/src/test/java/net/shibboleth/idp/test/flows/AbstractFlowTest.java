@@ -62,8 +62,10 @@ import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionPars
 import org.springframework.webflow.test.MockExternalContext;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
 
 import com.google.common.net.HttpHeaders;
 import com.unboundid.ldap.sdk.LDAPException;
@@ -144,8 +146,8 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     /** The name of the bean defining the SAML 2 Direct c14n descriptor. */
     @Nonnull public final static String SAML2_TRANSFORM_C14N_BEAN_NAME = "c14n/SAML2Transform";
 
-    /** In-memory directory server. */
-    @NonnullAfterInit protected InMemoryDirectory directoryServer;
+    /** In-memory directory server. A single instance is used for all child tests. */
+    @NonnullAfterInit private static InMemoryDirectory directoryServer;
 
     /** Mock external context. */
     @Nonnull protected MockExternalContext externalContext;
@@ -220,10 +222,8 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
 
     /**
      * Initialize XMLObject support classes.
-     * @throws IOException 
-     * @throws LDAPException 
      */
-    @BeforeClass public void initializeXMLObjectSupport() throws LDAPException, IOException {
+    @BeforeClass public void initializeXMLObjectSupport() {
         parserPool = XMLObjectProviderRegistrySupport.getParserPool();
         builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
         marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
@@ -237,10 +237,9 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * @throws LDAPException if the in-memory directory server cannot be created
      * @throws IOException if the LDIF resource cannot be imported
      */
-    @BeforeMethod
-    public void setupDirectoryServer() throws LDAPException, IOException {
+    @BeforeSuite public static void setupDirectoryServer() throws LDAPException, IOException {
         directoryServer =
-                new InMemoryDirectory(new ClassPathResource(LDIF_FILE), 10389, new ClassPathResource(KEYSTORE_FILE));
+            new InMemoryDirectory(new ClassPathResource(LDIF_FILE), 10389, new ClassPathResource(KEYSTORE_FILE));
         directoryServer.start();
     }
 
@@ -249,7 +248,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * 
      * Always run this method to avoid starting the server multiple times when tests fail.
      */
-    @AfterMethod(alwaysRun = true) public void teardownDirectoryServer() {
+    @AfterSuite(alwaysRun = true) public static void teardownDirectoryServer() {
         if (directoryServer != null) {
             directoryServer.stop();
         }
