@@ -29,6 +29,8 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
+import org.ldaptive.pool.ConnectionPool;
+import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.ssl.SSLContextInitializer;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509SSLContextInitializer;
@@ -158,6 +160,18 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
             }
         }
         policeForJVMTrust();
+    }
+    
+    /** {@inheritDoc} */
+    @Override protected void doDestroy() {
+        if (connectionFactory instanceof PooledConnectionFactory) {
+            final ConnectionPool pool = ((PooledConnectionFactory) connectionFactory).getConnectionPool();
+            if (pool != null) {
+                log.info("{} Closing LDAP connection pool", getLogPrefix());
+                pool.close();
+            }
+        }
+        super.doDestroy();
     }
 
 // CheckStyle: CyclomaticComplexity OFF
