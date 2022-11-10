@@ -20,7 +20,6 @@ package net.shibboleth.idp.session.impl;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.function.Supplier;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
@@ -33,8 +32,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -50,6 +47,8 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
+import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier;
+import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseSupplier;
 
 /** {@link ProcessLogout} unit test. */
 @SuppressWarnings("javadoc")
@@ -66,8 +65,8 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         
         action = new ProcessLogout();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
+        action.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
+        action.setHttpServletResponseSupplier(new ThreadLocalHttpServletResponseSupplier());
         action.setSessionResolver(sessionManager);
         action.initialize();
     }
@@ -189,10 +188,10 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
 
     @Test public void testAddressLookup() throws ComponentInitializationException, SessionException, ResolverException {
         action = new ProcessLogout();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
+        action.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
+        action.setHttpServletResponseSupplier(new ThreadLocalHttpServletResponseSupplier());
         action.setSessionResolver(sessionManager);
-        action.setAddressLookupStrategy(input -> requestProxy.getHeader("User-Agent"));
+        action.setAddressLookupStrategy(input -> action.getHttpServletRequest().getHeader("User-Agent"));
         action.initialize();
         
         Cookie cookie = createSession("joe");

@@ -18,12 +18,9 @@
 package net.shibboleth.idp.session.impl;
 
 import java.time.Duration;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -31,8 +28,8 @@ import net.shibboleth.shared.net.CookieManager;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
-import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestProxy;
-import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseProxy;
+import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier;
+import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseSupplier;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.storage.impl.MemoryStorageService;
@@ -48,27 +45,21 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
     
     protected StorageBackedSessionManager sessionManager;
     
-    protected ThreadLocalHttpServletRequestProxy requestProxy;
-    
-    protected ThreadLocalHttpServletResponseProxy responseProxy;
-    
     @BeforeClass public void setUp() throws ComponentInitializationException {
-        requestProxy = new ThreadLocalHttpServletRequestProxy();
-        responseProxy = new ThreadLocalHttpServletResponseProxy();
         
         storageService = new MemoryStorageService();
         storageService.setId("TestStorageService");
 
         CookieManager cookieManager = new CookieManager();
-        cookieManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return requestProxy;}});
-        cookieManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() { return responseProxy;}});
+        cookieManager.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
+        cookieManager.setHttpServletResponseSupplier(new ThreadLocalHttpServletResponseSupplier());
         cookieManager.initialize();
         
         sessionManager = new StorageBackedSessionManager();
         sessionManager.setSessionTimeout(Duration.ofSeconds(15));
         sessionManager.setStorageService(storageService);
         sessionManager.setIDGenerator(IdentifierGenerationStrategy.getInstance(ProviderType.SECURE));
-        sessionManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return requestProxy;}});
+        sessionManager.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
         sessionManager.setCookieManager(cookieManager);
         sessionManager.setId("Test Session Manager");
 

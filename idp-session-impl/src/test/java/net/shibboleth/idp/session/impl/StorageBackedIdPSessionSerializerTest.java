@@ -22,18 +22,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
-import java.util.function.Supplier;
 
 import org.opensaml.storage.impl.MemoryStorageService;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.reporters.Files;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicSPSession;
@@ -42,7 +37,8 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.CookieManager;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
-import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestProxy;
+import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier;
+import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseSupplier;
 
 /** {@link StorageBackedIdPSessionSerializer} unit test. */
 @SuppressWarnings("javadoc")
@@ -66,18 +62,14 @@ public class StorageBackedIdPSessionSerializerTest {
         storageService.initialize();
 
         CookieManager cookieManager = new CookieManager();
-        final HttpServletRequest request = new MockHttpServletRequest();
-        final HttpServletResponse response =  new MockHttpServletResponse();
         
-        cookieManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return request;}});
-        cookieManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() { return response;}});
+        cookieManager.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
+        cookieManager.setHttpServletResponseSupplier(new ThreadLocalHttpServletResponseSupplier());
         cookieManager.initialize();
         
         manager = new StorageBackedSessionManager();
         manager.setStorageService(storageService);
         manager.setIDGenerator(IdentifierGenerationStrategy.getInstance(ProviderType.SECURE));
-        final HttpServletRequest requestProxy = new ThreadLocalHttpServletRequestProxy();
-        manager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return requestProxy;}});
         manager.setCookieManager(cookieManager);
         manager.setId("Test Session Manager");
         manager.setTrackSPSessions(true);
