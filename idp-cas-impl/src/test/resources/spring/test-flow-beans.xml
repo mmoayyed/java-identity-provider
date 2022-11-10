@@ -31,12 +31,6 @@
     <bean id="shibboleth.StorageService"
         class="org.opensaml.storage.impl.MemoryStorageService" />
 
-    <bean id="shibboleth.HttpServletRequest" destroy-method=""
-        class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestProxy" />
-
-    <bean id="shibboleth.HttpServletResponse" destroy-method=""
-        class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseProxy" />
-
     <bean id="shibboleth.HttpServletRequestSupplier" destroy-method=""
         class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier" />
 
