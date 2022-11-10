@@ -14,9 +14,7 @@
 
     <!-- Beans related to servlet/filter installation and use. -->
 
-    <bean id="shibboleth.HttpServletRequest" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestProxy" />
     <bean id="shibboleth.HttpServletRequestSupplier" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier" />
-    <bean id="shibboleth.HttpServletResponse" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseProxy" />
     <bean id="shibboleth.HttpServletResponseSupplier" class="net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseSupplier" />
 
     <bean id="shibboleth.DefaultResponseHeaderMap"
