@@ -66,7 +66,7 @@ public class BuildAuthenticationContextAction
     }
     
     @Override
-    @Nonnull protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final AuthenticationContext ac = new AuthenticationContext();
         ac.setForceAuthn(request.isRenew());

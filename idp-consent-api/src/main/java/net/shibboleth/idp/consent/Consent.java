@@ -44,7 +44,7 @@ public class Consent extends AbstractIdentifiableInitializableComponent {
     @Nullable private String value;
 
     /** Whether consent is approved. */
-    @Nullable private boolean approved;
+    private boolean approved;
 
     /**
      * Get the consent value.
@@ -60,7 +60,7 @@ public class Consent extends AbstractIdentifiableInitializableComponent {
      * 
      * @return true if consent is approved
      */
-    @Nullable public boolean isApproved() {
+    public boolean isApproved() {
         return approved;
     }
 

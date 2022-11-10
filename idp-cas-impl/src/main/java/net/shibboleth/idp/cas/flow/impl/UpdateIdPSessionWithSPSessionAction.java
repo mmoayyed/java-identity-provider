@@ -104,7 +104,7 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
     }
     
     @Override
-    @Nonnull protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         IdPSession session = null;
         try {

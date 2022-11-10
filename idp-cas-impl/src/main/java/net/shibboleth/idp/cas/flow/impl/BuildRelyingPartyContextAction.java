@@ -91,7 +91,7 @@ public class BuildRelyingPartyContextAction<RequestType,ResponseType>
     
 
     @Override
-    @Nonnull protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
+    protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final String serviceURL;
         

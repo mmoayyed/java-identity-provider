@@ -50,23 +50,23 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
 
     /** Suppress Prompts. */
     @Parameter(names= {"--noPrompt"})
-    @Nullable private boolean noPrompt;
+    private boolean noPrompt;
 
     /** Brief info about installed plugins. */
     @Parameter(names= {"-l", "--list"})
-    @Nullable private boolean list;
+    private boolean list;
 
     /** Brief info about installed plugins. */
     @Parameter(names= {"-L", "--list-available"})
-    @Nullable private boolean listAvailable;
+    private boolean listAvailable;
 
     /** Override version check. */
     @Parameter(names= {"--noCheck"})
-    @Nullable private boolean noCheck;
+    private boolean noCheck;
 
     /** Detailed info about installed plugins. */
     @Parameter(names= {"-fl", "--full-list"})
-    @Nullable private boolean fullList;
+    private boolean fullList;
 
     /** List License. */
     @Parameter(names= {"--license"})
@@ -106,7 +106,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
 
     /** Override version check. */
     @Parameter(names= {"--noRebuild", "--no-rebuild"})
-    @Nullable private boolean noRebuild;
+    private boolean noRebuild;
 
     /** The {@link #forceUpdateVersion} as a {@link PluginVersion}. */
     @Nullable private PluginVersion updateVersion;

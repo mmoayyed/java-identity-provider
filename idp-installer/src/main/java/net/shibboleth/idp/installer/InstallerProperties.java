@@ -57,7 +57,7 @@ public interface InstallerProperties extends InitializableComponent {
     /** Do we set the mode?
     * @return do we the mode
     */
-    @Nonnull public boolean isSetGroupAndMode();
+    public boolean isSetGroupAndMode();
 
     /** Where is the install coming from?
      * @return the source directory
