@@ -28,10 +28,7 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.LdapException;
 import org.ldaptive.auth.AccountState;
-import org.ldaptive.auth.AuthenticationResponse;
-import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.SimpleBindAuthenticationHandler;
@@ -40,6 +37,7 @@ import org.ldaptive.auth.ext.PasswordPolicyAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.jaas.LdapPrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -47,11 +45,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
-import com.unboundid.ldap.listener.InMemoryListenerConfig;
-import com.unboundid.ldap.sdk.LDAPException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -66,18 +59,21 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.testing.InMemoryDirectory;
 import net.shibboleth.shared.testing.VelocityEngine;
+
+import static org.testng.Assert.assertEquals;
 
 /** Unit test for LDAP credential validation. */
 public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
 
-    private static final String DATA_PATH = "src/test/resources/net/shibboleth/idp/authn/impl/";
+    private static final String DATA_PATH = "/net/shibboleth/idp/authn/impl/";
 
     private LDAPCredentialValidator validator;
     
     private ValidateCredentials action;
 
-    private InMemoryDirectoryServer directoryServer;
+    private InMemoryDirectory directoryServer;
 
     private TemplateSearchDnResolver dnResolver;
 
@@ -87,17 +83,14 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
 
     /**
      * Creates an UnboundID in-memory directory server. Leverages LDIF found in test resources.
-     * 
-     * @throws LDAPException if the in-memory directory server cannot be created
      */
-    @BeforeClass public void setupDirectoryServer() throws LDAPException {
-
-        InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
-        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
-        config.addAdditionalBindCredentials("cn=Directory Manager", "password");
-        directoryServer = new InMemoryDirectoryServer(config);
-        directoryServer.importFromLDIF(true, DATA_PATH + "loginLDAPTest.ldif");
-        directoryServer.startListening();
+    @BeforeClass public void setupDirectoryServer() {
+        directoryServer =
+            new InMemoryDirectory(
+                new String[] {"dc=shibboleth,dc=net"},
+                new ClassPathResource(DATA_PATH + "loginLDAPTest.ldif"),
+                10389);
+        directoryServer.start();
     }
 
     /**
@@ -118,7 +111,8 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
      * Shutdown the in-memory directory server.
      */
     @AfterClass public void teardownDirectoryServer() {
-        directoryServer.shutDown(true);
+        assertEquals(directoryServer.openConnectionCount(), 0);
+        directoryServer.stop(true);
     }
 
     @BeforeMethod public void setUp() throws ComponentInitializationException {

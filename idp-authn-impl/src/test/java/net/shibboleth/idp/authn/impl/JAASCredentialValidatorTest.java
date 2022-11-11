@@ -40,11 +40,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.unboundid.ldap.listener.InMemoryDirectoryServer;
-import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
-import com.unboundid.ldap.listener.InMemoryListenerConfig;
-import com.unboundid.ldap.sdk.LDAPException;
-
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -59,6 +54,9 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.URISupport;
+import net.shibboleth.shared.testing.InMemoryDirectory;
+
+import static org.testng.Assert.assertEquals;
 
 /** Unit test for JAAS validation. */
 public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
@@ -71,28 +69,26 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
     
     private ValidateCredentials action;
 
-    private InMemoryDirectoryServer directoryServer;
+    private InMemoryDirectory directoryServer;
 
     /**
      * Creates an UnboundID in-memory directory server. Leverages LDIF found in test resources.
-     * 
-     * @throws LDAPException if the in-memory directory server cannot be created
      */
-    @BeforeClass public void setupDirectoryServer() throws LDAPException {
-
-        final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
-        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
-        config.addAdditionalBindCredentials("cn=Directory Manager", "password");
-        directoryServer = new InMemoryDirectoryServer(config);
-        directoryServer.importFromLDIF(true, DATA_PATH + "loginLDAPTest.ldif");
-        directoryServer.startListening();
+    @BeforeClass public void setupDirectoryServer() {
+        directoryServer =
+            new InMemoryDirectory(
+                new String[] {"dc=shibboleth,dc=net"},
+                new ClassPathResource(DATA_CLASSPATH + "loginLDAPTest.ldif"),
+                10389);
+        directoryServer.start();
     }
 
     /**
      * Shutdown the in-memory directory server.
      */
     @AfterClass public void teardownDirectoryServer() {
-        directoryServer.shutDown(true);
+        assertEquals(directoryServer.openConnectionCount(), 0);
+        directoryServer.stop(true);
     }
 
     @BeforeMethod public void setUp() throws ComponentInitializationException {

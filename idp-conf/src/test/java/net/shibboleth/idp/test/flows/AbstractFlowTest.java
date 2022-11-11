@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.test.flows;
 
-import java.io.IOException;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,12 +68,10 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
 import com.google.common.net.HttpHeaders;
-import com.unboundid.ldap.sdk.LDAPException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-import net.shibboleth.idp.test.InMemoryDirectory;
 import net.shibboleth.idp.test.PreferFileSystemApplicationContextInitializer;
 import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.idp.test.TestEnvironmentApplicationContextInitializer;
@@ -83,7 +81,10 @@ import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean;
+import net.shibboleth.shared.testing.InMemoryDirectory;
 import net.shibboleth.shared.xml.ParserPool;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Abstract flow test.
@@ -233,13 +234,15 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
 
     /**
      * Creates an UnboundID in-memory directory server. Leverages LDIF found at {@value #LDIF_FILE}.
-     * 
-     * @throws LDAPException if the in-memory directory server cannot be created
-     * @throws IOException if the LDIF resource cannot be imported
      */
-    @BeforeSuite public static void setupDirectoryServer() throws LDAPException, IOException {
+    @BeforeSuite public static void setupDirectoryServer() {
         directoryServer =
-            new InMemoryDirectory(new ClassPathResource(LDIF_FILE), 10389, new ClassPathResource(KEYSTORE_FILE));
+            new InMemoryDirectory(
+                new String[] {"dc=example,dc=org", "ou=system"},
+                new ClassPathResource(LDIF_FILE),
+                10389,
+                new ClassPathResource(KEYSTORE_FILE),
+                Optional.empty());
         directoryServer.start();
     }
 
@@ -250,7 +253,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      */
     @AfterSuite(alwaysRun = true) public static void teardownDirectoryServer() {
         if (directoryServer != null) {
-            directoryServer.stop();
+            directoryServer.stop(true);
         }
     }
 
