@@ -43,7 +43,7 @@ public class ComputedIdDataConnectorParser extends PairwiseIdDataConnectorParser
     @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedIdDataConnectorParser.class);
     
     /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "computedId");
 

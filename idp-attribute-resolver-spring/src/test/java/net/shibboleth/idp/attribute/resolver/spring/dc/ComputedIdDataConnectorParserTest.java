@@ -21,6 +21,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Collection;
+
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.MutablePropertySources;
@@ -61,7 +63,10 @@ public class ComputedIdDataConnectorParserTest extends BaseAttributeDefinitionPa
         final PairwiseIdDataConnector connector = getDataConnector("resolver/computedDataConnector.xml", PairwiseIdDataConnector.class);
         final ComputedPairwiseIdStore store = (ComputedPairwiseIdStore) connector.getPairwiseIdStore();
         assertFalse(connector.isExportAllAttributes());
-
+        final Collection<String> exports = connector.getExportAttributes();
+        assertEquals(exports.size(), 2);
+        assertTrue(exports.contains("Joe"));
+        assertTrue(exports.contains("Doe"));
         assertEquals(connector.getId(), "computed");
         assertEquals(connector.getGeneratedAttributeId(), "jenny");
         assertEquals(store.getSalt(), "abcdefghijklmnopqrst ".getBytes());

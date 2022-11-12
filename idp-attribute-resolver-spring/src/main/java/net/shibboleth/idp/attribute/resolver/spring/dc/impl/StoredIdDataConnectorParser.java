@@ -47,7 +47,7 @@ public class StoredIdDataConnectorParser extends ComputedIdDataConnectorParser {
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIdDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "storedId");
 

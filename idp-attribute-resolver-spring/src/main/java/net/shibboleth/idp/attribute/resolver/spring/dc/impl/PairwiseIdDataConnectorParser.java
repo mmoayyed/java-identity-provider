@@ -30,7 +30,6 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.resolver.dc.impl.PairwiseIdDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -41,7 +40,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
  * Spring bean definition parser for configuring
  * {@link net.shibboleth.idp.attribute.resolver.dc.impl.PairwiseIdDataConnector} variants.
  */
-public class PairwiseIdDataConnectorParser extends BaseResolverPluginParser {
+public class PairwiseIdDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type - resolver. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, 
@@ -51,12 +50,12 @@ public class PairwiseIdDataConnectorParser extends BaseResolverPluginParser {
     @Nonnull private final Logger log = LoggerFactory.getLogger(PairwiseIdDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<PairwiseIdDataConnector> getBeanClass(final Element element) {
+    @Override protected Class<PairwiseIdDataConnector> getNativeBeanClass() {
         return PairwiseIdDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         doParse(config, parserContext, builder, "pairwiseId");
     }
@@ -71,7 +70,6 @@ public class PairwiseIdDataConnectorParser extends BaseResolverPluginParser {
      */
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder, @Nullable final String generatedIdDefaultName) {
-        super.doParse(config, parserContext, builder);
         
         final String generatedAttribute;
         if (config.hasAttributeNS(null, "generatedAttributeID")) {
