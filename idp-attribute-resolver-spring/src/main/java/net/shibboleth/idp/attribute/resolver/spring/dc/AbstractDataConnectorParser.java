@@ -22,22 +22,26 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorFactoryBean;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
+import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.http.impl.HTTPDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorFactoryBean;
+import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.impl.LDAPDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Base spring bean definition parser for data connectors. DataConnector implementations should provide a custom
@@ -162,8 +166,13 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
                     SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, ATTR_EXPORT_NAMES)));
         }
 
-        if (config.hasAttributeNS(null, ATTR_FAIL_FAST)) {
-            // LDAP, Relational & HTTP only, limited in the schema
+        final QName typeName = DOMTypeSupport.getXSIType(config);
+        
+        if (config.hasAttributeNS(null, ATTR_FAIL_FAST) &&
+               (typeName.equals(LDAPDataConnectorParser.TYPE_NAME_RESOLVER) || 
+                typeName.equals(RDBMSDataConnectorParser.TYPE_NAME_RESOLVER) ||
+                typeName.equals(HTTPDataConnectorParser.TYPE_NAME))) {
+            // Common attribute so parse before the native/spring split
             builder.addPropertyValue("failFastInitialize", 
                     StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_FAIL_FAST)));
         }
