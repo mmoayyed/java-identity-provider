@@ -149,30 +149,30 @@
                 </attribute>
                 <attribute name="springResources" type="resolver:string">
                     <annotation>
-                        <documentation>Locations of Spring resource configurations.</documentation>
+                        <documentation>DEPRECATED: Locations of Spring resource configurations.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="springResourcesRef" type="resolver:string">
                     <annotation>
-                        <documentation>Bean Name of locations of Spring resource configurations.</documentation>
+                        <documentation>DEPRECATED: Bean Name of locations of Spring resource configurations.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="factoryPostProcessorsRef" type="resolver:string">
                     <annotation>
                         <documentation>
-                            Bean Name of locations of bean factory post processors resource configurations.
+                            DEPRECATED: Bean Name of locations of bean factory post processors resource configurations.
                             Defaults to shibboleth.PropertySourcesPlaceholderConfigurer.
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="postProcessorsRef" type="resolver:string">
                     <annotation>
-                        <documentation>Bean Name of a list of bean post processors.</documentation>
+                        <documentation>DEPRECATED: Bean Name of a list of bean post processors.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="exportAllAttributes" type="resolver:string">
                     <annotation>
-                        <documentation>Whether all attributes from this data connected are to be exported by the resolution process.</documentation>
+                        <documentation>DEPRECATED: Whether all attributes from this data connected are to be exported by the resolution process.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="exportAttributes" type="resolver:string">
@@ -246,7 +246,7 @@
         <attribute name="propagateResolutionExceptions" type="resolver:string">
             <annotation>
                 <documentation>
-                    Whether to ripple errors produced by the plugin out to the resolver (default is true).
+                    DEPRECATED: Whether to ripple errors produced by the plugin out to the resolver (default is true).
                 </documentation>
             </annotation>
         </attribute>
@@ -326,11 +326,7 @@
                         <extension base="string">
                             <attribute name="ignoreCase" type="resolver:string">
                                 <annotation>
-                                    <documentation>
-                                    If true, value matching will be case-insensitive.
-
-                                    Deprecated in V4.  Use caseSensitive
-                                    </documentation>
+                                    <documentation>DEPRECATED: If true, value matching will be case-insensitive.</documentation>
                                 </annotation>
                             </attribute>
                             <attribute name="caseSensitive" type="resolver:string">
@@ -1953,7 +1949,7 @@
         <attribute name="failFastInitialize" type="resolver:string">
             <annotation>
                 <documentation>
-                    A boolean flag indicating whether pool initialization should fail if configuration criteria is not met.
+                    Deprecated: A boolean flag indicating whether pool initialization should fail if configuration criteria is not met.
                     Default value is true.
                 </documentation>
             </annotation>
