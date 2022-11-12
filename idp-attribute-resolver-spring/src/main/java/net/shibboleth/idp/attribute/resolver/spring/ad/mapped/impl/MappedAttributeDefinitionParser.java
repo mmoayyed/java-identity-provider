@@ -34,13 +34,13 @@ import org.w3c.dom.Element;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /** Bean definition parser for a {@link MappedAttributeDefinition}. */
-public class MappedAttributeDefinitionParser extends BaseResolverPluginParser {
+public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =

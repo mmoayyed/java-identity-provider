@@ -69,6 +69,8 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
     @Test public void noDefault() {
         final MappedAttributeDefinition defn = getDefinition("resolver/mappedNoDefault.xml");
 
+        assertTrue(defn.isDependencyOnly());
+        assertTrue(defn.isPreRequested());
         assertFalse(defn.isPassThru());
         assertEquals(defn.getValueMaps().size(), 1);
         assertNull(defn.getDefaultAttributeValue());
