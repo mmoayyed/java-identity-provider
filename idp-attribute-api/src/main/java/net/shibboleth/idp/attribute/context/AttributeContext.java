@@ -42,10 +42,10 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 public final class AttributeContext extends BaseContext {
 
     /** The attributes tracked by this context. */
-    @Nonnull private Map<String,IdPAttribute> attributes;
+    @Nonnull @NonnullElements private Map<String,IdPAttribute> attributes;
     
     /** The attributes tracked by this context prior to filtering. */
-    @Nullable private Map<String,IdPAttribute> unfilteredAttributes;
+    @Nullable @NonnullElements private Map<String,IdPAttribute> unfilteredAttributes;
     
     /** Whether attribute release consent was obtained from the subject. */
     private boolean consented;
@@ -107,7 +107,7 @@ public final class AttributeContext extends BaseContext {
      */
     @Nonnull public AttributeContext setUnfilteredIdPAttributes(
             @Nullable @NonnullElements final Collection<IdPAttribute> newAttributes) {
-        if (null != unfilteredAttributes) {
+        if (null != newAttributes) {
             unfilteredAttributes = newAttributes.
                     stream().
                     collect(Collectors.toUnmodifiableMap(IdPAttribute::getId,
