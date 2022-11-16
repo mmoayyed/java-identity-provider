@@ -86,7 +86,10 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
     /**
      * Shutdown the in-memory directory server.
      */
-    @AfterClass public void teardownDirectoryServer() {
+    @AfterClass public void teardownDirectoryServer() throws Exception {
+        if (directoryServer.openConnectionCount() > 0) {
+            Thread.sleep(100);
+        }
         assertEquals(directoryServer.openConnectionCount(), 0);
         directoryServer.stop(true);
     }
