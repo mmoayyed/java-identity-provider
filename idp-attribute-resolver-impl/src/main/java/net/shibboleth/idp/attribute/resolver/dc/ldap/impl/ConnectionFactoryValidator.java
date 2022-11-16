@@ -102,8 +102,9 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
                 if (isThrowValidateError()) {
                     throw new LdapException("Unable to retrieve connection from connection factory");
                 }
+            } else {
+                connection.open();
             }
-            connection.open();
         } catch (final LdapException e) {
             log.error("Connection factory validation failed", e);
             if (isThrowValidateError()) {
