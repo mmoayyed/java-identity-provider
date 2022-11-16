@@ -187,23 +187,6 @@ public final class PluginDependencySupport {
     // Checkstyle: MethodLength|CyclomaticComplexity ON
 
     /**
-     * Adds the values of the attributes to the target collection of attribute values indexes by attribute ID.
-     * 
-     * @param sources the source attributes
-     * @param target current set attribute values
-     */
-    @Nonnull private static void mergeAttributes(@Nonnull final Map<String, IdPAttribute> sources,
-            @Nullable final Map<String, List<IdPAttributeValue>> target) {
-        for (final IdPAttribute source : sources.values()) {
-            if (source == null) {
-                continue;
-            }
-
-            addAttribute(source, target);
-        }
-    }
-
-    /**
      * Adds the values of the given attribute to the target collection of attribute values.
      * 
      * @param source the source attribute
