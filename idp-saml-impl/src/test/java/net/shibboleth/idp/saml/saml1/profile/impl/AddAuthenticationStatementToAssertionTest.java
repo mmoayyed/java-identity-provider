@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import java.time.Instant;
-import java.util.function.Supplier;
 
 import javax.security.auth.Subject;
 
@@ -50,6 +49,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.saml1.profile.testing.SAML1ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 /** {@link AddAuthenticationStatementToAssertion} unit test. */
 public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
@@ -67,7 +67,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
         action = new AddAuthenticationStatementToAssertion();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

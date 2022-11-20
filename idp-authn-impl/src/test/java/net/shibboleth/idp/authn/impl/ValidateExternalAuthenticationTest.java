@@ -20,7 +20,6 @@ package net.shibboleth.idp.authn.impl;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
@@ -43,6 +42,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 /** {@link ValidateExternalAuthentication} unit test. */
 public class ValidateExternalAuthenticationTest extends BaseAuthenticationContextTest {
@@ -60,7 +60,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
         action = new ValidateExternalAuthentication();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
 

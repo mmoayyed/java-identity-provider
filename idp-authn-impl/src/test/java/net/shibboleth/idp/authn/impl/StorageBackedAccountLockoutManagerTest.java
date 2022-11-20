@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 
 import java.time.Duration;
-import java.util.function.Supplier;
 
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -33,6 +32,7 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.StorageBackedAccountLockoutManager.UsernameIPLockoutKeyStrategy;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 /** {@link StorageBackedAccountLockoutManager} unit test. */
 public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationContextTest {
@@ -48,7 +48,7 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         
         final UsernameIPLockoutKeyStrategy keyStrategy = new UsernameIPLockoutKeyStrategy();
         final HttpServletRequest request = (HttpServletRequest) src.getExternalContext().getNativeRequest();
-        keyStrategy.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return request;}});
+        keyStrategy.setHttpServletRequestSupplier(new NonNullSupplier<>() {public HttpServletRequest get() {return request;}});
         manager = new StorageBackedAccountLockoutManager();
         manager.setId("test");
         manager.setStorageService(ss);

@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile.audit.impl;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
@@ -37,6 +36,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 /** {@link WriteAuditLog} unit test. */
 public class WriteAuditLogTest {
@@ -61,7 +61,7 @@ public class WriteAuditLogTest {
         mock.setRequestURI("/path/to/foo");
         
         action = new FilteringAction();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return mock;}});
+        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return mock;}});
     }
     
     @Test public void testNoRules() throws Exception {

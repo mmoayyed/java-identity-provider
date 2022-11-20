@@ -18,8 +18,6 @@
 package net.shibboleth.idp.authn.proxy.impl;
 
 
-import java.util.function.Supplier;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -32,6 +30,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 /** {@link ExtractDiscoveryResponse} unit test. */
 public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest {
@@ -43,7 +42,7 @@ public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest 
         
         action = new ExtractDiscoveryResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

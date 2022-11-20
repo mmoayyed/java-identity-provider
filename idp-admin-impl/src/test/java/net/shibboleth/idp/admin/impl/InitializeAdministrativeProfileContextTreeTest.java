@@ -18,7 +18,6 @@
 package net.shibboleth.idp.admin.impl;
 
 import java.util.Collections;
-import java.util.function.Supplier;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -38,6 +37,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LangBearingString;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 /** {@link InitializeAdministrativeProfileContextTree} unit test. */
 @SuppressWarnings("javadoc")
@@ -66,7 +66,7 @@ public class InitializeAdministrativeProfileContextTreeTest extends OpenSAMLInit
         
         action = new InitializeAdministrativeProfileContextTree();
         action.setAdministrativeFlowDescriptor(descriptor);
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() {
+        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() {
             return (HttpServletRequest) src.getExternalContext().getNativeRequest();
             }
         });

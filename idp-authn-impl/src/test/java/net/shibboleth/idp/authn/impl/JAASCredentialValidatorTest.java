@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -26,7 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import javax.security.auth.login.LoginException;
@@ -54,9 +55,8 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.URISupport;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 import net.shibboleth.shared.testing.InMemoryDirectory;
-
-import static org.testng.Assert.assertEquals;
 
 /** Unit test for JAAS validation. */
 public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
@@ -109,7 +109,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         action.setClassifiedMessages(mappings);
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testMissingFlow() throws ComponentInitializationException {

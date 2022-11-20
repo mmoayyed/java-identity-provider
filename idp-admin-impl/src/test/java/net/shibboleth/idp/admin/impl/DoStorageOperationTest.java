@@ -22,11 +22,8 @@ import java.text.ParseException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.impl.MemoryStorageService;
@@ -42,10 +39,13 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 /**
  * Unit test for {@link DoStorageOperation} action.
@@ -91,8 +91,8 @@ public class DoStorageOperationTest {
         mapper.setSerializationInclusion(Include.NON_NULL);
         
         action = new DoStorageOperation();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() {return response;}});
+        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletResponseSupplier(new NonNullSupplier<> () {public HttpServletResponse get() {return response;}});
         action.setStorageService(storageService);
         action.setObjectMapper(mapper);
         action.initialize();

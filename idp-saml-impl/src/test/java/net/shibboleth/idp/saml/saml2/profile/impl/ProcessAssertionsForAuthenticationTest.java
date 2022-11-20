@@ -22,7 +22,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -53,6 +52,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTestCase {
     
@@ -73,8 +73,8 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         httpResponse = new MockHttpServletResponse();
         
         action = new ProcessAssertionsForAuthentication();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return httpRequest;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return httpResponse;}});
+        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return httpRequest;}});
+        action.setHttpServletResponseSupplier(new NonNullSupplier<> () {public HttpServletResponse get() { return httpResponse;}});
         
         
         samlResponse = SAML2ActionTestingSupport.buildResponse();

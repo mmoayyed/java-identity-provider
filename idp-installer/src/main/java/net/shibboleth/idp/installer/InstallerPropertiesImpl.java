@@ -179,7 +179,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     private String credentialsKeyFileMode;
 
     /** Local overload of properties (to deal with nested calling). */
-    private Map<String, String> inheritedProperties = Collections.EMPTY_MAP;
+    private Map<String, String> inheritedProperties = Collections.emptyMap();
 
     /** Input handler from the prompting. */
     private final InputHandler inputHandler;

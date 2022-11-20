@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.function.Supplier;
 
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
@@ -36,6 +35,7 @@ import org.testng.annotations.Test;
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 /**
  * Test the {@link IdPInitiatedSSORequestMessageDecoder}.
@@ -68,7 +68,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
         request.setRequestedSessionId(sessionID);
         
         decoder = new IdPInitiatedSSORequestMessageDecoder();
-        decoder.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return request;}});
+        decoder.setHttpServletRequestSupplier(new NonNullSupplier<>() {public HttpServletRequest get() { return request;}});
         decoder.initialize();
     }
     

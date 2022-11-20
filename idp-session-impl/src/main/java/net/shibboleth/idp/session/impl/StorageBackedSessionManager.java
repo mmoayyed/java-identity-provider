@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiPredicate;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,6 +59,7 @@ import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponen
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.net.CookieManager;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
@@ -120,7 +120,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
 
     /** Servlet request to read from. */
-    @Nullable private Supplier<HttpServletRequest> httpRequestSupplier;
+    @Nullable private NonNullSupplier<HttpServletRequest> httpRequestSupplier;
 
     /** Inactivity timeout for sessions. */
     @Nonnull private Duration sessionTimeout;
@@ -184,7 +184,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      * @param requestSupplier servlet request Supplier
      */
-    public void setHttpServletRequestSupplier(@Nullable final Supplier<HttpServletRequest> requestSupplier) {
+    public void setHttpServletRequestSupplier(@Nullable final NonNullSupplier<HttpServletRequest> requestSupplier) {
         checkSetterPreconditions();
 
         httpRequestSupplier = requestSupplier;

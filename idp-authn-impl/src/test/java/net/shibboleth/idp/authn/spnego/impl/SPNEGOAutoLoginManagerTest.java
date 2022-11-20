@@ -17,18 +17,17 @@
 
 package net.shibboleth.idp.authn.spnego.impl;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import net.shibboleth.shared.net.CookieManager;
-
-import java.util.function.Supplier;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import net.shibboleth.shared.net.CookieManager;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 public class SPNEGOAutoLoginManagerTest {
 
@@ -52,8 +51,8 @@ public class SPNEGOAutoLoginManagerTest {
         final HttpServletRequest request = req != null ? req : new MockHttpServletRequest();
         final HttpServletResponse response = res != null ? res : new MockHttpServletResponse();
         
-        cookieManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return request;}});
-        cookieManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() { return response;}});
+        cookieManager.setHttpServletRequestSupplier(new NonNullSupplier<>() {public HttpServletRequest get() { return request;}});
+        cookieManager.setHttpServletResponseSupplier(new NonNullSupplier<>() {public HttpServletResponse get() { return response;}});
         cookieManager.initialize();
 
         SPNEGOAutoLoginManager autoLoginManager = new SPNEGOAutoLoginManager();

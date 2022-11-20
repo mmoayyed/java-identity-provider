@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import static org.testng.Assert.assertEquals;
+
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,15 +26,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
-import org.ldaptive.auth.SimpleBindAuthenticationHandler;
 import org.ldaptive.auth.SearchDnResolver;
+import org.ldaptive.auth.SimpleBindAuthenticationHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.jaas.LdapPrincipal;
@@ -59,10 +60,9 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 import net.shibboleth.shared.testing.InMemoryDirectory;
 import net.shibboleth.shared.testing.VelocityEngine;
-
-import static org.testng.Assert.assertEquals;
 
 /** Unit test for LDAP credential validation. */
 public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
@@ -134,7 +134,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         mappings.put("ExpiredPassword", Arrays.asList("PASSWORD_EXPIRED", "CHANGE_AFTER_RESET"));
         action.setClassifiedMessages(mappings);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testMissingFlow() throws ComponentInitializationException {

@@ -23,11 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -35,6 +33,7 @@ import org.opensaml.storage.RevocationCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
@@ -42,6 +41,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.NonNullSupplier;
 
 /**
  * A condition for login flows that checks for revocation against a {@link RevocationCache}.
@@ -70,7 +70,7 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
     @NonnullAfterInit private Function<ProfileRequestContext,String> principalNameLookupStrategy;
 
     /** Servlet request Supplier. */
-    @Nullable private Supplier<HttpServletRequest> httpServletRequestSupplier;
+    @Nullable private NonNullSupplier<HttpServletRequest> httpServletRequestSupplier;
     
     /**
      * Set {@link RevocationCache} to use.
@@ -98,7 +98,7 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
      * 
      * @param supplier servlet request interface
      */
-    public void setHttpServletRequestSupplier(@Nullable final Supplier<HttpServletRequest> supplier) {
+    public void setHttpServletRequestSupplier(@Nullable final NonNullSupplier<HttpServletRequest> supplier) {
         checkSetterPreconditions();
         httpServletRequestSupplier = supplier;
     }
