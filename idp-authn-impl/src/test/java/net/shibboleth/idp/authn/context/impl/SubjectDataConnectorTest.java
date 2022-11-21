@@ -126,7 +126,6 @@ public class SubjectDataConnectorTest {
         assertTrue(copy.getValues().contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
     }
 
-    @SuppressWarnings("removal")
     @Test public void emptyOk() throws ComponentInitializationException, ResolutionException {
 
         final SubjectDerivedAttributesFunction fn = new SubjectDerivedAttributesFunction();
@@ -135,7 +134,7 @@ public class SubjectDataConnectorTest {
         fn.initialize();
 
         final ContextDerivedDataConnector defn = new ContextDerivedDataConnector();
-        defn.setExportAllAttributes(true);
+
         defn.setId("pDAD");
         defn.setAttributesFunction(fn);
         defn.initialize();
@@ -153,7 +152,6 @@ public class SubjectDataConnectorTest {
         assertNull(results);
     }
 
-    @SuppressWarnings("removal")
     @Test(expectedExceptions=ResolutionException.class)
     public void emptyError() throws ComponentInitializationException, ResolutionException {
 
@@ -163,7 +161,7 @@ public class SubjectDataConnectorTest {
 
         final ContextDerivedDataConnector defn = new ContextDerivedDataConnector();
         defn.setId("pDAD");
-        defn.setExportAllAttributes(true);
+
         defn.setNoResultIsError(true);
         defn.setAttributesFunction(fn);
         defn.initialize();
