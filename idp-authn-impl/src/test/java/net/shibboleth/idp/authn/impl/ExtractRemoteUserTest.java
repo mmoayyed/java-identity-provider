@@ -19,9 +19,14 @@ package net.shibboleth.idp.authn.impl;
 
 
 import java.util.Arrays;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -30,12 +35,7 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /** {@link ExtractRemoteUser} unit test. */
 public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
@@ -47,7 +47,7 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         
         action = new ExtractRemoteUser();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testNoConfig() {

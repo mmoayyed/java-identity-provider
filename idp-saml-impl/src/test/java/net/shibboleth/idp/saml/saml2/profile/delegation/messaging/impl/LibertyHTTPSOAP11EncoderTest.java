@@ -17,11 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl;
 
-import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
-
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,6 +42,9 @@ import org.opensaml.soap.wsaddressing.Action;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /**
  * Test for Liberty SAML 2 SOAP 1.1 message encoder.
@@ -96,7 +96,7 @@ public class LibertyHTTPSOAP11EncoderTest extends XMLObjectBaseTestCase {
         
         LibertyHTTPSOAP11Encoder encoder = new LibertyHTTPSOAP11Encoder();
         encoder.setMessageContext(messageContext);
-        encoder.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() {return response;}});
+        encoder.setHttpServletResponseSupplier(new NonnullSupplier<>() {public HttpServletResponse get() {return response;}});
         
         encoder.initialize();
         encoder.prepareContext();

@@ -22,7 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
-import java.util.function.Supplier;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,6 +42,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.net.CookieManager;
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 /** {@link StorageBackedIdPSessionSerializer} unit test. */
@@ -68,17 +69,17 @@ public class StorageBackedIdPSessionSerializerTest {
         CookieManager cookieManager = new CookieManager();
         final HttpServletRequest request = new MockHttpServletRequest();
         final HttpServletResponse response =  new MockHttpServletResponse();
-        cookieManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return request;}});
-        cookieManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() { return response;}});
+        cookieManager.setHttpServletRequestSupplier(new NonnullSupplier() {public HttpServletRequest get() { return request;}});
+        cookieManager.setHttpServletResponseSupplier(new NonnullSupplier<>() {public HttpServletResponse get() { return response;}});
         cookieManager.initialize();
         
         manager = new StorageBackedSessionManager();
         manager.setStorageService(storageService);
         manager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
         final HttpServletRequest requestProxy = new ThreadLocalHttpServletRequestProxy();
-        manager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return requestProxy;}});
+        manager.setHttpServletRequestSupplier(new NonnullSupplier<>() {public HttpServletRequest get() {return requestProxy;}});
         final HttpServletResponse responseProxy = new ThreadLocalHttpServletResponseProxy();
-        manager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() {return responseProxy;}});
+        manager.setHttpServletResponseSupplier(new NonnullSupplier<>() {public HttpServletResponse get() {return responseProxy;}});
         manager.setCookieManager(cookieManager);
         manager.setId("Test Session Manager");
         manager.setTrackSPSessions(true);

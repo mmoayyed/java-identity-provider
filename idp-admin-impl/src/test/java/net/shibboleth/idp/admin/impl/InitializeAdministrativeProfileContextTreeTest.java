@@ -18,16 +18,19 @@
 package net.shibboleth.idp.admin.impl;
 
 import java.util.Collections;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor;
-import net.shibboleth.idp.profile.IdPEventIds;
-
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
+import net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -35,12 +38,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.LangBearingString;
-
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /** {@link InitializeAdministrativeProfileContextTree} unit test. */
 @SuppressWarnings("javadoc")
@@ -69,7 +67,7 @@ public class InitializeAdministrativeProfileContextTreeTest extends OpenSAMLInit
         
         action = new InitializeAdministrativeProfileContextTree();
         action.setAdministrativeFlowDescriptor(descriptor);
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() {
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() {
             return (HttpServletRequest) src.getExternalContext().getNativeRequest();
             }
         });

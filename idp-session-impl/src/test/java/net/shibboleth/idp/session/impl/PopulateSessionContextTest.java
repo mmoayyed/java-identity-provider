@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.session.impl;
 
-import java.util.function.Supplier;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +38,7 @@ import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.impl.testing.SessionManagerBaseTestCase;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /** {@link PopulateSessionContext} unit test. */
 @SuppressWarnings("javadoc")
@@ -56,8 +55,8 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         
         action = new PopulateSessionContext();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return requestProxy;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return responseProxy;}});
         action.setSessionResolver(sessionManager);
         action.initialize();
     }
@@ -125,8 +124,8 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
     
     @Test public void testAddressLookup() throws ComponentInitializationException, SessionException {
         action = new PopulateSessionContext();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return requestProxy;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return responseProxy;}});
         action.setSessionResolver(sessionManager);
         action.setAddressLookupStrategy(input -> requestProxy.getHeader("User-Agent"));
         action.initialize();

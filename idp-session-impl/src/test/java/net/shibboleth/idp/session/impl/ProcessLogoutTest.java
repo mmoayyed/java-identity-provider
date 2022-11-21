@@ -20,11 +20,20 @@ package net.shibboleth.idp.session.impl;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.function.Supplier;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageSerializer;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
@@ -40,18 +49,9 @@ import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.idp.session.impl.testing.SessionManagerBaseTestCase;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageSerializer;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /** {@link ProcessLogout} unit test. */
 @SuppressWarnings("javadoc")
@@ -68,8 +68,8 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         
         action = new ProcessLogout();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return requestProxy;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return responseProxy;}});
         action.setSessionResolver(sessionManager);
         action.initialize();
     }
@@ -191,8 +191,8 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
 
     @Test public void testAddressLookup() throws ComponentInitializationException, SessionException, ResolverException {
         action = new ProcessLogout();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return requestProxy;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return responseProxy;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return requestProxy;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return responseProxy;}});
         action.setSessionResolver(sessionManager);
         action.setAddressLookupStrategy(input -> requestProxy.getHeader("User-Agent"));
         action.initialize();

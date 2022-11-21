@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,6 +42,7 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /**
  * A condition for login flows that checks for revocation against a {@link RevocationCache}.
@@ -71,7 +71,7 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
     @NonnullAfterInit private Function<ProfileRequestContext,String> principalNameLookupStrategy;
 
     /** Servlet request Supplier. */
-    @Nullable private Supplier<HttpServletRequest> httpServletRequestSupplier;
+    @Nullable private NonnullSupplier<HttpServletRequest> httpServletRequestSupplier;
     
     /**
      * Set {@link RevocationCache} to use.
@@ -102,7 +102,7 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
      * 
      * @param supplier servlet request interface
      */
-    public void setHttpServletRequestSupplier(@Nullable final Supplier<HttpServletRequest> supplier) {
+    public void setHttpServletRequestSupplier(@Nullable final NonnullSupplier<HttpServletRequest> supplier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         

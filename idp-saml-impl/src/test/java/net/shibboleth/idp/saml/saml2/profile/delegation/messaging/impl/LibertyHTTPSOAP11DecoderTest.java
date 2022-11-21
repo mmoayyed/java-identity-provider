@@ -17,10 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl;
 
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
-
-import java.util.function.Supplier;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
@@ -33,6 +29,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 /**
  * Test case for Liberty HTTP SOAP 1.1 decoder.
@@ -50,7 +49,7 @@ public class LibertyHTTPSOAP11DecoderTest extends XMLObjectBaseTestCase {
         
         decoder = new LibertyHTTPSOAP11Decoder();
         decoder.setParserPool(parserPool);
-        decoder.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return httpRequest;}});
+        decoder.setHttpServletRequestSupplier(new NonnullSupplier<>() {public HttpServletRequest get() { return httpRequest;}});
         decoder.initialize();
     }
 

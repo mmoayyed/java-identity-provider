@@ -22,9 +22,14 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -36,12 +41,7 @@ import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.net.IPRange;
-
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /** {@link ValidateUserAgentAddress} unit test. */
 public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest {
@@ -56,7 +56,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
                 "foo", Arrays.asList(IPRange.parseCIDRBlock("192.168.1.0/24"))));
         action.setSupportedPrincipals(Arrays.asList(new TestPrincipal("UserAgentAuthentication")));
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
 

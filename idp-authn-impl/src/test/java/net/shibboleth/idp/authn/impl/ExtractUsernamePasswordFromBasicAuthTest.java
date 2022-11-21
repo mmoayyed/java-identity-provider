@@ -18,8 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 
-import java.util.function.Supplier;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -36,6 +34,7 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /** {@link ExtractUsernamePasswordFromBasicAuth} unit test. */
 public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthenticationContextTest {
@@ -47,7 +46,7 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthentication
         
         action = new ExtractUsernamePasswordFromBasicAuth();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});        action.initialize();
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});        action.initialize();
         action.initialize();
     }
     

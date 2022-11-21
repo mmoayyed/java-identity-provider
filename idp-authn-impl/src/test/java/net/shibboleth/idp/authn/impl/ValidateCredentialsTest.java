@@ -23,22 +23,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.TemplateSearchDnResolver;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
-import net.shibboleth.idp.authn.context.LDAPResponseContext;
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.auth.AuthenticationResultCode;
@@ -58,6 +44,20 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
+
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.TemplateSearchDnResolver;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
+import net.shibboleth.idp.authn.context.LDAPResponseContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
+import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 /** Unit test for multiple credential validation. */
 public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
@@ -134,7 +134,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         mappings.put("ExpiredPassword", Arrays.asList("PASSWORD_EXPIRED", "CHANGE_AFTER_RESET"));
         action.setClassifiedMessages(mappings);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testBadUsername() throws ComponentInitializationException {

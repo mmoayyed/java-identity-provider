@@ -19,25 +19,24 @@ package net.shibboleth.idp.profile.audit.impl;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import net.shibboleth.idp.profile.context.AuditContext;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.profile.context.AuditContext;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /** {@link WriteAuditLog} unit test. */
 public class WriteAuditLogTest {
@@ -62,7 +61,7 @@ public class WriteAuditLogTest {
         mock.setRequestURI("/path/to/foo");
         
         action = new FilteringAction();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return mock;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return mock;}});
     }
     
     @Test public void testNoRules() throws Exception {

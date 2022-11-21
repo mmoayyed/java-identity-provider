@@ -22,7 +22,6 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,6 +53,7 @@ import com.google.common.base.Predicates;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTestCase {
     
@@ -74,8 +74,8 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         httpResponse = new MockHttpServletResponse();
         
         action = new ProcessAssertionsForAuthentication();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return httpRequest;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return httpResponse;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return httpRequest;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return httpResponse;}});
         
         
         samlResponse = SAML2ActionTestingSupport.buildResponse();

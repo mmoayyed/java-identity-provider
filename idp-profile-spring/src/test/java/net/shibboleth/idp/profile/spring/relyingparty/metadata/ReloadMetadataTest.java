@@ -18,16 +18,8 @@
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.IOException;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletResponse;
-
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.profile.impl.ReloadMetadata;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -39,6 +31,14 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.saml.profile.impl.ReloadMetadata;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 @SuppressWarnings("javadoc")
 public class ReloadMetadataTest extends AbstractMetadataParserTest {
@@ -73,7 +73,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         
         final ReloadMetadata action = new ReloadMetadata();
         action.setMetadataResolver(service);
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return response;}});
         action.initialize();
 
         final Event event = action.execute(src);
@@ -86,7 +86,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         
         final ReloadMetadata action = new ReloadMetadata();
         action.setMetadataResolver(service);
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return response;}});
         action.initialize();
 
         src.getFlowScope().put(ReloadMetadata.RESOLVER_ID, "foo");
@@ -101,7 +101,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         src.getFlowScope().put(ReloadMetadata.RESOLVER_ID, "fileEntity");
         
         final ReloadMetadata action = new ReloadMetadata();
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return response;}});
         action.setMetadataResolver(service);
         action.initialize();
 
@@ -117,7 +117,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         src.getFlowScope().put(ReloadMetadata.RESOLVER_ID, "fileEntity2");
         
         final ReloadMetadata action = new ReloadMetadata();
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() { return response;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return response;}});
         action.setMetadataResolver(chainingservice);
         action.initialize();
 

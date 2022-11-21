@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,6 +47,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /**
  * Implementation of {@link AccountLockoutManager} interface that relies on a {@link StorageService}
@@ -390,14 +390,14 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
     public static class UsernameIPLockoutKeyStrategy implements Function<ProfileRequestContext,String> { 
         
         /** Supplier for the Servlet request to pull client ip from. **/
-        @Nullable private Supplier<HttpServletRequest> httpRequestSupplier;
+        @Nullable private NonnullSupplier<HttpServletRequest> httpRequestSupplier;
         
         /**
          * Set the Supplier for the servlet request to read from.
          * 
          * @param requestSupplier servlet request Supplier
          */
-        public void setHttpServletRequestSupplier(@Nonnull final Supplier<HttpServletRequest> requestSupplier) {
+        public void setHttpServletRequestSupplier(@Nonnull final NonnullSupplier<HttpServletRequest> requestSupplier) {
             httpRequestSupplier = Constraint.isNotNull(requestSupplier, "HttpServletRequest cannot be null");
         }
 

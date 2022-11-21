@@ -19,10 +19,15 @@ package net.shibboleth.idp.authn.impl;
 
 
 import java.util.Arrays;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.execution.Event;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -30,12 +35,7 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /** {@link ValidateRemoteUser} unit test. */
 public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
@@ -50,7 +50,7 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
         action.setDeniedUsernames(Arrays.asList("foo"));
         action.setMatchExpression(Pattern.compile("^ba(r|z|n)$"));
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
 

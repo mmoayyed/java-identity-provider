@@ -23,25 +23,8 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
-import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationContext;
-import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationRequest;
-import net.shibboleth.idp.saml.saml2.profile.delegation.impl.DecorateDelegatedAssertion.LibertySSOSEndpointURLStrategy;
-import net.shibboleth.utilities.java.support.collection.Pair;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.openliberty.xmltooling.disco.MetadataAbstract;
 import org.openliberty.xmltooling.disco.ProviderID;
@@ -83,6 +66,23 @@ import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Diff;
 
 import com.google.common.base.Predicates;
+
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationContext;
+import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationRequest;
+import net.shibboleth.idp.saml.saml2.profile.delegation.impl.DecorateDelegatedAssertion.LibertySSOSEndpointURLStrategy;
+import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 /**
  *
@@ -180,7 +180,7 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         rpcContext.setRelyingPartyIdContextTree(peerContext);
         
         action = new DecorateDelegatedAssertion();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return servletRequest;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return servletRequest;}});
         action.setLibertySSOSEndpointURL(ssosURL);
         action.setKeyInfoGeneratorManager(DefaultSecurityConfigurationBootstrap.buildBasicKeyInfoGeneratorManager());
         

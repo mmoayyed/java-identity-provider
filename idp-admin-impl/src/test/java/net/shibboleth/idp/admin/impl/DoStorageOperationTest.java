@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.Duration;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +45,7 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /**
  * Unit test for {@link DoStorageOperation} action.
@@ -91,8 +91,8 @@ public class DoStorageOperationTest {
         mapper.setSerializationInclusion(Include.NON_NULL);
         
         action = new DoStorageOperation();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
-        action.setHttpServletResponseSupplier(new Supplier<> () {public HttpServletResponse get() {return response;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() {return response;}});
         action.setStorageService(storageService);
         action.setObjectMapper(mapper);
         action.initialize();

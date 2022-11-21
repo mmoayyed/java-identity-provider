@@ -18,7 +18,6 @@
 package net.shibboleth.idp.session.impl.testing;
 
 import java.time.Duration;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
@@ -40,6 +39,7 @@ import net.shibboleth.utilities.java.support.net.CookieManager;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 import net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy;
 
 /** Base class for tests requiring a SessionManager component to be set up. */
@@ -61,16 +61,16 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
         storageService.setId("TestStorageService");
 
         CookieManager cookieManager = new CookieManager();
-        cookieManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return requestProxy;}});
-        cookieManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() { return responseProxy;}});
+        cookieManager.setHttpServletRequestSupplier(new NonnullSupplier<>() {public HttpServletRequest get() { return requestProxy;}});
+        cookieManager.setHttpServletResponseSupplier(new NonnullSupplier<>() {public HttpServletResponse get() { return responseProxy;}});
         cookieManager.initialize();
         
         sessionManager = new StorageBackedSessionManager();
         sessionManager.setSessionTimeout(Duration.ofSeconds(15));
         sessionManager.setStorageService(storageService);
         sessionManager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
-        sessionManager.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() {return requestProxy;}});
-        sessionManager.setHttpServletResponseSupplier(new Supplier<>() {public HttpServletResponse get() {return responseProxy;}});
+        sessionManager.setHttpServletRequestSupplier(new NonnullSupplier<>() {public HttpServletRequest get() {return requestProxy;}});
+        sessionManager.setHttpServletResponseSupplier(new NonnullSupplier<>() {public HttpServletResponse get() {return responseProxy;}});
         sessionManager.setCookieManager(cookieManager);
         sessionManager.setId("Test Session Manager");
 

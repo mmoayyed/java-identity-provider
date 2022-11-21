@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -59,6 +58,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -89,7 +89,7 @@ public final class RelyingPartyUIContext extends BaseContext {
     
     /** A way of getting the current HTTP request, if available.
      *  Used to define dynamically selected languages. */
-    @Nullable private Supplier<HttpServletRequest> requestSupplier;
+    @Nullable private NonnullSupplier<HttpServletRequest> requestSupplier;
     
     /** Constructor. */
     public RelyingPartyUIContext() {
@@ -231,7 +231,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @param what what to set.
      * @return this context
      */
-    public RelyingPartyUIContext setRequestSupplier(@Nonnull final Supplier<HttpServletRequest> what) {
+    public RelyingPartyUIContext setRequestSupplier(@Nonnull final NonnullSupplier<HttpServletRequest> what) {
         requestSupplier = what;
         return this;
     }

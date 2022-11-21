@@ -17,12 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
-import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,6 +33,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /**
  * Test the {@link IdPInitiatedSSORequestMessageDecoder}.
@@ -69,7 +69,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
         request.setRequestedSessionId(sessionID);
         
         decoder = new IdPInitiatedSSORequestMessageDecoder();
-        decoder.setHttpServletRequestSupplier(new Supplier<>() {public HttpServletRequest get() { return request;}});
+        decoder.setHttpServletRequestSupplier(new NonnullSupplier<>() {public HttpServletRequest get() { return request;}});
         decoder.initialize();
     }
     

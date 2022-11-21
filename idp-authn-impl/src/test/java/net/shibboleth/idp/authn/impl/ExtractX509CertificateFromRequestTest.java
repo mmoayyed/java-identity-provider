@@ -20,16 +20,8 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.CertificateContext;
-import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.security.x509.X509Support;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -37,6 +29,14 @@ import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.CertificateContext;
+import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 
 /** {@link ExtractX509CertificateFromRequest} unit test. */
 public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationContextTest {
@@ -93,7 +93,7 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         
         action = new ExtractX509CertificateFromRequest();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new Supplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

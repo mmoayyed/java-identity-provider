@@ -26,13 +26,22 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiPredicate;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
+import org.opensaml.storage.StorageService;
+import org.opensaml.storage.VersionMismatchException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.session.IdPSession;
@@ -53,20 +62,11 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.CookieManager;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-
-import org.opensaml.storage.StorageRecord;
-import org.opensaml.storage.StorageSerializer;
-import org.opensaml.storage.StorageService;
-import org.opensaml.storage.VersionMismatchException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 /**
  * Implementation of {@link SessionManager} and {@link SessionResolver} interfaces that relies on a
@@ -122,10 +122,10 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
 
     /** Servlet request to read from. */
-    @Nullable private Supplier<HttpServletRequest> httpRequestSupplier;
+    @Nullable private NonnullSupplier<HttpServletRequest> httpRequestSupplier;
 
     /** Servlet response to write to. */
-    @Nullable private Supplier<HttpServletResponse> httpResponseSupplier;
+    @Nullable private NonnullSupplier<HttpServletResponse> httpResponseSupplier;
 
     /** Inactivity timeout for sessions. */
     @Nonnull private Duration sessionTimeout;
@@ -189,7 +189,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      * @param requestSupplier servlet request Supplier
      */
-    public void setHttpServletRequestSupplier(@Nullable final Supplier<HttpServletRequest> requestSupplier) {
+    public void setHttpServletRequestSupplier(@Nullable final NonnullSupplier<HttpServletRequest> requestSupplier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         httpRequestSupplier = requestSupplier;
@@ -200,7 +200,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      * @param responseSupplier servlet response Supplier
      */
-    public void setHttpServletResponseSupplier(@Nullable final Supplier<HttpServletResponse> responseSupplier) {
+    public void setHttpServletResponseSupplier(@Nullable final NonnullSupplier<HttpServletResponse> responseSupplier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         httpResponseSupplier = responseSupplier;
