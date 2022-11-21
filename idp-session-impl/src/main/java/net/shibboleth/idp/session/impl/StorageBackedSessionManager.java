@@ -180,7 +180,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Set the {@link Supplier} for the servlet request to read from.
+     * Set the {@link NonNullSupplier} for the servlet request to read from.
      * 
      * @param requestSupplier servlet request Supplier
      */
