@@ -35,6 +35,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ApplicationObjectSupport;
 
 /**
@@ -72,7 +73,9 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
                 MetricRegistry.name(DEFAULT_METRIC_NAME, "starttime"),
                 new Gauge<Instant>() {
                     public Instant getValue() {
-                        return Instant.ofEpochMilli(getApplicationContext().getStartupDate());
+                        final ApplicationContext context = getApplicationContext();
+                        assert context != null;
+                        return Instant.ofEpochMilli(context.getStartupDate());
                     }
                 });
         
@@ -80,8 +83,10 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
                 MetricRegistry.name(DEFAULT_METRIC_NAME, "uptime"),
                 new Gauge<Duration>() {
                     public Duration getValue() {
+                        final ApplicationContext context = getApplicationContext();
+                        assert context != null;
                         return Duration.ofMillis(
-                                Instant.now().toEpochMilli() - getApplicationContext().getStartupDate());
+                                Instant.now().toEpochMilli() - context.getStartupDate());
                     }
                 });
     }
@@ -93,12 +98,15 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
      */
     public void setExposedProperties(@Nullable @NonnullElements final Set<String> properties) {
         if (properties != null) {
+            final ApplicationContext context = getApplicationContext();
+            assert context != null;
             for (final String property : properties) {
+                assert property != null;
                 gauges.put(
                         MetricRegistry.name(DEFAULT_METRIC_NAME, "properties", property),
                         new Gauge<String>() {
                             public String getValue() {
-                                return getApplicationContext().getEnvironment().getProperty(property);
+                                return context.getEnvironment().getProperty(property);
                             }
                         });
             }
@@ -114,5 +122,11 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
     public boolean matches(final String name, final Metric metric) {
         return gauges.containsKey(name);
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean isContextRequired() {
+        return true;
+    }
+
 }

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ public class DeprecatedPropertyBean extends AbstractInitializableComponent imple
     @Nonnull private final Logger log = LoggerFactory.getLogger(DeprecationSupport.LOG_CATEGORY);
     
     /** Spring context. */
-    @Nonnull private ApplicationContext applicationContext;
+    @Nullable private ApplicationContext applicationContext;
     
     /** Deprecated properties. */
     @Nonnull private Map<String,String> deprecatedProperties;
@@ -90,22 +91,30 @@ public class DeprecatedPropertyBean extends AbstractInitializableComponent imple
     }
 
     /** {@inheritDoc} */
-    public void setApplicationContext(final ApplicationContext context) {
+    public void setApplicationContext(@Nonnull final ApplicationContext context) {
         applicationContext = Constraint.isNotNull(context, "ApplicationContext cannot be null");
     }
     
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
+
+        final ApplicationContext context = applicationContext;
+        if (context == null) {
+            throw new ComponentInitializationException("ApplicationContext cannot be null");
+        }
         
         for (final Map.Entry<String,String> entry : deprecatedProperties.entrySet()) {
-            if (applicationContext.getEnvironment().containsProperty(entry.getKey())) {
-                DeprecationSupport.warn(ObjectType.PROPERTY, entry.getKey(), null, entry.getValue());
+            final String key = entry.getKey();
+            assert key != null;
+            if (context.getEnvironment().containsProperty(key)) {
+                DeprecationSupport.warn(ObjectType.PROPERTY, key, null, entry.getValue());
             }
         }
 
         for (final String name : deadProperties) {
-            if (applicationContext.getEnvironment().containsProperty(name)) {
+            assert name != null;
+            if (context.getEnvironment().containsProperty(name)) {
                 log.warn("property '{}' is no longer supported", name);
             }
         }
