@@ -203,16 +203,19 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
 
     /** {@inheritDoc} */
     @NonNegative public int getMajorVersion() {
+        assert pluginVersion != null;
         return pluginVersion.getMajor();
     }
 
     /** {@inheritDoc} */
     @NonNegative public int getMinorVersion() {
+        assert pluginVersion != null;
         return pluginVersion.getMinor();
     }
 
     /** {@inheritDoc} */
     @NonNegative public int getPatchVersion() {
+        assert pluginVersion != null;
         return pluginVersion.getPatch();
     }
     

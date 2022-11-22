@@ -161,7 +161,10 @@ public class IdPModuleTest {
         Assert.assertEquals(testModule.getId(), "idp.test");
         Assert.assertEquals(testModule.getOwnerId(), "idp.test.plugin");
         Assert.assertEquals(testModule.getName(null), "Test module");
-        Assert.assertEquals(testModule.getURL().toString(), "https://wiki.shibboleth.net/confluence/display/IDP4/Home");
+        
+        final String url = testModule.getURL();
+        assert url != null;
+        Assert.assertEquals(url, "https://wiki.shibboleth.net/confluence/display/IDP4/Home");
         
         final Iterator<ModuleResource> resources = testModule.getResources().iterator();
         Assert.assertEquals(testModule.getResources().size(), 2);
@@ -295,6 +298,7 @@ public class IdPModuleTest {
         
         final InputStream certStream = IdPModuleTest.class.getResourceAsStream("/net/shibboleth/idp/module/repo-entity.crt");
         final X509Certificate entityCert = X509Support.decodeCertificate(ByteStreams.toByteArray(certStream));
+        assert entityCert != null;
         final X509Credential entityCredential = new BasicX509Credential(entityCert);
         return new ExplicitKeyTrustEngine(new StaticCredentialResolver(entityCredential));
         

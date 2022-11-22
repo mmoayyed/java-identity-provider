@@ -19,6 +19,7 @@ package net.shibboleth.idp.module;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -137,6 +138,8 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
         locales = Collections.emptyList();
         moduleProperties = new Properties();
         moduleProperties.load(inputStream);
+        moduleId = "";
+        moduleName = "";
         load();
     }
 
@@ -150,6 +153,8 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     public PropertyDrivenIdPModule(@Nonnull final Properties properties) throws ModuleException {
         locales = Collections.emptyList();
         moduleProperties = Constraint.isNotNull(properties, "Properties cannot be null");
+        moduleId = "";
+        moduleName = "";
         load();
     }
 
@@ -279,10 +284,11 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements public Map<ModuleResource,ResourceResult> enable(
-            @Nullable final ModuleContext moduleContext) throws ModuleException {
+            @Nonnull final ModuleContext moduleContext) throws ModuleException {
         final Map<ModuleResource,ResourceResult> results = super.enable(moduleContext);
         
-        if (moduleContext.getMessageStream() != null) {
+        final PrintStream msgStream = moduleContext.getMessageStream();
+        if (msgStream != null) {
             
             String msg = null;
             
@@ -296,7 +302,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
             }
             
             if (msg != null) {
-                moduleContext.getMessageStream().println(msg);
+                msgStream.println(msg);
             }
         }
         
@@ -306,10 +312,11 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements public Map<ModuleResource,ResourceResult> disable(
-            @Nullable final ModuleContext moduleContext, final boolean clean) throws ModuleException {
+            @Nonnull final ModuleContext moduleContext, final boolean clean) throws ModuleException {
         final Map<ModuleResource,ResourceResult> results = super.disable(moduleContext, clean);
 
-        if (moduleContext.getMessageStream() != null) {
+        final PrintStream msgStream = moduleContext.getMessageStream();
+        if (msgStream != null) {
             
             String msg = null;
             
@@ -323,7 +330,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
             }
 
             if (msg != null) {
-                moduleContext.getMessageStream().println(msg);
+                msgStream.println(msg);
             }
         }
         

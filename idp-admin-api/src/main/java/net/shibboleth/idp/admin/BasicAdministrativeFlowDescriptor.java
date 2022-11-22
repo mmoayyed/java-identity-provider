@@ -377,13 +377,14 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
         
         // Check for string-based representation first, then back off to native objects.
         
-        if (principalServiceManager != null) {
+        final PrincipalServiceManager psm = principalServiceManager;
+        if (psm != null) {
             final Collection<String> stringBasedPrincipals =
                     stringBasedPrincipalsLookupStrategy.apply(profileRequestContext);
             if (stringBasedPrincipals != null && !stringBasedPrincipals.isEmpty()) {
                 final List<Principal> principals = new ArrayList<>(stringBasedPrincipals.size());
                 stringBasedPrincipals.forEach(v -> {
-                    final Principal p = principalServiceManager.principalFromString(v);
+                    final Principal p = psm.principalFromString(v);
                     if (p != null) {
                         principals.add(p);
                     }

@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -165,6 +166,7 @@ public abstract class AbstractIdPModule implements IdPModule {
         }
         
         log.debug("Module {} enabled", getId());
+        assert results != null;
         return results;
     }
 
@@ -190,20 +192,21 @@ public abstract class AbstractIdPModule implements IdPModule {
         }
         
         log.debug("Module {} disabled", getId());
+        assert results != null;
         return results;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof IdPModule && getId().equals(((IdPModule) obj).getId());
+        return obj instanceof IdPModule && Objects.equals(getId(), ((IdPModule) obj).getId());
     }
 
 
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return Constraint.isNotNull(getId(), "ID cannot be null").hashCode();
     }
     
     /** {@inheritDoc} */
@@ -369,13 +372,15 @@ public abstract class AbstractIdPModule implements IdPModule {
                 throws IOException {
             
             final HttpClientContext clientContext = HttpClientContext.create();
+            assert clientContext != null;
             HttpClientSecuritySupport.marshalSecurityParameters(clientContext,
                     moduleContext.getHttpClientSecurityParameters(), true);
             HttpResponse response = null;
             try {
                 log.debug("Module {} fetching HTTP resource {}", getId(), uri);
                 final HttpGet request = new HttpGet(uri);
-                response = moduleContext.getHttpClient().execute(request, clientContext);
+                response = Constraint.isNotNull(
+                        moduleContext.getHttpClient(), "HttpClient cannot be null").execute(request, clientContext);
                 HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getURI().getScheme());
                 if (response.getStatusLine().getStatusCode() != 200) {
                     throw new IOException("HTTP request was unsuccessful");
@@ -384,6 +389,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                 // The response socket should be closed after the stream is closed.
                 final InputStream ret = response.getEntity().getContent();
                 response = null;
+                assert ret != null;
                 return ret;
             } finally {
                 if (response != null && CloseableHttpResponse.class.isInstance(response)) {
