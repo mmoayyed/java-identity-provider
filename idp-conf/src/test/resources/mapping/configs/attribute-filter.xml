@@ -10,7 +10,7 @@
 			xsi:type="ANY" />
 
 		<AttributeRule attributeID="IdPRA1" id="ra1release">
-			<PermitValueRule xsi:type="MappedAttributeInMetadata" />
+			<PermitValueRule xsi:type="AttributeInMetadata" />
 		</AttributeRule>
 
 	</AttributeFilterPolicy>
