@@ -31,7 +31,7 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /** {@link ExtractUsernamePasswordFromFormRequest} unit test. */
 public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticationContextTest {
@@ -45,7 +45,7 @@ public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticati
         action.setUsernameFieldName("j_username");
         action.setPasswordFieldName("j_password");
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

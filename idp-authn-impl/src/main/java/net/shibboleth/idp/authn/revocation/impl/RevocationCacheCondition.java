@@ -41,7 +41,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /**
  * A condition for login flows that checks for revocation against a {@link RevocationCache}.
@@ -70,7 +70,7 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
     @NonnullAfterInit private Function<ProfileRequestContext,String> principalNameLookupStrategy;
 
     /** Servlet request Supplier. */
-    @Nullable private NonNullSupplier<HttpServletRequest> httpServletRequestSupplier;
+    @Nullable private NonnullSupplier<HttpServletRequest> httpServletRequestSupplier;
     
     /**
      * Set {@link RevocationCache} to use.
@@ -98,7 +98,7 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
      * 
      * @param supplier servlet request interface
      */
-    public void setHttpServletRequestSupplier(@Nullable final NonNullSupplier<HttpServletRequest> supplier) {
+    public void setHttpServletRequestSupplier(@Nullable final NonnullSupplier<HttpServletRequest> supplier) {
         checkSetterPreconditions();
         httpServletRequestSupplier = supplier;
     }

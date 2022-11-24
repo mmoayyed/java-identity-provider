@@ -59,7 +59,7 @@ import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponen
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.net.CookieManager;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
@@ -120,7 +120,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
 
     /** Servlet request to read from. */
-    @Nullable private NonNullSupplier<HttpServletRequest> httpRequestSupplier;
+    @Nullable private NonnullSupplier<HttpServletRequest> httpRequestSupplier;
 
     /** Inactivity timeout for sessions. */
     @Nonnull private Duration sessionTimeout;
@@ -180,11 +180,11 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Set the {@link NonNullSupplier} for the servlet request to read from.
+     * Set the {@link NonnullSupplier} for the servlet request to read from.
      * 
      * @param requestSupplier servlet request Supplier
      */
-    public void setHttpServletRequestSupplier(@Nullable final NonNullSupplier<HttpServletRequest> requestSupplier) {
+    public void setHttpServletRequestSupplier(@Nullable final NonnullSupplier<HttpServletRequest> requestSupplier) {
         checkSetterPreconditions();
 
         httpRequestSupplier = requestSupplier;

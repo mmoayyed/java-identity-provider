@@ -34,7 +34,7 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /** {@link ExtractRemoteUser} unit test. */
 public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
@@ -46,7 +46,7 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         
         action = new ExtractRemoteUser();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
     }
 
     @Test public void testNoConfig() {

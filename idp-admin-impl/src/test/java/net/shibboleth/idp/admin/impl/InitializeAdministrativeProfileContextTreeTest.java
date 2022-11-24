@@ -37,7 +37,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LangBearingString;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /** {@link InitializeAdministrativeProfileContextTree} unit test. */
 @SuppressWarnings("javadoc")
@@ -66,7 +66,7 @@ public class InitializeAdministrativeProfileContextTreeTest extends OpenSAMLInit
         
         action = new InitializeAdministrativeProfileContextTree();
         action.setAdministrativeFlowDescriptor(descriptor);
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() {
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() {
             return (HttpServletRequest) src.getExternalContext().getNativeRequest();
             }
         });

@@ -44,7 +44,7 @@ import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponen
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.servlet.HttpServletSupport;
 
 /**
@@ -377,14 +377,14 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
     public static class UsernameIPLockoutKeyStrategy implements Function<ProfileRequestContext,String> { 
         
         /** Supplier for the Servlet request to pull client ip from. **/
-        @Nullable private NonNullSupplier<HttpServletRequest> httpRequestSupplier;
+        @Nullable private NonnullSupplier<HttpServletRequest> httpRequestSupplier;
         
         /**
          * Set the Supplier for the servlet request to read from.
          * 
          * @param requestSupplier servlet request Supplier
          */
-        public void setHttpServletRequestSupplier(@Nonnull final NonNullSupplier<HttpServletRequest> requestSupplier) {
+        public void setHttpServletRequestSupplier(@Nonnull final NonnullSupplier<HttpServletRequest> requestSupplier) {
             httpRequestSupplier = Constraint.isNotNull(requestSupplier, "HttpServletRequest cannot be null");
         }
 

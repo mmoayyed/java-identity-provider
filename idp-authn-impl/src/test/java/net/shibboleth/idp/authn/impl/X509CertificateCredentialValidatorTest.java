@@ -43,7 +43,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /** {@link X509CertificateCredentialValidator} unit test. */
 public class X509CertificateCredentialValidatorTest extends BaseAuthenticationContextTest {
@@ -105,7 +105,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         action = new ValidateCredentials();
         action.setValidators(Collections.singletonList(validator));
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
 

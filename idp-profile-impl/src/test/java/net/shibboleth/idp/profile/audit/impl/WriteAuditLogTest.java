@@ -36,7 +36,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /** {@link WriteAuditLog} unit test. */
 public class WriteAuditLogTest {
@@ -61,7 +61,7 @@ public class WriteAuditLogTest {
         mock.setRequestURI("/path/to/foo");
         
         action = new FilteringAction();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return mock;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return mock;}});
     }
     
     @Test public void testNoRules() throws Exception {

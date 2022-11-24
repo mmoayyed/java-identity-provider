@@ -35,7 +35,7 @@ import net.shibboleth.idp.authn.context.CertificateContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /** {@link ExtractX509CertificateFromRequest} unit test. */
 public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationContextTest {
@@ -92,7 +92,7 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         
         action = new ExtractX509CertificateFromRequest();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     

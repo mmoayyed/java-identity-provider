@@ -32,7 +32,7 @@ import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /** {@link ExtractDuoAuthenticationFromHeaders} unit test. */
 public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationContextTest {
@@ -44,7 +44,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         
         action = new ExtractDuoAuthenticationFromHeaders();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
     }
     
@@ -64,7 +64,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
     @Test public void testNoAuto() throws ComponentInitializationException {
         action = new ExtractDuoAuthenticationFromHeaders();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.setAutoAuthenticationSupported(false);
         action.initialize();
         final Event event = action.execute(src);

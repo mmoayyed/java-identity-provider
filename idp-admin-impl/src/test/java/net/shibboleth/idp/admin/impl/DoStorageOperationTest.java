@@ -45,7 +45,7 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /**
  * Unit test for {@link DoStorageOperation} action.
@@ -91,8 +91,8 @@ public class DoStorageOperationTest {
         mapper.setSerializationInclusion(Include.NON_NULL);
         
         action = new DoStorageOperation();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
-        action.setHttpServletResponseSupplier(new NonNullSupplier<> () {public HttpServletResponse get() {return response;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() {return response;}});
         action.setStorageService(storageService);
         action.setObjectMapper(mapper);
         action.initialize();

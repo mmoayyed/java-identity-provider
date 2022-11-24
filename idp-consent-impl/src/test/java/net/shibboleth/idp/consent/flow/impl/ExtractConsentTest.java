@@ -29,7 +29,7 @@ import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /** {@link ExtractConsent} unit test. */
 public class ExtractConsentTest extends AbstractConsentActionTest {
@@ -60,7 +60,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
     @Test public void testNoUserInput() throws Exception {
         action = new ExtractConsent();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
 
         final Event event = action.execute(src);
@@ -82,7 +82,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
         httpServletRequest.setParameter(ExtractConsent.CONSENT_IDS_REQUEST_PARAMETER, "consent1");
 
         action = new ExtractConsent();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return httpServletRequest;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return httpServletRequest;}});
         action.initialize();
 
         final Event event = action.execute(src);
@@ -105,7 +105,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
         httpServletRequest.addParameter(ExtractConsent.CONSENT_IDS_REQUEST_PARAMETER, "consent2");
 
         action = new ExtractConsent();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return httpServletRequest;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return httpServletRequest;}});
         action.initialize();
 
         final Event event = action.execute(src);

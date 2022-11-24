@@ -31,7 +31,7 @@ import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonNullSupplier;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /** {@link ExtractUserAgentIdentifier} unit test. */
 public class ExtractUserAgentIdentifierTest extends BaseAuthenticationContextTest {
@@ -43,7 +43,7 @@ public class ExtractUserAgentIdentifierTest extends BaseAuthenticationContextTes
         
         action = new ExtractUserAgentIdentifier();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonNullSupplier<> () {public HttpServletRequest get() { return request;}}); 
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}}); 
         action.initialize();
     }
     
