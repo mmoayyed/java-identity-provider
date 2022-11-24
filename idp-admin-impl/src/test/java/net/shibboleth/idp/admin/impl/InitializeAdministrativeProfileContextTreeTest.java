@@ -19,6 +19,8 @@ package net.shibboleth.idp.admin.impl;
 
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
@@ -66,8 +68,9 @@ public class InitializeAdministrativeProfileContextTreeTest extends OpenSAMLInit
         
         action = new InitializeAdministrativeProfileContextTree();
         action.setAdministrativeFlowDescriptor(descriptor);
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() {
-            return (HttpServletRequest) src.getExternalContext().getNativeRequest();
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {
+            @Nonnull public HttpServletRequest get() {
+                return (HttpServletRequest) src.getExternalContext().getNativeRequest();
             }
         });
         action.initialize();

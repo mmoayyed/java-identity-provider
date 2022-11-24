@@ -39,13 +39,13 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 /**
  * Unit test for {@link DoStorageOperation} action.
@@ -91,7 +91,7 @@ public class DoStorageOperationTest {
         mapper.setSerializationInclusion(Include.NON_NULL);
         
         action = new DoStorageOperation();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() {return response;}});
         action.setStorageService(storageService);
         action.setObjectMapper(mapper);
