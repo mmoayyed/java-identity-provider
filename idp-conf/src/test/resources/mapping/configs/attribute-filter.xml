@@ -22,7 +22,7 @@
             xsi:type="ANY" />
 
         <AttributeRule attributeID="IdPEA1" id="ra2release">
-            <PermitValueRule xsi:type="MappedAttributeInMetadata" />
+            <PermitValueRule xsi:type="AttributeInMetadata" />
         </AttributeRule>
 
     </AttributeFilterPolicy>
