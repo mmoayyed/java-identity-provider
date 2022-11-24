@@ -29,7 +29,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
@@ -40,7 +39,7 @@ import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.IPRange;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ValidateUserAgentAddress} unit test. */
 public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest {
@@ -55,7 +54,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
                 "foo", Arrays.asList(IPRange.parseCIDRBlock("192.168.1.0/24"))));
         action.setSupportedPrincipals(Arrays.asList(new TestPrincipal("UserAgentAuthentication")));
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         action.initialize();
     }
 

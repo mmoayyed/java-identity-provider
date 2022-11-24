@@ -92,7 +92,7 @@ public class DoStorageOperationTest {
         
         action = new DoStorageOperation();
         action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
-        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() {return response;}});
+        action.setHttpServletResponseSupplier(new ConstantSupplier<>(response));
         action.setStorageService(storageService);
         action.setObjectMapper(mapper);
         action.initialize();

@@ -23,8 +23,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import net.shibboleth.shared.logic.ConstraintViolationException;
-
 /** {@link ConsentFlowDescriptor} unit test. */
 @SuppressWarnings("javadoc")
 public class ConsentFlowDescriptorTest {

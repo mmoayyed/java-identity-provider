@@ -119,6 +119,12 @@
             <artifactId>opensaml-testing</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>${spring.groupId}</groupId>

@@ -41,7 +41,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
@@ -55,7 +54,7 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.URISupport;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 import net.shibboleth.shared.testing.InMemoryDirectory;
 
 /** Unit test for JAAS validation. */
@@ -109,7 +108,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         action.setClassifiedMessages(mappings);
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
     }
 
     @Test public void testMissingFlow() throws ComponentInitializationException {

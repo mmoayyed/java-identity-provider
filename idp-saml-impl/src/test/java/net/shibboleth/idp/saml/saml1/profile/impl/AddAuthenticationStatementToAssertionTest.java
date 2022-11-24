@@ -35,7 +35,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -49,7 +48,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.saml1.profile.testing.SAML1ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link AddAuthenticationStatementToAssertion} unit test. */
 public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
@@ -67,7 +66,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
         action = new AddAuthenticationStatementToAssertion();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         action.initialize();
     }
     

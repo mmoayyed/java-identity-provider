@@ -47,12 +47,10 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTestCase {
     
@@ -73,8 +71,8 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         httpResponse = new MockHttpServletResponse();
         
         action = new ProcessAssertionsForAuthentication();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return httpRequest;}});
-        action.setHttpServletResponseSupplier(new NonnullSupplier<> () {public HttpServletResponse get() { return httpResponse;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(httpRequest));
+        action.setHttpServletResponseSupplier(new ConstantSupplier<>(httpResponse));
         
         
         samlResponse = SAML2ActionTestingSupport.buildResponse();

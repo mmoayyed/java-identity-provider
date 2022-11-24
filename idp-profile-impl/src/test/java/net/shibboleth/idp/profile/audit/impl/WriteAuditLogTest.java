@@ -37,6 +37,7 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link WriteAuditLog} unit test. */
 public class WriteAuditLogTest {
@@ -61,7 +62,7 @@ public class WriteAuditLogTest {
         mock.setRequestURI("/path/to/foo");
         
         action = new FilteringAction();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return mock;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(mock));
     }
     
     @Test public void testNoRules() throws Exception {

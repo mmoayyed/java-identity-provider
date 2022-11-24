@@ -34,7 +34,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
@@ -46,7 +45,7 @@ import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactor
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** Unit test for htpasswd file validation. */
 public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTest {
@@ -73,7 +72,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         action.setClassifiedMessages(mappings);
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
     }
 
     @Test public void testMissingFlow() throws ComponentInitializationException {

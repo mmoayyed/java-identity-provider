@@ -32,10 +32,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 /**
  * Test the {@link IdPInitiatedSSORequestMessageDecoder}.
@@ -68,7 +67,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
         request.setRequestedSessionId(sessionID);
         
         decoder = new IdPInitiatedSSORequestMessageDecoder();
-        decoder.setHttpServletRequestSupplier(new NonnullSupplier<>() {public HttpServletRequest get() { return request;}});
+        decoder.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         decoder.initialize();
     }
     

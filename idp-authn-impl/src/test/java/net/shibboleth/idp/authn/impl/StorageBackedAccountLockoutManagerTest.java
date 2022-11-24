@@ -32,7 +32,7 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.StorageBackedAccountLockoutManager.UsernameIPLockoutKeyStrategy;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link StorageBackedAccountLockoutManager} unit test. */
 public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationContextTest {
@@ -48,7 +48,7 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         
         final UsernameIPLockoutKeyStrategy keyStrategy = new UsernameIPLockoutKeyStrategy();
         final HttpServletRequest request = (HttpServletRequest) src.getExternalContext().getNativeRequest();
-        keyStrategy.setHttpServletRequestSupplier(new NonnullSupplier<>() {public HttpServletRequest get() {return request;}});
+        keyStrategy.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         manager = new StorageBackedAccountLockoutManager();
         manager.setId("test");
         manager.setStorageService(ss);

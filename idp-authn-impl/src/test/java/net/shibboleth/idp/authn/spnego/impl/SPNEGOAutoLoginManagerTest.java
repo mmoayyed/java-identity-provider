@@ -27,7 +27,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.shared.net.CookieManager;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 public class SPNEGOAutoLoginManagerTest {
 
@@ -51,8 +51,8 @@ public class SPNEGOAutoLoginManagerTest {
         final HttpServletRequest request = req != null ? req : new MockHttpServletRequest();
         final HttpServletResponse response = res != null ? res : new MockHttpServletResponse();
         
-        cookieManager.setHttpServletRequestSupplier(new NonnullSupplier<>() {public HttpServletRequest get() { return request;}});
-        cookieManager.setHttpServletResponseSupplier(new NonnullSupplier<>() {public HttpServletResponse get() { return response;}});
+        cookieManager.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
+        cookieManager.setHttpServletResponseSupplier(new ConstantSupplier<>(response));
         cookieManager.initialize();
 
         SPNEGOAutoLoginManager autoLoginManager = new SPNEGOAutoLoginManager();

@@ -24,12 +24,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ExtractConsent} unit test. */
 public class ExtractConsentTest extends AbstractConsentActionTest {
@@ -60,7 +59,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
     @Test public void testNoUserInput() throws Exception {
         action = new ExtractConsent();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -78,11 +77,11 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
     }
 
     @Test public void testSingleUserInput() throws Exception {
-        final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
-        httpServletRequest.setParameter(ExtractConsent.CONSENT_IDS_REQUEST_PARAMETER, "consent1");
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setParameter(ExtractConsent.CONSENT_IDS_REQUEST_PARAMETER, "consent1");
 
         action = new ExtractConsent();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return httpServletRequest;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -105,7 +104,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
         httpServletRequest.addParameter(ExtractConsent.CONSENT_IDS_REQUEST_PARAMETER, "consent2");
 
         action = new ExtractConsent();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return httpServletRequest;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(httpServletRequest));
         action.initialize();
 
         final Event event = action.execute(src);

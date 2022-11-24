@@ -24,13 +24,12 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ExtractDiscoveryResponse} unit test. */
 public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest {
@@ -42,7 +41,7 @@ public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest 
         
         action = new ExtractDiscoveryResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         action.initialize();
     }
     
