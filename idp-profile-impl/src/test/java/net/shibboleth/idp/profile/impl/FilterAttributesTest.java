@@ -70,7 +70,6 @@ public class FilterAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.EMPTY_LIST);
-        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
 
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
@@ -91,7 +90,6 @@ public class FilterAttributesTest {
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.EMPTY_LIST);
-        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
         
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
@@ -133,7 +131,6 @@ public class FilterAttributesTest {
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
-        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
 
         prc.getSubcontext(SubjectContext.class, true);
@@ -197,7 +194,6 @@ public class FilterAttributesTest {
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
-        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
 
         prc.getSubcontext(SubjectContext.class, true);
@@ -261,7 +257,6 @@ public class FilterAttributesTest {
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
-        engine.setApplicationContext(new MockApplicationContext());
         engine.initialize();
 
         prc.getSubcontext(SubjectContext.class, true);
