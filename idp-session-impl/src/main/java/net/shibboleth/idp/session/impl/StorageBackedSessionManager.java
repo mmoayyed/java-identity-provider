@@ -185,7 +185,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Set the {@link Supplier} for the servlet request to read from.
+     * Set the {@link NonnullSupplier} for the servlet request to read from.
      * 
      * @param requestSupplier servlet request Supplier
      */
@@ -196,7 +196,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Set the {@link Supplier} for the servlet response to write to.
+     * Set the {@link NonnullSupplier} for the servlet response to write to.
      * 
      * @param responseSupplier servlet response Supplier
      */
