@@ -220,7 +220,6 @@ public class ResolveAttributesTest {
         
         result.setAttributeDefinitions(definitions == null ? Collections.EMPTY_LIST : definitions);
         result.setDataConnectors(connectors == null ? Collections.EMPTY_LIST : connectors);
-        result.setApplicationContext(new MockApplicationContext());
         return result;
     }
 

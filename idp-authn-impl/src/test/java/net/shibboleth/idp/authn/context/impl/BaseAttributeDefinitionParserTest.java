@@ -31,6 +31,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.AfterMethod;
 
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
@@ -43,6 +44,7 @@ import net.shibboleth.shared.spring.config.StringToIPRangeConverter;
 import net.shibboleth.shared.spring.config.StringToResourceConverter;
 import net.shibboleth.shared.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.shared.spring.service.impl.SpringServiceableComponent;
 
 /**
  * Base class for tests for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
@@ -189,15 +191,17 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getBean(DATACONNECTOR_FILE_PATH + fileName, claz, context, supressValid);
     }
 
-    static public AttributeResolverImpl getResolver(final ApplicationContext appCtx) {
-        final AttributeResolverServiceStrategy strategy = new AttributeResolverServiceStrategy();
-        strategy.setId("testResolver");
-        try {
-            strategy.initialize();
-        } catch (final ComponentInitializationException e) {
-            return null;
-        }
-        return (AttributeResolverImpl) strategy.apply(appCtx);
+    static public AttributeResolverImpl getResolver(final ApplicationContext appContext) throws ComponentInitializationException {
+        final Collection<AttributeDefinition> definitions =
+                appContext.getBeansOfType(AttributeDefinition.class).values();
+
+        final Collection<DataConnector> connectors = appContext.getBeansOfType(DataConnector.class).values();
+        final AttributeResolverImpl resolver = new AttributeResolverImpl();
+        resolver.setAttributeDefinitions(definitions);
+        resolver.setDataConnectors(connectors);
+        resolver.setId("testResolver");
+        resolver.initialize();
+        return resolver;
     }
 
 }
