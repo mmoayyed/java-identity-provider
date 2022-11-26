@@ -26,12 +26,12 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.spring.service.AbstractServiceableComponent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Service registry that evaluates a candidate service URL against one or more defined services, where each
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Marvin S. Addison
  */
-public class PatternServiceRegistry extends AbstractServiceableComponent<ServiceRegistry>
+public class PatternServiceRegistry extends AbstractIdentifiableInitializableComponent
         implements ServiceRegistry {
 
     /** Class logger. */
@@ -65,12 +65,6 @@ public class PatternServiceRegistry extends AbstractServiceableComponent<Service
         for (final ServiceDefinition definition : serviceDefinitions) {
             definitions.put(definition, Pattern.compile(definition.getId()));
         }
-    }
-
-    @Nonnull
-    @Override
-    public ServiceRegistry getComponent() {
-        return this;
     }
 
     @Override
