@@ -94,7 +94,6 @@ public class DefaultRelyingPartyConfigurationResolverTest {
         resolver.setId("test");
         resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
-        resolver.setApplicationContext(new MockApplicationContext());
         resolver.initialize();
         
         final Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
@@ -129,7 +128,6 @@ public class DefaultRelyingPartyConfigurationResolverTest {
         resolver.setId("test");
         resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
-        resolver.setApplicationContext(new MockApplicationContext());
         resolver.initialize();
         
         final Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
@@ -185,7 +183,6 @@ public class DefaultRelyingPartyConfigurationResolverTest {
         resolver.setRelyingPartyConfigurations(rpConfigs);
         resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
-        resolver.setApplicationContext(new MockApplicationContext());
         resolver.initialize();
 
         Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);

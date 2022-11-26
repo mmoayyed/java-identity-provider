@@ -44,10 +44,10 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.ResolverException;
-import net.shibboleth.shared.spring.service.AbstractServiceableComponent;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context.
@@ -56,8 +56,7 @@ import net.shibboleth.shared.spring.service.AbstractServiceableComponent;
  * Note that this resolver does not permit more than one {@link RelyingPartyConfiguration} with the same ID.
  * </p>
  */
-public class DefaultRelyingPartyConfigurationResolver
-        extends AbstractServiceableComponent<RelyingPartyConfigurationResolver>
+public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent
         implements RelyingPartyConfigurationResolver {
 
     /** Class logger. */
@@ -332,10 +331,4 @@ public class DefaultRelyingPartyConfigurationResolver
             encryptionCredentials = Collections.emptyList();
         }
     }
-
-    /** {@inheritDoc} */
-    @Override @Nonnull public RelyingPartyConfigurationResolver getComponent() {
-        return this;
-    }
-    
 }

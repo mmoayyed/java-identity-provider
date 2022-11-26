@@ -139,7 +139,6 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         final List<RelyingPartyConfiguration> rpConfigs = Arrays.asList(oneByName, twoByName, threeByName);
 
         delegate.setId("delegate");
-        delegate.setApplicationContext(new MockApplicationContext());
         delegate.setRelyingPartyConfigurations(rpConfigs);
         delegate.initialize();
         
@@ -173,7 +172,6 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         final List<RelyingPartyConfiguration> rpConfigs = Arrays.asList(oneByName, twoByName, threeByName);
 
         delegate.setId("delegate");
-        delegate.setApplicationContext(new MockApplicationContext());
         delegate.setRelyingPartyConfigurations(rpConfigs);
         delegate.initialize();
         
@@ -203,7 +201,6 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
 
         delegate.setId("delegate");
         delegate.setRelyingPartyConfigurations(rpConfigs);
-        delegate.setApplicationContext(new MockApplicationContext());
         delegate.initialize();
         
         EntityDescriptor ed = (EntityDescriptor) XMLObjectSupport.buildXMLObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
@@ -246,7 +243,6 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         final List<RelyingPartyConfiguration> rpConfigs = Arrays.asList(oneByTag, twoByTag);
 
         delegate.setId("delegate");
-        delegate.setApplicationContext(new MockApplicationContext());
         delegate.setRelyingPartyConfigurations(rpConfigs);
         delegate.initialize();
         
