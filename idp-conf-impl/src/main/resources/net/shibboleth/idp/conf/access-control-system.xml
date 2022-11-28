@@ -12,13 +12,9 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.shared.service.security.impl.ReloadingAccessControlService">
-        <constructor-arg>
-            <bean class="net.shibboleth.shared.security.impl.BasicAccessControlService"
-                p:id="shibboleth.AccessControlService"
-                p:policyMap-ref="shibboleth.AccessControlPolicies" />
-        </constructor-arg>
-    </bean>
+    <bean class="net.shibboleth.shared.security.impl.BasicAccessControlService"
+        p:id="shibboleth.AccessControlService"
+        p:policyMap-ref="shibboleth.AccessControlPolicies" />
 
     <bean id="shibboleth.IPRangeAccessControl" abstract="true"
         class="net.shibboleth.shared.security.impl.IPRangeAccessControl" />
