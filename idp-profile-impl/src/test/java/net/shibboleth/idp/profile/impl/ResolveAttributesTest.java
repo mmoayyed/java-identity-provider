@@ -42,7 +42,6 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.LazySet;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.testing.MockApplicationContext;
 import net.shibboleth.shared.testing.MockReloadableService;
 
 import org.opensaml.profile.context.ProfileRequestContext;

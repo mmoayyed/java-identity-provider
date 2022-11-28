@@ -48,6 +48,7 @@ import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -268,27 +269,25 @@ public final class ResolveAttributes extends AbstractProfileAction {
             }
         }
 
-        try (final ServiceableComponent<AttributeResolver> component
-                = attributeResolverService.getServiceableComponent()) {
-            if (null == component) {
-                log.error("{} Error resolving attributes: Invalid Attribute resolver configuration", getLogPrefix());
-                if (!maskFailures) {
-                    ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
-                }
-            } else {
-                final AttributeResolver attributeResolver = component.getComponent();
-                attributeResolver.resolveAttributes(resolutionContext);
-                profileRequestContext.removeSubcontext(resolutionContext);
+        try (final ServiceableComponent<AttributeResolver> component =
+                attributeResolverService.getServiceableComponent()) {
+            final AttributeResolver attributeResolver = component.getComponent();
+            attributeResolver.resolveAttributes(resolutionContext);
+            profileRequestContext.removeSubcontext(resolutionContext);
 
-                final AttributeContext attributeCtx = attributeContextCreationStrategy.apply(profileRequestContext);
-                if (null == attributeCtx) {
-                    throw new ResolutionException("Unable to create or locate AttributeContext to populate");
-                }
-                attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
-                attributeCtx.setUnfilteredIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
+            final AttributeContext attributeCtx = attributeContextCreationStrategy.apply(profileRequestContext);
+            if (null == attributeCtx) {
+                throw new ResolutionException("Unable to create or locate AttributeContext to populate");
             }
+            attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
+            attributeCtx.setUnfilteredIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
         } catch (final ResolutionException e) {
             log.error("{} Error resolving attributes", getLogPrefix(), e);
+            if (!maskFailures) {
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
+            }
+        } catch (final ServiceException e) {
+            log.error("{} Invalid AttributeResolver configuration", getLogPrefix(), e);
             if (!maskFailures) {
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
             }

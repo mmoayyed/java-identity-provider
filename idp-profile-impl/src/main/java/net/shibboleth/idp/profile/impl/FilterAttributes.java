@@ -49,6 +49,7 @@ import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -374,28 +375,24 @@ public class FilterAttributes extends AbstractProfileAction {
         
         populateFilterContext(profileRequestContext, filterContext);
 
-        try (final ServiceableComponent<AttributeFilter> component =
-                    attributeFilterService.getServiceableComponent()) {
-            if (null == component) {
-                log.error("{} Error encountered while filtering attributes : Invalid Attribute Filter configuration",
-                        getLogPrefix());
-                if (maskFailures) {
-                    log.warn("Filter error masked, clearing resolved attributes");
-                    attributeContext.setIdPAttributes(null);
-                } else {
-                    ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
-                }
-            } else {
-                final AttributeFilter filter = component.getComponent();
-                filter.filterAttributes(filterContext);
-                filterContext.getParent().removeSubcontext(filterContext);
-                attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
-            }
+        try (final ServiceableComponent<AttributeFilter> component = attributeFilterService.getServiceableComponent()) {
+            final AttributeFilter filter = component.getComponent();
+            filter.filterAttributes(filterContext);
+            filterContext.getParent().removeSubcontext(filterContext);
+            attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
         } catch (final AttributeFilterException e) {
             log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
             if (maskFailures) {
                 log.warn("Filter error masked, clearing resolved attributes");
                 attributeContext.setIdPAttributes(Collections.emptySet());
+            } else {
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+            }
+        } catch (final ServiceException e) {
+            log.error("{} Invalid Attribute Filter service configuration", getLogPrefix(), e);
+            if (maskFailures) {
+                log.warn("Filter error masked, clearing resolved attributes");
+                attributeContext.setIdPAttributes(null);
             } else {
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
             }

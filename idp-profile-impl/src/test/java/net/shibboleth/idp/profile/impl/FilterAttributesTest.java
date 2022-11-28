@@ -39,7 +39,6 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.testing.MockApplicationContext;
 import net.shibboleth.shared.testing.MockReloadableService;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -56,6 +55,11 @@ public class FilterAttributesTest {
     
     private ProfileRequestContext prc;
     
+    /**
+     * Set up tests.
+     * 
+     * @throws ComponentInitializationException
+     */
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
@@ -69,7 +73,7 @@ public class FilterAttributesTest {
     @Test public void testNoAttributeContext() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.EMPTY_LIST);
+        final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.emptyList());
         engine.initialize();
 
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
@@ -89,7 +93,7 @@ public class FilterAttributesTest {
 
         prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true);
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.EMPTY_LIST);
+        final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.emptyList());
         engine.initialize();
         
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
