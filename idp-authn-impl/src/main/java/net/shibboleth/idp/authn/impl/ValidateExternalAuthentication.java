@@ -48,6 +48,7 @@ import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -298,20 +299,16 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         
         populateFilterContext(filterContext);
         
-        try (final ServiceableComponent<AttributeFilter> component
-                    = attributeFilterService.getServiceableComponent()) {
-            if (null == component) {
-                log.error("{} Error while filtering inbound attributes: Invalid Attribute Filter configuration",
-                        getLogPrefix());
-                attributeContext.setIdPAttributes(null);
-            } else {
-                final AttributeFilter filter = component.getComponent();
-                filter.filterAttributes(filterContext);
-                filterContext.getParent().removeSubcontext(filterContext);
-                attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
-            }
+        try (final ServiceableComponent<AttributeFilter> component = attributeFilterService.getServiceableComponent()) {
+            final AttributeFilter filter = component.getComponent();
+            filter.filterAttributes(filterContext);
+            filterContext.getParent().removeSubcontext(filterContext);
+            attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
         } catch (final AttributeFilterException e) {
             log.error("{} Error while filtering inbound attributes", getLogPrefix(), e);
+            attributeContext.setIdPAttributes(null);
+        } catch (final ServiceException e) {
+            log.error("{} Invalid AttributeFilter configuration", getLogPrefix(), e);
             attributeContext.setIdPAttributes(null);
         }
     }

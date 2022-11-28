@@ -29,6 +29,7 @@ import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -54,16 +55,14 @@ public class ReloadingServiceRegistry extends AbstractIdentifiableInitializableC
         service = Constraint.isNotNull(delegate, "ReloadableService cannot be null");
     }
 
-    @Nullable
     @Override
-    public Service lookup(@Nonnull final String serviceURL) {
-        try (final ServiceableComponent<ServiceRegistry>
-            component = service.getServiceableComponent()) {
-            if (null == component) {
-                log.error("ServiceRegistry '{}': error looking up service registry: Invalid configuration.", getId());
-                return null;
-            }
+    @Nullable public Service lookup(@Nonnull final String serviceURL) {
+        try (final ServiceableComponent<ServiceRegistry> component = service.getServiceableComponent()) {
             return component.getComponent().lookup(serviceURL);
+        } catch (final ServiceException e) {
+            log.error("ServiceRegistry '{}': Invalid CAS service registry configuration.", getId(), e);
+            return null;
         }
     }
+
 }

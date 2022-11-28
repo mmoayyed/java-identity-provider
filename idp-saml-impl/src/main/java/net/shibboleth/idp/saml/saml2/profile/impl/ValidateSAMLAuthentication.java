@@ -77,6 +77,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -446,12 +447,8 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         final Multimap<String,IdPAttribute> mapped = HashMultimap.create();
 
-        try (final ServiceableComponent<AttributeTranscoderRegistry>
-                component = transcoderRegistry.getServiceableComponent()) {
-            if (component == null) {
-                log.error("Attribute transcoder service unavailable");
-                return;
-            }
+        try (final ServiceableComponent<AttributeTranscoderRegistry> component =
+                transcoderRegistry.getServiceableComponent()) {
 
             final Response response = (Response) profileRequestContext.getInboundMessageContext().getMessage();
             for (final Assertion assertion : response.getAssertions()) {
@@ -465,6 +462,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                     }
                 }
             }
+        } catch (final ServiceException e) {
+            log.error("Attribute transcoder service unavailable", e);
+            return;
         }
 
         log.debug("{} Incoming SAML Attributes mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());
@@ -527,18 +527,15 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         populateFilterContext(profileRequestContext, filterContext);
 
         try (final ServiceableComponent<AttributeFilter> component = attributeFilterService.getServiceableComponent()) {
-            if (null == component) {
-                log.error("{} Error while filtering inbound attributes: Invalid Attribute Filter configuration",
-                        getLogPrefix());
-            } else {
-                final AttributeFilter filter = component.getComponent();
-                filter.filterAttributes(filterContext);
-                filterContext.getParent().removeSubcontext(filterContext);
-                attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
-            }
+            final AttributeFilter filter = component.getComponent();
+            filter.filterAttributes(filterContext);
+            filterContext.getParent().removeSubcontext(filterContext);
+            attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
         } catch (final AttributeFilterException e) {
             log.error("{} Error while filtering inbound attributes", getLogPrefix(), e);
-        }        
+        } catch (final ServiceException e) {
+            log.error("{} Invalid AttributeFilter configuration", getLogPrefix(), e);
+        }
     }
     
     /**

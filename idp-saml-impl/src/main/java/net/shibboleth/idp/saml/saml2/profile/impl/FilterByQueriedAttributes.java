@@ -55,6 +55,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -169,13 +170,8 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
                 
         final Multimap<String,IdPAttribute> mapped = HashMultimap.create();
 
-        try (final ServiceableComponent<AttributeTranscoderRegistry>
-                    component = transcoderRegistry.getServiceableComponent()) {
-            if (component == null) {
-                log.error("Attribute transcoder service unavailable");
-                ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
-                return;
-            }
+        try (final ServiceableComponent<AttributeTranscoderRegistry> component =
+                transcoderRegistry.getServiceableComponent()) {
 
             for (final Attribute designator : query.getAttributes()) {
                 try {
@@ -184,6 +180,10 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
                     log.error("{} Error decoding queried Attribute", getLogPrefix(), e);
                 }
             }
+        } catch (final ServiceException e) {
+            log.error("Attribute transcoder service unavailable", e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
+            return;
         }
                 
         log.debug("{} Query content mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());

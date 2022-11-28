@@ -48,6 +48,7 @@ import net.shibboleth.idp.saml.profile.impl.BaseAddAttributeStatementToAssertion
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -135,16 +136,15 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
 
         final ArrayList<Attribute> encodedAttributes = new ArrayList<>(attributes.size());
 
-        try (final ServiceableComponent<AttributeTranscoderRegistry>
-                    component = getTranscoderRegistry().getServiceableComponent()) {
-            if (component == null) {
-                throw new AttributeEncodingException("Attribute transoding service unavailable");
-            }
+        try (final ServiceableComponent<AttributeTranscoderRegistry> component =
+                getTranscoderRegistry().getServiceableComponent()) {
             for (final IdPAttribute attribute : attributes) {
                 if (attribute != null && !attribute.getValues().isEmpty()) {
                     encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
                 }
             }
+        } catch (final ServiceException e) {
+            throw new AttributeEncodingException("Attribute transoding service unavailable", e);
         }
 
         if (encodedAttributes.isEmpty()) {

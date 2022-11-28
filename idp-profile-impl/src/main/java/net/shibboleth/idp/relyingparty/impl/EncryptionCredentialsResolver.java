@@ -29,6 +29,7 @@ import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 import net.shibboleth.shared.spring.service.ReloadableSpringService;
 
@@ -85,20 +86,18 @@ public class EncryptionCredentialsResolver implements CredentialResolver, Identi
     @Nonnull public Iterable<Credential> resolve(@Nullable final CriteriaSet criteria) 
             throws ResolverException {
         try(final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()) {
-            if (null == component) {
-                log.error("EncryptionCredentialsResolver '{}': error looking up relying party configuration service:"
-                        + " Invalid configuration.", getId());
-            } else {
-                final RelyingPartyConfigurationResolver resolver = component.getComponent();
-                if (resolver instanceof DefaultRelyingPartyConfigurationResolver) {
-                    log.trace("Saw expected instance of DefaultRelyingPartyConfigurationResolver");
-                    return ((DefaultRelyingPartyConfigurationResolver)resolver).getEncryptionCredentials();
-                }
-                log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
-                return Collections.emptyList();
+            final RelyingPartyConfigurationResolver resolver = component.getComponent();
+            if (resolver instanceof DefaultRelyingPartyConfigurationResolver) {
+                log.trace("Saw expected instance of DefaultRelyingPartyConfigurationResolver");
+                return ((DefaultRelyingPartyConfigurationResolver)resolver).getEncryptionCredentials();
             }
+            log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
+            return Collections.emptyList();
+        } catch (final ServiceException e) {
+            log.error("EncryptionCredentialsResolver '{}': Invalid RelyingPartyResolver configuration", getId(), e);
         }
-        return null;
+        
+        return Collections.emptyList();
     }
 
 }

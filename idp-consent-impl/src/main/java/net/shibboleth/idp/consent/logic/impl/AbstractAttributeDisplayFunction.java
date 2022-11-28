@@ -35,6 +35,7 @@ import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 import net.shibboleth.shared.spring.util.SpringSupport;
 
@@ -95,9 +96,9 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
         if (displayInfo == null) {
             try (final ServiceableComponent<AttributeTranscoderRegistry> component =
                     transcoder.getServiceableComponent()) {
-                if (component != null) {
-                    displayInfo = getDisplayInfo(component.getComponent(), input);
-                }
+                displayInfo = getDisplayInfo(component.getComponent(), input);
+            } catch (final ServiceException e) {
+                // Ignore.
             }
             cachedInfo.put(input, displayInfo);
         }

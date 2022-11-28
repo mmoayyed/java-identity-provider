@@ -24,6 +24,7 @@ import net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -57,10 +58,9 @@ public class ProxySAML2NameIDGenerator implements SAML2NameIDGenerator {
         
         try (final ServiceableComponent<NameIdentifierGenerationService>
                 component = generatorService.getServiceableComponent()) {
-            if (component == null) {
-                throw new SAMLException("Invalid NameIdentifierGenerationService configuration");
-            }
             return component.getComponent().getSAML2NameIDGenerator().generate(profileRequestContext, format);
+        } catch (final ServiceException e) {
+            throw new SAMLException("Invalid NameIdentifierGenerationService configuration", e);
         }
     }
 

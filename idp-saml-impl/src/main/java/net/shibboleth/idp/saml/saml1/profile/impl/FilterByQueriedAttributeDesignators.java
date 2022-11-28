@@ -53,6 +53,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -170,13 +171,8 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
 
         final Set<String> decodedAttributeIds = new HashSet<>();
 
-        try (final ServiceableComponent<AttributeTranscoderRegistry>
-                    component = transcoderRegistry.getServiceableComponent()) {
-            if (component == null) {
-                log.error("Attribute transcoder service unavailable");
-                ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
-                return;
-            }
+        try (final ServiceableComponent<AttributeTranscoderRegistry> component =
+                transcoderRegistry.getServiceableComponent()) {
 
             for (final AttributeDesignator designator : query.getAttributeDesignators()) {
                 try {
@@ -186,6 +182,10 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
                     log.warn("{} Error decoding AttributeDesignators", getLogPrefix(), e);
                 }
             }
+        } catch (final ServiceException e) {
+            log.error("Attribute transcoder service unavailable", e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
+            return;
         }
 
         final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributeDesignators().size());

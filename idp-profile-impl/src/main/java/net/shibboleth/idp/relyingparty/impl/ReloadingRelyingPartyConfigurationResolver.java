@@ -37,6 +37,7 @@ import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponen
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -72,18 +73,16 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
             @Nullable final ProfileRequestContext context) throws ResolverException {
         checkComponentActive();
         try (final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()) {
-            if (null == component) {
-                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration", getId());
-            } else {
-                final RelyingPartyConfigurationResolver resolver = component.getComponent();
-                final List<RelyingPartyConfiguration> results = new ArrayList<>();
-                for (final RelyingPartyConfiguration result : resolver.resolve(context)) {
-                    results.add(result);
-                }
-                return results;
+            final RelyingPartyConfigurationResolver resolver = component.getComponent();
+            final List<RelyingPartyConfiguration> results = new ArrayList<>();
+            for (final RelyingPartyConfiguration result : resolver.resolve(context)) {
+                results.add(result);
             }
+            return results;
         } catch (final ResolverException e) {
             log.error("RelyingPartyResolver '{}': error in resolution", getId(), e);
+        } catch (final ServiceException e) {
+            log.error("RelyingPartyResolver '{}': Invalid RelyingPartyResolver configuration", getId(), e);
         }
         return Collections.emptySet();
     }
@@ -93,14 +92,11 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
             throws ResolverException {
         checkComponentActive();
         try (final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()){
-            if (null == component) {
-                log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration", getId());
-            } else {
-                final RelyingPartyConfigurationResolver resolver = component.getComponent();
-                return resolver.resolveSingle(context);
-            }
+            return component.getComponent().resolveSingle(context);
         } catch (final ResolverException e) {
             log.error("RelyingPartyResolver '{}': error in resolution", getId(), e);
+        } catch (final ServiceException e) {
+            log.error("RelyingPartyResolver '{}': Invalid RelyingPartyResolver configuration", getId(), e);
         }
         return null;
     }
@@ -109,13 +105,9 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     @Override public SecurityConfiguration getDefaultSecurityConfiguration(final String profileId) {
         checkComponentActive();
         try (final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()){
-            if (null == component) {
-                log.error("RelyingPartyResolver '{}': error looking up default security config:"
-                        + " Invalid configuration", getId());
-            } else {
-                final RelyingPartyConfigurationResolver resolver = component.getComponent();
-                return resolver.getDefaultSecurityConfiguration(profileId);
-            }
+            return component.getComponent().getDefaultSecurityConfiguration(profileId);
+        } catch (final ServiceException e) {
+            log.error("RelyingPartyResolver '{}': Invalid RelyingPartyResolver configuration", getId(), e);
         }
         return null;
     }

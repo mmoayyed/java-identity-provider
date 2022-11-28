@@ -43,6 +43,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -154,8 +155,8 @@ public class ReloadMetadata extends AbstractProfileAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         log.debug("{} Reloading metadata from '{}'", getLogPrefix(), id);
 
-        try (final ServiceableComponent<MetadataResolver>
-                    component = metadataResolverService.getServiceableComponent()) {
+        try (final ServiceableComponent<MetadataResolver> component =
+                metadataResolverService.getServiceableComponent()) {
 
             final MetadataResolver toProcess = findProvider(component.getComponent());
 
@@ -176,6 +177,14 @@ public class ReloadMetadata extends AbstractProfileAction {
             
         } catch (final ResolverException e) {
             log.error("{} Error refreshing/clearing metadata resolver: '{}'", getLogPrefix(), id, e);
+            try {
+                getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            } catch (final IOException e2) {
+                log.error("{} I/O error responding to request", getLogPrefix(), e2);
+                ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+            }
+        } catch (final ServiceException e) {
+            log.error("{} Invalid metadata resolver configuration: '{}'", getLogPrefix(), id, e);
             try {
                 getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (final IOException e2) {

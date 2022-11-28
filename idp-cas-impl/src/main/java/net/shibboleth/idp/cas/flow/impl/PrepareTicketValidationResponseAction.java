@@ -60,6 +60,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
@@ -214,11 +215,6 @@ public class PrepareTicketValidationResponseAction extends
 
         try (final ServiceableComponent<AttributeTranscoderRegistry> component =
                     transcoderRegistry.getServiceableComponent()) {
-            if (component == null) {
-                log.error("{} Attribute transoding service unavailable", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
-                return;
-            }
             for (final IdPAttribute attribute : inputAttributes) {
                 if (consentedAttributeIds == null || consentedAttributeIds.contains(attribute.getId())) {
                     encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
@@ -227,7 +223,12 @@ public class PrepareTicketValidationResponseAction extends
                             attribute.getId());
                 }
             }
+        } catch (final ServiceException e) {
+            log.error("{} Attribute transoding service unavailable", getLogPrefix(), e);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
+            return;
         }
+        
         encodedAttributes.forEach(a -> response.addAttribute(a));
     }
     // Checkstyle: CyclomaticComplexity ON
