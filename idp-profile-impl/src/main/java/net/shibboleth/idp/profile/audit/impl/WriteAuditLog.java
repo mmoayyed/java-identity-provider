@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -69,6 +70,9 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Map of log category to formatting tokens and literals to output. */
     @Nonnull @NotEmpty private Map<String,List<String>> formattingMap;
 
+    /** Explicit categories to log from {@link #formattingMap} */
+    @Nonnull @NotEmpty private Collection<String> categoriesToLog;
+    
     /** Formatter for date/time fields. */
     @Nonnull private DateTimeFormatter dateTimeFormatter;
     
@@ -85,6 +89,7 @@ public class WriteAuditLog extends AbstractProfileAction {
     public WriteAuditLog() {
         auditContextLookupStrategy = new ChildContextLookup<>(AuditContext.class);
         formattingMap = Collections.emptyMap();
+        categoriesToLog = Collections.emptyList();
         dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
     }
 
@@ -118,9 +123,13 @@ public class WriteAuditLog extends AbstractProfileAction {
      * 
      * @param map map of categories to formatting strings
      */
-    public void setFormattingMap(@Nonnull @NonnullElements final Map<String,String> map) {
+    public void setFormattingMap(@Nullable @NonnullElements final Map<String,String> map) {
         checkSetterPreconditions();
-        Constraint.isNotNull(map, "Audit formatting map cannot be null");
+        
+        if (map == null) {
+            formattingMap = Collections.emptyMap();
+            return;
+        }
         
         formattingMap = new HashMap<>(map.size());
         
@@ -163,6 +172,26 @@ public class WriteAuditLog extends AbstractProfileAction {
     }
 // Checkstyle: CyclomaticComplexity ON
 
+    /**
+     * Set categories to log explicitly.
+     * 
+     * <p>In the absence of any, the original behavior that iterates over the whole formatting map and logs
+     * each key is retained.</p>
+     * 
+     * @param categories categories to log
+     * 
+     * @since 4.3.0
+     */
+    public void setCategoriesToLog(@Nullable @NonnullElements final Collection<String> categories) {
+        checkSetterPreconditions();
+        
+        if (categories != null) {
+            categoriesToLog = List.copyOf(categories);
+        } else {
+            categoriesToLog = Collections.emptyList();
+        }
+    }
+    
     /**
      * Set the formatting string to apply when extracting date/time fields.
      * 
@@ -225,6 +254,10 @@ public class WriteAuditLog extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         for (final Map.Entry<String,List<String>> entry : formattingMap.entrySet()) {
+            
+            if (!categoriesToLog.isEmpty() && !categoriesToLog.contains(entry.getKey())) {
+                continue;
+            }
         
             final StringBuilder record = new StringBuilder();
     
