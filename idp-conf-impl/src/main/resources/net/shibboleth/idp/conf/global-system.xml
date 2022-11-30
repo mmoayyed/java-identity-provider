@@ -174,9 +174,9 @@
 
     <!-- Deprecated beans. -->
     <bean id="shibboleth.HttpServletRequest"
-        class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy" lazy-init="true" />
+        class="net.shibboleth.utilities.java.support.net.impl.ThreadLocalHttpServletRequestProxy" lazy-init="true" />
     <bean id="shibboleth.HttpServletResponse"
-        class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy" lazy-init="true" />
+        class="net.shibboleth.utilities.java.support.net.impl.ThreadLocalHttpServletResponseProxy" lazy-init="true" />
     
     <!-- Replacement beans. -->
     <bean id="shibboleth.HttpServletRequestSupplier"
