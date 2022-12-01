@@ -568,7 +568,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * 
      * @return predicate used to determine if produced assertions may be delegated
      */
-    @Nonnull public boolean isAllowDelegation(@Nullable final ProfileRequestContext profileRequestContext) {
+    public boolean isAllowDelegation(@Nullable final ProfileRequestContext profileRequestContext) {
         return allowDelegationPredicate.test(profileRequestContext);
     }
     

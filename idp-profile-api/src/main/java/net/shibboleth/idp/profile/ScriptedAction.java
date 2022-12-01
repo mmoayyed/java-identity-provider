@@ -94,7 +94,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(@Nullable final Object object) {
+    public void setCustomObject(@Nullable final Object object) {
         checkSetterPreconditions();
         scriptEvaluator.setCustomObject(object);
     }

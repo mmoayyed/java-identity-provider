@@ -66,7 +66,7 @@ public class CounterStorageKeyFunctionTest {
      * @throws IOException if a storage service error occurs
      * @throws InterruptedException if thread error occurs while sleeping
      */
-    protected void createCounter(@Nonnull final String key, @Nonnull final int iterations) throws IOException,
+    protected void createCounter(@Nonnull final String key, final int iterations) throws IOException,
             InterruptedException {
 
         final String counterKey = key + ":" + UpdateCounter.COUNTER_KEY;

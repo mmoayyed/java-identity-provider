@@ -51,8 +51,8 @@ public abstract class BaseCSRFTokenPredicate {
      * @param defaultValue a default value.
      * @return the boolean value of the attribute on the state definition.
      */
-    @Nonnull protected boolean safeGetBooleanStateAttribute(@Nullable final StateDefinition state, 
-            @Nullable final String attributeName, @Nonnull final boolean defaultValue) {
+    protected boolean safeGetBooleanStateAttribute(@Nullable final StateDefinition state, 
+            @Nullable final String attributeName, final boolean defaultValue) {
         
         //catch no state exists. Return default.
         if (state==null) {

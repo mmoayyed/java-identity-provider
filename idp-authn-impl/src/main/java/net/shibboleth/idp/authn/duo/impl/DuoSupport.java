@@ -129,7 +129,7 @@ public final class DuoSupport {
      * 
      * @since 3.4.0
      */
-    @Nonnull @NotEmpty public static void signRequest(@Nonnull final RequestBuilder request,
+    @NotEmpty public static void signRequest(@Nonnull final RequestBuilder request,
             @Nonnull final DuoIntegration duo)
             throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
         final String ikey = duo.getIntegrationKey();

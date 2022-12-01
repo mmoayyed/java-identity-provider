@@ -47,7 +47,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
 
     /** Brief info about installed modules. */
     @Parameter(names= {"-l", "--list"})
-    @Nullable private boolean list;
+    private boolean list;
 
     /** Detailed info about installed module(s). */
     @Parameter(names= {"-i", "--info"})
@@ -67,7 +67,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
 
     /** Clean when disabling. */
     @Parameter(names= {"-f", "--clean"})
-    @Nullable private boolean clean;
+    private boolean clean;
 
     /** {@inheritDoc} */
     @Nonnull public Logger getLog() {

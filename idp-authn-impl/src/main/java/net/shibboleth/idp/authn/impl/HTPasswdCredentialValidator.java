@@ -72,7 +72,7 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
     @Nullable private Resource htPasswdResource;
 
     /** File timestamp. */
-    @Nullable private long lastModified;
+    private long lastModified;
     
     /** In-memory copy of entries. */
     @Nonnull @NonnullElements private final Map<String,String> credentialMap;
@@ -169,7 +169,7 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
      * 
      * @return true iff the password matches
      */
-    @Nonnull private boolean authenticate(@Nonnull final UsernamePasswordContext usernamePasswordContext,
+    private boolean authenticate(@Nonnull final UsernamePasswordContext usernamePasswordContext,
             @Nonnull final String storedPassword) {
         
         refreshCredentials();

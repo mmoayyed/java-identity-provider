@@ -146,7 +146,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
      * @throws IOException if an I/O error occurs
      */
     @GetMapping("/{binding}/SSO/start")
-    @Nullable public void startSAML(@Nonnull final HttpServletRequest httpRequest,
+    public void startSAML(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @PathVariable @Nonnull @NotEmpty final String binding)
                     throws ExternalAuthenticationException, IOException {
         
@@ -221,7 +221,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
      * @throws IOException if an I/O error occurs
      */
     @RequestMapping("/{binding}/SSO")
-    @Nullable public void finishSAML(@Nonnull final HttpServletRequest httpRequest,
+    public void finishSAML(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @PathVariable @Nonnull @NotEmpty final String binding)
                     throws ExternalAuthenticationException, IOException {
         

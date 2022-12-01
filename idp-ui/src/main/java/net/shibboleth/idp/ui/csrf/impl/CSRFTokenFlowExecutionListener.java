@@ -62,7 +62,7 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
     @NonnullAfterInit private Predicate<RequestContext> viewRequiresCSRFTokenPredicate;
     
     /** Is this listener enabled? */
-    @Nonnull private boolean enabled;
+    private boolean enabled;
 
     /** The CSRF token manager for getting and validating tokens. */    
     @NonnullAfterInit private CSRFTokenManager csrfTokenManager;
@@ -78,7 +78,7 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
      * 
      * @param enable enabled/disable CSRF protection (default is {@literal false}).
      */
-    public void setEnabled(@Nonnull final boolean enable) {
+    public void setEnabled(final boolean enable) {
         checkSetterPreconditions();
         enabled = enable;
     }

@@ -39,11 +39,11 @@ public class JarCheckArguments extends AbstractIdPHomeAwareCommandLineArguments 
 
     /** look inside the jars. */
     @Parameter(names= {"-d", "--detailed"})
-    @Nullable private boolean detailed;
+    private boolean detailed;
 
     /** provide a sorted list. */
     @Parameter(names= {"-l", "--list"})
-    @Nullable private boolean list;
+    private boolean list;
 
     /** {@inheritDoc} */
     @Nonnull public Logger getLog() {

@@ -109,7 +109,7 @@ public final class InitializeProxyProfileRequestContext extends AbstractProfileA
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         final ProfileRequestContext prc = profileRequestContextCreationStrategy.apply(profileRequestContext);
         if (prc == null) {
