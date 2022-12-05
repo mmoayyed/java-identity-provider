@@ -63,14 +63,37 @@ public class PopulateAuditContextTest {
         action.setFieldExtractors(map);
         action.initialize();
         
-        final Event event = action.execute(src);
+        Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        final AuditContext ac = prc.getSubcontext(AuditContext.class);
+        AuditContext ac = prc.getSubcontext(AuditContext.class);
         Assert.assertNotNull(ac);
         Assert.assertEquals(ac.getFieldValues("a").size(), 1);
         Assert.assertEquals(ac.getFieldValues("a").iterator().next(), "foo");
         Assert.assertTrue(ac.getFieldValues("b").isEmpty());
+        
+        action = new PopulateAuditContext();
+        action.setFieldExtractors(map);
+        action.initialize();
+        
+        event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        ac = prc.getSubcontext(AuditContext.class);
+        Assert.assertNotNull(ac);
+        Assert.assertEquals(ac.getFieldValues("a").size(), 1);
+        Assert.assertEquals(ac.getFieldValues("a").iterator().next(), "foo");
+
+        action = new PopulateAuditContext();
+        action.setClearAuditContext(true);
+        action.initialize();
+        
+        event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        ac = prc.getSubcontext(AuditContext.class);
+        Assert.assertNotNull(ac);
+        Assert.assertTrue(ac.getFields().isEmpty());
     }
 
     @Test public void testMultiple() throws Exception {
