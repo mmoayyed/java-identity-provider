@@ -132,38 +132,40 @@ public class PluginState extends AbstractInitializableComponent {
             }
             for (final URL url: urls) {
                 final Resource propertyResource;
-                if ("file".equals(url.getProtocol())) {
-                    propertyResource = new FileSystemResource(url.getPath());
-                } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                    propertyResource = new HTTPResource(httpClient, url);
-                } else {
-                    throw new ComponentInitializationException("Only file and http[s] URLs are allowed");
-                }
-
-                log.debug("Plugin {}: Looking for update at {}", plugin.getPluginId(),
-                        propertyResource.getDescription());
-                if (!propertyResource.exists()) {
-                    log.info("Plugin {}: {} could not be located", plugin.getPluginId(),
-                            propertyResource.getDescription());
-                    continue;
-                }
-                
-                if (populate(propertyResource)) {
-                    log.debug("Plugin {}: PluginState populated from {}",
-                            plugin.getPluginId(), propertyResource.getDescription());
-                    if (myPluginInfo.getAvailableVersions().get(myPluginVersion) == null) {
-                        log.error("Plugin {} : Could not find version {} in descriptions at {}",
-                                plugin.getPluginId(), myPluginVersion, propertyResource.getDescription());
+                try {
+                    if ("file".equals(url.getProtocol())) {
+                        propertyResource = new FileSystemResource(url.getPath());
+                    } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+                            propertyResource = new HTTPResource(httpClient, url);
+                    } else {
+                        log.error("Plugin {}: Only file and http[s] URLs are allowed: '{}'", plugin.getPluginId(), url);
+                        continue;
                     }
-                    return;
+                    log.debug("Plugin {}: Looking for update at {}", plugin.getPluginId(),
+                            propertyResource.getDescription());
+                    if (!propertyResource.exists()) {
+                        log.info("Plugin {}: {} could not be located", plugin.getPluginId(),
+                                propertyResource.getDescription());
+                        continue;
+                    }
+                    if (populate(propertyResource)) {
+                        log.debug("Plugin {}: PluginState populated from {}",
+                                plugin.getPluginId(), propertyResource.getDescription());
+                        if (myPluginInfo.getAvailableVersions().get(myPluginVersion) == null) {
+                            log.error("Plugin {} : Could not find version {} in descriptions at {}",
+                                    plugin.getPluginId(), myPluginVersion, propertyResource.getDescription());
+                        }
+                        return;
+                    }
+                }
+                catch (final IOException e) {
+                    log.error("Could not open Update Resource for {} :", plugin.getPluginId(), e);
+                    continue;
                 }
             }
             log.error("Plugin {}: No available servers found.", plugin.getPluginId());
             throw new ComponentInitializationException("Could not locate information for " + plugin.getPluginId());
 
-        } catch (final IOException e) {
-            throw new ComponentInitializationException("Could not locate Update Resource for "
-                        + plugin.getPluginId(), e);
         } catch (final ComponentInitializationException e) {
             throw e;
         } catch (final Exception e) {

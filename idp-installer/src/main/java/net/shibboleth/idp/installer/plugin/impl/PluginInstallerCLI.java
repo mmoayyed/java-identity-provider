@@ -422,31 +422,35 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             } else {
                 urls = updateURLs;
             }
-            for (final URL url: urls) {
-                final Resource propertyResource;
+        } catch (final IOException e) {
+            log.error("Could not load update URLs", e);
+            return null;
+        }
+        for (final URL url: urls) {
+            final Resource propertyResource;
+            try {
                 if ("file".equals(url.getProtocol())) {
                     propertyResource = new FileSystemResource(url.getPath());
                 } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                    propertyResource = new HTTPResource(getHttpClient(), url);
+                        propertyResource = new HTTPResource(getHttpClient(), url);
                 } else {
                     log.error("Only file and http[s] URLs are allowed");
-                    return null;
+                    continue;
                 }
-
                 log.debug("Plugin Listing: Looking for update at {}", propertyResource.getDescription());
                 if (!propertyResource.exists()) {
                     log.info("{} could not be located", propertyResource.getDescription());
                     continue;
                 }
                 props.load(propertyResource.getInputStream());
-                break;
+                return props;
+            } catch (final IOException e) {
+                log.error("Could not open Update URL {} :", url, e);
+                continue;
             }
-
-        } catch (final IOException e) {
-            log.error("Could not load update URL", e);
-            return null;
         }
-        return props;
+        log.error("Could not locate any active update servers");
+        return null;
     }
 
     /** Given the pluginId find the best version and install.
