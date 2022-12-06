@@ -44,7 +44,7 @@
             value="#{'%{idp.authn.X509.audit.format:%a|%T|%SP|%s|%AF|%X509S|%X509I|%AR|%UA}'.trim()}" />
     </util:map>
 
-    <bean id="shibboleth.authn.X509.DefaulAuditExtractors" parent="shibboleth.authn.DefaulAuditExtractors" lazy-init="true"
+    <bean id="shibboleth.authn.X509.DefaultAuditExtractors" parent="shibboleth.authn.DefaulAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
              <map merge="true">
@@ -65,7 +65,7 @@
     </bean>
     
     <bean id="shibboleth.authn.X509.PopulateAuditContext" parent="shibboleth.authn.AbstractPopulateAuditContext" lazy-init="true"
-        p:fieldExtractors="#{getObject('shibboleth.authn.X509.AuditExtractors') ?: getObject('shibboleth.authn.X509.DefaulAuditExtractors')}"
+        p:fieldExtractors="#{getObject('shibboleth.authn.X509.AuditExtractors') ?: getObject('shibboleth.authn.X509.DefaultAuditExtractors')}"
         p:clearAuditContext="true" />
 
 </beans>
