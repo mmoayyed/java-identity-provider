@@ -296,9 +296,9 @@ public class WriteAuditLog extends AbstractProfileAction {
                         
                         if (IdPAuditFields.EVENT_TIME.equals(field)) {
                             record.append(dateTimeFormatter.format(Instant.now()));
-                        } else if (IdPAuditFields.EVENT_TYPE.equals(field)) {
+                        } else if (IdPAuditFields.EVENT_TYPE.equals(field) && requestContext != null) {
                             final Event event = requestContext.getCurrentEvent();
-                            if (event != null && !event.getId().equals(EventIds.PROCEED_EVENT_ID)) {
+                            if (event != null && !EventIds.PROCEED_EVENT_ID.equals(event.getId())) {
                                 record.append(event.getId());
                             }
                         } else if (IdPAuditFields.PROFILE.equals(field)) {
