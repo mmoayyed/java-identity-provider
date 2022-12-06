@@ -64,17 +64,10 @@
             value="#{'%{idp.authn.IPAddress.audit.format:%a|%T|%SP|%s|%AF|%CV|%u|%AR|%UA}'.trim()}" />
     </util:map>
 
-    <bean id="shibboleth.authn.IPAddress.DefaultAuditExtractors" parent="shibboleth.authn.DefaulAuditExtractors" lazy-init="true"
+    <bean id="shibboleth.authn.IPAddress.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
-             <map merge="true">
-                <entry>
-                    <key>
-                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
-                    </key>
-                    <bean class="net.shibboleth.idp.authn.audit.impl.AttemptedUsernameAuditExtractor" />
-                </entry>
-             </map>
+             <map merge="true" />
         </property>
     </bean>
     
