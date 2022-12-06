@@ -18,6 +18,25 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
+    <!-- Default message map. -->
+    <util:map id="shibboleth.authn.IPAddress.ClassifiedMessageMap">
+        <entry key="RequestUnsupported">
+            <list>
+                <value>RequestUnsupported</value>
+            </list>
+        </entry>
+        <entry key="NoCredentials">
+            <list>
+                <value>NoCredentials</value>
+            </list>
+        </entry>
+        <entry key="InvalidCredentials">
+            <list>
+                <value>InvalidCredentials</value>
+            </list>
+        </entry>
+    </util:map>
+
     <import resource="conditional:%{idp.home}/conf/authn/ipaddress-authn-config.xml" />
     
     <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype"
@@ -27,11 +46,40 @@
         
     <bean id="ValidateUserAgentAddress" class="net.shibboleth.idp.authn.impl.ValidateUserAgentAddress" scope="prototype"
         p:mappings="#{getObject('shibboleth.authn.IPAddress.Mappings')}"
+        p:classifiedMessages="#{getObject('shibboleth.authn.IPAddress.ClassifiedMessageMap')}"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.IPAddress.addDefaultPrincipals') ?: %{idp.authn.IPAddress.addDefaultPrincipals:true}}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}" />
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}"
+        p:populateAuditContextAction="#{%{idp.authn.IPAddress.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.IPAddress.PopulateAuditContext') : null}"
+        p:writeAuditLogAction="#{%{idp.authn.IPAddress.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
         p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
+
+    <!-- Audit logging beans. -->
+
+    <!-- Default audit format and extractors --> 
+    <util:map id="shibboleth.authn.AuditFormattingMap">
+        <entry key="#{'%{idp.authn.IPAddress.audit.category:Shibboleth-Audit.IPAddress}'.trim()}"
+            value="#{'%{idp.authn.IPAddress.audit.format:%a|%T|%SP|%s|%AF|%CV|%u|%AR|%UA}'.trim()}" />
+    </util:map>
+
+    <bean id="shibboleth.authn.IPAddress.DefaultAuditExtractors" parent="shibboleth.authn.DefaulAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+             <map merge="true">
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.authn.audit.impl.AttemptedUsernameAuditExtractor" />
+                </entry>
+             </map>
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.authn.IPAddress.PopulateAuditContext" parent="shibboleth.authn.AbstractPopulateAuditContext" lazy-init="true"
+        p:fieldExtractors="#{getObject('shibboleth.authn.IPAddress.AuditExtractors') ?: getObject('shibboleth.authn.IPAddress.DefaultAuditExtractors')}"
+        p:clearAuditContext="true" />
 
 </beans>

@@ -28,11 +28,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.IdPAuditFields;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -60,7 +60,7 @@ import com.google.common.base.Strings;
  * satisfies a configured address range, an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the
  * {@link AuthenticationContext}.
  */
-public class ValidateUserAgentAddress extends AbstractValidationAction {
+public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
 
     /** Default prefix for metrics. */
     @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.address";
@@ -176,6 +176,16 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         subject.getPrincipals().add(new UsernamePrincipal(principalName));
         return subject;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nullable protected Map<String, String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
+        if (principalName != null) {
+            return Map.of(IdPAuditFields.USERNAME, principalName);
+        }
+        
+        return super.getAuditFields(profileRequestContext);
     }
 
 }
