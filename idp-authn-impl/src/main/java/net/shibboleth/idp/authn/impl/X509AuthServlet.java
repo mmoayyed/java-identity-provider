@@ -158,6 +158,7 @@ public class X509AuthServlet extends HttpServlet {
             log.debug("End-entity X.509 certificate found with subject '{}', issued by '{}'",
                     cert.getSubjectDN().getName(), cert.getIssuerDN().getName());
             
+            // Populate the cert chain into a CertificateContext for auditing.
             final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, httpRequest);
             final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
             if (authnCtx != null) {

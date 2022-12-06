@@ -24,11 +24,12 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 
 /**
- * {@link Function} that returns the username in a subordinate {@link UsernamePasswordContext},
- * if any.
+ * {@link Function} that returns the username in a subordinate {@link UsernamePasswordContext} or
+ * {@link UsernameContext}, if any.
  * 
  * @since 4.3.0
  */
@@ -42,6 +43,11 @@ public class AttemptedUsernameAuditExtractor implements Function<ProfileRequestC
             final UsernamePasswordContext upContext = authnCtx.getSubcontext(UsernamePasswordContext.class);
             if (upContext != null) {
                 return upContext.getUsername();
+            }
+            
+            final UsernameContext uContext = authnCtx.getSubcontext(UsernameContext.class);
+            if (uContext != null) {
+                return uContext.getUsername();
             }
         }
         
