@@ -24,6 +24,25 @@
     <bean id="shibboleth.authn.RemoteUser.checkAttributes" parent="shibboleth.CommaDelimStringArray"
         c:_0="#{'%{idp.authn.RemoteUserInternal.checkAttributes:}'.trim()}" />
 
+    <!-- Default message map. -->
+    <util:map id="shibboleth.authn.RemoteUser.ClassifiedMessageMap">
+        <entry key="RequestUnsupported">
+            <list>
+                <value>RequestUnsupported</value>
+            </list>
+        </entry>
+        <entry key="NoCredentials">
+            <list>
+                <value>NoCredentials</value>
+            </list>
+        </entry>
+        <entry key="InvalidCredentials">
+            <list>
+                <value>InvalidCredentials</value>
+            </list>
+        </entry>
+    </util:map>
+
     <import resource="conditional:%{idp.home}/conf/authn/remoteuser-internal-authn-config.xml" />
 
     <bean class="net.shibboleth.shared.spring.config.DeprecatedBeanDetector" c:_1="remoteuser-internal-authn-config.xml">
@@ -60,10 +79,38 @@
         p:allowedUsernames="#{getObject('shibboleth.authn.RemoteUser.allowedUsernames') ?: (getObject('shibboleth.authn.RemoteUser.whitelistedUsernames') ?: getObject('PropertyDrivenAllowList'))}"
         p:deniedUsernames="#{getObject('shibboleth.authn.RemoteUser.deniedUsernames') ?: (getObject('shibboleth.authn.RemoteUser.blacklistedUsernames') ?: getObject('PropertyDrivenDenyList'))}"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') ?: %{idp.authn.RemoteUserInternal.addDefaultPrincipals:true}}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}" />
+        p:classifiedMessages="#{getObject('shibboleth.authn.RemoteUser.ClassifiedMessageMap')}"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}"
+        p:populateAuditContextAction="#{%{idp.authn.RemoteUserInternal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.RemoteUserInternal.PopulateAuditContext') : null}"
+        p:writeAuditLogAction="#{%{idp.authn.RemoteUserInternal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
         p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
+
+    <!-- Audit logging beans. -->
+
+    <util:map id="shibboleth.authn.AuditFormattingMap">
+        <entry key="#{'%{idp.authn.RemoteUserInternal.audit.category:Shibboleth-Audit.RemoteUserInternal}'.trim()}"
+            value="#{'%{idp.authn.RemoteUserInternal.audit.format:%a|%T|%SP|%s|%AF|%CV|%u|%AR|%UA}'.trim()}" />
+    </util:map>
+
+    <bean id="shibboleth.authn.RemoteUserInternal.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+             <map merge="true">
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.authn.audit.impl.AttemptedUsernameAuditExtractor" />
+                </entry>
+             </map>
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.authn.RemoteUserInternal.PopulateAuditContext" parent="shibboleth.authn.AbstractPopulateAuditContext" lazy-init="true"
+        p:fieldExtractors="#{getObject('shibboleth.authn.RemoteUserInternal.AuditExtractors') ?: getObject('shibboleth.authn.RemoteUserInternal.DefaultAuditExtractors')}"
+        p:clearAuditContext="true" />
 
 </beans>

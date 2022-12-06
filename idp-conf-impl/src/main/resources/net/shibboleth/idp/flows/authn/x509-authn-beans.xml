@@ -24,12 +24,15 @@
 
     <import resource="conditional:%{idp.home}/conf/authn/x509-authn-config.xml" />
 
+    <bean id="DefaultCleanupHook" class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication.CertificateCleanupHook" />
+
     <bean id="ValidateExternalAuthentication"
         class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
         p:metricName="net.shibboleth.idp.authn.x509"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: %{idp.authn.X509.addDefaultPrincipals:true}}"
         p:classifiedMessages="#{getObject('shibboleth.authn.X509.ClassifiedMessageMap')}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}"
+        p:cleanupHook-ref="DefaultCleanupHook"
         p:populateAuditContextAction="#{%{idp.authn.X509.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.X509.PopulateAuditContext') : null}"
         p:writeAuditLogAction="#{%{idp.authn.X509.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
 

@@ -39,6 +39,7 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -281,6 +282,14 @@ public class RemoteUserAuthServlet extends HttpServlet {
                 log.info("{}: User identity not found in request", key);
                 ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                 return;
+            }
+            
+            // Populate the username into a UsernameContext for auditing.
+            final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, httpRequest);
+            final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
+            if (authnCtx != null) {
+                final UsernameContext uc = authnCtx.getSubcontext(UsernameContext.class, true);
+                uc.setUsername(username);
             }
             
             if (authnAuthorityHeader != null) {

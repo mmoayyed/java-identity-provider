@@ -32,7 +32,7 @@ import org.opensaml.messaging.context.BaseContext;
 public final class UsernameContext extends BaseContext {
 
     /** The username. */
-    private String username;
+    @Nullable private String username;
 
     /**
      * Gets the username.

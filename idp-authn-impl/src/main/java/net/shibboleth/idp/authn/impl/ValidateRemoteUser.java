@@ -26,13 +26,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
@@ -54,7 +52,7 @@ import net.shibboleth.shared.primitive.StringSupport;
  * @post If AuthenticationContext.getSubcontext(UsernameContext.class, false).getUsername() != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext}.
  */
-public class ValidateRemoteUser extends AbstractValidationAction {
+public class ValidateRemoteUser extends AbstractAuditingValidationAction {
 
     /** Default prefix for metrics. */
     @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.remoteuser";
@@ -127,13 +125,15 @@ public class ValidateRemoteUser extends AbstractValidationAction {
         usernameContext = authenticationContext.getSubcontext(UsernameContext.class);
         if (usernameContext == null) {
             log.debug("{} No UsernameContext available within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
+                    AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
         if (usernameContext.getUsername() == null) {
             log.debug("{} No username available within UsernameContext", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
+                    AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
         
@@ -147,7 +147,8 @@ public class ValidateRemoteUser extends AbstractValidationAction {
                 
         if (!isAuthenticated(usernameContext.getUsername())) {
             log.info("{} User '{}' was not valid", getLogPrefix(), usernameContext.getUsername());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
+                    AuthnEventIds.INVALID_CREDENTIALS);
             recordFailure(profileRequestContext);
             return;
         }
@@ -184,4 +185,5 @@ public class ValidateRemoteUser extends AbstractValidationAction {
         subject.getPrincipals().add(new UsernamePrincipal(usernameContext.getUsername()));
         return subject;
     }
+    
 }

@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,9 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext.Direct
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.CertificateContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
+import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -331,6 +334,48 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         
         if (!extContext.getAuthenticatingAuthorities().isEmpty()) {
             filterContext.setAttributeIssuerID(extContext.getAuthenticatingAuthorities().iterator().next());
+        }
+    }
+    
+    /**
+     * A default cleanup hook that removes a {@link UsernameContext} from the tree.
+     * 
+     * @since 4.3.0
+     */
+    public static class UsernameCleanupHook implements Consumer<ProfileRequestContext> {
+
+        /** {@inheritDoc} */
+        public void accept(@Nullable final ProfileRequestContext input) {
+            if (input != null) {
+                final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
+                if (authnCtx != null) {
+                    final UsernameContext uCtx = authnCtx.getSubcontext(UsernameContext.class);
+                    if (uCtx != null) {
+                        authnCtx.removeSubcontext(uCtx);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * A default cleanup hook that removes a {@link CertificateContext} from the tree.
+     * 
+     * @since 4.3.0
+     */
+    public static class CertificateCleanupHook implements Consumer<ProfileRequestContext> {
+
+        /** {@inheritDoc} */
+        public void accept(@Nullable final ProfileRequestContext input) {
+            if (input != null) {
+                final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
+                if (authnCtx != null) {
+                    final CertificateContext cc = authnCtx.getSubcontext(CertificateContext.class);
+                    if (cc != null) {
+                        authnCtx.removeSubcontext(cc);
+                    }
+                }
+            }
         }
     }
 

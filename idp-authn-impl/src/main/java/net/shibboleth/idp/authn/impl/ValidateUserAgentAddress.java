@@ -28,7 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -111,13 +110,15 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
         uaContext = authenticationContext.getSubcontext(UserAgentContext.class, false);
         if (uaContext == null) {
             log.debug("{} No UserAgentContext available within authentication context", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
+                    AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
         if (uaContext.getAddress() == null) {
             log.debug("{} No address available within UserAgentContext", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
+                    AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
         
@@ -142,7 +143,8 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
 
         log.debug("{} User agent with address {} was not authenticated", getLogPrefix(),
                 uaContext.getAddress().getHostAddress());
-        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
+        handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
+                AuthnEventIds.INVALID_CREDENTIALS);
         recordFailure(profileRequestContext);
     }
 
