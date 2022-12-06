@@ -34,9 +34,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.CertificateContext;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.resolver.CriteriaSet;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.BasicX509Credential;
@@ -154,6 +157,18 @@ public class X509AuthServlet extends HttpServlet {
             log.debug("End-entity X.509 certificate found with subject '{}', issued by '{}'",
                     cert.getSubjectX500Principal().getName(), cert.getIssuerX500Principal().getName());
             
+            final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, httpRequest);
+            final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
+            if (authnCtx != null) {
+                final CertificateContext cc = authnCtx.getSubcontext(CertificateContext.class, true);
+                cc.setCertificate(cert);
+                if (certs.length > 1) {
+                    for (int i = 1; i < certs.length; i++) {
+                        cc.getIntermediates().add(certs[i]);
+                    }
+                }
+            }
+
             if (trustEngine != null) {
                 try {
                     final BasicX509Credential cred = new BasicX509Credential(cert);

@@ -67,7 +67,7 @@ import net.shibboleth.shared.service.ServiceableComponent;
  * {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, Exception, String)}
  * method is called.
  */
-public class ValidateExternalAuthentication extends AbstractValidationAction {
+public class ValidateExternalAuthentication extends AbstractAuditingValidationAction {
 
     /** Default prefix for metrics. */
     @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.external"; 

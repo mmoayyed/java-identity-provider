@@ -34,9 +34,8 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.audit.impl.PopulateAuditContext;
 import net.shibboleth.idp.profile.audit.impl.WriteAuditLog;
 import net.shibboleth.idp.profile.context.AuditContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Base class for validation actions that includes new audit logging support.
@@ -75,8 +74,7 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
      * @param strategy lookup strategy
      */
     public void setAuditContextCreationStrategy(@Nonnull final Function<ProfileRequestContext,AuditContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        checkSetterPreconditions();
         auditContextCreationStrategy = Constraint.isNotNull(strategy, "AuditContext creation strategy cannot be null");
     }
     
@@ -88,8 +86,7 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
      * @since 4.3.0
      */
     public void setPopulateAuditContextAction(@Nullable final PopulateAuditContext action) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        checkSetterPreconditions();
         populateAuditContextAction = action;
     }
 
@@ -101,8 +98,7 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
      * @since 4.3.0
      */
     public void setWriteAuditLogAction(@Nullable final WriteAuditLog action) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+        checkSetterPreconditions();
         writeAuditLogAction = action;
     }
 

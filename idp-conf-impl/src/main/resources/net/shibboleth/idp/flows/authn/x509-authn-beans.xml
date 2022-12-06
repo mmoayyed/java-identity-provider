@@ -29,10 +29,43 @@
         p:metricName="net.shibboleth.idp.authn.x509"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: %{idp.authn.X509.addDefaultPrincipals:true}}"
         p:classifiedMessages="#{getObject('shibboleth.authn.X509.ClassifiedMessageMap')}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}" />
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}"
+        p:populateAuditContextAction="#{%{idp.authn.X509.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.X509.PopulateAuditContext') : null}"
+        p:writeAuditLogAction="#{%{idp.authn.X509.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
         p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
+
+    <!-- Audit logging beans. -->
+
+    <util:map id="shibboleth.authn.AuditFormattingMap">
+        <entry key="#{'%{idp.authn.X509.audit.category:Shibboleth-Audit.X509}'.trim()}"
+            value="#{'%{idp.authn.X509.audit.format:%a|%T|%SP|%s|%AF|%X509S|%X509I|%AR|%UA}'.trim()}" />
+    </util:map>
+
+    <bean id="shibboleth.authn.X509.DefaulAuditExtractors" parent="shibboleth.authn.DefaulAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+             <map merge="true">
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.X509_SUBJECT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.authn.audit.impl.CertificateSubjectAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.X509_ISSUER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.authn.audit.impl.CertificateIssuerAuditExtractor" />
+                </entry>
+             </map>
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.authn.X509.PopulateAuditContext" parent="shibboleth.authn.AbstractPopulateAuditContext" lazy-init="true"
+        p:fieldExtractors="#{getObject('shibboleth.authn.X509.AuditExtractors') ?: getObject('shibboleth.authn.X509.DefaulAuditExtractors')}"
+        p:clearAuditContext="true" />
 
 </beans>

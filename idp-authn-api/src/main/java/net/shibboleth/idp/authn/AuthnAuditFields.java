@@ -59,6 +59,20 @@ public final class AuthnAuditFields {
      */
     @Nonnull @NotEmpty public static final String AUTHN_RESULT = "AR";
 
+    /**
+     * X.509 cerificate subject.
+     * 
+     * @since 4.3.0
+     */
+    @Nonnull @NotEmpty public static final String X509_SUBJECT = "X509S";
+
+    /**
+     * X.509 cerificate subject.
+     * 
+     * @since 4.3.0
+     */
+    @Nonnull @NotEmpty public static final String X509_ISSUER = "X509I";
+
     /** Constructor. */
     private AuthnAuditFields() {
 
