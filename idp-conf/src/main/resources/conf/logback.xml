@@ -172,6 +172,8 @@
         <suffixPattern>[%thread] %logger %msg</suffixPattern>
     </appender>
 
+    <!-- Top level loggers. -->
+
     <logger name="Shibboleth-Audit" level="ALL">
         <appender-ref ref="${idp.audit.appender:-IDP_AUDIT}"/>
     </logger>
@@ -189,4 +191,26 @@
         <appender-ref ref="${idp.warn.appender:-IDP_WARN}" />
     </root>
 
+    <!-- Example routing Password flow auditing to separate location (extend to other flows as needed). -->
+    
+    <!--
+    <appender name="IDP_PASSWORD_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${idp.logfiles}/idp-password-audit.log</File>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${idp.logfiles}/idp-password-audit-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>${idp.loghistory}</maxHistory>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%msg%n</Pattern>
+        </encoder>
+    </appender>
+    
+    <logger name="Shibboleth-Audit.Password" level="ALL" additivity="false">
+        <appender-ref ref="IDP_PASSWORD_AUDIT"/>
+    </logger>
+    -->
+    
 </configuration>

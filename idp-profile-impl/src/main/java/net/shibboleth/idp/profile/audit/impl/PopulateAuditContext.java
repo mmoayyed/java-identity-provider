@@ -110,7 +110,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      */
     public void setAuditContextCreationStrategy(@Nonnull final Function<ProfileRequestContext,AuditContext> strategy) {
         checkSetterPreconditions();
-        auditContextCreationStrategy = Constraint.isNotNull(strategy, "AuditContext lookup strategy cannot be null");
+        auditContextCreationStrategy = Constraint.isNotNull(strategy, "AuditContext creation strategy cannot be null");
     }
     
     /**
