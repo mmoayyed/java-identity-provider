@@ -37,7 +37,28 @@ public final class AuthnAuditFields {
 
     /** SSO indicator signaling authentication was not "freshly" performed. */
     @Nonnull @NotEmpty public static final String SSO = "SSO";
-    
+
+    /**
+     * A username after undergoing transformation for input to validation.
+     * 
+     * @since 4.3.0
+     */
+    @Nonnull @NotEmpty public static final String TRANSFORMED_USERNAME = "tu";
+
+    /**
+     * Identifies the {@link CredentialValidator} used.
+     * 
+     * @since 4.3.0
+     */
+    @Nonnull @NotEmpty public static final String CREDENTIAL_VALIDATOR = "CV";
+
+    /**
+     * Authentication results, either "Success" or any classified error results.
+     * 
+     * @since 4.3.0
+     */
+    @Nonnull @NotEmpty public static final String AUTHN_RESULT = "AR";
+
     /** Constructor. */
     private AuthnAuditFields() {
 

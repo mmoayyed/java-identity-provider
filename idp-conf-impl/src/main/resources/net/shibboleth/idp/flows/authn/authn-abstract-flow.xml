@@ -92,4 +92,6 @@
         <transition on="SubjectCanonicalizationError" to="SubjectCanonicalizationError" />
     </global-transitions>
 
+    <bean-import resource="classpath:/net/shibboleth/idp/flows/authn/authn-abstract-beans.xml" />
+
 </flow>

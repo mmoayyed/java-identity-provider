@@ -21,15 +21,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AccountLockoutManager;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnAuditFields;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.CredentialValidator;
 import net.shibboleth.idp.authn.CredentialValidator.ErrorHandler;
@@ -55,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @since 4.0.0
  */
-public class ValidateCredentials extends AbstractValidationAction implements WarningHandler, ErrorHandler {
+public class ValidateCredentials extends AbstractAuditingValidationAction implements WarningHandler, ErrorHandler {
 
     /** Default prefix for metrics. */
     @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn";
@@ -65,13 +66,13 @@ public class ValidateCredentials extends AbstractValidationAction implements War
     
     /** Ordered list of validators. */
     @Nonnull @NonnullElements private List<CredentialValidator> credentialValidators;
-        
+    
     /** Whether all validators must succeed. */
     private boolean requireAll;
 
     /** Optional lockout management interface. */
     @Nullable private AccountLockoutManager lockoutManager;
-
+    
     /** Results from successful validators. */
     @Nonnull @NonnullElements private Collection<Subject> results;
     
@@ -200,14 +201,15 @@ public class ValidateCredentials extends AbstractValidationAction implements War
                     return;
                 }
             } catch (final Exception e) {
+                if (requireAll || !errorSignaled) {
+                    super.handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
+                    errorSignaled = true;
+                }
+                
                 recordFailure(profileRequestContext);
+                
                 if (requireAll) {
-                    super.handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
-                    errorSignaled = true;
                     break;
-                } else if (!errorSignaled) {
-                    super.handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
-                    errorSignaled = true;
                 }
             }
         }
@@ -251,11 +253,11 @@ public class ValidateCredentials extends AbstractValidationAction implements War
     }
 
     /**
-     * Record a successful authentication attempt against the configured counter,
-     * optionally clearing account lockout state.
+     * {@inheritDoc}
      * 
-     * @param profileRequestContext current profile request context
+     * <p>Also optionally clears account lockout state.</p>
      */
+    @Override
     protected void recordSuccess(@Nonnull final ProfileRequestContext profileRequestContext) {
         // Need to do this first because the superclass's method will call the cleanup hook.
         if (lockoutManager != null) {
@@ -263,9 +265,17 @@ public class ValidateCredentials extends AbstractValidationAction implements War
                 log.warn("{} Failed to clear lockout state", getLogPrefix());
             }
         }
+        
         super.recordSuccess(profileRequestContext);
     }
-
+    
+    /** {@inheritDoc} */
+    @Override
+    @Nullable @NonnullElements protected Map<String,String> getAuditFields(
+            @Nonnull final ProfileRequestContext profileRequestContext) {
+        return Map.of(AuthnAuditFields.CREDENTIAL_VALIDATOR, currentValidator.getId());
+    }
+    
     /**
      * A default cleanup hook that removes the {@link UsernamePasswordContext} from the tree.
      * 

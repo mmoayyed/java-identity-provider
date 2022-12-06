@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!-- The actual abstract-authn flow doesn't use anything in here so far but child flows do. -->
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
+    <!-- Most/all of this is for login flow auditing right now. -->
+
+    <!-- Private copy of AuditContext for login flows. -->
+    <bean id="AuthenticationAuditContextLookup"
+        parent="shibboleth.Functions.Compose">
+        <constructor-arg name="g">
+            <bean id="shibboleth.ChildLookup.AuditContext"
+                class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                c:type="#{ T(net.shibboleth.idp.profile.context.AuditContext) }"
+                c:createContext="true" />
+        </constructor-arg>
+          <constructor-arg name="f">
+            <ref bean="shibboleth.ChildLookup.AuthenticationContext" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="shibboleth.authn.AbstractPopulateAuditContext" abstract="true"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:auditContextCreationStrategy-ref="AuthenticationAuditContextLookup"
+        p:formattingMapParser-ref="shibboleth.authn.AuditFormattingMapParser"
+        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
+        p:fieldReplacements="#{getObject('shibboleth.AuditFieldReplacementMap')}" />
+        
+    <bean id="shibboleth.authn.AuditFormattingMapParser" scope="prototype" lazy-init="true"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext.FormattingMapParser"
+        c:_0-ref="shibboleth.authn.AuditFormattingMap" />
+    
+    <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype" lazy-init="true"
+        p:formattingMap-ref="shibboleth.authn.AuditFormattingMap"
+        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
+        p:includeProfileLoggingId="false"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" 
+        p:activationCondition="%{idp.authn.audit.enabled:false}"
+        p:auditContextLookupStrategy-ref="AuthenticationAuditContextLookup"/>
+
+    <bean id="shibboleth.authn.DefaulAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+             <map>  
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.AUTHN_FLOW_ID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.authn.audit.impl.AttemptedAuthenticationFlowAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.AUTHN_RESULT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.authn.audit.impl.AuthenticationErrorAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SERVICE_PROVIDER"/>
+                    </key>
+                    <ref bean="shibboleth.RelyingPartyIdLookup.Simple" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.SESSION_ID"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Compose">
+                        <constructor-arg name="g">
+                            <bean class="net.shibboleth.idp.session.context.navigate.SessionContextIDLookupFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <ref bean="shibboleth.ChildLookup.SessionContext" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+             </map>
+        </property>
+    </bean>
+
+</beans>
