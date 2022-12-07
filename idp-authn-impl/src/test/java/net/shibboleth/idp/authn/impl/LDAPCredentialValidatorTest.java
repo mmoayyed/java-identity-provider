@@ -171,8 +171,10 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
         Assert.assertNull(ac.getSubcontext(LDAPResponseContext.class));
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class));
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
+        final AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        Assert.assertNotNull(aec);
+        Assert.assertTrue(aec.isClassifiedError(AuthnEventIds.NO_CREDENTIALS));
     }
 
     @Test public void testUnmatchedUser() throws ComponentInitializationException {
@@ -242,11 +244,12 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
 
         Assert.assertNull(ac.getAuthenticationResult());
         Assert.assertNull(ac.getSubcontext(LDAPResponseContext.class));
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        final AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.AUTHN_EXCEPTION);
         Assert.assertEquals(aec.getExceptions().size(), 1);
-        Assert.assertEquals(aec.getClassifiedErrors().size(), 0);
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
+        Assert.assertTrue(aec.isClassifiedError(AuthnEventIds.AUTHN_EXCEPTION));
     }
 
     @Test public void testBadUsername() throws ComponentInitializationException {
@@ -294,8 +297,10 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
         Assert.assertNull(ac.getSubcontext(LDAPResponseContext.class));
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class));
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+        final AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        Assert.assertNotNull(aec);
+        Assert.assertTrue(aec.isClassifiedError(AuthnEventIds.INVALID_CREDENTIALS));
     }
 
     @Test public void testBadPassword() throws ComponentInitializationException {
