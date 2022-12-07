@@ -130,7 +130,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
         }
     }
 
-// Checkstyle: CyclomaticComplexity OFF    
+// Checkstyle: CyclomaticComplexity|MethodLength OFF    
     /** {@inheritDoc} */
     @Override
     @Nullable protected Subject doValidate(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -206,7 +206,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
             throw e;
         }
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
 
     /**
      * Builds a new {@link Subject} populated with the necessary data.
