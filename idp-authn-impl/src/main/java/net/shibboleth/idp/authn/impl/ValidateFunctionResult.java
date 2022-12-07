@@ -131,8 +131,8 @@ public class ValidateFunctionResult extends AbstractAuditingValidationAction {
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         } else {
             log.info("{} Authentication by function failed, result type was invalid", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
-                    AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
+                    AuthnEventIds.INVALID_CREDENTIALS);
             recordFailure(profileRequestContext);
         }
     }

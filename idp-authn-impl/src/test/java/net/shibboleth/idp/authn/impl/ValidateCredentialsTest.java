@@ -204,8 +204,9 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, "InvalidPassword");
-        Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 2);
         Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
+        Assert.assertTrue(aec.isClassifiedError("InvalidCredentials"));
     }
 
     @Test public void testAuthorized() throws ComponentInitializationException {

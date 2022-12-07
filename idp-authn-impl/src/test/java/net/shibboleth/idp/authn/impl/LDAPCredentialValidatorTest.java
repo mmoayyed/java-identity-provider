@@ -175,7 +175,9 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class));
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
+        final AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
@@ -220,7 +222,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(),
                 AuthenticationResultCode.DN_RESOLUTION_FAILURE);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        final AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, "UnknownUsername");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
@@ -255,7 +257,8 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.AUTHN_EXCEPTION);
         System.err.println("EXCEPTIONS:: " + aec.getExceptions());
         Assert.assertEquals(aec.getExceptions().size(), 1);
-        Assert.assertEquals(aec.getClassifiedErrors().size(), 0);
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
+        Assert.assertTrue(aec.isClassifiedError(AuthnEventIds.AUTHN_EXCEPTION));
     }
 
     @Test public void testBadUsername() throws ComponentInitializationException {
@@ -279,7 +282,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(),
                 AuthenticationResultCode.DN_RESOLUTION_FAILURE);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        final AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, "UnknownUsername");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
@@ -302,8 +305,10 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class));
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+        final AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        Assert.assertNotNull(aec);
+        Assert.assertTrue(aec.isClassifiedError(AuthnEventIds.INVALID_CREDENTIALS));
     }
 
     @Test public void testBadPassword() throws ComponentInitializationException {
