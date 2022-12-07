@@ -126,6 +126,8 @@
             </DirectorySearch>
         </Property>
 
+        <Property Id="ALWAYS_START_SERVICE" Value="TRUE" Secure="yes" />
+        <CustomAction Id="PassdownStartService" Property="ALWAYS_START_SERVICE.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Value="[ALWAYS_START_SERVICE]" />
 
         <CustomAction Id="NoJavaBin" Error="Could not locate Java.exe.  Please check the value for JAVA_HOME." />
 
@@ -189,8 +191,9 @@
 
             <Custom Action="InheritInstallJetty" After="AppSearch">OLD_JETTY_INSTALL AND NOT JETTY_INSTALL</Custom>
 
-            <!-- Pass across the instruction about the firewall-->
+            <!-- Pass across the instructions to Jetty-->
             <Custom Action="PassdownNoFireWall" After="AppSearch">NO_FIREWALL_EXCEPTION</Custom>
+            <Custom Action="PassdownStartService" After="AppSearch"/>
 
             <!-- Setup JAVA_IDP_HOME before we use it -->
 

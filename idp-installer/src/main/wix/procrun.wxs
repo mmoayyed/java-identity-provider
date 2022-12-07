@@ -26,6 +26,8 @@
         <Binary Id="DoRandomSrc" SourceFile="scripts\shib_random.vbs" />
         <CustomAction Id="MakeRandom" BinaryKey="DoRandomSrc" VBScriptCall="" Execute="immediate" />
         <InstallExecuteSequence>
+            <!-- Do/Do Not not start service -->
+            <StartServices>(ALWAYS_START_SERVICE = "TRUE")</StartServices>
             <Custom Action="MakeRandom" Before="WriteRegistryValues">NOT Installed</Custom>
         </InstallExecuteSequence>
     </Fragment>
