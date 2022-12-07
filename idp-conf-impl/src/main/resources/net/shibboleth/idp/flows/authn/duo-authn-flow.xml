@@ -57,7 +57,7 @@
 
     <action-state id="LogDuoException">
         <on-entry>
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn.duo').error('DuoWebException', flowExecutionException.getCause())" />
+            <evaluate expression="LogRuntimeException.log('net.shibboleth.idp.authn.duo', flowExecutionException)" />
         </on-entry>
         <evaluate expression="'AuthenticationException'" />
     </action-state>
