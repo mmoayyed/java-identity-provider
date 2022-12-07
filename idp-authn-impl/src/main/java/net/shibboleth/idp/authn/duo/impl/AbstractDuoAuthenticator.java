@@ -131,8 +131,12 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
         if (httpStatusCode == HttpStatus.SC_BAD_REQUEST) {
             final InputStream httpContent = httpResponse.getEntity().getContent();
             final DuoFailureResponse msg = objectMapper.readValue(httpContent, DuoFailureResponse.class);
-            throw new DuoWebException(msg.getMessage() != null ? msg.getMessage() : "no message" + "("
-                    + msg.getMessageDetail() != null ? msg.getMessageDetail() : "no detail" + ")");
+            final StringBuilder builder = new StringBuilder();
+            builder.append(msg.getMessage() != null ? msg.getMessage() : "no message")
+                .append(" (")
+                .append(msg.getMessageDetail() != null ? msg.getMessageDetail() : "no detail")
+                .append(")");
+            throw new DuoWebException(builder.toString());
         }
         if (httpStatusCode != HttpStatus.SC_OK) {
             throw new IOException("Non-ok status code (" + httpStatusCode + ") returned from Duo: "
