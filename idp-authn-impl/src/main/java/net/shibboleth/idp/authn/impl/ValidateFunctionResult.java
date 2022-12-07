@@ -18,22 +18,24 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -53,7 +55,7 @@ import net.shibboleth.shared.logic.ConstraintViolationException;
  * 
  * @since 3.4.0
  */
-public class ValidateFunctionResult extends AbstractValidationAction {
+public class ValidateFunctionResult extends AbstractAuditingValidationAction {
 
     /** Default prefix for metrics. */
     @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.function";
@@ -99,11 +101,19 @@ public class ValidateFunctionResult extends AbstractValidationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        result = resultLookupStrategy.apply(profileRequestContext);
+        try {
+            result = resultLookupStrategy.apply(profileRequestContext);
+        } catch (final Exception e) {
+            log.info("{} Authentication by function failed with exception", getLogPrefix(), e);
+            handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
+            recordFailure(profileRequestContext);
+            return;
+        }
 
         if (result == null) {
             log.info("{} Authentication by function failed", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
+                    AuthnEventIds.NO_CREDENTIALS);
             recordFailure(profileRequestContext);
         } else if (result instanceof String) {
             log.info("{} Validated user via name '{}'", getLogPrefix(), result);
@@ -119,7 +129,8 @@ public class ValidateFunctionResult extends AbstractValidationAction {
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         } else {
             log.info("{} Authentication by function failed, result type was invalid", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
+                    AuthnEventIds.NO_CREDENTIALS);
             recordFailure(profileRequestContext);
         }
     }
@@ -143,5 +154,40 @@ public class ValidateFunctionResult extends AbstractValidationAction {
         // Save my walrus!
         throw new ConstraintViolationException("Result type was unexpected");
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    @Nullable protected Map<String,String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        if (result instanceof String) {
+            return Collections.singletonMap(IdPAuditFields.USERNAME, (String) result);
+        } else if (result instanceof UsernamePrincipal) {
+            return Collections.singletonMap(IdPAuditFields.USERNAME, ((UsernamePrincipal) result).getName());
+        } else if (result instanceof Subject) {
+            final String name = getUsername((Subject) result);
+            if (name != null) {
+                return Collections.singletonMap(IdPAuditFields.USERNAME, name);
+            }
+        }
+        
+        return super.getAuditFields(profileRequestContext);
+    }
+
+    /**
+     * Get the username from a {@link UsernamePrincipal} inside the subject.
+     * 
+     * @param subject input subject
+     * 
+     * @return username, or null
+     */
+    @Nullable private String getUsername(@Nonnull final Subject subject) {
+        
+        final Set<UsernamePrincipal> princs = subject.getPrincipals(UsernamePrincipal.class);
+        if (princs != null && !princs.isEmpty()) {
+            return princs.iterator().next().getName();
+        }
+        
+        return null;
+    }
+
 }

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -45,10 +46,10 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.CertificateContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
-import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceException;
@@ -260,21 +261,52 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
     private boolean checkUsername(@Nonnull final Subject subject) {
         
         if (matchExpression != null) {
-            final Set<UsernamePrincipal> princs = subject.getPrincipals(UsernamePrincipal.class);
-            if (princs != null && !princs.isEmpty()) {
-                if (matchExpression.matcher(princs.iterator().next().getName()).matches()) {
+            final String name = getUsername(subject);
+            if (name != null) {
+                if (matchExpression.matcher(name).matches()) {
                     return true;
                 }
                 
-                log.info("{} Username did not match expression", getLogPrefix());
+                log.info("{} Username {} did not match expression", getLogPrefix(), name);
                 return false;
             }
             
-            log.info("{} Match expression set, but not UsernamePrincipal found");
+            log.info("{} Match expression set, but no UsernamePrincipal found");
             return false;
         }
         
         return true;
+    }
+    
+    /**
+     * Get the username from a {@link UsernamePrincipal} inside the subject.
+     * 
+     * @param subject input subject
+     * 
+     * @return username, or null
+     */
+    @Nullable private String getUsername(@Nonnull final Subject subject) {
+        
+        final Set<UsernamePrincipal> princs = subject.getPrincipals(UsernamePrincipal.class);
+        if (princs != null && !princs.isEmpty()) {
+            return princs.iterator().next().getName();
+        }
+        
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nullable protected Map<String,String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        if (extContext != null && extContext.getSubject() != null) {
+            final String name = getUsername(extContext.getSubject());
+            if (name != null) {
+                return Collections.singletonMap(IdPAuditFields.USERNAME, name);
+            }
+        }
+        
+        return super.getAuditFields(profileRequestContext);
     }
     
     /**
@@ -334,27 +366,6 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         
         if (!extContext.getAuthenticatingAuthorities().isEmpty()) {
             filterContext.setAttributeIssuerID(extContext.getAuthenticatingAuthorities().iterator().next());
-        }
-    }
-    
-    /**
-     * A default cleanup hook that removes a {@link UsernameContext} from the tree.
-     * 
-     * @since 4.3.0
-     */
-    public static class UsernameCleanupHook implements Consumer<ProfileRequestContext> {
-
-        /** {@inheritDoc} */
-        public void accept(@Nullable final ProfileRequestContext input) {
-            if (input != null) {
-                final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
-                if (authnCtx != null) {
-                    final UsernameContext uCtx = authnCtx.getSubcontext(UsernameContext.class);
-                    if (uCtx != null) {
-                        authnCtx.removeSubcontext(uCtx);
-                    }
-                }
-            }
         }
     }
 

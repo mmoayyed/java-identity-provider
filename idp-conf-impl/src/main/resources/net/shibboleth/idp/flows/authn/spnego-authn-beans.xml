@@ -47,19 +47,39 @@
     <!-- Action beans. -->
 
     <bean id="ValidateExternalAuthentication"
-            class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
-            p:metricName="net.shibboleth.idp.authn.spnego"
-            p:matchExpression="#{getObject('shibboleth.authn.SPNEGO.matchExpression') ?: '%{idp.authn.SPNEGO.matchExpression:}'}"
-            p:addDefaultPrincipals="#{getObject('shibboleth.authn.SPNEGO.addDefaultPrincipals') ?: %{idp.authn.SPNEGO.addDefaultPrincipals:true}}"
-            p:classifiedMessages="#{getObject('shibboleth.authn.SPNEGO.ClassifiedMessageMap')}" />
+        class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
+        p:metricName="net.shibboleth.idp.authn.spnego"
+        p:matchExpression="#{getObject('shibboleth.authn.SPNEGO.matchExpression') ?: '%{idp.authn.SPNEGO.matchExpression:}'}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.SPNEGO.addDefaultPrincipals') ?: %{idp.authn.SPNEGO.addDefaultPrincipals:true}}"
+        p:classifiedMessages="#{getObject('shibboleth.authn.SPNEGO.ClassifiedMessageMap')}"
+        p:populateAuditContextAction="#{%{idp.authn.SPNEGO.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.SPNEGO.PopulateAuditContext') : null}"
+        p:writeAuditLogAction="#{%{idp.authn.SPNEGO.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
             
     <bean id="SPNEGOAutoLoginManager"
-          class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAutoLoginManager"
-          p:cookieManager-ref="shibboleth.UserPrefsCookieManager"
-          p:cookieName="%{idp.authn.SPNEGO.cookieName:_idp_spnego_autologin}" />
+        class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAutoLoginManager"
+        p:cookieManager-ref="shibboleth.UserPrefsCookieManager"
+        p:cookieName="%{idp.authn.SPNEGO.cookieName:_idp_spnego_autologin}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
         p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
+
+    <!-- Audit logging beans. -->
+
+    <util:map id="shibboleth.authn.AuditFormattingMap">
+        <entry key="#{'%{idp.authn.SPNEGO.audit.category:Shibboleth-Audit.SPNEGO}'.trim()}"
+            value="#{'%{idp.authn.SPNEGO.audit.format:%a|%T|%SP|%s|%AF|%u|%AR|%UA}'.trim()}" />
+    </util:map>
+
+    <bean id="shibboleth.authn.SPNEGO.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+             <map merge="true" />
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.authn.SPNEGO.PopulateAuditContext" parent="shibboleth.authn.AbstractPopulateAuditContext" lazy-init="true"
+        p:fieldExtractors="#{getObject('shibboleth.authn.SPNEGO.AuditExtractors') ?: getObject('shibboleth.authn.SPNEGO.DefaultAuditExtractors')}"
+        p:clearAuditContext="true" />
 
 </beans>

@@ -15,6 +15,9 @@
     <!--
     The entire flow depends on the execution of a function bean you supply. A pathological script example
     is below. The function may return a String, Principal, Subject, or a null to signal failure.
+    
+    You may also raise an exception and install a bean named shibboleth.authn.Function.ClassifiedMessageMap
+    to map exception messages to events.
     -->
     
     <bean id="shibboleth.authn.Function.ResultLookupStrategy"

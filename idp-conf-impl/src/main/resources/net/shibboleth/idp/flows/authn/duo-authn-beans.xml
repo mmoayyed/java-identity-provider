@@ -44,20 +44,9 @@
                 <value>Your two-factor account is disabled.</value>
             </list>
         </entry>
-        <entry key="RequestUnsupported">
-            <list>
-                <value>RequestUnsupported</value>
-            </list>
-        </entry>
         <entry key="NoCredentials">
             <list>
-                <value>NoCredentials</value>
                 <value>Invalid request parameters (no capable device)</value>
-            </list>
-        </entry>
-        <entry key="InvalidCredentials">
-            <list>
-                <value>InvalidCredentials</value>
             </list>
         </entry>
     </util:map>

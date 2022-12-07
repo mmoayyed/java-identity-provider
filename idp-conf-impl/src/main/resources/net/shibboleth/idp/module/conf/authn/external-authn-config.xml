@@ -25,32 +25,17 @@
     kinds of errors for use in your templates and as events in flows.
 
     Keys are events to signal, values are error codes.
-
-    The examples here just allow external signaling of the exact type of condition to record.
     
     If you want to "fall-through" to other login flows, include a mapping to "ReselectFlow".
     -->
+    <!--
     <util:map id="shibboleth.authn.External.ClassifiedMessageMap">
-        <entry key="UnknownUsername">
+        <entry key="ReselectFlow">
             <list>
                 <value>UnknownUsername</value>
             </list>
         </entry>
-        <entry key="InvalidPassword">
-            <list>
-                <value>InvalidPassword</value>
-            </list>
-        </entry>
-        <entry key="ExpiredPassword">
-            <list>
-                <value>ExpiredPassword</value>
-            </list>
-        </entry>
-        <entry key="ExpiringPassword">
-            <list>
-                <value>ExpiringPassword</value>
-            </list>
-        </entry>
     </util:map>
+    -->
     
 </beans>

@@ -31,24 +31,4 @@
 
     </util:list>
 
-    <!--
-    Define entries here to map events or error messages returned by the SPNEGO module
-    and classify them as particular kinds of errors for use in your templates and as
-    events in flows.
-
-    Keys are events to signal, values are error codes.
-    -->
-    <util:map id="shibboleth.authn.SPNEGO.ClassifiedMessageMap">
-        <entry key="SPNEGONotAvailable">
-            <list>
-                <value>SPNEGONotAvailable</value>
-            </list>
-        </entry>
-        <entry key="NTLMUnsupported">
-            <list>
-                <value>NTLMUnsupported</value>
-            </list>
-        </entry>
-    </util:map>
- 
 </beans>

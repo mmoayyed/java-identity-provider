@@ -31,10 +31,30 @@
         p:classifiedMessages="#{getObject('shibboleth.authn.External.ClassifiedMessageMap')}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.External.resultCachingPredicate')}"
         c:filterService-ref="shibboleth.AttributeFilterService"
-        p:metadataResolver-ref="shibboleth.MetadataResolver" />
+        p:metadataResolver-ref="shibboleth.MetadataResolver"
+        p:populateAuditContextAction="#{%{idp.authn.External.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.External.PopulateAuditContext') : null}"
+        p:writeAuditLogAction="#{%{idp.authn.External.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
         p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
+
+    <!-- Audit logging beans. -->
+
+    <util:map id="shibboleth.authn.AuditFormattingMap">
+        <entry key="#{'%{idp.authn.External.audit.category:Shibboleth-Audit.External}'.trim()}"
+            value="#{'%{idp.authn.External.audit.format:%a|%T|%SP|%s|%AF|%u|%AR|%UA}'.trim()}" />
+    </util:map>
+
+    <bean id="shibboleth.authn.External.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+             <map merge="true" />
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.authn.External.PopulateAuditContext" parent="shibboleth.authn.AbstractPopulateAuditContext" lazy-init="true"
+        p:fieldExtractors="#{getObject('shibboleth.authn.External.AuditExtractors') ?: getObject('shibboleth.authn.External.DefaultAuditExtractors')}"
+        p:clearAuditContext="true" />
 
 </beans>

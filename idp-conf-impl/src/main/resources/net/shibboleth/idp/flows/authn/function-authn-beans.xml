@@ -29,10 +29,31 @@
     <bean id="ValidateFunctionResult" class="net.shibboleth.idp.authn.impl.ValidateFunctionResult" scope="prototype"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Function.addDefaultPrincipals') ?: %{idp.authn.Function.addDefaultPrincipals:true}}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.Function.resultCachingPredicate')}"
-        p:resultLookupStrategy="#{getObject('shibboleth.authn.Function.ResultLookupStrategy') ?: getObject('DefaultResultLookupStrategy')}" />
+        p:classifiedMessages="#{getObject('shibboleth.authn.Function.ClassifiedMessageMap')}"
+        p:resultLookupStrategy="#{getObject('shibboleth.authn.Function.ResultLookupStrategy') ?: getObject('DefaultResultLookupStrategy')}"
+        p:populateAuditContextAction="#{%{idp.authn.Function.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.Function.PopulateAuditContext') : null}"
+        p:writeAuditLogAction="#{%{idp.authn.Function.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
         p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
+
+    <!-- Audit logging beans. -->
+
+    <util:map id="shibboleth.authn.AuditFormattingMap">
+        <entry key="#{'%{idp.authn.Function.audit.category:Shibboleth-Audit.Function}'.trim()}"
+            value="#{'%{idp.authn.Function.audit.format:%a|%T|%SP|%s|%AF|%u|%AR|%UA}'.trim()}" />
+    </util:map>
+
+    <bean id="shibboleth.authn.Function.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+             <map merge="true" />
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.authn.Function.PopulateAuditContext" parent="shibboleth.authn.AbstractPopulateAuditContext" lazy-init="true"
+        p:fieldExtractors="#{getObject('shibboleth.authn.Function.AuditExtractors') ?: getObject('shibboleth.authn.Function.DefaultAuditExtractors')}"
+        p:clearAuditContext="true" />
 
 </beans>
