@@ -18,6 +18,8 @@
 package net.shibboleth.idp.authn.duo.impl;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import com.duosecurity.duoweb.DuoWebException;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
+import net.shibboleth.idp.authn.AuthnAuditFields;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
@@ -40,6 +43,8 @@ import net.shibboleth.idp.authn.duo.DuoAuthAPI;
 import net.shibboleth.idp.authn.duo.DuoIntegration;
 import net.shibboleth.idp.authn.duo.DuoPrincipal;
 import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
+import net.shibboleth.idp.authn.impl.AbstractAuditingValidationAction;
+import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -70,7 +75,7 @@ import net.shibboleth.shared.logic.FunctionSupport;
  *       {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, String, String)}
  *       method is called.
  */
-public class ValidateDuoAuthAPI extends AbstractValidationAction {
+public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
 
     /** Default prefix for metrics. */
     @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.duo";
@@ -319,4 +324,29 @@ public class ValidateDuoAuthAPI extends AbstractValidationAction {
         profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName(username);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @Nullable protected Map<String,String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
+        final Map<String,String> fields = new HashMap<>();
+        
+        if (username != null) {
+            fields.put(IdPAuditFields.USERNAME, username);
+        }
+        
+        if (duoIntegration != null) {
+            fields.put(AuthnAuditFields.DUO_CLIENT_ID, duoIntegration.getIntegrationKey());
+        }
+        
+        if (duoContext != null) {
+            if (duoContext.getDeviceID() != null) {
+                fields.put(AuthnAuditFields.DUO_DEVICE_ID, duoContext.getDeviceID());
+            }
+            if (duoContext.getFactor() != null) {
+                fields.put(AuthnAuditFields.DUO_FACTOR, duoContext.getFactor());
+            }
+        }
+        
+        return Map.copyOf(fields);
+    }
+    
 }

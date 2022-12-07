@@ -44,6 +44,22 @@
                 <value>Your two-factor account is disabled.</value>
             </list>
         </entry>
+        <entry key="RequestUnsupported">
+            <list>
+                <value>RequestUnsupported</value>
+            </list>
+        </entry>
+        <entry key="NoCredentials">
+            <list>
+                <value>NoCredentials</value>
+                <value>Invalid request parameters (no capable device)</value>
+            </list>
+        </entry>
+        <entry key="InvalidCredentials">
+            <list>
+                <value>InvalidCredentials</value>
+            </list>
+        </entry>
     </util:map>
 
     <!-- Can override one or more of the beans above. -->
@@ -57,7 +73,9 @@
         p:usernameLookupStrategy-ref="shibboleth.authn.Duo.UsernameLookupStrategy"
         p:duoIntegrationLookupStrategy-ref="shibboleth.authn.Duo.DuoIntegrationStrategy"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: %{idp.authn.Duo.addDefaultPrincipals:true}}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.Duo.resultCachingPredicate')}" />
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.Duo.resultCachingPredicate')}"
+        p:populateAuditContextAction="#{%{idp.authn.Duo.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.Duo.PopulateAuditContext') : null}"
+        p:writeAuditLogAction="#{%{idp.authn.Duo.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
 
     <bean id="ExtractDuoAuthenticationFromHeaders" scope="prototype"
         class="net.shibboleth.idp.authn.duo.impl.ExtractDuoAuthenticationFromHeaders"
@@ -89,6 +107,26 @@
         p:preauthAuthenticator-ref="DuoPreauthAuthenticator"
         p:authAuthenticator-ref="DuoAuthAuthenticator"
         p:classifiedMessages="#{getObject('shibboleth.authn.Duo.ClassifiedMessageMap')}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.Duo.resultCachingPredicate')}" />
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.Duo.resultCachingPredicate')}"
+        p:populateAuditContextAction="#{%{idp.authn.Duo.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.Duo.PopulateAuditContext') : null}"
+        p:writeAuditLogAction="#{%{idp.authn.Duo.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
+
+    <!-- Audit logging beans. -->
+
+    <util:map id="shibboleth.authn.AuditFormattingMap">
+        <entry key="#{'%{idp.authn.Duo.audit.category:Shibboleth-Audit.Duo}'.trim()}"
+            value="#{'%{idp.authn.Duo.audit.format:%a|%T|%SP|%s|%AF|%u|%AR|%DuoCID|%DuoF|%DuoDID|%UA}'.trim()}" />
+    </util:map>
+
+    <bean id="shibboleth.authn.Duo.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+             <map merge="true" />
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.authn.Duo.PopulateAuditContext" parent="shibboleth.authn.AbstractPopulateAuditContext" lazy-init="true"
+        p:fieldExtractors="#{getObject('shibboleth.authn.Duo.AuditExtractors') ?: getObject('shibboleth.authn.Duo.DefaultAuditExtractors')}"
+        p:clearAuditContext="true" />
 
 </beans>
