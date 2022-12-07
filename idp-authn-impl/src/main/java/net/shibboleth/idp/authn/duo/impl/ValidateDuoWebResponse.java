@@ -26,14 +26,18 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Map;
 import java.util.function.Function;
 
-import net.shibboleth.idp.authn.AbstractValidationAction;
+import net.shibboleth.idp.authn.AuthnAuditFields;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.duo.DuoIntegration;
 import net.shibboleth.idp.authn.duo.DuoPrincipal;
+import net.shibboleth.idp.authn.impl.AbstractAuditingValidationAction;
+import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -54,7 +58,7 @@ import com.duosecurity.duoweb.DuoWebException;
  * 
  * <p>The username to cross-check comes from a lookup strategy, by default a {@link CanonicalUsernameLookupStrategy}
  * that returns a username produced by an earlier authentication flow, and on success the same name is populated into
- * a {@link SubjectCanonicalizationContext} as a pre-established result for the login flow.
+ * a {@link SubjectCanonicalizationContext} as a pre-established result for the login flow.</p>
  *  
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
@@ -64,7 +68,7 @@ import com.duosecurity.duoweb.DuoWebException;
  * 
  * @since 3.3.0
  */
-public class ValidateDuoWebResponse extends AbstractValidationAction {
+public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
 
     /** Signed response parameter name. */
     @Nonnull @NotEmpty public static final String RESPONSE_PARAM = "sig_response";
@@ -151,21 +155,24 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
         username = usernameLookupStrategy.apply(profileRequestContext);
         if (username == null) {
             log.warn("{} No principal name available to cross-check Duo result", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
+                    AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
         final ServletRequest servletRequest = getHttpServletRequest();
         if (servletRequest == null) {
             log.error("{} No ServletRequest available", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
+                    AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
         
         signedResponse = servletRequest.getParameter(RESPONSE_PARAM);
         if (signedResponse == null || signedResponse.isEmpty()) {
             log.warn("{} No signed Duo response in the request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
+                    AuthnEventIds.NO_CREDENTIALS);
             recordFailure(profileRequestContext);
             return false;
         }
@@ -220,7 +227,23 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
         // Bypass c14n. We already operate on a canonical name, so just re-confirm it.
         profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName(username);
     }
-    
-    
+
+    /** {@inheritDoc} */
+    @Override
+    @Nullable protected Map<String,String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        if (username != null) {
+            if (duoIntegration != null) {
+                return Map.of(AuthnAuditFields.DUO_CLIENT_ID, duoIntegration.getIntegrationKey(),
+                        IdPAuditFields.USERNAME, username);
+            } else {
+                return Collections.singletonMap(IdPAuditFields.USERNAME, username);
+            }
+        } else if (duoIntegration != null) {
+            return Collections.singletonMap(AuthnAuditFields.DUO_CLIENT_ID, duoIntegration.getIntegrationKey());
+        }
+        
+        return super.getAuditFields(profileRequestContext);
+    }
     
 }

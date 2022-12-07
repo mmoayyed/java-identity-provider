@@ -73,6 +73,27 @@ public final class AuthnAuditFields {
      */
     @Nonnull @NotEmpty public static final String X509_ISSUER = "X509I";
 
+    /**
+     * Duo client/integration key/ID.
+     * 
+     * @since 4.3.0
+     */
+    @Nonnull @NotEmpty public static final String DUO_CLIENT_ID = "DuoCID";
+
+    /**
+     * Duo device ID.
+     * 
+     * @since 4.3.0
+     */
+    @Nonnull @NotEmpty public static final String DUO_DEVICE_ID = "DuoDID";
+
+    /**
+     * Duo factor.
+     * 
+     * @since 4.3.0
+     */
+    @Nonnull @NotEmpty public static final String DUO_FACTOR = "DuoF";
+
     /** Constructor. */
     private AuthnAuditFields() {
 
