@@ -18,25 +18,6 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <!-- Default message map. -->
-    <util:map id="shibboleth.authn.IPAddress.ClassifiedMessageMap">
-        <entry key="RequestUnsupported">
-            <list>
-                <value>RequestUnsupported</value>
-            </list>
-        </entry>
-        <entry key="NoCredentials">
-            <list>
-                <value>NoCredentials</value>
-            </list>
-        </entry>
-        <entry key="InvalidCredentials">
-            <list>
-                <value>InvalidCredentials</value>
-            </list>
-        </entry>
-    </util:map>
-
     <import resource="conditional:%{idp.home}/conf/authn/ipaddress-authn-config.xml" />
     
     <bean id="ExtractUserAgentAddress" class="net.shibboleth.idp.authn.impl.ExtractUserAgentAddress" scope="prototype"

@@ -39,7 +39,6 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -189,7 +188,8 @@ public class RemoteUserAuthServlet extends HttpServlet {
             }
         }
 
-        param = config.getInitParameter(CHECK_HEADERS_PARAM);
+        //param = config.getInitParameter(CHECK_HEADERS_PARAM);
+        param = "ShibbolethUser";
         if (param != null) {
             final String[] headers = param.split(" ");
             if (headers != null) {
@@ -282,14 +282,6 @@ public class RemoteUserAuthServlet extends HttpServlet {
                 log.info("{}: User identity not found in request", key);
                 ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                 return;
-            }
-            
-            // Populate the username into a UsernameContext for auditing.
-            final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, httpRequest);
-            final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
-            if (authnCtx != null) {
-                final UsernameContext uc = authnCtx.getSubcontext(UsernameContext.class, true);
-                uc.setUsername(username);
             }
             
             if (authnAuthorityHeader != null) {

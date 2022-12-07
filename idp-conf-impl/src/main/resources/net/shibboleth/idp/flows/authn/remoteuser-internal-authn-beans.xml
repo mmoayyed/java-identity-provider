@@ -24,25 +24,6 @@
     <bean id="shibboleth.authn.RemoteUser.checkAttributes" parent="shibboleth.CommaDelimStringArray"
         c:_0="#{'%{idp.authn.RemoteUserInternal.checkAttributes:}'.trim()}" />
 
-    <!-- Default message map. -->
-    <util:map id="shibboleth.authn.RemoteUser.ClassifiedMessageMap">
-        <entry key="RequestUnsupported">
-            <list>
-                <value>RequestUnsupported</value>
-            </list>
-        </entry>
-        <entry key="NoCredentials">
-            <list>
-                <value>NoCredentials</value>
-            </list>
-        </entry>
-        <entry key="InvalidCredentials">
-            <list>
-                <value>InvalidCredentials</value>
-            </list>
-        </entry>
-    </util:map>
-
     <import resource="conditional:%{idp.home}/conf/authn/remoteuser-internal-authn-config.xml" />
 
     <bean class="net.shibboleth.ext.spring.util.DeprecatedBeanDetector" c:_1="remoteuser-internal-authn-config.xml">
