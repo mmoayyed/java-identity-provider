@@ -548,6 +548,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         }
         
         if (!eventSet) {
+            authenticationContext.getSubcontext(AuthenticationErrorContext.class,
+                    true).getClassifiedErrors().add(eventId);
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }
     }
@@ -589,6 +591,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         }
         
         if (!eventSet) {
+            authenticationContext.getSubcontext(AuthenticationWarningContext.class,
+                    true).getClassifiedWarnings().add(eventId);
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }
     }
