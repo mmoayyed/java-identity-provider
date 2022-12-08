@@ -227,6 +227,7 @@
             p:ignoreComments="true"
             p:ignoreElementContentWhitespace="true"
             p:namespaceAware="true"
+            p:entityResolver="#{%{idp.xml.strictEntityResolution:true} ? getObject('shibboleth.ThrowingEntityResolver') : null}"
             p:securityManagerAttributeName="http://apache.org/xml/properties/security-manager">
         <property name="builderFeatures">
             <map>
@@ -242,6 +243,9 @@
             </map>
         </property>
     </bean>
+    
+    <bean id="shibboleth.ThrowingEntityResolver"
+        class="net.shibboleth.shared.xml.impl.ThrowingEntityResolver" lazy-init="true" />
 
     <!--  Bean used by the SchemaValidation metadata filter and anything else doing basic schema validation. -->
     <bean id="shibboleth.SchemaBuilder" lazy-init="true"
