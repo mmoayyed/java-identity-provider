@@ -163,6 +163,27 @@
 
         <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#2048" />
 
+        <!-- Actions to add an appropriate ACE to existing file when we are running as a user -->
+        <CustomAction Id="SetACEUser" Property="ACE_USER" Value="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]\[JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" />
+        <CustomAction Id="SetACEConf" Property="QtSetACEConf" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\conf&quot; /e /t /g [ACE_USER]:r" />
+        <CustomAction Id="SetACECreds" Property="QtSetACECreds" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\credentials&quot; /e /t /g [ACE_USER]:r" />
+        <CustomAction Id="SetACELogs" Property="QtSetACELogs" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\logs&quot; /e /t /g [ACE_USER]:f" />
+
+        <CustomAction Id="QtSetACEConf" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+        <CustomAction Id="QtSetACECreds" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+        <CustomAction Id="QtSetACELogs" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+        <CustomAction Id="SetACEJettyStart" Property="QtSetACEJettyStart" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\jetty-base\start.d&quot; /e /t /g [ACE_USER]:r" />
+        <CustomAction Id="SetACEJettyLogs" Property="QtSetACEJettyLogs" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\jetty-base\logs&quot; /e /t /g [ACE_USER]:f" />
+        <CustomAction Id="SetACEJettyTmp" Property="QtSetACEJettyTmp" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\jetty-base\tmp&quot; /e /t /g [ACE_USER]:f" />
+
+        <CustomAction Id="QtSetACEJettyStart" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+        <CustomAction Id="QtSetACEJettyLogs" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+        <CustomAction Id="QtSetACEJettyTmp" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+        <CustomAction Id="SetACEProcrunLog" Property="QtSetACEProcrunLog" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[SHIBBOLETHDIR]ProcRun\log&quot; /e /t /g [ACE_USER]:f" />
+        <CustomAction Id="QtSetACEProcrunLog" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
         <InstallUISequence>
 
             <!-- inherit installationDir if there is something to inherit (Conditions set in ShibolethIdP-registry) -->
@@ -174,13 +195,9 @@
             <Custom Action="InheritInstallJetty" After="AppSearch">OLD_INSTALL_JETTY AND NOT INSTALL_JETTY</Custom>
 
             <!-- Could we find JAVA.EXE ?-->
-            <Custom Action="NoJavaBin" After="AppSearch">
-        NOT JAVA_EXECUTABLE and NOT Installed
-      </Custom>
+            <Custom Action="NoJavaBin" After="AppSearch">NOT JAVA_EXECUTABLE and NOT Installed</Custom>
 
-            <Custom Action="SetDNSName" After="AppSearch">
-        NOT DNSNAME
-      </Custom>
+            <Custom Action="SetDNSName" After="AppSearch">NOT DNSNAME</Custom>
 
         </InstallUISequence>
 
@@ -194,6 +211,28 @@
             <!-- Pass across the instructions to Jetty-->
             <Custom Action="PassdownNoFireWall" After="AppSearch">NO_FIREWALL_EXCEPTION</Custom>
             <Custom Action="PassdownStartService" After="AppSearch"/>
+
+            <!-- Do the ACE setting just after the directories -->
+            <Custom Action="SetACEUser" After="CreateFolders">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+
+            <Custom Action="SetACEConf"  After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+            <Custom Action="SetACECreds" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+            <Custom Action="SetACELogs" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+
+            <Custom Action="QtSetACEConf" After="SetACEConf">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+            <Custom Action="QtSetACECreds" After="SetACECreds">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+            <Custom Action="QtSetACELogs" After="SetACELogs">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+
+            <Custom Action="SetACEJettyStart" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+            <Custom Action="SetACEJettyLogs" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+            <Custom Action="SetACEJettyTmp" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+
+            <Custom Action="QtSetACEJettyStart"  After="SetACEJettyStart">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+            <Custom Action="QtSetACEJettyLogs"  After="SetACEJettyLogs">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+            <Custom Action="QtSetACEJettyTmp"  After="SetACEJettyTmp">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+
+            <Custom Action="SetACEProcrunLog" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
+            <Custom Action="QtSetACEProcrunLog"  After="SetACEProcrunLog">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
 
             <!-- Setup JAVA_IDP_HOME before we use it -->
 

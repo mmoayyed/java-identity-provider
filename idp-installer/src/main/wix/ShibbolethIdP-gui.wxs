@@ -46,7 +46,7 @@ permissions and limitations under the License.  -->
         <DialogRef Id="LicenseAgreementDlg" />
         <DialogRef Id="WelcomeDlg" />
 
-  	<!-- "In addition, WixUI_InstallDir includes the following common
+        <!-- "In addition, WixUI_InstallDir includes the following common
              dialogs that appear in all WixUI dialog sets:" -->
         <DialogRef Id="CancelDlg" />
         <DialogRef Id="ErrorDlg" />
@@ -121,6 +121,10 @@ permissions and limitations under the License.  -->
 
         <ProgressText Action="QtIdpAnt">Performing IdP Installation tasks; this may take some time.</ProgressText>
         <ProgressText Action="QtJettyAnt">Configuring Jetty</ProgressText>
+        <ProgressText Action="QtSetACEJettyLogs">Setting ACE onto the Jetty Logs</ProgressText>
+        <ProgressText Action="QtSetACEJettyTmp">Setting ACE onto the Jetty TMP dir</ProgressText>
+        <ProgressText Action="QtSetACEProcrunLog">Setting ACE onto the ProcRun Logs</ProgressText>
+
     </UI>
   </Fragment>
 </Wix>
