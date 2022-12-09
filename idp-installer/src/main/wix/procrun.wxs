@@ -87,7 +87,11 @@
             <Component Id="ServiceParameters" Directory="PROCRUNROOT" Guid="{EC1EA760-0113-4CAD-9719-ADFF1885FC53}" KeyPath="yes">
                 <Condition>NOT Installed</Condition>
                 <!-- Start component here - that way if the start fails the user will be prompted and things will continue with the service declared. -->
-                <RegistryKey ForceCreateOnInstall="yes" Key="SYSTEM\CurrentControlSet\services\$(var.ServiceName)\Parameters" Root="HKLM" />
+                <RegistryKey ForceDeleteOnUninstall="yes" ForceCreateOnInstall="yes" Key="SYSTEM\CurrentControlSet\services\$(var.ServiceName)\Parameters" Root="HKLM">
+                    <Permission User="Administrators" GenericAll="yes" />
+                    <Permission User="SYSTEM" GenericAll="yes" />
+                    <Permission Domain="[JETTYD_DOMAIN]" User="[PERMISSION_USER]" GenericRead="yes" GenericExecute="yes" Read="yes" />
+                </RegistryKey>
                 <ServiceControl Id="controlService" Name="$(var.ServiceName)" Stop="install" Start="install" Wait="no" />
                 <ServiceControl Id="controlServiceUninstall" Name="$(var.ServiceName)" Stop="uninstall" Remove="uninstall" Wait="yes" />
             </Component>
@@ -100,6 +104,9 @@
                         <MultiStringValue>STOP.PORT=8963</MultiStringValue>
                         <MultiStringValue>STOP.Key=[JETTY_PASS]</MultiStringValue>
                     </RegistryValue>
+                    <Permission User="Administrators" GenericAll="yes" />
+                    <Permission User="SYSTEM" GenericAll="yes" />
+                    <Permission Domain="[JETTYD_DOMAIN]" User="[PERMISSION_USER]" GenericRead="yes" GenericExecute="yes" Read="yes" />
                 </RegistryKey>
             </Component>
             <Component Id="cmpF05C4062771C368BB8F3DD6673EECF15" Directory="PROCRUNROOT" Guid="{BB7062F1-573B-40BF-A761-21C31A897881}" KeyPath="yes">
@@ -111,21 +118,30 @@
                         <MultiStringValue>STOP.PORT=8963</MultiStringValue>
                         <MultiStringValue>STOP.Key=[JETTY_PASS]</MultiStringValue>
                     </RegistryValue>
+                    <Permission User="Administrators" GenericAll="yes" />
+                    <Permission User="SYSTEM" GenericAll="yes" />
+                    <Permission Domain="[JETTYD_DOMAIN]" User="[PERMISSION_USER]" GenericRead="yes" GenericExecute="yes" Read="yes" />
                 </RegistryKey>
             </Component>
             <Component Id="cmpBE4E97DA105319AE7A75741FACA90364" Directory="PROCRUNROOT" Guid="{0FA07510-6387-4D0D-8984-86C17759B745}" KeyPath="yes">
-                <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Log" Root="HKLM">
+                <RegistryKey ForceDeleteOnUninstall="yes" ForceCreateOnInstall="yes" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Log" Root="HKLM">
                     <RegistryValue Name="Path" Value="[PROCRUNROOT]\log" Type="string" />
                     <RegistryValue Name="StdError" Value="auto" Type="string" />
                     <RegistryValue Name="StdOutput" Value="auto" Type="string" />
+                    <Permission User="Administrators" GenericAll="yes" />
+                    <Permission User="SYSTEM" GenericAll="yes" />
+                    <Permission Domain="[JETTYD_DOMAIN]" User="[PERMISSION_USER]" GenericRead="yes" GenericExecute="yes" Read="yes" />
                 </RegistryKey>
             </Component>
             <Component Id="cmpD450CE822D5D1E635C3D66423D0E27B8" Directory="PROCRUNROOT" Guid="{62BACF23-6B8B-43C6-9B37-3992D6B86E5C}" KeyPath="yes">
-                <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Java" Root="HKLM">
+                <RegistryKey ForceDeleteOnUninstall="yes" ForceCreateOnInstall="yes" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Java" Root="HKLM">
                     <RegistryValue Name="JavaHome" Value="[%JAVA_HOME]" Type="string" />
                     <RegistryValue Name="Jvm" Value="auto" Type="string" />
                     <RegistryValue Name="Classpath" Value="[JETTYROOT]\start.jar" Type="string" />
                     <RegistryValue Name="JvmMs" Value="256" Type="integer" />
+                    <Permission User="Administrators" GenericAll="yes" />
+                    <Permission User="SYSTEM" GenericAll="yes" />
+                    <Permission Domain="[JETTYD_DOMAIN]" User="[PERMISSION_USER]" GenericRead="yes" GenericExecute="yes" Read="yes" />
                 </RegistryKey>
             </Component>
         </ComponentGroup>
