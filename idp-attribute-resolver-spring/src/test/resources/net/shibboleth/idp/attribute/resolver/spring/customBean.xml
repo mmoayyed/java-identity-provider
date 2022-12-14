@@ -69,4 +69,7 @@
         </constructor-arg>
     </bean>
 
+    <bean id="shibboleth.HttpServletRequestSupplier"
+        class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestSupplier" />
+
 </beans>

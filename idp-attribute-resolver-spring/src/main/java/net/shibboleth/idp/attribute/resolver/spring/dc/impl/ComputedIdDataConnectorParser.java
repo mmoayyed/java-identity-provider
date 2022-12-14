@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,9 @@ public class ComputedIdDataConnectorParser extends PairwiseIdDataConnectorParser
     @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, 
             "ComputedId");
 
+    /** ID of system bean used to access servlet request. */
+    @Nonnull @NotEmpty public static final String SERVLET_SUPPLIER_ID = "shibboleth.HttpServletRequestSupplier";
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedIdDataConnectorParser.class);
     
@@ -79,6 +83,7 @@ public class ComputedIdDataConnectorParser extends PairwiseIdDataConnectorParser
         
         if (config.hasAttributeNS(null, "saltLookupStrategyRef")) {
             builder.addPropertyReference("saltLookupStrategy", config.getAttributeNS(null, "saltLookupStrategyRef"));
+            builder.addPropertyReference("httpServletRequestSupplier", SERVLET_SUPPLIER_ID);
         }
 
         final String salt;
