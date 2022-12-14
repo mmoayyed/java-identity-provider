@@ -63,6 +63,7 @@
         p:encodedSalt="%{idp.persistentId.encodedSalt:}"
         p:exceptionMap="#{getObject('%{idp.persistentId.exceptionMap:shibboleth.ComputedIdExceptionMap}'.trim())}"
         p:saltLookupStrategy="#{getObject('shibboleth.ComputedIdSaltLookupStrategy')}"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:algorithm="%{idp.persistentId.algorithm:SHA}"
         p:encoding="#{ T(net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore.Encoding).%{idp.persistentId.encoding:BASE64} }" />
 

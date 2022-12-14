@@ -27,6 +27,7 @@ import java.util.function.BiFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.attribute.PairwiseId;
 import net.shibboleth.idp.attribute.PairwiseIdStore;
@@ -40,6 +41,7 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.NonnullSupplier;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -94,6 +96,9 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
     
     /** Optional source of salt for request. */
     @Nullable BiFunction<ProfileRequestContext,PairwiseId,String> saltLookupStrategy;
+    
+    /** Servlet request supplier. */
+    @Nullable NonnullSupplier<HttpServletRequest> httpServletRequestSupplier;
     
     /** Constructor. */
     public ComputedPairwiseIdStore() {
@@ -247,6 +252,17 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
         
         saltLookupStrategy = strategy;
     }
+    
+    /**
+     * Sets a supplier for the servlet request by which the {@link ProfileRequestContext} can be obtained.
+     * 
+     * @param supplier
+     * 
+     * @since 4.3.0
+     */
+    public void setHttpServletRequestSupplier(@Nullable final NonnullSupplier<HttpServletRequest> supplier) {
+        httpServletRequestSupplier = supplier;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -341,7 +357,16 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
         }
         
         if (saltLookupStrategy != null) {
-            final String derivedSalt = saltLookupStrategy.apply(null, pid);
+            
+            final ProfileRequestContext prc;
+            if (httpServletRequestSupplier != null) {
+                prc = (ProfileRequestContext) httpServletRequestSupplier.get().getAttribute(
+                        ProfileRequestContext.BINDING_KEY);
+            } else {
+                prc = null;
+            }
+            
+            final String derivedSalt = saltLookupStrategy.apply(prc, pid);
             if (derivedSalt != null) {
                 return derivedSalt.getBytes();
             }
