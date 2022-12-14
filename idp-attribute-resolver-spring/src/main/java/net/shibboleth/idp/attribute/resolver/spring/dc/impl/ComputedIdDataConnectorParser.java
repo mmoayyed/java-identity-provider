@@ -76,6 +76,10 @@ public class ComputedIdDataConnectorParser extends PairwiseIdDataConnectorParser
         if (config.hasAttributeNS(null, "exceptionMapRef")) {
             builder.addPropertyReference("exceptionMap", config.getAttributeNS(null, "exceptionMapRef"));
         }
+        
+        if (config.hasAttributeNS(null, "saltLookupStrategyRef")) {
+            builder.addPropertyReference("saltLookupStrategy", config.getAttributeNS(null, "saltLookupStrategyRef"));
+        }
 
         final String salt;
         final String encodedSalt;

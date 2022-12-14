@@ -39,6 +39,8 @@ public class ComputedPairwiseIdStoreTest {
     /** Value calculated using V2 version. DO NOT CHANGE WITHOUT TESTING AGAINST 2.0 */
     private static final String RESULT = "Vl6z6K70iLc4AuBoNeb59Dj1rGw=";
 
+    private static final String RESULT_BY_FUNCTION = "ZPNsH0Q/K8s48wLwFdviHuFPuWY=";
+    
     private static final String RESULT2 = "kLyH1uEvYigEvg1ZLh/QXeW1VAs=";
 
     private static final String B32RESULT = "KZPLH2FO6SELOOAC4BUDLZXZ6Q4PLLDM";
@@ -46,6 +48,8 @@ public class ComputedPairwiseIdStoreTest {
     private static final byte salt[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
     private static final String salt2 = "thisisaspecialsalt";
+    
+    private static final String saltByFunction = "thisisasaltfromfunction";
     
     private static final String INVALID_BASE64_SALT="AB==";
         
@@ -125,6 +129,12 @@ public class ComputedPairwiseIdStoreTest {
     public void testComputedId() throws Exception {
         final ComputedPairwiseIdStore store = new ComputedPairwiseIdStore();
         store.setSalt(salt);
+        store.setSaltLookupStrategy((prc,pid) -> {
+            if ("fooByFunction".equals(pid.getPrincipalName())) {
+                return saltByFunction;
+            }
+            return null;
+        });
         store.initialize();
 
         PairwiseId pid = new PairwiseId();
@@ -136,6 +146,13 @@ public class ComputedPairwiseIdStoreTest {
 
         Assert.assertNotNull(pid);
         Assert.assertEquals(pid.getPairwiseId(), RESULT);
+        
+        // Trigger function override.
+        pid.setPrincipalName("fooByFunction");
+        pid = store.getBySourceValue(pid, true);
+
+        Assert.assertNotNull(pid);
+        Assert.assertEquals(pid.getPairwiseId(), RESULT_BY_FUNCTION);
     }
     
     @Test

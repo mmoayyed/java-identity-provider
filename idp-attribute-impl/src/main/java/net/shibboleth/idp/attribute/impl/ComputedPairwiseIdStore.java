@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,12 +42,20 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A {@link PairwiseIdStore} that generates a pairwise ID by computing the hash of
- * a given attribute value, the entity ID of the recipient, and a provided salt.
+ * a given attribute value, the entity ID of the recipient, and a salt.
+ * 
+ * <p>The salt may be global, or produced by a lookup function, and an exception map
+ * may be injected to override those values. The precedence is [map, function, global],
+ * and either a global value or function must be supplied.<.p>
+ * 
+ * <p>In this version of the software, the first argument to the salt strategy function
+ * will always be null. Future versions will change this.</p>
  * 
  * <p>The original implementation and values in common use relied on base64 encoding of the result,
  * but due to discovery of the lack of appropriate case handling of identifiers by applications, the
@@ -71,7 +80,7 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
         BASE32,
     };
 
-    /** Salt used when computing the ID. */
+    /** Default salt used when computing the ID. */
     @NonnullAfterInit private byte[] salt;
 
     /** JCE digest algorithm name to use. */
@@ -82,6 +91,9 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
     
     /** Override map to block or re-issue identifiers. */
     @Nonnull private Map<String,Map<String,String>> exceptionMap;
+    
+    /** Optional source of salt for request. */
+    @Nullable BiFunction<ProfileRequestContext,PairwiseId,String> saltLookupStrategy;
     
     /** Constructor. */
     public ComputedPairwiseIdStore() {
@@ -222,6 +234,19 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
             }
         }
     }
+    
+    /**
+     * Sets an optional function to use to obtain the salt for the request.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.3.0
+     */
+    public void setSaltLookupStrategy(@Nullable final BiFunction<ProfileRequestContext,PairwiseId,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        saltLookupStrategy = strategy;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -229,10 +254,10 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
         super.doInitialize();
         
         if (null == getSalt()) {
-            throw new ComponentInitializationException("Salt cannot be null");
-        }
-
-        if (getSalt().length < 16) {
+            if (saltLookupStrategy == null) {
+                throw new ComponentInitializationException("Global salt and salt lookup strategy cannot both be null");
+            }
+        } else if (getSalt().length < 16) {
             throw new ComponentInitializationException("Salt must be at least 16 bytes in size");
         }
     }
@@ -246,10 +271,10 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
         Constraint.isNotEmpty(pid.getPrincipalName(), "Principal name cannot be null or empty");
         Constraint.isNotEmpty(pid.getSourceSystemId(), "Source system ID cannot be null or empty");
     
-        final byte[] effectiveSalt = getEffectiveSalt(pid.getPrincipalName(), pid.getRecipientEntityID());
+        final byte[] effectiveSalt = getEffectiveSalt(pid);
         if (effectiveSalt == null) {
-            log.warn("Pairwise ID generation blocked for relying party ({})", pid.getRecipientEntityID());
-            throw new IOException("Pairwise ID generation blocked by exception rule");
+            log.warn("Pairwise ID generation blocked for relying party ({}), no salt available", pid.getRecipientEntityID());
+            throw new IOException("Pairwise ID generation blocked due to absence of salt");
         }
         
         try {
@@ -280,40 +305,45 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
     /**
      * Get the effective salt to apply for a particular principal/RP pair, or null to refuse to generate one.
      * 
-     * @param principalName name of subject
-     * @param relyingPartyId name of relying party scope
+     * @param pid pairwise ID input
      * 
      * @return salt to use
      */
-    @Nullable private byte[] getEffectiveSalt(@Nonnull @NotEmpty final String principalName,
-            @Nonnull @NotEmpty final String relyingPartyId) {
+    @Nullable private byte[] getEffectiveSalt(@Nonnull final PairwiseId pid) {
         
-        Map<String,String> override = exceptionMap.get(principalName);
+        Map<String,String> override = exceptionMap.get(pid.getPrincipalName());
         if (override == null) {
             override = exceptionMap.get(WILDCARD_OVERRIDE);
         }
         
         if (override != null) {
-            if (override.containsKey(relyingPartyId)) {
-                final String s = override.get(relyingPartyId);
+            if (override.containsKey(pid.getRecipientEntityID())) {
+                final String s = override.get(pid.getRecipientEntityID());
                 if (s != null) {
-                    log.debug("Overriding salt for principal '{}' and relying party '{}'", principalName,
-                            relyingPartyId);
+                    log.debug("Overriding salt for principal '{}' and relying party '{}'", pid.getPrincipalName(),
+                            pid.getRecipientEntityID());
                     return s.getBytes();
                 }
                 log.debug("Blocked generation of ID for principal '{}' for relying party '{}'",
-                        principalName, relyingPartyId);
+                        pid.getPrincipalName(), pid.getRecipientEntityID());
                 return null;
             } else if (override.containsKey(WILDCARD_OVERRIDE)) {
                 final String s = override.get(WILDCARD_OVERRIDE);
                 if (s != null) {
-                    log.debug("Overriding salt for principal '{}' and relying party '{}'", principalName,
-                            relyingPartyId);
+                    log.debug("Overriding salt for principal '{}' and relying party '{}'", pid.getPrincipalName(),
+                            pid.getRecipientEntityID());
                     return s.getBytes();
                 }
                 log.debug("Blocked generation of ID for principal '{}' for relying party '{}'",
-                        principalName, relyingPartyId);
+                        pid.getPrincipalName(), pid.getRecipientEntityID());
                 return null;
+            }
+        }
+        
+        if (saltLookupStrategy != null) {
+            final String derivedSalt = saltLookupStrategy.apply(null, pid);
+            if (derivedSalt != null) {
+                return derivedSalt.getBytes();
             }
         }
         

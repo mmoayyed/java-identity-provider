@@ -821,11 +821,19 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="exceptionMapRef" type="string">
+                <attribute name="exceptionMapRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Spring bean reference to a map of overrides that alter salt or suppress generation
                             for particular users/services.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="saltLookupStrategyRef" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Spring bean reference to a BiFunction&lt;ProfileRequestContext,PairwiseId&gt; 
+                            to obtain the salt.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -1749,11 +1757,19 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="exceptionMapRef" type="string">
+                <attribute name="exceptionMapRef" type="resolver:string">
                     <annotation>
                         <documentation>
                             Spring bean reference to a map of overrides that alter salt or suppress generation
                             for particular users/services.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="saltLookupStrategyRef" type="resolver:string">
+                    <annotation>
+                        <documentation>
+                            Spring bean reference to a BiFunction&lt;ProfileRequestContext,PairwiseId&gt; 
+                            to obtain the salt.
                         </documentation>
                     </annotation>
                 </attribute>

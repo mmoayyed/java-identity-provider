@@ -62,7 +62,11 @@
             </property>
         </bean>
     </util:list>
+    
+    <bean id="SaltLookupStrategy" class="net.shibboleth.utilities.java.support.logic.BiFunctionSupport" factory-method="constant">
+        <constructor-arg>
+            <null/>
+        </constructor-arg>
+    </bean>
 
 </beans>
-
-       
