@@ -256,7 +256,7 @@ public class ComputedPairwiseIdStore extends AbstractInitializableComponent impl
     /**
      * Sets a supplier for the servlet request by which the {@link ProfileRequestContext} can be obtained.
      * 
-     * @param supplier
+     * @param supplier request supplier
      * 
      * @since 4.3.0
      */
