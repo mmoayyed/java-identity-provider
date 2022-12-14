@@ -107,7 +107,8 @@ public class StoredIdDataConnectorParser extends ComputedIdDataConnectorParser {
                     SpringSupport.getAttributeValueAsList(config.getAttributeNodeNS(null, "retryableErrors")));
         }
 
-        if (config.hasAttributeNS(null, "salt")) {
+        if (config.hasAttributeNS(null, "salt") || config.hasAttributeNS(null, "encodedSalt") ||
+                config.hasAttributeNS(null, "saltLookupStrategyRef")) {
             builder.addPropertyValue("initialValueStore", doComputedPairwiseIdStore(config, parserContext));
         }
         
