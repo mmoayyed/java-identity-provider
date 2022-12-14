@@ -57,10 +57,13 @@
         class="net.shibboleth.idp.saml.nameid.impl.CryptoTransientIdGenerationStrategy"
         p:dataSealer-ref="shibboleth.DataSealer" />
 
+
     <bean id="shibboleth.ComputedPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore"
         p:salt="%{idp.persistentId.salt:}"
         p:encodedSalt="%{idp.persistentId.encodedSalt:}"
+        p:saltLookupStrategy="#{getObject('shibboleth.ComputedIdSaltLookupStrategy')}"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:exceptionMap="#{getObject('%{idp.persistentId.exceptionMap:shibboleth.ComputedIdExceptionMap}'.trim())}"
         p:algorithm="%{idp.persistentId.algorithm:SHA}"
         p:encoding="#{ T(net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore.Encoding).%{idp.persistentId.encoding:BASE64} }" />
