@@ -68,7 +68,7 @@
 
     <util:map id="shibboleth.authn.AuditFormattingMap">
         <entry key="#{'%{idp.authn.SPNEGO.audit.category:Shibboleth-Audit.SPNEGO}'.trim()}"
-            value="#{'%{idp.authn.SPNEGO.audit.format:%a|%T|%SP|%s|%AF|%u|%AR|%UA}'.trim()}" />
+            value="#{'%{idp.authn.SPNEGO.audit.format:%a|%T|%SP|%I|%s|%AF|%u|%AR|%UA}'.trim()}" />
     </util:map>
 
     <bean id="shibboleth.authn.SPNEGO.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"

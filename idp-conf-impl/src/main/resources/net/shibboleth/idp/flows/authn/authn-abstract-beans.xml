@@ -92,6 +92,21 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.REQUEST_ID"/>
+                    </key>
+                    <bean parent="shibboleth.Functions.Compose">
+                        <constructor-arg name="g">
+                            <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLMessageInfoContextIDFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean parent="shibboleth.Functions.Compose"
+                                c:g-ref="shibboleth.ChildLookupOrCreate.SAMLMessageInfoContext"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
              </map>
         </property>
     </bean>

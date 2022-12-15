@@ -42,7 +42,7 @@
     <!-- Default audit format and extractors --> 
     <util:map id="shibboleth.authn.AuditFormattingMap">
         <entry key="#{'%{idp.authn.IPAddress.audit.category:Shibboleth-Audit.IPAddress}'.trim()}"
-            value="#{'%{idp.authn.IPAddress.audit.format:%a|%T|%SP|%s|%AF|%CV|%u|%AR|%UA}'.trim()}" />
+            value="#{'%{idp.authn.IPAddress.audit.format:%a|%T|%SP|%I|%s|%AF|%CV|%u|%AR|%UA}'.trim()}" />
     </util:map>
 
     <bean id="shibboleth.authn.IPAddress.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"
