@@ -73,7 +73,7 @@
 
     <util:map id="shibboleth.authn.AuditFormattingMap">
         <entry key="#{'%{idp.authn.RemoteUserInternal.audit.category:Shibboleth-Audit.RemoteUserInternal}'.trim()}"
-            value="#{'%{idp.authn.RemoteUserInternal.audit.format:%a|%T|%SP|%s|%AF|%CV|%u|%AR|%UA}'.trim()}" />
+            value="#{'%{idp.authn.RemoteUserInternal.audit.format:%a|%T|%SP|%I|%s|%AF|%CV|%u|%AR|%UA}'.trim()}" />
     </util:map>
 
     <bean id="shibboleth.authn.RemoteUserInternal.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"

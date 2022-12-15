@@ -104,7 +104,7 @@
 
     <util:map id="shibboleth.authn.AuditFormattingMap">
         <entry key="#{'%{idp.authn.Duo.audit.category:Shibboleth-Audit.Duo}'.trim()}"
-            value="#{'%{idp.authn.Duo.audit.format:%a|%T|%SP|%s|%AF|%u|%AR|%DuoCID|%DuoF|%DuoDID|%UA}'.trim()}" />
+            value="#{'%{idp.authn.Duo.audit.format:%a|%T|%SP|%I|%s|%AF|%u|%AR|%DuoCID|%DuoF|%DuoDID|%UA}'.trim()}" />
     </util:map>
 
     <bean id="shibboleth.authn.Duo.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"

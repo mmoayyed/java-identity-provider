@@ -44,7 +44,7 @@
 
     <util:map id="shibboleth.authn.AuditFormattingMap">
         <entry key="#{'%{idp.authn.X509.audit.category:Shibboleth-Audit.X509}'.trim()}"
-            value="#{'%{idp.authn.X509.audit.format:%a|%T|%SP|%s|%AF|%X509S|%X509I|%AR|%UA}'.trim()}" />
+            value="#{'%{idp.authn.X509.audit.format:%a|%T|%SP|%I|%s|%AF|%X509S|%X509I|%AR|%UA}'.trim()}" />
     </util:map>
 
     <bean id="shibboleth.authn.X509.DefaultAuditExtractors" parent="shibboleth.authn.DefaultAuditExtractors" lazy-init="true"
