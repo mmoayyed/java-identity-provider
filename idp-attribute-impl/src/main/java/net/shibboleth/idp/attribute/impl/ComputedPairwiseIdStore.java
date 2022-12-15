@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>The salt may be global, or produced by a lookup function, and an exception map
  * may be injected to override those values. The precedence is [map, function, global],
- * and either a global value or function must be supplied.<.p>
+ * and either a global value or function must be supplied.</p>
  * 
  * <p>In this version of the software, the first argument to the salt strategy function
  * will always be null. Future versions will change this.</p>
