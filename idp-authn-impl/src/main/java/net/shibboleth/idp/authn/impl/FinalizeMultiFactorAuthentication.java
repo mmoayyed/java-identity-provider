@@ -248,15 +248,22 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
                     if (mfaContext != null) {
                         final Collection<AuthenticationResult> results = mfaContext.getActiveResults().values();
                         if (!results.isEmpty()) {
+                            
+                            // Track whether SSO was performed.
+                            boolean allPreviousResults = true;
+                            
                             final Subject subject = new Subject();
                             for (final AuthenticationResult result : results) {
                                 subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
                                 subject.getPrincipals().addAll(result.getSubject().getPrincipals());
                                 subject.getPublicCredentials().addAll(result.getSubject().getPublicCredentials());
                                 subject.getPrivateCredentials().addAll(result.getSubject().getPrivateCredentials());
+                                allPreviousResults = allPreviousResults && result.isPreviousResult();
                             }
+                            
                             final AuthenticationResult merged = new AuthenticationResult(
                                     mfaContext.getAuthenticationFlowDescriptor().getId(), subject);
+                            merged.setPreviousResult(allPreviousResults);
                             return merged;
                         }
                     }
