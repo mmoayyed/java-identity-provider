@@ -747,8 +747,7 @@ public class V4Install extends AbstractInitializableComponent {
                 generator.setVersionFile(versionFile.toFile());
                 generator.setKeyAlias(installerProps.getSealerAlias());
                 generator.setKeystorePassword(installerProps.getSealerPassword());
-                log.info("Creating backchannel keystore, CN = {} URI = {}, keySize={}",
-                        installerProps.getHostName(), installerProps.getSubjectAltName(),installerProps.getKeySize());
+                log.info("Creating Sealer KeyStore");
                 try {
                     generator.changeKey();
                 } catch (final Exception e) {
