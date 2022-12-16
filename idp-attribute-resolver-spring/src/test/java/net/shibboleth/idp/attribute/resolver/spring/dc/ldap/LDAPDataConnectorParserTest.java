@@ -21,6 +21,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.RandomConnectionStrategy;
 import org.ldaptive.SearchExecutor;
@@ -258,7 +260,7 @@ public class LDAPDataConnectorParserTest {
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         assertNotNull(validator);
-        assertTrue(validator.isThrowValidateError());
+        assertFalse(validator.isThrowValidateError());
         assertNotNull(validator.getConnectionFactory());
 
         final ExecutableSearchBuilder<?> searchBuilder = dataConnector.getExecutableSearchBuilder();
@@ -499,7 +501,6 @@ public class LDAPDataConnectorParserTest {
         assertNotNull(attrs);
     }
 
-
     @Test public void springPropsConfig() throws Exception,
             ResolutionException {
         final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-v3.properties");
@@ -572,6 +573,17 @@ public class LDAPDataConnectorParserTest {
         assertNull(attrs.get("homephone"));
         assertNotNull(attrs.get("phonenumber"));
         assertNotNull(attrs.get("entryDN"));
+    }
+
+    @Test public void connectionFactorySingleton() throws Exception {
+        final LDAPDataConnector dataConnector =
+            getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2.xml"});
+        assertNotNull(dataConnector);
+        doTest(dataConnector);
+        dataConnector.initialize();
+        final ConnectionFactory connFactory1 = dataConnector.getConnectionFactory();
+        final ConnectionFactory connFactory2 = ((ConnectionFactoryValidator) dataConnector.getValidator()).getConnectionFactory();
+        assertSame(connFactory1, connFactory2);
     }
 
     protected LDAPDataConnector getLdapDataConnector(final Resource properties, final String[] beanDefinitions) throws IOException {

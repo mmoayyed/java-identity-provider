@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     <bean id="connectionFactory" class="org.ldaptive.pool.PooledConnectionFactory">
         <property name="connectionPool">
-            <bean class="org.ldaptive.pool.BlockingConnectionPool" init-method="initialize" p:blockWaitTime="PT5S" p:failFastInitialize="false" p:name="resolver-pool">
+            <bean class="org.ldaptive.pool.BlockingConnectionPool" init-method="initialize" destroy-method="close" p:blockWaitTime="PT5S" p:failFastInitialize="false" p:name="resolver-pool">
                 <constructor-arg index="0">
                     <bean class="org.ldaptive.pool.PoolConfig" p:minPoolSize="5" p:maxPoolSize="10"
                         p:validatePeriodically="true" p:validatePeriod="PT15M" />
@@ -62,5 +62,5 @@
         </property>
     </bean>
     <bean id="validator" class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator"
-      p:connectionFactory-ref="connectionFactory" p:throwValidateError="true" />
+      p:connectionFactory-ref="connectionFactory" p:throwValidateError="false" />
 </beans>

@@ -201,12 +201,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         } else {
             if (connectionFactoryID != null) {
                 builder.addPropertyValue("validator", v2Parser.createValidator(connectionFactoryID));
-            }
-            else if (pooledConnectionFactory != null) {
-                builder.addPropertyValue("validator",
-                        v2Parser.createValidator(pooledConnectionFactory.getBeanDefinition()));
             } else {
-                builder.addPropertyValue("validator", v2Parser.createValidator(connectionFactory.getBeanDefinition()));
+                builder.addPropertyValue("validator", v2Parser.createValidator());
             }
         }
         
@@ -673,6 +669,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                         StringSupport.trimOrNull(configElement.getAttributeNS(null, ATTR_FAIL_FAST)));
             }
             pool.setInitMethodName("initialize");
+            pool.setDestroyMethodName("close");
             return pool.getBeanDefinition();
         }
 
@@ -835,16 +832,13 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         /**
          * Create the validator. See {@link net.shibboleth.idp.attribute.resolver.dc.Validator}.
          * 
-         * @param connectionFactory to provide to the validator
-         * 
          * @return validator
          */
-        @Nullable public BeanDefinition createValidator(final BeanDefinition connectionFactory) {
+        @Nullable public BeanDefinition createValidator() {
 
             final BeanDefinitionBuilder validator =
                     BeanDefinitionBuilder.genericBeanDefinition(ConnectionFactoryValidator.class);
-
-            validator.addPropertyValue("connectionFactory", connectionFactory);
+            validator.addPropertyValue("throwValidateError", false);
             return validator.getBeanDefinition();
         }
 
@@ -860,6 +854,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final BeanDefinitionBuilder validator =
                     BeanDefinitionBuilder.genericBeanDefinition(ConnectionFactoryValidator.class);
 
+            validator.addPropertyValue("throwValidateError", false);
             validator.addPropertyReference("connectionFactory", connectionFactoryId);
             return validator.getBeanDefinition();
         }

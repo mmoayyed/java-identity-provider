@@ -121,6 +121,9 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
     /** {@inheritDoc} */
     @Override public void setValidator(@Nonnull final Validator validator) {
         super.setValidator(validator);
+        if (validator instanceof ConnectionFactoryValidator && connectionFactory != null) {
+            ((ConnectionFactoryValidator) validator).setConnectionFactory(connectionFactory);
+        }
         defaultValidator = false;
     }
 
@@ -144,13 +147,15 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
             validator.setConnectionFactory(connectionFactory);
             super.setValidator(validator);
         }
-        getValidator().setThrowValidateError(isFailFastInitialize());
         if (defaultMappingStrategy) {
             super.setMappingStrategy(new StringAttributeValueMappingStrategy());
         }
         super.doInitialize();
 
+        // validator should defer to data connector fail-fast-initialize during #initialize
+        final boolean throwValidateError = getValidator().isThrowValidateError();
         try {
+            getValidator().setThrowValidateError(isFailFastInitialize());
             getValidator().validate();
         } catch (final ValidationException e) {
             log.error("{} Invalid connector configuration", getLogPrefix(), e);
@@ -158,6 +163,8 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
                 // Should always follow this leg.
                 throw new ComponentInitializationException(getLogPrefix() + " Invalid connector configuration", e);
             }
+        } finally {
+            getValidator().setThrowValidateError(throwValidateError);
         }
         policeForJVMTrust();
     }

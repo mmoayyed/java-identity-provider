@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
@@ -34,7 +35,10 @@ import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.ldaptive.ConnectionFactory;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -156,6 +160,17 @@ public class RDBMSDataConnectorParserTest {
                 getRdbmsDataConnector(props, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-spring-props.xml");
         assertNotNull(dataConnector);
         doTest(dataConnector);
+    }
+
+    @Test public void dataSourceSingleton() throws Exception {
+        final RDBMSDataConnector dataConnector =
+            getRdbmsDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/resolver/rdbms-attribute-resolver-v2.xml"});
+        assertNotNull(dataConnector);
+        doTest(dataConnector);
+        dataConnector.initialize();
+        final DataSource dataSource1 = dataConnector.getDataSource();
+        final DataSource dataSource2 = ((DataSourceValidator) dataConnector.getValidator()).getDataSource();
+        assertSame(dataSource1, dataSource2);
     }
 
     protected RDBMSDataConnector getRdbmsDataConnector(final String... beanDefinitions) throws IOException {

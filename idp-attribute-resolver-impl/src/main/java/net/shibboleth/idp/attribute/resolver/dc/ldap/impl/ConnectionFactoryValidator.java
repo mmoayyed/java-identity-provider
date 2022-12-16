@@ -27,16 +27,13 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Validator implementation that invokes {@link Connection#open()} to determine if the ConnectionFactory is properly
  * configured.
  */
-public class ConnectionFactoryValidator extends AbstractInitializableComponent implements Validator {
+public class ConnectionFactoryValidator implements Validator {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ConnectionFactoryValidator.class);
@@ -48,29 +45,13 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
     private boolean throwOnValidateError;
        
     /**
-     * Constructor.  
-     *
-     */
-    public ConnectionFactoryValidator() {  
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        Constraint.isNotNull(connectionFactory, "Connection factory must be non-null");
-        super.doInitialize();
-    }
-    
-    /**
      * Sets the connection factory.
      *
      * @param factory the connection factory
      */
     @Nonnull public void setConnectionFactory(@Nonnull final ConnectionFactory factory) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         connectionFactory = Constraint.isNotNull(factory, "Connection factory must be non-null");
     }
-
 
     /**
      * Returns the connection factory.
@@ -83,7 +64,6 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
 
     /** {@inheritDoc} */
     public void setThrowValidateError(final boolean what) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         throwOnValidateError = what;
     }
 
@@ -94,25 +74,33 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
 
     /** {@inheritDoc} */
     @Override public void validate() throws ValidationException {
-        Connection connection = null;
-        try {
-            connection = connectionFactory.getConnection();
-            if (connection == null) {
-                log.error("Unable to retrieve connections from configured connection factory");
-                if (isThrowValidateError()) {
-                    throw new LdapException("Unable to retrieve connection from connection factory");
-                }
-            } else {
-                connection.open();
-            }
-        } catch (final LdapException e) {
-            log.error("Connection factory validation failed", e);
+        if (connectionFactory == null) {
+            log.error("No connection factory installed");
             if (isThrowValidateError()) {
-                throw new ValidationException(e);
+                throw new ValidationException("Connection factory is not set");
             }
-        } finally {
-            if (connection != null) {
-                connection.close();
+        } else {
+            assert connectionFactory != null;
+            Connection connection = null;
+            try {
+                connection = connectionFactory.getConnection();
+                if (connection == null) {
+                    log.error("Unable to retrieve connections from configured connection factory");
+                    if (isThrowValidateError()) {
+                        throw new LdapException("Unable to retrieve connection from connection factory");
+                    }
+                } else {
+                    connection.open();
+                }
+            } catch (final LdapException e) {
+                log.error("Connection factory validation failed", e);
+                if (isThrowValidateError()) {
+                    throw new ValidationException(e);
+                }
+            } finally {
+                if (connection != null) {
+                    connection.close();
+                }
             }
         }
     }

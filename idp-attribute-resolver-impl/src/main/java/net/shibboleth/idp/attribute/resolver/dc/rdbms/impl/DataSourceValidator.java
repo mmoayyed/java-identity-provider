@@ -29,16 +29,13 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Validator implementation that invokes {@link DataSource#getConnection()} to determine if the DataSource is properly
  * configured.
  */
-public class DataSourceValidator extends AbstractInitializableComponent implements Validator {
+public class DataSourceValidator implements Validator {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(DataSourceValidator.class);
@@ -46,36 +43,17 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
     /** JDBC data source to validate. */
     @NonnullAfterInit private DataSource dataSource;
 
-    /** Whether validate should throw, default value is <code>true</code>. */
+    /** Whether validate should throw. */
     private boolean throwOnValidateError;
 
-    /**
-     * Constructor.
-     *
-     */
-    public DataSourceValidator() {
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        
-        if (null == dataSource) {
-            throw new  ComponentInitializationException("DataSourceValidator: Data Source should not be null");
-        }
-    }
-    
     /**
      * Sets the data source.
      *
      * @param source the data source
      */
     public void setDataSource(@Nonnull final DataSource source) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         dataSource =  Constraint.isNotNull(source, "Data Source should not be null");
     }
-
 
     /**
      * Returns the data source.
@@ -88,10 +66,8 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
 
     /** {@inheritDoc} */
     public void setThrowValidateError(final boolean value) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         throwOnValidateError = value;
     }
-
 
     /** {@inheritDoc} */
     public boolean isThrowValidateError() {
@@ -100,35 +76,41 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
 
     /** {@inheritDoc} */
     @Override public void validate() throws ValidationException {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
-            if (connection == null) {
-                log.error("Unable to retrieve connections from configured data source");
-                if (isThrowValidateError()) {
-                    throw new ValidationException("Unable to retrieve connections from configured data source");
-                }
-            }
-        } catch (final SQLException e) {
-            if (e.getSQLState() != null) {
-                log.error("Datasource validation failed with SQL state: {}, SQL Code: {}",
-                        new Object[] {e.getSQLState(), e.getErrorCode(), e});
-            } else {
-                log.error("Datasource validation failed", e);
-            }
+        if (dataSource == null) {
+            log.error("No datasource installed");
             if (isThrowValidateError()) {
-                throw new ValidationException("Invalid connector configuration", e);
+                throw new ValidationException("Datasource is not set");
             }
-        } finally {
+        } else {
+            assert dataSource != null;
+            Connection connection = null;
             try {
-                if (connection != null && !connection.isClosed()) {
-                    connection.close();
+                connection = dataSource.getConnection();
+                if (connection == null) {
+                    log.error("Unable to retrieve connections from configured data source");
+                    if (isThrowValidateError()) {
+                        throw new ValidationException("Unable to retrieve connections from configured data source");
+                    }
                 }
             } catch (final SQLException e) {
-                log.error("Error closing database connection; SQL State: {}, SQL Code: {}",
+                if (e.getSQLState() != null) {
+                    log.error("Datasource validation failed with SQL state: {}, SQL Code: {}",
                         new Object[] {e.getSQLState(), e.getErrorCode(), e});
+                } else {
+                    log.error("Datasource validation failed", e);
+                }
+                if (isThrowValidateError()) {
+                    throw new ValidationException("Invalid connector configuration", e);
+                }
+            } finally {
+                try {
+                    if (connection != null && !connection.isClosed()) {
+                        connection.close();
+                    }
+                } catch (final SQLException e) {
+                    log.error("Error closing database connection; SQL State: {}, SQL Code: {}",
+                        new Object[] {e.getSQLState(), e.getErrorCode(), e});
+                }
             }
         }
     }

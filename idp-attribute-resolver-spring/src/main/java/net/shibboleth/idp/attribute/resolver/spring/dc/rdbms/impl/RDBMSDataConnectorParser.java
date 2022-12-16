@@ -115,7 +115,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             if (dataSourceID != null) {
                 builder.addPropertyValue("validator", v2Parser.createValidator(dataSourceID));
             } else {
-                builder.addPropertyValue("validator", v2Parser.createValidator(dataSource));
+                builder.addPropertyValue("validator", v2Parser.createValidator());
             }
         }
 
@@ -289,21 +289,27 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         
         /**
          * Create the validator. See {@link net.shibboleth.idp.attribute.resolver.dc.Validator}.
+         *
+         * @return validator
+         */
+        @Nullable public BeanDefinition createValidator() {
+            final BeanDefinitionBuilder validator =
+                    BeanDefinitionBuilder.genericBeanDefinition(DataSourceValidator.class);
+            validator.addPropertyValue("throwValidateError", true);
+            return validator.getBeanDefinition();
+        }
+
+        /**
+         * Create the validator. See {@link net.shibboleth.idp.attribute.resolver.dc.Validator}.
          * 
          * @param dataSource to provide to the validator
          *
          * @return validator
          */
-        @Nullable public BeanDefinition createValidator(final Object dataSource) {            
+        @Nullable public BeanDefinition createValidator(final String dataSource) {
             final BeanDefinitionBuilder validator =
                     BeanDefinitionBuilder.genericBeanDefinition(DataSourceValidator.class);
-            validator.setInitMethodName("initialize");
-            validator.setDestroyMethodName("destroy");
-            if (dataSource instanceof String) {
-                validator.addPropertyReference("dataSource", (String) dataSource); 
-            } else {
-                validator.addPropertyValue("dataSource", dataSource);
-            }
+            validator.addPropertyReference("dataSource", dataSource);
             validator.addPropertyValue("throwValidateError", true);
             return validator.getBeanDefinition();
         }

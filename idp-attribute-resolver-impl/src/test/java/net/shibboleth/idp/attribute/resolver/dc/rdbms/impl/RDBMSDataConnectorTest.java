@@ -191,11 +191,7 @@ public class RDBMSDataConnectorTest {
             // OK
         }
 
-        final DataSourceValidator validator = new DataSourceValidator();
-        validator.setDataSource(datasource);
-        validator.setThrowValidateError(false);
-        validator.initialize();
-        connector.setValidator(validator);
+        connector.setFailFastInitialize(false);
         connector.initialize();
     }
 

@@ -62,5 +62,5 @@
         </property>
     </bean>
     <bean id="LDAPTESTvalidator" class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator"
-      p:connectionFactory-ref="LDAPTESTconnectionFactory" p:throwValidateError="true" />
+      p:connectionFactory-ref="LDAPTESTconnectionFactory" p:throwValidateError="false" />
 </beans>
