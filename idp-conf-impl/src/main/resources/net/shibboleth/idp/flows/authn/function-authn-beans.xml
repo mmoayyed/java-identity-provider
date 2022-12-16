@@ -32,7 +32,7 @@
         p:classifiedMessages="#{getObject('shibboleth.authn.Function.ClassifiedMessageMap')}"
         p:resultLookupStrategy="#{getObject('shibboleth.authn.Function.ResultLookupStrategy') ?: getObject('DefaultResultLookupStrategy')}"
         p:populateAuditContextAction="#{%{idp.authn.Function.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.Function.PopulateAuditContext') : null}"
-        p:writeAuditLogAction="#{%{idp.authn.Function.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
+        p:writeAuditLogAction="#{%{idp.authn.Function.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuthnAuditLog') : null}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"

@@ -34,7 +34,7 @@
         p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}"
         p:cleanupHook-ref="DefaultCleanupHook"
         p:populateAuditContextAction="#{%{idp.authn.X509.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.X509.PopulateAuditContext') : null}"
-        p:writeAuditLogAction="#{%{idp.authn.X509.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
+        p:writeAuditLogAction="#{%{idp.authn.X509.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuthnAuditLog') : null}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"

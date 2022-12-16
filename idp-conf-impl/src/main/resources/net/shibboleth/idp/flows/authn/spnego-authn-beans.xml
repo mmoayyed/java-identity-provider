@@ -53,7 +53,7 @@
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.SPNEGO.addDefaultPrincipals') ?: %{idp.authn.SPNEGO.addDefaultPrincipals:true}}"
         p:classifiedMessages="#{getObject('shibboleth.authn.SPNEGO.ClassifiedMessageMap')}"
         p:populateAuditContextAction="#{%{idp.authn.SPNEGO.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.SPNEGO.PopulateAuditContext') : null}"
-        p:writeAuditLogAction="#{%{idp.authn.SPNEGO.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
+        p:writeAuditLogAction="#{%{idp.authn.SPNEGO.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuthnAuditLog') : null}" />
             
     <bean id="SPNEGOAutoLoginManager"
         class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAutoLoginManager"
