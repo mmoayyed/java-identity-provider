@@ -30,7 +30,7 @@
             p:classifiedMessages="#{getObject('shibboleth.authn.X509Internal.ClassifiedMessageMap')}"
             p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}"
             p:populateAuditContextAction="#{%{idp.authn.X509Internal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.X509Internal.PopulateAuditContext') : null}"
-            p:writeAuditLogAction="#{%{idp.authn.X509Internal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}">
+            p:writeAuditLogAction="#{%{idp.authn.X509Internal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuthnAuditLog') : null}">
         <property name="validators">
             <bean id="x509" class="net.shibboleth.idp.authn.impl.X509CertificateCredentialValidator"
                 p:trustEngine="#{getObject('shibboleth.authn.X509.TrustEngine')}"

@@ -48,7 +48,8 @@
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext.FormattingMapParser"
         c:_0-ref="shibboleth.authn.AuditFormattingMap" />
     
-    <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype" lazy-init="true"
+    <bean id="WriteAuthnAuditLog"
+        class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype" lazy-init="true"
         p:formattingMap-ref="shibboleth.authn.AuditFormattingMap"
         p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"

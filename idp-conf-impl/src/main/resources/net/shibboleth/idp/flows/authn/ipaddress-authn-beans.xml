@@ -31,7 +31,7 @@
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.IPAddress.addDefaultPrincipals') ?: %{idp.authn.IPAddress.addDefaultPrincipals:true}}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.IPAddress.resultCachingPredicate')}"
         p:populateAuditContextAction="#{%{idp.authn.IPAddress.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.IPAddress.PopulateAuditContext') : null}"
-        p:writeAuditLogAction="#{%{idp.authn.IPAddress.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
+        p:writeAuditLogAction="#{%{idp.authn.IPAddress.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuthnAuditLog') : null}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
