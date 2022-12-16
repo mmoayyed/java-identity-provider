@@ -27,13 +27,30 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.messaging.context.navigate.RootContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.context.ProxiedRequesterContext;
+import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
@@ -43,21 +60,10 @@ import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
+import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Scoping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
-import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 
 /**
  * Action that creates an {@link AuthnRequest} and sets it as the message returned by
@@ -88,6 +94,12 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     
     /** Strategy used to obtain the request issuer value. */
     @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
+
+    /** Strategy used to obtain the original requester value. */
+    @Nonnull private Function<ProfileRequestContext,String> requesterLookupStrategy;
+
+    /** Strategy used to obtain the proxied requester context. */
+    @Nonnull private Function<ProfileRequestContext,ProxiedRequesterContext> proxiedRequesterContextLookupStrategy;
     
     /** The generator to use. */
     @Nullable private IdentifierGenerationStrategy idGenerator;
@@ -105,6 +117,16 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         // Fool the parent class into looking above instead of below the PRC for the context.
         setAuthenticationContextLookupStrategy(new ParentContextLookup<>(AuthenticationContext.class));
+
+        // Root PRC -> RelyingPartyContext -> ID
+        requesterLookupStrategy = new RelyingPartyIdLookupFunction().compose(
+                new RootContextLookup<>(ProfileRequestContext.class));
+        
+        // Root PRC -> inbound context -> ProxiedRequesterContext
+        proxiedRequesterContextLookupStrategy =
+                new ChildContextLookup<>(ProxiedRequesterContext.class).compose(
+                        new InboundMessageContextLookup().compose(
+                                new RootContextLookup<>(ProfileRequestContext.class)));
     }
     
     /**
@@ -137,6 +159,33 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         checkSetterPreconditions();
         issuerLookupStrategy = strategy;
+    }
+
+    /**
+     * Set the strategy used to locate the requester value to use for the Scoping element's {@link RequesterID} value.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.3.0
+     */
+    public void setRequesterLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        checkSetterPreconditions();
+        requesterLookupStrategy = Constraint.isNotNull(strategy, "Requester lookup strategy cannot be null");
+    }
+
+    /**
+     * Set the strategy used to locate the {@link ProxiedRequesterContext} to use for the Scoping element's
+     * {@link RequesterID} values.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 4.3.0
+     */
+    public void setProxiedRequesterContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,ProxiedRequesterContext> strategy) {
+        checkSetterPreconditions();
+        proxiedRequesterContextLookupStrategy =
+                Constraint.isNotNull(strategy, "ProxiedRequesterContext lookup strategy cannot be null");
     }
 
 // Checkstyle: CyclomaticComplexity OFF
@@ -346,20 +395,23 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
      */
     @Nullable public Scoping buildScoping(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nullable final Integer count, @Nonnull @NonnullElements final Set<String> idplist) {
+
+        boolean include = false;
         
-        if (count == null && idplist.isEmpty()) {
-            return null;
-        } else if (profileConfiguration.isIgnoreScoping(profileRequestContext)) {
+        if (profileConfiguration.isIgnoreScoping(profileRequestContext)) {
             log.warn("{} Skipping generation of Scoping element in violation of standard", getLogPrefix());
             return null;
         }
         
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        
         final SAMLObjectBuilder<Scoping> scopingBuilder =
                 (SAMLObjectBuilder<Scoping>) bf.<Scoping>getBuilderOrThrow(Scoping.DEFAULT_ELEMENT_NAME);
         final Scoping scoping = scopingBuilder.buildObject();
+        
         if (count != null) {
             scoping.setProxyCount(Integer.max(0, count - 1));
+            include = true;
         }
         
         if (!idplist.isEmpty()) {
@@ -375,9 +427,32 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
                 idps.getIDPEntrys().add(entry);
             }
             scoping.setIDPList(idps);
+            include = true;
+        }
+
+        final SAMLObjectBuilder<RequesterID> requesterIdBuilder =
+                (SAMLObjectBuilder<RequesterID>) bf.<RequesterID>getBuilderOrThrow(RequesterID.DEFAULT_ELEMENT_NAME);
+
+        final ProxiedRequesterContext proxiedReqCtx =
+                proxiedRequesterContextLookupStrategy.apply(profileRequestContext);
+        if (proxiedReqCtx != null) {
+            for (final String id : proxiedReqCtx.getRequesters()) {
+                final RequesterID requesterId = requesterIdBuilder.buildObject();
+                requesterId.setURI(id);
+                scoping.getRequesterIDs().add(requesterId);
+                include = true;
+            }
+        }
+
+        final String immediateRequester = requesterLookupStrategy.apply(profileRequestContext);
+        if (immediateRequester != null) {
+            final RequesterID requesterId = requesterIdBuilder.buildObject();
+            requesterId.setURI(immediateRequester);
+            scoping.getRequesterIDs().add(requesterId);
+            include = true;
         }
         
-        return scoping;
+        return include ? scoping : null;
     }
     
 }
