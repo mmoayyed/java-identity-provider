@@ -146,6 +146,9 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertTrue(nid.getAllowCreate());
         
         assertNull(request.getRequestedAuthnContext());
+        
+        final Scoping scoping = request.getScoping();
+        assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
     }
 
     /** Test that the action works for ForceAuthn/IsPassive. */
@@ -206,6 +209,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertNotNull(scoping);
         assertNull(scoping.getProxyCount());
         assertNotNull(scoping.getIDPList());
+        assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
         
         final Set<String> requestedAuthorities = scoping.getIDPList().getIDPEntrys()
                 .stream()
@@ -232,6 +236,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertNotNull(scoping);
         assertNull(scoping.getIDPList());
         assertEquals(scoping.getProxyCount(), Integer.valueOf(0));
+        assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
     }
 
     /** Test with Scoping element and count of 5. */
@@ -250,6 +255,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertNotNull(scoping);
         assertNull(scoping.getIDPList());
         assertEquals(scoping.getProxyCount(), Integer.valueOf(4));
+        assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
     }
 
     /** Test with Scoping element and count of 0 (this shouldn't really happen). */
@@ -268,6 +274,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertNotNull(scoping);
         assertNull(scoping.getIDPList());
         assertEquals(scoping.getProxyCount(), Integer.valueOf(0));
+        assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
     }
 
     /** Test that the action works for RequestedAuthnContext. */
