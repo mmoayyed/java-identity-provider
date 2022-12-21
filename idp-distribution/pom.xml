@@ -57,7 +57,7 @@
         <!-- Required if you're using casses from the security package. -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-jdk18on</artifactId>
             <optional>true</optional>
             <scope>runtime</scope>
         </dependency>
@@ -65,7 +65,7 @@
         <!--  For the installers -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpg-jdk15on</artifactId>
+            <artifactId>bcpg-jdk18on</artifactId>
             <scope>runtime</scope>
         </dependency>
 
@@ -208,7 +208,7 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.bouncycastle</groupId>
-                                    <artifactId>bcpg-jdk15on</artifactId>
+                                    <artifactId>bcpg-jdk18on</artifactId>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.commons</groupId>

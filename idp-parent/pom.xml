@@ -256,6 +256,10 @@
                                         <exclude>javax.mail:mail</exclude>
                                         <exclude>javax.xml.bind:jaxb-api</exclude>
                                         <exclude>com.sun.mail:javax.mail</exclude>
+                                        <!--
+                                            Ban use of older coordinates for Bouncy Castle components.
+                                        -->
+                                        <exclude>org.bouncycastle:*-jdk15on</exclude>
                                     </excludes>
                                     <includes>
                                         <!--

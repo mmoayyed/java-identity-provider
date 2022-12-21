@@ -131,8 +131,6 @@ import net.shibboleth.shared.component.ComponentInitializationException;
                pgpFact = new PGPObjectFactory(decoded, new JcaKeyFingerprintCalculator());
            }
            return new PGPPublicKeyRingCollection(listr);
-       } catch (final PGPException e) {
-           throw new IOException("Error reading key ring", e);
        }
     }
 
@@ -155,11 +153,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
      *  has problems.
      */
     protected void createNewStore() throws IOException {
-        try {        
-            keyRings = new PGPPublicKeyRingCollection(Collections.emptyList());
-        } catch (final PGPException e) {
-            throw new IOException("Bad keystore", e);
-        }
+        keyRings = new PGPPublicKeyRingCollection(Collections.emptyList());
         saveStoreInternal();
     }
 
@@ -214,34 +208,30 @@ import net.shibboleth.shared.component.ComponentInitializationException;
                             final Predicate<String> accept) throws IOException {
         final PGPPublicKeyRingCollection providedStore = loadStoreFrom(keyStream);
 
-        try {
-            final PGPPublicKey key = providedStore.getPublicKey(sigForKey.getSignature().getKeyID());
-            if (key == null) {
-                log.info("Provided key stream did not contain a key for {}", sigForKey);
-                return;
-            }
-            final StringBuilder builder = new StringBuilder("Signature:\t").
-                    append(sigForKey.toString()).
-                    append("\nFingerPrint:\t").
-                    append((new String(Hex.encode(key.getFingerprint()))).toUpperCase());
-            final Iterator<String> namesIterator = key.getUserIDs();
-            while (namesIterator.hasNext()) {
-                builder.append("\nUsername:\t").append(namesIterator.next());
-            }
-            builder.append('\n');
-            final String keyInfo = builder.toString();
-            log.debug("Asking to import key\n{}", keyInfo);
-            if (!accept.test(keyInfo)) {
-                log.info("Key import barred by user");
-                return;
-            }
-            keyRings = PGPPublicKeyRingCollection.addPublicKeyRing(
-                    keyRings,
-                    new PGPPublicKeyRing(Collections.singletonList(key)));
-            saveStoreInternal();
-        } catch (final PGPException e) {
-            log.warn("Couldn't locate key", e);
+        final PGPPublicKey key = providedStore.getPublicKey(sigForKey.getSignature().getKeyID());
+        if (key == null) {
+            log.info("Provided key stream did not contain a key for {}", sigForKey);
+            return;
         }
+        final StringBuilder builder = new StringBuilder("Signature:\t").
+                append(sigForKey.toString()).
+                append("\nFingerPrint:\t").
+                append((new String(Hex.encode(key.getFingerprint()))).toUpperCase());
+        final Iterator<String> namesIterator = key.getUserIDs();
+        while (namesIterator.hasNext()) {
+            builder.append("\nUsername:\t").append(namesIterator.next());
+        }
+        builder.append('\n');
+        final String keyInfo = builder.toString();
+        log.debug("Asking to import key\n{}", keyInfo);
+        if (!accept.test(keyInfo)) {
+            log.info("Key import barred by user");
+            return;
+        }
+        keyRings = PGPPublicKeyRingCollection.addPublicKeyRing(
+                keyRings,
+                new PGPPublicKeyRing(Collections.singletonList(key)));
+        saveStoreInternal();
     }
 
     /** Provide an opaque signature object from an input stream.
@@ -263,12 +253,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 
         log.debug("Looking for key with Id {}", signature);
 
-        try {
-            return keyRings.getPublicKey(sig.getKeyID()) != null;
-        } catch (final PGPException e) {
-            log.warn("Error looking for key {}", signature, e);
-            return false;
-        }
+        return keyRings.getPublicKey(sig.getKeyID()) != null;
     }
 
     /** Run a signature check over the streams.
