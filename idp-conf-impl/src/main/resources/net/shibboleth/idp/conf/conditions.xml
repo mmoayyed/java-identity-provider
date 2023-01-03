@@ -51,6 +51,16 @@
         class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate"
         c:objectStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty" />
 
+    <!-- IdPAttribute conditions. -->
+    <bean id="shibboleth.Conditions.SimpleAttribute"
+        class="net.shibboleth.idp.profile.logic.SimpleAttributePredicate" abstract="true" />
+    <bean id="shibboleth.Conditions.DynamicAttribute"
+        class="net.shibboleth.idp.profile.logic.DynamicAttributePredicate" abstract="true" />
+    <bean id="shibboleth.Conditions.RegexAttribute"
+        class="net.shibboleth.idp.profile.logic.RegexAttributePredicate" abstract="true" />
+    <bean id="shibboleth.Conditions.DateAttribute"
+        class="net.shibboleth.idp.profile.logic.DateAttributePredicate" abstract="true" />
+
     <!-- Parent bean for building predicates acting over a candidate c14n Subject based on proxy authn. -->
     <bean id="shibboleth.Conditions.ProxyAuthentication" abstract="true"
             class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">

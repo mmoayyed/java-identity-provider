@@ -15,6 +15,20 @@
     <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
         class="net.shibboleth.utilities.java.support.security.impl.SecureRandomIdentifierGenerationStrategy" />
 
+    <!-- Credential factory beans, mostly for relying-party service. -->
+
+    <bean id="shibboleth.BasicX509CredentialFactoryBean" abstract="true"
+        class="net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean" />
+        
+    <bean id="shibboleth.X509InlineCredentialFactoryBean" abstract="true"
+        class="net.shibboleth.idp.profile.spring.factory.X509InlineCredentialFactoryBean" />
+        
+    <bean id="shibboleth.BasicResourceCredentialFactoryBean" abstract="true"
+        class="net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean" />
+        
+    <bean id="shibboleth.BasicInlineCredentialFactoryBean" abstract="true"
+        class="net.shibboleth.idp.profile.spring.factory.BasicInlineCredentialFactoryBean" />
+
     <!-- Principally used in relying-party.xml to define new security configurations. -->
 
     <bean id="shibboleth.BasicSignatureValidationConfiguration" abstract="true"

@@ -32,7 +32,7 @@
     <!-- Uncomment to move the definition of this bean from credentials.xml --> 
     <!--
     <bean id="shibboleth.DefaultSigningCredential"
-        class="net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean"
+        parent="shibboleth.BasicX509CredentialFactoryBean"
         p:certificateResource="%{idp.signing.cert}"
         p:entityId="%{idp.entityID}" />
     -->
