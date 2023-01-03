@@ -113,30 +113,8 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-saml-impl</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>idp-testing</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-filter-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-resolver-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-testing</artifactId>
             <scope>test</scope>
         </dependency>
 

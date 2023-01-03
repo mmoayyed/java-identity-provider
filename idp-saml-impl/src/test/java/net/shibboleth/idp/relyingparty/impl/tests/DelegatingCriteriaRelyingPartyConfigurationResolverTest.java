@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty.impl;
+package net.shibboleth.idp.relyingparty.impl.tests;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,11 +45,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
+import net.shibboleth.idp.relyingparty.impl.DelegatingCriteriaRelyingPartyConfigurationResolver;
 import net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
-import net.shibboleth.shared.testing.MockApplicationContext;
 
 /** Unit tests for {@link DelegatingCriteriaRelyingPartyConfigurationResolver}. */
 public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase {

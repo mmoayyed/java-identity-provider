@@ -86,6 +86,9 @@ public class PopulateAuditContext extends AbstractProfileAction {
     /** Convert date/time fields to default time zone. */
     private boolean useDefaultTimeZone;
     
+    /** Flag signalling to clear context on entry. */
+    private boolean clearAuditContext;
+    
     /** {@link AuditContext} to populate. */
     @Nullable private AuditContext auditCtx;
     
@@ -183,6 +186,20 @@ public class PopulateAuditContext extends AbstractProfileAction {
         useDefaultTimeZone = flag;
     }
     
+    /**
+     * Sets whether to clear any existing fields from the audit context.
+     * 
+     * <p>Defaults to false.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.3.0
+     */
+    public void setClearAuditContext(final boolean flag) {
+        checkSetterPreconditions();
+        clearAuditContext = flag;
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -199,7 +216,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
-        if (!super.doPreExecute(profileRequestContext) || fieldExtractors.isEmpty()) {
+        if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
         
@@ -216,6 +233,10 @@ public class PopulateAuditContext extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        if (clearAuditContext) {
+            auditCtx.getFields().clear();
+        }
         
         for (final Map.Entry<String,Function<ProfileRequestContext,Object>> entry : fieldExtractors.entrySet()) {
             

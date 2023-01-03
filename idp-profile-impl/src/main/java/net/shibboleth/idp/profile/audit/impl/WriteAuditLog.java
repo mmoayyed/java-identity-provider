@@ -79,6 +79,9 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Convert date/time fields to default time zone. */
     private boolean useDefaultTimeZone;
 
+    /* Include profile's logging ID in category. */
+    private boolean includeProfileLoggingId;
+    
     /** The Spring RequestContext to operate on. */
     @Nullable private RequestContext requestContext;
 
@@ -91,6 +94,7 @@ public class WriteAuditLog extends AbstractProfileAction {
         formattingMap = Collections.emptyMap();
         categoriesToLog = Collections.emptyList();
         dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
+        includeProfileLoggingId = true;
     }
 
     /**
@@ -214,6 +218,20 @@ public class WriteAuditLog extends AbstractProfileAction {
         useDefaultTimeZone = flag;
     }
     
+    /**
+     * Sets whether to suffix the profile's logging ID to the category to log against.
+     * 
+     * <p>Defaults to true.</p>
+     * 
+     * @param flag flag to set
+     * 
+     * @since 4.3.0
+     */
+    public void setIncludeProfileLoggingId(final boolean flag) {
+        checkSetterPreconditions();
+        includeProfileLoggingId = flag;
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -303,8 +321,14 @@ public class WriteAuditLog extends AbstractProfileAction {
             
             filter(record);
             
-            LoggerFactory.getLogger(entry.getKey() + '.'
-                    + profileRequestContext.getLoggingId()).info(record.toString());
+            final String category;
+            if (includeProfileLoggingId) {
+                category = entry.getKey() + '.' + profileRequestContext.getLoggingId();
+            } else {
+                category = entry.getKey();
+            }
+            
+            LoggerFactory.getLogger(category).info(record.toString());
         }
     }
 // Checkstyle: CyclomaticComplexity ON
