@@ -32,7 +32,7 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
   <head>
     <meta charset="utf-8">
     <title><spring:message code="idp.title" text="Web Login Service" /></title>
-    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath()%>/css/main.css">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath()%><spring:message code="idp.css" text="/css/placeholder.css" />">
   </head>
 
   <body>
@@ -106,7 +106,7 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
 
       <footer>
         <div class="container container-footer">
-          <p class="footer-text"><spring:message code="root.footer" text="Insert your footer text here." /></p>
+          <p class="footer-text"><spring:message code="idp.footer" text="Insert your footer text here." /></p>
         </div>
       </footer>
     </div>
