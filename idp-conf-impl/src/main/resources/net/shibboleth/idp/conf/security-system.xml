@@ -20,6 +20,20 @@
         </constructor-arg>
     </bean>
 
+    <!-- Credential factory beans, mostly for relying-party service. -->
+
+    <bean id="shibboleth.BasicX509CredentialFactoryBean" abstract="true"
+        class="org.opensaml.spring.credential.BasicX509CredentialFactoryBean" />
+        
+    <bean id="shibboleth.X509InlineCredentialFactoryBean" abstract="true"
+        class="org.opensaml.spring.credential.X509InlineCredentialFactoryBean" />
+        
+    <bean id="shibboleth.BasicResourceCredentialFactoryBean" abstract="true"
+        class="org.opensaml.spring.credential.BasicResourceCredentialFactoryBean" />
+        
+    <bean id="shibboleth.BasicInlineCredentialFactoryBean" abstract="true"
+        class="org.opensaml.spring.credential.BasicInlineCredentialFactoryBean" />
+
     <!-- Principally used in relying-party.xml to define new security configurations. -->
 
     <bean id="shibboleth.BasicSignatureValidationConfiguration" abstract="true"
