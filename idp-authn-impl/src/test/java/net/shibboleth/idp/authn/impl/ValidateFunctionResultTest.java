@@ -76,7 +76,7 @@ public class ValidateFunctionResultTest extends BaseAuthenticationContextTest {
         action.initialize();
         
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testPrincipalName() throws ComponentInitializationException {
