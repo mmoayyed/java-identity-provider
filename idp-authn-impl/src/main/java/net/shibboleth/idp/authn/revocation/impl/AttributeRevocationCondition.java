@@ -178,10 +178,10 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
         
         final ScratchContext context = input.getSubcontext(ScratchContext.class, true);
         
-        final AttributeResolutionContext resolutionContext = buildResolutionContext(input, principal);
-
         if (!context.getMap().containsKey(getClass())) {
+            final AttributeResolutionContext resolutionContext = buildResolutionContext(input, principal);
             resolutionContext.resolveAttributes(attributeResolver);
+            
             final Collection<Instant> records = new ArrayList<>();
             if (resolutionContext.getResolvedIdPAttributes().containsKey(attributeId)) {
                 for (final IdPAttributeValue value :
