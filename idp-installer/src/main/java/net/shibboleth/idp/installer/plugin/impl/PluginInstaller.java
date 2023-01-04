@@ -483,7 +483,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void installNew(final RollbackPluginInstall rollBack) throws BuildException {
         final Path from = distribution.resolve("webapp");
         if (PluginInstallerSupport.detectDuplicates(from, pluginsWebapp)) {
-            throw new BuildException("Install would overwrite filess");
+            throw new BuildException("Install would overwrite files");
         }
         PluginInstallerSupport.copyWithLogging(from, pluginsWebapp, rollBack.getFilesCopied());
 
