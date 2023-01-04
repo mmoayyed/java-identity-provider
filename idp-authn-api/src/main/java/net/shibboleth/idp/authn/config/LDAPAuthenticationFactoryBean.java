@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.config;
 
+import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.time.Period;
 import javax.annotation.Nonnull;
@@ -108,7 +109,8 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
   public enum TrustType {
     JVM("jvmTrust"),
     CERTIFICATE("certificateTrust"),
-    KEYSTORE("keyStoreTrust");
+    KEYSTORE("keyStoreTrust"),
+    DISABLED("disabled");
 
     /** Label for this type. */
     private final String label;
@@ -490,6 +492,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
       break;
     case KEYSTORE:
       config.setCredentialConfig(truststoreCredentialConfig);
+      break;
+    case DISABLED:
+      config.setCredentialConfig(() -> { throw new GeneralSecurityException("SSL/startTLS is disabled"); });
       break;
     case JVM:
     default:
