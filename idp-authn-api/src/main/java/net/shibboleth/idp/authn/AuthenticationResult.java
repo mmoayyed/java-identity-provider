@@ -97,7 +97,11 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
         authenticationInstant = Instant.now();
         lastActivityInstant = authenticationInstant;
         additionalData = new HashMap<>();
+        
+        // These are defaulted in primarily as a safety valve for cases like the MFA flow
+        // where the result isn't built in the "normal" way.
         reuseCondition = new DescriptorReusePredicate();
+        revocationCondition = new DescriptorRevocationPredicate();
     }
 
     /**
@@ -364,7 +368,32 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
             
             return false;
         }
-        
     }
 
+    /**
+     * Inner class that delegates revocation condition evaluation to the underlying
+     * {@link AuthenticationFlowDescriptor}.
+     */
+    class DescriptorRevocationPredicate implements BiPredicate<ProfileRequestContext,AuthenticationResult> {
+
+        /** {@inheritDoc} */
+        public boolean test(@Nullable final ProfileRequestContext prc, @Nullable final AuthenticationResult result) {
+            if (prc != null) {
+                final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+                if (ac != null) {
+                    final AuthenticationFlowDescriptor flow = ac.getAvailableFlows().get(authenticationFlowId);
+                    if (flow != null) {
+                        if (flow.getRevocationCondition() != null) {
+                            return flow.getRevocationCondition().test(prc, result);
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            }
+            
+            return true;
+        }
+    }
+    
 }
