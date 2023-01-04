@@ -9,9 +9,11 @@
         </encoder>
     </appender>
 
-    <root>
-        <level value="INFO" />
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
+    
+    <!-- Turn down some noise. -->
+    <logger name="ch.qos.logback" level="WARN" />
     
 </configuration>
