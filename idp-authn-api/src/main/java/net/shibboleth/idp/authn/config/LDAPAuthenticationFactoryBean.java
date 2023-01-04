@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.config;
 
+import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.time.Period;
 import javax.annotation.Nonnull;
@@ -25,8 +26,6 @@ import javax.annotation.Nullable;
 import com.google.common.base.MoreObjects;
 import net.shibboleth.idp.authn.TemplateSearchDnResolver;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.primitive.DeprecationSupport;
-import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.ActivePassiveConnectionStrategy;
@@ -102,7 +101,8 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
   public enum TrustType {
     JVM("jvmTrust"),
     CERTIFICATE("certificateTrust"),
-    KEYSTORE("keyStoreTrust");
+    KEYSTORE("keyStoreTrust"),
+    DISABLED("disabled");
 
     /** Label for this type. */
     private final String label;
@@ -478,6 +478,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     case KEYSTORE:
       config.setCredentialConfig(truststoreCredentialConfig);
       break;
+    case DISABLED:
+      config.setCredentialConfig(() -> { throw new GeneralSecurityException("SSL/startTLS is disabled"); });
+      break;
     case JVM:
     default:
       break;
@@ -734,6 +737,13 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     return authenticator;
   }
 // Checkstyle: CyclomaticComplexity|MethodLength ON
+
+  @Override
+  protected void destroyInstance(final Authenticator instance) {
+    if (instance != null) {
+      instance.close();
+    }
+  }
 
   @Override
   public String toString() {

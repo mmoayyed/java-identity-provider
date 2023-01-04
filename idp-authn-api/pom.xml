@@ -110,6 +110,11 @@
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <scm>
