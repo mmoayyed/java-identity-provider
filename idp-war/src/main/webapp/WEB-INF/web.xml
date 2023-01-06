@@ -54,11 +54,9 @@
     <session-config>
         <session-timeout>15</session-timeout>
         <cookie-config>
-            <!-- Uncomment to add __Host- protection. -->
-            <!--
+            <!-- Comment name and path to revert __Host- protection. -->
             <name>__Host-JSESSIONID</name>
             <path>/</path>
-            -->
             <secure>true</secure>
             <http-only>true</http-only>
         </cookie-config>

@@ -77,21 +77,21 @@
     <bean id="shibboleth.DefaultSPSessionSerializerRegistry" class="net.shibboleth.idp.session.SPSessionSerializerRegistry" />
     
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
-            depends-on="shibboleth.OpenSAMLConfig"
-            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
-            p:authenticationFlowDescriptors="#{@'shibboleth.AuthenticationFlowDescriptorManager'.getComponents()}"
-            p:cookieManager-ref="shibboleth.CookieManager"
-            p:cookieName="%{idp.session.cookieName:shib_idp_session}"
-            p:storageService-ref="#{'%{idp.session.StorageService:shibboleth.ClientSessionStorageService}'.trim()}"
-            p:consistentAddressCondition="#{getObject('%{idp.session.consistentAddressCondition:}'.trim()) ?:
-                T(net.shibboleth.idp.session.impl.StorageBackedSessionManager.DefaultConsistentAddressConditionFactory).getDefaultConsistentAddressCondition(%{idp.session.consistentAddress:true})}"
-            p:sessionTimeout="%{idp.session.timeout:PT60M}"
-            p:sessionSlop="%{idp.session.slop:PT0S}"
-            p:maskStorageFailure="%{idp.session.maskStorageFailure:false}"
-            p:trackSPSessions="%{idp.session.trackSPSessions:false}"
-            p:secondaryServiceIndex="%{idp.session.secondaryServiceIndex:false}"
-            p:IDGenerator-ref="shibboleth.SessionIDGenerator"
-            p:SPSessionSerializerRegistry="#{getObject('shibboleth.SPSessionSerializerRegistry') ?: getObject('shibboleth.DefaultSPSessionSerializerRegistry')}" />
+        depends-on="shibboleth.OpenSAMLConfig"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
+        p:authenticationFlowDescriptors="#{@'shibboleth.AuthenticationFlowDescriptorManager'.getComponents()}"
+        p:cookieManager-ref="shibboleth.CookieManager"
+        p:cookieName="%{idp.session.cookieName:__Host-shib_idp_session}"
+        p:storageService-ref="#{'%{idp.session.StorageService:shibboleth.ClientSessionStorageService}'.trim()}"
+        p:consistentAddressCondition="#{getObject('%{idp.session.consistentAddressCondition:}'.trim()) ?:
+            T(net.shibboleth.idp.session.impl.StorageBackedSessionManager.DefaultConsistentAddressConditionFactory).getDefaultConsistentAddressCondition(%{idp.session.consistentAddress:true})}"
+        p:sessionTimeout="%{idp.session.timeout:PT60M}"
+        p:sessionSlop="%{idp.session.slop:PT0S}"
+        p:maskStorageFailure="%{idp.session.maskStorageFailure:false}"
+        p:trackSPSessions="%{idp.session.trackSPSessions:false}"
+        p:secondaryServiceIndex="%{idp.session.secondaryServiceIndex:false}"
+        p:IDGenerator-ref="shibboleth.SessionIDGenerator"
+        p:SPSessionSerializerRegistry="#{getObject('shibboleth.SPSessionSerializerRegistry') ?: getObject('shibboleth.DefaultSPSessionSerializerRegistry')}" />
 
     <!-- Management bean to collect and expose LogoutPropagationFlowDescriptors. -->
     
