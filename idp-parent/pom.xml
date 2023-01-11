@@ -13,9 +13,8 @@
 
     <name>Shibboleth Identity Provider</name>
     <description>
-        A SAML 1.1 and 2.0 identity provider implementation.
-
-        For more information, including how to install and configure the IdP, see https://wiki.shibboleth.net/confluence/display/IDP30/Home
+        A SAML Identity Provider and CAS login service implementation
+        with robust extensibility to other protocols.
     </description>
 
     <groupId>net.shibboleth.idp</groupId>
