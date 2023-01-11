@@ -92,8 +92,11 @@ public final class UserAgentContext extends BaseContext {
     /**
      * Gets the parsed user agent.
      *
-     * @return Parsed user agent or null if {@link #setIdentifier(String)} has not been called.
+     * @return Parsed user agent or null if {@link #setIdentifier(String)} has not been called
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.3.0", forRemoval=true)
     @Nullable public UserAgent getUserAgent() {
         return userAgent;
     }
@@ -101,10 +104,13 @@ public final class UserAgentContext extends BaseContext {
     /**
      * Determines whether this user agent is an instance of the given browser.
      *
-     * @param browser browser to check.
+     * @param browser browser to check
      *
-     * @return True if this user agent is an instance of the given browser, false otherwise.
+     * @return True if this user agent is an instance of the given browser, false otherwise
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.3.0", forRemoval=true)
     public boolean isInstance(@Nonnull final Browser browser) {
         Constraint.isNotNull(browser, "Browser cannot be null");
         if (userAgent == null) {
@@ -116,10 +122,13 @@ public final class UserAgentContext extends BaseContext {
     /**
      * Determines whether this user agent is an instance of the given operating system.
      *
-     * @param os operating system to check.
+     * @param os operating system to check
      *
-     * @return True if this user agent is an instance of the given operating system, false otherwise.
+     * @return True if this user agent is an instance of the given operating system, false otherwise
+     * 
+     * @deprecated
      */
+    @Deprecated(since="4.3.0", forRemoval=true)
     public boolean isInstance(@Nonnull final OperatingSystem os) {
         Constraint.isNotNull(os, "OperatingSystem cannot be null");
         if (userAgent == null) {
