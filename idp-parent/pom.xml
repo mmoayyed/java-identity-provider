@@ -46,7 +46,7 @@
 
         <module>../idp-war</module>
         <module>../idp-war-distribution</module>
-	<module>../idp-cli</module>
+        <module>../idp-cli</module>
         <module>../idp-installer</module>
         <module>../idp-conf</module>
         <module>../idp-conf-impl</module>
@@ -70,23 +70,6 @@
         <idp-parent.site.url>${shibboleth.site.deploy.url}java-identity-provider/${project.version}/</idp-parent.site.url>
         <idp-module.site.url>${idp-parent.site.url}${project.artifactId}</idp-module.site.url>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>shib-release</id>
-            <url>https://build.shibboleth.net/nexus/content/groups/public</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>shib-snapshot</id>
-            <url>https://build.shibboleth.net/nexus/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
 
     <dependencies>
     <!-- This file should contain NO additional dependencies unless they truly apply to every "every module. See IDP-1620. -->
