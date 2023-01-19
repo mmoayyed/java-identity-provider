@@ -83,7 +83,7 @@ public class FlowDefinitionResourceFactory {
      * 
      * @return the flow definition resource
      */
-    public FlowDefinitionResource createResource(@Nullable final String basePath,
+    @Nonnull public FlowDefinitionResource createResource(@Nullable final String basePath,
             @Nonnull @NotEmpty final String path, @Nonnull final AttributeMap<Object> attributes,
             @Nonnull @NotEmpty final String flowId) {
         Constraint.isNotEmpty(path, "Flow path cannot be null or empty");
@@ -153,6 +153,7 @@ public class FlowDefinitionResourceFactory {
         
         final Collection<FlowDefinitionResource> flowResources = new ArrayList<>(resources.length);
         for (final Resource resource : resources) {
+            assert resource != null;
             flowResources.add(new FlowDefinitionResource(getFlowId(basePath, resource), resource, attributes));
         }
         return flowResources;
@@ -186,7 +187,12 @@ public class FlowDefinitionResourceFactory {
             filePath = truncateFilePath(flowResource.getURL().getPath(), localBasePath);
         } else {
             // Default to the filename.
-            return StringUtils.stripFilenameExtension(flowResource.getFilename());
+            final String fname = flowResource.getFilename();
+            if (fname != null) {
+                return StringUtils.stripFilenameExtension(fname);
+            } else {
+                throw new IOException("Unable to obtain filename from Resource of type " + flowResource.getClass().getName());
+            }
         }
 
         int beginIndex = 0;
@@ -205,7 +211,12 @@ public class FlowDefinitionResourceFactory {
             endIndex = filePath.lastIndexOf(SLASH);
         } else {
             // There is no path info, default to the filename.
-            return StringUtils.stripFilenameExtension(flowResource.getFilename());
+            final String fname = flowResource.getFilename();
+            if (fname != null) {
+                return StringUtils.stripFilenameExtension(fname);
+            } else {
+                throw new IOException("Unable to obtain filename from Resource of type " + flowResource.getClass().getName());
+            }
         }
         return filePath.substring(beginIndex, endIndex);
     }
@@ -253,7 +264,7 @@ public class FlowDefinitionResourceFactory {
      * 
      * @return the input with the scheme removed.
      */
-    private String removeScheme(@Nonnull @NotEmpty final String path) {
+    @Nonnull private String removeScheme(@Nonnull @NotEmpty final String path) {
         if (path.startsWith(CLASSPATH_SCHEME)) {
             return path.substring(CLASSPATH_SCHEME.length());
         } else if (path.startsWith(FILESYSTEM_SCHEME)) {

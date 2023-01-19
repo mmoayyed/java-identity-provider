@@ -31,6 +31,7 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.webflow.config.FlowDefinitionResource;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -79,9 +80,6 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
 
     /** Optional parent reference. */
     @Nullable private FlowDefinitionRegistry parent;
-
-    /** Overriden resource factory, the whole reason for this class. */
-    @Nullable private FlowDefinitionResourceFactory flowResourceFactory;
     
     /** Constructor. */
     public FlowDefinitionRegistryFactoryBean() {
@@ -159,35 +157,48 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
 
     /** {@inheritDoc} */
     @Override
-    protected FlowDefinitionRegistry createInstance() throws Exception {
+    @Nonnull protected FlowDefinitionRegistry createInstance() throws Exception {
 
-        flowResourceFactory = new FlowDefinitionResourceFactory(flowBuilderServices.getApplicationContext());
+        if (flowBuilderServices == null) {
+            throw new BeanCreationException("FlowBuilderServices instance was null");
+        }
+        
+        assert flowBuilderServices != null;
+        
+        // This is the whole reason for this class.
+        final FlowDefinitionResourceFactory flowResourceFactory =
+                new FlowDefinitionResourceFactory(flowBuilderServices.getApplicationContext());
         
         final DefaultFlowRegistry flowRegistry = new DefaultFlowRegistry();
         flowRegistry.setParent(this.parent);
 
-        registerFlowLocations(flowRegistry);
-        registerFlowLocationPatterns(flowRegistry);
+        registerFlowLocations(flowRegistry, flowResourceFactory);
+        registerFlowLocationPatterns(flowRegistry, flowResourceFactory);
 
         return flowRegistry;
     }
 
     /** {@inheritDoc} */
-    @Override protected void destroyInstance(final FlowDefinitionRegistry instance) throws Exception {
-        ((DefaultFlowRegistry) instance).destroy();
+    @Override protected void destroyInstance(@Nullable final FlowDefinitionRegistry instance) throws Exception {
+        if (instance != null) {
+            ((DefaultFlowRegistry) instance).destroy();
+        }
     }
 
     /**
      * Register explicit flow mappings.
      * 
      * @param flowRegistry the flow registry
+     * @param resourceFactory the flow definition resource factory
      */
-    private void registerFlowLocations(@Nonnull final DefaultFlowRegistry flowRegistry) {
+    private void registerFlowLocations(@Nonnull final DefaultFlowRegistry flowRegistry, 
+            @Nonnull final FlowDefinitionResourceFactory resourceFactory) {
         for (final Map.Entry<String,String> location : flowLocations.entrySet()) {
             final LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
             updateFlowAttributes(attributes);
+            
             final FlowDefinitionResource resource =
-                    flowResourceFactory.createResource(basePath, location.getValue(), attributes, location.getKey());
+                    resourceFactory.createResource(basePath, location.getValue(), attributes, location.getKey());
             registerFlow(resource, flowRegistry);
         }
     }
@@ -196,15 +207,24 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
      * Register flows derived from resource patterns.
      * 
      * @param flowRegistry the flow registry
+     * @param resourceFactory the flow definition resource factory
      */
-    private void registerFlowLocationPatterns(@Nonnull final DefaultFlowRegistry flowRegistry) {
+    private void registerFlowLocationPatterns(@Nonnull final DefaultFlowRegistry flowRegistry,
+            @Nonnull final FlowDefinitionResourceFactory resourceFactory) {
         for (final Map.Entry<String,String> pattern : flowLocationPatterns.entrySet()) {
             final LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
             updateFlowAttributes(attributes);
             final Collection<FlowDefinitionResource> resources;
             try {
-                resources = flowResourceFactory.createResources(
-                        pattern.getValue() != null ? pattern.getValue() : basePath, pattern.getKey(), attributes);
+                final String base;
+                if (pattern.getValue() != null) {
+                    base = pattern.getValue();
+                } else if (basePath != null) {
+                    base = basePath;
+                } else {
+                    base = "";
+                }
+                resources = resourceFactory.createResources(base, pattern.getKey(), attributes);
             } catch (final IOException e) {
                 throw new IllegalStateException(
                         "An I/O Exception occurred resolving the flow location pattern '" + pattern.getKey() + "'", e);
@@ -236,7 +256,8 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
     private void registerFlow(@Nonnull final FlowDefinitionResource resource,
             @Nonnull final DefaultFlowRegistry flowRegistry) {
         FlowModelBuilder flowModelBuilder = null;
-        if (resource.getPath().getFilename().endsWith(".xml")) {
+        final String fname = resource.getPath().getFilename();
+        if (fname != null && fname.endsWith(".xml")) {
             flowModelBuilder = new XmlFlowModelBuilder(resource.getPath(), flowRegistry.getFlowModelRegistry());
         } else {
             throw new IllegalArgumentException(resource
@@ -260,7 +281,8 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
      * @param attributes attribute map to update
      */
     private void updateFlowAttributes(@Nonnull final LocalAttributeMap<Object> attributes) {
-        if (flowBuilderServices.getDevelopment()) {
+        
+        if (flowBuilderServices != null && flowBuilderServices.getDevelopment()) {
             attributes.put("development", true);
         }
     }

@@ -35,7 +35,8 @@ public class RelyingPartyIdPredicateTest {
     
     private boolean testCandidate(final RelyingPartyIdPredicate rpIdPredicate, final String rpId) {
         ProfileRequestContext prc = new ProfileRequestContext();
-        RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, true);
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, true);
+        assert rpc != null;
         rpc.setRelyingPartyId(rpId);
         return rpIdPredicate.test(prc);
     }

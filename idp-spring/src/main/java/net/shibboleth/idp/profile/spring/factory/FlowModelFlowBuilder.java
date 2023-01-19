@@ -69,7 +69,7 @@ public class FlowModelFlowBuilder extends org.springframework.webflow.engine.bui
      * 
      * @return the imported resource paths
      */
-    private String[] parseContextResources(@Nullable final List<BeanImportModel> beanImports) {
+    @Nonnull private String[] parseContextResources(@Nullable final List<BeanImportModel> beanImports) {
         if (beanImports != null && !beanImports.isEmpty()) {
             final String[] resources = new String[beanImports.size()];
             return beanImports.stream()

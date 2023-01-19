@@ -19,6 +19,8 @@ package net.shibboleth.idp.profile.spring.factory;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.FileSystemResource;
@@ -57,7 +59,7 @@ class FlowRelativeResourceLoader extends DefaultResourceLoader {
 
     /** {@inheritDoc} */
     @Override
-    public Resource getResource(final String location) {
+    @Nonnull public Resource getResource(@Nonnull final String location) {
         
         try {
             final Resource r = super.getResource(location);
@@ -79,7 +81,7 @@ class FlowRelativeResourceLoader extends DefaultResourceLoader {
      * @param location the resource location
      * @return a corresponding Resource handle
      */
-    private Resource createFlowRelativeResource(final String location) {
+    @Nonnull private Resource createFlowRelativeResource(@Nonnull final String location) {
         try {
             return flowResource.createRelative(location);
         } catch (final IOException e) {
@@ -100,7 +102,7 @@ class FlowRelativeResourceLoader extends DefaultResourceLoader {
      * </p>
      */
     @Override
-    protected Resource getResourceByPath(final String path) {
+    @Nonnull protected Resource getResourceByPath(@Nonnull final String path) {
         try {
             final Resource r = new FileSystemResource(path);
             if (r.exists()) {
