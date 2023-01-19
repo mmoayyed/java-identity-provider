@@ -34,9 +34,11 @@ public class WebflowRequestContextProfileRequestContextLookup implements
 
     /** {@inheritDoc} */
     @Nullable public ProfileRequestContext apply(@Nullable final RequestContext requestContext) {
-        final Object ctx = requestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
-        if (ctx instanceof ProfileRequestContext) {
-            return (ProfileRequestContext) ctx;
+        if (requestContext != null) {
+            final Object ctx = requestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
+            if (ctx instanceof ProfileRequestContext) {
+                return (ProfileRequestContext) ctx;
+            }
         }
         
         return null;

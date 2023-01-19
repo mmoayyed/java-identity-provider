@@ -20,7 +20,9 @@ package net.shibboleth.idp.profile.context.navigate;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.OverriddenIssuerProfileConfiguration;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -41,17 +43,17 @@ public class ResponderIdLookupFunction extends AbstractRelyingPartyLookupFunctio
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null) {
-                
-                if (rpc.getProfileConfig() instanceof OverriddenIssuerProfileConfiguration) {
-                    final String issuer =
-                            ((OverriddenIssuerProfileConfiguration) rpc.getProfileConfig()).getIssuer(input);
+                final ProfileConfiguration pc = rpc.getProfileConfig();
+                if (pc instanceof OverriddenIssuerProfileConfiguration) {
+                    final String issuer = ((OverriddenIssuerProfileConfiguration) pc).getIssuer(input);
                     if (issuer != null) {
                         return issuer;
                     }
                 }
                 
-                if (rpc.getConfiguration() != null) {
-                    return rpc.getConfiguration().getResponderId(input);
+                final RelyingPartyConfiguration rpConfig = rpc.getConfiguration();
+                if (rpConfig != null) {
+                    return rpConfig.getResponderId(input);
                 }
             }
         }

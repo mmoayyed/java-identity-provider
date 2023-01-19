@@ -99,6 +99,7 @@ public abstract class ExternalInterceptor {
             throw new ExternalInterceptorException("No conversation key found in request");
         }
         
+        assert key != null;
         final ProfileRequestContext profileRequestContext = getProfileRequestContext(key, request);
         final ExternalInterceptorContext extContext = getExternalInterceptorContext(profileRequestContext);
         extContext.getExternalInterceptor().doStart(request, profileRequestContext, extContext);

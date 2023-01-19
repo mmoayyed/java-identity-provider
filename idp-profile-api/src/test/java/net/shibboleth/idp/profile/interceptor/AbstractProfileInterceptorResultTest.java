@@ -29,6 +29,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link AbstractProfileInterceptorResult} unit test. */
+@SuppressWarnings("javadoc")
 public class AbstractProfileInterceptorResultTest {
 
     @Test(expectedExceptions = ConstraintViolationException.class)
@@ -47,23 +48,8 @@ public class AbstractProfileInterceptorResultTest {
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
-    public void testNullContext() {
-        new MockAbstractProfileInterceptorResult(null, "key", "value", Instant.ofEpochMilli(100));
-    }
-
-    @Test(expectedExceptions = ConstraintViolationException.class)
-    public void testNullKey() {
-        new MockAbstractProfileInterceptorResult("context", null, "value", Instant.ofEpochMilli(100));
-    }
-
-    @Test(expectedExceptions = ConstraintViolationException.class)
-    public void testNullValue() {
-        new MockAbstractProfileInterceptorResult("context", "key", null, Instant.ofEpochMilli(100));
-    }
-
-    @Test(expectedExceptions = ConstraintViolationException.class)
     public void testNegativeExpiration() {
-        new MockAbstractProfileInterceptorResult("context", "key", null, Instant.ofEpochMilli(-100));
+        new MockAbstractProfileInterceptorResult("context", "key", "value", Instant.ofEpochMilli(-100));
     }
 
     @Test public void testNullExpiration() {
@@ -76,7 +62,7 @@ public class AbstractProfileInterceptorResultTest {
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testZeroExpiration() {
-        new MockAbstractProfileInterceptorResult("context", "key", null, Instant.ofEpochMilli(0));
+        new MockAbstractProfileInterceptorResult("context", "key", "value", Instant.ofEpochMilli(0));
     }
 
     @Test public void testResult() {
@@ -96,4 +82,5 @@ public class AbstractProfileInterceptorResultTest {
             super(context, key, value, expiration);
         }
     }
+
 }

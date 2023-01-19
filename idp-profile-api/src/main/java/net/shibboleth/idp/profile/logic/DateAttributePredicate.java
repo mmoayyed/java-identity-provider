@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.time.DateTimeException;
 import java.time.Duration;
@@ -54,7 +55,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     @Nonnull @NotEmpty private final String attributeName;
 
     /** Formatter used to parse string-based date attribute values. */
-    @Nonnull private final DateTimeFormatter dateTimeFormatter;
+    @Nullable private final DateTimeFormatter dateTimeFormatter;
 
     /** Offset from system time used for date comparisons. */
     @Nonnull private Duration systemTimeOffset;
@@ -70,7 +71,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute) {
         attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
         dateTimeFormatter = null;
-        systemTimeOffset = java.time.Duration.ZERO;
+        systemTimeOffset = Duration.ZERO;
     }
 
     /**
@@ -85,7 +86,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
         
         attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
         dateTimeFormatter = Constraint.isNotNull(formatter, "Formatter cannot be null");
-        systemTimeOffset = java.time.Duration.ZERO;
+        systemTimeOffset = Duration.ZERO;
     }
 
     /**
@@ -100,7 +101,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
         attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
         dateTimeFormatter = DateTimeFormatter.ofPattern(
                 Constraint.isNotNull(formatString, "Format string cannot be null"));
-        systemTimeOffset = java.time.Duration.ZERO;
+        systemTimeOffset = Duration.ZERO;
     }
 
     /**
@@ -157,6 +158,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
                 }
                 dateString = ((StringAttributeValue) value).getValue();
                 try {
+                    assert dateTimeFormatter != null;
                     if (Instant.from(dateTimeFormatter.parse(dateString)).plus(systemTimeOffset).isAfter(now)) {
                         return true;
                     }

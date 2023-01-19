@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.profile.context.navigate;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,17 +26,16 @@ import net.shibboleth.idp.profile.context.MultiRelyingPartyContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
- * A function that returns a {@link RelyingPartyContext} based on ID.
+ * A {@link BiFunction} that returns a {@link RelyingPartyContext} based on ID.
  * 
  * <p>If a label is provided, the context will be auto-created if it doesn't already exist.</p>
  */
 public class RelyingPartyContextLookupById
-        implements Function<Pair<MultiRelyingPartyContext,String>, RelyingPartyContext> {
+        implements BiFunction<MultiRelyingPartyContext,String,RelyingPartyContext> {
 
     /** Label to use for auto-creation. */
     @Nullable private final String label; 
@@ -56,21 +55,23 @@ public class RelyingPartyContextLookupById
     }
 
     /** {@inheritDoc} */
-    @Nullable public RelyingPartyContext apply(@Nullable final Pair<MultiRelyingPartyContext,String> input) {
-        if (input == null || input.getFirst() == null) {
+    @Nullable public RelyingPartyContext apply(@Nullable final MultiRelyingPartyContext input1,
+            @Nullable final String input2) {
+        if (input1 == null) {
             return null;
         }
         
-        final String id = StringSupport.trimOrNull(input.getSecond()); 
+        final String id = StringSupport.trimOrNull(input2); 
         if (id == null) {
             return null;
         }
         
-        RelyingPartyContext rpCtx = input.getFirst().getRelyingPartyContextById(id);
+        RelyingPartyContext rpCtx = input1.getRelyingPartyContextById(id);
         if (rpCtx == null && label != null) {
             rpCtx = new RelyingPartyContext();
             rpCtx.setRelyingPartyId(id);
-            input.getFirst().addRelyingPartyContext(label, rpCtx);
+            assert label != null;
+            input1.addRelyingPartyContext(label, rpCtx);
         }
         
         return rpCtx;

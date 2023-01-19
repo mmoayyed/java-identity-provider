@@ -46,18 +46,18 @@ public class WebFlowCurrentEventLookupFunction implements Function<ProfileReques
             eventCtx = input.getSubcontext(PreviousEventContext.class);
         }
         
-        // If nothing in the Spring layer, just return what we have.
         final SpringRequestContext springContext = input.getSubcontext(SpringRequestContext.class);
-        if (springContext == null || springContext.getRequestContext() == null
-                || springContext.getRequestContext().getCurrentEvent() == null) {
+        final RequestContext springRequest = springContext != null ? springContext.getRequestContext() : null;
+
+        
+        // If nothing in the Spring layer, just return what we have.
+        if (springRequest == null || springRequest.getCurrentEvent() == null) {
             return eventCtx;
         }
-        
-        final RequestContext springRequest = springContext.getRequestContext();
-        
-        if (eventCtx == null || eventCtx.getEvent() == null
-                || !Objects.equals(eventCtx.getEvent().toString(), springRequest.getCurrentEvent().getId())) {
-            eventCtx = input.getSubcontext(EventContext.class, true);
+
+        final Object current = eventCtx != null ? eventCtx.getEvent() : null;
+        if (current == null || !Objects.equals(current.toString(), springRequest.getCurrentEvent().getId())) {
+            eventCtx = input.getOrCreateSubcontext(EventContext.class);
             eventCtx.setEvent(springRequest.getCurrentEvent());
         }
         

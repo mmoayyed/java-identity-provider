@@ -28,7 +28,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.component.ComponentSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.profile.action.AbstractConditionalProfileAction;
@@ -77,7 +76,7 @@ public abstract class AbstractProfileAction
     @Nonnull private Function<RequestContext,ProfileRequestContext> profileContextLookupStrategy;
 
     /** MessageSource injected by Spring, typically the parent ApplicationContext itself. */
-    @Nonnull private MessageSource messageSource;
+    @Nullable private MessageSource messageSource;
     
     /**
      * Constructor.
@@ -113,9 +112,15 @@ public abstract class AbstractProfileAction
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
+    @Nullable public Event execute(@Nullable final RequestContext springRequestContext) {
         checkComponentActive();
 
+        if (springRequestContext == null) {
+            // Suspect this is impossible but SWF is not annotated as such.
+            log.error("{} Spring request context is not available", getLogPrefix());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_PROFILE_CTX);
+        }
+        
         final ProfileRequestContext profileRequestContext =
                 profileContextLookupStrategy.apply(springRequestContext);
         if (profileRequestContext == null) {
@@ -142,12 +147,13 @@ public abstract class AbstractProfileAction
      * @param profileRequestContext a profile request context
      * @return a Web Flow event produced by the action
      */
-    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+    @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
         
         // Attach the Spring context to the context tree.
         final SpringRequestContext springSubcontext =
-                profileRequestContext.getSubcontext(SpringRequestContext.class, true);      
+                profileRequestContext.getOrCreateSubcontext(SpringRequestContext.class);
+        assert springSubcontext != null;
         springSubcontext.setRequestContext(springRequestContext);
 
         try {
@@ -171,7 +177,7 @@ public abstract class AbstractProfileAction
      * @param profileRequestContext the profile request context to examine
      * @return  an event based on the profile request context, or "proceed"
      */
-    @Nonnull protected Event getResult(@Nonnull final ProfileAction action,
+    @Nullable protected Event getResult(@Nonnull final ProfileAction action,
             @Nonnull final ProfileRequestContext profileRequestContext) {
         
         // Check for an EventContext on output.
@@ -180,13 +186,12 @@ public abstract class AbstractProfileAction
             final Object event = eventCtx.getEvent();
             
             if (event instanceof Event) {
-                return (Event) eventCtx.getEvent();
+                return (Event) event;
             } else if (event instanceof String) {
-                return ActionSupport.buildEvent(action, (String) eventCtx.getEvent());
+                return ActionSupport.buildEvent(action, (String) event);
             } else if (event instanceof AttributeMap) {
-                @SuppressWarnings("unchecked")
-                final AttributeMap<Object> map = (AttributeMap<Object>) eventCtx.getEvent();
-                return ActionSupport.buildEvent(action, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map); 
+                final AttributeMap<Object> map = (AttributeMap<Object>) event;
+                return ActionSupport.buildEvent(action, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map);
             }
         }
         
@@ -316,13 +321,14 @@ public abstract class AbstractProfileAction
     
     /** {@inheritDoc} */
     @Override
-    public void setMessageSource(final MessageSource source) {
+    public void setMessageSource(@Nullable final MessageSource source) {
         messageSource = source;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getMessage(final String code, final Object[] args, final String defaultMessage, final Locale locale) {
+    @Nullable public String getMessage(@Nonnull final String code, @Nullable final Object[] args,
+            @Nullable final String defaultMessage, @Nonnull final Locale locale) {
         if (messageSource != null) {
             return messageSource.getMessage(code, args, defaultMessage, locale);
         }
@@ -331,7 +337,8 @@ public abstract class AbstractProfileAction
 
     /** {@inheritDoc} */
     @Override
-    public String getMessage(final String code, final Object[] args, final Locale locale) {
+    @Nonnull public String getMessage(@Nonnull final String code, @Nullable final Object[] args,
+            @Nonnull final Locale locale) {
         if (messageSource != null) {
             return messageSource.getMessage(code, args, locale);
         }
@@ -340,7 +347,7 @@ public abstract class AbstractProfileAction
 
     /** {@inheritDoc} */
     @Override
-    public String getMessage(final MessageSourceResolvable resolvable, final Locale locale) {
+    @Nonnull public String getMessage(@Nonnull final MessageSourceResolvable resolvable, @Nonnull final Locale locale) {
         if (messageSource != null) {
             return messageSource.getMessage(resolvable, locale);
         }

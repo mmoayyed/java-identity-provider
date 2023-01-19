@@ -149,9 +149,10 @@ public class SimpleAttributePredicate extends AbstractAttributePredicate {
         
         for (final IdPAttributeValue value : attribute.getValues()) {
             if (scope != null && value instanceof ScopedStringAttributeValue) {
+                final String scopeCopy = scope;
                 if ("*".equals(toMatch) || toMatch.equals(((ScopedStringAttributeValue) value).getValue())) {
-                    if ("*".equals(scope) || scope.equals(((ScopedStringAttributeValue) value).getScope())) {
-                        log.debug("Found matching value ({}) and scope ({}) in attribute {}", toMatch, scope,
+                    if ("*".equals(scopeCopy) || scopeCopy.equals(((ScopedStringAttributeValue) value).getScope())) {
+                        log.debug("Found matching value ({}) and scope ({}) in attribute {}", toMatch, scopeCopy,
                                 attribute.getId());
                         return true;
                     }

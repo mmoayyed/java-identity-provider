@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.config.logic;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 
@@ -36,8 +37,11 @@ public class ResolveAttributesPredicate extends AbstractRelyingPartyPredicate {
     public boolean test(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-            if (rpc != null && rpc.getProfileConfig() instanceof AttributeResolvingProfileConfiguration) {
-                return ((AttributeResolvingProfileConfiguration) rpc.getProfileConfig()).isResolveAttributes(input);
+            if (rpc != null) {
+                final ProfileConfiguration pc = rpc.getProfileConfig();
+                if (pc instanceof AttributeResolvingProfileConfiguration) {
+                    return ((AttributeResolvingProfileConfiguration) pc).isResolveAttributes(input);
+                }
             }
         }
         

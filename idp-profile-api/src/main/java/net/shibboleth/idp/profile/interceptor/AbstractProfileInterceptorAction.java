@@ -78,6 +78,7 @@ public abstract class AbstractProfileInterceptorAction extends
             return false;
         }
 
+        assert profileInterceptorContext != null;
         return doPreExecute(profileRequestContext, profileInterceptorContext)
                 && super.doPreExecute(profileRequestContext);
     }
@@ -98,6 +99,7 @@ public abstract class AbstractProfileInterceptorAction extends
 
     /** {@inheritDoc} */
     @Override protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        assert profileInterceptorContext != null;
         doExecute(profileRequestContext, profileInterceptorContext);
     }
 

@@ -71,7 +71,7 @@ public class ScriptedPredicate
     @Override
     protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
         super.prepareContext(scriptContext, input);
-        scriptContext.setAttribute("profileContext", input[0], ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("profileContext", input != null ? input[0] : null, ScriptContext.ENGINE_SCOPE);
     }
     
     /**
@@ -102,7 +102,8 @@ public class ScriptedPredicate
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    public static ScriptedPredicate resourceScript(final Resource resource) throws ScriptException, IOException {
+    public static ScriptedPredicate resourceScript(@Nonnull final Resource resource)
+            throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 

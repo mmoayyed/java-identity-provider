@@ -74,7 +74,8 @@ public class SignatureSigningConfigurationLookupFunction
         if (input != null && rpResolver != null) {
             final SecurityConfiguration defaultConfig =
                     rpResolver.getDefaultSecurityConfiguration(input.getProfileId());
-            if (defaultConfig instanceof XMLSecurityConfiguration xsc && xsc.getSignatureSigningConfiguration() != null) {
+            if (defaultConfig instanceof XMLSecurityConfiguration xsc &&
+                    xsc.getSignatureSigningConfiguration() != null) {
                 configs.add(xsc.getSignatureSigningConfiguration());
             }
         }

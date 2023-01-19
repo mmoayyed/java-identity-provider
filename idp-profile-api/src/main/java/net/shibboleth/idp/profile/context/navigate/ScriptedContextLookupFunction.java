@@ -111,8 +111,8 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
     protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
         // We don't actually know that the context is a PRC, but we'll keep this for compatibility.
         // We can't use the variable name "context" because Rhino appears to reserve that name.
-        scriptContext.setAttribute("profileContext", input[0], ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("input", input[0], ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("profileContext", input != null ? input[0] : null, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("input", input != null ? input[0] : null, ScriptContext.ENGINE_SCOPE);
     }
     
     /**

@@ -37,7 +37,7 @@ public class RelyingPartyContextLookupByLabel
         implements Function<MultiRelyingPartyContext, Collection<RelyingPartyContext>> {
 
     /** Label to use for auto-creation. */
-    @Nullable private final String label; 
+    @Nonnull private final String label; 
     
     /**
      * Constructor.

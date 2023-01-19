@@ -69,7 +69,7 @@ public final class ActionSupport {
      * @return the constructed {@link Event}
      */
     @Nonnull public static Event buildEvent(@Nonnull final Object source, @Nonnull final String eventId,
-            @Nonnull final AttributeMap<Object> eventAttributes) {
+            @Nullable final AttributeMap<Object> eventAttributes) {
         Constraint.isNotNull(source, "Component cannot be null");
 
         final String trimmedEventId =

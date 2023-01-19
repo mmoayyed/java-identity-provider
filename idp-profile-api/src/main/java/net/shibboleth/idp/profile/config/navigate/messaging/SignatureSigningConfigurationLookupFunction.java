@@ -72,12 +72,14 @@ public class SignatureSigningConfigurationLookupFunction
             }
             
             // Check for a per-profile default (relying party independent) config.
-            if (pc != null && rpResolver != null) {
-                final SecurityConfiguration defaultConfig =
-                        rpResolver.getDefaultSecurityConfiguration(pc.getId());
-                if (defaultConfig instanceof XMLSecurityConfiguration xsc &&
-                        xsc.getSignatureSigningConfiguration() != null) {
-                    configs.add(xsc.getSignatureSigningConfiguration());
+            if (pc != null) {
+                final String id = pc.getId();
+                if (id != null && rpResolver != null) {
+                    final SecurityConfiguration defaultConfig = rpResolver.getDefaultSecurityConfiguration(id);
+                    if (defaultConfig instanceof XMLSecurityConfiguration xsc &&
+                            xsc.getSignatureSigningConfiguration() != null) {
+                        configs.add(xsc.getSignatureSigningConfiguration());
+                    }
                 }
             }
         }

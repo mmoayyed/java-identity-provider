@@ -64,7 +64,8 @@ public class BasicSecurityConfiguration implements SecurityConfiguration {
      * @param skew the clock skew, must be greater than 0
      * @param generator the identifier generator, must not be null
      */
-    public BasicSecurityConfiguration(@Nonnull final Duration skew, @Nonnull final IdentifierGenerationStrategy generator) {
+    public BasicSecurityConfiguration(@Nonnull final Duration skew,
+            @Nonnull final IdentifierGenerationStrategy generator) {
         Constraint.isNotNull(skew, "Clock skew cannot be null");
         Constraint.isFalse(skew.isNegative() || skew.isZero(), "Clock skew must be greater than 0");
         

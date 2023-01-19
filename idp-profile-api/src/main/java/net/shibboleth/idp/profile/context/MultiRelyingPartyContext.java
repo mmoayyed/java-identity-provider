@@ -60,9 +60,6 @@ public final class MultiRelyingPartyContext extends BaseContext {
     /** An iterator to track progress through the set of relying parties. */
     @Nullable private Iterator<RelyingPartyContext> relyingPartyIterator;
     
-    /** Tracks the context being operated on. */
-    @Nullable private RelyingPartyContext relyingPartyCtx;
-    
     /** Constructor. */
     public MultiRelyingPartyContext() {
         relyingPartyIdMap = new HashMap<>();
@@ -118,6 +115,7 @@ public final class MultiRelyingPartyContext extends BaseContext {
         if (fresh || relyingPartyIterator == null) {
             relyingPartyIterator = new RelyingPartyContextIterator(this);
         }
+        assert relyingPartyIterator != null;
         return relyingPartyIterator;
     }
 
@@ -179,9 +177,6 @@ public final class MultiRelyingPartyContext extends BaseContext {
      * Wrapper for an iterator that tracks the current object.
      */
     private class RelyingPartyContextIterator implements Iterator<RelyingPartyContext> {
-
-        /** Outer ctx. */
-        @Nonnull private final MultiRelyingPartyContext multiCtx;
         
         /** Embedded iterator. */
         @Nonnull private final Iterator<RelyingPartyContext> iterator;
@@ -195,7 +190,6 @@ public final class MultiRelyingPartyContext extends BaseContext {
          * @param ctx outer context
          */
         public RelyingPartyContextIterator(@Nonnull final MultiRelyingPartyContext ctx) {
-            multiCtx = ctx;
             iterator = ctx.relyingPartyIdMap.values().iterator();
         }
         

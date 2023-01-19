@@ -21,11 +21,10 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -48,7 +47,7 @@ public abstract class AbstractConditionalProfileConfiguration extends AbstractPr
     public AbstractConditionalProfileConfiguration(@Nonnull @NotEmpty @ParameterName(name="id") final String id) {
         super(id);
         
-        activationCondition = Predicates.alwaysTrue();
+        activationCondition = PredicateSupport.alwaysTrue();
     }
 
     /** {@inheritDoc} */

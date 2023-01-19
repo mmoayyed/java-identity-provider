@@ -110,7 +110,12 @@ public class LoopDetectionPredicate extends AbstractRelyingPartyPredicate {
             if (meterName != null) {
                 meterName = MetricRegistry.name("net.shibboleth.idp.loopDetection", meterName,
                         username.replace(".",""));
-                final Meter meter = MetricsSupport.getMetricRegistry().meter(meterName,
+                final MetricRegistry registry = MetricsSupport.getMetricRegistry();
+                if (registry == null) {
+                    log.error("MetricRegistry was unavailable");
+                    return false;
+                }
+                final Meter meter = registry.meter(meterName,
                         new MetricSupplier<Meter>() {
                             public Meter newMetric() {
                                 return new Meter(new SlidingTimeWindowMovingAverages());

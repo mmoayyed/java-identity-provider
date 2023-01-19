@@ -40,6 +40,9 @@ public class IdentifierGenerationStrategyLookupFunction
     /** A resolver for default security configurations. */
     @Nullable private RelyingPartyConfigurationResolver rpResolver;
 
+    /** Default strategy to return. */
+    @Nullable private IdentifierGenerationStrategy defaultGenerator;
+
     /**
      * Set the resolver for default security configurations.
      * 
@@ -48,9 +51,6 @@ public class IdentifierGenerationStrategyLookupFunction
     public void setRelyingPartyConfigurationResolver(@Nullable final RelyingPartyConfigurationResolver resolver) {
         rpResolver = resolver;
     }
-
-    /** Default strategy to return. */
-    @Nullable private IdentifierGenerationStrategy defaultGenerator;
     
     /**
      * Set the default {@link IdentifierGenerationStrategy} to return.

@@ -29,12 +29,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
@@ -44,17 +41,15 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.IdentifiedComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /** The configuration that applies to a given relying party. */
 public class RelyingPartyConfiguration extends AbstractIdentifiableInitializableComponent implements
         IdentifiedComponent, Predicate<ProfileRequestContext> {
     
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(RelyingPartyConfiguration.class);
-    
     /** Lookup function to supply <code>responderId</code> property. */
-    @Nonnull private Function<ProfileRequestContext,String> responderIdLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,String> responderIdLookupStrategy;
 
     /** Controls whether detailed information about errors should be exposed. */
     @Nonnull private Predicate<ProfileRequestContext> detailedErrorsPredicate;
@@ -68,8 +63,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
 
     /** Constructor. */
     public RelyingPartyConfiguration() {
-        activationCondition = Predicates.alwaysTrue();
-        detailedErrorsPredicate = Predicates.alwaysFalse();
+        activationCondition = PredicateSupport.alwaysTrue();
+        detailedErrorsPredicate = PredicateSupport.alwaysFalse();
         profileConfigurationsLookupStrategy = FunctionSupport.constant(null);
     }
 
@@ -127,7 +122,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      */
     public void setDetailedErrors(final boolean flag) {
         checkSetterPreconditions();
-        detailedErrorsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        detailedErrorsPredicate = PredicateSupport.constant(flag);
     }
     
     /**

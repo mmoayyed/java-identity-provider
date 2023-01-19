@@ -71,11 +71,13 @@ public class HttpClientSecurityConfigurationLookupFunction
             }
             
             // Check for a per-profile default (relying party independent) config.
-            if (pc != null && rpResolver != null) {
-                final SecurityConfiguration defaultConfig =
-                        rpResolver.getDefaultSecurityConfiguration(pc.getId());
-                if (defaultConfig != null && defaultConfig.getHttpClientSecurityConfiguration() != null) {
-                    configs.add(defaultConfig.getHttpClientSecurityConfiguration());
+            if (pc != null) {
+                final String id = pc.getId();
+                if (id != null && rpResolver != null) {
+                    final SecurityConfiguration defaultConfig = rpResolver.getDefaultSecurityConfiguration(id);
+                    if (defaultConfig != null && defaultConfig.getHttpClientSecurityConfiguration() != null) {
+                        configs.add(defaultConfig.getHttpClientSecurityConfiguration());
+                    }
                 }
             }
         }

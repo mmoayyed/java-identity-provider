@@ -119,7 +119,7 @@ public class ScriptedAction extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override public void doExecute(@Nullable final ProfileRequestContext profileContext) {
+    @Override public void doExecute(@Nonnull final ProfileRequestContext profileContext) {
 
         final String result = scriptEvaluator.execute(profileContext);
         if (result == null) {
@@ -141,7 +141,8 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws IOException if the file doesn't exist.
      */
     @SuppressWarnings("removal")
-    static public ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource)
+    public static ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName,
+            @Nonnull final Resource resource)
             throws ScriptException, IOException {
         try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript();
@@ -160,7 +161,8 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static public ScriptedAction resourceScript(@Nonnull final Resource resource) throws ScriptException, IOException {
+    public static ScriptedAction resourceScript(@Nonnull final Resource resource)
+            throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
@@ -173,7 +175,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws ScriptException if the compile fails
      */
     @SuppressWarnings("removal")
-    static public ScriptedAction inlineScript(@Nonnull @NotEmpty final String engineName,
+    public static ScriptedAction inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript();
                 script.setEngineName(engineName);
@@ -189,7 +191,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @return the predicate
      * @throws ScriptException if the compile fails
      */
-    static public ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+    public static ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         return inlineScript(DEFAULT_ENGINE, scriptSource);
     }
 
@@ -229,7 +231,7 @@ public class ScriptedAction extends AbstractProfileAction {
         /** {@inheritDoc} */
         @Override
         protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
-            scriptContext.setAttribute("profileContext", input[0], ScriptContext.ENGINE_SCOPE);
+            scriptContext.setAttribute("profileContext", input != null ? input[0] : null, ScriptContext.ENGINE_SCOPE);
         }
     }
     

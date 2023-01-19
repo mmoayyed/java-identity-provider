@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class SpringStatusMessageLookupFunction implements Function<ProfileRequestContext, String>, MessageSourceAware {
 
     /** MessageSource injected by Spring, typically the parent ApplicationContext itself. */
-    @Nonnull private MessageSource messageSource;
+    @Nullable private MessageSource messageSource;
     
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
@@ -50,6 +50,8 @@ public class SpringStatusMessageLookupFunction implements Function<ProfileReques
                         ? springRequestContext.getCurrentEvent() : null;
                 if (previousEvent != null) {
                     try {
+                        assert messageSource != null;
+                        assert springRequestContext != null;
                         return messageSource.getMessage(previousEvent.getId(), null,
                                 springRequestContext.getExternalContext().getLocale());
                     } catch (final NoSuchMessageException e) {
@@ -64,7 +66,7 @@ public class SpringStatusMessageLookupFunction implements Function<ProfileReques
 
     /** {@inheritDoc} */
     @Override
-    public void setMessageSource(final MessageSource source) {
+    public void setMessageSource(@Nonnull final MessageSource source) {
         messageSource = source;
     }
 

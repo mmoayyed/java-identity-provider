@@ -37,8 +37,6 @@ import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Base class for {@link ProfileConfiguration} implementations. */
 public abstract class AbstractProfileConfiguration extends AbstractIdentifiableInitializableComponent
@@ -46,9 +44,6 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     
     /** Default value for disallowedFeatures property. */
     @Nonnull public static final Integer DEFAULT_DISALLOWED_FEATURES = 0; 
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractProfileConfiguration.class);
 
     /** Lookup function to supply inboundFlows property. */
     @Nonnull private Function<ProfileRequestContext,List<String>> inboundFlowsLookupStrategy;
