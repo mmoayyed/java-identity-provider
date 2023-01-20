@@ -32,6 +32,7 @@ import net.shibboleth.shared.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 
 /**
  * A predicate implementation that forwards to 
@@ -82,11 +83,13 @@ public class SignRequestsPredicate extends AbstractRelyingPartyPredicate {
 
         if (honorMetadata) {
             final SAMLMetadataContext metadataCtx = metadataContextLookupStrategy.apply(input);
-            if (metadataCtx != null && metadataCtx.getRoleDescriptor() != null
-                    && metadataCtx.getRoleDescriptor() instanceof IDPSSODescriptor) {
-                final Boolean flag = ((IDPSSODescriptor) metadataCtx.getRoleDescriptor()).getWantAuthnRequestsSigned();
-                if (flag != null && flag.booleanValue()) {
-                    return true;
+            if (metadataCtx != null) {
+                final RoleDescriptor role = metadataCtx.getRoleDescriptor();
+                if (role instanceof IDPSSODescriptor) {
+                    final Boolean flag = ((IDPSSODescriptor) role).getWantAuthnRequestsSigned();
+                    if (flag != null && flag.booleanValue()) {
+                        return true;
+                    }
                 }
             }
         }

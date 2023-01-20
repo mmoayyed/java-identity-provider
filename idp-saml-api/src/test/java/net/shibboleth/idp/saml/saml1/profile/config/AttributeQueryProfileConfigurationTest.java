@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.saml1.profile.config;
 
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -27,6 +26,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link AttributeQueryProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class AttributeQueryProfileConfigurationTest {
 
     @Test

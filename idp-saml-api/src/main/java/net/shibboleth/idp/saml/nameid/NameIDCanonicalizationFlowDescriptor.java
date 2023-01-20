@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.nameid;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -27,6 +26,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -42,7 +42,7 @@ public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizatio
 
     /** Constructor. */
     public NameIDCanonicalizationFlowDescriptor() {
-        formats = Collections.emptySet();
+        formats = CollectionSupport.emptySet();
     }
     
     /**

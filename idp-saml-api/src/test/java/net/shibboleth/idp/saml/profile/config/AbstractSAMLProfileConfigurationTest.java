@@ -24,13 +24,13 @@ import java.util.Set;
 
 import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
-
 /** Unit test for {@link AbstractSAMLProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testSignAssertionsCriteria() {
@@ -38,13 +38,6 @@ public class AbstractSAMLProfileConfigurationTest {
 
         config.setSignAssertions(false);
         Assert.assertFalse(config.isSignAssertions(null));
-
-        try {
-            config.setSignAssertionsPredicate(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // excepted this
-        }
     }
 
     @Test public void testSignResponsesCriteria() {
@@ -52,13 +45,6 @@ public class AbstractSAMLProfileConfigurationTest {
 
         config.setSignResponses(false);
         Assert.assertFalse(config.isSignResponses(null));
-
-        try {
-            config.setSignResponsesPredicate(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // excepted this
-        }
     }
 
     @Test public void testSignRequestsCriteria() {
@@ -66,13 +52,6 @@ public class AbstractSAMLProfileConfigurationTest {
 
         config.setSignRequests(false);
         Assert.assertFalse(config.isSignRequests(null));
-
-        try {
-            config.setSignRequestsPredicate(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // excepted this
-        }
     }
 
     @Test public void testAssertionLifetime() {
@@ -122,7 +101,7 @@ public class AbstractSAMLProfileConfigurationTest {
     @Test public void testIndirectIncludeNotBefore() {
         final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
 
-        config.setIncludeConditionsNotBeforePredicate(Predicates.alwaysFalse());
+        config.setIncludeConditionsNotBeforePredicate(PredicateSupport.alwaysFalse());
         Assert.assertFalse(config.isIncludeConditionsNotBefore(null));
     }
 

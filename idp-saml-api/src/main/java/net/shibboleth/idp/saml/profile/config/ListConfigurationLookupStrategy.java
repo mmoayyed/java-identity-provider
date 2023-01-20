@@ -26,11 +26,11 @@ import javax.annotation.Nullable;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A strategy function that examines SAML metadata associated with a relying party and derives List&lt;String&gt;-valued
@@ -74,6 +74,7 @@ public class ListConfigurationLookupStrategy<T> extends AbstractCollectionConfig
         final List<XMLObject> values = tag.getAttributeValues();
         final List<T> result = new ArrayList<>(values.size());
         for (final XMLObject value : values) {
+            assert value != null;
             final String converted = xmlObjectToString(value);
             if (converted != null) {
                 try {

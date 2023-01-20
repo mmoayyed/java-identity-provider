@@ -27,14 +27,13 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 /**
  * Configuration support for artifact-aware profiles.
@@ -103,7 +102,7 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration extends Abs
      * @param flag flag to set
      */
     public void setSignArtifactRequests(final boolean flag) {
-        signArtifactRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        signArtifactRequestsPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -129,7 +128,7 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration extends Abs
      * @param flag flag to set
      */
     public void setClientTLSArtifactRequests(final boolean flag) {
-        clientTLSArtifactRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        clientTLSArtifactRequestsPredicate = PredicateSupport.constant(flag);
     }
     
     /**

@@ -25,6 +25,7 @@ import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 /** Unit test for {@link SingleLogoutProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class SingleLogoutProfileConfigurationTest {
 
     @Test

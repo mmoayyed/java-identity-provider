@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
@@ -75,11 +76,13 @@ public class SignAssertionsPredicate extends AbstractRelyingPartyPredicate {
         
         if (honorMetadata) {
             final SAMLMetadataContext metadataCtx = metadataContextLookupStrategy.apply(input);
-            if (metadataCtx != null && metadataCtx.getRoleDescriptor() != null
-                    && metadataCtx.getRoleDescriptor() instanceof SPSSODescriptor) {
-                final Boolean flag = ((SPSSODescriptor) metadataCtx.getRoleDescriptor()).getWantAssertionsSigned();
-                if (flag != null && flag.booleanValue()) {
-                    return true;
+            if (metadataCtx != null) {
+                final RoleDescriptor role = metadataCtx.getRoleDescriptor();
+                if (role instanceof SPSSODescriptor) {
+                    final Boolean flag = ((SPSSODescriptor) role).getWantAssertionsSigned();
+                    if (flag != null && flag.booleanValue()) {
+                        return true;
+                    }
                 }
             }
         }
@@ -87,7 +90,7 @@ public class SignAssertionsPredicate extends AbstractRelyingPartyPredicate {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc instanceof SAMLProfileConfiguration) {
+            if (pc instanceof SAMLProfileConfiguration) {
                 return ((SAMLProfileConfiguration) pc).isSignAssertions(input);
             }
         }

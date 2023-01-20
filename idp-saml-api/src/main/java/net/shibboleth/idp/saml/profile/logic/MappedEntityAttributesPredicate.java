@@ -31,7 +31,6 @@ import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidat
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -43,6 +42,7 @@ import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -166,7 +166,7 @@ public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
      * 
      * @return true iff the attached object metadata matched at least one input candidate
      */
-    private boolean doTest(@Nullable final XMLObject input, @Nullable final String name,
+    private boolean doTest(@Nonnull final XMLObject input, @Nullable final String name,
             @Nonnull @NonnullElements final Collection<Candidate> candidates) {
         final List<AttributesMapContainer> containerList =
                 input.getObjectMetadata().get(AttributesMapContainer.class);
@@ -206,9 +206,9 @@ public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
 
 // Checkstyle: CyclomaticComplexity OFF
         /** {@inheritDoc} */
-        public boolean test(@Nonnull final Candidate input) {
+        public boolean test(@Nullable final Candidate input) {
             
-            if (input.getNameFormat() != null) {
+            if (input == null || input.getNameFormat() != null) {
                 return false;
             }
             
@@ -227,6 +227,7 @@ public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
                     final String tagvalstr = tagvals.get(tagindex);
 
                     for (final IdPAttributeValue cval : a.getValues()) {
+                        assert cval != null;
                         final String cvalstr = attributeValueToString(cval);
                         if (tagvalstr != null && cvalstr != null) {
                             if (tagvalstr.equals(cvalstr)) {
@@ -248,6 +249,7 @@ public class MappedEntityAttributesPredicate extends EntityAttributesPredicate {
                 for (int tagindex = 0; tagindex < tagexps.size(); ++tagindex) {
 
                     for (final IdPAttributeValue cval : a.getValues()) {
+                        assert cval != null;
                         final String cvalstr = attributeValueToString(cval);
                         if (tagexps.get(tagindex) != null && cvalstr != null) {
                             if (tagexps.get(tagindex).matcher(cvalstr).matches()) {

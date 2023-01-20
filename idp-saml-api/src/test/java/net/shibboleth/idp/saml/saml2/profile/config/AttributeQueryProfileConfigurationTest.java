@@ -25,6 +25,7 @@ import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 /** Unit test for {@link AttributeQueryProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class AttributeQueryProfileConfigurationTest {
 
     @Test

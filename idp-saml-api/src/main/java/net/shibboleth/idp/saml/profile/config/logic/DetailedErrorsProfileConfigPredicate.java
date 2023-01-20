@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -37,8 +38,11 @@ public class DetailedErrorsProfileConfigPredicate extends AbstractRelyingPartyPr
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-        if (rpc != null && rpc.getConfiguration() != null) {
-            return rpc.getConfiguration().isDetailedErrors(input);
+        if (rpc != null) {
+            final RelyingPartyConfiguration rpConfig = rpc.getConfiguration();
+            if (rpConfig != null) {
+                return rpConfig.isDetailedErrors(input);
+            }
         }
         
         return false;

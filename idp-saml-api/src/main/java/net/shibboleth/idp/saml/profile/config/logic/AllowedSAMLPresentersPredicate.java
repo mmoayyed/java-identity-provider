@@ -18,25 +18,28 @@
 package net.shibboleth.idp.saml.profile.config.logic;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 import java.util.function.Predicate;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  * Predicate which evaluates the inbound {@link SAMLPresenterEntityContext#getEntityId()}
  * against a specified collection of entityIDs.
  */
+@SuppressWarnings("removal")
 public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestContext> {
     
     /** Logger. */
@@ -47,7 +50,7 @@ public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestC
     
     /** Constructor. */
     public AllowedSAMLPresentersPredicate() {
-        allowedPresenters = Collections.emptySet();
+        allowedPresenters = CollectionSupport.emptySet();
     }
     
     /**
@@ -57,7 +60,7 @@ public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestC
      */
     public void setAllowedPresenters(@Nullable final Collection<String> presenters) {
         if (presenters == null) {
-            allowedPresenters = Collections.emptySet();
+            allowedPresenters = CollectionSupport.emptySet();
         } else {
             allowedPresenters = new HashSet<>(StringSupport.normalizeStringCollection(presenters));
         }
@@ -65,13 +68,18 @@ public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestC
 
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
-        if (input == null || input.getInboundMessageContext() == null) {
-            log.debug("ProfileRequestContext or inbound MessageContext were null");
+        if (input == null) {
+            log.debug("ProfileRequestContext was null");
             return false;
         }
         
-        final SAMLPresenterEntityContext presenterContext = input.getInboundMessageContext().getSubcontext(
-                SAMLPresenterEntityContext.class);
+        final MessageContext mc = input.getInboundMessageContext();
+        if (mc == null) {
+            log.debug("Inbound MessageContext was null");
+            return false;
+        }
+        
+        final SAMLPresenterEntityContext presenterContext = mc.getSubcontext(SAMLPresenterEntityContext.class);
         if (presenterContext == null) {
             log.debug("No inbound SAMLPresenterEntityContext");
             return false;

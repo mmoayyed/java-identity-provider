@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 import java.security.Principal;
 import java.time.Duration;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -40,8 +39,12 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -49,8 +52,6 @@ import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.SubjectLocality;
-
-import com.google.common.base.Predicates;
 
 /** Configuration support for SAML 2 Browser SSO. */
 public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration
@@ -149,19 +150,19 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         super(profileId);
         setSignResponses(true);
         setEncryptAssertions(true);
-        resolveAttributesPredicate = Predicates.alwaysTrue();
-        includeAttributeStatementPredicate = Predicates.alwaysTrue();
-        ignoreScoping = Predicates.alwaysFalse();
+        resolveAttributesPredicate = PredicateSupport.alwaysTrue();
+        includeAttributeStatementPredicate = PredicateSupport.alwaysTrue();
+        ignoreScoping = PredicateSupport.alwaysFalse();
         forceAuthnPredicate = new ProxyAwareForceAuthnPredicate();
-        checkAddressPredicate = Predicates.alwaysTrue();
-        skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
-        proxiedAuthnInstantPredicate = Predicates.alwaysTrue();
-        suppressAuthenticatingAuthorityPredicate = Predicates.alwaysFalse();
-        requireSignedRequestsPredicate = Predicates.alwaysFalse();
+        checkAddressPredicate = PredicateSupport.alwaysTrue();
+        skipEndpointValidationWhenSignedPredicate = PredicateSupport.alwaysFalse();
+        proxiedAuthnInstantPredicate = PredicateSupport.alwaysTrue();
+        suppressAuthenticatingAuthorityPredicate = PredicateSupport.alwaysFalse();
+        requireSignedRequestsPredicate = PredicateSupport.alwaysFalse();
         maximumSPSessionLifetimeLookupStrategy = FunctionSupport.constant(null);
         maximumTimeSinceAuthnLookupStrategy = FunctionSupport.constant(null);
         maximumTokenDelegationChainLengthLookupStrategy = FunctionSupport.constant(DEFAULT_DELEGATION_CHAIN_LENGTH);
-        allowDelegationPredicate = Predicates.alwaysFalse();
+        allowDelegationPredicate = PredicateSupport.alwaysFalse();
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         authnContextTranslationStrategyLookupStrategy = FunctionSupport.constant(null);
@@ -182,7 +183,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @param flag flag to set
      */
     public void setResolveAttributes(final boolean flag) {
-        resolveAttributesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        resolveAttributesPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -213,7 +214,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @param flag flag to set
      */
     public void setIncludeAttributeStatement(final boolean flag) {
-        includeAttributeStatementPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        includeAttributeStatementPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -250,7 +251,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @since 4.0.0
      */
     public void setIgnoreScoping(final boolean flag) {
-        ignoreScoping = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        ignoreScoping = PredicateSupport.constant(flag);
     }
     
     /**
@@ -275,7 +276,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @param flag flag to set
      */
     public void setForceAuthn(final boolean flag) {
-        forceAuthnPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        forceAuthnPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -310,7 +311,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @since 4.0.0
      */
     public void setCheckAddress(final boolean flag) {
-        checkAddressPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        checkAddressPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -346,7 +347,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @since 3.4.0
      */
     public void setSkipEndpointValidationWhenSigned(final boolean flag) {
-        skipEndpointValidationWhenSignedPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        skipEndpointValidationWhenSignedPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -386,7 +387,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @since 4.2.0
      */
     public void setSuppressAuthenticatingAuthority(final boolean flag) {
-        suppressAuthenticatingAuthorityPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        suppressAuthenticatingAuthorityPredicate = PredicateSupport.constant(flag);
     }
 
     /**
@@ -425,7 +426,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @since 4.0.0
      */
     public void setProxiedAuthnInstant(final boolean flag) {
-        proxiedAuthnInstantPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        proxiedAuthnInstantPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -461,7 +462,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @since 4.3.0
      */
     public void setRequireSignedRequests(final boolean flag) {
-        requireSignedRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        requireSignedRequestsPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -567,7 +568,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @param profileRequestContext current profile request context
      * 
      * @return predicate used to determine if produced assertions may be delegated
+     * 
+     * @deprecated
      */
+    @Deprecated(since="5.0.0", forRemoval=true)
     public boolean isAllowDelegation(@Nullable final ProfileRequestContext profileRequestContext) {
         return allowDelegationPredicate.test(profileRequestContext);
     }
@@ -577,17 +581,25 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * Set whether produced assertions may be delegated.
      * 
      * @param  flag flag to set
+     * 
+     * @deprecated
      */
+    @Deprecated(since="5.0.0", forRemoval=true)
     public void setAllowDelegation(final boolean flag) {
-        allowDelegationPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        DeprecationSupport.warnOnce(ObjectType.CONFIGURATION, "allowDelegation", "relying-party.xml", null);
+        allowDelegationPredicate = PredicateSupport.constant(flag);
     }    
 
     /**
      * Set the predicate used to determine if produced assertions may be delegated.
      * 
      * @param  predicate used to determine if produced assertions may be delegated
+     * 
+     * @deprecated
      */
+    @Deprecated(since="5.0.0", forRemoval=true)
     public void setAllowDelegationPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+        DeprecationSupport.warnOnce(ObjectType.CONFIGURATION, "allowDelegationPredicate", "relying-party.xml", null);
         allowDelegationPredicate = Constraint.isNotNull(predicate, "Allow delegation predicate cannot be null");
     }
 
@@ -597,7 +609,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @param profileRequestContext current profile request context
      * 
      * @return the limit on the total number of delegates that may be derived from the initial SAML token
+     * 
+     * @deprecated
      */
+    @Deprecated(since="5.0.0", forRemoval=true)
     @NonNegative public long getMaximumTokenDelegationChainLength(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
@@ -612,8 +627,13 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * Set the limits on the total number of delegates that may be derived from the initial SAML token.
      * 
      * @param length the limit on the total number of delegates that may be derived from the initial SAML token
+     * 
+     * @deprecated
      */
+    @Deprecated(since="5.0.0", forRemoval=true)
     public void setMaximumTokenDelegationChainLength(@NonNegative final long length) {
+        DeprecationSupport.warnOnce(ObjectType.CONFIGURATION, "maximumTokenDelegationChainLength",
+                "relying-party.xml", null);
         Constraint.isGreaterThanOrEqual(0, length, "Delegation chain length must be greater than or equal to 0");
         
         maximumTokenDelegationChainLengthLookupStrategy = FunctionSupport.constant(length);
@@ -626,9 +646,14 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * @param strategy  lookup strategy
      * 
      * @since 3.4.0
+     * 
+     * @deprecated
      */
+    @Deprecated(since="5.0.0", forRemoval=true)
     public void setMaximumTokenDelegationChainLengthLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Long> strategy) {
+        DeprecationSupport.warnOnce(ObjectType.CONFIGURATION, "maximumTokenDelegationChainLengthLookupStrategy",
+                "relying-party.xml", null);
         maximumTokenDelegationChainLengthLookupStrategy =
                 Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
@@ -780,7 +805,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         if (methods != null) {
             return List.copyOf(methods);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
         
     /**
@@ -816,7 +841,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         if (flows != null) {
             return Set.copyOf(flows);
         }
-        return Collections.emptySet();
+        return CollectionSupport.emptySet();
     }
 
     /**
@@ -852,7 +877,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         if (flows != null) {
             return List.copyOf(flows);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /**
@@ -895,7 +920,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         if (formats != null) {
             return List.copyOf(formats);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /**

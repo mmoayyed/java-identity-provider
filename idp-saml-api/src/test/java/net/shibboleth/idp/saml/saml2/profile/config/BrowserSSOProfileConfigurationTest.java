@@ -20,23 +20,21 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
 
 /** Unit test for {@link BrowserSSOProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class BrowserSSOProfileConfigurationTest {
 
     @Test
@@ -60,7 +58,7 @@ public class BrowserSSOProfileConfigurationTest {
     public void testIndirectResolveAttributes(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setResolveAttributesPredicate(Predicates.alwaysFalse());
+        config.setResolveAttributesPredicate(PredicateSupport.alwaysFalse());
         Assert.assertFalse(config.isResolveAttributes(null));
     }
 
@@ -77,7 +75,7 @@ public class BrowserSSOProfileConfigurationTest {
     public void testIndirectIncludeAttributeStatement(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setIncludeAttributeStatementPredicate(Predicates.alwaysFalse());
+        config.setIncludeAttributeStatementPredicate(PredicateSupport.alwaysFalse());
         Assert.assertFalse(config.isIncludeAttributeStatement(null));
     }
 
@@ -94,7 +92,7 @@ public class BrowserSSOProfileConfigurationTest {
     public void testIndirectEndpointValidationWhenSigned(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setSkipEndpointValidationWhenSignedPredicate(Predicates.alwaysTrue());
+        config.setSkipEndpointValidationWhenSignedPredicate(PredicateSupport.alwaysTrue());
         Assert.assertTrue(config.isSkipEndpointValidationWhenSigned(null));
     }
     
@@ -113,40 +111,6 @@ public class BrowserSSOProfileConfigurationTest {
 
         config.setMaximumSPSessionLifetimeLookupStrategy(FunctionSupport.constant(Duration.ofSeconds(1)));
         Assert.assertEquals(config.getMaximumSPSessionLifetime(null), Duration.ofSeconds(1));
-    }
-    
-    @Test
-    public void testAllowDelegation() {
-        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertFalse(config.isAllowDelegation(null));
-        
-        final Predicate<ProfileRequestContext> predicate = Predicates.alwaysTrue();
-        config.setAllowDelegationPredicate(predicate);
-        Assert.assertTrue(config.isAllowDelegation(null));
-        
-        try {
-            config.setAllowDelegationPredicate(null);
-            Assert.fail("Null predicate should not have been allowed");
-        } catch (ConstraintViolationException e) {
-            // expected, do nothing 
-        }
-    }
-    
-    @Test
-    public void testMaximumTokenDelegationChainLength(){
-        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(null), 1);
-        
-        config.setMaximumTokenDelegationChainLength(10);
-        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(null), 10);
-    }
-    
-    @Test
-    public void testIndirectMaximumTokenDelegationChainLength(){
-        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        
-        config.setMaximumTokenDelegationChainLengthLookupStrategy(FunctionSupport.constant(10L));
-        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(null), 10);
     }
 
     @Test

@@ -63,9 +63,10 @@ public class BasicSAMLArtifactConfiguration implements SAMLArtifactConfiguration
             }
             
             final byte[] typeCode = ByteBuffer.allocate(4).putInt(type).array();
-            artifactType = new byte[2];
-            artifactType[0] = typeCode[2];
-            artifactType[1] = typeCode[3];
+            final byte[] atype = new byte[2];
+            atype[0] = typeCode[2];
+            atype[1] = typeCode[3];
+            artifactType = atype;
         }
     }
     

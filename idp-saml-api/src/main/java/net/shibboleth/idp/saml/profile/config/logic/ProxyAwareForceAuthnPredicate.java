@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -45,8 +46,11 @@ public class ProxyAwareForceAuthnPredicate implements Predicate<ProfileRequestCo
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
      
-        if (input != null && input.getParent() instanceof AuthenticationContext) {
-            return ((AuthenticationContext) input.getParent()).isForceAuthn();
+        if (input != null) {
+            final BaseContext parent = input.getParent();
+            if (parent instanceof AuthenticationContext) {
+                return ((AuthenticationContext) parent).isForceAuthn();
+            }
         }
         
         return false;

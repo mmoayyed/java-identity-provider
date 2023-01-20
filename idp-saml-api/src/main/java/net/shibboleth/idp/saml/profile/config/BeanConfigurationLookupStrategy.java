@@ -26,8 +26,9 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml2.core.Attribute;
+
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -38,6 +39,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A strategy function that examines SAML metadata associated with a relying party and derives bean-based
@@ -56,7 +58,7 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
     @Nonnull private final Logger log = LoggerFactory.getLogger(BeanConfigurationLookupStrategy.class);
 
     /** Enclosing Spring context. */
-    @Nullable private ApplicationContext applicationContext;
+    @NonnullAfterInit private ApplicationContext applicationContext;
     
     /** Type of bean to return. */
     @NonnullAfterInit private Class<T> propertyType;
@@ -77,7 +79,7 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
     }
 
     /** {@inheritDoc} */
-    public void setApplicationContext(final ApplicationContext context) throws BeansException {
+    public void setApplicationContext(@Nonnull final ApplicationContext context) throws BeansException {
         checkSetterPreconditions();
         applicationContext = context;
     }
@@ -152,6 +154,7 @@ public class BeanConfigurationLookupStrategy<T> extends AbstractMetadataDrivenCo
         
         if (value != null) {
             try {
+                assert propertyType != null;
                 return applicationContext.getBean(value, propertyType);
             } catch (final BeansException e) {
                 log.error("Error locating appropriately typed bean named {}", value, e);

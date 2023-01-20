@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.profile.config;
 
 import java.time.Duration;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -31,15 +30,13 @@ import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
 
 /** Base class for SAML profile configurations. */
 public abstract class AbstractSAMLProfileConfiguration extends AbstractConditionalProfileConfiguration implements
@@ -47,9 +44,6 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     
     /** Default assertion lifetime. */
     @Nonnull public static final Duration DEFAULT_ASSERTION_LIFETIME = Duration.ofMinutes(5);
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLProfileConfiguration.class);
     
     /** Predicate used to determine if the generated request should be signed. Default returns false. */
     @Nonnull private Predicate<ProfileRequestContext> signRequestsPredicate;
@@ -77,10 +71,10 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
     public AbstractSAMLProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
 
-        signRequestsPredicate = Predicates.alwaysFalse();
-        signResponsesPredicate = Predicates.alwaysFalse();
-        signAssertionsPredicate = Predicates.alwaysFalse();
-        includeNotBeforePredicate = Predicates.alwaysTrue();
+        signRequestsPredicate = PredicateSupport.alwaysFalse();
+        signResponsesPredicate = PredicateSupport.alwaysFalse();
+        signAssertionsPredicate = PredicateSupport.alwaysFalse();
+        includeNotBeforePredicate = PredicateSupport.alwaysTrue();
         assertionLifetimeLookupStrategy = FunctionSupport.constant(DEFAULT_ASSERTION_LIFETIME);
         assertionAudiencesLookupStrategy = FunctionSupport.constant(null);
     }
@@ -96,7 +90,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
      * @param flag flag to set
      */
     public void setSignAssertions(final boolean flag) {
-        signAssertionsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        signAssertionsPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -121,7 +115,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
      * @param flag flag to set
      */
     public void setSignRequests(final boolean flag) {
-        signRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        signRequestsPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -146,7 +140,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
      * @param flag flag to set
      */
     public void setSignResponses(final boolean flag) {
-        signResponsesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        signResponsesPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -202,7 +196,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
      * @param flag flag to set
      */
     public void setIncludeConditionsNotBefore(final boolean flag) {
-        includeNotBeforePredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        includeNotBeforePredicate = PredicateSupport.constant(flag);
     }
 
     /**
@@ -225,7 +219,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
         if (audiences != null) {
             return Set.copyOf(audiences);
         }
-        return Collections.emptySet();
+        return CollectionSupport.emptySet();
     }
 
     /**

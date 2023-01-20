@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -31,6 +30,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -58,6 +58,8 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration {
      */
     protected ECPProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
+        
+        localEventsLookupStrategy = FunctionSupport.constant(null);
     }
 
     /**
@@ -76,7 +78,7 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration {
         if (events != null) {
             return Set.copyOf(events);
         }
-        return Collections.emptySet();
+        return CollectionSupport.emptySet();
     }
 
     /**

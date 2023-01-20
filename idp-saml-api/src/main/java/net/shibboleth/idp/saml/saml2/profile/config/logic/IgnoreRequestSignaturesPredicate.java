@@ -22,12 +22,13 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Predicate that decides whether to ignore a request signature. */
 public class IgnoreRequestSignaturesPredicate extends AbstractRelyingPartyPredicate {
@@ -39,17 +40,18 @@ public class IgnoreRequestSignaturesPredicate extends AbstractRelyingPartyPredic
     public boolean test(@Nullable final ProfileRequestContext input) {
         
         final RelyingPartyContext rpCtx = getRelyingPartyContextLookupStrategy().apply(input);
-        if (rpCtx == null) {
+        if (input == null || rpCtx == null) {
             log.debug("No RelyingPartyContext found, assuming signatures should be checked");
             return false;
         }
         
-        if (rpCtx.getProfileConfig() == null || !(rpCtx.getProfileConfig() instanceof SAML2ProfileConfiguration)) {
+        final ProfileConfiguration pc = rpCtx.getProfileConfig();
+        if (!(pc instanceof SAML2ProfileConfiguration)) {
             log.debug("No SAML 2 profile configuration found, assuming signatures should be checked");
             return false;
         }
         
-        return ((SAML2ProfileConfiguration) rpCtx.getProfileConfig()).isIgnoreRequestSignatures(input);
+        return ((SAML2ProfileConfiguration) pc).isIgnoreRequestSignatures(input);
     }
 
 }

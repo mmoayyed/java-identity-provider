@@ -20,15 +20,14 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
-
 /** Unit test for {@link AbstractSAML2ProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class AbstractSAML2ProfileConfigurationTest {
 
     @Test
@@ -44,7 +43,7 @@ public class AbstractSAML2ProfileConfigurationTest {
     public void testIndirectEncryptionOptional(){
         final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
 
-        config.setEncryptionOptionalPredicate(Predicates.alwaysTrue());
+        config.setEncryptionOptionalPredicate(PredicateSupport.alwaysTrue());
         Assert.assertTrue(config.isEncryptionOptional(null));
     }
 
@@ -53,13 +52,6 @@ public class AbstractSAML2ProfileConfigurationTest {
 
         config.setEncryptNameIDs(true);
         Assert.assertTrue(config.isEncryptNameIDs(null));
-
-        try {
-            config.setEncryptNameIDsPredicate(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // excepted this
-        }
     }
 
     @Test public void testEncryptAssertionsPredicate() {
@@ -67,13 +59,6 @@ public class AbstractSAML2ProfileConfigurationTest {
 
         config.setEncryptAssertions(true);
         Assert.assertTrue(config.isEncryptAssertions(null));
-
-        try {
-            config.setEncryptAssertionsPredicate(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // excepted this
-        }
     }
 
     @Test public void testEncryptAttributesPredicate() {
@@ -81,13 +66,6 @@ public class AbstractSAML2ProfileConfigurationTest {
 
         config.setEncryptAttributes(true);
         Assert.assertTrue(config.isEncryptAttributes(null));
-
-        try {
-            config.setEncryptAttributesPredicate(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // excepted this
-        }
     }
     
     @Test public void testProxyCount() {

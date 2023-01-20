@@ -29,12 +29,14 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
  * Implements a set of default logic for determining the custom principals to derive the
@@ -58,7 +60,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunction
     
     /** Constructor. */
     public ProxyAwareDefaultAuthenticationMethodsLookupFunction() {
-        principalMappings = Collections.emptyMap();
+        principalMappings = CollectionSupport.emptyMap();
     }
     
     /**
@@ -70,7 +72,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunction
      */
     public void setMappings(@Nullable @NonnullElements final Map<Principal,Collection<Principal>> mappings) {
         if (mappings == null || mappings.isEmpty()) {
-            principalMappings = Collections.emptyMap();
+            principalMappings = CollectionSupport.emptyMap();
             return;
         }
         
@@ -79,27 +81,31 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunction
     }
     
     /** {@inheritDoc} */
-    @Nullable public Collection<AuthnContextClassRefPrincipal> apply(@Nullable final ProfileRequestContext input) {
-        if (input != null && input.getParent() instanceof AuthenticationContext) {
-            final RequestedPrincipalContext rpc = input.getParent().getSubcontext(RequestedPrincipalContext.class);
-            if (rpc != null) {
-                // Returns a transformed collection of the original principals, replacing any elements
-                // found in the multimap with the corresponding (possibly empty) set of replacements.
-                return rpc.getRequestedPrincipals().stream()
-                        .map(p -> {
-                            if (principalMappings.containsKey(p)) {
-                                return principalMappings.get(p);
-                            }
-                            return Collections.singletonList(p);
-                        })
-                        .flatMap(Collection::stream)
-                        .filter(AuthnContextClassRefPrincipal.class::isInstance)
-                        .map(AuthnContextClassRefPrincipal.class::cast)
-                        .collect(Collectors.toUnmodifiableList());
+    @Nonnull @NonnullElements public Collection<AuthnContextClassRefPrincipal> apply(
+            @Nullable final ProfileRequestContext input) {
+        if (input != null) {
+            final BaseContext parent = input.getParent();
+            if (parent instanceof AuthenticationContext) {
+                final RequestedPrincipalContext rpc = parent.getSubcontext(RequestedPrincipalContext.class);
+                if (rpc != null) {
+                    // Returns a transformed collection of the original principals, replacing any elements
+                    // found in the multimap with the corresponding (possibly empty) set of replacements.
+                    return rpc.getRequestedPrincipals().stream()
+                            .map(p -> {
+                                if (principalMappings.containsKey(p)) {
+                                    return principalMappings.get(p);
+                                }
+                                return Collections.singletonList(p);
+                            })
+                            .flatMap(Collection::stream)
+                            .filter(AuthnContextClassRefPrincipal.class::isInstance)
+                            .map(AuthnContextClassRefPrincipal.class::cast)
+                            .collect(Collectors.toUnmodifiableList());
+                }
             }
         }
         
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
 }

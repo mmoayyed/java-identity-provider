@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.saml1.profile.config;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -30,8 +29,6 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
@@ -40,8 +37,10 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /** Configuration for SAML 1 Browser SSO profile requests. */
@@ -89,13 +88,13 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
     protected BrowserSSOProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         setSignResponses(true);
-        resolveAttributesPredicate = Predicates.alwaysTrue();
-        includeAttributeStatementPredicate = Predicates.alwaysFalse();
+        resolveAttributesPredicate = PredicateSupport.alwaysTrue();
+        includeAttributeStatementPredicate = PredicateSupport.alwaysFalse();
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(null);
         nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
-        forceAuthnPredicate = Predicates.alwaysFalse();
+        forceAuthnPredicate = PredicateSupport.alwaysFalse();
         proxyCountLookupStrategy = FunctionSupport.constant(null);
     }
 
@@ -110,7 +109,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
      * @param flag flag to set
      */
     public void setResolveAttributes(final boolean flag) {
-        resolveAttributesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        resolveAttributesPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -141,7 +140,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
      * @param flag flag to set
      */
     public void setIncludeAttributeStatement(final boolean flag) {
-        includeAttributeStatementPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        includeAttributeStatementPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -166,7 +165,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
      * @param flag flag to set
      */
     public void setForceAuthn(final boolean flag) {
-        forceAuthnPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        forceAuthnPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -186,7 +185,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         if (methods != null) {
             return List.copyOf(methods);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
     
     /**
@@ -224,7 +223,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         if (flows != null) {
             return Set.copyOf(flows);
         }
-        return Collections.emptySet();
+        return CollectionSupport.emptySet();
     }
 
     /**
@@ -260,7 +259,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         if (flows != null) {
             return List.copyOf(flows);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /**
@@ -302,7 +301,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         if (formats != null) {
             return List.copyOf(formats);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /**

@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.authn.principal;
 
-import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
@@ -47,13 +46,6 @@ public class AuthnContextDeclRefPrincipalTest extends XMLObjectBaseTestCase {
         
         AuthnContextDeclRefPrincipal principal2 = principal.clone();
         assertXMLEquals(xml.getOwnerDocument(), principal2.getAuthnContextDeclRef());
-        
-        try {
-            new AuthnContextDeclRefPrincipal(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
 
         try {
             new AuthnContextDeclRefPrincipal("");

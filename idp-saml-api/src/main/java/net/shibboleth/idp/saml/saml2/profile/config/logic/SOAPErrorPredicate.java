@@ -26,13 +26,14 @@ import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.CurrentOrPreviousEventLookup;
 
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Predicate that decides whether to handle an error by returning a SOAP fault to a requester
@@ -74,22 +75,24 @@ public class SOAPErrorPredicate extends AbstractRelyingPartyPredicate {
         }
         
         final EventContext eventCtx = eventContextLookupStrategy.apply(input);
-        if (eventCtx == null || eventCtx.getEvent() == null) {
+        final Object event = eventCtx != null ? eventCtx.getEvent() : null;
+        if (event == null) {
             log.debug("No event found, assuming error handled with SOAP fault");
             return true;
         }
         
-        if (rpCtx.getProfileConfig() == null || !(rpCtx.getProfileConfig() instanceof ECPProfileConfiguration)) {
+        final ProfileConfiguration pc = rpCtx.getProfileConfig();
+        if (!(pc instanceof ECPProfileConfiguration)) {
             log.debug("No ECP profile configuration found, assuming error handled with SOAP fault");
             return true;
         }
         
-        final String event = eventCtx.getEvent().toString();
-        if (((ECPProfileConfiguration) rpCtx.getProfileConfig()).getLocalEvents(input).contains(event)) {
-            log.debug("Error event {} will be handled locally", event);
+        final String eventString = event.toString();
+        if (((ECPProfileConfiguration) pc).getLocalEvents(input).contains(eventString)) {
+            log.debug("Error event {} will be handled locally", eventString);
             return false;
         }
-        log.debug("Error event {} will be handled with SOAP fault", event);
+        log.debug("Error event {} will be handled with SOAP fault", eventString);
         return true;
     }
 

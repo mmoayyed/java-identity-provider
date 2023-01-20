@@ -27,8 +27,11 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -36,7 +39,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.profile.logic.MetadataNameIdentifierFormatStrategy;
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Function to filter a set of candidate NameIdentifier/NameID Format values derived from an entity's SAML metadata
@@ -103,18 +105,21 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public List<String> apply(@Nullable final ProfileRequestContext input) {
+    @Override
+    @Nonnull @NonnullElements public List<String> apply(@Nullable final ProfileRequestContext input) {
         final List<String> fromConfig = new ArrayList<>();
         final List<String> fromMetadata = super.apply(input);
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(input);
-        if (relyingPartyCtx != null && relyingPartyCtx.getConfiguration() != null) {
+        final RelyingPartyConfiguration rpConfig = relyingPartyCtx != null ? relyingPartyCtx.getConfiguration() : null;
+        if (rpConfig != null) {
             final ProfileConfiguration profileConfig;
             
             if (profileId != null) {
                 log.debug("Using overridden profile configuration ID: {}", profileId);
-                profileConfig = relyingPartyCtx.getConfiguration().getProfileConfiguration(input, profileId);
+                profileConfig = rpConfig.getProfileConfiguration(input, profileId);
             } else {
+                assert relyingPartyCtx != null;
                 profileConfig = relyingPartyCtx.getProfileConfig();
             }
             

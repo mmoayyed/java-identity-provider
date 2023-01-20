@@ -25,8 +25,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.shared.logic.ConstraintViolationException;
-
 /** {@link SAML2SPSession} unit test. */
 public class SAML2SPSessionTest extends OpenSAMLInitBaseTestCase {
 
@@ -55,55 +53,6 @@ public class SAML2SPSessionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(session.getSPSessionKey(), "joe@example.org");
         Assert.assertEquals(session.getACSLocation(), "https://sp.example.org/acs");
         Assert.assertFalse(session.supportsLogoutPropagation());
-
-        try {
-            new SAML2SPSession(null, Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, null, true);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new SAML2SPSession("", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, null, true);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new SAML2SPSession("  ", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, null, true);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new SAML2SPSession("foo", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0), null, null, null, true);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new SAML2SPSession("foo", start, Instant.ofEpochMilli(0), null, null, null, true);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new SAML2SPSession("foo", start, start, null, null, null, true);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new SAML2SPSession("foo", start, start, nameID, null, null, true);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
     }
 
 }

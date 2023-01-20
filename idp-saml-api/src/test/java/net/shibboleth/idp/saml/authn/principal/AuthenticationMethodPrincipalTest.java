@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.authn.principal;
 
-import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -39,13 +38,6 @@ public class AuthenticationMethodPrincipalTest {
 
         AuthenticationMethodPrincipal principal2 = principal.clone();
         Assert.assertEquals(principal.getName(), principal2.getName());
-        
-        try {
-            new AuthenticationMethodPrincipal(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
 
         try {
             new AuthenticationMethodPrincipal("");

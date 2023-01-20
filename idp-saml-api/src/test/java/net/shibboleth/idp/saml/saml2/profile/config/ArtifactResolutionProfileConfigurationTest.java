@@ -21,6 +21,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ArtifactResolutionProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class ArtifactResolutionProfileConfigurationTest {
 
     @Test

@@ -22,6 +22,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.shared.logic.Constraint;
@@ -29,6 +30,7 @@ import net.shibboleth.shared.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
+import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 
 /**
@@ -65,27 +67,23 @@ public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPred
     public boolean test(@Nullable final ProfileRequestContext input) {
         
         // Check for an artifact binding.
-        final SAMLBindingContext bindingCtx = bindingContextLookupStrategy.apply(input);
-        if (bindingCtx != null && bindingCtx.getBindingDescriptor() != null
-                && bindingCtx.getBindingDescriptor().isArtifact()) {
+        if (isArtifactBinding(input)) {
             return true;
         }
         
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-        if (rpc != null && rpc.getProfileConfig() != null) {
-            if (rpc.getProfileConfig()
-                    instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            
+            if (pc instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
                 return ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).isIncludeAttributeStatement(input);
-            } else if (rpc.getProfileConfig()
-                    instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
+                        pc).isIncludeAttributeStatement(input);
+            } else if (pc instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
                 return ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration)
-                        rpc.getProfileConfig()).isIncludeAttributeStatement(input);
-            } else if (rpc.getProfileConfig()
-                    instanceof net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration) {
+                        pc).isIncludeAttributeStatement(input);
+            } else if (pc instanceof net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration) {
                 return true;
-            } else if (rpc.getProfileConfig()
-                    instanceof net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration) {
+            } else if (pc instanceof net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration) {
                 return true;
             }
         }
@@ -93,4 +91,23 @@ public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPred
         return false;
     }
 
+    /**
+     * Returns true iff the SAML binding is an artifact variant.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @return true iff the SAML binding is an artifact variant
+     */
+    private boolean isArtifactBinding(@Nullable final ProfileRequestContext profileRequestContext) {
+        final SAMLBindingContext bindingCtx = bindingContextLookupStrategy.apply(profileRequestContext);
+        if (bindingCtx != null) {
+            final BindingDescriptor bd = bindingCtx.getBindingDescriptor();
+            if (bd != null) {
+                return bd.isArtifact();
+            }
+        }
+        
+        return false;
+    }
+    
 }

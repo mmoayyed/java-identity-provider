@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.saml.saml1.profile.config;
 
-import net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ArtifactResolutionProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class ArtifactResolutionProfileConfigurationTest {
 
     @Test

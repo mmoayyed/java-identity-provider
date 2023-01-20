@@ -21,6 +21,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -44,10 +45,14 @@ public class ProxyAwareAuthnContextComparisonLookupFunction implements Function<
     
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
-        if (input != null && input.getParent() instanceof AuthenticationContext) {
-            final RequestedPrincipalContext rpc = input.getParent().getSubcontext(RequestedPrincipalContext.class);
-            if (rpc != null) {
-                return rpc.getOperator();
+        
+        if (input != null) {
+            final BaseContext parent = input.getParent();
+            if (parent instanceof AuthenticationContext) {
+                final RequestedPrincipalContext rpc = parent.getSubcontext(RequestedPrincipalContext.class);
+                if (rpc != null) {
+                    return rpc.getOperator();
+                }
             }
         }
         

@@ -35,7 +35,7 @@ public class SignResponsesPredicate extends AbstractRelyingPartyPredicate {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc instanceof SAMLProfileConfiguration) {
+            if (pc instanceof SAMLProfileConfiguration) {
                 return ((SAMLProfileConfiguration) pc).isSignResponses(input);
             }
         }

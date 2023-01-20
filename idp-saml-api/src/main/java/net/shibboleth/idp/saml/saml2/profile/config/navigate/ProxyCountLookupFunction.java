@@ -42,7 +42,7 @@ public class ProxyCountLookupFunction extends AbstractRelyingPartyLookupFunction
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc instanceof SAML2ProfileConfiguration) {
+            if (pc instanceof SAML2ProfileConfiguration) {
                 return ((SAML2ProfileConfiguration) pc).getProxyCount(input);
             }
         }

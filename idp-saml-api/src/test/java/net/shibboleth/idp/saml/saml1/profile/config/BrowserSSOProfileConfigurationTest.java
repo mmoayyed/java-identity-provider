@@ -20,18 +20,17 @@ package net.shibboleth.idp.saml.saml1.profile.config;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
-
 import java.util.*;
 
 /** Unit test for {@link BrowserSSOProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class BrowserSSOProfileConfigurationTest {
 
     @Test
@@ -55,7 +54,7 @@ public class BrowserSSOProfileConfigurationTest {
     public void testIndirectResolveAttributes(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setResolveAttributesPredicate(Predicates.alwaysFalse());
+        config.setResolveAttributesPredicate(PredicateSupport.alwaysFalse());
         Assert.assertFalse(config.isResolveAttributes(null));
     }
 
@@ -72,7 +71,7 @@ public class BrowserSSOProfileConfigurationTest {
     public void testIndirectIncludeAttributeStatement(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setIncludeAttributeStatementPredicate(Predicates.alwaysTrue());
+        config.setIncludeAttributeStatementPredicate(PredicateSupport.alwaysTrue());
         Assert.assertTrue(config.isIncludeAttributeStatement(null));
     }
 

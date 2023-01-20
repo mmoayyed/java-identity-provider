@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config.navigate;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -32,6 +31,7 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -65,7 +65,7 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
     
 // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
-    @Nullable public Pair<Integer,Set<String>> apply(@Nullable final ProfileRequestContext input) {
+    @Nonnull public Pair<Integer,Set<String>> apply(@Nullable final ProfileRequestContext input) {
                 
         // The proxy count is normally set to the minimum of local policy and upstream - 1, but
         // null values have to be taken into account, and 0 is the minimum.
@@ -90,7 +90,7 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
         
         final SubjectContext sc = subjectContextLookupStrategy.apply(input);
         final Set<ProxyAuthenticationPrincipal> proxieds =
-                sc == null ? Collections.emptySet()
+                sc == null ? CollectionSupport.emptySet()
                     : sc.getSubjects().stream()
                         .map(s -> s.getPrincipals(ProxyAuthenticationPrincipal.class))
                         .flatMap(Set::stream)
@@ -116,7 +116,7 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
                     // audiences, and can immediately exit signaling no proxying.
                     
                     if (audiences.isEmpty()) {
-                        return new Pair<>(0, Collections.emptySet());
+                        return new Pair<>(0, CollectionSupport.emptySet());
                     }
                 }
             }
@@ -124,11 +124,12 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
             // Given a non-null upstream count, we reduce the local value if necessary, or possibly
             // set it for the first time. The max expression just turns -1 back into 0.
             
-            if (p.getProxyCount() != null) {
+            final Integer upstreamCount = p.getProxyCount();
+            if (upstreamCount != null) {
                 if (proxyCount != null) {
-                    proxyCount = Integer.min(proxyCount, Integer.max(0, p.getProxyCount() - 1));
+                    proxyCount = Integer.min(proxyCount, Integer.max(0, upstreamCount - 1));
                 } else {
-                    proxyCount = Integer.max(0, p.getProxyCount() - 1);
+                    proxyCount = Integer.max(0, upstreamCount - 1);
                 }
             }
         }

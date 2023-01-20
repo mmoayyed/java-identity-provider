@@ -96,7 +96,7 @@ public class BasicSPSession implements SPSession {
     }
 
     /** {@inheritDoc} */
-    public boolean equals(@Nullable final Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

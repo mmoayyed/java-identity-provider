@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -33,13 +32,13 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Predicates;
 
 /** Base class for SAML 2 profile configurations. */
 public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProfileConfiguration implements
@@ -74,11 +73,11 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     public AbstractSAML2ProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
 
-        ignoreRequestSignaturesPredicate = Predicates.alwaysFalse();
-        encryptionOptionalPredicate = Predicates.alwaysFalse();
-        encryptAssertionsPredicate = Predicates.alwaysFalse();
-        encryptNameIDsPredicate = Predicates.alwaysFalse();
-        encryptAttributesPredicate = Predicates.alwaysFalse();
+        ignoreRequestSignaturesPredicate = PredicateSupport.alwaysFalse();
+        encryptionOptionalPredicate = PredicateSupport.alwaysFalse();
+        encryptAssertionsPredicate = PredicateSupport.alwaysFalse();
+        encryptNameIDsPredicate = PredicateSupport.alwaysFalse();
+        encryptAttributesPredicate = PredicateSupport.alwaysFalse();
         proxyCountLookupStrategy = FunctionSupport.constant(null);
         proxyAudiencesLookupStrategy = FunctionSupport.constant(null);
     }
@@ -122,7 +121,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
         if (audiences != null) {
             return Set.copyOf(audiences);
         }
-        return Collections.emptySet();
+        return CollectionSupport.emptySet();
     }
 
     /**
@@ -164,7 +163,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @since 4.0.0
      */
     public void setIgnoreRequestSignatures(final boolean flag) {
-        ignoreRequestSignaturesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        ignoreRequestSignaturesPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -189,7 +188,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param flag  flag to set
      */
     public void setEncryptionOptional(final boolean flag) {
-        encryptionOptionalPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        encryptionOptionalPredicate = PredicateSupport.constant(flag);
     }
 
     /**
@@ -214,7 +213,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param flag  flag to set
      */
     public void setEncryptAssertions(final boolean flag) {
-        encryptAssertionsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        encryptAssertionsPredicate = PredicateSupport.constant(flag);
     }
     
     /**
@@ -239,7 +238,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param flag  flag to set
      */
     public void setEncryptNameIDs(final boolean flag) {
-        encryptNameIDsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        encryptNameIDsPredicate = PredicateSupport.constant(flag);
     }
 
     /**
@@ -264,7 +263,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param flag  flag to set
      */
     public void setEncryptAttributes(final boolean flag) {
-        encryptAttributesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        encryptAttributesPredicate = PredicateSupport.constant(flag);
     }
     
     /**

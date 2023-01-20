@@ -42,7 +42,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.soap.client.security.SOAPClientSecurityProfileIdLookupFunction;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -56,6 +55,7 @@ import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -108,14 +108,14 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
     /** Alternative "full" property identifiers to support. */
     @NonnullAfterInit @NonnullElements private Collection<String> propertyAliases;
     
-    /** Optional default to return in the absence of a property. */
-    @Nullable private Function<BaseContext,T> defaultValueStrategy;
+    /** Default to return in the absence of a property. */
+    @Nonnull private Function<BaseContext,T> defaultValueStrategy;
     
     /** Strategy for obtaining metadata to check. */
     @Nullable private Function<BaseContext,EntityDescriptor> metadataLookupStrategy;
 
     /** Strategy for obtaining profile ID for property naming. */
-    @Nullable @NotEmpty private Function<BaseContext,String> profileIdLookupStrategy;
+    @Nullable private Function<BaseContext,String> profileIdLookupStrategy;
         
     /** Constructor. */
     public AbstractMetadataDrivenConfigurationLookupStrategy() {
@@ -278,7 +278,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         CachedConfigurationContext cacheContext = null;
         
         if (enableCaching && input != null) {
-            cacheContext = input.getSubcontext(CachedConfigurationContext.class, true);
+            cacheContext = input.getOrCreateSubcontext(CachedConfigurationContext.class);
             if (cacheContext.getPropertyMap().containsKey(propertyName)) {
                 log.debug("Returning cached property '{}'", propertyName);
                 return (T) cacheContext.getPropertyMap().get(propertyName);
@@ -324,6 +324,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             log.debug("Found matching tag '{}' for property '{}'", idpAttribute.getId(), propertyName);
             final T result = translate(idpAttribute);
             if (enableCaching) {
+                assert cacheContext != null;
                 cacheContext.getPropertyMap().put(propertyName, result);
             }
             return result;
@@ -336,6 +337,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
                 log.debug("Found matching tag '{}' for property '{}'", idpAttribute.getId(), propertyName);
                 final T result = translate(idpAttribute);
                 if (enableCaching) {
+                    assert cacheContext != null;
                     cacheContext.getPropertyMap().put(propertyName, result);
                 }
                 return result;
@@ -346,6 +348,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             log.debug("No applicable mapped tag, applying default strategy for '{}'", propertyName);
             final T ret = defaultValueStrategy.apply(input);
             if (enableCaching) {
+                assert cacheContext != null;
                 cacheContext.getPropertyMap().put(propertyName, ret);
             }
             return ret;
@@ -358,6 +361,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             log.debug("Found matching tag '{}' for property '{}'", attribute.getName(), propertyName);
             final T result = translate(attribute);
             if (enableCaching) {
+                assert cacheContext != null;
                 cacheContext.getPropertyMap().put(propertyName, result);
             }
             return result;
@@ -370,6 +374,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
                 log.debug("Found matching tag '{}' for property '{}'", attribute.getName(), propertyName);
                 final T result = translate(attribute);
                 if (enableCaching) {
+                    assert cacheContext != null;
                     cacheContext.getPropertyMap().put(propertyName, result);
                 }
                 return result;
@@ -379,6 +384,7 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         log.debug("No applicable tag, applying default strategy for '{}'", propertyName);
         final T ret = defaultValueStrategy.apply(input);
         if (enableCaching) {
+            assert cacheContext != null;
             cacheContext.getPropertyMap().put(propertyName, ret);
         }
         return ret;
@@ -525,12 +531,16 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
             @Nonnull @NotEmpty final String name) {
 
         final List<AttributesMapContainer> containerList = input.get(AttributesMapContainer.class);
-        if (null == containerList || containerList.isEmpty() || containerList.get(0).get() == null ||
-                containerList.get(0).get().isEmpty()) {
+        if (null == containerList || containerList.isEmpty()) {
             return null;
         }
         
-        final Collection<IdPAttribute> matches = containerList.get(0).get().get(name);
+        final AttributesMapContainer container = containerList.get(0);
+        if (container == null || container.get().isEmpty()) {
+            return null;
+        }
+        
+        final Collection<IdPAttribute> matches = container.get().get(name);
         return matches.isEmpty() ? null : matches.iterator().next();
     }
 
@@ -591,4 +601,5 @@ public abstract class AbstractMetadataDrivenConfigurationLookupStrategy<T> exten
         
         DEFAULT_MC_PROFILE_ID_LOOKUP = new SOAPClientSecurityProfileIdLookupFunction();
     }
+
 }

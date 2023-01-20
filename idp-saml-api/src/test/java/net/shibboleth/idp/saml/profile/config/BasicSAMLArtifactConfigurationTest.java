@@ -21,6 +21,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link BasicSAMLArtifactConfiguration}. */
+@SuppressWarnings("javadoc")
 public class BasicSAMLArtifactConfigurationTest {
 
     @Test public void testArtifactType() {
