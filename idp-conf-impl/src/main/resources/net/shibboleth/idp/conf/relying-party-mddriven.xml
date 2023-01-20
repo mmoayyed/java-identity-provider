@@ -481,22 +481,6 @@
         <property name="maximumTimeSinceAuthnLookupStrategy">
             <bean parent="shibboleth.MDDrivenDurationProperty" p:propertyName="maximumTimeSinceAuthn" />
         </property>
-        <property name="allowDelegationPredicate">
-            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
-                <constructor-arg>
-                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="allowDelegation" />
-                </constructor-arg>
-                <constructor-arg value="false" />
-            </bean>
-        </property>
-        <property name="maximumTokenDelegationChainLengthLookupStrategy">
-            <bean parent="shibboleth.MDDrivenLongProperty" p:propertyName="maximumTokenDelegationChainLength">
-                <property name="defaultValue">
-                    <util:constant
-                        static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.DEFAULT_DELEGATION_CHAIN_LENGTH"/>
-                </property>
-            </bean>
-        </property>
     </bean>
 
     <bean id="SAML2.ECP.MDDriven" parent="SAML2.SSO.MDDriven" lazy-init="true"
