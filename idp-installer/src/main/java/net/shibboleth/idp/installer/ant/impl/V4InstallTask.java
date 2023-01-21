@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.CopyDistribution;
@@ -37,6 +36,7 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A thin veneer around the V4 installer.

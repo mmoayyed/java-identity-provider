@@ -65,8 +65,6 @@ import org.apache.tools.ant.BuildException;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.InstallerSupport;
@@ -82,6 +80,7 @@ import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.httpclient.HttpClientBuilder;
@@ -89,6 +88,7 @@ import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resource.Resource;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
+import net.shibboleth.shared.logic.PredicateSupport;
 /**
  *  The class where the heavy lifting of managing a plugin happens. 
  */
@@ -99,7 +99,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private static final Logger LOG = InstallationLogger.getLogger(PluginInstaller.class);
 
     /** Property Name for version. */
-    private  static final String PLUGIN_VERSION_PROPERTY ="idp.plugin.version";
+    private static final String PLUGIN_VERSION_PROPERTY ="idp.plugin.version";
 
     /** Property Prefix for install files . */
     private static final String PLUGIN_FILE_PROPERTY_PREFIX = "idp.plugin.file.";
@@ -123,7 +123,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private IdPPlugin description;
 
     /** The callback before we install a key into the TrustStore. */
-    @Nonnull private Predicate<String> acceptKey = Predicates.alwaysFalse();
+    @Nonnull private Predicate<String> acceptKey = PredicateSupport.alwaysFalse();
 
     /** The actual distribution. */
     private Path distribution;
@@ -135,7 +135,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private HttpClient httpClient;
 
     /** If overridden these are the urls to us for update (rather than what the plugin asks for. */
-    @Nonnull private List<URL> updateOverrideURLs = Collections.emptyList();
+    @Nonnull private List<URL> updateOverrideURLs = CollectionSupport.emptyList();
 
     /** Dumping space for renamed files. */
     @NonnullAfterInit private Path workspacePath;
@@ -249,6 +249,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                               @Nonnull @NotEmpty final String fileName,
                               final boolean checkVersion) throws BuildException {
         download(baseURL, fileName);
+        assert downloadDirectory != null;
         installPlugin(downloadDirectory, fileName, checkVersion);
     }
 
@@ -277,15 +278,18 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         setupPluginId();
         checkSignature(base, fileName);
         setupDescriptionFromDistribution();
+        //
+        // the above line guarantees a non null description
+        //
         if (checkVersion) {
-            final PluginState state = new PluginState(description, updateOverrideURLs);
+            final PluginState state = new PluginState(getDescription(), updateOverrideURLs);
             state.setHttpClient(httpClient);
             try {
                 state.initialize();
             } catch (final ComponentInitializationException e) {
                throw new BuildException(e);
             }
-            final PluginVersion pluginVersion = new PluginVersion(description);
+            final PluginVersion pluginVersion = new PluginVersion(getDescription());
             final PluginVersion idpVersion = getIdPVersion();
             if (!state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
                 LOG.error("Plugin {} version {} is not supported with IdP Version {}",
@@ -294,10 +298,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             }
         }
         LOG.info("Installing Plugin {} version {}.{}.{}", pluginId,
-                description.getMajorVersion(),description.getMinorVersion(), description.getPatchVersion());
+                getDescription().getMajorVersion(),getDescription().getMinorVersion(), getDescription().getPatchVersion());
 
         final Set<String> loadedModules = getLoadedModules();
-        try (final RollbackPluginInstall rollBack = new RollbackPluginInstall(moduleContext, moduleChanges)) {
+        try (final RollbackPluginInstall rollBack = new RollbackPluginInstall(getModuleContext(), moduleChanges)) {
             uninstallOld(rollBack);
 
             checkRequiredModules(loadedModules);
@@ -331,10 +335,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         if (description == null) {
             LOG.warn("Description for {} not found", pluginId);
         } else {
-            try (final RollbackPluginInstall rollback = new RollbackPluginInstall(moduleContext, moduleChanges)){
-                for (final IdPModule module: description.getDisableOnRemoval()) {
+            try (final RollbackPluginInstall rollback = new RollbackPluginInstall(getModuleContext(), moduleChanges)){
+                for (final IdPModule module: getDescription().getDisableOnRemoval()) {
                     moduleId = module.getId();
-                    captureChanges(module.disable(moduleContext, false));
+                    captureChanges(module.disable(getModuleContext(), false));
                     rollback.getModulesDisabled().add(module);
                 }
                 rollback.completed();
@@ -407,6 +411,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     @Nonnull public List<Path> getInstalledContents() {
         loadCopiedFiles();
+        assert installedContents != null;
         return installedContents;
     }
 
@@ -417,6 +422,25 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         loadCopiedFiles();
         return installedVersionFromContents;
     }
+    
+    /** Check for initialized and if so return the {@link #moduleContext}.
+     * @return the {@link #moduleContext}.
+     */
+    @Nonnull private ModuleContext getModuleContext() {
+        checkComponentActive();
+        assert moduleContext!=null;
+        return moduleContext;
+    }
+    
+    /** Check for non null and then if so return the {@link #description}.
+     * @return the {@link #description}
+     */
+    @Nonnull private IdPPlugin getDescription() {
+        Constraint.isTrue(description != null, "Invalid Plugin Id in Description");
+        assert description!=null;
+        return description;
+    }
+
 
     /** What modules (on the installed plugins Classpath) are currently loaded?
      * @return a set of the names of the currently enabled Modules.
@@ -428,7 +452,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         while (modules.hasNext()) {
             try {
                 final IdPModule module = modules.next();
-                if (module.isEnabled(moduleContext)) {
+                assert moduleChanges != null;
+                if (module.isEnabled(getModuleContext())) {
                     enablededModules.add(module.getId());
                 }
             } catch (final ServiceConfigurationError e) {
@@ -445,7 +470,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @throws BuildException if any required modules are missing or disabled
      */
     private void checkRequiredModules(final Set<String> loadedModules) throws BuildException  {
-        for (final String moduleId: description.getRequiredModules()) {
+        for (final String moduleId: getDescription().getRequiredModules()) {
             if (!loadedModules.contains(moduleId)) {
                 LOG.warn("Required module {} is missing or not enabled ", moduleId);
                 throw new BuildException("One or more required modules are not enabled");
@@ -464,7 +489,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 final IdPModule module = modules.next();
                 if (pluginId.equals(module.getOwnerId()) && loadedModules.contains(module.getId())) {
                     LOG.debug("Re-enabling module {}", module.getId());
-                    captureChanges(module.enable(moduleContext));
+                    captureChanges(module.enable(getModuleContext()));
                 } else {
                     LOG.debug("Not re-enabling module {}, not provided by this plugin", module.getId());
                 }
@@ -489,10 +514,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
         String moduleId = null;
         try {
-            for (final IdPModule module: description.getEnableOnInstall()) {
+            for (final IdPModule module: getDescription().getEnableOnInstall()) {
                 moduleId = module.getId();
-                if (!module.isEnabled(moduleContext)) {
-                    captureChanges(module.enable(moduleContext));
+                if (!module.isEnabled(getModuleContext())) {
+                    captureChanges(module.enable(getModuleContext()));
                     rollBack.getModulesEnabled().add(module);
                 }
             }
@@ -532,7 +557,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         try {
             Files.createDirectories(pluginsContents);
             final Properties props = new Properties(1+copiedFiles.size());
-            props.setProperty(PLUGIN_VERSION_PROPERTY, new PluginVersion(description).toString());
+            props.setProperty(PLUGIN_VERSION_PROPERTY, new PluginVersion(getDescription()).toString());
             props.setProperty(PLUGIN_RELATIVE_PATHS_PROPERTY, "true");
             int count = 1;
             for (final Path p: copiedFiles) {
@@ -607,7 +632,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new BuildException(e);
         }
         LOG.debug("Property file {}", props);
-        installedContents = new ArrayList<>(props.size());
+        final List<Path> result = new ArrayList<>(props.size());
         installedVersionFromContents = StringSupport.trimOrNull(props.getProperty(PLUGIN_VERSION_PROPERTY));
         final boolean relativePaths = props.get(PLUGIN_RELATIVE_PATHS_PROPERTY) != null;
         final Path installedIdPHome;
@@ -621,14 +646,15 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         while (val != null) {
             final Path valAsPath = Path.of(val);
             if (relativePaths || installedIdPHome == null) {
-                installedContents.add(idpHome.resolve(valAsPath));
+                result.add(idpHome.resolve(valAsPath));
             } else {
                 final Path relPath = installedIdPHome.relativize(valAsPath);
                 final Path newPath = idpHome.resolve(relPath);
-                installedContents.add(newPath);
+                result.add(newPath);
             }
             val = props.getProperty(PLUGIN_FILE_PROPERTY_PREFIX+Integer.toString(count++));
         }
+        installedContents = result;
     }
 
     /** Method to download a zip file to the {{@link #downloadDirectory}.
@@ -636,7 +662,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param fileName the name.
      * @throws BuildException if badness is detected.
      */
-    private void download(final URL baseURL, final String fileName) throws BuildException {
+    private void download(@Nonnull final URL baseURL, @Nonnull final String fileName) throws BuildException {
         buildHttpClient();
         try {
             downloadDirectory = Files.createTempDirectory("plugin-installer-download");
@@ -656,7 +682,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.debug("No HttpClient built, creating default");
             try {
                 httpClient = new HttpClientBuilder().buildClient();
-                moduleContext.setHttpClient(httpClient);
+                getModuleContext().setHttpClient(httpClient);
             } catch (final Exception e) {
                 LOG.error("Could not create HttpClient", e);
                 throw new BuildException(e);
@@ -722,7 +748,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param fileName the file name
      * @throws IOException as required
      */
-    private void download(final Resource baseResource, final String fileName) throws IOException {
+    private void download(final Resource baseResource, @Nonnull final String fileName) throws IOException {
         final Resource fileResource = baseResource.createRelativeResource(fileName);
         final Path filePath = downloadDirectory.resolve(fileName);
         LOG.info("Downloading from {}", fileResource.getDescription());
@@ -902,11 +928,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new ComponentInitializationException("idp.home property must be set");
         }
         try {
+            assert idpHome != null;
             idpHome = PluginInstallerSupport.canonicalPath(idpHome);
         } catch (final IOException e) {
             LOG.error("Could not canonicalize idp home", e);
             throw new ComponentInitializationException(e);
         }
+        assert idpHome != null;
         moduleContext = new ModuleContext(idpHome);
         moduleContext.setHttpClientSecurityParameters(securityParams);
         moduleContext.setHttpClient(httpClient);
@@ -1009,11 +1037,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param name what to find
      * @return the {@link IdPPlugin} or null if not found.
      */
-    @Nullable public IdPPlugin getInstalledPlugin(@Nonnull final String name) {
+    @Nullable public IdPPlugin getInstalledPlugin(final String name) {
         Constraint.isNotNull(name, "Plugin Name must not be null");
         final List<IdPPlugin> plugins = getInstalledPlugins();
         for (final IdPPlugin plugin: plugins) {
-            if (name.equals(plugin.getPluginId())) {
+            if (plugin.getPluginId().equals(name)) {
                 return plugin;
             }
         }

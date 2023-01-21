@@ -22,12 +22,11 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.shared.component.ComponentInitializationException;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  *
  */

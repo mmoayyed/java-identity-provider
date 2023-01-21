@@ -28,6 +28,8 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.plugin.IdPPlugin;
@@ -108,7 +110,7 @@ public class PluginStateTest {
 
         final IdPPlugin simple = new TestPlugin() {
             @Override
-            public java.util.List<URL> getUpdateURLs() {
+            public @Nonnull java.util.List<URL> getUpdateURLs() {
                 try {
                     return List.of(new URL("http://example.org/dir"), super.getUpdateURLs().get(0));
                 } catch (final MalformedURLException e) {

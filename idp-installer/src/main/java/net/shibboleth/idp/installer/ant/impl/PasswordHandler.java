@@ -77,6 +77,7 @@ public class PasswordHandler extends SecureInputHandler {
                 continue;
             }
             final String firstPass = String.copyValueOf(result);
+            assert firstPass != null;
             if (!passwordSavesOK(firstPass)) {
                 System.console().printf("Password contains unsafe characters\n");
                 continue;

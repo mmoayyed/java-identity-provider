@@ -23,9 +23,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Shimmed logger.
@@ -236,6 +236,7 @@ public final class InstallationLogger implements Logger {
 
     /** {@inheritDoc} */
     public void info(final String format, final Object arg) {
+        assert(format != null);
         if (encapsulated.isDebugEnabled()) {
             encapsulated.info(format,arg);
         }
@@ -281,6 +282,7 @@ public final class InstallationLogger implements Logger {
 
     /** {@inheritDoc} */
     public void info(final Marker marker, final String format, final Object arg) {
+        assert(format != null);
         if (encapsulated.isDebugEnabled()) {
             encapsulated.info(marker, format, arg);
         }
@@ -328,6 +330,7 @@ public final class InstallationLogger implements Logger {
 
     /** {@inheritDoc} */
     public void warn(final String format, final Object arg) {
+        assert(format != null);
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(format, arg);
         }
@@ -376,6 +379,7 @@ public final class InstallationLogger implements Logger {
 
     /** {@inheritDoc} */
     public void warn(final Marker marker, final String format, final Object arg) {
+        assert(format != null);
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(marker, format, arg);
         }
@@ -384,6 +388,7 @@ public final class InstallationLogger implements Logger {
 
     /** {@inheritDoc} */
     public void warn(final Marker marker, final String format, final Object arg1, final Object arg2) {
+        assert(format != null);
         if (encapsulated.isDebugEnabled()) {
             encapsulated.warn(marker, format, arg1, arg2);
         }
@@ -424,6 +429,7 @@ public final class InstallationLogger implements Logger {
 
     /** {@inheritDoc} */
     public void error(final String format, final Object arg) {
+        assert(format != null);
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(format, arg);
         }
@@ -474,6 +480,7 @@ public final class InstallationLogger implements Logger {
 
     /** {@inheritDoc} */
     public void error(final Marker marker, final String format, final Object arg) {
+        assert(format != null);
         if (encapsulated.isDebugEnabled()) {
             encapsulated.error(marker, format, arg);
         } else {
@@ -509,7 +516,7 @@ public final class InstallationLogger implements Logger {
      * @param clazz what to log
      * @return a logger
      */
-    public static Logger getLogger(final Class<?> clazz) {
+    @Nonnull public static Logger getLogger(@Nonnull final Class<?> clazz) {
         return new InstallationLogger(LoggerFactory.getLogger(clazz));
     }
 

@@ -32,13 +32,13 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
+import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.httpclient.HttpClientBuilder;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
-import net.shibboleth.idp.plugin.PluginVersion;
 
 /**
  * A class which will answer questions about a plugin state as of now
@@ -113,6 +113,7 @@ public class PluginState extends AbstractInitializableComponent {
 
     /** {@inheritDoc} */
     // CheckStyle: CyclomaticComplexity OFF
+    @SuppressWarnings("unused")
     protected void doInitialize() throws ComponentInitializationException {
         
         try {
@@ -133,8 +134,11 @@ public class PluginState extends AbstractInitializableComponent {
                 final Resource propertyResource;
                 try {
                     if ("file".equals(url.getProtocol())) {
-                        propertyResource = new FileSystemResource(url.getPath());
+                        final String path = url.getPath();
+                        assert path != null;
+                        propertyResource = new FileSystemResource(path);
                     } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+                            assert(httpClient != null);
                             propertyResource = new HTTPResource(httpClient, url);
                     } else {
                         log.error("Plugin {}: Only file and http[s] URLs are allowed: '{}'", plugin.getPluginId(), url);

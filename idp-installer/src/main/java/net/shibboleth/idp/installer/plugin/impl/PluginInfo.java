@@ -68,7 +68,7 @@ public class PluginInfo {
      * @param id the id we care about
      * @param props all the properties.
      */
-    public PluginInfo(final String id, final Properties props) {
+    public PluginInfo(final String id, @Nonnull final Properties props) {
         pluginId = Constraint.isNotNull(StringSupport.trimOrNull(id), "pluginID must be non-null");
         parse(props);
     }

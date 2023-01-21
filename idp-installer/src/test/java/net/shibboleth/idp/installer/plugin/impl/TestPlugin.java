@@ -22,6 +22,8 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.core.io.ClassPathResource;
 
 import net.shibboleth.idp.plugin.AbstractIdPPlugin;
@@ -33,13 +35,13 @@ public class TestPlugin extends AbstractIdPPlugin {
 
     /** {@inheritDoc} */
     @Override
-    public String getPluginId() {
+    public @Nonnull String getPluginId() {
         return "net.shibboleth.plugin.test";
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<URL> getUpdateURLs() {
+    public @Nonnull List<URL> getUpdateURLs() {
         ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/plugin/plugins.props");
         try {
             return Collections.singletonList(resource.getURL());

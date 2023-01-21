@@ -56,7 +56,8 @@ public final class PluginInstallerSupport {
      * @return the canonicalized one
      * @throws IOException  as from {@link File#getCanonicalFile()}
      */
-    static Path canonicalPath(final Path from) throws IOException {
+    @SuppressWarnings("null")
+    @Nonnull static Path canonicalPath(@Nonnull final Path from) throws IOException {
         return from.toFile().getCanonicalFile().toPath();
     }
 

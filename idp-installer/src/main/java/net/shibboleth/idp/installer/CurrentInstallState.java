@@ -19,7 +19,6 @@ package net.shibboleth.idp.installer;
 
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,6 +28,7 @@ import javax.annotation.Nullable;
 import org.apache.tools.ant.BuildException;
 
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.InitializableComponent;
 
 /** Tells the installers about the current install state. */
@@ -80,8 +80,8 @@ public interface CurrentInstallState extends InitializableComponent {
     /** Which modules (by ID) are enabled for this release.
      * @return those modules enabled.
      */
-    default @Nonnull Collection<String> getEnabledModules() {
-        return Collections.emptySet();
+    @Nonnull default Collection<String> getEnabledModules() {
+        return CollectionSupport.emptySet();
     }
 
     /** Build a classpath loader which adds all the plugins in.

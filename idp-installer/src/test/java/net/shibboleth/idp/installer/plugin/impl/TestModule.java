@@ -18,8 +18,10 @@
 package net.shibboleth.idp.installer.plugin.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.module.IdPModule;
@@ -31,10 +33,10 @@ public class TestModule implements IdPModule {
     
     @Nullable final ModuleException throwOnEnable;
     @Nullable final ModuleException throwOnDisable;
-    @Nullable final String id;
+    @Nonnull final String id;
     boolean enabled;
     
-    public TestModule(String name, ModuleException enable, ModuleException disable) {
+    public TestModule(@Nonnull String name, ModuleException enable, ModuleException disable) {
         throwOnEnable = enable;
         throwOnDisable = disable;
         id = name;
@@ -46,12 +48,12 @@ public class TestModule implements IdPModule {
     }
 
     /** {@inheritDoc} */
-    public String getName(ModuleContext moduleContext) {
+    public @Nonnull String getName(@Nullable final ModuleContext moduleContext) {
         return id;
     }
 
     /** {@inheritDoc} */
-    public String getDescription(ModuleContext moduleContext) {
+    public String getDescription(@Nullable  final ModuleContext moduleContext) {
         return null;
     }
 
@@ -71,8 +73,8 @@ public class TestModule implements IdPModule {
     }
 
     /** {@inheritDoc} */
-    public Collection<ModuleResource> getResources() {
-        return null;
+    public @Nonnull Collection<ModuleResource> getResources() {
+        return Collections.emptyList();
     }
 
     /** {@inheritDoc} */
@@ -81,22 +83,22 @@ public class TestModule implements IdPModule {
     }
 
     /** {@inheritDoc} */
-    public Map<ModuleResource, ResourceResult> enable(ModuleContext moduleContext) throws ModuleException {
+    public @Nonnull Map<ModuleResource, ResourceResult> enable(ModuleContext moduleContext) throws ModuleException {
         if (throwOnEnable != null) {
             throw throwOnEnable;
         }
         enabled = true;
-        return null;
+        return Collections.emptyMap();
     }
 
     /** {@inheritDoc} */
-    public Map<ModuleResource, ResourceResult> disable(ModuleContext moduleContext, boolean clean)
+    public @Nonnull Map<ModuleResource, ResourceResult> disable(ModuleContext moduleContext, boolean clean)
             throws ModuleException {
         if (throwOnDisable != null) {
             throw throwOnDisable;
         }
         enabled = false;
-        return null;
+        return Collections.emptyMap();
     }
     
 }

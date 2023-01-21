@@ -18,7 +18,6 @@
 package net.shibboleth.idp.installer.ant.impl;
 
 import java.io.File;
-import java.util.Collections;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +33,7 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParametersImpl;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.spring.util.ApplicationContextBuilder;
 
 /**
@@ -86,8 +86,7 @@ public class MetadataGeneratorTask extends Task {
      * 
      * @param file what to set.
      */
-    public void setOutput(final File file) {
-
+    public void setOutput(@Nonnull final File file) {
         outputFile = file;
     }
 
@@ -147,6 +146,16 @@ public class MetadataGeneratorTask extends Task {
 
     /** {@inheritDoc} */
     @Override public void execute() {
+        final File file = outputFile;
+        if (file == null) {
+            log("Build Failed - output file not provided", Project.MSG_ERR);
+            throw new BuildException("Build Failed - output file not provided");
+        }
+        final String dns = dnsName;
+        if (dns == null) {
+            log("Build Failed - DNS Name not provided", Project.MSG_ERR);
+            throw new BuildException("DNS Name - output file not provided");
+        }
         try {
             final MetadataGeneratorParametersImpl parameters;
 
@@ -154,21 +163,21 @@ public class MetadataGeneratorTask extends Task {
 
             final GenericApplicationContext context = new ApplicationContextBuilder()
                     .setName(MetadataGeneratorTask.class.getName())
-                    .setServiceConfigurations(Collections.singletonList(resource))
+                    .setServiceConfigurations(CollectionSupport.singletonList(resource))
                     .setContextInitializer(new Initializer())
                     .build();
             
             parameters = context.getBean("IdPConfiguration", MetadataGeneratorParametersImpl.class);
 
             parameters.setBackchannelCert(backchannelCert);
-            parameters.setDnsName(dnsName);
+            parameters.setDnsName(dns);
             parameters.initialize();
 
             final MetadataGeneratorImpl generator = new MetadataGeneratorImpl();
             generator.setSAML2AttributeQueryCommented(saml2AttributeQueryCommented);
             generator.setSAML2LogoutCommented(saml2LogoutCommented);
             generator.setParameters(parameters);
-            generator.setOutput(outputFile);
+            generator.setOutput(file);
             generator.initialize();
             generator.generate();
 
@@ -189,18 +198,20 @@ public class MetadataGeneratorTask extends Task {
         /** {@inheritDoc} */
         @Override @Nonnull public String selectSearchLocation(
                 @Nonnull final ConfigurableApplicationContext applicationContext) {
-            if (null == idpHome) {
+            final String result = idpHome;
+            if (null == result) {
                 return super.selectSearchLocation(applicationContext);
             }
-            return idpHome;
+            return result;
         }
 
         /** {@inheritDoc} */
         @Override @Nonnull public String getSearchLocation() {
-            if (null == idpHome) {
+            final String result = idpHome;
+            if (null == result) {
                 return super.getSearchLocation();
             }
-            return idpHome;
+            return result;
         }
 
     }

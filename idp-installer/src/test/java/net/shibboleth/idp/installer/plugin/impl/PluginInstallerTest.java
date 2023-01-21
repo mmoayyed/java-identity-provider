@@ -29,15 +29,17 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.plugin.AbstractIdPPlugin;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 @SuppressWarnings("javadoc")
 public class PluginInstallerTest extends BasePluginTest {
@@ -117,13 +119,13 @@ public class PluginInstallerTest extends BasePluginTest {
     public static class Wibble extends AbstractIdPPlugin {
 
         /** {@inheritDoc} */
-        public String getPluginId() {
+        public @Nonnull String getPluginId() {
             
             return "org.example.Plugin";
         }
 
         /** {@inheritDoc} */
-        public List<URL> getUpdateURLs() throws IOException {
+        public @Nonnull List<URL> getUpdateURLs() throws IOException {
             return Collections.emptyList();
         }
 

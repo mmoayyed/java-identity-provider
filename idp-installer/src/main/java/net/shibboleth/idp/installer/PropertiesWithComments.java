@@ -36,6 +36,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -57,7 +58,7 @@ public final class PropertiesWithComments {
     private Map<String, CommentedProperty> properties;
 
     /** Name Replacement info. */
-    private final Properties nameReplacement;
+    @Nonnull private final Properties nameReplacement = new Properties();
 
     /**  BlackListed property names. */
     @Nonnull private final Set<String> unreplacableNames;
@@ -70,7 +71,7 @@ public final class PropertiesWithComments {
 
     /** Legacy Constructor. */
     public PropertiesWithComments() {
-        this(Collections.emptySet());
+        this(CollectionSupport.emptySet());
     }
 
     /** Constructor.
@@ -78,7 +79,6 @@ public final class PropertiesWithComments {
      */
     public PropertiesWithComments(@Nonnull final Set<String> unreplacable) {
         unreplacableNames = Set.copyOf(unreplacable);
-        nameReplacement = new Properties();
     }
 
     /**

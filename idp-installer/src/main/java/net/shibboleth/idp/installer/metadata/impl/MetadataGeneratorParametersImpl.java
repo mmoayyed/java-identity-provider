@@ -24,11 +24,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.installer.MetadataGeneratorParameters;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
@@ -69,10 +72,10 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
     private List<String> signingCerts;
 
     /** The entityID. */
-    private String entityID;
+    @NonnullAfterInit private String entityID;
 
     /** The DNS name. */
-    private String dnsName;
+    @NonnullAfterInit private String dnsName;
 
     /** The scope. */
     private String scope;
@@ -85,6 +88,12 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
             backChannelCerts = getCertificateContents(backChannelCert);
         } catch (final IOException e) {
             throw new ComponentInitializationException(e);
+        }
+        if (entityID == null || entityID.isEmpty()) {
+            throw new ComponentInitializationException("Entity ID not specified");
+        }
+        if (dnsName == null || dnsName.isEmpty()) {
+            throw new ComponentInitializationException("DNS name not specified");
         }
     }
 
@@ -188,7 +197,8 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
     }
 
     /**  {@inheritDoc} */
-    public String getEntityID() {
+    @Nonnull @NotEmpty public String getEntityID() {
+        assert entityID != null;
         return entityID;
     }
 
@@ -197,12 +207,13 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
      *
      * @param id what to set.
      */
-    public void setEntityID(final String id) {
+    public void setEntityID(@Nonnull final String id) {
         entityID = id;
     }
 
     /**  {@inheritDoc} */
-    public String getDnsName() {
+    @Nonnull @NotEmpty public String getDnsName() {
+        assert dnsName != null;
         return dnsName;
     }
 
@@ -211,7 +222,7 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
      *
      * @param name what to set.
      */
-    public void setDnsName(final String name) {
+    public void setDnsName(@Nonnull final String name) {
         dnsName = name;
     }
 

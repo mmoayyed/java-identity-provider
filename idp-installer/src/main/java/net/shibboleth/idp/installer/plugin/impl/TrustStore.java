@@ -51,6 +51,7 @@ import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Code to handle (load, update, check) the trust store for an individual plugin.
@@ -239,7 +240,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
      * @return the Signature.
      * @throws IOException if there is a problem reading the file of it it doesn't represent a signature
      */
-    public static Signature signatureOf(final InputStream stream) throws IOException {
+    public static Signature signatureOf(@Nonnull final InputStream stream) throws IOException {
         return new Signature(stream);
     }
 
@@ -361,14 +362,19 @@ import net.shibboleth.shared.component.ComponentInitializationException;
             try (final InputStream sigStream =  PGPUtil.getDecoderStream(input)) {
                 final JcaPGPObjectFactory factory = new JcaPGPObjectFactory(sigStream);
                 final Object first = factory.nextObject();
-                if (first instanceof PGPSignatureList) {
+                if (first != null && first instanceof PGPSignatureList) {
                     final PGPSignatureList list = (PGPSignatureList) first;
-                    signature = list.get(0);
+                    if (list.isEmpty()) {
+                        throw new IOException("Provided signature file was empty");
+                    }
+                    signature = Constraint.isNotNull(list.get(0), "PGPSignatureList#get(0) retiurned null for non empty list");
                 } else {
                     throw new IOException("Provided file was not a signature");
                 }
             }
-            keyId = String.format("0x%X", signature.getKeyID());
+            final String kid =String.format("0x%X", signature.getKeyID()) ;
+            assert kid != null;
+            keyId = kid;
         }
 
         /**

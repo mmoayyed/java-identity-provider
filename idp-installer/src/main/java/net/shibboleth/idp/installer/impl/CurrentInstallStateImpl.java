@@ -47,7 +47,6 @@ import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.installer.CurrentInstallState;
 import net.shibboleth.idp.installer.InstallerProperties;
@@ -58,6 +57,7 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** Tells the installers about the current install state. */
 public final class CurrentInstallStateImpl extends AbstractInitializableComponent implements CurrentInstallState {
@@ -66,7 +66,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     @Nonnull private final Logger log = InstallationLogger.getLogger(CurrentInstallStateImpl.class);
 
     /** Where we are installing to. */
-    private final Path targetDir;
+    @Nonnull private final Path targetDir;
     
     /** The files we will delete if they created on upgrade. */
     private final String[][] deleteAfterUpgrades = { { "credentials", "secrets.properties", }, };
@@ -145,17 +145,18 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
         if (!isIdPPropertiesPresent()) {
             return ;
         }
-        props = new Properties();
+        final Properties localProps = props = new Properties();
         try {
             final File idpPropsFile = targetDir.resolve("conf").resolve("idp.properties").toFile();
             final InputStream idpPropsStream = new FileInputStream(idpPropsFile);
-            props.load(idpPropsStream);
+            localProps .load(idpPropsStream);
         } catch (final IOException e) {
             log.error("Error loading idp.properties", e);
             return;
         }
-        final Collection<String> additionalSources = IdPPropertiesApplicationContextInitializer.getAdditionalSources(
-                targetDir.toString(), props);
+        final String targetDirString = targetDir.toString();
+        assert targetDirString!=null;
+        final Collection<String> additionalSources = IdPPropertiesApplicationContextInitializer.getAdditionalSources(targetDirString, localProps);
         for (final String source : additionalSources) {
             final Path path = Path.of(source);
             if (Files.exists(path)) {
@@ -249,7 +250,8 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     }
 
     /** {@inheritDoc} */
-    public List<Path> getPathsToBeDeleted() {
+    public @Nonnull List<Path> getPathsToBeDeleted() {
+        assert pathsToDelete != null;
         return pathsToDelete;
     }
 
@@ -260,6 +262,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
 
     /** {@inheritDoc} */
     @Nonnull public Collection<String> getEnabledModules() {
+        assert enabledModules != null;
         return enabledModules;
     }
 

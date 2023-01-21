@@ -25,12 +25,12 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import net.shibboleth.idp.installer.InstallerSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * set up state for testing.

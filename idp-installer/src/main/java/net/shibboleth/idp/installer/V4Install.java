@@ -57,6 +57,7 @@ import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.UninitializedComponentException;
@@ -242,7 +243,7 @@ public class V4Install extends AbstractInitializableComponent {
      */
     // CheckStyle: CyclomaticComplexity|MethodLength OFF
     protected void populatePropertyFiles(final boolean sealerCreated) throws BuildException {
-        final Set<String> doNotReplaceList = Set.of(
+        @Nonnull final Set<String> doNotReplaceList = Set.of(
                 "idp.sealer.storePassword",
                 "idp.sealer.keyPassword",
                 "idp.authn.LDAP.bindDNCredential",
@@ -517,15 +518,16 @@ public class V4Install extends AbstractInitializableComponent {
         }
 
         final Path parentDir = installerProps.getTargetDir().resolve("metadata");
-        final Path metadataFile = parentDir.resolve("idp-metadata.xml");
-        if (Files.exists(metadataFile)) {
+        final File metadataFile = parentDir.resolve("idp-metadata.xml").toFile();
+        assert metadataFile != null;
+        if (metadataFile.exists()) {
             log.debug("Metadata file {} exists", metadataFile.toString());
             return;
         }
         final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
         final GenericApplicationContext context = new ApplicationContextBuilder()
                 .setName(MetadataGenerator.class.getName())
-                .setServiceConfigurations(Collections.singletonList(resource))
+                .setServiceConfigurations(CollectionSupport.singletonList(resource))
                 .setContextInitializer(new Initializer())
                 .build();
 
@@ -534,7 +536,7 @@ public class V4Install extends AbstractInitializableComponent {
 
         log.info("Creating Metadata to {}", metadataFile);
         log.debug("Parameters {}", parameters);
-        metadataGenerator.setOutput(metadataFile.toFile());
+        metadataGenerator.setOutput(metadataFile);
         metadataGenerator.setParameters(parameters);
         try {
             metadataGenerator.initialize();
@@ -662,7 +664,7 @@ public class V4Install extends AbstractInitializableComponent {
               generator.setPrivateKeyFile(key.toFile());
               generator.setKeySize(installerProps.getKeySize());
               generator.setHostName(installerProps.getHostName());
-              generator.setURISubjectAltNames(Collections.singletonList(installerProps.getSubjectAltName()));
+              generator.setURISubjectAltNames(CollectionSupport.singletonList(installerProps.getSubjectAltName()));
               log.info("Creating {}, CN = {} URI = {}, keySize={}", fileBase,
                       installerProps.getHostName(), installerProps.getSubjectAltName(), installerProps.getKeySize());
               try {
@@ -704,7 +706,7 @@ public class V4Install extends AbstractInitializableComponent {
                 generator.setKeystoreFile(keyStore.toFile());
                 generator.setKeySize(installerProps.getKeySize());
                 generator.setHostName(installerProps.getHostName());
-                generator.setURISubjectAltNames(Collections.singletonList(installerProps.getSubjectAltName()));
+                generator.setURISubjectAltNames(CollectionSupport.singletonList(installerProps.getSubjectAltName()));
                 generator.setKeystorePassword(installerProps.getKeyStorePassword());
                 log.info("Creating backchannel keystore, CN = {} URI = {}, keySize={}",
                         installerProps.getHostName(), installerProps.getSubjectAltName(), installerProps.getKeySize());
@@ -725,26 +727,26 @@ public class V4Install extends AbstractInitializableComponent {
          */
         private void generateSealer() {
             final Path credentials = installerProps.getTargetDir().resolve("credentials");
-            final Path sealer = credentials.resolve("sealer.jks");
-            final Path versionFile = credentials.resolve("sealer.kver");
-
-            if (Files.exists(sealer)  && Files.exists(versionFile)) {
+            final File sealerFile = credentials.resolve("sealer.jks").toFile();
+            final File versionFile = credentials.resolve("sealer.kver").toFile();
+            assert sealerFile!=null && versionFile!=null;
+            if (sealerFile.exists()  && versionFile.exists()) {
                 if (!currentState.isIdPPropertiesPresent()) {
                     log.error("Cookie encryption files {} and {} exist, but idp.properties does not",
-                            sealer, versionFile);
+                            sealerFile, versionFile);
                     throw new BuildException("Invalid Cookie encryption  file configuration");
                 }
-                log.debug("Cookie encryption files {} and {} exists.  Not generating.", sealer, versionFile);
+                log.debug("Cookie encryption files {} and {} exists.  Not generating.", sealerFile, versionFile);
             } else if (currentState.isIdPPropertiesPresent()) {
-                log.error("idp.properties exists but cookie encryption files {} do not", sealer, versionFile);
+                log.error("idp.properties exists but cookie encryption files {} do not", sealerFile, versionFile);
                 throw new BuildException("Invalid key file configuration");
-            } else if (Files.exists(sealer) || Files.exists(versionFile)) {
-                log.error("One of two expected cookie encryption file {} and {} exist", sealer, versionFile);
+            } else if (sealerFile.exists() || versionFile.exists()) {
+                log.error("One of two expected cookie encryption file {} and {} exist", sealerFile, versionFile);
                 throw new BuildException("Invalid cookie encryption file configuration");
             } else {
                 final BasicKeystoreKeyStrategyTool generator = new BasicKeystoreKeyStrategyTool();
-                generator.setKeystoreFile(sealer.toFile());
-                generator.setVersionFile(versionFile.toFile());
+                generator.setKeystoreFile(sealerFile);
+                generator.setVersionFile(versionFile);
                 generator.setKeyAlias(installerProps.getSealerAlias());
                 generator.setKeystorePassword(installerProps.getSealerPassword());
                 log.info("Creating Sealer KeyStore");
@@ -799,16 +801,20 @@ public class V4Install extends AbstractInitializableComponent {
         /** {@inheritDoc} */
         @Override @Nonnull public String selectSearchLocation(
                 @Nonnull final ConfigurableApplicationContext applicationContext) {
-            return installerProps.getTargetDir().toString();
+            final String result = installerProps.getTargetDir().toString();
+            assert result != null;
+            return result;
         }
 
         /** {@inheritDoc} */
         @Override @Nonnull public String getSearchLocation() {
-            return installerProps.getTargetDir().toString();
+            final String result = installerProps.getTargetDir().toString();
+            assert result != null;
+            return result;
         }
 
         /** {@inheritDoc} */
-        public void initialize(final ConfigurableApplicationContext applicationContext) {
+        public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
             final Properties props = new Properties(2);
             props.setProperty("idp.backchannel.cert",
                     installerProps.getTargetDir().resolve("credentials").resolve("idp-backchannel.crt").toString());

@@ -34,6 +34,7 @@ import com.beust.jcommander.Parameter;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -144,10 +145,11 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Nonnull private OperationType operation = OperationType.UNKNOWN;
 
     /** {@inheritDoc} */
-    public Logger getLog() {
+    public @Nonnull Logger getLog() {
         if (log == null) {
             log = InstallationLogger.getLogger(PluginInstallerArguments.class);
         }
+        assert log != null;
         return log;
     }
 
@@ -172,8 +174,12 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
      *
      * Only valid for {@link OperationType#INSTALLREMOTE}.
      */
-    public URL getInputURL() {
-        return inputURL;
+    @Nonnull public URL getInputURL() {
+        final URL result = inputURL;
+        Constraint.isTrue(operation == OperationType.INSTALLREMOTE, "Can only call getInputURL on remote operations");
+        Constraint.isTrue(result != null, "Invalid Remote URL");
+        assert result != null;
+        return result;
     }
 
     /** Get the file Name.
@@ -183,8 +189,13 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
      *
      * @return Returns the digested file Name.
      */
-    public String getInputFileName() {
-        return inputName;
+    @Nonnull public String getInputFileName() {
+        final String result = inputName;
+        Constraint.isTrue(operation == OperationType.INSTALLREMOTE || operation == OperationType.INSTALLDIR, 
+                "Can only call getInputFileName on remote or local installs");
+        Constraint.isTrue(result != null, "Invalid InputFileName");
+        assert result != null;
+        return result;
     }
 
     /** Get the digested input directory.
@@ -193,8 +204,13 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
      *
      * @return Returns the digested input directory.
      */
-    public Path getInputDirectory() {
-        return inputDirectory;
+    @Nonnull public Path getInputDirectory() {
+        final Path  result = inputDirectory;
+        Constraint.isTrue(operation == OperationType.INSTALLDIR, 
+                "Can only call getInputDirectory on local installs");
+        Constraint.isTrue(result != null, "Invalid InputDirectory");
+        assert result != null;
+        return result;
     }
 
     /** Are we doing a full List?
@@ -260,7 +276,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
      * Get operation to perform.
      * @return operation
      */
-    @Nullable public OperationType getOperation() {
+    @Nonnull public OperationType getOperation() {
         return operation;
     }
 
@@ -341,13 +357,15 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** Given an input string, work out what the parts are.
      * @return Whether this is a remote install or a local one.
      */
-    private OperationType decodeInput() {
+    @Nonnull private OperationType decodeInput() {
         try {
-            final URL inputAsURL = new URL(input);
+            final String urlInput = input;
+            assert urlInput != null;
+            final URL inputAsURL = new URL(urlInput);
             if ("https".equals(inputAsURL.getProtocol()) || "http".equals(inputAsURL.getProtocol())) {
-                final int i = input.lastIndexOf('/')+1;
-                inputURL = new URL(input.substring(0, i));
-                inputName = input.substring(i);
+                final int i = urlInput.lastIndexOf('/')+1;
+                inputURL = new URL(urlInput.substring(0, i));
+                inputName = urlInput.substring(i);
                 getLog().trace("Found URL: {}\t{}", inputDirectory, inputName);
                 return OperationType.INSTALLREMOTE;
             }

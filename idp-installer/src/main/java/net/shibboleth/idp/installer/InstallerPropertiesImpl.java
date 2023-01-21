@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,6 +47,7 @@ import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /** Class implement {@link InstallerProperties} with properties/UI driven values.
@@ -267,8 +267,10 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         noPrompt = value != null;
 
         if (needSourceDir) {
+            final String baseDirAsString = baseDir.toString();
+            assert baseDirAsString!=null;
             value = getValue(SOURCE_DIR, "Source (Distribution) Directory (press <enter> to accept default):",
-                    () -> baseDir.toString());
+                    () -> baseDirAsString);
             srcDir = Path.of(value);
             log.debug("Source directory {}", srcDir.toAbsolutePath());
         }
@@ -291,8 +293,8 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
      * @throws BuildException of anything goes wrong
      * @return the value
      */
-    protected String getValue(final String propertyName,
-            final String prompt, final Supplier<String> defaultSupplier) throws BuildException {
+    @Nonnull protected String getValue(final String propertyName,
+            final String prompt, final NonnullSupplier<String> defaultSupplier) throws BuildException {
         String value = installerProperties.getProperty(propertyName);
         if (value != null) {
             return value;
@@ -321,7 +323,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
      * @throws BuildException of anything goes wrong
      * @return the value.  this is not repeated to the screen
      */
-    protected String getPassword(final String propertyName, final String prompt) throws BuildException {
+    @Nonnull protected String getPassword(final String propertyName, final String prompt) throws BuildException {
         final String value = installerProperties.getProperty(propertyName);
         if (value != null) {
             return value;
@@ -333,7 +335,11 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         final InputRequest request = new InputRequest(prompt);
 
         new PasswordHandler().handleInput(request);
-        return request.getInput();
+        @Nullable final String result = request.getInput();
+        if (result == null) {
+            throw new BuildException("Null result from Ant PasswordHandler");
+        }
+        return result;
     }
 
     /** {@inheritDoc}
@@ -351,9 +357,10 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         } else {
             // build-war or Windows so "here" is also "where"
             defTarget = baseDir.toAbsolutePath().toString();
+            assert defTarget!=null;
         }
-        final String targetValue = getValue(TARGET_DIR, "Installation Directory:", () -> defTarget);
-        targetDir = Path.of(targetValue);
+        final Path targetDir= Path.of(getValue(TARGET_DIR, "Installation Directory:", () -> defTarget));
+        assert targetDir != null;
         return targetDir;
     }
 
@@ -366,10 +373,11 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
      * Defaults to information pulled from {{@link #getHostName()}.
      */
     @Nonnull public String getEntityID() {
-        if (entityID == null) {
-            entityID = getValue(ENTITY_ID, "SAML EntityID:", () -> "https://" + getHostName() + "/idp/shibboleth");
+        String result = entityID;
+        if (result == null) {
+            entityID = result = getValue(ENTITY_ID, "SAML EntityID:", () -> "https://" + getHostName() + "/idp/shibboleth");
         }
-        return entityID;
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -391,7 +399,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
      * @return the best name we can work out
      */
     // CheckStyle: CyclomaticComplexity OFF
-    private String bestHostName() {
+    @Nonnull private String bestHostName() {
         InetAddress bestSoFar = null;
         try {
             for (final NetworkInterface netInterface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
@@ -435,7 +443,9 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         if (bestSoFar == null) {
             return "localhost.localdomain";
         }
-        return bestSoFar.getCanonicalHostName();
+        final String result = bestSoFar.getCanonicalHostName();
+        assert result!=null;
+        return result;
     }
     // CheckStyle: CyclomaticComplexity ON
 
@@ -443,18 +453,22 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
      * Defaults to information pulled from the network.
      */
     @Nonnull public String getHostName() {
-        if (hostname == null) {
-            hostname = getValue(HOST_NAME, "Host Name:", () -> bestHostName());
+        String result = hostname;
+        if (result == null) {
+            result = hostname = getValue(HOST_NAME, "Host Name:", () -> bestHostName());
         }
-        return hostname;
+        return result;
     }
 
     /** {@inheritDoc} */
     @Override @Nonnull public String getCredentialsKeyFileMode() {
-        if (credentialsKeyFileMode == null) {
-            credentialsKeyFileMode = installerProperties.getProperty(MODE_CREDENTIAL_KEYS, "600");
+        String result = credentialsKeyFileMode;
+        if (result != null) {
+            return result;
         }
-        return credentialsKeyFileMode;
+        result = credentialsKeyFileMode = installerProperties.getProperty(MODE_CREDENTIAL_KEYS, "600");
+        assert result != null;
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -475,17 +489,20 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         final String host = getHostName();
         final int index = host.indexOf('.');
         if (index > 1) {
-            return host.substring(index+1);
+            final String result =host.substring(index+1);
+            assert result != null;
+            return result;
         }
         return "localdomain";
     }
 
     /** {@inheritDoc}. */
     @Override @Nonnull public String getScope() {
-        if (scope == null) {
-            scope = getValue(SCOPE, "Attribute Scope:", () -> defaultScope());
+        String result = scope;
+        if (result  == null) {
+            result = scope = getValue(SCOPE, "Attribute Scope:", () -> defaultScope());
         }
-        return scope;
+        return result;
     }
 
     /** {@inheritDoc}. */
@@ -500,18 +517,20 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
 
     /** {@inheritDoc}. */
     @Override  @Nonnull public String getKeyStorePassword() {
+        @SuppressWarnings("null") @Nonnull String result = keyStorePassword;
         if (keyStorePassword == null) {
-            keyStorePassword = getPassword(KEY_STORE_PASSWORD, "Backchannel PKCS12 Password:");
+            result = keyStorePassword = getPassword(KEY_STORE_PASSWORD, "Backchannel PKCS12 Password:");
         }
-        return keyStorePassword;
+        return result;
     }
 
     /** {@inheritDoc}. */
     @Override @Nonnull public String getSealerPassword() {
-        if (sealerPassword == null) {
-            sealerPassword = getPassword(SEALER_PASSWORD, "Cookie Encryption Key Password:");
+        String result = sealerPassword;
+        if (result == null) {
+            result = sealerPassword = getPassword(SEALER_PASSWORD, "Cookie Encryption Key Password:");
         }
-        return sealerPassword;
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -526,7 +545,9 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         }
         final String[] modules = prop.split(",");
         if (!additive) {
-            return Set.copyOf(Arrays.asList(modules));
+            final Set<String> result = Set.copyOf(Arrays.asList(modules));
+            assert result != null;
+            return result;
         }
         final Set<String> result = new HashSet<>(modules.length + InstallerProperties.DEFAULT_MODULES.size());
         result.addAll(InstallerProperties.DEFAULT_MODULES);
@@ -536,13 +557,14 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
 
     /** {@inheritDoc}. */
     @Nonnull public String getSealerAlias() {
-        if (sealerAlias == null) {
-            sealerAlias = installerProperties.getProperty(SEALER_ALIAS);
+        String result = sealerAlias;
+        if (result == null) {
+            result = sealerAlias = installerProperties.getProperty(SEALER_ALIAS);
         }
-        if (sealerAlias == null) {
-            sealerAlias = "secret";
+        if (result == null) {
+            result = sealerAlias = "secret";
         }
-        return sealerAlias;
+        return result;
     }
 
     /** {@inheritDoc}. default is {@value #DEFAULT_KEY_SIZE}. */

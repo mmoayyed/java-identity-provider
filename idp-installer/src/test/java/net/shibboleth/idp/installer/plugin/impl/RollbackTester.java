@@ -59,26 +59,28 @@ public class RollbackTester {
     private void test(boolean commit) throws IOException, ModuleException {
         final Path copied = Files.createTempFile(parent, "copied", "file");
         final Path to = Files.createTempFile(parent, "renamed", "file");
+        final Path mc = Files.createTempDirectory(parent, "mod");
         final Path from = parent.resolve("fromFile");
         final Pair<Path, Path> renamed = new Pair<>(from, to);
         final IdPModule enabled1 = new TestModule("enabled1", null, null);
         final IdPModule enabled2 = new TestModule("enabled2", null, new ModuleException()); 
         final IdPModule disabled1 = new TestModule("disabled1", null, null);
-        final IdPModule disabled2 = new TestModule("disablde2", new ModuleException(), null); 
+        final IdPModule disabled2 = new TestModule("disablde2", new ModuleException(), null);
+        final ModuleContext ctx = new ModuleContext(mc);
 
         try {
             assertFalse(from.toFile().exists());
             assertTrue(to.toFile().exists());
             assertTrue(copied.toFile().exists());
             
-            enabled1.enable(null);
-            assertTrue(enabled1.isEnabled(null));
+            enabled1.enable(ctx);
+            assertTrue(enabled1.isEnabled(ctx));
             
-            enabled2.enable(null);
-            assertTrue(enabled2.isEnabled(null));
+            enabled2.enable(ctx);
+            assertTrue(enabled2.isEnabled(ctx));
             
-            assertFalse(disabled1.isEnabled(null));
-            assertFalse(disabled2.isEnabled(null));
+            assertFalse(disabled1.isEnabled(ctx));
+            assertFalse(disabled2.isEnabled(ctx));
             
             try (final RollbackPluginInstall rp = new RollbackPluginInstall(new ModuleContext(parent), new HashMap<>())) {
                 rp.getFilesCopied().add(copied);
@@ -93,18 +95,18 @@ public class RollbackTester {
             }
 
             if (commit) {
-                assertTrue(enabled1.isEnabled(null));
-                assertTrue(enabled2.isEnabled(null));
-                assertFalse(disabled1.isEnabled(null));
-                assertFalse(disabled2.isEnabled(null));
+                assertTrue(enabled1.isEnabled(ctx));
+                assertTrue(enabled2.isEnabled(ctx));
+                assertFalse(disabled1.isEnabled(ctx));
+                assertFalse(disabled2.isEnabled(ctx));
                 assertFalse(from.toFile().exists());
                 assertTrue(to.toFile().exists());
                 assertTrue(copied.toFile().exists());            
             } else {
-                assertFalse(enabled1.isEnabled(null));
-                assertTrue(enabled2.isEnabled(null)); // threw instead
-                assertTrue(disabled1.isEnabled(null));
-                assertFalse(disabled2.isEnabled(null)); // threw instead
+                assertFalse(enabled1.isEnabled(ctx));
+                assertTrue(enabled2.isEnabled(ctx)); // threw instead
+                assertTrue(disabled1.isEnabled(ctx));
+                assertFalse(disabled2.isEnabled(ctx)); // threw instead
                 
                 assertTrue(from.toFile().exists()); //copied to
                 assertTrue(to.toFile().exists()); // copied from

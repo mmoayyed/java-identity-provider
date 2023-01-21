@@ -38,6 +38,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.http.client.HttpClient;
 import org.apache.tools.ant.BuildException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -54,6 +55,7 @@ import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.cli.AbstractCommandLine;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -66,7 +68,7 @@ import net.shibboleth.idp.plugin.PluginVersion;
 public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<PluginInstallerArguments> {
 
     /** Class logger. */
-    @Nullable private Logger log;
+    @Nonnull final private Logger log = InstallationLogger.getLogger(PluginInstallerCLI.class);
 
     /** A Plugin Installer to use. */
     @Nullable private PluginInstaller installer;
@@ -84,9 +86,6 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Logger getLogger() {
-        if (log == null) {
-            log = InstallationLogger.getLogger(PluginInstallerCLI.class);
-        }
         return log;
     }
 
@@ -98,19 +97,21 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected String getVersion() {
-        return Version.getVersion();
+    @Nonnull protected String getVersion() {
+        final String result = Version.getVersion();
+        assert result != null;
+        return result;
     }
     
     /** {@inheritDoc} */
     @Nonnull @NonnullElements protected List<Resource> getAdditionalSpringResources() {
-        return List.of(
+        return CollectionSupport.singletonList(
                new ClassPathResource("net/shibboleth/idp/conf/http-client.xml"));
     }
     
     /** {@inheritDoc} */
     //CheckStyle: CyclomaticComplexity|MethodLength OFF
-    protected int doRun(final PluginInstallerArguments args) {
+    protected int doRun(@Nonnull final PluginInstallerArguments args) {
         
         if (args.getHttpClientName() == null) {
             args.setHttpClientName("shibboleth.InternalHttpClient");
@@ -120,6 +121,11 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         if (ret != RC_OK) {
             return ret;
         }
+        //
+        // Sanity check - we rely on a non null HttpClient (see constructPluginInstaller)
+        //
+        Constraint.isTrue(getHttpClient()!=null, "no HttpClient supplied");
+        
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
@@ -136,6 +142,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
         try (final PluginInstaller inst = new PluginInstaller()){
             constructPluginInstaller(inst, args);
+            assert inst == installer;
+            final String pluginId = args.getPluginId();
 
             switch (args.getOperation()) {
                 case LIST:
@@ -146,38 +154,43 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                     break;
 
                 case INSTALLDIR:
-                    if (args.getPluginId() != null) {
-                        installer.setPluginId(args.getPluginId());
+                    if (pluginId != null) {
+                        inst.setPluginId(pluginId);
                     }
-                    installer.installPlugin(args.getInputDirectory(), args.getInputFileName(), !args.isNoCheck());
+                    inst.installPlugin(args.getInputDirectory(), args.getInputFileName(), !args.isNoCheck());
                     break;
 
                 case INSTALLREMOTE:
-                    if (args.getPluginId() != null) {
-                        installer.setPluginId(args.getPluginId());
+                    if (pluginId != null) {
+                        inst.setPluginId(pluginId);
                     }
                     if (args.isInstallId()) {
-                        return autoPluginFromId(args.getPluginId(), !args.isNoCheck());
+                        assert(pluginId != null);
+                        return autoPluginFromId(pluginId, !args.isNoCheck());
                     }
-                    installer.installPlugin(args.getInputURL(), args.getInputFileName(), !args.isNoCheck());
+                    inst.installPlugin(args.getInputURL(), args.getInputFileName(), !args.isNoCheck());
                     break;
 
                 case UPDATE:
-                    doUpdate(args.getPluginId(), args.getUpdateVersion(), !args.isNoCheck());
+                    assert pluginId != null;
+                    doUpdate(pluginId, args.getUpdateVersion(), !args.isNoCheck());
                     break;
 
                 case UNINSTALL:
-                    installer.setPluginId(args.getPluginId());
-                    installer.uninstall();
+                    assert pluginId != null;
+                    inst.setPluginId(pluginId);
+                    inst.uninstall();
                     break;
 
                 case OUTPUTLICENSE:
-                    outputLicense(args.getPluginId());
+                    assert pluginId != null;
+                    outputLicense(pluginId);
                     break;
 
                 case LISTCONTENTS:
-                    installer.setPluginId(args.getPluginId());
-                    doContentList(args.getPluginId());
+                    assert pluginId != null;
+                    inst.setPluginId(pluginId);
+                    doContentList(pluginId);
                     break;
 
                 default:
@@ -203,15 +216,21 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      */
     private void constructPluginInstaller(final PluginInstaller inst,
             final PluginInstallerArguments args) throws ComponentInitializationException {
-        inst.setIdpHome(Path.of(getApplicationContext().getEnvironment().getProperty("idp.home")));
+        final Path idpHome = Path.of(getApplicationContext().getEnvironment().getProperty("idp.home"));
+        assert idpHome != null;
+        inst.setIdpHome(idpHome);
         if (!args.isUnattended()) {
             inst.setAcceptKey(new InstallerQuery("Accept this key"));
         }
         inst.setTrustore(args.getTruststore());
-        if (getHttpClient()!= null) {
-            inst.setHttpClient(getHttpClient());
-        }
+        final HttpClient client = getHttpClient();
+        //
+        // This is null because we set up the bean name before calling super.dorun
+        //
+        assert client != null;
+        inst.setHttpClient(client);
         inst.setModuleContextSecurityParams(getHttpClientSecurityParameters());
+        assert(updateURLs != null);
         inst.setUpdateOverrideURLs(updateURLs);
         inst.setRebuildWar(args.isRebuild());
         inst.initialize();
@@ -236,8 +255,9 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     private void printDetails(final IdPPlugin plugin) {
         log.debug("Interrogating {}", plugin.getPluginId());
         final PluginState state =  new PluginState(plugin, updateURLs);
-        if (getHttpClient() != null) {
-            state.setHttpClient(getHttpClient());
+        final HttpClient client = getHttpClient();
+        if (client != null) {
+            state.setHttpClient(client);
         }
         try {
             state.initialize();
@@ -268,6 +288,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param pluginId what to list
      */
     private void outputLicense(@Nonnull final String pluginId) {
+        assert installer != null;
         final IdPPlugin plugin = installer.getInstalledPlugin(pluginId);
         if (plugin == null) {
             log.error("Plugin {} not installed", pluginId);
@@ -302,6 +323,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      */
     private void doList(final boolean fullList, @Nullable final String pluginId) {
         boolean list = false;
+        assert installer != null;
         final List<IdPPlugin> plugins = installer.getInstalledPlugins();
         for (final IdPPlugin plugin: plugins) {
             if (pluginId == null || pluginId.equals(plugin.getPluginId())) {
@@ -327,19 +349,22 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param pluginId the pluginId
      */
     private void doContentList(@Nonnull final String pluginId) {
-        final IdPPlugin thePlugin = installer.getInstalledPlugin(pluginId);
+        final PluginInstaller inst = installer;
+        assert inst != null;
 
-        final String fromContentsVersion =  installer.getVersionFromContents();
-        final List<Path> contents = installer.getInstalledContents();
+        final IdPPlugin thePlugin = inst.getInstalledPlugin(pluginId);
+
+        final String fromContentsVersion =  inst.getVersionFromContents();
+        final List<Path> contents = inst.getInstalledContents();
         if (thePlugin == null) {
             log.warn("Plugin was not installed {}", pluginId);
             if (fromContentsVersion != null) {
                 log.error("Plugin {} not installed, but contents found", pluginId);
                 log.debug("{}", contents);
-            } else {
-                return;
             }
-        } else if (fromContentsVersion == null) {
+            return;
+        }
+        if (fromContentsVersion == null) {
             log.error("Plugin {} found, but no contents listed", pluginId);
             return;
         }
@@ -382,6 +407,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
         for (final Entry<String, PluginInfo> e: plugins.entrySet()) {
             final PluginVersion nullVersion = new PluginVersion(0, 0, 0);
+            assert installer != null;
             final IdPPlugin existingPlugin = installer.getInstalledPlugin(e.getKey());
             if (existingPlugin == null) {
                 final PluginVersion version = getBestVersion(nullVersion, e.getValue());
@@ -430,9 +456,13 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             final Resource propertyResource;
             try {
                 if ("file".equals(url.getProtocol())) {
-                    propertyResource = new FileSystemResource(url.getPath());
+                    final String path =url.getPath();
+                    assert path != null;
+                    propertyResource = new FileSystemResource(path);
                 } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                        propertyResource = new HTTPResource(getHttpClient(), url);
+                    final HttpClient client = getHttpClient();
+                    assert client != null;
+                    propertyResource = new HTTPResource(client , url);
                 } else {
                     log.error("Only file and http[s] URLs are allowed");
                     continue;
@@ -459,13 +489,19 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param checkVersion are we checking the version.
      * @return installation status
      */
-    private int autoPluginFromId(final String pluginId, final boolean checkVersion) {
-        final IdPPlugin existing = installer.getInstalledPlugin(pluginId);
+    private int autoPluginFromId(@Nonnull final String pluginId, final boolean checkVersion) {
+        final PluginInstaller inst = installer;
+        assert inst != null;
+        final IdPPlugin existing = inst.getInstalledPlugin(pluginId);
         if (existing != null) {
             log.error("Plugin {} is already installed", pluginId);
             return RC_INIT;
         }
         final Properties props = loadPluginInfo();
+        if (props == null) {
+            log.error("AutoInstall not possible");
+            return RC_INIT;
+        }
         final PluginInfo info = new PluginInfo(pluginId, props);
         if (!info.isInfoComplete()) {
             log.error("Plugin {}: Information not found", pluginId);
@@ -476,7 +512,9 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             log.error("Plugin {}: No version available to install", pluginId);
             return RC_INIT;
         }
-        installer.installPlugin(info.getUpdateURL(versionToInstall),
+        final URL updateURL = info.getUpdateURL(versionToInstall); 
+        assert updateURL != null;
+        inst.installPlugin(updateURL,
                 info.getUpdateBaseName(versionToInstall) + ".tar.gz",
                 checkVersion);
         return RC_OK;
@@ -530,15 +568,19 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     private void doUpdate(@Nonnull final String pluginId, 
             @Nullable final PluginVersion pluginVersion,
             final boolean checkVersion) {
-        final IdPPlugin plugin = installer.getInstalledPlugin(pluginId);
+        
+        final PluginInstaller inst = installer;
+        assert inst != null;
+        final IdPPlugin plugin = inst.getInstalledPlugin(pluginId);
         if (plugin == null) {
             log.error("Plugin {} was not installed", pluginId);
             return;
         }
         log.debug("Interrogating {} ", plugin.getPluginId());
         final PluginState state =  new PluginState(plugin, updateURLs);
-        if (getHttpClient() != null) {
-            state.setHttpClient(getHttpClient());
+        final HttpClient client = getHttpClient();
+        if (client != null) {
+            state.setHttpClient(client);
         }
         try {
             state.initialize();
@@ -563,7 +605,9 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             }
         }
         // just use the tgz version - its an update so it should be jar files only
-        installer.installPlugin(state.getPluginInfo().getUpdateURL(installVersion),
+        final URL updateURL = state.getPluginInfo().getUpdateURL(installVersion); 
+        assert updateURL != null;
+        inst.installPlugin(updateURL,
                 state.getPluginInfo().getUpdateBaseName(installVersion) + ".tar.gz",
                 checkVersion);
     }

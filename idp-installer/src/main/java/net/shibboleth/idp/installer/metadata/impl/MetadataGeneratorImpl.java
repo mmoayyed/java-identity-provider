@@ -60,6 +60,7 @@ import net.shibboleth.idp.installer.MetadataGenerator;
 import net.shibboleth.idp.installer.MetadataGeneratorParameters;
 import net.shibboleth.idp.saml.xmlobject.ExtensionsConstants;
 import net.shibboleth.idp.saml.xmlobject.Scope;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -158,7 +159,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
     /**
      * Where to write to - as {@link BufferedWriter}.
      */
-    @Nonnull private BufferedWriter writer;
+    @NonnullAfterInit private BufferedWriter writer;
 
     /**
      * Where to write to - as {@link File}.
@@ -599,16 +600,18 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
      */
     protected void writeKeyDescriptors() throws IOException {
         final List<List<String>> signing = new ArrayList<>(2);
-        if (params.getBackchannelCert() != null && !params.getBackchannelCert().isEmpty()) {
+        final List<String> backchannelCert = params.getBackchannelCert();
+        if (backchannelCert != null && !backchannelCert.isEmpty()) {
             writer.write("        ");
             openComment();
             writer.write(" First signing certificate is BackChannel, the Second is FrontChannel");
             closeComment();
             writer.newLine();
-            signing.add(params.getBackchannelCert());
+            signing.add(backchannelCert);
         }
-        if (params.getSigningCert() != null && !params.getSigningCert().isEmpty()) {
-            signing.add(params.getSigningCert());
+        final List<String> signingCert = params.getSigningCert();
+        if (signingCert!= null && !signingCert.isEmpty()) {
+            signing.add(signingCert);
         }
         writeKeyDescriptors(signing, "signing");
         writeKeyDescriptors(Collections.singletonList(params.getEncryptionCert()), "encryption");

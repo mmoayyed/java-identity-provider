@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,6 +41,7 @@ import net.shibboleth.idp.module.IdPModule.ResourceResult;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.shared.annotation.constraint.Live;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -177,10 +177,13 @@ public class RollbackPluginInstall implements AutoCloseable {
         }
         for (int i = filesRenamedAway.size()-1; i >=0; i--) {
             final Pair<Path, Path> filePair = filesRenamedAway.get(i);
+            final Path from = filePair.getFirst();
+            final Path to = filePair.getSecond();
+            assert from != null && to != null;
             try (final InputStream in = new BufferedInputStream(
-                         new FileInputStream(filePair.getSecond().toFile()));
+                         new FileInputStream(to.toFile()));
                  final OutputStream out = new BufferedOutputStream(
-                         new FileOutputStream(filePair.getFirst().toFile()))) {
+                         new FileOutputStream(from.toFile()))) {
                 log.trace("Copying {} to {}", filePair.getSecond());
                 in.transferTo(out);
             } catch (final Throwable t) {
@@ -218,10 +221,10 @@ public class RollbackPluginInstall implements AutoCloseable {
     
     /** Signal that the operation completed and that rollback won't be needed. */
     public void completed() {
-        modulesEnabled = Collections.emptyList();
-        modulesDisabled = Collections.emptyList();
-        filesCopied = Collections.emptyList();
-        filesRenamedAway = Collections.emptyList();
+        modulesEnabled = CollectionSupport.emptyList();
+        modulesDisabled = CollectionSupport.emptyList();
+        filesCopied = CollectionSupport.emptyList();
+        filesRenamedAway = CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
