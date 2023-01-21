@@ -26,7 +26,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +77,7 @@ public final class PropertiesWithComments {
      * @param unreplacable names to warn on.
      */
     public PropertiesWithComments(@Nonnull final Set<String> unreplacable) {
-        unreplacableNames = Set.copyOf(unreplacable);
+        unreplacableNames = CollectionSupport.copyToSet(unreplacable);
     }
 
     /**

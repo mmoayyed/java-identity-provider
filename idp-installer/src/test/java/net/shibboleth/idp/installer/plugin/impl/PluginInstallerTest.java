@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.client.HttpClient;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.testng.annotations.BeforeClass;
@@ -39,13 +40,16 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.plugin.AbstractIdPPlugin;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.httpclient.HttpClientBuilder;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class PluginInstallerTest extends BasePluginTest {
 
     private final Logger log = LoggerFactory.getLogger(PluginInstallerTest.class);
-    
+
+    private HttpClient client;
+
     private final Predicate<String> loggingAcceptCert = new  Predicate<>() {
         public boolean test(String what) {
             log.debug("Accepting the certificate\n{}", what);
@@ -53,15 +57,17 @@ public class PluginInstallerTest extends BasePluginTest {
         }
     };
 
-    @BeforeClass public void setup() throws IOException {
+    
+    @BeforeClass public void setup() throws Exception {
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
             Security.addProvider(new BouncyCastleProvider());
         }
+        client = new HttpClientBuilder().buildClient();
     }
 
     @Test(enabled = false) public void testListing() throws ComponentInitializationException, IOException {
         
-        try (final PluginInstaller inst = new PluginInstaller()) {
+        try (final PluginInstaller inst = new PluginInstaller(client)) {
             inst.setIdpHome(getIdpHome());
             inst.initialize();
             final Map<String, Object> result = inst.getInstalledPlugins().stream().collect(Collectors.toMap(IdPPlugin::getPluginId,
@@ -74,7 +80,7 @@ public class PluginInstallerTest extends BasePluginTest {
 
     @Test(enabled = false, dependsOnMethods ={"testListing", }) public void testRemove() throws ComponentInitializationException, IOException
     {
-        try (final PluginInstaller inst = new PluginInstaller()) {
+        try (final PluginInstaller inst = new PluginInstaller(client)) {
             inst.setIdpHome(getIdpHome());
             inst.setPluginId("org.example.Plugin");
             inst.initialize();
@@ -83,7 +89,7 @@ public class PluginInstallerTest extends BasePluginTest {
     }
 
     @Test(enabled = false) public void testUnpackZip() throws ComponentInitializationException, IOException {
-        try (final PluginInstaller inst = new PluginInstaller()) {
+        try (final PluginInstaller inst = new PluginInstaller(client)) {
             inst.setIdpHome(getIdpHome());
             inst.setAcceptKey(loggingAcceptCert);
             inst.initialize();
@@ -94,7 +100,7 @@ public class PluginInstallerTest extends BasePluginTest {
     }
     
     @Test(enabled = false) public void testUnpackZipFile() throws ComponentInitializationException, IOException {
-        try (final PluginInstaller inst = new PluginInstaller()) {
+        try (final PluginInstaller inst = new PluginInstaller(client)) {
             inst.setIdpHome(getIdpHome());
             inst.setAcceptKey(loggingAcceptCert);
             inst.initialize();
@@ -105,7 +111,7 @@ public class PluginInstallerTest extends BasePluginTest {
 
     
     @Test(enabled = false) public void testUnpackTgz() throws ComponentInitializationException, IOException {
-        try (final PluginInstaller inst = new PluginInstaller()) {
+        try (final PluginInstaller inst = new PluginInstaller(client)) {
             inst.setPluginId("net.shibboleth.idp.plugin.rhino");
             inst.setIdpHome(getIdpHome());
             inst.setAcceptKey(loggingAcceptCert);

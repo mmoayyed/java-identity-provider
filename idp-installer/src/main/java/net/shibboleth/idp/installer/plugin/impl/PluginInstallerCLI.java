@@ -140,7 +140,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             updateURLs = Collections.emptyList();
         }
 
-        try (final PluginInstaller inst = new PluginInstaller()){
+        try (final PluginInstaller inst = new PluginInstaller(Constraint.isNotNull(getHttpClient(), "HJttpClient cannot be non null (by construction"))) {
             constructPluginInstaller(inst, args);
             assert inst == installer;
             final String pluginId = args.getPluginId();
@@ -228,7 +228,6 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         // This is null because we set up the bean name before calling super.dorun
         //
         assert client != null;
-        inst.setHttpClient(client);
         inst.setModuleContextSecurityParams(getHttpClientSecurityParameters());
         assert(updateURLs != null);
         inst.setUpdateOverrideURLs(updateURLs);

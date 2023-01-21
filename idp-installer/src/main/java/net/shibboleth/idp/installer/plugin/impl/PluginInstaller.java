@@ -83,20 +83,18 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.httpclient.HttpClientBuilder;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resource.Resource;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
-import net.shibboleth.shared.logic.PredicateSupport;
 /**
  *  The class where the heavy lifting of managing a plugin happens. 
  */
 public final class PluginInstaller extends AbstractInitializableComponent implements AutoCloseable {
 
     /** Class logger. */
-    @Nonnull
-    private static final Logger LOG = InstallationLogger.getLogger(PluginInstaller.class);
+    @Nonnull private static final Logger LOG = InstallationLogger.getLogger(PluginInstaller.class);
 
     /** Property Name for version. */
     private static final String PLUGIN_VERSION_PROPERTY ="idp.plugin.version";
@@ -132,7 +130,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private String truststore;
 
     /** What to use to download things. */
-    private HttpClient httpClient;
+    @Nonnull private final HttpClient httpClient;
 
     /** If overridden these are the urls to us for update (rather than what the plugin asks for. */
     @Nonnull private List<URL> updateOverrideURLs = CollectionSupport.emptyList();
@@ -173,6 +171,14 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Do we rebuild? */
     private boolean rebuildWar = true;
 
+    /**
+     * Constructor.
+     * @param client - the HttpClient to use
+     */
+    public PluginInstaller(@Nonnull final HttpClient client) {
+        httpClient = client;
+    }
+
     /** Set IdP Home.
      * @param home Where we are working from
      */
@@ -200,13 +206,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     public void setAcceptKey(@Nonnull final Predicate<String> what) {
         acceptKey = Constraint.isNotNull(what, "Accept Key Predicate should be non-null");
-    }
-
-    /** Set the httpClient.
-     * @param what what to set.
-     */
-    public void setHttpClient(@Nonnull final HttpClient what) {
-        httpClient = Constraint.isNotNull(what, "HttpClient should be non-null");
     }
 
     /** Set the override URLS.
@@ -537,9 +536,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.debug("{} not installed. files renamed", pluginId);
         } else {
             try {
+                final Path rollbackDir = workspacePath.resolve("rollback");
+                assert rollbackDir != null;
                 LOG.debug("Uninstalling version {} of {}", oldVersion, pluginId);
                 PluginInstallerSupport.renameToTree(pluginsWebapp,
-                        workspacePath.resolve("rollback"),
+                        rollbackDir,
                         getInstalledContents(),
                         rollback.getFilesRenamedAway());
             } catch (final IOException e) {
@@ -663,7 +664,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @throws BuildException if badness is detected.
      */
     private void download(@Nonnull final URL baseURL, @Nonnull final String fileName) throws BuildException {
-        buildHttpClient();
         try {
             downloadDirectory = Files.createTempDirectory("plugin-installer-download");
             final Resource baseResource = new HTTPResource(httpClient, baseURL);
@@ -672,21 +672,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         } catch (final IOException e) {
             LOG.error("Error in download", e);
             throw new BuildException(e);
-        }
-    }
-
-    /** Build the Http Client if it doesn't exist. */
-    private void buildHttpClient() {
-        checkComponentActive();
-        if (httpClient == null) {
-            LOG.debug("No HttpClient built, creating default");
-            try {
-                httpClient = new HttpClientBuilder().buildClient();
-                getModuleContext().setHttpClient(httpClient);
-            } catch (final Exception e) {
-                LOG.error("Could not create HttpClient", e);
-                throw new BuildException(e);
-            }
         }
     }
 
@@ -803,7 +788,9 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                     LOG.error("No contents unpacked from {}", fullName);
                     throw new BuildException("Distro was empty");
                 }
-                distribution = PluginInstallerSupport.canonicalPath(contents.next());
+                final Path next = contents.next();
+                assert next != null;
+                distribution = PluginInstallerSupport.canonicalPath(next);
                 if (contents.hasNext()) {
                     LOG.error("Too many packages in distributions {}", fullName);
                     throw new BuildException("Too many packages in distributions");
