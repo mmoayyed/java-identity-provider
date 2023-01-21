@@ -157,7 +157,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     @NonnullAfterInit private ModuleContext moduleContext;
 
     /** Module Changes.*/
-    private final  Map<ModuleResource,ResourceResult> moduleChanges = new HashMap<>();
+    @Nonnull private final  Map<ModuleResource,ResourceResult> moduleChanges = new HashMap<>();
 
     /** The "plugins" classpath loader. AutoClosed. */
     private URLClassLoader installedPluginsLoader;
@@ -431,6 +431,15 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         return moduleContext;
     }
     
+    /** Check for initialized and if so return the {@link #pluginsWebapp}.
+     * @return the {@link #moduleContext}.
+     */
+    @Nonnull private Path getPluginsWebapp() {
+        checkComponentActive();
+        assert pluginsWebapp!=null;
+        return pluginsWebapp;
+    }
+
     /** Check for non null and then if so return the {@link #description}.
      * @return the {@link #description}
      */
@@ -445,13 +454,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return a set of the names of the currently enabled Modules.
      * @throws BuildException on loading a module
      */
-    private Set<String> getLoadedModules() throws BuildException {
-        final Set<String> enablededModules = new HashSet<>();
+    @Nonnull private Set<String> getLoadedModules() throws BuildException {
+        final @Nonnull Set<String> enablededModules = new HashSet<>();
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class, getInstalledPluginsLoader()).iterator();
         while (modules.hasNext()) {
             try {
                 final IdPModule module = modules.next();
-                assert moduleChanges != null;
                 if (module.isEnabled(getModuleContext())) {
                     enablededModules.add(module.getId());
                 }
@@ -468,7 +476,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param loadedModules the modules we know to be enabled
      * @throws BuildException if any required modules are missing or disabled
      */
-    private void checkRequiredModules(final Set<String> loadedModules) throws BuildException  {
+    private void checkRequiredModules(@Nonnull final Set<String> loadedModules) throws BuildException  {
         for (final String moduleId: getDescription().getRequiredModules()) {
             if (!loadedModules.contains(moduleId)) {
                 LOG.warn("Required module {} is missing or not enabled ", moduleId);
@@ -506,10 +514,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void installNew(final RollbackPluginInstall rollBack) throws BuildException {
         final Path from = distribution.resolve("webapp");
-        if (PluginInstallerSupport.detectDuplicates(from, pluginsWebapp)) {
+        if (PluginInstallerSupport.detectDuplicates(from, getPluginsWebapp())) {
             throw new BuildException("Install would overwrite files");
         }
-        PluginInstallerSupport.copyWithLogging(from, pluginsWebapp, rollBack.getFilesCopied());
+        PluginInstallerSupport.copyWithLogging(from, getPluginsWebapp(), rollBack.getFilesCopied());
 
         String moduleId = null;
         try {
@@ -539,7 +547,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 final Path rollbackDir = workspacePath.resolve("rollback");
                 assert rollbackDir != null;
                 LOG.debug("Uninstalling version {} of {}", oldVersion, pluginId);
-                PluginInstallerSupport.renameToTree(pluginsWebapp,
+                PluginInstallerSupport.renameToTree(getPluginsWebapp(),
                         rollbackDir,
                         getInstalledContents(),
                         rollback.getFilesRenamedAway());
@@ -948,7 +956,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             return installedPluginsLoader;
         }
         final URL[] urls;
-        final Path libs = pluginsWebapp.resolve("WEB-INF").resolve("lib");
+        final Path libs = getPluginsWebapp().resolve("WEB-INF").resolve("lib");
         if (Files.exists(libs)) {
             try {
                 if (!Files.exists(workspacePath)) {
