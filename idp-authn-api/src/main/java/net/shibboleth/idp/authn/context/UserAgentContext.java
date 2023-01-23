@@ -22,11 +22,6 @@ import java.net.InetAddress;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import eu.bitwalker.useragentutils.Browser;
-import eu.bitwalker.useragentutils.OperatingSystem;
-import eu.bitwalker.useragentutils.UserAgent;
-import net.shibboleth.shared.logic.Constraint;
-
 import org.opensaml.messaging.context.BaseContext;
 
 /**
@@ -41,10 +36,6 @@ public final class UserAgentContext extends BaseContext {
     
     /** An identification string (such as a User-Agent header). */
     @Nullable private String identifier;
-
-    /** Parsed User-Agent. */
-    @Nullable private UserAgent userAgent;
-
 
     /**
      * Get the address of the user-agent host.
@@ -77,8 +68,7 @@ public final class UserAgentContext extends BaseContext {
     }
     
     /**
-     * Set the user agent identifier. The parsed user agent is available via {@link #getUserAgent()} upon calling
-     * this method.
+     * Set the user agent identifier.
      * 
      * @param id identifier for the user agent
      * 
@@ -86,46 +76,7 @@ public final class UserAgentContext extends BaseContext {
      */
     @Nonnull public UserAgentContext setIdentifier(@Nullable final String id) {
         identifier = id;
-        userAgent = new UserAgent(id);
         return this;
     }
 
-    /**
-     * Gets the parsed user agent.
-     *
-     * @return Parsed user agent or null if {@link #setIdentifier(String)} has not been called.
-     */
-    @Nullable public UserAgent getUserAgent() {
-        return userAgent;
-    }
-
-    /**
-     * Determines whether this user agent is an instance of the given browser.
-     *
-     * @param browser browser to check.
-     *
-     * @return True if this user agent is an instance of the given browser, false otherwise.
-     */
-    public boolean isInstance(@Nonnull final Browser browser) {
-        Constraint.isNotNull(browser, "Browser cannot be null");
-        if (userAgent == null) {
-            return false;
-        }
-        return userAgent.getBrowser().getGroup().equals(browser) || userAgent.getBrowser().equals(browser);
-    }
-
-    /**
-     * Determines whether this user agent is an instance of the given operating system.
-     *
-     * @param os operating system to check.
-     *
-     * @return True if this user agent is an instance of the given operating system, false otherwise.
-     */
-    public boolean isInstance(@Nonnull final OperatingSystem os) {
-        Constraint.isNotNull(os, "OperatingSystem cannot be null");
-        if (userAgent == null) {
-            return false;
-        }
-        return userAgent.getOperatingSystem().getGroup().equals(os) || userAgent.getOperatingSystem().equals(os);
-    }
 }

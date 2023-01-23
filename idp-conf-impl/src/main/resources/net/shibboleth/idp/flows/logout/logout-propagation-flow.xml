@@ -37,9 +37,7 @@
         <on-entry>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext))" result="requestScope.logoutPropCtx" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.UserAgentContext))" result="requestScope.userAgentContext" />
-            <evaluate expression="userAgentContext.isInstance(T(eu.bitwalker.useragentutils.Browser).IE)
-                ? externalContext.nativeResponse.setContentType('text/plain')
-                : externalContext.nativeResponse.setContentType('application/json')" />
+            <evaluate expression="externalContext.nativeResponse.setContentType('application/json')" />
             <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="WriteAuditLog" />
         </on-entry>
