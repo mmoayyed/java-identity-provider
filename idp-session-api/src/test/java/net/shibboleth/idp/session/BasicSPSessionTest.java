@@ -44,13 +44,6 @@ public class BasicSPSessionTest {
         Assert.assertTrue(session.getExpirationInstant().isAfter(session.getCreationInstant()));
 
         try {
-            new BasicSPSession(null, Instant.ofEpochMilli(0), Instant.ofEpochMilli(0));
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
             new BasicSPSession("", Instant.ofEpochMilli(0), Instant.ofEpochMilli(0));
             Assert.fail();
         } catch (ConstraintViolationException e) {

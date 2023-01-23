@@ -36,10 +36,10 @@ import javax.json.stream.JsonGenerator;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for {@link SPSession} serializers that handles data common to all such objects.
@@ -109,6 +109,8 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
             final String serviceId = obj.getString(SERVICE_ID_FIELD);
             final Instant creation = Instant.ofEpochMilli(obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact());
 
+            assert serviceId != null;
+            assert creation != null;
             return doDeserialize(obj, serviceId, creation, Instant.ofEpochMilli(expiration).minus(expirationOffset));
             
         } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {

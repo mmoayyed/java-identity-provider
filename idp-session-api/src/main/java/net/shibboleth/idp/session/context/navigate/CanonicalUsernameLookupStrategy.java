@@ -22,6 +22,7 @@ import java.util.function.Function;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 
 /**
@@ -41,8 +42,11 @@ public class CanonicalUsernameLookupStrategy implements Function<ProfileRequestC
             }
             
             final SessionContext sessionContext = input.getSubcontext(SessionContext.class);
-            if (sessionContext != null && sessionContext.getIdPSession() != null) {
-                return sessionContext.getIdPSession().getPrincipalName();
+            if (sessionContext != null) {
+                final IdPSession idpSession = sessionContext.getIdPSession();
+                if (idpSession != null) {
+                    return idpSession.getPrincipalName();
+                }
             }
         }
         return null;

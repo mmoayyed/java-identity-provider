@@ -26,13 +26,14 @@ import javax.annotation.Nullable;
 
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A registry of mappings between a {@link SPSession} class and a corresponding {@link StorageSerializer}
@@ -119,7 +120,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
         @Nonnull private final Class<T> sessionType;
         
         /** Serializer. */
-        @Nonnull private final StorageSerializer<T> serializer;
+        @Nullable private final StorageSerializer<T> serializer;
         
         /**
          * Constructor.

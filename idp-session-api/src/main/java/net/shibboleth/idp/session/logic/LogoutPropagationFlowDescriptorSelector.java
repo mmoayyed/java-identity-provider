@@ -27,6 +27,7 @@ import net.shibboleth.idp.session.LogoutPropagationFlowDescriptor;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -44,12 +45,16 @@ public class LogoutPropagationFlowDescriptorSelector implements Function<SPSessi
      */
     public LogoutPropagationFlowDescriptorSelector(
             @Nonnull @NonnullElements @ParameterName(name="flows") final List<LogoutPropagationFlowDescriptor> flows) {
-        availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flows cannot be null"));
+        availableFlows = CollectionSupport.copyToList(Constraint.isNotNull(flows, "Flows cannot be null"));
     }
 
     /** {@inheritDoc} */
     @Nullable public LogoutPropagationFlowDescriptor apply(@Nullable final SPSession input) {
 
+        if (input == null) {
+            return null;
+        }
+        
         for (final LogoutPropagationFlowDescriptor flowDescriptor : availableFlows) {
             if (flowDescriptor.isSupported(input)) {
                 return flowDescriptor;

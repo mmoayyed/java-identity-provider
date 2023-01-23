@@ -19,6 +19,7 @@ package net.shibboleth.idp.session.context.navigate;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
@@ -29,8 +30,11 @@ public class SessionContextPrincipalLookupFunction implements ContextDataLookupF
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final SessionContext input) {
         
-        if (input != null && input.getIdPSession() != null) {
-            return input.getIdPSession().getPrincipalName();
+        if (input != null) {
+            final IdPSession idpSession = input.getIdPSession();
+            if (idpSession != null) {
+                return idpSession.getPrincipalName();
+            }
         }
         return null;
     }

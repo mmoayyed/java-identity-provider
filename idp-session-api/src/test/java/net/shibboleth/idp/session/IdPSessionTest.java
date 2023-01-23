@@ -23,6 +23,8 @@ import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import java.time.Instant;
 
+import javax.annotation.Nonnull;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -49,13 +51,6 @@ public class IdPSessionTest {
         Assert.assertFalse(session.getSPSessions().iterator().hasNext());
 
         try {
-            new DummyIdPSession(null, null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
             new DummyIdPSession("", "");
             Assert.fail();
         } catch (ConstraintViolationException e) {
@@ -64,13 +59,6 @@ public class IdPSessionTest {
 
         try {
             new DummyIdPSession("  ", "  ");
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new DummyIdPSession("test", null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
@@ -149,19 +137,6 @@ public class IdPSessionTest {
         Assert.assertTrue(session.getSPSessions().contains(svcSession3));
         Assert.assertEquals(session.getSPSession("svc3"), svcSession3);
 
-        try {
-            session.addSPSession(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            Assert.assertEquals(session.getSPSessions().size(), 3);
-            Assert.assertTrue(session.getSPSessions().contains(svcSession1));
-            Assert.assertEquals(session.getSPSession("svc1"), svcSession1);
-            Assert.assertTrue(session.getSPSessions().contains(svcSession2));
-            Assert.assertEquals(session.getSPSession("svc2"), svcSession2);
-            Assert.assertTrue(session.getSPSessions().contains(svcSession3));
-            Assert.assertEquals(session.getSPSession("svc3"), svcSession3);
-        }
-
         session.addSPSession(svcSession1);
         Assert.assertEquals(session.getSPSessions().size(), 3);
         Assert.assertTrue(session.getSPSessions().contains(svcSession1));
@@ -195,16 +170,6 @@ public class IdPSessionTest {
         Assert.assertFalse(session.getSPSessions().contains(svcSession1));
         Assert.assertTrue(session.getSPSessions().contains(svcSession2));
         Assert.assertEquals(session.getSPSession("svc2"), svcSession2);
-
-        try {
-            session.removeSPSession(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            Assert.assertEquals(session.getSPSessions().size(), 1);
-            Assert.assertFalse(session.getSPSessions().contains(svcSession1));
-            Assert.assertTrue(session.getSPSessions().contains(svcSession2));
-            Assert.assertEquals(session.getSPSession("svc2"), svcSession2);
-        }
     }
 
     /**
@@ -233,15 +198,6 @@ public class IdPSessionTest {
         Assert.assertEquals(session.getAuthenticationResults().size(), 1);
         Assert.assertTrue(session.getAuthenticationResults().contains(event1));
         Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-
-        try {
-            session.removeAuthenticationResult(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            Assert.assertEquals(session.getAuthenticationResults().size(), 1);
-            Assert.assertTrue(session.getAuthenticationResults().contains(event1));
-            Assert.assertEquals(session.getAuthenticationResult("foo"), event1);
-        }
     }
 
     /**
@@ -255,12 +211,13 @@ public class IdPSessionTest {
          * @param sessionId ...
          * @param canonicalName ...
          */
-        public DummyIdPSession(String sessionId, String canonicalName) {
+        public DummyIdPSession(@Nonnull final String sessionId, @Nonnull final String canonicalName) {
             super(sessionId, canonicalName, Instant.now());
         }
 
         /** {@inheritDoc} */
-        public void updateAuthenticationResultActivity(AuthenticationResult result) throws SessionException {
+        public void updateAuthenticationResultActivity(@Nonnull final AuthenticationResult result)
+                throws SessionException {
 
         }
     }

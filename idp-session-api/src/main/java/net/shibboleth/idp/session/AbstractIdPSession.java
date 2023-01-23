@@ -36,11 +36,12 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
 
@@ -254,12 +255,11 @@ public abstract class AbstractIdPSession implements IdPSession {
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
-        return Set.copyOf(
-                authenticationResults.values()
+        return authenticationResults.values()
                     .stream()
                     .filter(Optional::isPresent)
                     .map(Optional::orElseThrow)
-                    .collect(Collectors.toUnmodifiableSet()));
+                    .collect(Collectors.toUnmodifiableSet());
     }
 
     /** {@inheritDoc} */
@@ -328,12 +328,11 @@ public abstract class AbstractIdPSession implements IdPSession {
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<SPSession> getSPSessions() {
-        return Set.copyOf(
-                spSessions.values()
+        return spSessions.values()
                     .stream()
                     .filter(Optional::isPresent)
                     .map(Optional::orElseThrow)
-                    .collect(Collectors.toUnmodifiableSet()));
+                    .collect(Collectors.toUnmodifiableSet());
     }
 
     /** {@inheritDoc} */

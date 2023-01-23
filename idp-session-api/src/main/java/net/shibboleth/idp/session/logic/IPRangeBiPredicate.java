@@ -18,7 +18,6 @@
 package net.shibboleth.idp.session.logic;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.BiPredicate;
 
 import javax.annotation.Nonnull;
@@ -27,6 +26,7 @@ import javax.annotation.Nullable;
 import com.google.common.net.InetAddresses;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.net.IPRange;
 
@@ -38,7 +38,7 @@ public class IPRangeBiPredicate implements BiPredicate<String,String> {
 
     /** Constructor. */
     IPRangeBiPredicate() {
-        addressRanges = List.of();
+        addressRanges = CollectionSupport.emptyList();
     }
     
     /**
@@ -49,7 +49,7 @@ public class IPRangeBiPredicate implements BiPredicate<String,String> {
     public void setRanges(@Nonnull @NonnullElements final Collection<IPRange> ranges) {
         Constraint.isNotNull(ranges, "Address range collection cannot be null");
         
-        addressRanges = List.copyOf(ranges);
+        addressRanges = CollectionSupport.copyToList(ranges);
     }
     
     /** {@inheritDoc} */
