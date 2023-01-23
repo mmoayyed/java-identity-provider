@@ -64,8 +64,11 @@ public final class LDAPResponseContext extends BaseContext {
      * @return  true if account state warnings exist
      */
     public boolean hasAccountStateWarning() {
-        final AccountState state = authenticationResponse.getAccountState();
-        return state != null ? state.getWarning() != null : false;
+        if (authenticationResponse != null) {
+            final AccountState state = authenticationResponse.getAccountState();
+            return state != null ? state.getWarning() != null : false;
+        }
+        return false;
     }
 
     /**
@@ -74,8 +77,11 @@ public final class LDAPResponseContext extends BaseContext {
      * @return  true if account state errors exist
      */
     public boolean hasAccountStateError() {
-        final AccountState state = authenticationResponse.getAccountState();
-        return state != null ? state.getError() != null : false;
+        if (authenticationResponse != null) {
+            final AccountState state = authenticationResponse.getAccountState();
+            return state != null ? state.getError() != null : false;
+        }
+        return false;
     }
 
     /** {@inheritDoc} */

@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.context.navigate;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
@@ -31,8 +32,11 @@ public class PreviousResultLookupFunction implements ContextDataLookupFunction<A
 
     /** {@inheritDoc} */
     @Nullable public Boolean apply(@Nullable final AuthenticationContext input) {
-        if (input != null && input.getAuthenticationResult() != null) {
-            return input.getAuthenticationResult().isPreviousResult();
+        if (input != null) {
+            final AuthenticationResult result = input.getAuthenticationResult();
+            if (result != null) {
+                return result.isPreviousResult();
+            }
         }
         return null;
     }

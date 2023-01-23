@@ -34,9 +34,6 @@ import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.stream.JsonGenerator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
 
 import net.shibboleth.shared.annotation.ParameterName;
@@ -53,9 +50,6 @@ import net.shibboleth.shared.primitive.StringSupport;
  */
 @ThreadSafe
 public class SimplePrincipalSerializer<T extends Principal> extends AbstractPrincipalSerializer<String> {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(SimplePrincipalSerializer.class);
 
     /** Principal type. */
     @Nonnull private final Class<T> principalType;

@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.principal;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.shared.annotation.ParameterName;
@@ -36,6 +35,8 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Manages and exposes instances of the {@link PrincipalService} interface.
@@ -69,8 +70,8 @@ public class PrincipalServiceManager {
                 idIndexedMap.put(ps.getId(), ps);
             });
         } else {
-            classIndexedMap = Collections.emptyMap();
-            idIndexedMap = Collections.emptyMap();
+            classIndexedMap = CollectionSupport.emptyMap();
+            idIndexedMap = CollectionSupport.emptyMap();
         }
     }
     
@@ -80,7 +81,7 @@ public class PrincipalServiceManager {
      * @return all registered services
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<PrincipalService<?>> all() {
-        return List.copyOf(classIndexedMap.values());
+        return CollectionSupport.copyToList(classIndexedMap.values());
     }
 
     /**

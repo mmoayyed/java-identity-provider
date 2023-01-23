@@ -42,7 +42,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 public final class AuthenticationWarningContext extends BaseContext {
 
     /** Warning conditions detected through classified warning messages. */
-    private Collection<String> classifiedWarnings;
+    @Nonnull @NonnullElements private Collection<String> classifiedWarnings;
     
     /** Constructor. */
     public AuthenticationWarningContext() {
@@ -67,4 +67,5 @@ public final class AuthenticationWarningContext extends BaseContext {
     public boolean isClassifiedWarning(@Nonnull @NotEmpty final String warning) {
         return classifiedWarnings.contains(warning);
     }
+
 }

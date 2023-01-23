@@ -19,9 +19,6 @@ package net.shibboleth.idp.authn;
 
 import java.time.Instant;
 
-import javax.security.auth.Subject;
-
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
@@ -48,13 +45,6 @@ public class AuthenticationResultTest {
         Assert.assertTrue(event.getSubject().getPrincipals(UsernamePrincipal.class).contains(new UsernamePrincipal("bob")));
 
         try {
-            new AuthenticationResult(null, new UsernamePrincipal("bob"));
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
             new AuthenticationResult("", new UsernamePrincipal("bob"));
             Assert.fail();
         } catch (ConstraintViolationException e) {
@@ -63,13 +53,6 @@ public class AuthenticationResultTest {
 
         try {
             new AuthenticationResult("  ", new UsernamePrincipal("bob"));
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new AuthenticationResult("test", (Subject) null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

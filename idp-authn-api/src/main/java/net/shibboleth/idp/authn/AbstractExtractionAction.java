@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,12 +27,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -61,7 +61,7 @@ public abstract class AbstractExtractionAction extends AbstractAuthenticationAct
     
     /** Constructor. */
     public AbstractExtractionAction() {
-        transforms = Collections.emptyList();
+        transforms = CollectionSupport.emptyList();
         
         uppercase = false;
         lowercase = false;
@@ -83,7 +83,7 @@ public abstract class AbstractExtractionAction extends AbstractAuthenticationAct
                         StringSupport.trimOrNull(p.getSecond()), "Replacement expression cannot be null")));
             }
         } else {
-            transforms = Collections.emptyList();
+            transforms = CollectionSupport.emptyList();
         }
     }
 
@@ -145,12 +145,15 @@ public abstract class AbstractExtractionAction extends AbstractAuthenticationAct
             return s;
         }
         
-        for (final Pair<Pattern,String> p : transforms) {            
-            final Matcher m = p.getFirst().matcher(s);
-            log.debug("{} Applying replacement expression '{}' against input '{}'", getLogPrefix(),
-                    p.getFirst().pattern(), s);
-            s = m.replaceAll(p.getSecond());
-            log.debug("{} Result of replacement is '{}'", getLogPrefix(), s);
+        for (final Pair<Pattern,String> p : transforms) {
+            final Pattern pattern = p.getFirst();
+            if (pattern != null) {
+                final Matcher m = pattern.matcher(s);
+                log.debug("{} Applying replacement expression '{}' against input '{}'", getLogPrefix(),
+                        pattern.pattern(), s);
+                s = m.replaceAll(p.getSecond());
+                log.debug("{} Result of replacement is '{}'", getLogPrefix(), s);
+            }
         }
         
         return s;

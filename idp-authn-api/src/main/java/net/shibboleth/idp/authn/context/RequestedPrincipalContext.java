@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +34,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -77,7 +77,7 @@ public final class RequestedPrincipalContext extends BaseContext {
     /** Constructor. */
     public RequestedPrincipalContext() {
         evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
-        requestedPrincipals = Collections.emptyList();
+        requestedPrincipals = CollectionSupport.emptyList();
     }
 
     /**
@@ -148,7 +148,8 @@ public final class RequestedPrincipalContext extends BaseContext {
     @Nonnull public RequestedPrincipalContext setRequestedPrincipals(
             @Nonnull @NonnullElements final List<Principal> principals) {
         
-        requestedPrincipals = List.copyOf(Constraint.isNotNull(principals, "Principal list cannot be null"));
+        requestedPrincipals =
+                CollectionSupport.copyToList(Constraint.isNotNull(principals, "Principal list cannot be null"));
         return this;
     }
     
@@ -183,8 +184,9 @@ public final class RequestedPrincipalContext extends BaseContext {
      */
     @Nullable public PrincipalEvalPredicate getPredicate(@Nonnull final Principal principal) {
         
-        if (operatorString != null) {
-            final PrincipalEvalPredicateFactory factory = evalRegistry.lookup(principal.getClass(), operatorString);
+        final String op = getOperator();
+        if (op != null) {
+            final PrincipalEvalPredicateFactory factory = evalRegistry.lookup(principal.getClass(), op);
             return factory != null ? factory.getPredicate(principal) : null;
         }
         return null;
@@ -202,6 +204,7 @@ public final class RequestedPrincipalContext extends BaseContext {
      */
     public boolean isAcceptable(@Nonnull final PrincipalSupportingComponent component) {
         for (final Principal requestedPrincipal : requestedPrincipals) {
+            assert requestedPrincipal != null;
             final PrincipalEvalPredicate predicate = getPredicate(requestedPrincipal);
             if (predicate != null) {
                 if (predicate.test(component)) {
@@ -226,7 +229,7 @@ public final class RequestedPrincipalContext extends BaseContext {
      */
     public boolean isAcceptable(@Nonnull @NonnullElements final Collection<Principal> principals) {
         return isAcceptable(new PrincipalSupportingComponent() {
-            public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
+            @Nonnull public <T extends Principal> Set<T> getSupportedPrincipals(@Nonnull final Class<T> c) {
                 final HashSet<T> set = new HashSet<>();
                 for (final Principal p : principals) {
                     if (c.isAssignableFrom(p.getClass())) {
@@ -249,11 +252,11 @@ public final class RequestedPrincipalContext extends BaseContext {
      */
     public <T extends Principal> boolean isAcceptable(@Nonnull final T principal) {
         return isAcceptable(new PrincipalSupportingComponent() {
-            public <TT extends Principal> Set<TT> getSupportedPrincipals(final Class<TT> c) {
+            @Nonnull public <TT extends Principal> Set<TT> getSupportedPrincipals(@Nonnull final Class<TT> c) {
                 if (c.isAssignableFrom(principal.getClass())) {
-                    return Collections.singleton(c.cast(principal));
+                    return CollectionSupport.singleton(c.cast(principal));
                 }
-                return Collections.emptySet();
+                return CollectionSupport.emptySet();
             }
         });
     }

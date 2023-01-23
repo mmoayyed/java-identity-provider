@@ -23,7 +23,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -46,6 +45,7 @@ import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -94,7 +94,7 @@ public final class AuthenticationContext extends BaseContext {
     @Nullable @NonNegative private Integer proxyCount;
 
     /** Allowable proxied sources of authority. */
-    @Nullable @NonnullElements private Set<String> proxiableAuthorities;
+    @Nonnull @NonnullElements private Set<String> proxiableAuthorities;
     
     /** Lookup strategy for a fixed event to return from validators for testing. */
     @Nullable private Function<ProfileRequestContext,String> fixedEventLookupStrategy;
@@ -265,7 +265,7 @@ public final class AuthenticationContext extends BaseContext {
         evalRegistry = registry;
         
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
-        if (rpCtx != null) {
+        if (rpCtx != null && registry != null) {
             rpCtx.setPrincipalEvalPredicateFactoryRegistry(registry);
         }
         
@@ -703,7 +703,7 @@ public final class AuthenticationContext extends BaseContext {
         }
         // No requirements so anything is acceptable.
         if (principal instanceof ProxyAuthenticationPrincipal) {
-            return checkProxyRestrictions(Collections.singletonList((ProxyAuthenticationPrincipal) principal));
+            return checkProxyRestrictions(CollectionSupport.singletonList((ProxyAuthenticationPrincipal) principal));
         }
         return true;
     }
@@ -726,7 +726,7 @@ public final class AuthenticationContext extends BaseContext {
             @Nonnull @NotEmpty final String className, @Nonnull @NotEmpty final String principal,
             final boolean replace) throws Exception {
         
-        return addRequestedPrincipalContext(operator, className, Collections.singletonList(principal), replace);
+        return addRequestedPrincipalContext(operator, className, CollectionSupport.singletonList(principal), replace);
     }
     
     /**
@@ -772,7 +772,7 @@ public final class AuthenticationContext extends BaseContext {
     public boolean addRequestedPrincipalContext(@Nonnull @NotEmpty final String operator,
             @Nonnull final Principal principal, final boolean replace) {
         
-        return addRequestedPrincipalContext(operator, Collections.singletonList(principal), replace);
+        return addRequestedPrincipalContext(operator, CollectionSupport.singletonList(principal), replace);
     }
     
     /**
@@ -796,8 +796,11 @@ public final class AuthenticationContext extends BaseContext {
         
         rpCtx = new RequestedPrincipalContext();
         rpCtx.setOperator(operator)
-            .setPrincipalEvalPredicateFactoryRegistry(evalRegistry)
             .setRequestedPrincipals(principals);
+        
+        if (evalRegistry != null) {
+            rpCtx.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
+        }
         
         addSubcontext(rpCtx, true);
         

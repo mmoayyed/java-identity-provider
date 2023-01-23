@@ -160,7 +160,8 @@ public abstract class ExternalAuthentication {
         if (Strings.isNullOrEmpty(key)) {
             throw new ExternalAuthenticationException("No conversation key found in request");
         }
-
+        assert key != null;
+        
         final ProfileRequestContext profileRequestContext = getProfileRequestContext(key, request);
         final ExternalAuthenticationContext extContext = getExternalAuthenticationContext(profileRequestContext);
         extContext.getExternalAuthentication().doStart(request, profileRequestContext, extContext);

@@ -32,6 +32,7 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
@@ -136,11 +137,17 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
         
         // Check for local flow as relying party.
         final RelyingPartyContext rpCtx = input != null ? input.getSubcontext(RelyingPartyContext.class) : null;
-        if (rpCtx == null || !(rpCtx.getProfileConfig() instanceof AuthenticationProfileConfiguration) ||
-                ((AuthenticationProfileConfiguration) rpCtx.getProfileConfig()).isLocal()) {
+        if (rpCtx == null) {
             return true;
         }
-        
+
+        final ProfileConfiguration pc = rpCtx.getProfileConfig();
+        if (!(pc instanceof AuthenticationProfileConfiguration)) {
+            return true;
+        } else if (((AuthenticationProfileConfiguration) pc).isLocal()) {
+            return true;
+        }
+
         if (proxyCount != null && proxyCount == 0) {
             return false;
         } else if (rpCtx.getRelyingPartyId() != null && !audiences.isEmpty() &&

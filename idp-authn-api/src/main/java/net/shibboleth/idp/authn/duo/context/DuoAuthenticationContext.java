@@ -56,7 +56,7 @@ public final class DuoAuthenticationContext extends BaseContext {
     @Nullable private String duoPasscode;
     
     /** PushInfo data. */
-    @Nullable private Map<String,String> pushInfo;
+    @Nonnull private Map<String,String> pushInfo;
 
     /** Constructor. */
     public DuoAuthenticationContext() {

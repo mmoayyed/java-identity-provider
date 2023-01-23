@@ -24,12 +24,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.DataSealerException;
 
@@ -79,6 +79,7 @@ public class SealedPrincipalSerializer<T extends Principal> extends SimplePrinci
     /** {@inheritDoc} */
     @Override
     public boolean supports(@Nonnull final Principal principal) {
+        checkComponentActive();
         if (!super.supports(principal)) {
             return false;
         } else if (sealer == null) {
@@ -91,7 +92,7 @@ public class SealedPrincipalSerializer<T extends Principal> extends SimplePrinci
     /** {@inheritDoc} */
     @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
-
+        checkComponentActive();
         if (!super.supports(value)) {
             return false;
         } else if (sealer == null) {
@@ -103,8 +104,13 @@ public class SealedPrincipalSerializer<T extends Principal> extends SimplePrinci
     
     /** {@inheritDoc} */
     @Override
-    protected String getName(@Nonnull final Principal principal) throws IOException {
+    @Nonnull protected String getName(@Nonnull final Principal principal) throws IOException {
+        checkComponentActive();
         try {
+            if (sealer == null) {
+                throw new IOException("No DataSealer was provided, unable to support serialization");
+            }
+            assert sealer != null;
             return sealer.wrap(super.getName(principal));
         } catch (final DataSealerException e) {
             throw new IOException(e);
@@ -113,9 +119,15 @@ public class SealedPrincipalSerializer<T extends Principal> extends SimplePrinci
 
     /** {@inheritDoc} */
     @Override
-    protected String getName(@Nullable final String serializedName) throws IOException {
+    @Nullable protected String getName(@Nullable final String serializedName) throws IOException {
+        checkComponentActive();
         if (!Strings.isNullOrEmpty(serializedName)) {
             try {
+                if (sealer == null) {
+                    throw new IOException("No DataSealer was provided, unable to support serialization");
+                }
+                assert sealer != null;
+                assert serializedName != null;
                 return sealer.unwrap(serializedName);
             } catch (final DataSealerException e) {
                 throw new IOException(e);

@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.config.navigate;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 
@@ -37,8 +38,11 @@ public class ForceAuthnProfileConfigPredicate extends AbstractRelyingPartyPredic
     public boolean test(@Nullable final ProfileRequestContext input) {
         
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-        if (rpc != null && rpc.getProfileConfig() instanceof AuthenticationProfileConfiguration) {
-            return ((AuthenticationProfileConfiguration) rpc.getProfileConfig()).isForceAuthn(input);
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc instanceof AuthenticationProfileConfiguration) {
+                return ((AuthenticationProfileConfiguration) pc).isForceAuthn(input);
+            }
         }
         
         return false;

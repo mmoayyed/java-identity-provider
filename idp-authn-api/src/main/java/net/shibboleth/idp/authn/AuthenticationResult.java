@@ -79,7 +79,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
     @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
     
     /** Whether this result should be considered revoked. */
-    @Nonnull private BiPredicate<ProfileRequestContext,AuthenticationResult> revocationCondition;
+    @Nullable private BiPredicate<ProfileRequestContext,AuthenticationResult> revocationCondition;
     
     /**
      * Constructor.
@@ -383,8 +383,10 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
                 if (ac != null) {
                     final AuthenticationFlowDescriptor flow = ac.getAvailableFlows().get(authenticationFlowId);
                     if (flow != null) {
-                        if (flow.getRevocationCondition() != null) {
-                            return flow.getRevocationCondition().test(prc, result);
+                        final BiPredicate<ProfileRequestContext,AuthenticationResult> condition =
+                                flow.getRevocationCondition();
+                        if (condition != null) {
+                            return condition.test(prc, result);
                         } else {
                             return false;
                         }

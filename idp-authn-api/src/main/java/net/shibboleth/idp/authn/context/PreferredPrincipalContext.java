@@ -28,6 +28,7 @@ import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -53,7 +54,7 @@ public final class PreferredPrincipalContext extends BaseContext {
     
     /** Constructor. */
     public PreferredPrincipalContext() {
-        preferredPrincipals = Collections.emptyList();
+        preferredPrincipals = CollectionSupport.emptyList();
     }
 
     /**
@@ -75,7 +76,8 @@ public final class PreferredPrincipalContext extends BaseContext {
     @Nonnull public PreferredPrincipalContext setPreferredPrincipals(
             @Nonnull @NonnullElements final List<Principal> principals) {
         
-        preferredPrincipals = List.copyOf(Constraint.isNotNull(principals, "Principal list cannot be null"));
+        preferredPrincipals = CollectionSupport.copyToList(
+                Constraint.isNotNull(principals, "Principal list cannot be null"));
         return this;
     }
         

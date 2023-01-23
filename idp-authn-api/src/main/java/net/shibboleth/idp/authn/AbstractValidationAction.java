@@ -37,8 +37,8 @@ import org.opensaml.core.metrics.MetricsSupport;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
@@ -56,7 +56,9 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -105,14 +107,13 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     
     /** Constructor. */
     public AbstractValidationAction() {
+        metricName = DEFAULT_METRIC_NAME;
         addDefaultPrincipals = true;
         authenticatedSubject = new Subject();
         clearErrorContext = true;
-        classifiedMessages = Collections.emptyMap();
+        classifiedMessages = CollectionSupport.emptyMap();
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
-        
-        setMetricName(DEFAULT_METRIC_NAME);
     }
     
     /**
@@ -190,7 +191,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
                 }
             }
         } else {
-            classifiedMessages = Collections.emptyMap();
+            classifiedMessages = CollectionSupport.emptyMap();
         }
     }
 
@@ -335,34 +336,38 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         // able to satisfy the request. This step only applies if the validator has been injected with
         // specific principals, otherwise the flow's capabilities have already been examined.
         final RequestedPrincipalContext rpCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
-        if (rpCtx != null && rpCtx.getOperator() != null && !getSubject().getPrincipals().isEmpty()) {
-            log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
-            for (final Principal p : rpCtx.getRequestedPrincipals()) {
-                final PrincipalEvalPredicateFactory factory =
-                        rpCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(p.getClass(), rpCtx.getOperator());
-                if (factory != null) {
-                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
-                    if (predicate.test(this)) {
-                        log.debug("{} Compatible with principal type '{}' and operator '{}'", getLogPrefix(),
-                                p.getClass(), rpCtx.getOperator());
-                        rpCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
-                        return true;
+        if (rpCtx != null && !getSubject().getPrincipals().isEmpty()) {
+            final String operator = rpCtx.getOperator();
+            if (operator != null) {
+                log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
+                for (final Principal p : rpCtx.getRequestedPrincipals()) {
+                    final PrincipalEvalPredicateFactory factory =
+                            rpCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(p.getClass(), operator);
+                    if (factory != null) {
+                        final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                        if (predicate.test(this)) {
+                            log.debug("{} Compatible with principal type '{}' and operator '{}'", getLogPrefix(),
+                                    p.getClass(), operator);
+                            rpCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
+                            return true;
+                        }
+                        log.debug("{} Not compatible with principal type '{}' and operator '{}'", getLogPrefix(),
+                                p.getClass(), operator);
+                    } else {
+                        log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
+                                getLogPrefix(), p.getClass(), operator);
                     }
-                    log.debug("{} Not compatible with principal type '{}' and operator '{}'", getLogPrefix(),
-                            p.getClass(), rpCtx.getOperator());
-                } else {
-                    log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
-                            getLogPrefix(), p.getClass(), rpCtx.getOperator());
                 }
+                
+                log.info("{} Skipping validator, not compatible with request's principal requirements", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+                return false;
             }
-            
-            log.info("{} Skipping validator, not compatible with request's principal requirements", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
-            return false;
         }
         
-        if (authenticationContext.getFixedEventLookupStrategy() != null) {
-            final String fixedEvent = authenticationContext.getFixedEventLookupStrategy().apply(profileRequestContext);
+        final Function<ProfileRequestContext,String> strategy = authenticationContext.getFixedEventLookupStrategy(); 
+        if (strategy != null) {
+            final String fixedEvent = strategy.apply(profileRequestContext);
             if (fixedEvent != null) {
                 log.info("{} Signaling fixed event: {}", getLogPrefix(), fixedEvent);
                 ActionSupport.buildEvent(profileRequestContext, fixedEvent);
@@ -385,13 +390,15 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     protected void buildAuthenticationResult(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        final AuthenticationFlowDescriptor attemptedFlow = authenticationContext.getAttemptedFlow();
+        assert attemptedFlow != null;
+        
         if (addDefaultPrincipals) {
             log.debug("{} Adding custom Principal(s) defined on underlying flow descriptor", getLogPrefix());
-            getSubject().getPrincipals().addAll(authenticationContext.getAttemptedFlow().getSupportedPrincipals());
+            getSubject().getPrincipals().addAll(attemptedFlow.getSupportedPrincipals());
         }
         
-        final AuthenticationResult result =
-                authenticationContext.getAttemptedFlow().newAuthenticationResult(populateSubject(getSubject()));
+        final AuthenticationResult result = attemptedFlow.newAuthenticationResult(populateSubject(getSubject()));
         authenticationContext.setAuthenticationResult(result);
         
         // Override cacheability if a predicate is installed.
@@ -401,8 +408,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
                     authenticationContext.isResultCacheable() ? "will" : "will not");
         }
         
-        final BiConsumer<ProfileRequestContext,Subject> decorator =
-                authenticationContext.getAttemptedFlow().getSubjectDecorator();
+        final BiConsumer<ProfileRequestContext,Subject> decorator = attemptedFlow.getSubjectDecorator();
         if (decorator != null) {
             decorator.accept(profileRequestContext, result.getSubject());
         }
@@ -416,7 +422,9 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         if (responderLookupStrategy != null) {
             c14n.setResponderId(responderLookupStrategy.apply(profileRequestContext));
         }
-        authenticationContext.getParent().addSubcontext(c14n, true);
+        
+        Constraint.isNotNull(authenticationContext.getParent(),
+                "Parent context cannot be null").addSubcontext(c14n, true);
     }
     
     /**
@@ -435,42 +443,15 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * Record a successful authentication attempt against the configured counter. Records
      * nothing if the metrics registry is not installed into the runtime.
      * 
-     * @since 3.3.0
-     * 
-     * @deprecated
-     */
-    @Deprecated(since="4.1.0", forRemoval=true)
-    protected void recordSuccess() {
-        if (MetricsSupport.getMetricRegistry() != null) {
-            MetricsSupport.getMetricRegistry().counter(getMetricName() + ".successes").inc();
-        }
-    }
-    
-    /**
-     * Record a failed authentication attempt against the configured counter. Records
-     * nothing if the metrics registry is not installed into the runtime.
-     * 
-     * @since 3.3.0
-     * 
-     * @deprecated
-     */
-    @Deprecated(since="4.1.0", forRemoval=true)
-    protected void recordFailure() {
-        if (MetricsSupport.getMetricRegistry() != null) {
-            MetricsSupport.getMetricRegistry().counter(getMetricName() + ".failures").inc();
-        }
-    }
-    
-    /**
-     * Record a successful authentication attempt against the configured counter. Records
-     * nothing if the metrics registry is not installed into the runtime.
-     * 
      * @param profileRequestContext profile request context
      * 
      * @since 4.1.0
      */
     protected void recordSuccess(@Nonnull final ProfileRequestContext profileRequestContext) {
-        recordSuccess();
+        final MetricRegistry registry = MetricsSupport.getMetricRegistry();
+        if (registry != null) {
+            registry.counter(getMetricName() + ".successes").inc();
+        }
         if (cleanupHook != null) {
             cleanupHook.accept(profileRequestContext);
         }
@@ -485,7 +466,10 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * @since 4.1.0
      */
     protected void recordFailure(@Nonnull final ProfileRequestContext profileRequestContext) {
-        recordFailure();
+        final MetricRegistry registry = MetricsSupport.getMetricRegistry();
+        if (registry != null) {
+            registry.counter(getMetricName() + ".failures").inc();
+        }
     }
     
     /**
@@ -506,7 +490,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull final Exception e,
             @Nonnull @NotEmpty final String eventId) {
 
-        authenticationContext.getSubcontext(AuthenticationErrorContext.class, true).getExceptions().add(e);
+        authenticationContext.getOrCreateSubcontext(AuthenticationErrorContext.class).getExceptions().add(e);
 
         handleError(profileRequestContext, authenticationContext, e.getMessage(), eventId);
     }
@@ -533,12 +517,13 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         boolean eventSet = false;
 
         if (!Strings.isNullOrEmpty(message)) {
+            assert message != null;
             final MessageChecker checker = new MessageChecker(message);
             
             for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
                 if (Iterables.any(entry.getValue(), checker::test)) {
-                    authenticationContext.getSubcontext(AuthenticationErrorContext.class,
-                            true).getClassifiedErrors().add(entry.getKey());
+                    authenticationContext.getOrCreateSubcontext(
+                            AuthenticationErrorContext.class).getClassifiedErrors().add(entry.getKey());
                     if (!eventSet) {
                         eventSet = true;
                         ActionSupport.buildEvent(profileRequestContext, entry.getKey());
@@ -548,8 +533,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         }
         
         if (!eventSet) {
-            authenticationContext.getSubcontext(AuthenticationErrorContext.class,
-                    true).getClassifiedErrors().add(eventId);
+            authenticationContext.getOrCreateSubcontext(
+                    AuthenticationErrorContext.class).getClassifiedErrors().add(eventId);
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }
     }
@@ -576,12 +561,13 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         boolean eventSet = false;
         
         if (!Strings.isNullOrEmpty(message)) {
+            assert message != null;
             final MessageChecker checker = new MessageChecker(message);
             
             for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
                 if (Iterables.any(entry.getValue(), checker::test)) {
-                    authenticationContext.getSubcontext(AuthenticationWarningContext.class,
-                            true).getClassifiedWarnings().add(entry.getKey());
+                    authenticationContext.getOrCreateSubcontext(
+                            AuthenticationWarningContext.class).getClassifiedWarnings().add(entry.getKey());
                     if (!eventSet) {
                         eventSet = true;
                         ActionSupport.buildEvent(profileRequestContext, entry.getKey());
@@ -591,8 +577,8 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         }
         
         if (!eventSet) {
-            authenticationContext.getSubcontext(AuthenticationWarningContext.class,
-                    true).getClassifiedWarnings().add(eventId);
+            authenticationContext.getOrCreateSubcontext(
+                    AuthenticationWarningContext.class).getClassifiedWarnings().add(eventId);
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }
     }

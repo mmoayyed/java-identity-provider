@@ -33,13 +33,6 @@ public class UsernamePrincipalTest {
         Assert.assertEquals(principal.getName(), "bob");
 
         try {
-            new UsernamePrincipal(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
             new UsernamePrincipal("");
             Assert.fail();
         } catch (ConstraintViolationException e) {

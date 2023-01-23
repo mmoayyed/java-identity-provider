@@ -24,11 +24,11 @@ import javax.annotation.Nonnull;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.profile.FlowDescriptor;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 /**
  * A descriptor for a subject canonicalization flow.
@@ -49,7 +49,7 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableI
 
     /** Constructor. */
     public SubjectCanonicalizationFlowDescriptor() {
-        activationCondition = Predicates.alwaysTrue();
+        activationCondition = PredicateSupport.alwaysTrue();
     }
 
     /**

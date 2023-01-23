@@ -23,7 +23,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +39,6 @@ import org.opensaml.storage.StorageSerializer;
 import org.springframework.core.Ordered;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.PrincipalService;
@@ -50,6 +48,7 @@ import net.shibboleth.idp.profile.FlowDescriptor;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -127,7 +126,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     @Nullable private StorageSerializer<AuthenticationResult> resultSerializer;
     
     /** Weighted sort oredering of custom Principals produced by flow(s). */
-    @Nullable @NonnullElements private Map<Principal,Integer> principalWeightMap;
+    @Nonnull @NonnullElements private Map<Principal,Integer> principalWeightMap;
     
     /** Access to principal services. */
     @Nullable private PrincipalServiceManager principalServiceManager;
@@ -142,10 +141,10 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         proxyRestrictionsEnforced = true;
         reuseCondition = new ProxyCountPredicate();
         supportedPrincipals = new Subject();
-        activationCondition = Predicates.alwaysTrue();
+        activationCondition = PredicateSupport.alwaysTrue();
         inactivityTimeout = Duration.ofMinutes(30);
-        principalWeightMap = Collections.emptyMap();
-        stringBasedPrincipals = Collections.emptySet();
+        principalWeightMap = CollectionSupport.emptyMap();
+        stringBasedPrincipals = CollectionSupport.emptySet();
     }
     
     /** {@inheritDoc} */
@@ -329,7 +328,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @since 4.3.0
      */
-    @Nonnull public BiPredicate<ProfileRequestContext,AuthenticationResult> getRevocationCondition() {
+    @Nullable public BiPredicate<ProfileRequestContext,AuthenticationResult> getRevocationCondition() {
         return revocationCondition;
     }
     
@@ -490,7 +489,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      */
     public void setSupportedPrincipalsByString(@Nonnull @NonnullElements final Collection<String> principals) {
         checkSetterPreconditions();
-        stringBasedPrincipals = Set.copyOf(StringSupport.normalizeStringCollection(principals));
+        stringBasedPrincipals = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(principals));
     }
 
     /**
@@ -531,7 +530,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      */
     public void setPrincipalWeightMap(@Nullable @NonnullElements final Map<Principal,Integer> map) {
         checkSetterPreconditions();
-        principalWeightMap = map != null ? map : Collections.emptyMap();
+        principalWeightMap = map != null ? map : CollectionSupport.emptyMap();
     }
     
     /**
@@ -562,6 +561,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
             supportedPrincipals.getPrincipals().clear();
             
             stringBasedPrincipals.forEach(v -> {
+                assert principalServiceManager != null;
                 final Principal p = principalServiceManager.principalFromString(v);
                 if (p != null) {
                     supportedPrincipals.getPrincipals().add(p);
@@ -595,17 +595,19 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
             throws IOException {
         checkComponentActive();
 
+        assert resultSerializer != null;
         return resultSerializer.serialize(instance);
     }
 
     /** {@inheritDoc} */
     @Override @Nonnull public AuthenticationResult deserialize(final long version,
             @Nonnull @NotEmpty final String context, @Nonnull @NotEmpty final String key, 
-            @Nonnull @NotEmpty final String value, @Nonnull final Long expiration)
+            @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
             throws IOException {
         checkComponentActive();
 
         // Back the expiration off by the inactivity timeout to recover the last activity time.
+        assert resultSerializer != null;
         final AuthenticationResult result = resultSerializer.deserialize(version, context, key, value,
                 (expiration != null) ?
                         expiration - inactivityTimeout.toMillis() - STORAGE_EXPIRATION_OFFSET.toMillis() :
@@ -705,7 +707,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         /** {@inheritDoc} */
         public boolean test(@Nullable final ProfileRequestContext input) {
             
-            if (proxyScopingEnforced) {
+            if (proxyScopingEnforced && input != null) {
                 final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
                 if (authnCtx != null && authnCtx.getProxyCount() != null && authnCtx.getProxyCount() == 0) {
                     return false;

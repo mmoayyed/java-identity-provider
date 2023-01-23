@@ -30,10 +30,11 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -73,20 +74,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
             registrations.forEach(r -> registry.put(r.getTypeAndOperator(), r.getPredicateFactory()));
         }
     }
-    
-    /**
-     * Constructor.
-     * 
-     * @param fromMap  map to populate registry with
-     * 
-     * @deprecated
-     */
-    @Deprecated(since="4.1.0", forRemoval=true)
-    public PrincipalEvalPredicateFactoryRegistry(@Nonnull @NonnullElements @ParameterName(name="fromMap") final
-            Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> fromMap) {
-        registry = new ConcurrentHashMap<>(Constraint.isNotNull(fromMap, "Source map cannot be null"));
-    }
-    
+        
     /**
      * Add registrations from a map, overwriting any previously matching entries.
      * 
@@ -99,8 +87,11 @@ public final class PrincipalEvalPredicateFactoryRegistry {
         if (fromMap != null) {
             fromMap.entrySet().forEach(entry -> {
                 if (registry.containsKey(entry.getKey())) {
-                    log.info("Replacing auto-wired entry for principal type '{}' and operator '{}'",
-                            entry.getKey().getFirst().getName(), entry.getKey().getSecond());
+                    if (log.isInfoEnabled()) {
+                        final Class<? extends Principal> claz = entry.getKey().getFirst();
+                        log.info("Replacing auto-wired entry for principal type '{}' and operator '{}'",
+                                claz != null ? claz.getName() : "(null)", entry.getKey().getSecond());
+                    }
                 }
                 registry.put(entry.getKey(), entry.getValue());
             });

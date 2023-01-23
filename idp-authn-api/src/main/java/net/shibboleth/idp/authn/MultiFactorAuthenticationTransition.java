@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.authn;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -28,6 +27,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -124,7 +124,7 @@ public class MultiFactorAuthenticationTransition {
      * @param flowId fully-qualified flow ID to run
      */
     public void setNextFlow(@Nullable @NotEmpty final String flowId) {
-        setNextFlowStrategyMap(Collections.singletonMap("proceed", flowId));
+        setNextFlowStrategyMap(CollectionSupport.singletonMap("proceed", flowId));
     }
 
     /**
@@ -138,7 +138,7 @@ public class MultiFactorAuthenticationTransition {
     public void setNextFlowStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
         Constraint.isNotNull(strategy, "Flow strategy function cannot be null");
         
-        setNextFlowStrategyMap(Collections.singletonMap("proceed", strategy));
+        setNextFlowStrategyMap(CollectionSupport.singletonMap("proceed", strategy));
     }
 
 }

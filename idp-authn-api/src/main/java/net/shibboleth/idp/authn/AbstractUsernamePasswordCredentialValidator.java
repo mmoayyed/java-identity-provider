@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -33,7 +32,6 @@ import javax.security.auth.login.LoginException;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
@@ -42,8 +40,10 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -67,9 +67,6 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
     /** Whether to save the password in the Java Subject's private credentials. */
     private boolean savePasswordToCredentialSet;
     
-    /** Whether to remove the {@link UsernamePasswordContext} after successful validation. */
-    private boolean removeContextAfterValidation;
-    
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
     
@@ -89,7 +86,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
     public AbstractUsernamePasswordCredentialValidator() {
         usernamePasswordContextLookupStrategy = new ChildContextLookup<>(UsernamePasswordContext.class);
 
-        transforms = Collections.emptyList();
+        transforms = CollectionSupport.emptyList();
         
         uppercase = false;
         lowercase = false;
@@ -128,35 +125,6 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
     }
 
     /**
-     * Get whether to remove the {@link UsernamePasswordContext} after it's
-     * successfully validated.
-     * 
-     * <p>Defaults to true</p>
-     * 
-     * @return whether to remove the context after successful validation
-     * 
-     * @deprecated
-     */
-    @Deprecated(since="4.1.0", forRemoval=true)
-    public boolean removeContextAfterValidation() {
-        return removeContextAfterValidation;
-    }
-    
-    /**
-     * Set whether to remove the {@link UsernamePasswordContext} after it's
-     * successfully validated.
-     * 
-     * @param flag  flag to set
-     * 
-     * @deprecated
-     */
-    @Deprecated(since="4.1.0", forRemoval=true)
-    public void setRemoveContextAfterValidation(final boolean flag) {
-        checkSetterPreconditions();
-        removeContextAfterValidation = flag;
-    }
-
-    /**
      * Set a matching expression to apply to the username for acceptance. 
      * 
      * @param expression a matching expression
@@ -185,7 +153,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
                         StringSupport.trimOrNull(p.getSecond()), "Replacement expression cannot be null")));
             }
         } else {
-            transforms = Collections.emptyList();
+            transforms = CollectionSupport.emptyList();
         }
     }
 
@@ -235,7 +203,10 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
                         AuthnEventIds.NO_CREDENTIALS);
             }
             throw new LoginException(AuthnEventIds.NO_CREDENTIALS);
-        } else if (upContext.getUsername() == null) {
+        }
+        
+        final String username = upContext.getUsername();
+        if (username == null) {
             log.info("{} No username available within UsernamePasswordContext", getLogPrefix());
             if (errorHandler != null) {
                 errorHandler.handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
@@ -251,7 +222,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
             throw new LoginException(AuthnEventIds.INVALID_CREDENTIALS);
         }
         
-        upContext.setTransformedUsername(applyTransforms(upContext.getUsername()));
+        upContext.setTransformedUsername(applyTransforms(username));
         
         if (matchExpression != null && !matchExpression.matcher(upContext.getTransformedUsername()).matches()) {
             log.debug("{} Username '{}' did not match expression", getLogPrefix(), upContext.getTransformedUsername());
@@ -294,15 +265,15 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      */
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject,
             @Nonnull final UsernamePasswordContext usernamePasswordContext) {
-        subject.getPrincipals().add(new UsernamePrincipal(usernamePasswordContext.getTransformedUsername()));
+        
+        final String u = usernamePasswordContext.getTransformedUsername();
+        assert u != null;
+        subject.getPrincipals().add(new UsernamePrincipal(u));
+        
         if (savePasswordToCredentialSet) {
-            subject.getPrivateCredentials().add(new PasswordPrincipal(usernamePasswordContext.getPassword()));
-        }
-
-        // This is migrating out to the validation action, leaving code here for now but we won't use it.
-        if (removeContextAfterValidation) {
-            usernamePasswordContext.getParent().removeSubcontext(usernamePasswordContext);
-            usernamePasswordContext.setPassword(null);
+            final String p = usernamePasswordContext.getPassword();
+            assert p != null;
+            subject.getPrivateCredentials().add(new PasswordPrincipal(p));
         }
         
         return super.populateSubject(subject);
@@ -336,12 +307,15 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
             return s;
         }
         
-        for (final Pair<Pattern,String> p : transforms) {            
-            final Matcher m = p.getFirst().matcher(s);
-            log.trace("{} Applying replacement expression '{}' against input '{}'", getLogPrefix(),
-                    p.getFirst().pattern(), s);
-            s = m.replaceAll(p.getSecond());
-            log.trace("{} Result of replacement is '{}'", getLogPrefix(), s);
+        for (final Pair<Pattern,String> p : transforms) {
+            final Pattern pattern = p.getFirst();
+            if (pattern != null) {
+                final Matcher m = pattern.matcher(s);
+                log.trace("{} Applying replacement expression '{}' against input '{}'", getLogPrefix(),
+                        pattern.pattern(), s);
+                s = m.replaceAll(p.getSecond());
+                log.trace("{} Result of replacement is '{}'", getLogPrefix(), s);
+            }
         }
         
         return s;

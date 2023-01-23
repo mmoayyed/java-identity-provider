@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -29,9 +28,6 @@ import javax.security.auth.Subject;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
@@ -42,8 +38,11 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.PredicateSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An abstract {@link CredentialValidator} that handles some common behavior.
@@ -67,12 +66,12 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     
     /** Constructor. */
     public AbstractCredentialValidator() {
-        activationCondition = Predicates.alwaysTrue();
+        activationCondition = PredicateSupport.alwaysTrue();
     }
     
     /** {@inheritDoc} */
     @Override
-    public synchronized void setId(final String id) {
+    public synchronized void setId(@Nonnull final String id) {
         super.setId(id);
     }
     
@@ -91,7 +90,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     @Override
     @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
-        return customPrincipals != null ? customPrincipals.getPrincipals(c) : Collections.emptySet();
+        return customPrincipals != null ? customPrincipals.getPrincipals(c) : CollectionSupport.emptySet();
     }
     
     /**
@@ -160,8 +159,9 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
      * @return the decorated subject
      */
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
-        if (customPrincipals != null) {
-            subject.getPrincipals().addAll(customPrincipals.getPrincipals());
+        final Subject localCopy = customPrincipals;
+        if (localCopy != null) {
+            subject.getPrincipals().addAll(localCopy.getPrincipals());
         }
         return subject;
     }
@@ -174,7 +174,9 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     @Nonnull @NotEmpty protected String getLogPrefix() {
         if (logPrefix == null) {
             logPrefix = "Credential Validator " + (getId() != null ? getId() : "(unknown)") + ":";
+            return logPrefix;
         }
+        assert logPrefix != null;
         return logPrefix;
     }
     
@@ -191,31 +193,35 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     protected boolean isAcceptable(@Nullable final RequestedPrincipalContext requestedPrincipalCtx,
             @Nullable final Subject subject, @Nonnull @NotEmpty final String configName) {
         
-        if (subject != null && requestedPrincipalCtx != null && requestedPrincipalCtx.getOperator() != null) {
-            log.debug("{} Request contains principal requirements, checking validator '{}' for compatibility",
-                    getLogPrefix(), configName);
-            for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
-                final PrincipalEvalPredicateFactory factory =
-                        requestedPrincipalCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                                p.getClass(), requestedPrincipalCtx.getOperator());
-                if (factory != null) {
-                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
-                    final PrincipalSupportingComponent wrapper = new PrincipalSupportingComponent() {
-                        public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
-                            return subject.getPrincipals(c);
+        if (subject != null && requestedPrincipalCtx != null) {
+            final String operator = requestedPrincipalCtx.getOperator();
+            if (operator != null) {
+                log.debug("{} Request contains principal requirements, checking validator '{}' for compatibility",
+                        getLogPrefix(), configName);
+                for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+                    final PrincipalEvalPredicateFactory factory =
+                            requestedPrincipalCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                    p.getClass(), operator);
+                    if (factory != null) {
+                        final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                        final PrincipalSupportingComponent wrapper = new PrincipalSupportingComponent() {
+                            @Nonnull
+                            public <T extends Principal> Set<T> getSupportedPrincipals(@Nonnull final Class<T> c) {
+                                return subject.getPrincipals(c);
+                            }
+                        };
+                        if (predicate.test(wrapper)) {
+                            log.debug("{} Validator '{}' compatible with principal type '{}' and operator '{}'",
+                                    getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
+                            requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
+                            return true;
                         }
-                    };
-                    if (predicate.test(wrapper)) {
-                        log.debug("{} Validator '{}' compatible with principal type '{}' and operator '{}'",
+                        log.debug("{} Validator '{}' not compatible with principal type '{}' and operator '{}'",
                                 getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
-                        requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
-                        return true;
+                    } else {
+                        log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
+                                getLogPrefix(), p.getClass(), requestedPrincipalCtx.getOperator());
                     }
-                    log.debug("{} Validator '{}' not compatible with principal type '{}' and operator '{}'",
-                            getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
-                } else {
-                    log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
-                            getLogPrefix(), p.getClass(), requestedPrincipalCtx.getOperator());
                 }
             }
             

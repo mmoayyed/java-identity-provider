@@ -18,12 +18,15 @@
 package net.shibboleth.idp.authn;
 
 import java.util.Arrays;
+
+import javax.annotation.Nonnull;
+
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.VelocityException;
-import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionFactoryManager;
-import org.ldaptive.LdapException;
+
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * {@link net.shibboleth.shared.velocity.Template}-based search dn resolver.
@@ -38,7 +41,8 @@ public class TemplateSearchDnResolver extends AbstractTemplateSearchDnResolver i
      *
      * @throws VelocityException if velocity is not configured properly or the filter template is invalid
      */
-    public TemplateSearchDnResolver(final VelocityEngine engine, final String filter) throws VelocityException {
+    public TemplateSearchDnResolver(@Nonnull final VelocityEngine engine, @Nonnull @NotEmpty final String filter)
+            throws VelocityException {
         super(engine, filter);
     }
 
@@ -51,7 +55,8 @@ public class TemplateSearchDnResolver extends AbstractTemplateSearchDnResolver i
      *
      * @throws VelocityException if velocity is not configured properly or the filter template is invalid
      */
-    public TemplateSearchDnResolver(final ConnectionFactory cf, final VelocityEngine engine, final String filter)
+    public TemplateSearchDnResolver(@Nonnull final ConnectionFactory cf, @Nonnull final VelocityEngine engine,
+            @Nonnull @NotEmpty final String filter)
             throws VelocityException {
         super(engine, filter);
         setConnectionFactory(cf);
@@ -65,4 +70,5 @@ public class TemplateSearchDnResolver extends AbstractTemplateSearchDnResolver i
                 getUserFilter(), Arrays.toString(getUserFilterParameters()), getAllowMultipleDns(), getSubtreeSearch(),
                 getDerefAliases());
     }
+
 }

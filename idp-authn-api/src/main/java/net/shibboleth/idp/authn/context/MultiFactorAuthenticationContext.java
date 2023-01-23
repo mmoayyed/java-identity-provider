@@ -185,6 +185,7 @@ public final class MultiFactorAuthenticationContext extends BaseContext {
         final AuthenticationContext authnContext = (AuthenticationContext) getParent();
         if (authnContext != null) {
             for (final AuthenticationResult result : activeResults.values()) {
+                assert result != null;
                 // Only include Principals from fresh results or when forced authn is off.
                 if (!(authnContext.isForceAuthn() && result.isPreviousResult())) {
                     if (authnContext.isAcceptable(result)) {

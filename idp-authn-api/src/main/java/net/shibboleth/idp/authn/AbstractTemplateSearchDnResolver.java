@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.event.EventCartridge;
@@ -31,6 +34,7 @@ import org.ldaptive.FilterTemplate;
 import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.User;
 
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.velocity.Template;
 
 /**
@@ -39,7 +43,7 @@ import net.shibboleth.shared.velocity.Template;
 public abstract class AbstractTemplateSearchDnResolver extends SearchDnResolver {
 
     /** Template. */
-    private final Template template;
+    @Nonnull private final Template template;
 
     /** Event handler used for escaping. */
     private ReferenceInsertionEventHandler eventHandler = new EscapingReferenceInsertionEventHandler();
@@ -52,7 +56,8 @@ public abstract class AbstractTemplateSearchDnResolver extends SearchDnResolver 
      *
      * @throws VelocityException if velocity is not configured properly or the filter template is invalid
      */
-    public AbstractTemplateSearchDnResolver(final VelocityEngine engine, final String filter) throws VelocityException {
+    public AbstractTemplateSearchDnResolver(@Nonnull final VelocityEngine engine,
+            @Nonnull @NotEmpty final String filter) throws VelocityException {
         template = Template.fromTemplate(engine, filter);
         setUserFilter(filter);
     }
@@ -62,11 +67,12 @@ public abstract class AbstractTemplateSearchDnResolver extends SearchDnResolver 
      *
      * @return template
      */
-    public Template getTemplate() {
+    @Nonnull public Template getTemplate() {
         return template;
     }
 
-    @Override protected FilterTemplate createFilterTemplate(final User user) {
+    @Override
+    @Nonnull protected FilterTemplate createFilterTemplate(final User user) {
         final FilterTemplate filter = new FilterTemplate();
         if (user != null && user.getContext() != null) {
             final VelocityContext context = (VelocityContext) user.getContext();
@@ -95,7 +101,8 @@ public abstract class AbstractTemplateSearchDnResolver extends SearchDnResolver 
     /** Escapes LDAP attribute values added to the template context. */
     protected static class EscapingReferenceInsertionEventHandler implements ReferenceInsertionEventHandler {
 
-        @Override public Object referenceInsert(final Context context, final String reference, final Object value) {
+        @Override
+        @Nullable public Object referenceInsert(final Context context, final String reference, final Object value) {
             if (value == null) {
                 return null;
             } else if (value instanceof Object[]) {
@@ -122,7 +129,7 @@ public abstract class AbstractTemplateSearchDnResolver extends SearchDnResolver 
          *
          * @return encoded value
          */
-        private Object encode(final Object value) {
+        @Nullable private Object encode(@Nullable final Object value) {
             if (value instanceof String){ 
                 return FilterTemplate.encodeValue((String) value);
             } else if (value instanceof byte[]) {
@@ -131,4 +138,5 @@ public abstract class AbstractTemplateSearchDnResolver extends SearchDnResolver 
             return value;
         }
     }
+
 }
