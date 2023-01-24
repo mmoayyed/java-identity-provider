@@ -27,8 +27,6 @@
                 <bean class="net.shibboleth.shared.spring.config.BooleanToPredicateConverter" />
                 <bean class="net.shibboleth.shared.spring.config.StringBooleanToPredicateConverter" />
                 <bean class="net.shibboleth.shared.spring.config.StringToResourceConverter" />
-                <bean class="net.shibboleth.shared.spring.config.FunctionToFunctionConverter" />
-                <bean class="net.shibboleth.shared.spring.config.PredicateToPredicateConverter" />
                 <bean class="net.shibboleth.shared.spring.config.StringToDurationConverter" />
                 <bean class="net.shibboleth.shared.spring.config.StringToPeriodConverter" />
             </set>
