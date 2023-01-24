@@ -19,6 +19,8 @@ package net.shibboleth.idp.cas.ticket.serialization.impl;
 
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
+import net.shibboleth.shared.collection.CollectionSupport;
+
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -78,7 +80,7 @@ public class ServiceTicketSerializerTest {
                 true);
         final TicketState state = new TicketState("idpsess-d2db22058dc178d3b917363859e", "bob",
                 Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password");
-        state.setConsentedAttributeIds(Set.of("foo", "bar"));
+        state.setConsentedAttributeIds(CollectionSupport.setOf("foo", "bar"));
         st1.setTicketState(state);
         final String serialized = serializer.serialize(st1);
         final ServiceTicket st2 = serializer.deserialize(1, "notused", st1.getId(), serialized, null);

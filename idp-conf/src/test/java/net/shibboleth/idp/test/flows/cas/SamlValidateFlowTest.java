@@ -25,6 +25,8 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.shared.collection.CollectionSupport;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -106,7 +108,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
         final TicketState state = new TicketState(session.getId(), principal, Instant.now(), "Password");
-        state.setConsentedAttributeIds(Set.of("uid", "eduPersonPrincipalName"));
+        state.setConsentedAttributeIds(CollectionSupport.setOf("uid", "eduPersonPrincipalName"));
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),

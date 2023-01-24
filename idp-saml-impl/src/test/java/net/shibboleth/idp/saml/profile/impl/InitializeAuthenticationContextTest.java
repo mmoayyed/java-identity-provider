@@ -23,6 +23,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
@@ -216,14 +217,14 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
                 new RequestContextBuilder().setInboundMessage(authnRequest).buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
 
-        final Scoping scoping = SAML2ActionTestingSupport.buildScoping(0, Set.of("foo", "bar"));
+        final Scoping scoping = SAML2ActionTestingSupport.buildScoping(0, CollectionSupport.setOf("foo", "bar"));
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setScoping(scoping);
         
         final Event event = action.execute(requestCtx);
         ActionTestingSupport.assertProceedEvent(event);
         final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(0));
-        Assert.assertEquals(authnCtx.getProxiableAuthorities(), Set.of("foo", "bar"));
+        Assert.assertEquals(authnCtx.getProxiableAuthorities(), CollectionSupport.setOf("foo", "bar"));
     }
 
 }

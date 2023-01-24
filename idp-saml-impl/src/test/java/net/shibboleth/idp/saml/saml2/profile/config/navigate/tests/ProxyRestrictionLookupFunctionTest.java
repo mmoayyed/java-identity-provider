@@ -29,6 +29,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyRestrictionLookupFunction;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
@@ -126,33 +127,33 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
     public void testOneAudienceSet() {
         final ProxyAuthenticationPrincipal proxy = new ProxyAuthenticationPrincipal();
         proxy.setProxyCount(10);
-        proxy.getAudiences().addAll(Set.of("foo", "bar"));
+        proxy.getAudiences().addAll(CollectionSupport.setOf("foo", "bar"));
         sc.getAuthenticationResults().get("test2").getSubject().getPrincipals().add(proxy);
         
         result = fn.apply(prc);
         Assert.assertEquals(result.getFirst(), Integer.valueOf(9));
-        Assert.assertEquals(result.getSecond(), Set.of("foo", "bar"));
+        Assert.assertEquals(result.getSecond(), CollectionSupport.setOf("foo", "bar"));
     }
 
     @Test
     public void testTwoAudienceSets() {
         final ProxyAuthenticationPrincipal proxy1 = new ProxyAuthenticationPrincipal();
         proxy1.setProxyCount(10);
-        proxy1.getAudiences().addAll(Set.of("foo", "bar"));
+        proxy1.getAudiences().addAll(CollectionSupport.setOf("foo", "bar"));
         sc.getAuthenticationResults().get("test1").getSubject().getPrincipals().add(proxy1);
 
         final ProxyAuthenticationPrincipal proxy2 = new ProxyAuthenticationPrincipal();
-        proxy2.getAudiences().addAll(Set.of("foo", "bar"));
+        proxy2.getAudiences().addAll(CollectionSupport.setOf("foo", "bar"));
         sc.getAuthenticationResults().get("test2").getSubject().getPrincipals().add(proxy2);
         
         result = fn.apply(prc);
         Assert.assertEquals(result.getFirst(), Integer.valueOf(9));
-        Assert.assertEquals(result.getSecond(), Set.of("foo", "bar"));
+        Assert.assertEquals(result.getSecond(), CollectionSupport.setOf("foo", "bar"));
         
         proxy1.getAudiences().clear();
         proxy1.getAudiences().add("bar");
         result = fn.apply(prc);
-        Assert.assertEquals(result.getSecond(), Set.of("bar"));
+        Assert.assertEquals(result.getSecond(), CollectionSupport.singleton("bar"));
         
         proxy2.getAudiences().clear();
         proxy2.getAudiences().add("foo");
@@ -163,12 +164,12 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
     @Test
     public void testConfigOnly() {
         config.setProxyCount(5);
-        config.setProxyAudiences(Set.of("foo", "bar"));
+        config.setProxyAudiences(CollectionSupport.setOf("foo", "bar"));
         prc.removeSubcontext(sc);
         
         result = fn.apply(prc);
         Assert.assertEquals(result.getFirst(), Integer.valueOf(5));
-        Assert.assertEquals(result.getSecond(), Set.of("foo", "bar"));
+        Assert.assertEquals(result.getSecond(), CollectionSupport.setOf("foo", "bar"));
     }
 
     @Test
@@ -200,26 +201,26 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
 
     @Test
     public void testJointAudiences() {
-        config.setProxyAudiences(Set.of("foo", "bar"));
+        config.setProxyAudiences(CollectionSupport.setOf("foo", "bar"));
 
         final ProxyAuthenticationPrincipal proxy1 = new ProxyAuthenticationPrincipal();
-        proxy1.getAudiences().addAll(Set.of("foo", "bar"));
+        proxy1.getAudiences().addAll(CollectionSupport.setOf("foo", "bar"));
         sc.getAuthenticationResults().get("test1").getSubject().getPrincipals().add(proxy1);
 
         final ProxyAuthenticationPrincipal proxy2 = new ProxyAuthenticationPrincipal();
-        proxy2.getAudiences().addAll(Set.of("foo", "bar"));
+        proxy2.getAudiences().addAll(CollectionSupport.setOf("foo", "bar"));
         sc.getAuthenticationResults().get("test2").getSubject().getPrincipals().add(proxy2);
         
         result = fn.apply(prc);
         Assert.assertNull(result.getFirst());
-        Assert.assertEquals(result.getSecond(), Set.of("foo", "bar"));
+        Assert.assertEquals(result.getSecond(), CollectionSupport.setOf("foo", "bar"));
         
-        config.setProxyAudiences(Set.of("foo", "baz"));
+        config.setProxyAudiences(CollectionSupport.setOf("foo", "baz"));
         result = fn.apply(prc);
-        Assert.assertEquals(result.getSecond(), Set.of("foo"));
+        Assert.assertEquals(result.getSecond(), CollectionSupport.singleton("foo"));
         
         proxy2.getAudiences().clear();
-        proxy2.getAudiences().addAll(Set.of("foo", "bar", "baz"));
+        proxy2.getAudiences().addAll(CollectionSupport.setOf("foo", "bar", "baz"));
         result = fn.apply(prc);
         Assert.assertEquals(result.getSecond(), Set.of("foo"));
         

@@ -131,7 +131,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         if (args.getUpdateURL() !=null) {
             try {
-                updateURLs = List.of(new URL(args.getUpdateURL()));
+                updateURLs = CollectionSupport.singletonList(new URL(args.getUpdateURL()));
             } catch (final MalformedURLException e) {
                 log.error("Could not convert update URL {}", args.getUpdateURL(), e);
                 return RC_INIT;

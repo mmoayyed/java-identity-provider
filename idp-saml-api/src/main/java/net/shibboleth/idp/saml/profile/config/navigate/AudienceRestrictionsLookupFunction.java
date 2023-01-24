@@ -31,6 +31,7 @@ import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -69,7 +70,7 @@ public class AudienceRestrictionsLookupFunction extends AbstractRelyingPartyLook
             }
             
             if (id != null) {
-                return List.of(rpc.getRelyingPartyId());
+                return CollectionSupport.singletonList(rpc.getRelyingPartyId());
             }
         }
         

@@ -28,13 +28,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Properties;
-import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /**
@@ -64,7 +64,7 @@ public class TestPropertiesWithComments {
 
 
     @Test public void testReplaceValues() throws FileNotFoundException, IOException {
-        final PropertiesWithComments pwc = new PropertiesWithComments(Set.of("a", "b", "q"));
+        final PropertiesWithComments pwc = new PropertiesWithComments(CollectionSupport.setOf("a", "b", "q"));
 
         pwc.load(getInputStream());
 
@@ -88,7 +88,7 @@ public class TestPropertiesWithComments {
     }
 
     @Test public void testUnreplaceableList() throws IOException {
-        final PropertiesWithComments pwc = new PropertiesWithComments(Set.of("x", "a", "b"));
+        final PropertiesWithComments pwc = new PropertiesWithComments(CollectionSupport.setOf("x", "a", "b"));
 
         pwc.load(getInputStream());
 

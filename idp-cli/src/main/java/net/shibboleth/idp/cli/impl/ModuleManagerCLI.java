@@ -48,6 +48,7 @@ import net.shibboleth.idp.module.IdPModule.ResourceResult;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
 
@@ -83,7 +84,7 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable protected List<Resource> getAdditionalSpringResources() {
-        return List.of(new ClassPathResource("net/shibboleth/idp/conf/http-client.xml"));
+        return CollectionSupport.singletonList(new ClassPathResource("net/shibboleth/idp/conf/http-client.xml"));
     }
     
     /** {@inheritDoc} */

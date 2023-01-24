@@ -244,15 +244,12 @@ public class V4Install extends AbstractInitializableComponent {
     // CheckStyle: CyclomaticComplexity|MethodLength OFF
     protected void populatePropertyFiles(final boolean sealerCreated) throws BuildException {
 
-        final Set<String> dnrList = Set.of(
+        @Nonnull final Set<String> doNotReplaceList = CollectionSupport.setOf(
                 "idp.sealer.storePassword",
                 "idp.sealer.keyPassword",
                 "idp.authn.LDAP.bindDNCredential",
                 "idp.attribute.resolver.LDAP.bindDNCredential",
                 "idp.persistentId.salt");
-        assert dnrList != null;
-        @Nonnull final Set<String> doNotReplaceList =dnrList;
-
         final Path conf = installerProps.getTargetDir().resolve("conf");
         final Path dstConf = installerProps.getTargetDir().resolve("dist").resolve("conf");
         if (!currentState.isIdPPropertiesPresent()) {

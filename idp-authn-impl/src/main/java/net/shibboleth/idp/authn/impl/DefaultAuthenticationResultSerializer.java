@@ -64,6 +64,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.Base64Support;
 import net.shibboleth.shared.codec.EncodingException;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -181,11 +182,11 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
                     .collect(Collectors.toUnmodifiableList());
         
         if (serializers.isEmpty()) {
-            principalSerializers = List.of(authnResultPrincipalSerializer);
+            principalSerializers = CollectionSupport.singletonList(authnResultPrincipalSerializer);
         } else {
             final List<PrincipalSerializer<String>> copy = new ArrayList<>(serializers);
             copy.add(authnResultPrincipalSerializer);
-            principalSerializers = List.copyOf(copy);
+            principalSerializers = CollectionSupport.copyToList(copy);
         }
     }
 

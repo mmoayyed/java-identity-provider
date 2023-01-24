@@ -17,10 +17,22 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.time.Instant;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
+
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.webflow.execution.FlowExecutionOutcome;
+import org.springframework.webflow.executor.FlowExecutionResult;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
@@ -32,17 +44,8 @@ import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.webflow.execution.FlowExecutionOutcome;
-import org.springframework.webflow.executor.FlowExecutionResult;
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.*;
 
 /**
  * Tests the flow behind the <code>/serviceValidate</code> endpoint.
@@ -141,7 +144,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
         final TicketState state = new TicketState(session.getId(), principal, Instant.now(), "Password");
-        state.setConsentedAttributeIds(Set.of("uid", "eduPersonPrincipalName"));
+        state.setConsentedAttributeIds(CollectionSupport.setOf("uid", "eduPersonPrincipalName"));
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
