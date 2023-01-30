@@ -18,12 +18,12 @@
 package net.shibboleth.idp.profile.config.tests;
 
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.BasicSecurityConfiguration;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.testing.MockProfileConfiguration;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
+import org.opensaml.security.config.BasicSecurityConfiguration;
+import org.opensaml.security.config.SecurityConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

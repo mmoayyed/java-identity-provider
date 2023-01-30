@@ -20,7 +20,8 @@ package net.shibboleth.idp.relyingparty;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import org.opensaml.security.config.SecurityConfiguration;
+
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.IdentifiedComponent;
 import net.shibboleth.shared.resolver.CriteriaSet;

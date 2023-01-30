@@ -37,6 +37,7 @@ import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.security.config.SecurityConfiguration;
 
 /** Base class for {@link ProfileConfiguration} implementations. */
 public abstract class AbstractProfileConfiguration extends AbstractIdentifiableInitializableComponent

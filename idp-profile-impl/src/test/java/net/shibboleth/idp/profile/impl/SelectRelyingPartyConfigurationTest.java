@@ -22,7 +22,6 @@ import java.util.Collections;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -34,6 +33,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.ResolverException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.security.config.SecurityConfiguration;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;

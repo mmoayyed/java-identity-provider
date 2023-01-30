@@ -19,8 +19,9 @@ package net.shibboleth.idp.profile.testing;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.security.config.BasicSecurityConfiguration;
+
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.BasicSecurityConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 

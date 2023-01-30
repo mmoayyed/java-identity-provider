@@ -102,7 +102,7 @@
     <bean id="AbstractMDDrivenProfile" abstract="true">
         <property name="securityConfigurationLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="securityConfiguration"
-                p:propertyType="#{T(net.shibboleth.idp.profile.config.SecurityConfiguration)}" />
+                p:propertyType="#{T(org.opensaml.security.config.SecurityConfiguration)}" />
         </property>
         <property name="disallowedFeaturesLookupStrategy">
             <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="disallowedFeatures">

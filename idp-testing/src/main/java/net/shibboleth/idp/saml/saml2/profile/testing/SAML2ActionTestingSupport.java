@@ -23,9 +23,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.BasicXMLSecurityConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -36,6 +34,8 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.security.config.SecurityConfiguration;
+import org.opensaml.xmlsec.config.BasicXMLSecurityConfiguration;
 
 /**
  * Helper methods for creating/testing SAML 2 objects within profile action tests. When methods herein refer to mock

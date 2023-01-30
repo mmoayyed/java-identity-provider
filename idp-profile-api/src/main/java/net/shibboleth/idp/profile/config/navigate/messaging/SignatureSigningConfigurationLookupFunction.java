@@ -23,12 +23,12 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.security.config.SecurityConfiguration;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
+import org.opensaml.xmlsec.config.XMLSecurityConfiguration;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.idp.profile.config.XMLSecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.messaging.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;

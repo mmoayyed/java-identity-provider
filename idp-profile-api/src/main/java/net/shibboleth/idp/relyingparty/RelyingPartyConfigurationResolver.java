@@ -20,12 +20,12 @@ package net.shibboleth.idp.relyingparty;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.IdentifiedComponent;
 import net.shibboleth.shared.resolver.Resolver;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.security.config.SecurityConfiguration;
 
 /** Resolves a {@link RelyingPartyConfiguration} for a given profile request context. */
 public interface RelyingPartyConfigurationResolver extends Resolver<RelyingPartyConfiguration,ProfileRequestContext>,

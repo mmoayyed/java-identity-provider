@@ -23,14 +23,14 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.idp.profile.config.XMLSecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.security.config.SecurityConfiguration;
 import org.opensaml.xmlsec.SignatureValidationConfiguration;
+import org.opensaml.xmlsec.config.XMLSecurityConfiguration;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 
 /**

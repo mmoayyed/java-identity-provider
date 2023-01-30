@@ -155,7 +155,7 @@
     and loads the default credentials used.
     -->
 
-    <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.BasicXMLSecurityConfiguration">
+    <bean id="shibboleth.DefaultSecurityConfiguration" class="org.opensaml.xmlsec.config.BasicXMLSecurityConfiguration">
         <property name="signatureSigningConfiguration">
             <ref bean="#{'%{idp.signing.config:shibboleth.SigningConfiguration.SHA256}'.trim()}" />
         </property>
