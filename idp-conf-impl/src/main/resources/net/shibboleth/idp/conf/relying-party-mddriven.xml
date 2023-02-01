@@ -72,30 +72,42 @@
         </property>
     </bean>
 
+    <!-- These beans need two different paths to the metadata, one via PRC and one via MC. -->
     <bean id="shibboleth.AbstractMDDrivenProperty" abstract="true"
+        p:profileMetadataLookupStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty"
+        p:messageMetadataLookupStrategy-ref="MessageContextMetadataLookupStrategy"
         p:profileAliases="#{getObject('shibboleth.MDProfileAliases') ?: getObject('shibboleth.DefaultMDProfileAliases')}"
         p:ignoreUnmappedEntityAttributes="%{idp.service.relyingparty.ignoreUnmappedEntityAttributes:false}" />
+        
+    <bean id="MessageContextMetadataLookupStrategy" parent="shibboleth.Functions.Compose">
+        <constructor-arg name="g">
+            <bean class="org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction" />
+        </constructor-arg>
+        <constructor-arg name="f">
+            <bean class="net.shibboleth.idp.saml.profile.context.navigate.messaging.SAMLMetadataContextLookupFunction" />
+        </constructor-arg>
+    </bean>
     
     <bean id="shibboleth.MDDrivenStringProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
-        class="net.shibboleth.idp.saml.profile.config.StringConfigurationLookupStrategy" />
+        class="net.shibboleth.idp.attribute.config.StringConfigurationLookupStrategy" />
     <bean id="shibboleth.MDDrivenBoolProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
-        class="net.shibboleth.idp.saml.profile.config.BooleanConfigurationLookupStrategy" />
+        class="net.shibboleth.idp.attribute.config.BooleanConfigurationLookupStrategy" />
     <bean id="shibboleth.MDDrivenIntProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
-        class="net.shibboleth.idp.saml.profile.config.IntegerConfigurationLookupStrategy" />
+        class="net.shibboleth.idp.attribute.config.IntegerConfigurationLookupStrategy" />
     <bean id="shibboleth.MDDrivenLongProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
-        class="net.shibboleth.idp.saml.profile.config.LongConfigurationLookupStrategy" />
+        class="net.shibboleth.idp.attribute.config.LongConfigurationLookupStrategy" />
     <bean id="shibboleth.MDDrivenDoubleProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
-        class="net.shibboleth.idp.saml.profile.config.DoubleConfigurationLookupStrategy" />
+        class="net.shibboleth.idp.attribute.config.DoubleConfigurationLookupStrategy" />
     <bean id="shibboleth.MDDrivenDurationProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
-        class="net.shibboleth.idp.saml.profile.config.DurationConfigurationLookupStrategy" />
+        class="net.shibboleth.idp.attribute.config.DurationConfigurationLookupStrategy" />
     <bean id="shibboleth.MDDrivenListProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
-        class="net.shibboleth.idp.saml.profile.config.ListConfigurationLookupStrategy"
+        class="net.shibboleth.idp.attribute.config.ListConfigurationLookupStrategy"
         p:propertyType="#{T(java.lang.String)}" />
     <bean id="shibboleth.MDDrivenSetProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
-        class="net.shibboleth.idp.saml.profile.config.SetConfigurationLookupStrategy"
+        class="net.shibboleth.idp.attribute.config.SetConfigurationLookupStrategy"
         p:propertyType="#{T(java.lang.String)}" />
     <bean id="shibboleth.MDDrivenBeanProperty" abstract="true" parent="shibboleth.AbstractMDDrivenProperty"
-        class="net.shibboleth.idp.saml.profile.config.BeanConfigurationLookupStrategy" />
+        class="net.shibboleth.idp.attribute.config.BeanConfigurationLookupStrategy" />
 
     <!-- Wiring lookup strategies into the actual profile configurations of various types. -->
 
