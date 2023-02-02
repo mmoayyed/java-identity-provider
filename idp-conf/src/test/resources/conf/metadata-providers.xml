@@ -56,8 +56,6 @@
 
     <MetadataProvider id="SP123MD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes" resourceRef="exampleMetadata-sp123"/>
 
-    <MetadataProvider id="DuoSSO" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M" indexesRef="testbed.MetadataIndexes" resourceRef="duoMetadata"/>
-
     <!--
     <MetadataProvider id="ICMDQ" xsi:type="DynamicHTTPMetadataProvider"
             minCacheDuration="PT5M" maxCacheDuration="PT24H" maxIdleEntityData="PT1H">
