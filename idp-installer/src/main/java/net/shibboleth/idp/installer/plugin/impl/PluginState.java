@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.slf4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;

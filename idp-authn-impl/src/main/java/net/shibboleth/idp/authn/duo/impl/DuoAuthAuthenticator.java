@@ -27,9 +27,9 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 
 import com.duosecurity.duoweb.DuoWebException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -75,8 +75,8 @@ public class DuoAuthAuthenticator extends AbstractDuoAuthenticator {
             // prepare the request
             final URI uri = new URIBuilder().setScheme("https").setHost(duoIntegration.getAPIHost())
                     .setPath("/auth/v2/auth").build();
-            final RequestBuilder rb =
-                    RequestBuilder.post().setUri(uri).addParameter(DuoAuthAPI.DUO_USERNAME, duoContext.getUsername());
+            final ClassicRequestBuilder rb =
+                    ClassicRequestBuilder.post().setUri(uri).addParameter(DuoAuthAPI.DUO_USERNAME, duoContext.getUsername());
             if (duoContext.getClientAddress() != null) {
                 rb.addParameter(DuoAuthAPI.DUO_IPADDR, duoContext.getClientAddress());
             }
@@ -97,7 +97,7 @@ public class DuoAuthAuthenticator extends AbstractDuoAuthenticator {
                 rb.addParameter(DuoAuthAPI.DUO_PUSHINFO, StringSupport.listToStringValue(pushinfo, "&"));
             }
             DuoSupport.signRequest(rb, duoIntegration);
-            final HttpUriRequest request = rb.build();
+            final ClassicHttpRequest request = rb.build();
 
             // do it
             return doAPIRequest(request, wrapperTypeRef).getResponse();

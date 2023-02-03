@@ -25,7 +25,7 @@ import java.util.Locale.LanguageRange;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;

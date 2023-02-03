@@ -24,12 +24,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 
@@ -115,19 +114,19 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      * @throws ClientProtocolException on an HTTP error 
      * @throws DuoWebException on a Duo-related error
      */
-    protected <T extends DuoResponseWrapper<?>> T doAPIRequest(@Nonnull final HttpUriRequest request,
+    protected <T extends DuoResponseWrapper<?>> T doAPIRequest(@Nonnull final ClassicHttpRequest request,
             @Nonnull final TypeReference<T> wrapperTypeRef)
-                    throws DuoWebException, ClientProtocolException, IOException {
+                    throws DuoWebException, IOException {
 
         // Make the request.
         final HttpClientContext clientContext = HttpClientContext.create();
         HttpClientSecuritySupport.marshalSecurityParameters(clientContext, httpClientSecurityParameters, true);
         HttpClientSecuritySupport.addDefaultTLSTrustEngineCriteria(clientContext, request);
-        final HttpResponse httpResponse = httpClient.execute(request, clientContext);
-        HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getURI().getScheme());
+        final ClassicHttpResponse httpResponse = httpClient.executeOpen(null, request, clientContext);
+        HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getScheme());
 
         // Check the HTTP response code.
-        final int httpStatusCode = httpResponse.getStatusLine().getStatusCode();
+        final int httpStatusCode = httpResponse.getCode();
         if (httpStatusCode == HttpStatus.SC_BAD_REQUEST) {
             final InputStream httpContent = httpResponse.getEntity().getContent();
             final DuoFailureResponse msg = objectMapper.readValue(httpContent, DuoFailureResponse.class);
@@ -140,7 +139,7 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
         }
         if (httpStatusCode != HttpStatus.SC_OK) {
             throw new IOException("Non-ok status code (" + httpStatusCode + ") returned from Duo: "
-                    + httpResponse.getStatusLine().getReasonPhrase());
+                    + httpResponse.getReasonPhrase());
         } else if (httpResponse.getEntity() == null) {
             throw new IOException("No response body returned from Duo");
         }

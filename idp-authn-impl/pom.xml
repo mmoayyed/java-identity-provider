@@ -160,13 +160,14 @@
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-engine-core</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>${httpclient.groupId}</groupId>
+            <artifactId>${httpclient.artifactId}</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
+            <groupId>${httpclient.httpcore.groupId}</groupId>
+            <artifactId>${httpclient.httpcore.artifactId}</artifactId>
         </dependency>
 
         <dependency>

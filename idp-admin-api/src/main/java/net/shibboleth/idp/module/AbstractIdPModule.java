@@ -41,10 +41,10 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 import org.slf4j.Logger;
 import org.springframework.core.io.ClassPathResource;
@@ -376,14 +376,14 @@ public abstract class AbstractIdPModule implements IdPModule {
             assert clientContext != null;
             HttpClientSecuritySupport.marshalSecurityParameters(clientContext,
                     moduleContext.getHttpClientSecurityParameters(), true);
-            HttpResponse response = null;
+            ClassicHttpResponse response = null;
             try {
                 log.debug("Module {} fetching HTTP resource {}", getId(), uri);
                 final HttpGet request = new HttpGet(uri);
                 response = Constraint.isNotNull(
-                        moduleContext.getHttpClient(), "HttpClient cannot be null").execute(request, clientContext);
-                HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getURI().getScheme());
-                if (response.getStatusLine().getStatusCode() != 200) {
+                        moduleContext.getHttpClient(), "HttpClient cannot be null").executeOpen(null, request, clientContext);
+                HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getScheme());
+                if (response.getCode() != 200) {
                     throw new IOException("HTTP request was unsuccessful");
                 }
                 

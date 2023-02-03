@@ -274,8 +274,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <groupId>${httpclient.groupId}</groupId>
+            <artifactId>${httpclient.artifactId}</artifactId>
             <scope>test</scope>
         </dependency>
 

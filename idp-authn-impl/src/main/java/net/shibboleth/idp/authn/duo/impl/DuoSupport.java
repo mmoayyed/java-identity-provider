@@ -42,8 +42,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.RequestBuilder;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 
 /**
  * Helpers for DuoWeb and Duo AuthAPI operations.
@@ -129,7 +129,7 @@ public final class DuoSupport {
      * 
      * @since 3.4.0
      */
-    @NotEmpty public static void signRequest(@Nonnull final RequestBuilder request,
+    @NotEmpty public static void signRequest(@Nonnull final ClassicRequestBuilder request,
             @Nonnull final DuoIntegration duo)
             throws InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException {
         final String ikey = duo.getIntegrationKey();
@@ -156,7 +156,7 @@ public final class DuoSupport {
      * 
      * @throws UnsupportedEncodingException failure from {@link java.net.URLEncoder}
      */
-    private static String canonRequest(@Nonnull final RequestBuilder request, @Nonnull final String date,
+    private static String canonRequest(@Nonnull final ClassicRequestBuilder request, @Nonnull final String date,
             final int sigVersion) throws UnsupportedEncodingException {
         final URI uri = request.getUri();
         String canon = "";

@@ -25,13 +25,13 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.annotation.Nonnull;
 
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
+import org.apache.hc.core5.net.URIBuilder;
+
 import com.duosecurity.duoweb.DuoWebException;
 //import javax.json.JsonObject;
 import com.fasterxml.jackson.core.type.TypeReference;
-
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
-import org.apache.http.client.utils.URIBuilder;
 
 import net.shibboleth.idp.authn.duo.DuoAuthAPI;
 import net.shibboleth.idp.authn.duo.DuoIntegration;
@@ -66,15 +66,15 @@ public class DuoPreauthAuthenticator extends AbstractDuoAuthenticator {
             // Prepare the request
             final URI uri = new URIBuilder().setScheme("https").setHost(duoIntegration.getAPIHost())
                     .setPath("/auth/v2/preauth").build();
-            final RequestBuilder rb =
-                    RequestBuilder.post().setUri(uri).addParameter(DuoAuthAPI.DUO_USERNAME, duoContext.getUsername());
+            final ClassicRequestBuilder rb =
+                    ClassicRequestBuilder.post().setUri(uri).addParameter(DuoAuthAPI.DUO_USERNAME, duoContext.getUsername());
             
             if (duoContext.getClientAddress() != null) {
                 rb.addParameter(DuoAuthAPI.DUO_IPADDR, duoContext.getClientAddress());
             }
             
             DuoSupport.signRequest(rb, duoIntegration);
-            final HttpUriRequest request = rb.build();
+            final ClassicHttpRequest request = rb.build();
 
             return doAPIRequest(request, wrapperTypeRef).getResponse();
         } catch (final IOException | URISyntaxException | InvalidKeyException | NoSuchAlgorithmException ex) {

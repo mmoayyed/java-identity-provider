@@ -33,12 +33,24 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.FailedLoginException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
+import net.shibboleth.idp.cas.config.AbstractProtocolConfiguration;
+import net.shibboleth.idp.cas.protocol.ProtocolContext;
+import net.shibboleth.idp.cas.proxy.ProxyValidator;
+import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.idp.cas.service.ServiceContext;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.resolver.CriteriaSet;
+
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -53,19 +65,8 @@ import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.TrustedNamesCriterion;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.cas.config.AbstractProtocolConfiguration;
-import net.shibboleth.idp.cas.protocol.ProtocolContext;
-import net.shibboleth.idp.cas.proxy.ProxyValidator;
-import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.idp.cas.service.ServiceContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.LoggerFactory;
-import net.shibboleth.shared.resolver.CriteriaSet;
-
 /**
- * Authenticates a CAS proxy callback endpoint using an {@link org.apache.http.client.HttpClient} instance to establish
+ * Authenticates a CAS proxy callback endpoint using an {@link org.apache.hc.client5.http.classic.HttpClient} instance to establish
  * the connection and a {@link TrustEngine} to verify the TLS certificate presented by the remote peer. The endpoint
  * is validated if and only if the following requirements are met:
  *
@@ -157,13 +158,13 @@ public class HttpClientProxyValidator implements ProxyValidator {
         final HttpClientContext clientContext = HttpClientContext.create();
         HttpClientSecuritySupport.marshalSecurityParameters(clientContext, securityParameters, true);
         setCASTLSTrustEngineCriteria(clientContext, uri, service);
-        HttpResponse response = null;
+        ClassicHttpResponse response = null;
         try {
             log.debug("Attempting to validate CAS proxy callback URI {}", uri);
             final HttpGet request = new HttpGet(uri);
-            response = httpClient.execute(request, clientContext);
-            HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getURI().getScheme());
-            return response.getStatusLine().getStatusCode();
+            response = httpClient.executeOpen(null, request, clientContext);
+            HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getScheme());
+            return response.getCode();
         } catch (final ClientProtocolException e) {
             throw new GeneralSecurityException("HTTP protocol error", e);
         } catch (final SSLPeerUnverifiedException e) {

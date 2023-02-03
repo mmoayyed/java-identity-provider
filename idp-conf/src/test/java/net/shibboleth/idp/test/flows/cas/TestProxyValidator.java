@@ -19,7 +19,8 @@ package net.shibboleth.idp.test.flows.cas;
 
 import net.shibboleth.idp.cas.proxy.impl.HttpClientProxyValidator;
 import net.shibboleth.idp.cas.service.Service;
-import org.apache.http.impl.client.HttpClients;
+
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 
 import javax.annotation.Nonnull;

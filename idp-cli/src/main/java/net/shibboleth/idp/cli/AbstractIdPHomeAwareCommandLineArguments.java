@@ -21,7 +21,6 @@ import java.io.PrintStream;
 
 import javax.annotation.Nullable;
 
-import org.apache.http.client.HttpClient;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 
 import com.beust.jcommander.Parameter;
