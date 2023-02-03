@@ -73,4 +73,17 @@ public interface ProfileConfiguration extends IdentifiedComponent {
     @Nullable SecurityConfiguration getSecurityConfiguration(
             @Nullable final ProfileRequestContext profileRequestContext);
     
+    /**
+     * Get a bitmask of disallowed features to block.
+     * 
+     * <p>Individual profiles define their own feature constants.</p>
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return bitmask of features to block
+     * 
+     * @since 5.0.0
+     */
+    public int getDisallowedFeatures(@Nullable final ProfileRequestContext profileRequestContext);
+
 }

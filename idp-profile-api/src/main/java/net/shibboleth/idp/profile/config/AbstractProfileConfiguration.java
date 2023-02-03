@@ -18,7 +18,6 @@
 package net.shibboleth.idp.profile.config;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -31,6 +30,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
@@ -103,9 +103,9 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
         @Nullable final ProfileRequestContext profileRequestContext) {
         final List<String> flows = inboundFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return List.copyOf(flows);
+            return CollectionSupport.copyToList(flows);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /**
@@ -139,9 +139,9 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
             @Nullable final ProfileRequestContext profileRequestContext) {
         final List<String> flows = outboundFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return List.copyOf(flows);
+            return CollectionSupport.copyToList(flows);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /**
@@ -184,17 +184,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
         return (getDisallowedFeatures(profileRequestContext) & feature) == feature;
     }
     
-    /**
-     * Get a bitmask of disallowed features to block.
-     * 
-     * <p>Individual profiles define their own feature constants.</p>
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return bitmask of features to block
-     * 
-     * @since 3.3.0
-     */
+    /** {@inheritDoc} */
     public int getDisallowedFeatures(@Nullable final ProfileRequestContext profileRequestContext) {
         final Integer mask = disallowedFeaturesLookupStrategy.apply(profileRequestContext); 
         return mask != null ? mask : DEFAULT_DISALLOWED_FEATURES;
