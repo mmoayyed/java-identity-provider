@@ -803,7 +803,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         final Collection<AuthnContextClassRefPrincipal> methods =
                 defaultAuthenticationContextsLookupStrategy.apply(profileRequestContext);
         if (methods != null) {
-            return List.copyOf(methods);
+            return CollectionSupport.copyToList(methods);
         }
         return CollectionSupport.emptyList();
     }
@@ -839,7 +839,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return Set.copyOf(flows);
+            return CollectionSupport.copyToSet(flows);
         }
         return CollectionSupport.emptySet();
     }
@@ -852,7 +852,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
         if (flows != null) {
             authenticationFlowsLookupStrategy =
-                    FunctionSupport.constant(Set.copyOf(StringSupport.normalizeStringCollection(flows)));
+                    FunctionSupport.constant(
+                            CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(flows)));
         } else {
             authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         }
@@ -875,7 +876,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return List.copyOf(flows);
+            return CollectionSupport.copyToList(flows);
         }
         return CollectionSupport.emptyList();
     }
@@ -918,7 +919,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         
         final Collection<String> formats = nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext);
         if (formats != null) {
-            return List.copyOf(formats);
+            return CollectionSupport.copyToList(formats);
         }
         return CollectionSupport.emptyList();
     }
@@ -928,11 +929,14 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * 
      * @param formats   name identifier formats to use
      */
-    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final Collection<String> formats) {
-        Constraint.isNotNull(formats, "List of formats cannot be null");
-        
-        nameIDFormatPrecedenceLookupStrategy =
-                FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(formats)));
+    public void setNameIDFormatPrecedence(@Nullable @NonnullElements final Collection<String> formats) {
+        if (formats != null) {
+            nameIDFormatPrecedenceLookupStrategy =
+                    FunctionSupport.constant(
+                            CollectionSupport.copyToList(StringSupport.normalizeStringCollection(formats)));
+        } else {
+            nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
+        }
     }
 
     /**
