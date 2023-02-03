@@ -170,16 +170,7 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
         outboundFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
-    /**
-     * Return true iff the input feature constant is disallowed.
-     * 
-     * @param profileRequestContext current profile request context
-     * @param feature a bit constant
-     * 
-     * @return true iff the input feature constant is disallowed
-     * 
-     * @since 3.3.0
-     */
+    /** {@inheritDoc} */
     public boolean isFeatureDisallowed(@Nullable final ProfileRequestContext profileRequestContext, final int feature) {
         return (getDisallowedFeatures(profileRequestContext) & feature) == feature;
     }

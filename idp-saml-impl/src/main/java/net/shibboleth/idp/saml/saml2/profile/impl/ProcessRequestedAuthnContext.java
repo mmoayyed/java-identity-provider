@@ -194,9 +194,8 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
 
         // Check if permitted.
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpContext != null && rpContext.getProfileConfig() != null
-                && rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
-            if (((BrowserSSOProfileConfiguration) rpContext.getProfileConfig()).isFeatureDisallowed(
+        if (rpContext != null && rpContext.getProfileConfig() != null) {
+            if (rpContext.getProfileConfig().isFeatureDisallowed(
                     profileRequestContext, BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT)) {
                 log.warn("{} Incoming RequestedAuthnContext disallowed by profile configuration", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, EventIds.ACCESS_DENIED);

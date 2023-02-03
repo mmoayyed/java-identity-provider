@@ -241,9 +241,8 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         
         // Check if permitted.
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpContext != null && rpContext.getProfileConfig() != null
-                && rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
-            if (((BrowserSSOProfileConfiguration) rpContext.getProfileConfig()).isFeatureDisallowed(
+        if (rpContext != null && rpContext.getProfileConfig() != null) {
+            if (rpContext.getProfileConfig().isFeatureDisallowed(
                     profileRequestContext, BrowserSSOProfileConfiguration.FEATURE_SCOPING)) {
                 log.warn("{} Incoming Scoping disallowed by profile configuration", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, EventIds.ACCESS_DENIED);

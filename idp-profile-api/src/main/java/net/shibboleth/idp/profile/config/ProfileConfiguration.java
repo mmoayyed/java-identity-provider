@@ -86,4 +86,16 @@ public interface ProfileConfiguration extends IdentifiedComponent {
      */
     public int getDisallowedFeatures(@Nullable final ProfileRequestContext profileRequestContext);
 
+    /**
+     * Return true iff the input feature constant is disallowed.
+     * 
+     * @param profileRequestContext current profile request context
+     * @param feature a bit constant
+     * 
+     * @return true iff the input feature constant is disallowed
+     * 
+     * @since 5.0.0
+     */
+    public boolean isFeatureDisallowed(@Nullable final ProfileRequestContext profileRequestContext, final int feature);
+
 }
