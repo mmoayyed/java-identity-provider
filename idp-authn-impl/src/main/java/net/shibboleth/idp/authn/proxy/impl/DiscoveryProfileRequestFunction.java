@@ -26,13 +26,11 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
@@ -40,6 +38,9 @@ import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A {@link Function} that produces a discovery request URL using the protocol defined in

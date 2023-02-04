@@ -26,7 +26,7 @@ import jakarta.servlet.jsp.tagext.BodyContent;
 import net.shibboleth.shared.codec.HTMLEncoder;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** Service OrganizationName - directly from the metadata if present. */
 public class OrganizationNameTag extends ServiceTagSupport {

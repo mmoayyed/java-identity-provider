@@ -24,6 +24,11 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+
+import com.google.common.base.Strings;
+
 import net.shibboleth.idp.attribute.AttributeDecodingException;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -32,12 +37,7 @@ import net.shibboleth.idp.attribute.transcoding.AbstractAttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Base class for transcoders that support CAS attributes.

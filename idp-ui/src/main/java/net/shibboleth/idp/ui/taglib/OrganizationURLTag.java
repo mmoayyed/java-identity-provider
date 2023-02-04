@@ -20,12 +20,14 @@ package net.shibboleth.idp.ui.taglib;
 import java.io.IOException;
 
 import javax.annotation.Nullable;
+
+import org.slf4j.Logger;
+
+import net.shibboleth.shared.primitive.LoggerFactory;
+
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Service OrganizationURL - directly from the metadata if present. */
 public class OrganizationURLTag extends ServiceTagSupport {

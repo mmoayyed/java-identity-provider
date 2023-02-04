@@ -33,7 +33,6 @@ import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.security.x509.X509Credential;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.AbstractCredentialValidator;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -42,6 +41,7 @@ import net.shibboleth.idp.authn.context.CertificateContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
 
 /**

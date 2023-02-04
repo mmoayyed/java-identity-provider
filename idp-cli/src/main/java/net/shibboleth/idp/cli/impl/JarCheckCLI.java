@@ -42,10 +42,10 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Program to check for potential jar clashes.

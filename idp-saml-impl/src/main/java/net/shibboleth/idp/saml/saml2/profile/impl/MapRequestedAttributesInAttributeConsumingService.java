@@ -40,7 +40,7 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Action that ensures that the attributes in the ACS (if any) are mapped.

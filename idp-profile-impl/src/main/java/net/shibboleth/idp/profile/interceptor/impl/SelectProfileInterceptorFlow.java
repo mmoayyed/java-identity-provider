@@ -27,7 +27,7 @@ import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A profile interceptor action that selects flows to invoke.

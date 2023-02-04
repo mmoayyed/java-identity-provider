@@ -17,15 +17,17 @@
 
 package net.shibboleth.idp.profile.support;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.shibboleth.shared.primitive.LoggerFactory;
+
 import jakarta.servlet.ServletRequest;
 
 /**

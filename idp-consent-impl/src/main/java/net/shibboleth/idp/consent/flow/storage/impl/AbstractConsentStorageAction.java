@@ -27,7 +27,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.AbstractConsentAction;
@@ -38,6 +37,7 @@ import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Base class for consent actions which interact with a {@link StorageService}.

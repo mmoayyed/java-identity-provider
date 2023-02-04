@@ -30,7 +30,11 @@ import javax.annotation.Nullable;
 
 import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.StringSupport;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -39,9 +43,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Servlet filter to translate Apache mod_ssl certificate variables into Java servlet attributes.

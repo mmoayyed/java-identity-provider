@@ -17,21 +17,23 @@
 
 package net.shibboleth.idp.authn.impl;
 
+
 import javax.annotation.Nonnull;
-import jakarta.servlet.http.HttpServletRequest;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+
+import com.google.common.net.InetAddresses;
 
 import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.servlet.HttpServletSupport;
 
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.net.InetAddresses;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * An action that extracts the user-agent's IP address from the incoming request, creates a

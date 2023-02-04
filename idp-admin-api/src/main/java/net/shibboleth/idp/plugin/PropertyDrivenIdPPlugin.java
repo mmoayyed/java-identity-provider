@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -31,7 +30,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.module.PropertyDrivenIdPModule;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
@@ -39,7 +37,9 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -80,10 +80,10 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
     @Nullable private PluginVersion pluginVersion;
     
     /** Plugin update URLs. */
-    @Nonnull @NonnullElements private List<URL> updateURLs = Collections.emptyList();
+    @Nonnull @NonnullElements private List<URL> updateURLs = CollectionSupport.emptyList();
     
     /** Required modules. */
-    @Nonnull @NonnullElements private Set<String> requiredModules = Collections.emptySet();
+    @Nonnull @NonnullElements private Set<String> requiredModules = CollectionSupport.emptySet();
 
     /**
      * Constructor.
@@ -226,7 +226,7 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
      * @throws PluginException if a derived class throws it (see derived classes)
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive protected List<URL> getDefaultUpdateURLs() throws PluginException {
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
     
 }

@@ -54,6 +54,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -73,7 +74,7 @@ public abstract class AbstractIdPModule implements IdPModule {
     
     /** Constructor. */
     public AbstractIdPModule() {
-        moduleResources = Collections.emptyList();
+        moduleResources = CollectionSupport.emptyList();
     }
     
     /** {@inheritDoc} */

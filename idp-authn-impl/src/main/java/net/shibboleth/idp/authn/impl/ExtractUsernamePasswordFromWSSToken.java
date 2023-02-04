@@ -17,22 +17,17 @@
 
 package net.shibboleth.idp.authn.impl;
 
+
 import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.AbstractExtractionAction;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.shared.collection.Pair;
-
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.core.xml.XMLObject;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
 import org.opensaml.soap.wssecurity.Password;
@@ -40,7 +35,14 @@ import org.opensaml.soap.wssecurity.Security;
 import org.opensaml.soap.wssecurity.Username;
 import org.opensaml.soap.wssecurity.UsernameToken;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.AbstractExtractionAction;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.shared.collection.Pair;
+import net.shibboleth.shared.primitive.LoggerFactory;
+
 
 //TODO(lajoie) should we support nonce and created checks?  probably
 

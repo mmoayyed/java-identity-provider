@@ -23,7 +23,6 @@ import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,14 +32,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.ConstraintViolationException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -135,7 +135,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
      */
     public PropertyDrivenIdPModule(@Nonnull final InputStream inputStream)
             throws IOException, ModuleException {
-        locales = Collections.emptyList();
+        locales = CollectionSupport.emptyList();
         moduleProperties = new Properties();
         moduleProperties.load(inputStream);
         moduleId = "";
@@ -151,7 +151,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
      * @throws ModuleException if the module is not in a valid state
      */
     public PropertyDrivenIdPModule(@Nonnull final Properties properties) throws ModuleException {
-        locales = Collections.emptyList();
+        locales = CollectionSupport.emptyList();
         moduleProperties = Constraint.isNotNull(properties, "Properties cannot be null");
         moduleId = "";
         moduleName = "";

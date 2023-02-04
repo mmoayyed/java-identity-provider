@@ -25,7 +25,7 @@ import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** Service PrivacyURL - directly from the metadata if present. */
 public class ServicePrivacyURLTag extends ServiceTagSupport {

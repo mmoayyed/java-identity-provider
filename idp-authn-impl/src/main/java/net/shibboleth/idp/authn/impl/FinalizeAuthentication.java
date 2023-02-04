@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,10 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
@@ -41,11 +46,7 @@ import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.context.SessionContext;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An authentication action that runs after a completed authentication flow (or the reuse

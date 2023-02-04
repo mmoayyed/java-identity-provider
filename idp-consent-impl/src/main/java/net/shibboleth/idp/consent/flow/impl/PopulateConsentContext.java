@@ -22,13 +22,13 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.shared.logic.Constraint;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Consent action which populates the current consents of a consent context with the output value of a function whose

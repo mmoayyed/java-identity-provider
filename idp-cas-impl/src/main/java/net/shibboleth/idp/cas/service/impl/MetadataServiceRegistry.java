@@ -22,15 +22,6 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.cas.config.AbstractProtocolConfiguration;
-import net.shibboleth.idp.cas.config.LoginConfiguration;
-import net.shibboleth.idp.cas.config.ProxyConfiguration;
-import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.idp.cas.service.ServiceRegistry;
-import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.shared.resolver.CriteriaSet;
-import net.shibboleth.shared.resolver.ResolverException;
-
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.criterion.EndpointCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
@@ -47,8 +38,16 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.cas.config.AbstractProtocolConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
+import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.idp.cas.service.ServiceRegistry;
+import net.shibboleth.shared.annotation.ParameterName;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
 /**
  * CAS service registry implementation that queries SAML metadata for a CAS service given a CAS service URL using
  * the following strategy. A {@link MetadataResolver} is queried for an {@link EntityDescriptor} that meets the

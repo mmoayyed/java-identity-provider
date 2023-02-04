@@ -20,22 +20,20 @@ package net.shibboleth.idp.consent.logic.impl;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.shared.logic.Constraint;
-
-import java.util.function.Predicate;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Predicate that returns whether consent is required by comparing the previous and current consents from the consent
  * context.

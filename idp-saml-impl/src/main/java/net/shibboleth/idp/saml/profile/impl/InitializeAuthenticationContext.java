@@ -36,8 +36,7 @@ import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Scoping;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.idp.authn.config.navigate.ForceAuthnProfileConfigPredicate;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;

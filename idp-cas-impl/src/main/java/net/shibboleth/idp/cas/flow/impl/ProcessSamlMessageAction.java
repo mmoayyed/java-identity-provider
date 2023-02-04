@@ -19,6 +19,16 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml1.core.AssertionArtifact;
+import org.opensaml.saml.saml1.core.Request;
+import org.slf4j.Logger;
+import org.springframework.webflow.core.collection.ParameterMap;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+
 import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
@@ -26,17 +36,7 @@ import net.shibboleth.idp.cas.protocol.SamlParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.profile.ActionSupport;
-
-import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.profile.action.EventException;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml1.core.AssertionArtifact;
-import org.opensaml.saml.saml1.core.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.webflow.core.collection.ParameterMap;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Processes the ticket validation request message from decoded SAML 1.1 message and request parameters.

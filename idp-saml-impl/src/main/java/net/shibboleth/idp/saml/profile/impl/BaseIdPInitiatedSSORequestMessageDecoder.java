@@ -32,7 +32,7 @@ import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;
 import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Decodes an incoming Shibboleth Authentication Request message.

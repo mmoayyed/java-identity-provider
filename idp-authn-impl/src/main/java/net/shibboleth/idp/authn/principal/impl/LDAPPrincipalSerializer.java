@@ -44,12 +44,12 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.jaas.LdapPrincipal;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
 import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Principal serializer for {@link LdapPrincipal}.

@@ -22,7 +22,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import jakarta.servlet.ServletContainerInitializer;
@@ -32,6 +31,7 @@ import jakarta.servlet.ServletRegistration;
 //import net.shibboleth.idp.authn.impl.RemoteUserAuthServlet;
 //import net.shibboleth.idp.authn.impl.X509AuthServlet;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext;
 import net.shibboleth.shared.spring.servlet.impl.DelegatingServletProxy;
 

@@ -31,7 +31,7 @@ import org.opensaml.saml.metadata.resolver.ClearableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 import jakarta.servlet.http.HttpServletResponse;

@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

@@ -22,11 +22,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.StringSupport;
-
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
@@ -35,7 +30,12 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.MetricContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.shared.annotation.ParameterName;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * An {@link AbstractProfileAction} subclass that adapts an OpenSAML {@link MessageHandler} for execution 

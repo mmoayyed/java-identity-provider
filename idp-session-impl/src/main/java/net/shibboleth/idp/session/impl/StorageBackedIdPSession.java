@@ -45,7 +45,7 @@ import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Implementation of {@link net.shibboleth.idp.session.IdPSession} for use with {@link StorageBackedSessionManager}.

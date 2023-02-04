@@ -28,8 +28,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that runs after a completed canonicalization of a SAML Subject and transfers

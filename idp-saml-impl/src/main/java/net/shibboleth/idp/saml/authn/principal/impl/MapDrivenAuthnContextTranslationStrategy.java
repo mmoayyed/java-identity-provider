@@ -31,11 +31,11 @@ import javax.annotation.Nullable;
 
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Implements a set of default logic for mapping an {@link AuthnContext}'s content into a set of

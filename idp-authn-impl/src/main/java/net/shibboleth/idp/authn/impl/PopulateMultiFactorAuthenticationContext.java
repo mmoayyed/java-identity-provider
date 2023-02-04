@@ -32,7 +32,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
@@ -44,6 +43,7 @@ import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that creates and populates a {@link MultiFactorAuthenticationContext} with the set of

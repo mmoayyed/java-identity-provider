@@ -52,8 +52,10 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Positive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.LangBearingString;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -125,11 +127,11 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     public BasicAdministrativeFlowDescriptor(@Nonnull @NotEmpty @ParameterName(name="id") final String id) {
         super(id);
         
-        supportsNonBrowserPredicate = Predicates.alwaysTrue();
-        authenticatedPredicate = Predicates.alwaysFalse();
+        supportsNonBrowserPredicate = PredicateSupport.alwaysTrue();
+        authenticatedPredicate = PredicateSupport.alwaysFalse();
         policyNameLookupStrategy = FunctionSupport.constant(null);
-        resolveAttributesPredicate = Predicates.alwaysFalse();
-        forceAuthnPredicate = Predicates.alwaysFalse();
+        resolveAttributesPredicate = PredicateSupport.alwaysFalse();
+        forceAuthnPredicate = PredicateSupport.alwaysFalse();
         
         builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
         uiInfo = ((SAMLObjectBuilder<UIInfo>) builderFactory.<UIInfo>getBuilderOrThrow(
@@ -178,7 +180,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      * @param flag flag to set
      */
     public void setNonBrowserSupported(final boolean flag) {
-        supportsNonBrowserPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        supportsNonBrowserPredicate = flag ? PredicateSupport.alwaysTrue() : PredicateSupport.alwaysFalse();
     }
     
     /**
@@ -201,7 +203,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      * @param flag flag to set
      */
     public void setAuthenticated(final boolean flag) {
-        authenticatedPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        authenticatedPredicate = flag ? PredicateSupport.alwaysTrue() : PredicateSupport.alwaysFalse();
     }
     
     /**
@@ -341,7 +343,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      * @param flag flag to set
      */
     public void setResolveAttributes(final boolean flag) {
-        resolveAttributesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        resolveAttributesPredicate = flag ? PredicateSupport.alwaysTrue() : PredicateSupport.alwaysFalse();
     }
     
     /**
@@ -356,13 +358,13 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
@@ -389,16 +391,16 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
                         principals.add(p);
                     }
                 });
-                return List.copyOf(principals);
+                return CollectionSupport.copyToList(principals);
             }
         }
         
         final Collection<Principal> methods = defaultAuthenticationMethodsLookupStrategy.apply(profileRequestContext);
         if (methods != null) {
-            return List.copyOf(methods);
+            return CollectionSupport.copyToList(methods);
         }
         
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
     
     /**
@@ -460,9 +462,9 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return Set.copyOf(flows);
+            return CollectionSupport.copyToSet(flows);
         }
-        return Collections.emptySet();
+        return CollectionSupport.emptySet();
     }
 
     /**
@@ -495,9 +497,9 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return List.copyOf(flows);
+            return CollectionSupport.copyToList(flows);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
     
     /**
@@ -536,7 +538,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      * @param flag flag to set
      */
     public void setForceAuthn(final boolean flag) {
-        forceAuthnPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        forceAuthnPredicate = flag ? PredicateSupport.alwaysTrue() : PredicateSupport.alwaysFalse();
     }
     
     /**

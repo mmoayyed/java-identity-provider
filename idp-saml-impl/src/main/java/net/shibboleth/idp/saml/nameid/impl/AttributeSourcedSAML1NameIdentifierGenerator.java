@@ -33,7 +33,6 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.profile.AbstractSAML1NameIdentifierGenerator;
 import org.opensaml.saml.saml1.profile.SAML1ObjectSupport;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -49,6 +48,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**

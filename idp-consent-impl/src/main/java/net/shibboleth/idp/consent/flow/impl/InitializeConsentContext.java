@@ -19,13 +19,13 @@ package net.shibboleth.idp.consent.flow.impl;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Action that creates a {@link ConsentContext} and attaches it to the current {@link ProfileRequestContext}.

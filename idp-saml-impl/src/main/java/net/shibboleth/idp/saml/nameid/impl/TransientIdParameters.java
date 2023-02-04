@@ -30,12 +30,12 @@ import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.stream.JsonGenerator;
 
+import org.slf4j.Logger;
+
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Parameters we need to store in, and get out of a transient ID, namely the attribute recipient (aka the SP) and

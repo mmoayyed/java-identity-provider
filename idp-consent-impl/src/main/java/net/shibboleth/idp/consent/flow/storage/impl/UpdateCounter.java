@@ -21,13 +21,13 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Consent action which maintains a storage record whose value is the current time in milliseconds. The storage record

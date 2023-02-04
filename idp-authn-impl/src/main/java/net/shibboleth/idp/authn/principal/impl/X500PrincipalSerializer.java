@@ -41,13 +41,13 @@ import javax.json.stream.JsonGenerator;
 import javax.security.auth.x500.X500Principal;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.Base64Support;
 import net.shibboleth.shared.codec.DecodingException;
 import net.shibboleth.shared.codec.EncodingException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Principal serializer for {@link X500Principal}.

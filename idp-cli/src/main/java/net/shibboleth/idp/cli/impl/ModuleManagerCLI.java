@@ -34,7 +34,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -45,12 +44,13 @@ import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.IdPModule.ModuleResource;
 import net.shibboleth.idp.module.IdPModule.ResourceResult;
+import net.shibboleth.idp.module.ModuleContext;
+import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
-import net.shibboleth.idp.module.ModuleContext;
-import net.shibboleth.idp.module.ModuleException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Command line for {@link IdPModule} management.

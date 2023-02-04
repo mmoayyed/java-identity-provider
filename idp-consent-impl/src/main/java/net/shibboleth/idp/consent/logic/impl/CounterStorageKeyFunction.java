@@ -33,7 +33,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
@@ -44,6 +43,7 @@ import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.ConstraintViolationException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Function to order storage keys by least-used and oldest first during pruning of storage records.

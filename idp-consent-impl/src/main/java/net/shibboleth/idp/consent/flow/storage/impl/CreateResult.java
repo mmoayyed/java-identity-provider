@@ -24,15 +24,14 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.storage.impl.ConsentResult;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Consent action to create a consent result representing the result of a consent flow. The result is added to the
  * profile interceptor context for eventual storage by a storage service. The result of the consent flow is created from

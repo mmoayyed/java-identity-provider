@@ -25,7 +25,6 @@ import javax.sql.DataSource;
 
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.DurablePairwiseIdStore;
 import net.shibboleth.idp.attribute.PairwiseId;
@@ -37,6 +36,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An abstract decoder which contains the logic to decode SAML persistent IDs that are managed with a

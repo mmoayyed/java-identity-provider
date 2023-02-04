@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Default comparator implementation for comparing CAS service URLs. URL comparison is case-insensitive and supports

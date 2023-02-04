@@ -52,8 +52,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;

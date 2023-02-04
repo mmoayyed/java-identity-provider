@@ -20,9 +20,9 @@ package net.shibboleth.idp.plugin;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.Version;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** Useful methods for supporting plugins. 
  *

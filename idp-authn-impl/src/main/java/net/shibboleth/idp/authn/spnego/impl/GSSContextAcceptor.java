@@ -31,8 +31,8 @@ import org.ietf.jgss.GSSException;
 import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.Oid;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Helper class that manages context establishment for the SPNEGO GSS-API mechanism.
  * 

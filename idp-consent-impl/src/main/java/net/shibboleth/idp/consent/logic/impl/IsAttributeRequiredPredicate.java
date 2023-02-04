@@ -20,10 +20,10 @@ package net.shibboleth.idp.consent.logic.impl;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -34,14 +34,15 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.navigate.AttributeConsumerServiceLookupFunction;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Multimap;
 
 import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
-import java.util.function.Predicate;
+import net.shibboleth.shared.primitive.LoggerFactory;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Predicate that determines whether an IdP attribute is required by the requester.

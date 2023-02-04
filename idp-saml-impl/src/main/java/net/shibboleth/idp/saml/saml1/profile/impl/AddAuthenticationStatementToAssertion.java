@@ -34,7 +34,7 @@ import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.SubjectLocality;
 import org.opensaml.saml.saml1.profile.SAML1ActionSupport;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;

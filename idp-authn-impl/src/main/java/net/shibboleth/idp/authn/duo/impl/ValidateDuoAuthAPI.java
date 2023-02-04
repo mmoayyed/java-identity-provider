@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.duo.impl;
 
+
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.duosecurity.duoweb.DuoWebException;
 
@@ -50,6 +50,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that checks for a {@link DuoAuthenticationContext} and directly produces an

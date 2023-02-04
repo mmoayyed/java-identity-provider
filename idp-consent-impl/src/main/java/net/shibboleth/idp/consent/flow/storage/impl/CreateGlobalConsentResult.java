@@ -24,16 +24,16 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.consent.storage.impl.ConsentResult;
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
-
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.storage.impl.ConsentResult;
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Consent action to create a consent result representing global consent to be stored in a storage service. Global

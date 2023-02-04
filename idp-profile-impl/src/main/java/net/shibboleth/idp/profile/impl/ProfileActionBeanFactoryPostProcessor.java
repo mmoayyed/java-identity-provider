@@ -20,12 +20,12 @@ package net.shibboleth.idp.profile.impl;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
 import net.shibboleth.shared.annotation.Prototype;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Post-processes bean configuration metadata to ensure that stateful beans are scoped properly.

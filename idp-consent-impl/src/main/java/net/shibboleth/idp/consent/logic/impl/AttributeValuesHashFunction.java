@@ -34,7 +34,6 @@ import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
@@ -45,6 +44,7 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.codec.Base64Support;
 import net.shibboleth.shared.codec.EncodingException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.xml.SerializeSupport;
 
 /**

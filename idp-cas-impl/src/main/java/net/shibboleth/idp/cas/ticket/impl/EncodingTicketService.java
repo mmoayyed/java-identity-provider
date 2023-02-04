@@ -22,6 +22,9 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.storage.StorageService;
+import org.slf4j.Logger;
+
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
@@ -30,11 +33,8 @@ import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.DataSealer;
-
-import org.opensaml.storage.StorageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Ticket service that uses two different strategies for ticket persistence:

@@ -30,7 +30,7 @@ import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** Decodes an incoming Shibboleth Authentication Request message. */
 public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSORequestMessageDecoder {

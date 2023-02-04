@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
@@ -38,6 +37,7 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}

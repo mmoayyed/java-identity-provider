@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 
@@ -32,6 +31,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Action to fail if asked to perform C14N ..

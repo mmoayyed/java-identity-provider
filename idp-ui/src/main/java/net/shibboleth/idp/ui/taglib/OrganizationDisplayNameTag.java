@@ -20,13 +20,15 @@ package net.shibboleth.idp.ui.taglib;
 import java.io.IOException;
 
 import javax.annotation.Nullable;
+
+import org.slf4j.Logger;
+
+import net.shibboleth.shared.codec.HTMLEncoder;
+import net.shibboleth.shared.primitive.LoggerFactory;
+
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
-import net.shibboleth.shared.codec.HTMLEncoder;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Service OrganizationDisplayName - directly from the metadata if present. */
 public class OrganizationDisplayNameTag extends ServiceTagSupport {

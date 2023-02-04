@@ -28,7 +28,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -42,6 +41,7 @@ import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Action to perform subject canonicalization, transforming the input {@link javax.security.auth.Subject}

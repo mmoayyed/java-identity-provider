@@ -27,13 +27,13 @@ import javax.security.auth.Subject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.filter.FilterScriptContextExtender;
 import net.shibboleth.idp.attribute.resolver.scripted.ResolverScriptContextExtender;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An extender that supplements an IdP {@link ScriptContext} with {@link Subject} information. 

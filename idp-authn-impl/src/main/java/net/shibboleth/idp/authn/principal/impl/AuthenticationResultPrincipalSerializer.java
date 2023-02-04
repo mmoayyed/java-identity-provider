@@ -40,13 +40,13 @@ import javax.json.stream.JsonGenerator;
 
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Principal serializer for {@link AuthenticationResultPrincipal}.

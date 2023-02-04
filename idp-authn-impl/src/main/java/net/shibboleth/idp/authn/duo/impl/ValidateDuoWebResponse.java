@@ -33,11 +33,9 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.duosecurity.duoweb.DuoWebException;
 
-import jakarta.servlet.ServletRequest;
 import net.shibboleth.idp.authn.AuthnAuditFields;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -50,6 +48,9 @@ import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrate
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
+
+import jakarta.servlet.ServletRequest;
 
 /**
  * An action that validates a DuoWeb response message and produces an

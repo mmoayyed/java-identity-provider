@@ -30,7 +30,6 @@ import javax.security.auth.Subject;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -41,6 +40,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.ConstraintViolationException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that executes a deployer-supplied function and produces an

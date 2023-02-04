@@ -23,11 +23,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.Parameter;
 
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Command line arguments for {@link JarCheckCLI}.

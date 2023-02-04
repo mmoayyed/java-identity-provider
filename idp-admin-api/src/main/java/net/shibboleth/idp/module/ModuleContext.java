@@ -33,6 +33,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -64,7 +65,7 @@ public final class ModuleContext {
      */
     public ModuleContext(@Nonnull @NotEmpty final String home) {
         idpHome = Constraint.isNotEmpty(home, "Home location cannot be null or empty");
-        languageRanges = Collections.emptyList();
+        languageRanges = CollectionSupport.emptyList();
     }
 
     /**
@@ -153,9 +154,9 @@ public final class ModuleContext {
      */
     public void setLanguageRanges(@Nullable @NonnullElements final List<LanguageRange> ranges) {
         if (ranges != null) {
-            languageRanges = List.copyOf(ranges);
+            languageRanges = CollectionSupport.copyToList(ranges);
         } else {
-            languageRanges = Collections.emptyList();
+            languageRanges = CollectionSupport.emptyList();
         }
     }
 

@@ -22,17 +22,17 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.consent.context.ConsentContext;
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
-import net.shibboleth.shared.logic.Constraint;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Base class for consent actions.

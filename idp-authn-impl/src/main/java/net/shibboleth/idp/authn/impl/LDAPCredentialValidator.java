@@ -36,7 +36,6 @@ import org.ldaptive.auth.User;
 import org.ldaptive.jaas.LdapPrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.AbstractUsernamePasswordCredentialValidator;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -47,6 +46,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A password validator that authenticates against LDAP natively.

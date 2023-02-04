@@ -36,13 +36,13 @@ import javax.json.spi.JsonProvider;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 
+import org.opensaml.storage.StorageSerializer;
+import org.slf4j.Logger;
+
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
-
-import org.opensaml.storage.StorageSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Serializes a {@link Collection} of strings. <code>Null</code> elements and non-string values are ignored.

@@ -41,7 +41,6 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.opensaml.saml.saml2.profile.SAML2ActionSupport;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
@@ -55,6 +54,7 @@ import net.shibboleth.idp.saml.saml2.profile.config.logic.SuppressAuthenticating
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Action that builds an {@link AuthnStatement} and adds it to an {@link Assertion} returned by a lookup

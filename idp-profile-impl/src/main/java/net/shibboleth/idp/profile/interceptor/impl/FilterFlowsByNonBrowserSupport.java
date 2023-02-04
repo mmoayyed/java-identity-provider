@@ -23,13 +23,13 @@ import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A profile interceptor action that filters out available interceptor flows if the request requires non-browser support

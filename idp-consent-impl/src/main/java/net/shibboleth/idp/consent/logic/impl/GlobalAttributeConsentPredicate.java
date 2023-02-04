@@ -19,18 +19,18 @@ package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.consent.context.ConsentContext;
-import java.util.function.Predicate;
-
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Predicate to determine whether global consent has been given by user.

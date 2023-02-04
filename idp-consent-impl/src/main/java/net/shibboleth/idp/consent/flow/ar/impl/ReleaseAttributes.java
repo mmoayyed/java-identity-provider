@@ -22,16 +22,16 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Attribute consent action which constrains the attributes released to those consented to.

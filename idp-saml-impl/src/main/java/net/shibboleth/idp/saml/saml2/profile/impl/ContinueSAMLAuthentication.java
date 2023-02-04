@@ -31,7 +31,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that checks for an {@link ExternalAuthenticationContext} for a signaled event via the

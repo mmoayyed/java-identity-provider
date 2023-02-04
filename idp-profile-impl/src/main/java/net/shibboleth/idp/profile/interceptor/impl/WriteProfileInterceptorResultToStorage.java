@@ -34,8 +34,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * A profile interceptor action that writes a {@link ProfileInterceptorResult} to a {@link StorageService}.
  * 

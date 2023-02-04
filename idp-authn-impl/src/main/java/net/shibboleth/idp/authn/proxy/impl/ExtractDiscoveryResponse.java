@@ -18,17 +18,18 @@
 package net.shibboleth.idp.authn.proxy.impl;
 
 import javax.annotation.Nonnull;
-import jakarta.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.StringSupport;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * An action that extracts a discovery service result and copies it to the {@link AuthenticationContext}.

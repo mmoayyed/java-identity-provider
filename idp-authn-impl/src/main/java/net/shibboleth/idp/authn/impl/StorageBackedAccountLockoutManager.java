@@ -30,9 +30,7 @@ import org.opensaml.storage.StorageCapabilities;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AccountLockoutManager;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.LockoutManagerContext;
@@ -44,8 +42,11 @@ import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponen
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.servlet.HttpServletSupport;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Implementation of {@link AccountLockoutManager} interface that relies on a {@link StorageService}

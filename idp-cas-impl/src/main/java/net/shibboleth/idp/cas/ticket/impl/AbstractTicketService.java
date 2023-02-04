@@ -25,6 +25,11 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
+import org.opensaml.storage.StorageService;
+import org.slf4j.Logger;
+
 import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.config.ValidateConfiguration;
@@ -37,13 +42,7 @@ import net.shibboleth.idp.cas.ticket.serialization.impl.ProxyGrantingTicketSeria
 import net.shibboleth.idp.cas.ticket.serialization.impl.ProxyTicketSerializer;
 import net.shibboleth.idp.cas.ticket.serialization.impl.ServiceTicketSerializer;
 import net.shibboleth.shared.logic.Constraint;
-
-import org.opensaml.storage.StorageRecord;
-import org.opensaml.storage.StorageSerializer;
-import org.opensaml.storage.StorageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Abstract base class for ticket services that rely on {@link StorageService} for ticket storage.
  *

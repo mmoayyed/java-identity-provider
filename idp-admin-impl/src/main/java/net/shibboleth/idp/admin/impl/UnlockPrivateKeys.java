@@ -35,13 +35,13 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.credential.MutableCredential;
 import org.opensaml.security.crypto.KeySupport;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Action that creates private key objects and injects them into existing

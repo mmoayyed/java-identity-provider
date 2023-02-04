@@ -30,12 +30,12 @@ import org.opensaml.messaging.handler.AbstractMessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.impl.SAMLRelyingPartyIdLookupStrategy;
 import net.shibboleth.idp.saml.profile.impl.SAMLVerificationLookupStrategy;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Message handler that adds a {@link RelyingPartyContext} to the current {@link InOutOperationContext} tree

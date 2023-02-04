@@ -23,6 +23,11 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.session.impl.CASSPSession;
 import net.shibboleth.idp.cas.ticket.Ticket;
@@ -32,14 +37,9 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventException;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Conditionally updates the {@link IdPSession} with a {@link CASSPSession} to support SLO.

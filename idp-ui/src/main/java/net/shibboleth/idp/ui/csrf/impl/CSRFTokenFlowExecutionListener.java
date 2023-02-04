@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.FlowExecutionListener;

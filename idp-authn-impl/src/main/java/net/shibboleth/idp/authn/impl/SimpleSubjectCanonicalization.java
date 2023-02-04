@@ -32,7 +32,8 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current

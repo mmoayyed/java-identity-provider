@@ -17,20 +17,23 @@
 
 package net.shibboleth.idp.authn.impl;
 
+
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
-import jakarta.servlet.http.HttpServletRequest;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
 
 import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.CertificateContext;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletRequest;
+
 
 /**
  * An action that extracts an X.509 certificate from the standard servlet request attribute,

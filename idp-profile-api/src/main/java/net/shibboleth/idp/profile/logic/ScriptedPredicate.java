@@ -26,14 +26,14 @@ import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
-import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.scripting.EvaluableScript;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
+
+import net.shibboleth.shared.annotation.ParameterName;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.scripting.EvaluableScript;
 
 /**
  * A {@link java.util.function.Predicate} which calls out to a supplied script.

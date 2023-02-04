@@ -23,7 +23,6 @@ import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -34,6 +33,7 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Populates error information needed for protocol error messages.

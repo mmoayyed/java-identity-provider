@@ -18,8 +18,14 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import java.time.Instant;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
@@ -29,13 +35,7 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.shared.logic.Constraint;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventException;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Action that builds the chain of visited proxies for a successful proxy ticket validation event. Possible outcomes:
  *

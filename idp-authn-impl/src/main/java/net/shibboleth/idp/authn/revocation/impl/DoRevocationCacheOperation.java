@@ -21,25 +21,14 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
 
-import jakarta.servlet.http.HttpServletResponse;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.SpringRequestContext;
-import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.xml.DOMTypeSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.RevocationCache;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -48,6 +37,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jasminb.jsonapi.models.errors.Error;
 import com.github.jasminb.jsonapi.models.errors.Errors;
 import com.google.common.base.Strings;
+
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.SpringRequestContext;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.xml.DOMTypeSupport;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Action that implements a JSON REST API for the {@link RevocationCache} interface.

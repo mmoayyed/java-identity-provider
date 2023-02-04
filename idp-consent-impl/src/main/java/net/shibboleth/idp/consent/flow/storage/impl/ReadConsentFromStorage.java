@@ -22,14 +22,13 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Consent action which reads consent records from storage and adds the serialized consent records to the consent
  * context as previous consents.

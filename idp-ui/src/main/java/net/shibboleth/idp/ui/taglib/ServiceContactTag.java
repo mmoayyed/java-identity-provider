@@ -32,7 +32,7 @@ import org.opensaml.saml.saml2.metadata.EmailAddress;
 import org.opensaml.saml.saml2.metadata.GivenName;
 import org.opensaml.saml.saml2.metadata.SurName;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** return the contactInfo for the SP or null. */
 public class ServiceContactTag extends ServiceTagSupport {

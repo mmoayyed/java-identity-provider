@@ -19,6 +19,13 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.springframework.webflow.core.collection.ParameterMap;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
@@ -28,14 +35,7 @@ import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.shared.logic.Constraint;
-
-import org.opensaml.profile.action.EventException;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.webflow.core.collection.ParameterMap;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Initializes the CAS protocol interaction at the <code>/proxy</code> URI. Returns one of the following events:

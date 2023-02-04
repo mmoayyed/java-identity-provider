@@ -35,7 +35,7 @@ import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.StorageService;
 import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;

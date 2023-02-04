@@ -22,6 +22,11 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+
 import net.shibboleth.idp.cas.config.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.config.ProxyConfiguration;
@@ -34,12 +39,7 @@ import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.shared.logic.Constraint;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventException;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * CAS protocol service ticket validation action. Emits one of the following events based on validation result:

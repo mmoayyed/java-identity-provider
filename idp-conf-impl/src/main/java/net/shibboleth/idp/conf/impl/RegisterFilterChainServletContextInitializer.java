@@ -22,14 +22,15 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.DelegatingFilterProxy;
+
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContainerInitializer;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * A {@link ServletContainerInitializer} implementation that registers a filter chain embedded in

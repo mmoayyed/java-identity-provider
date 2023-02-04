@@ -22,10 +22,10 @@ import java.io.PrintStream;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.Parameter;
 
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.DataSealer;
 
 /**

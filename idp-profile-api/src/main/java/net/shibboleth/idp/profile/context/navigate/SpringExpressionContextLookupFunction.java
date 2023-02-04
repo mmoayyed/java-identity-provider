@@ -20,14 +20,14 @@ package net.shibboleth.idp.profile.context.navigate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
+
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.spring.expression.SpringExpressionFunction;
-
-import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link java.util.function.Function} over a {@link BaseContext}

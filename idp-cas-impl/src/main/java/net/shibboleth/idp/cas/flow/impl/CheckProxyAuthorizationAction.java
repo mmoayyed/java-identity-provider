@@ -20,15 +20,15 @@ package net.shibboleth.idp.cas.flow.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.idp.cas.service.ServiceContext;
-
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.idp.cas.service.ServiceContext;
+import net.shibboleth.shared.primitive.LoggerFactory;   
 
 /**
  * Checks the current {@link ServiceContext} to determine whether the service/relying party is authorized to proxy.

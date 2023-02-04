@@ -28,7 +28,6 @@ import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.opensaml.saml.common.SAMLObject;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
@@ -41,6 +40,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.StringDigester;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**

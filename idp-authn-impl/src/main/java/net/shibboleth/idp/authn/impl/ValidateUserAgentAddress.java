@@ -31,7 +31,8 @@ import javax.security.auth.Subject;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -41,8 +42,7 @@ import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.net.IPRange;
-
-import com.google.common.base.Strings;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that ensures that a user-agent address found within a {@link UserAgentContext}

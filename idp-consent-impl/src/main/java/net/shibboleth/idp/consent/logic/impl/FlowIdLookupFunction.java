@@ -20,15 +20,15 @@ package net.shibboleth.idp.consent.logic.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.context.SpringRequestContext;
-
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.execution.FlowExecutionContext;
 import org.springframework.webflow.execution.RequestContext;
+
+import net.shibboleth.idp.profile.context.SpringRequestContext;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * {@link ContextDataLookupFunction} that returns the current flow id.

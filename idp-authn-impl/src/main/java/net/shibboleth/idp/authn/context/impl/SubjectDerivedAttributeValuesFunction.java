@@ -31,7 +31,6 @@ import javax.security.auth.Subject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
@@ -41,7 +40,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
-
+import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * A Function which returns {@link IdPAttributeValue}s derived from the {@link java.security.Principal}s
  * associated with the request. The precise values are determined by an injected {@link Function}.

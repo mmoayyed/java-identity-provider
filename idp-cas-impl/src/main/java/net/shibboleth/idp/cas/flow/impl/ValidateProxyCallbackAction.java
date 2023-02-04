@@ -24,7 +24,6 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import org.apache.http.client.utils.URIBuilder;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -32,7 +31,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.config.SecurityConfiguration;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.cas.config.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.ValidateConfiguration;
@@ -42,12 +40,14 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.proxy.ProxyIdentifiers;
 import net.shibboleth.idp.cas.proxy.ProxyValidator;
+import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 
 /**

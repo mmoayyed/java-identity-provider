@@ -52,7 +52,6 @@ import javax.security.auth.Subject;
 import org.opensaml.security.x509.X509Support;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.GenericPrincipalSerializer;
@@ -68,6 +67,7 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Handles serialization of results, delegating handling of {@link Principal} objects to one or more

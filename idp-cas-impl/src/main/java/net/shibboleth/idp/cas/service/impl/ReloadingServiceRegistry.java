@@ -1,5 +1,6 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development,
+ * Licensed to the Unive
+import net.shibboleth.shared.primitive.LoggerFactory;rsity Corporation for Advanced Internet Development,
  * Inc. (UCAID) under one or more contributor license agreements.  See the
  * NOTICE file distributed with this work for additional information regarding
  * copyright ownership. The UCAID licenses this file to You under the Apache
@@ -21,13 +22,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;

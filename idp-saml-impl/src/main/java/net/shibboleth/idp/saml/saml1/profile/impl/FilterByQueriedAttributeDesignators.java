@@ -36,7 +36,7 @@ import org.opensaml.saml.saml1.core.AttributeDesignator;
 import org.opensaml.saml.saml1.core.AttributeQuery;
 import org.opensaml.saml.saml1.core.Request;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.attribute.AttributeDecodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;

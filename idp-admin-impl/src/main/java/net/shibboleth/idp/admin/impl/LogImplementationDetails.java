@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.StandardSystemProperty;
 
@@ -34,6 +33,7 @@ import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A bean that logs IdP internals when instantiated.

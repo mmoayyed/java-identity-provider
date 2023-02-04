@@ -22,19 +22,19 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import jakarta.servlet.http.HttpServletRequest;
-
-import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.consent.context.ConsentContext;
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Consent action which extracts user input and updates current consent objects in the consent context accordingly.

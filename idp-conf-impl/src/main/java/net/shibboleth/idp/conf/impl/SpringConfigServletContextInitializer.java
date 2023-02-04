@@ -22,7 +22,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
 
 import jakarta.servlet.ServletContainerInitializer;
@@ -30,6 +29,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext;
 
 /**

@@ -21,16 +21,6 @@ import java.time.Instant;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
-import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.cas.ticket.Ticket;
-import net.shibboleth.idp.cas.ticket.TicketState;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;
@@ -53,8 +43,17 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
+import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.idp.cas.ticket.Ticket;
+import net.shibboleth.idp.cas.ticket.TicketState;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.StringSupport;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 /**
  * Creates the SAML response message for successful ticket validation at the <code>/samlValidate</code> URI.
  *
