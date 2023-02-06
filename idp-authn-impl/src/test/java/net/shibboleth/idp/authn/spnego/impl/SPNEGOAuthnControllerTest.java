@@ -255,7 +255,7 @@ public class SPNEGOAuthnControllerTest {
         final AuthenticationContext authnContext =
                 ((BaseContext) req.getConversationScope().get(ProfileRequestContext.BINDING_KEY)).getSubcontext(AuthenticationContext.class);
         final SPNEGOContext spnegoContext = authnContext != null ? authnContext.getSubcontext(SPNEGOContext.class) : null;
-        Assert.assertNotNull(spnegoContext);
+        assert spnegoContext != null;
         Assert.assertEquals(spnegoContext.getContextAcceptor(), mockGSSContextAcceptor);
     }
 

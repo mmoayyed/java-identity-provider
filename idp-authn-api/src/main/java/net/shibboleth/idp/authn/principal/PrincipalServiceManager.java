@@ -20,14 +20,12 @@ package net.shibboleth.idp.authn.principal;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.shared.annotation.ParameterName;

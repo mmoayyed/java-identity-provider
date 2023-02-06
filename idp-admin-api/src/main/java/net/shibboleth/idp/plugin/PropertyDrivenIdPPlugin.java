@@ -167,9 +167,9 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
         
         urls.addAll(getDefaultUpdateURLs());
         
-        updateURLs = List.copyOf(urls);
+        updateURLs = CollectionSupport.copyToList(urls);
         
-        requiredModules = Set.copyOf(StringSupport.normalizeStringCollection(
+        requiredModules = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(
                 StringSupport.stringToList(pluginProperties.getProperty(PLUGIN_REQ_MODULES_PROPERTY, ""), ",")));
 
         log.debug("Plugin {} loaded", getPluginId());

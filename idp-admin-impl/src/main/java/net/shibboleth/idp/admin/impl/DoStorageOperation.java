@@ -119,11 +119,25 @@ public class DoStorageOperation extends AbstractProfileAction {
             throw new ComponentInitializationException("ObjectMapper cannot be null");
         }
     }
+    
+    /** Null safe key getter.
+     * @return Returns the key.
+     */
+    @Nonnull private String getKeyInExecute() {
+        return Constraint.isNotNull(key, "null key not detected in preExecute");
+    }
+
+    /** Null safe context getter.
+     * @return Returns the context.
+     */
+    @Nonnull private String getContextInExecute() {
+        return Constraint.isNotNull(context, "null context not detected in preExecute");
+    }
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -179,11 +193,11 @@ public class DoStorageOperation extends AbstractProfileAction {
 // Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         try {
-            final HttpServletRequest request = getHttpServletRequest();
-            final HttpServletResponse response = getHttpServletResponse();
+            @Nonnull final HttpServletRequest request = Constraint.isNotNull(getHttpServletRequest(), "No Servlet request present");
+            @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
             
             response.setContentType("application/json");
             response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
@@ -233,17 +247,19 @@ public class DoStorageOperation extends AbstractProfileAction {
     private void doRead() throws IOException {
         final StorageRecord<?> record;
         try {
-            record = storageService.read(context, key);
+            @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
+            @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
+            record = storageServ.read(getContextInExecute(), getKeyInExecute());
             if (record != null) {
-                getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+                response.setStatus(HttpServletResponse.SC_OK);
                 final JsonFactory jsonFactory = new JsonFactory();
                 try (final JsonGenerator g = jsonFactory.createGenerator(
-                        getHttpServletResponse().getOutputStream()).useDefaultPrettyPrinter()) {
+                        response.getOutputStream()).useDefaultPrettyPrinter()) {
                     g.setCodec(objectMapper);
                     g.writeStartObject();
                     g.writeObjectFieldStart("data");
                     g.writeStringField("type", "records");
-                    g.writeStringField("id", storageService.getId() + '/' + context +'/' + key);
+                    g.writeStringField("id", storageServ.getId() + '/' + context +'/' + key);
                     g.writeObjectFieldStart("attributes");
                     g.writeStringField("value", record.getValue());
                     g.writeNumberField("version", record.getVersion());
@@ -268,8 +284,12 @@ public class DoStorageOperation extends AbstractProfileAction {
      * @throws IOException if an error is raised
      */
     private void doCreate() throws IOException {
+        @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
+        @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
+        @Nonnull final HttpServletRequest request = Constraint.isNotNull(getHttpServletRequest(), "No Servlet request present");
+
         final JsonFactory jsonFactory = new JsonFactory();
-        final JsonParser parser = jsonFactory.createParser(getHttpServletRequest().getInputStream());
+        final JsonParser parser = jsonFactory.createParser(request.getInputStream());
         
         if (parser.nextToken() != JsonToken.START_OBJECT) {
             throw new IOException("Expected data to start with an Object");
@@ -292,8 +312,8 @@ public class DoStorageOperation extends AbstractProfileAction {
             throw new IOException("Input missing 'val' field");
         }
         
-        if (storageService.create(context, key, value, exp)) {
-            getHttpServletResponse().setStatus(HttpServletResponse.SC_CREATED);
+        if (storageServ.create(getContextInExecute(), getKeyInExecute(), value, exp)) {
+            response.setStatus(HttpServletResponse.SC_CREATED);
         } else {
             sendError(HttpServletResponse.SC_CONFLICT, "Duplicate Record",
                     "Context and key matched an existing record.");
@@ -308,7 +328,11 @@ public class DoStorageOperation extends AbstractProfileAction {
      */
     private void doUpdate() throws IOException {
         final JsonFactory jsonFactory = new JsonFactory();
-        final JsonParser parser = jsonFactory.createParser(getHttpServletRequest().getInputStream());
+        @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
+        @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
+        @Nonnull final HttpServletRequest request = Constraint.isNotNull(getHttpServletRequest(), "No Servlet request present");
+
+        final JsonParser parser = jsonFactory.createParser(request .getInputStream());
         
         if (parser.nextToken() != JsonToken.START_OBJECT) {
             throw new IOException("Expected data to start with an Object");
@@ -336,9 +360,9 @@ public class DoStorageOperation extends AbstractProfileAction {
         
         if (version != null) {
             try {
-                version = storageService.updateWithVersion(version, context, key, value, exp);
+                version = storageServ.updateWithVersion(version, getContextInExecute(), getKeyInExecute(), value, exp);
                 if (version != null) {
-                    getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+                    response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     sendError(HttpServletResponse.SC_NOT_FOUND, "Not Found", "Record to update was absent.");
                 }
@@ -346,10 +370,10 @@ public class DoStorageOperation extends AbstractProfileAction {
                 sendError(HttpServletResponse.SC_CONFLICT, "Version Mismatch", "Record version did not match.");
             }
         } else {
-            if (storageService.update(context, key, value, exp)) {
-                getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
-            } else if (storageService.create(context, key, value, exp)) {
-                getHttpServletResponse().setStatus(HttpServletResponse.SC_CREATED);
+            if (storageServ.update(getContextInExecute(), getKeyInExecute(), value, exp)) {
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else if (storageServ.create(getContextInExecute(), getKeyInExecute(), value, exp)) {
+                response.setStatus(HttpServletResponse.SC_CREATED);
             } else {
                 sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
                         "Record to update was absent and create attempt failed.");
@@ -365,8 +389,11 @@ public class DoStorageOperation extends AbstractProfileAction {
      */
     private void doDelete() throws IOException {
         try {
-            if (storageService.delete(context, key)) {
-                getHttpServletResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+            @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
+            @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
+
+            if (storageServ.delete(getContextInExecute(), getKeyInExecute())) {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } else {
                 sendError(HttpServletResponse.SC_NOT_FOUND,
                         "Record Not Found", "The specified record was not present or has expired.");
@@ -388,7 +415,7 @@ public class DoStorageOperation extends AbstractProfileAction {
     private void sendError(final int status, @Nonnull @NotEmpty final String title,
             @Nonnull @NotEmpty final String detail) throws IOException {
         
-        final HttpServletResponse response = getHttpServletResponse();
+        @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
         response.setContentType("application/json");
         response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
         response.setStatus(status);

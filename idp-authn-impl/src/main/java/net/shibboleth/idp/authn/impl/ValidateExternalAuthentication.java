@@ -50,6 +50,7 @@ import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceException;
@@ -163,33 +164,33 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        if (extContext.getAuthnException() != null) {
-            log.info("{} External authentication produced exception", getLogPrefix(), extContext.getAuthnException());
-            handleError(profileRequestContext, authenticationContext, extContext.getAuthnException(),
+        @Nonnull ExternalAuthenticationContext localExtContext = Constraint.isNotNull(extContext, "external Authn Context cannot be null");
+        if (localExtContext.getAuthnException() != null) {
+            log.info("{} External authentication produced exception", getLogPrefix(), localExtContext.getAuthnException());
+            handleError(profileRequestContext, authenticationContext, localExtContext.getAuthnException(),
                     AuthnEventIds.AUTHN_EXCEPTION);
             recordFailure(profileRequestContext);
             return;
-        } else if (extContext.getAuthnError() != null) {
+        } else if (localExtContext.getAuthnError() != null) {
             log.info("{} External authentication produced error message: {}", getLogPrefix(),
-                    extContext.getAuthnError());
-            handleError(profileRequestContext, authenticationContext, extContext.getAuthnError(),
+                    localExtContext.getAuthnError());
+            handleError(profileRequestContext, authenticationContext, localExtContext.getAuthnError(),
                     AuthnEventIds.AUTHN_EXCEPTION);
             recordFailure(profileRequestContext);
             return;
         }
-        
-        if (extContext.getSubject() != null) {
+        if (localExtContext.getSubject() != null) {
             log.info("{} External authentication succeeded for Subject", getLogPrefix());
-        } else if (extContext.getPrincipal() != null) {
+        } else if (localExtContext.getPrincipal() != null) {
             log.info("{} External authentication succeeded for Principal: {}", getLogPrefix(),
-                    extContext.getPrincipal());
-            extContext.setSubject(new Subject(false, Collections.singleton(extContext.getPrincipal()),
+                    localExtContext.getPrincipal());
+            localExtContext.setSubject(new Subject(false, Collections.singleton(localExtContext.getPrincipal()),
                     Collections.emptySet(), Collections.emptySet()));
-        } else if (extContext.getPrincipalName() != null) {
+        } else if (localExtContext.getPrincipalName() != null) {
             log.info("{} External authentication succeeded for user: {}", getLogPrefix(),
-                    extContext.getPrincipalName());
-            extContext.setSubject(new Subject(false,
-                    Collections.singleton(new UsernamePrincipal(extContext.getPrincipalName())),
+                    localExtContext.getPrincipalName());
+            localExtContext.setSubject(new Subject(false,
+                    Collections.singleton(new UsernamePrincipal(localExtContext.getPrincipalName())),
                     Collections.emptySet(), Collections.emptySet()));
         } else {
             log.info("{} External authentication failed, no user identity or error information returned",
@@ -199,7 +200,7 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
             return;
         }
         
-        if (!checkUsername(extContext.getSubject())) {
+        if (!checkUsername(localExtContext.getSubject())) {
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                     AuthnEventIds.INVALID_CREDENTIALS);
             recordFailure(profileRequestContext);
@@ -208,13 +209,13 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         
         recordSuccess(profileRequestContext);
         
-        if (!extContext.getAuthenticatingAuthorities().isEmpty()) {
+        if (!localExtContext.getAuthenticatingAuthorities().isEmpty()) {
             final ProxyAuthenticationPrincipal proxied =
-                    new ProxyAuthenticationPrincipal(extContext.getAuthenticatingAuthorities());
-            extContext.getSubject().getPrincipals().add(proxied);
+                    new ProxyAuthenticationPrincipal(localExtContext.getAuthenticatingAuthorities());
+            localExtContext.getSubject().getPrincipals().add(proxied);
         }
         
-        if (extContext.doNotCache()) {
+        if (localExtContext.doNotCache()) {
             log.debug("{} Disabling caching of authentication result", getLogPrefix());
             authenticationContext.setResultCacheable(false);
         }
@@ -224,10 +225,10 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         
         if (authenticationContext.getAuthenticationResult() != null) {
-            if (extContext.getAuthnInstant() != null) {
-                authenticationContext.getAuthenticationResult().setAuthenticationInstant(extContext.getAuthnInstant());
+            if (localExtContext.getAuthnInstant() != null) {
+                authenticationContext.getAuthenticationResult().setAuthenticationInstant(localExtContext.getAuthnInstant());
             }
-            if (extContext.isPreviousResult()) {
+            if (localExtContext.isPreviousResult()) {
                 authenticationContext.getAuthenticationResult().setPreviousResult(true);
             }
         }
@@ -239,16 +240,17 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         // Override supplied Subject with our own, after transferring over any custom Principals
         // and adding any filtered inbound attributes.
-        extContext.getSubject().getPrincipals().addAll(subject.getPrincipals());
+        @Nonnull ExternalAuthenticationContext localExtContext = Constraint.isNotNull(extContext, "external Authn Context cannot be null");
+        localExtContext.getSubject().getPrincipals().addAll(subject.getPrincipals());
         
         if (attributeContext != null && !attributeContext.getIdPAttributes().isEmpty()) {
             log.debug("{} Adding filtered inbound attributes to Subject", getLogPrefix());
-            extContext.getSubject().getPrincipals().addAll(
+            localExtContext.getSubject().getPrincipals().addAll(
                 attributeContext.getIdPAttributes().values().stream().map(
                         (IdPAttribute a) -> new IdPAttributePrincipal(a)).collect(Collectors.toList()));
         }
         
-        return extContext.getSubject();
+        return localExtContext.getSubject();
     }
     
     /**

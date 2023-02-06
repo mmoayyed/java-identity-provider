@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.plugin;
 
-import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnegative;
@@ -28,6 +27,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
  * A base class implementing {@link IdPPlugin} that defaults common settings.
@@ -44,13 +44,15 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
 
     /** Constructor. */
     public AbstractIdPPlugin() {
-        enableModules = Collections.emptySet();
-        disableModules = Collections.emptySet();
+        enableModules = CollectionSupport.emptySet();
+        disableModules = CollectionSupport.emptySet();
     }
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getPluginId() {
-        return getClass().getPackageName();
+        final String result = getClass().getPackageName();
+        assert result != null;
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -60,7 +62,7 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<String> getRequiredModules() {
-        return Collections.emptySet();
+        return CollectionSupport.emptySet();
     }
 
     /** {@inheritDoc} */
@@ -79,7 +81,7 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
      * @param modules modules to enable
      */
     protected void setEnableOnInstall(@Nonnull @NonnullElements final Set<IdPModule> modules) {
-        enableModules = Set.copyOf(modules);
+        enableModules = CollectionSupport.copyToSet(modules);
     }
 
     /** {@inheritDoc} */
@@ -93,7 +95,7 @@ public abstract class AbstractIdPPlugin implements IdPPlugin {
      * @param modules modules to disable
      */
     protected void setDisableOnRemoval(@Nonnull @NonnullElements final Set<IdPModule> modules) {
-        disableModules = Set.copyOf(modules);
+        disableModules = CollectionSupport.copyToSet(modules);
     }
 
     /** {@inheritDoc} */

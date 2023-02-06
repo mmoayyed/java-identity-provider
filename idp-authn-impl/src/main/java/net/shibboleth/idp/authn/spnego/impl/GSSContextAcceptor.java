@@ -32,6 +32,7 @@ import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.Oid;
 import org.slf4j.Logger;
 
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Helper class that manages context establishment for the SPNEGO GSS-API mechanism.
@@ -192,7 +193,7 @@ public class GSSContextAcceptor {
             }
         }
         
-        throw preserved;
+        throw Constraint.isNotNull(preserved, "No realms presented to GssContextAccpetor");
     }
     
     /**
