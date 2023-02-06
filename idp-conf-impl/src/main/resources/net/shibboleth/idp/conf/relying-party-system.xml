@@ -28,11 +28,11 @@
     Auto-wiring exposers for credentials to get them loaded into the bean above.
     The qualifiers control which auto-wiring point is used.
     -->
-    <bean class="net.shibboleth.idp.relyingparty.RelyingPartyResolverCredentialHolder"
+    <bean class="net.shibboleth.spring.security.CredentialHolder"
             c:_0="#{getObject('shibboleth.SigningCredentials')}">
         <qualifier value="signing"/>
     </bean>
-    <bean class="net.shibboleth.idp.relyingparty.RelyingPartyResolverCredentialHolder"
+    <bean class="net.shibboleth.spring.security.CredentialHolder"
             c:_0="#{getObject('shibboleth.EncryptionCredentials')}">
         <qualifier value="encryption"/>
     </bean>

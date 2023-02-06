@@ -45,6 +45,10 @@
             <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-filter-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.shibboleth</groupId>
+            <artifactId>shib-metadata-spring</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>

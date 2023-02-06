@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import net.shibboleth.idp.profile.logic.VerifiedProfilePredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
-import net.shibboleth.idp.relyingparty.RelyingPartyResolverCredentialHolder;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -48,6 +47,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.ResolverException;
+import net.shibboleth.spring.security.CredentialHolder;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context.
@@ -291,7 +291,7 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
     @Autowired
     @Qualifier("signing")
     public void setSigningCredentials(
-            @Nullable @NonnullElements final List<RelyingPartyResolverCredentialHolder> credentials) {
+            @Nullable @NonnullElements final List<CredentialHolder> credentials) {
         checkSetterPreconditions();
         
         if (credentials != null) {
@@ -320,7 +320,7 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
     @Autowired
     @Qualifier("encryption")
     public void setEncryptionCredentials(
-            @Nullable @NonnullElements final List<RelyingPartyResolverCredentialHolder> credentials) {
+            @Nullable @NonnullElements final List<CredentialHolder> credentials) {
         checkSetterPreconditions();
         
         if (credentials != null) {
