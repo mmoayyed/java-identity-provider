@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.nameid.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +30,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
@@ -54,7 +54,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
     
     /** Constructor. */
     public BaseTransformingDecoder() {
-        transforms = Collections.emptyList();
+        transforms = CollectionSupport.emptyList();
     }
     
     /**
@@ -120,9 +120,10 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
             return s;
         }
         
-        for (final Pair<Pattern,String> p : transforms) {            
-            final Matcher m = p.getFirst().matcher(s);
-            log.debug("Applying replacement expression '{}' against input '{}'", p.getFirst().pattern(), s);
+        for (final Pair<Pattern,String> p : transforms) {
+            @Nonnull final Pattern first = Constraint.isNotNull(p.getFirst(), "Transforms did not contain pattern");
+            final Matcher m = first.matcher(s);
+            log.debug("Applying replacement expression '{}' against input '{}'", first.pattern(), s);
             s = m.replaceAll(p.getSecond());
             log.debug("Result of replacement is '{}'", s);
         }

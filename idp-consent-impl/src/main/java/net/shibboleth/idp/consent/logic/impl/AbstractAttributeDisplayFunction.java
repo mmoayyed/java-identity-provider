@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -28,16 +27,19 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
 import net.shibboleth.shared.spring.util.SpringSupport;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Abstract Function which returns {@link Locale}-aware information about an attribute. The abstract method
@@ -75,14 +77,15 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
         languageRange = SpringSupport.getLanguageRange(request);
         transcoder = Constraint.isNotNull(transcoderService, "Injected transocde service should be non-null");
         if (defaultLanguages == null || defaultLanguages.isEmpty()) {
-            defaultLanguageRange = Collections.emptyList();
+            defaultLanguageRange = CollectionSupport.emptyList();
         } else {
             defaultLanguageRange = defaultLanguages.
                     stream().
                     map(StringSupport::trimOrNull).
                     filter(e -> e != null).
                     map(s -> new LanguageRange(s)).
-                    collect(Collectors.toUnmodifiableList());
+                    collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).
+                    get();
         }
     }
 
@@ -98,7 +101,7 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
                     transcoder.getServiceableComponent()) {
                 displayInfo = getDisplayInfo(component.getComponent(), input);
             } catch (final ServiceException e) {
-                // Ignore.
+                displayInfo = CollectionSupport.emptyMap();
             }
             cachedInfo.put(input, displayInfo);
         }

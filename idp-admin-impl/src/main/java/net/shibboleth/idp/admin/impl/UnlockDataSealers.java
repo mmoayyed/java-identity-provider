@@ -19,9 +19,7 @@ package net.shibboleth.idp.admin.impl;
 
 import java.security.KeyException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,6 +32,8 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
 
@@ -69,7 +69,7 @@ public class UnlockDataSealers extends AbstractProfileAction {
 
     /** Constructor. */
     public UnlockDataSealers() {
-        keyStrategies = Collections.emptyList();
+        keyStrategies = CollectionSupport.emptyList();
     }
     
     /**
@@ -81,15 +81,15 @@ public class UnlockDataSealers extends AbstractProfileAction {
         checkSetterPreconditions();
         
         if (strategies != null) {
-            keyStrategies = List.copyOf(strategies);
+            keyStrategies = CollectionSupport.copyToList(strategies);
         } else {
-            keyStrategies = Collections.emptyList();
+            keyStrategies = CollectionSupport.emptyList();
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext) || keyStrategies.isEmpty()) {
             return false;
@@ -103,9 +103,9 @@ public class UnlockDataSealers extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final HttpServletRequest request = getHttpServletRequest();
+        @Nonnull final HttpServletRequest request = Constraint.isNotNull(getHttpServletRequest(), "Could noit locate servlet request");
         
         final String[] keystorePasswords = request.getParameterValues(KEYSTORE_PASSWORD_PARAM_NAME);
         final String[] keyPasswords = request.getParameterValues(KEY_PASSWORD_PARAM_NAME);

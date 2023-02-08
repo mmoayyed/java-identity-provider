@@ -35,10 +35,12 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -139,8 +141,8 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
             return false;
         }
         
-        sessionCtx = sessionContextLookupStrategy.apply(profileRequestContext);
-        if (sessionCtx == null || sessionCtx.getIdPSession() == null) {
+        final SessionContext ctx =  sessionCtx = sessionContextLookupStrategy.apply(profileRequestContext);
+        if (ctx == null || ctx.getIdPSession() == null) {
             log.debug("{} No previous session found, nothing to do", getLogPrefix());
             return false;
         }
@@ -160,25 +162,30 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        if (sessionCtx.getIdPSession().getPrincipalName().equals(newPrincipalName)) {
+        // Nullability checked in pre;
+        final SessionContext ctx =  sessionCtx;
+        assert ctx != null;
+        final IdPSession idpSession = ctx.getIdPSession();
+        assert idpSession != null;
+        if (idpSession.getPrincipalName().equals(newPrincipalName)) {
             log.debug("{} Identities from session and new authentication result match, nothing to do", getLogPrefix());
             return;
         }
         
         log.info("{} Identity switch to {} detected, destroying original session {} for principal {}",
-                getLogPrefix(), newPrincipalName, sessionCtx.getIdPSession().getId(),
-                sessionCtx.getIdPSession().getPrincipalName());
+                getLogPrefix(), newPrincipalName, idpSession.getId(),
+                idpSession.getPrincipalName());
         
         try {
-            sessionManager.destroySession(sessionCtx.getIdPSession().getId(), true);
+            sessionManager.destroySession(idpSession.getId(), true);
         } catch (final SessionException e) {
-            log.error("{} Error destroying session {}", getLogPrefix(), sessionCtx.getIdPSession().getId(), e);
+            log.error("{} Error destroying session {}", getLogPrefix(), idpSession.getId(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
         
         // Establish context state as if the original session didn't exist.
-        sessionCtx.setIdPSession(null);
-        authenticationContext.setActiveResults(Collections.<AuthenticationResult>emptyList());
+        ctx.setIdPSession(null);
+        authenticationContext.setActiveResults(CollectionSupport.<AuthenticationResult>emptyList());
         
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.IDENTITY_SWITCH);
     }

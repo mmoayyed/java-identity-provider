@@ -21,9 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,8 +38,11 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Action that creates private key objects and injects them into existing
@@ -71,8 +72,8 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
 
     /** Constructor. */
     public UnlockPrivateKeys() {
-        credentials = Collections.emptyList();
-        keyResources = Collections.emptyList();
+        credentials = CollectionSupport.emptyList();
+        keyResources = CollectionSupport.emptyList();
     }
     
     /**
@@ -84,9 +85,9 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
         checkSetterPreconditions();
         
         if (creds != null) {
-            credentials = List.copyOf(creds);
+            credentials = CollectionSupport.copyToList(creds);
         } else {
-            credentials = Collections.emptyList();
+            credentials = CollectionSupport.emptyList();
         }
     }
 
@@ -99,9 +100,9 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
         checkSetterPreconditions();
         
         if (keys != null) {
-            keyResources = List.copyOf(keys);
+            keyResources = CollectionSupport.copyToList(keys);
         } else {
-            keyResources = Collections.emptyList();
+            keyResources = CollectionSupport.emptyList();
         }
     }
     
@@ -117,7 +118,7 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext) || credentials.isEmpty() || keyResources.isEmpty()) {
             return false;
@@ -131,9 +132,11 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final String[] keyPasswords = getHttpServletRequest().getParameterValues(KEY_PASSWORD_PARAM_NAME);
+        final HttpServletRequest request = getHttpServletRequest();
+        assert request != null;
+        final String[] keyPasswords = request.getParameterValues(KEY_PASSWORD_PARAM_NAME);
         
         if (keyPasswords == null || keyPasswords.length != credentials.size()) {
             log.warn("{} Password parameter count does not match number of configured credentials", getLogPrefix());

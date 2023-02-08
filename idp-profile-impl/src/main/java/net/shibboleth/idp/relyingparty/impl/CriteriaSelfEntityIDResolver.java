@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.relyingparty.impl;
 
-import java.util.Collections;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -38,9 +36,11 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.IdentifiableComponent;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.Resolver;
@@ -100,15 +100,15 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
         checkComponentActive();
         final String entityID = resolveSingle(criteria);
         if (entityID != null) {
-            return Collections.singletonList(entityID);
+            return CollectionSupport.singletonList(entityID);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
     @Nullable public String resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
         checkComponentActive();
-        final ProfileRequestContext prc = buildContext(criteria);
+        @Nonnull final ProfileRequestContext prc = Constraint.isNotNull(buildContext(criteria), "Could not build context");
         final CriteriaSet prcSet = new CriteriaSet(new ProfileRequestContextCriterion(prc));
         
         final RelyingPartyConfiguration rpc = rpcResolver.resolveSingle(prcSet);
@@ -130,8 +130,9 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
             return null;
         }
         
-        if (criteria.contains(ProfileRequestContextCriterion.class)) {
-            return criteria.get(ProfileRequestContextCriterion.class).getProfileRequestContext();
+        final ProfileRequestContextCriterion prcCriterion = criteria.get(ProfileRequestContextCriterion.class);
+        if (prcCriterion != null) {
+            return prcCriterion.getProfileRequestContext();
         }
 
         final String entityID = resolveEntityID(criteria);
@@ -145,13 +146,13 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
 
         if (entityID != null || entityDescriptor != null || roleDescriptor != null) {
             final ProfileRequestContext prc = new ProfileRequestContext();
-            final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, true);
+            final RelyingPartyContext rpc = prc.getOrCreateSubcontext(RelyingPartyContext.class);
             rpc.setVerified(true);
 
             rpc.setRelyingPartyId(entityID);
 
             if (entityDescriptor != null || roleDescriptor != null) {
-                final SAMLPeerEntityContext peerContext = prc.getSubcontext(SAMLPeerEntityContext.class, true);
+                final SAMLPeerEntityContext peerContext = prc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
                 rpc.setRelyingPartyIdContextTree(peerContext);
 
                 peerContext.setEntityId(entityID);
@@ -161,7 +162,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
                             ? roleDescriptor.getSchemaType() : roleDescriptor.getElementQName());
                 }
 
-                final SAMLMetadataContext metadataContext = peerContext.getSubcontext(SAMLMetadataContext.class, true);
+                final SAMLMetadataContext metadataContext = peerContext.getOrCreateSubcontext(SAMLMetadataContext.class);
                 metadataContext.setEntityDescriptor(entityDescriptor);
                 metadataContext.setRoleDescriptor(roleDescriptor);
             }
@@ -177,8 +178,9 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
      * @return the input entityID criterion or null if could not be resolved
      */
     private String resolveEntityID(@Nonnull final CriteriaSet criteria) {
-        if (criteria.contains(EntityIdCriterion.class)) {
-            return criteria.get(EntityIdCriterion.class).getEntityId();
+        final EntityIdCriterion eic = criteria.get(EntityIdCriterion.class);
+        if (eic != null) {
+            return eic.getEntityId();
         }
 
         final EntityDescriptor ed = resolveEntityDescriptor(criteria);
@@ -211,8 +213,9 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
      * @return the input role descriptor criterion or null if could not be resolved
      */
     private RoleDescriptor resolveRoleDescriptor(@Nonnull final CriteriaSet criteria) {
-        if (criteria.contains(RoleDescriptorCriterion.class)) {
-            return criteria.get(RoleDescriptorCriterion.class).getRole();
+        final RoleDescriptorCriterion rdc = criteria.get(RoleDescriptorCriterion.class);
+        if (rdc != null) {
+            return rdc.getRole();
         }
 
         return null;

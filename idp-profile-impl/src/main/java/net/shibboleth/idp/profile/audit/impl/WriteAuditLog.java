@@ -47,6 +47,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -92,8 +93,8 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Constructor. */
     public WriteAuditLog() {
         auditContextLookupStrategy = new ChildContextLookup<>(AuditContext.class);
-        formattingMap = Collections.emptyMap();
-        categoriesToLog = Collections.emptyList();
+        formattingMap = CollectionSupport.emptyMap();
+        categoriesToLog = CollectionSupport.emptyList();
         dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
         includeProfileLoggingId = true;
     }
@@ -115,7 +116,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * @return map of formatting tokens
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<String,List<String>> getFormattingMap() {
-        return Map.copyOf(formattingMap);
+        return CollectionSupport.copyToMap(formattingMap);
     }
     
 // Checkstyle: CyclomaticComplexity OFF
@@ -132,7 +133,7 @@ public class WriteAuditLog extends AbstractProfileAction {
         checkSetterPreconditions();
         
         if (map == null) {
-            formattingMap = Collections.emptyMap();
+            formattingMap = CollectionSupport.emptyMap();
             return;
         }
         
@@ -191,9 +192,9 @@ public class WriteAuditLog extends AbstractProfileAction {
         checkSetterPreconditions();
         
         if (categories != null) {
-            categoriesToLog = List.copyOf(categories);
+            categoriesToLog = CollectionSupport.copyToList(categories);
         } else {
-            categoriesToLog = Collections.emptyList();
+            categoriesToLog = CollectionSupport.emptyList();
         }
     }
     

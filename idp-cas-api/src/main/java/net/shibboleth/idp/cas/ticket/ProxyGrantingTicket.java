@@ -32,7 +32,7 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class ProxyGrantingTicket extends Ticket {
 
     /** Proxy callback URL that uniquely identifies the proxying party to which the PGT was issued. */
-    private String proxyCallbackUrl;
+    @Nonnull private String proxyCallbackUrl;
 
     /** The ID of the parent proxy-granting ticket. */
     @Nullable
@@ -82,7 +82,7 @@ public class ProxyGrantingTicket extends Ticket {
     }
 
     @Override
-    protected Ticket newInstance(final String newId) {
+    protected Ticket newInstance(@Nonnull final String newId) {
         return new ProxyGrantingTicket(
             newId, getService(), getExpirationInstant(), getProxyCallbackUrl(), parentPgTicketId);
     }

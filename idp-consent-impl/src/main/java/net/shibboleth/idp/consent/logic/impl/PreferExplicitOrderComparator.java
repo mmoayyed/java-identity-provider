@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +29,7 @@ import com.google.common.collect.Ordering;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -44,10 +44,10 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class PreferExplicitOrderComparator implements Comparator<String> {
 
     /** Explicit ordering. */
-    @Nullable private Ordering<String> explicitOrdering;
+    @Nonnull final private Ordering<String> explicitOrdering;
 
     /** Strings in order. */
-    @Nonnull @NonnullElements @Unmodifiable private List<String> explicitOrder;
+    @Nonnull @NonnullElements @Unmodifiable final private List<String> explicitOrder;
 
     /**
      * Constructor.
@@ -56,7 +56,7 @@ public class PreferExplicitOrderComparator implements Comparator<String> {
      */
     public PreferExplicitOrderComparator(@Nullable @NullableElements final List<String> order) {
         if (order == null) {
-            explicitOrder = Collections.emptyList();
+            explicitOrder = CollectionSupport.emptyList();
         } else {
             // no duplicates
             explicitOrder = order.
@@ -64,10 +64,12 @@ public class PreferExplicitOrderComparator implements Comparator<String> {
                     map(StringSupport::trimOrNull).
                     filter(e -> e != null).
                     distinct().
-                    collect(Collectors.toUnmodifiableList()); 
-
-            explicitOrdering = Ordering.explicit(explicitOrder);
+                    collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).
+                    get(); 
         }
+        final Ordering<String> ord =Ordering.explicit(explicitOrder);
+        assert ord != null;
+        explicitOrdering = ord;
     }
 
     /**

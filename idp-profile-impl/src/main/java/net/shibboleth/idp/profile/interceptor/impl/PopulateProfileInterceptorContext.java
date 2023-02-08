@@ -18,8 +18,6 @@
 package net.shibboleth.idp.profile.interceptor.impl;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -37,6 +35,7 @@ import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -68,7 +67,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
     
     /** Constructor. */
     public PopulateProfileInterceptorContext() {
-        availableFlows = Collections.emptyList();
+        availableFlows = CollectionSupport.emptyList();
     }
 
     /**
@@ -78,7 +77,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<ProfileInterceptorFlowDescriptor> flows) {
         checkSetterPreconditions();
-        availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
+        availableFlows = CollectionSupport.copyToList(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
     
     /**

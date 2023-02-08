@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -46,6 +45,7 @@ import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -78,7 +78,7 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
                 new ChildContextLookup<>(AttributeContext.class).compose(
                         new ChildContextLookup<>(RelyingPartyContext.class));
         delimiter = '@';
-        attributeSourceIds = Collections.emptyList();
+        attributeSourceIds = CollectionSupport.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
         useUnfilteredAttributes = false;
@@ -113,7 +113,7 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
         checkSetterPreconditions();
-        attributeSourceIds = List.copyOf(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
+        attributeSourceIds = CollectionSupport.copyToList(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
     }
 
     /**

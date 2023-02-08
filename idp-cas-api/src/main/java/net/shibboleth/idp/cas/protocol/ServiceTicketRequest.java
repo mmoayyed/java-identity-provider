@@ -29,10 +29,10 @@ import net.shibboleth.shared.logic.Constraint;
 public class ServiceTicketRequest {
 
     /** HTTP GET method. */
-    public static final String METHOD_GET = "GET";
+    @Nonnull public static final String METHOD_GET = "GET";
 
     /** HTTP POST method. */
-    public static final String METHOD_POST = "POST";
+    @Nonnull public static final String METHOD_POST = "POST";
 
     /** Service URL. */
     @Nonnull private final String serviceURL;
@@ -47,7 +47,7 @@ public class ServiceTicketRequest {
     private boolean saml;
 
     /** CAS protocol 3.0 "method" parameter. */
-    private String method = METHOD_GET;
+    @Nonnull private String method = METHOD_GET;
 
     /**
      * Constructor.

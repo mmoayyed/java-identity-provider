@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.spring.factory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +37,7 @@ import org.springframework.webflow.config.FlowDefinitionResource;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -148,7 +148,7 @@ public class FlowDefinitionResourceFactory {
         }
         
         if (resources.length == 0) {
-            return Collections.emptyList();
+            return CollectionSupport.emptyList();
         }
         
         final Collection<FlowDefinitionResource> flowResources = new ArrayList<>(resources.length);
@@ -265,15 +265,18 @@ public class FlowDefinitionResourceFactory {
      * @return the input with the scheme removed.
      */
     @Nonnull private String removeScheme(@Nonnull @NotEmpty final String path) {
+        final String result;
         if (path.startsWith(CLASSPATH_SCHEME)) {
-            return path.substring(CLASSPATH_SCHEME.length());
+            result = path.substring(CLASSPATH_SCHEME.length());
         } else if (path.startsWith(FILESYSTEM_SCHEME)) {
-            return path.substring(FILESYSTEM_SCHEME.length());
+            result = path.substring(FILESYSTEM_SCHEME.length());
         } else if (path.startsWith(CLASSPATH_STAR_SCHEME)) {
-            return path.substring(CLASSPATH_STAR_SCHEME.length());
+            result = path.substring(CLASSPATH_STAR_SCHEME.length());
         } else {
-            return path;
+            result = path;
         }
+        assert result != null;
+        return result;
     }
 
 }

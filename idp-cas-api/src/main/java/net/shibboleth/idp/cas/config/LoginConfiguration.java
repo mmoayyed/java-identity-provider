@@ -19,7 +19,6 @@ package net.shibboleth.idp.cas.config;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -30,8 +29,6 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
@@ -39,8 +36,10 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 
@@ -87,8 +86,8 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
         authenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         postAuthenticationFlowsLookupStrategy = FunctionSupport.constant(null);
         defaultAuthenticationContextsLookupStrategy = FunctionSupport.constant(null);
-        forceAuthnPredicate = Predicates.alwaysFalse();
-        storeConsentInTicketsPredicate = Predicates.alwaysFalse();
+        forceAuthnPredicate = PredicateSupport.alwaysFalse();
+        storeConsentInTicketsPredicate = PredicateSupport.alwaysFalse();
         proxyCountLookupStrategy = FunctionSupport.constant(null);
     }
 
@@ -98,9 +97,9 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
         final Collection<AuthnContextClassRefPrincipal> methods =
                 defaultAuthenticationContextsLookupStrategy.apply(profileRequestContext);
         if (methods != null) {
-            return List.copyOf(methods);
+            return CollectionSupport.copyToList(methods);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
         
     /**
@@ -133,9 +132,9 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
         
         final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return Set.copyOf(flows);
+            return CollectionSupport.copyToSet(flows);
         }
-        return Collections.emptySet();
+        return CollectionSupport.emptySet();
     }
 
     /**
@@ -167,9 +166,9 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return List.copyOf(flows);
+            return CollectionSupport.copyToList(flows);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /**
@@ -207,7 +206,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * @param flag flag to set
      */
     public void setForceAuthn(final boolean flag) {
-        forceAuthnPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        forceAuthnPredicate = flag ? PredicateSupport.alwaysTrue() : PredicateSupport.alwaysFalse();
     }
     
     /**
@@ -240,7 +239,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * @since 4.2.0
      */
     public void setStoreConsentInTickets(final boolean flag) {
-        storeConsentInTicketsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        storeConsentInTicketsPredicate = flag ? PredicateSupport.alwaysTrue() : PredicateSupport.alwaysFalse();
     }
 
     /**

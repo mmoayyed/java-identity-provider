@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,8 +38,10 @@ import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.storage.impl.CollectionSerializer;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -65,7 +66,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
     @Nullable private String storageIndexKey;
 
     /** Strategy used to determine the storage key of the index record. */
-    @Nullable private Function<ProfileRequestContext, String> storageIndexKeyLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext, String> storageIndexKeyLookupStrategy;
 
     /** Strategy used to manipulate the storage keys when pruning storage records. */
     @Nullable private Function<Pair<ProfileRequestContext, List<String>>, List<String>> storageKeysStrategy;
@@ -76,7 +77,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
     /** Constructor. */
     public AbstractConsentIndexedStorageAction() {
         super();
-        setStorageKeysSerializer(new CollectionSerializer());
+        storageKeysSerializer = new CollectionSerializer();
     }
 
     /**
@@ -127,10 +128,6 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         if (storageIndexKeyLookupStrategy == null) {
             throw new ComponentInitializationException("Storage key lookup strategy cannot be null");
         }
-
-        if (storageKeysSerializer == null) {
-            throw new ComponentInitializationException("Storage keys serializer cannot be null");
-        }
     }
 
     /** {@inheritDoc} */
@@ -175,7 +172,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
                 getStorageContext(), getStorageIndexKey());
 
         if (storageRecord == null) {
-            return Collections.emptyList();
+            return CollectionSupport.emptyList();
         }
 
         return new ArrayList<>(storageRecord.getValue(getStorageKeysSerializer(), getStorageContext(),
@@ -198,7 +195,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         if (storageRecord == null) {
             log.debug("{} Creating storage index with key '{}'", getLogPrefix(), keyToAdd);
             return getStorageService().create(getStorageContext(), getStorageIndexKey(),
-                    Collections.singletonList(keyToAdd), storageKeysSerializer, null);
+                    CollectionSupport.singletonList(keyToAdd), storageKeysSerializer, null);
         }
         
         final LinkedHashSet<String> keys = new LinkedHashSet<>(getStorageKeysFromIndex());

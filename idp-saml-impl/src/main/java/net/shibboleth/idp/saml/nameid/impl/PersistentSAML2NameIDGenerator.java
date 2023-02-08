@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -49,6 +48,7 @@ import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -89,7 +89,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
         attributeContextLookupStrategy =
                 new ChildContextLookup<>(AttributeContext.class).compose(
                         new ChildContextLookup<>(RelyingPartyContext.class));
-        attributeSourceIds = Collections.emptyList();
+        attributeSourceIds = CollectionSupport.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
         useUnfilteredAttributes = true;
@@ -125,7 +125,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
         checkSetterPreconditions();
-        attributeSourceIds = List.copyOf(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
+        attributeSourceIds = CollectionSupport.copyToList(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
     }
 
     /**
@@ -172,6 +172,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
             if (dataSource != null) {
                 log.debug("Creating JDBCPersistentStoreEx instance around supplied DataSource");
                 final JDBCPairwiseIdStore newStore = new JDBCPairwiseIdStore();
+                assert dataSource != null;
                 newStore.setDataSource(dataSource);
                 newStore.initialize();
                 pidStore = newStore;
@@ -242,6 +243,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
                         pid.setSourceSystemId(((ScopedStringAttributeValue) value).getValue() + '@'
                                 + ((ScopedStringAttributeValue) value).getScope());
                         pid = pidStore.getBySourceValue(pid, true);
+                        assert pid != null;
                         return pid.getPairwiseId();
                     } else if (value instanceof StringAttributeValue) {
                         // Check for all whitespace, but don't trim the value used.
@@ -252,6 +254,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
                         log.debug("Generating persistent NameID from String-valued attribute {}", sourceId);
                         pid.setSourceSystemId(((StringAttributeValue) value).getValue());
                         pid = pidStore.getBySourceValue(pid, true);
+                        assert pid != null;
                         return pid.getPairwiseId();
                     } else {
                         log.info("Unrecognized attribute value type: {}", value.getClass().getName());

@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -56,13 +57,13 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     @Nullable private Logger log;
 
     /** Jar files in edit-webapp. */
-    @Nonnull private List<String> webAppJars = Collections.emptyList();
+    @Nonnull private List<String> webAppJars = CollectionSupport.emptyList();
 
     /** Jar files Plugin Folder. */
-    @Nonnull private List<String> pluginJars = Collections.emptyList();
+    @Nonnull private List<String> pluginJars = CollectionSupport.emptyList();
 
     /** Jar files Distributions . */
-    @Nonnull private List<String> distJars = Collections.emptyList();
+    @Nonnull private List<String> distJars = CollectionSupport.emptyList();
 
     /** Populate {@link #webAppJars}, {@link #pluginJars} and {@link #distJars}. 
      * @param args the arguments
@@ -79,19 +80,21 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
      * @param webapp folder to start at.
      * @return the list of names as a strung
      */
-    private List<String> listJars(final Path webapp) {
+    @Nonnull private List<String> listJars(final Path webapp) {
         final Path libDir = webapp.resolve("WEB-INF").resolve("lib");
         
         if (!Files.exists(libDir) || !Files.isDirectory(libDir)) {
-            return Collections.emptyList();
+            return CollectionSupport.emptyList();
         }
         
-        return Arrays.asList(libDir.toFile().list(new FilenameFilter() {
+        final List<String> result = Arrays.asList(libDir.toFile().list(new FilenameFilter() {
             public boolean accept(final File dir, final String name) {
                 final String nameUpper = name.toUpperCase();
                 return nameUpper.endsWith(".JAR");
             }
         }));
+        assert result != null;
+        return result;
     }
     
     /** Check for the same file in two places.
@@ -140,7 +143,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     }
 
     /** {@inheritDoc} */
-    protected Class<JarCheckArguments> getArgumentClass() {
+    protected @Nonnull Class<JarCheckArguments> getArgumentClass() {
         return JarCheckArguments.class;
     }
 
@@ -150,10 +153,11 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     }
 
     /** {@inheritDoc} */
-    protected synchronized Logger getLogger() {
+    @Nonnull protected synchronized Logger getLogger() {
         if (log == null) {
             log = LoggerFactory.getLogger(JarCheckCLI.class);
         }
+        assert log != null;
         return log;
     }
 

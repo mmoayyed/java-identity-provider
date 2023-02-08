@@ -18,7 +18,6 @@
 package net.shibboleth.idp.relyingparty.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Predicate;
@@ -42,6 +41,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -72,23 +72,23 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
     @NonnullAfterInit private RelyingPartyConfiguration defaultConfiguration;
 
     /** The predicate which decides if this request is "verified". */
-    @NonnullAfterInit private Predicate<ProfileRequestContext> verificationPredicate;
+    @Nonnull private Predicate<ProfileRequestContext> verificationPredicate;
     
     /** A global default security configuration. */
     @Nullable private SecurityConfiguration defaultSecurityConfiguration;
     
     /** The global list of all configured signing credentials. */
-    @Nullable private List<Credential> signingCredentials;
+    @Nonnull private List<Credential> signingCredentials;
     
     /** The global list of all configured encryption credentials. */
-    @Nullable private List<Credential> encryptionCredentials;
+    @Nonnull private List<Credential> encryptionCredentials;
 
     /** Constructor. */
     public DefaultRelyingPartyConfigurationResolver() {
-        rpConfigurations = Collections.emptyList();
+        rpConfigurations = CollectionSupport.emptyList();
         verificationPredicate = new VerifiedProfilePredicate();
-        signingCredentials = Collections.emptyList();
-        encryptionCredentials = Collections.emptyList();
+        signingCredentials = CollectionSupport.emptyList();
+        encryptionCredentials = CollectionSupport.emptyList();
     }
     
     /**
@@ -108,7 +108,7 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
      */
     public void setRelyingPartyConfigurations(@Nonnull @NonnullElements final List<RelyingPartyConfiguration> configs) {
         checkSetterPreconditions();
-        rpConfigurations = List.copyOf(Constraint.isNotNull(configs, "RelyingPartyConfiguration list cannot be null"));
+        rpConfigurations = CollectionSupport.copyToList(Constraint.isNotNull(configs, "RelyingPartyConfiguration list cannot be null"));
     }
 
     /**
@@ -200,18 +200,20 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
         checkComponentActive();
 
         if (context == null) {
-            return Collections.emptyList();
+            return CollectionSupport.emptyList();
         }
 
         log.debug("Resolving relying party configuration");
         if (!verificationPredicate.test(context)) {
             if (getUnverifiedConfiguration() == null) {
                 log.warn("Profile request was unverified, but no such configuration is available");
-                return Collections.emptyList();
+                return CollectionSupport.emptyList();
             }
+            final RelyingPartyConfiguration uvc = getUnverifiedConfiguration();
+            assert uvc != null;
             log.debug("Profile request is unverified, returning configuration {}",
-                    getUnverifiedConfiguration().getId());
-            return Collections.singleton(getUnverifiedConfiguration());
+                    uvc.getId());
+            return CollectionSupport.singleton(uvc);
         }
 
         final ArrayList<RelyingPartyConfiguration> matches = new ArrayList<>();
@@ -227,9 +229,10 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
         }
 
         if (matches.isEmpty()) {
+            final RelyingPartyConfiguration dc = getDefaultConfiguration();
             log.debug("No matching Relying Party Configuration found, returning the default configuration {}",
-                    getDefaultConfiguration().getId());
-            return Collections.singleton(getDefaultConfiguration());
+                    dc.getId());
+            return CollectionSupport.singleton(dc);
         }
         return matches;
     }
@@ -297,9 +300,10 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
         if (credentials != null) {
             signingCredentials = credentials.stream()
                     .flatMap(h -> h.getCredentials().stream())
-                    .collect(Collectors.toUnmodifiableList());
+                    .collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).
+                    get();
         } else {
-            signingCredentials = Collections.emptyList();
+            signingCredentials = CollectionSupport.emptyList();
         }
     }
 
@@ -326,9 +330,10 @@ public class DefaultRelyingPartyConfigurationResolver extends AbstractIdentifiab
         if (credentials != null) {
             encryptionCredentials = credentials.stream()
                     .flatMap(h -> h.getCredentials().stream())
-                    .collect(Collectors.toUnmodifiableList());
+                    .collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).
+                    get();
         } else {
-            encryptionCredentials = Collections.emptyList();
+            encryptionCredentials = CollectionSupport.emptyList();
         }
     }
 }

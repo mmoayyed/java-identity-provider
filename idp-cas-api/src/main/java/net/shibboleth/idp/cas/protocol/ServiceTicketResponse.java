@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.cas.protocol;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.web.util.UriComponentsBuilder;
 
 import net.shibboleth.shared.logic.Constraint;
-
-import javax.annotation.Nonnull;
 
 /**
  * CAS protocol response message for a successfully granted service ticket.
@@ -91,11 +91,15 @@ public class ServiceTicketResponse {
      * 
      * @return the name of the ticket parameter returned to the requesting service
      */
-    public String getTicketParameterName() {
+    @Nonnull public String getTicketParameterName() {
+        final String result;
         if (saml) {
-            return SamlParam.SAMLart.name();
+            result = SamlParam.SAMLart.name();
+        } else {
+            result = ProtocolParam.Ticket.id();
         }
-        return ProtocolParam.Ticket.id();
+        assert result != null;
+        return result;
     }
 
     /**

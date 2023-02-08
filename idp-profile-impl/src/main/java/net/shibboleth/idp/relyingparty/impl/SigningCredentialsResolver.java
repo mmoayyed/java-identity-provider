@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.relyingparty.impl;
 
-import java.util.Collections;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -28,6 +26,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.IdentifiableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -93,12 +92,12 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
                 return ((DefaultRelyingPartyConfigurationResolver)resolver).getSigningCredentials();
             }
             log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
-            return Collections.emptyList();
+            return CollectionSupport.emptyList();
         } catch (final ServiceException e) {
             log.error("SigningCredentialsResolver '{}': Invalid RelyingPartyResolver configuration", getId(), e);
         }
         
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
 }

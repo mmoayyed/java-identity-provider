@@ -18,15 +18,16 @@
 package net.shibboleth.idp.profile.support;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import javax.annotation.Nonnull;
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Extension of standard SWF URL handler that checks for requests in which a valid flow ID
@@ -45,7 +46,7 @@ public class PathInfoSupportingFlowUrlHandler extends DefaultFlowUrlHandler {
     
     /** Constructor. */
     public PathInfoSupportingFlowUrlHandler() {
-        supportedFlowIds = Collections.emptyList();
+        supportedFlowIds = CollectionSupport.emptyList();
     }
 
     /**

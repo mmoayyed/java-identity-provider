@@ -41,6 +41,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.IdentifiableComponent;
@@ -132,7 +133,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
         if (prc != null) {
             return delegate.resolve(prc);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
         
     }
 
@@ -148,8 +149,9 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
             return null;
         }
         
-        if (criteria.contains(ProfileRequestContextCriterion.class)) {
-            return criteria.get(ProfileRequestContextCriterion.class).getProfileRequestContext();
+        final ProfileRequestContextCriterion prcc = criteria.get(ProfileRequestContextCriterion.class);
+        if (prcc != null) {
+            return prcc.getProfileRequestContext();
         }
 
         final String entityID = resolveEntityID(criteria);
@@ -163,13 +165,13 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
 
         if (entityID != null || entityDescriptor != null || roleDescriptor != null) {
             final ProfileRequestContext prc = new ProfileRequestContext();
-            final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, true);
+            final RelyingPartyContext rpc = prc.getOrCreateSubcontext(RelyingPartyContext.class);
             rpc.setVerified(true);
 
             rpc.setRelyingPartyId(entityID);
 
             if (entityDescriptor != null || roleDescriptor != null) {
-                final SAMLPeerEntityContext peerContext = prc.getSubcontext(SAMLPeerEntityContext.class, true);
+                final SAMLPeerEntityContext peerContext = prc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
                 rpc.setRelyingPartyIdContextTree(peerContext);
 
                 peerContext.setEntityId(entityID);
@@ -179,7 +181,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
                             ? roleDescriptor.getSchemaType() : roleDescriptor.getElementQName());
                 }
 
-                final SAMLMetadataContext metadataContext = peerContext.getSubcontext(SAMLMetadataContext.class, true);
+                final SAMLMetadataContext metadataContext = peerContext.getOrCreateSubcontext(SAMLMetadataContext.class);
                 metadataContext.setEntityDescriptor(entityDescriptor);
                 metadataContext.setRoleDescriptor(roleDescriptor);
             }
@@ -195,8 +197,9 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
      * @return the input entityID criterion or null if could not be resolved
      */
     private String resolveEntityID(@Nonnull final CriteriaSet criteria) {
-        if (criteria.contains(EntityIdCriterion.class)) {
-            return criteria.get(EntityIdCriterion.class).getEntityId();
+        final EntityIdCriterion eic = criteria.get(EntityIdCriterion.class);
+        if (eic != null) {
+            return eic.getEntityId();
         }
 
         final EntityDescriptor ed = resolveEntityDescriptor(criteria);
@@ -229,8 +232,9 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolver extends Abstrac
      * @return the input role descriptor criterion or null if could not be resolved
      */
     private RoleDescriptor resolveRoleDescriptor(@Nonnull final CriteriaSet criteria) {
-        if (criteria.contains(RoleDescriptorCriterion.class)) {
-            return criteria.get(RoleDescriptorCriterion.class).getRole();
+        final RoleDescriptorCriterion rdc = criteria.get(RoleDescriptorCriterion.class);
+        if (rdc != null) {
+            return rdc.getRole();
         }
 
         return null;

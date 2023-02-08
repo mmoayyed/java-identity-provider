@@ -194,6 +194,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
         if (Strings.isNullOrEmpty(id)) {
             throw new AttributeDecodingException("Required transcoder property 'id' not found");
         }
+        assert id != null;
         
         if (!attribute.getValues().isEmpty() && attributeValues.isEmpty()) {
             throw new AttributeDecodingException("Failed to decode any values for attribute " + attribute.getName());

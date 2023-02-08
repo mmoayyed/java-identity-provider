@@ -61,7 +61,7 @@ public class ProxyTicket extends Ticket {
     }
 
     @Override
-    protected Ticket newInstance(final String newId) {
+    protected Ticket newInstance(@Nonnull final String newId) {
         return new ProxyTicket(newId, getService(), getExpirationInstant(), pgTicketId);
     }
 

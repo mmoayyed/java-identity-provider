@@ -18,7 +18,6 @@
 package net.shibboleth.idp.spring;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +29,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -58,8 +58,8 @@ public class DeprecatedPropertyBean extends AbstractInitializableComponent imple
 
     /** Constructor. */
     public DeprecatedPropertyBean() {
-        deprecatedProperties = Collections.emptyMap();
-        deadProperties = Collections.emptyList();
+        deprecatedProperties = CollectionSupport.emptyMap();
+        deadProperties = CollectionSupport.emptyList();
     }
     
     /**

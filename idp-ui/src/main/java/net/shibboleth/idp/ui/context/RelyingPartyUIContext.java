@@ -54,6 +54,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
@@ -82,7 +83,7 @@ public final class RelyingPartyUIContext extends BaseContext {
     @Nullable private IdPUIInfo rpUIInfo;
 
     /** The (statically defined) languages that this user wants to know about. */
-    @Nullable @NonnullElements private List<LanguageRange> browserLanguages;
+    @Nonnull @NonnullElements private List<LanguageRange> browserLanguages;
     
     /** The languages that this the Operator want to fall back to. */
     @Nonnull private List<LanguageRange> fallbackLanguages;
@@ -93,8 +94,8 @@ public final class RelyingPartyUIContext extends BaseContext {
     
     /** Constructor. */
     public RelyingPartyUIContext() {
-        browserLanguages = Collections.emptyList();
-        fallbackLanguages = Collections.emptyList();
+        browserLanguages = CollectionSupport.emptyList();
+        fallbackLanguages = CollectionSupport.emptyList();
     }
 
     /**
@@ -154,7 +155,7 @@ public final class RelyingPartyUIContext extends BaseContext {
         
         XMLObject object = getRPEntityDescriptor(); 
         if (object == null) {
-            return Collections.emptyList();
+            return CollectionSupport.emptyList();
         }
         
         final List<String> accumulator = new ArrayList<>();
@@ -165,7 +166,7 @@ public final class RelyingPartyUIContext extends BaseContext {
             object = object.getParent();
         }
 
-        return List.copyOf(accumulator);
+        return CollectionSupport.copyToList(accumulator);
     }
     
     /**
@@ -254,7 +255,8 @@ public final class RelyingPartyUIContext extends BaseContext {
                 stream().
                 filter(e -> e != null).
                 map(s -> new LanguageRange(s)).
-                collect(Collectors.toUnmodifiableList());
+                collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).
+                get();
         return this;
     }
 
@@ -279,10 +281,13 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return the languages.
      */
     @Nonnull @NonnullElements protected List<LanguageRange> getBrowserLanguages() {
-        if (requestSupplier == null || requestSupplier.get() == null) {
+        final NonnullSupplier<HttpServletRequest> supplier = requestSupplier;
+        if (supplier == null || supplier.get() == null) {
             return browserLanguages;
+        } else {
+            // TODO handle null value
         }
-        return SpringSupport.getLanguageRange(requestSupplier.get());
+        return SpringSupport.getLanguageRange(supplier.get());
     }
 
     /**
@@ -294,13 +299,15 @@ public final class RelyingPartyUIContext extends BaseContext {
      */
     @Nonnull public RelyingPartyUIContext setFallbackLanguages(@Nullable final List<String> languages) {
         if (languages == null || languages.isEmpty()) {
-            fallbackLanguages = Collections.emptyList();
+            fallbackLanguages = CollectionSupport.emptyList();
+        } else {
+            fallbackLanguages = languages.
+                    stream().
+                    filter(s -> s != null).
+                    map(s -> new LanguageRange(s)).
+                    collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).
+                    get();
         }
-        fallbackLanguages = languages.
-                stream().
-                filter(s -> s != null).
-                map(s -> new LanguageRange(s)).
-                collect(Collectors.toUnmodifiableList());
         return this;
     }
 
@@ -353,7 +360,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return the input or the default as appropriate
      */
     @Nullable protected String policeURLLogo(@Nullable final String url) {
-        return policeURL(url, Arrays.asList("http", "https", "data"));
+        return policeURL(url, CollectionSupport.listOf("http", "https", "data"));
     }
 
     /**
@@ -363,7 +370,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return the input or the default as appropriate
      */
     @Nullable protected String policeURLNonLogo(@Nullable final String url) {
-        return policeURL(url, Arrays.asList("http", "https", "mailto"));
+        return policeURL(url, CollectionSupport.listOf("http", "https", "mailto"));
     }
 
     /**
@@ -401,11 +408,12 @@ public final class RelyingPartyUIContext extends BaseContext {
      */
     @Nullable protected String getNameFromEntityId() {
 
-        if (null == getRPEntityDescriptor()) {
+        final EntityDescriptor entityDescriptor = getRPEntityDescriptor();
+        if (null == entityDescriptor) {
             log.trace("No relying party, no Name");
             return null;
         }
-        final String spName = getRPEntityDescriptor().getEntityID();
+        final String spName = entityDescriptor.getEntityID();
 
         try {
             final URI entityId = new URI(spName);
@@ -437,7 +445,7 @@ public final class RelyingPartyUIContext extends BaseContext {
             return null;
         }
 
-        final Map<Locale, String> descriptions = getRPUInfo().getDescriptions();
+        final Map<Locale, String> descriptions = info.getDescriptions();
         Locale l = Locale.lookup(getBrowserLanguages(), descriptions.keySet());
 
         if (l == null) {
@@ -488,11 +496,13 @@ public final class RelyingPartyUIContext extends BaseContext {
     @Nullable protected OrganizationUIInfo getOrganization() {
 
         Organization organization = null;
-        if (null != getRPSPSSODescriptor()) {
-            organization = getRPSPSSODescriptor().getOrganization();
+        final SPSSODescriptor descriptor = getRPSPSSODescriptor();
+        if (null != descriptor) {
+            organization = descriptor.getOrganization();
         }
-        if (organization == null && getRPEntityDescriptor() != null) {
-            organization = getRPEntityDescriptor().getOrganization();
+        final EntityDescriptor entityDescriptor = getRPEntityDescriptor();
+        if (organization == null && entityDescriptor != null) {
+            organization = entityDescriptor.getOrganization();
         }
         if (organization == null) {
             return null;
@@ -517,15 +527,15 @@ public final class RelyingPartyUIContext extends BaseContext {
             log.warn("no parameter provided to contactType");
             return ContactPersonTypeEnumeration.SUPPORT;
         }
-        if (type.equals(ContactPersonTypeEnumeration.ADMINISTRATIVE.toString())) {
+        if (value.equals(ContactPersonTypeEnumeration.ADMINISTRATIVE.toString())) {
             return ContactPersonTypeEnumeration.ADMINISTRATIVE;
-        } else if (type.equals(ContactPersonTypeEnumeration.BILLING.toString())) {
+        } else if (value.equals(ContactPersonTypeEnumeration.BILLING.toString())) {
             return ContactPersonTypeEnumeration.BILLING;
-        } else if (type.equals(ContactPersonTypeEnumeration.OTHER.toString())) {
+        } else if (value.equals(ContactPersonTypeEnumeration.OTHER.toString())) {
             return ContactPersonTypeEnumeration.OTHER;
-        } else if (type.equals(ContactPersonTypeEnumeration.SUPPORT.toString())) {
+        } else if (value.equals(ContactPersonTypeEnumeration.SUPPORT.toString())) {
             return ContactPersonTypeEnumeration.SUPPORT;
-        } else if (type.equals(ContactPersonTypeEnumeration.TECHNICAL.toString())) {
+        } else if (value.equals(ContactPersonTypeEnumeration.TECHNICAL.toString())) {
             return ContactPersonTypeEnumeration.TECHNICAL;
         } else {
             log.warn("parameter provided to contactType: " + type + " is invalid");
@@ -540,10 +550,11 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return the {@link ContactPerson} or null.
      */
     @Nullable public ContactPerson getContactPerson(final ContactPersonTypeEnumeration contactType) {
-        if (null == getRPEntityDescriptor()) {
+        final EntityDescriptor entityDescriptor = getRPEntityDescriptor();
+        if (entityDescriptor == null) {
             return null;
         }
-        final List<ContactPerson> contacts = getRPEntityDescriptor().getContactPersons();
+        final List<ContactPerson> contacts = entityDescriptor.getContactPersons();
         if (null == contacts || contacts.isEmpty()) {
             log.trace("No Contacts found at all");
             return null;
@@ -589,7 +600,7 @@ public final class RelyingPartyUIContext extends BaseContext {
             l = Locale.lookup(getFallbackLanguages(), names.keySet());
         }
         if (l != null) {
-            final String result = names.get(l);
+            final String result = Constraint.isNotNull(names, "Names not found in metadata").get(l);
             log.debug("Found Name '{}' for Locale '{}'", result, l);
             return result;
         }
@@ -630,7 +641,7 @@ public final class RelyingPartyUIContext extends BaseContext {
             l = Locale.lookup(getFallbackLanguages(), names.keySet());
         }
         if (l != null) {
-            final String result = names.get(l);
+            final String result = Constraint.isNotNull(names, "Names not found in metadata").get(l);
             log.debug("Found Name '{}' for Locale '{}'", result, l);
             return result;
         }
@@ -758,11 +769,12 @@ public final class RelyingPartyUIContext extends BaseContext {
      */
     @Nullable public String getInformationURL() {
 
-        if (null == getRPUInfo()) {
+        final IdPUIInfo info = getRPUInfo();
+        if (info == null) {
             log.debug("No UIInfo returning null");
             return null;
         }
-        return policeURLNonLogo(getLocalizeString(getRPUInfo().getInformationURLs(), "InformationURL"));
+        return policeURLNonLogo(getLocalizeString(info.getInformationURLs(), "InformationURL"));
     }
 
     /**
@@ -771,11 +783,12 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @return the value or null
      */
     @Nullable public String getPrivacyStatementURL() {
-        if (null == getRPUInfo()) {
+        final IdPUIInfo info = getRPUInfo();
+        if (info == null) {
             log.debug("No UIInfo returning null");
             return null;
         }
-        return policeURLNonLogo(getLocalizeString(getRPUInfo().getPrivacyStatementURLs(), "PrivacyStatementURL"));
+        return policeURLNonLogo(getLocalizeString(info.getPrivacyStatementURLs(), "PrivacyStatementURL"));
     }
 
     /**
@@ -788,21 +801,17 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight max Height
      * @return whether it fits
      */
-    private boolean logoFits(final Logo logo, final int minWidth, final int minHeight, final int maxWidth,
+    private boolean logoFits(@Nonnull final Logo logo, final int minWidth, final int minHeight, final int maxWidth,
             final int maxHeight) {
-        final int height;
-        if (null == logo.getHeight()) {
+        Integer height = logo.getHeight();
+        if (height == null) {
             log.warn("No height available for {} assuming a fit", logo.getURI());
             height = maxHeight -1;
-        } else {
-            height = logo.getHeight();
         }
-        final int width;
-        if (null == logo.getWidth()) {
+        Integer width = logo.getWidth();
+        if (width == null) {
             log.warn("No width available for {} assuming a fit", logo.getURI());
             width = maxWidth - 1;
-        } else {
-            width = logo.getWidth();
         }
         return height <= maxHeight && height >= minHeight && width <= maxWidth && width >= minWidth;
     }
@@ -820,12 +829,13 @@ public final class RelyingPartyUIContext extends BaseContext {
     // CheckStyle: CyclomaticComplexity OFF
     @Nullable public String getLogo(final int minWidth, final int minHeight, final int maxWidth, final int maxHeight) {
 
-        if (null == getRPUInfo()) {
+        final IdPUIInfo info = getRPUInfo();
+        if (info == null) {
             log.debug("No UIInfo or logos returning null");
             return null;
         }
 
-        final Map<Locale, List<Logo>> logos = getRPUInfo().getLocaleLogos();
+        final Map<Locale, List<Logo>> logos = info.getLocaleLogos();
 
         if (logos != null && !logos.isEmpty()) {
             for (final Locale l: Locale.filter(getBrowserLanguages(), logos.keySet())) {

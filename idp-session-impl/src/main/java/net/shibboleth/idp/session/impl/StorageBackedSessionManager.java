@@ -55,6 +55,7 @@ import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -120,7 +121,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     @Nonnull private final Logger log = LoggerFactory.getLogger(StorageBackedSessionManager.class);
 
     /** Servlet request to read from. */
-    @Nullable private NonnullSupplier<HttpServletRequest> httpRequestSupplier;
+    @NonnullAfterInit private NonnullSupplier<HttpServletRequest> httpRequestSupplier;
 
     /** Inactivity timeout for sessions. */
     @Nonnull private Duration sessionTimeout;
@@ -354,6 +355,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @return the back-end to use
      */
     @Nonnull public StorageService getStorageService() {
+        checkComponentActive();
+        assert storageService != null;
         return storageService;
     }
 
@@ -426,6 +429,14 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             getAuthenticationFlowDescriptor(@Nonnull @NotEmpty final String flowId) {
         return flowDescriptorMap.get(flowId);
     }
+    
+    @Nullable final private HttpServletRequest getHttpRequest() {
+        final NonnullSupplier<HttpServletRequest> supplier = httpRequestSupplier;
+        if (supplier == null) {
+            return null;
+        }
+        return supplier.get();
+    }
 
     /**
      * Set the {@link AuthenticationFlowDescriptor} collection active in the system.
@@ -478,7 +489,6 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         } else if (trackSPSessions && spSessionSerializerRegistry == null) {
             throw new ComponentInitializationException("Tracking SPSessions requires a spSessionSerializerRegistry");
         }
-
         // This is our private instance, so we initialize it.
         serializer.initialize();
     }
@@ -488,7 +498,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             throws SessionException {
         checkComponentActive();
 
-        final HttpServletRequest httpRequest = httpRequestSupplier == null?null:httpRequestSupplier.get();
+        final HttpServletRequest httpRequest = getHttpRequest();
         if (httpRequest == null) {
             throw new SessionException("No HttpServletRequest available, can't bind to client address");
         }
@@ -557,7 +567,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         if (criteria != null) {
             final HttpServletRequestCriterion requestCriterion = criteria.get(HttpServletRequestCriterion.class);
             if (requestCriterion != null) {
-                final HttpServletRequest httpRequest = httpRequestSupplier == null?null:httpRequestSupplier.get();
+                final HttpServletRequest httpRequest = getHttpRequest();
                 if (httpRequest != null) {
                     final Cookie[] cookies = httpRequest.getCookies();
                     if (cookies != null) {
@@ -565,12 +575,12 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                             if (cookieName.equals(cookie.getName())) {
                                 final IdPSession session = lookupBySessionId(cookie.getValue());
                                 if (session != null) {
-                                    return Collections.singletonList(session);
+                                    return CollectionSupport.singletonList(session);
                                 }
                             }
                         }
                     }
-                    return ImmutableList.of();
+                    return CollectionSupport.emptyList();
                 }
                 throw new ResolverException("HttpServletRequest is null");
             }
@@ -579,9 +589,9 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             if (sessionIdCriterion != null) {
                 final IdPSession session = lookupBySessionId(sessionIdCriterion.getSessionId());
                 if (session != null) {
-                    return Collections.singletonList(session);
+                    return CollectionSupport.singletonList(session);
                 }
-                return Collections.emptyList();
+                return CollectionSupport.emptyList();
             }
 
             final SPSessionCriterion serviceCriterion = criteria.get(SPSessionCriterion.class);
@@ -627,6 +637,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             }
         } else if (secondaryServiceIndex && storageServiceMeetsThreshold()) {
             String serviceId = spSession.getId();
+            assert serviceId != null;
             String serviceKey = spSession.getSPSessionKey();
             if (serviceKey == null) {
                 return;
@@ -643,7 +654,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             if (serviceKey.length() > keySize) {
                 serviceKey = serviceKey.substring(0, keySize);
             }
-
+            assert serviceId != null && serviceKey != null;
             StorageRecord<?> sessionList = null;
 
             try {
@@ -661,7 +672,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                         // Need to update record.
                         final String updated = sessionList.getValue() + idpSession.getId() + ',';
                         if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
-                                Math.max(sessionList.getExpiration(), 
+                                Math.max(Constraint.isNotNull(sessionList.getExpiration(),"Session List Expiration not set"), 
                                          spSession.getExpirationInstant().plus(sessionSlop).toEpochMilli())) == null) {
                             log.debug("Secondary index record disappeared, retrying as insert");
                             indexBySPSession(idpSession, spSession, attempts - 1);
@@ -706,6 +717,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             }
         } else if (secondaryServiceIndex && storageServiceMeetsThreshold()) {
             String serviceId = spSession.getId();
+            assert serviceId != null;
             String serviceKey = spSession.getSPSessionKey();
             if (serviceKey == null) {
                 return;
@@ -722,6 +734,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             if (serviceKey.length() > keySize) {
                 serviceKey = serviceKey.substring(0, keySize);
             }
+            assert serviceId != null && serviceKey != null;
 
             StorageRecord<?> sessionList = null;
 
@@ -781,6 +794,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             log.debug("Lookup of null/empty session ID");
             return null;
         }
+        assert sessionId != null;
         
         log.debug("Performing primary lookup on session ID {}", sessionId);
 
@@ -822,9 +836,11 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         // Truncate context and key if needed.
         if (serviceId.length() > contextSize) {
             serviceId = serviceId.substring(0, contextSize);
+            assert serviceId != null;
         }
         if (serviceKey.length() > keySize) {
             serviceKey = serviceKey.substring(0, keySize);
+            assert serviceKey != null;
         }
 
         StorageRecord<?> sessionList = null;
@@ -840,7 +856,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         if (sessionList == null) {
             log.debug("Secondary lookup failed on service ID {} and key {}", serviceId, serviceKey);
-            return Collections.emptyList();
+            return CollectionSupport.emptyList();
         }
 
         final ImmutableList.Builder<IdPSession> builder = ImmutableList.builder();

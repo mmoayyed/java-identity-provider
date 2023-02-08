@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -69,8 +70,10 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
         super(SAMLConstants.SAML20MD_NS, EntityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME, SAMLConstants.SAML20MD_PREFIX);
         
         svc = Constraint.isNotNull(service, "Service cannot be null");
-        if (StringSupport.trimOrNull(service.getGroup()) != null) {
-            getObjectMetadata().put(new EntityGroupName(service.getGroup()));
+        final String group = service.getGroup();
+        if (StringSupport.trimOrNull(group) != null) {
+            assert group != null;
+            getObjectMetadata().put(new EntityGroupName(group));
         }
     }
 
@@ -182,12 +185,12 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
 
     /** {@inheritDoc} */
     public List<ContactPerson> getContactPersons() {
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
     public List<AdditionalMetadataLocation> getAdditionalMetadataLocations() {
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
@@ -244,14 +247,14 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    public void setValidUntil(final Instant validUntil) {
+    public void setValidUntil(final @Nullable Instant validUntil) {
         throw new UnsupportedOperationException();        
     }
 
     /** {@inheritDoc} */
     @Override
     public List<XMLObject> getOrderedChildren() {
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
 }

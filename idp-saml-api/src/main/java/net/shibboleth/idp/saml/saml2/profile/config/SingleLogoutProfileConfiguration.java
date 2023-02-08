@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -31,13 +30,13 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /** Configuration support for SAML 2 Single Logout. */
@@ -98,7 +97,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * @since 4.0.0
      */
     public void setSignSOAPRequests(final boolean flag) {
-        signSOAPRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        signSOAPRequestsPredicate = flag ? PredicateSupport.alwaysTrue() : PredicateSupport.alwaysFalse();
     }
     
     /**
@@ -134,7 +133,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * @since 4.0.0
      */
     public void setClientTLSSOAPRequests(final boolean flag) {
-        clientTLSSOAPRequestsPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        clientTLSSOAPRequestsPredicate = flag ? PredicateSupport.alwaysTrue() : PredicateSupport.alwaysFalse();
     }
     
     /**
@@ -168,9 +167,9 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> formats = qualifiedNameIDFormatsLookupStrategy.apply(profileRequestContext);
         if (formats != null) {
-            return List.copyOf(formats);
+            return CollectionSupport.copyToList(formats);
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /**

@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.profile.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -30,6 +29,7 @@ import javax.xml.namespace.QName;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageChannelSecurityContext;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -51,8 +51,9 @@ import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
+
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
@@ -62,9 +63,11 @@ import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfigurati
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 
@@ -96,7 +99,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateBindingAndEndpointContexts.class);
     
     /** The type of endpoint to resolve. */
-    @Nonnull private QName endpointType;
+    @Nullable private QName endpointType;
 
     /** Endpoint resolver. */
     @NonnullAfterInit private EndpointResolver<?> endpointResolver;
@@ -123,7 +126,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     @Nullable private Function<ProfileRequestContext,BestMatchLocationCriterion> bestMatchCriterionLookupStrategy;
     
     /** List of possible bindings, in preference order. */
-    @Nonnull @NonnullElements private List<BindingDescriptor> bindingDescriptors;
+    @Nullable @NonnullElements private List<BindingDescriptor> bindingDescriptors;
     
     /** Whether an artifact-based binding implies the use of a secure channel. */
     private boolean artifactImpliesSecureChannel;
@@ -151,7 +154,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     
     /** Constructor. */
     public PopulateBindingAndEndpointContexts() {
-        bindingDescriptorsLookupStrategy = FunctionSupport.constant(Collections.emptyList());
+        bindingDescriptorsLookupStrategy = FunctionSupport.constant(CollectionSupport.emptyList());
         
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
@@ -308,12 +311,13 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             throw new ComponentInitializationException("EndpointResolver cannot be null");
         }
         
-        if (endpointType != null) {
+        final QName et = endpointType;
+        if (et != null) {
             endpointBuilder = XMLObjectSupport.getBuilder(endpointType);
             if (endpointBuilder == null) {
                 throw new ComponentInitializationException("Unable to obtain builder for endpoint type "
-                        + endpointType);
-            } else if (!(endpointBuilder.buildObject(endpointType) instanceof Endpoint)) {
+                        + et);
+            } else if (!(endpointBuilder.buildObject(et) instanceof Endpoint)) {
                 throw new ComponentInitializationException("Builder for endpoint type " + endpointType
                         + " did not result in Endpoint object");
             }
@@ -329,8 +333,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             return false;
         }
         
-        if (profileRequestContext.getInboundMessageContext() != null) {
-            inboundMessage = profileRequestContext.getInboundMessageContext().getMessage();
+        final MessageContext imc = profileRequestContext.getInboundMessageContext();
+        if (imc != null) {
+            inboundMessage = imc.getMessage();
         }
         
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
@@ -353,7 +358,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                             inboundMessage instanceof AuthnRequest
                             && ssoConfig.isSkipEndpointValidationWhenSigned(profileRequestContext)
                             && !ssoConfig.isIgnoreRequestSignatures(profileRequestContext)
-                            && SAMLBindingSupport.isMessageSigned(profileRequestContext.getInboundMessageContext()); 
+                            && SAMLBindingSupport.isMessageSigned(Constraint.isNotNull(imc, "No Inboud Message Context")); 
                 }
             }
         }
@@ -366,7 +371,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
        
         bindingDescriptors = bindingDescriptorsLookupStrategy.apply(profileRequestContext);
         if (bindingDescriptors == null) {
-            bindingDescriptors = Collections.emptyList();
+            bindingDescriptors = CollectionSupport.emptyList();
         }
         
         mdContext = metadataContextLookupStrategy.apply(profileRequestContext);
@@ -388,9 +393,11 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         log.debug("{} Attempting to resolve endpoint of type {} for outbound message", getLogPrefix(), endpointType);
 
-        // Compile binding list.
-        final List<String> bindings = new ArrayList<>(bindingDescriptors.size());
-        for (final BindingDescriptor bindingDescriptor : bindingDescriptors) {
+        // Compile binding list.  binding descriptors were checked for being non null in pre
+        final List<BindingDescriptor> bds = bindingDescriptors;
+        assert bds != null; 
+        @Nonnull final List<String> bindings = new ArrayList<>(bds.size());
+        for (final BindingDescriptor bindingDescriptor : bds) {
             if (bindingDescriptor.test(profileRequestContext)) {
                 bindings.add(bindingDescriptor.getId());
             }
@@ -414,8 +421,14 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             }
         }
         
-        if (mdContext != null && mdContext.getRoleDescriptor() != null) {
-            criteria.add(new RoleDescriptorCriterion(mdContext.getRoleDescriptor()));
+        final RoleDescriptor rdc;
+        if (mdContext != null) {
+            rdc =  mdContext.getRoleDescriptor();
+        } else {
+            rdc = null;
+        }
+        if (rdc != null) {
+            criteria.add(new RoleDescriptorCriterion(rdc));
         } else {
             log.debug("{} No metadata available for endpoint resolution", getLogPrefix());
         }
@@ -449,7 +462,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
         
         final Optional<BindingDescriptor> bindingDescriptor =
-                bindingDescriptors.stream().filter(b -> b.getId().equals(bindingURI)).findFirst();
+                bds.stream().filter(b -> b.getId().equals(bindingURI)).findFirst();
 
         if (bindingDescriptor.isPresent()) {
             bindingCtx.setBindingDescriptor(bindingDescriptor.orElseThrow());
@@ -459,20 +472,21 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         // Handle artifact details.
         if (bindingDescriptor.isPresent() && bindingDescriptor.get().isArtifact()) {
-            if (artifactConfiguration != null) {
+            final SAMLArtifactConfiguration artifactCfg = artifactConfiguration;
+            if (artifactCfg != null) {
                 final SAMLArtifactContext artifactCtx = artifactContextLookupStrategy.apply(profileRequestContext);
-                artifactCtx.setArtifactType(artifactConfiguration.getArtifactType());
+                artifactCtx.setArtifactType(artifactCfg.getArtifactType());
                 artifactCtx.setSourceArtifactResolutionServiceEndpointURL(
-                        artifactConfiguration.getArtifactResolutionServiceURL());
+                        artifactCfg.getArtifactResolutionServiceURL());
                 artifactCtx.setSourceArtifactResolutionServiceEndpointIndex(
-                        artifactConfiguration.getArtifactResolutionServiceIndex());
+                        artifactCfg.getArtifactResolutionServiceIndex());
             }
             
             if (artifactImpliesSecureChannel) {
                 log.debug("{} Use of artifact binding implies the channel will be secure, "
                         + "overriding MessageChannelSecurityContext flags", getLogPrefix());
                 final MessageChannelSecurityContext channelCtx =
-                        profileRequestContext.getSubcontext(MessageChannelSecurityContext.class, true);
+                        profileRequestContext.getOrCreateSubcontext(MessageChannelSecurityContext.class);
                 channelCtx.setIntegrityActive(true);
                 channelCtx.setConfidentialityActive(true);
             }            

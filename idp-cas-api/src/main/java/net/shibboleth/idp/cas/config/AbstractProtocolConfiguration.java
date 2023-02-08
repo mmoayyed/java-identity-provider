@@ -24,6 +24,10 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.security.config.BasicSecurityConfiguration;
+import org.opensaml.security.config.SecurityConfiguration;
+
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
 import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
@@ -31,12 +35,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.InitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.security.config.BasicSecurityConfiguration;
-import org.opensaml.security.config.SecurityConfiguration;
-
-import com.google.common.base.Predicates;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 /**
  * Base class for CAS protocol configuration.
@@ -69,7 +68,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
     public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         
-        resolveAttributesPredicate = Predicates.alwaysTrue();
+        resolveAttributesPredicate = PredicateSupport.alwaysTrue();
         ticketValidityPeriodLookupStrategy = FunctionSupport.constant(DEFAULT_TICKET_VALIDITY_PERIOD);
         
         defaultSecurityConfiguration = new BasicSecurityConfiguration(Duration.ofMinutes(5),
@@ -134,7 +133,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractConditionalP
      * @param flag flag to set
      */
     public void setResolveAttributes(final boolean flag) {
-        resolveAttributesPredicate = flag ? Predicates.alwaysTrue() : Predicates.alwaysFalse();
+        resolveAttributesPredicate = flag ? PredicateSupport.alwaysTrue() : PredicateSupport.alwaysFalse();
     }
 
     /**
