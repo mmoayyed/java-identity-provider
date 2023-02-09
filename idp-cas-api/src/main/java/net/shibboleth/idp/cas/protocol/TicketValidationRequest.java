@@ -18,6 +18,7 @@
 package net.shibboleth.idp.cas.protocol;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -32,7 +33,7 @@ public class TicketValidationRequest extends ServiceTicketResponse {
     private boolean renew;
 
     /** Proxy-granting ticket validation URL. */
-    @Nonnull private String pgtUrl;
+    @Nullable private String pgtUrl;
 
     /**
      * Creates a CAS ticket validation request message.
@@ -67,7 +68,7 @@ public class TicketValidationRequest extends ServiceTicketResponse {
      * 
      * @return proxy-granting ticket validation URL
      */
-    @Nonnull public String getPgtUrl() {
+    @Nullable public String getPgtUrl() {
         return pgtUrl;
     }
 
@@ -76,7 +77,7 @@ public class TicketValidationRequest extends ServiceTicketResponse {
      * 
      * @param url proxy-granting ticket validation URL
      */
-    public void setPgtUrl(@Nonnull final String url) {
-        this.pgtUrl = StringSupport.trimOrNull(url);
+    public void setPgtUrl(@Nullable final String url) {
+        pgtUrl = StringSupport.trimOrNull(url);
     }
 }
