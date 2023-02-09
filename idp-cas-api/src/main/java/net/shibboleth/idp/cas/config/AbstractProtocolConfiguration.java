@@ -29,8 +29,8 @@ import org.opensaml.security.config.BasicSecurityConfiguration;
 import org.opensaml.security.config.SecurityConfiguration;
 
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
-import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
-import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
+import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;
+import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.InitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
@@ -42,7 +42,7 @@ import net.shibboleth.shared.logic.PredicateSupport;
  * 
  * @author Marvin S. Addison
  */
-public abstract class AbstractProtocolConfiguration extends AbstractConditionalProfileConfiguration implements
+public abstract class AbstractProtocolConfiguration extends AbstractInterceptorAwareProfileConfiguration implements
         AttributeResolvingProfileConfiguration, InitializableComponent {
 
     /** CAS base protocol URI. */

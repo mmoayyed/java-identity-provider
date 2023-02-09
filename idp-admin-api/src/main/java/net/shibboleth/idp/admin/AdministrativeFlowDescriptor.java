@@ -24,7 +24,7 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.FlowDescriptor;
-import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
+import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
 
 /**
  * A descriptor for an administrative flow.

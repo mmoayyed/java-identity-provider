@@ -19,8 +19,8 @@ package net.shibboleth.idp.profile.context.navigate;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.OverriddenIssuerProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.config.OverriddenIssuerProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 

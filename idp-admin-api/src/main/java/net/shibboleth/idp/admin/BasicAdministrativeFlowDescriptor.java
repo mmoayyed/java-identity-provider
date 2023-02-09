@@ -20,7 +20,6 @@ package net.shibboleth.idp.admin;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -44,7 +43,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
@@ -70,7 +69,7 @@ import net.shibboleth.shared.primitive.StringSupport;
  * 
  * @since 3.3.0
  */
-public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfiguration
+public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareProfileConfiguration
         implements AdministrativeFlowDescriptor {
     
     /** Logging ID. */

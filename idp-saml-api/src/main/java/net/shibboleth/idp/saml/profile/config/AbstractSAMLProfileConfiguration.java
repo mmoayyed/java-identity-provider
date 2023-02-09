@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
+import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
@@ -39,7 +39,7 @@ import net.shibboleth.shared.primitive.StringSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /** Base class for SAML profile configurations. */
-public abstract class AbstractSAMLProfileConfiguration extends AbstractConditionalProfileConfiguration implements
+public abstract class AbstractSAMLProfileConfiguration extends AbstractInterceptorAwareProfileConfiguration implements
         SAMLProfileConfiguration {
     
     /** Default assertion lifetime. */
@@ -217,7 +217,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractCondition
         
         final Set<String> audiences = assertionAudiencesLookupStrategy.apply(profileRequestContext);
         if (audiences != null) {
-            return Set.copyOf(audiences);
+            return CollectionSupport.copyToSet(audiences);
         }
         return CollectionSupport.emptySet();
     }

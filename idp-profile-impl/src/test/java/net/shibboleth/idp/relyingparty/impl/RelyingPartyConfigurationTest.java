@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.base.Predicates;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.testing.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
@@ -40,7 +40,7 @@ public class RelyingPartyConfigurationTest {
         RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
-        config.setDetailedErrorsPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
+        config.setDetailedErrorsPredicate(PredicateSupport.alwaysTrue());
         config.initialize();
         Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderId(null), "http://idp.example.org");
@@ -50,7 +50,7 @@ public class RelyingPartyConfigurationTest {
         config = new RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
-        config.setDetailedErrorsPredicate(Predicates.<ProfileRequestContext>alwaysFalse());
+        config.setDetailedErrorsPredicate(PredicateSupport.alwaysFalse());
         config.initialize();
         Assert.assertEquals(config.getId(), "foo");
         Assert.assertEquals(config.getResponderId(null), "http://idp.example.org");

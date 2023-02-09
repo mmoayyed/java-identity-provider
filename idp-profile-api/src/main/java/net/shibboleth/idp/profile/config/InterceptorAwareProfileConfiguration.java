@@ -23,15 +23,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.security.config.SecurityConfiguration;
 
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
-import net.shibboleth.shared.component.IdentifiedComponent;
 
-/** Represents the configuration of a particular communication profile. */
-public interface ProfileConfiguration extends IdentifiedComponent {
+/**
+ * Extension of {@link ProfileConfiguration} that adds inteceptor support.
+ * 
+ * @since 5.0.0
+ */
+public interface InterceptorAwareProfileConfiguration extends ProfileConfiguration {
 
     /**
      * Get an ordered list of interceptor flows to run for this profile after an inbound message is
@@ -63,39 +66,4 @@ public interface ProfileConfiguration extends IdentifiedComponent {
     @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getOutboundInterceptorFlows(
             @Nullable final ProfileRequestContext profileRequestContext);
     
-    /**
-     * Get the {@link SecurityConfiguration} to use with this profile.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return security configuration to use with this profile
-     */
-    @Nullable SecurityConfiguration getSecurityConfiguration(
-            @Nullable final ProfileRequestContext profileRequestContext);
-    
-    /**
-     * Get a bitmask of disallowed features to block.
-     * 
-     * <p>Individual profiles define their own feature constants.</p>
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return bitmask of features to block
-     * 
-     * @since 5.0.0
-     */
-    public int getDisallowedFeatures(@Nullable final ProfileRequestContext profileRequestContext);
-
-    /**
-     * Return true iff the input feature constant is disallowed.
-     * 
-     * @param profileRequestContext current profile request context
-     * @param feature a bit constant
-     * 
-     * @return true iff the input feature constant is disallowed
-     * 
-     * @since 5.0.0
-     */
-    public boolean isFeatureDisallowed(@Nullable final ProfileRequestContext profileRequestContext, final int feature);
-
 }

@@ -21,12 +21,12 @@ import javax.annotation.Nonnull;
 
 import org.opensaml.security.config.BasicSecurityConfiguration;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
+public class MockProfileConfiguration extends AbstractInterceptorAwareProfileConfiguration {
 
     /**
      * Constructor.

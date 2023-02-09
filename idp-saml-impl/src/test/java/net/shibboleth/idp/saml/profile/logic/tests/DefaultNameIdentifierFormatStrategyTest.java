@@ -18,13 +18,12 @@
 package net.shibboleth.idp.saml.profile.logic.tests;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -63,7 +62,7 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
         
         profileConfig = new BrowserSSOProfileConfiguration();
         prc = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singletonList(profileConfig)).buildProfileRequestContext();
+                CollectionSupport.singletonList(profileConfig)).buildProfileRequestContext();
         prc.setProfileId(BrowserSSOProfileConfiguration.PROFILE_ID);
         
         final EntityDescriptor entity = edBuilder.buildObject();
@@ -81,13 +80,13 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
     public void testNoConfiguration() {
         final ProfileRequestContext context = new ProfileRequestContext();
         final List<String> formats = strategy.apply(context);
-        Assert.assertEquals(formats, Collections.singletonList(NameID.UNSPECIFIED));
+        Assert.assertEquals(formats, CollectionSupport.singletonList(NameID.UNSPECIFIED));
     }
 
     @Test
     public void testNoFormats() {
         final List<String> formats = strategy.apply(prc);
-        Assert.assertEquals(formats, Collections.singletonList(NameID.UNSPECIFIED));
+        Assert.assertEquals(formats, CollectionSupport.singletonList(NameID.UNSPECIFIED));
     }
     
     @Test
@@ -146,7 +145,7 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
         role.getNameIDFormats().add(format);
 
         final List<String> formats = strategy.apply(prc);
-        Assert.assertEquals(formats, Collections.singletonList(NameID.TRANSIENT));
+        Assert.assertEquals(formats, CollectionSupport.singletonList(NameID.TRANSIENT));
     }
 
     @Test

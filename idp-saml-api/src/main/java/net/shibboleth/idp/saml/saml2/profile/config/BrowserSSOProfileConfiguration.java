@@ -29,11 +29,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
-import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.logic.ProxyAwareForceAuthnPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareAuthnContextComparisonLookupFunction;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction;
+import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;

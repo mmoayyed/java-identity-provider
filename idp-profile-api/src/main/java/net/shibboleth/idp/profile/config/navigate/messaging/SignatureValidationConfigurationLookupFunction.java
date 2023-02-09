@@ -28,7 +28,7 @@ import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.SignatureValidationConfiguration;
 import org.opensaml.xmlsec.config.XMLSecurityConfiguration;
 
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.messaging.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;

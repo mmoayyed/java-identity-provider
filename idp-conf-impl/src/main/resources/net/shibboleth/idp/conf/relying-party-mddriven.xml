@@ -120,7 +120,7 @@
             <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="disallowedFeatures">
                 <property name="defaultValue">
                     <util:constant
-                        static-field="net.shibboleth.idp.profile.config.AbstractProfileConfiguration.DEFAULT_DISALLOWED_FEATURES" />
+                        static-field="net.shibboleth.profile.config.AbstractProfileConfiguration.DEFAULT_DISALLOWED_FEATURES" />
                 </property>
             </bean>
         </property>

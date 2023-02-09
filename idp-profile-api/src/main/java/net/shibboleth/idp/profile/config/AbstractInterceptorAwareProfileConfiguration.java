@@ -19,83 +19,48 @@ package net.shibboleth.idp.profile.config;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.profile.config.AbstractConditionalProfileConfiguration;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
-import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.security.config.SecurityConfiguration;
 
-/** Base class for {@link ProfileConfiguration} implementations. */
-public abstract class AbstractProfileConfiguration extends AbstractIdentifiableInitializableComponent
-        implements ProfileConfiguration {
+/**
+ * Base class for {@link InterceptorAwareProfileConfiguration} implementations.
+ * 
+ * @since 5.0.0
+ */
+public abstract class AbstractInterceptorAwareProfileConfiguration extends AbstractConditionalProfileConfiguration
+        implements InterceptorAwareProfileConfiguration {
     
-    /** Default value for disallowedFeatures property. */
-    @Nonnull public static final Integer DEFAULT_DISALLOWED_FEATURES = 0; 
-
     /** Lookup function to supply inboundFlows property. */
     @Nonnull private Function<ProfileRequestContext,List<String>> inboundFlowsLookupStrategy;
 
     /** Lookup function to supply #outboundFlows property. */
     @Nonnull private Function<ProfileRequestContext,List<String>> outboundFlowsLookupStrategy;
 
-    /** Lookup function to supply securityConfiguration property. */
-    @Nonnull private Function<ProfileRequestContext,SecurityConfiguration> securityConfigurationLookupStrategy;
-
-    /** Lookup function to return a bitmask of request features to disallow. */
-    @Nonnull private Function<ProfileRequestContext,Integer> disallowedFeaturesLookupStrategy;
 
     /**
      * Constructor.
      * 
      * @param id ID of the communication profile, never null or empty
      */
-    public AbstractProfileConfiguration(@Nonnull @NotEmpty @ParameterName(name="id") final String id) {
-        setId(id);
-        securityConfigurationLookupStrategy = FunctionSupport.constant(null);
+    public AbstractInterceptorAwareProfileConfiguration(@Nonnull @NotEmpty @ParameterName(name="id") final String id) {
+        super(id);
         inboundFlowsLookupStrategy = FunctionSupport.constant(null);
         outboundFlowsLookupStrategy = FunctionSupport.constant(null);
-        disallowedFeaturesLookupStrategy = FunctionSupport.constant(DEFAULT_DISALLOWED_FEATURES);
-    }
-
-    /** {@inheritDoc} */
-    @Nullable public SecurityConfiguration getSecurityConfiguration(
-            @Nullable final ProfileRequestContext profileRequestContext) {
-        return securityConfigurationLookupStrategy.apply(profileRequestContext);
-    }
-
-    /**
-     * Sets the security configuration for this profile.
-     * 
-     * @param configuration security configuration for this profile
-     */
-    public void setSecurityConfiguration(@Nullable final SecurityConfiguration configuration) {
-        securityConfigurationLookupStrategy = FunctionSupport.constant(configuration);
-    }
-
-    /**
-     * Set a lookup strategy for the security configuration.
-     *
-     * @param strategy  lookup strategy
-     * 
-     * @since 3.3.0
-     */
-    public void setSecurityConfigurationLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,SecurityConfiguration> strategy) {
-        securityConfigurationLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -168,64 +133,6 @@ public abstract class AbstractProfileConfiguration extends AbstractIdentifiableI
     public void setOutboundInterceptorFlowsLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,List<String>> strategy) {
         outboundFlowsLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
-    }
-
-    /** {@inheritDoc} */
-    public boolean isFeatureDisallowed(@Nullable final ProfileRequestContext profileRequestContext, final int feature) {
-        return (getDisallowedFeatures(profileRequestContext) & feature) == feature;
-    }
-    
-    /** {@inheritDoc} */
-    public int getDisallowedFeatures(@Nullable final ProfileRequestContext profileRequestContext) {
-        final Integer mask = disallowedFeaturesLookupStrategy.apply(profileRequestContext); 
-        return mask != null ? mask : DEFAULT_DISALLOWED_FEATURES;
-    }
-    
-    /**
-     * Set a bitmask of disallowed features to block.
-     * 
-     * @param mask a bitmask of features to block
-     * 
-     * @since 3.3.0
-     */
-    public void setDisallowedFeatures(final int mask) {
-        disallowedFeaturesLookupStrategy = FunctionSupport.constant(mask);
-    }
-    
-    /**
-     * Set a lookup strategy for the bitmask of disallowed features to block. 
-     * 
-     * @param strategy lookup strategy
-     * 
-     * @since 3.3.0
-     */
-    public void setDisallowedFeaturesLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
-        disallowedFeaturesLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return getId().hashCode();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (!(obj instanceof AbstractProfileConfiguration)) {
-            return false;
-        }
-
-        final AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
-        return Objects.equals(getId(), other.getId());
     }
     
 }

@@ -62,6 +62,7 @@
     <properties>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>5.0.0-SNAPSHOT</opensaml.version>
+        <shib-profile.version>5.0.0-SNAPSHOT</shib-profile.version>
         <shib-attribute.version>5.0.0-SNAPSHOT</shib-attribute.version>
         <shib-metadata.version>5.0.0-SNAPSHOT</shib-metadata.version>
         <shib-shared.groupId>net.shibboleth</shib-shared.groupId>
@@ -112,11 +113,11 @@
         used by all project modules. -->
     <dependencyManagement>
         <dependencies>
-            <!-- Import Dependencies:  Shib-Metadata/Attribute -->
+            <!-- Import Dependencies:  Shib-Metadata/Attribute/Profile -->
             <dependency>
                 <groupId>net.shibboleth</groupId>
-                <artifactId>shib-metadata-bom</artifactId>
-                <version>${shib-metadata.version}</version>
+                <artifactId>shib-profile-bom</artifactId>
+                <version>${shib-profile.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -124,6 +125,13 @@
                 <groupId>net.shibboleth</groupId>
                 <artifactId>shib-attribute-bom</artifactId>
                 <version>${shib-attribute.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.shibboleth</groupId>
+                <artifactId>shib-metadata-bom</artifactId>
+                <version>${shib-metadata.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

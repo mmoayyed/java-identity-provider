@@ -22,7 +22,8 @@ import java.util.Collections;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.InterceptorAwareProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
@@ -32,8 +33,8 @@ import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A function that returns {@link ProfileConfiguration#getInboundInterceptorFlows}() if such a profile is
- * available from a {@link RelyingPartyContext} obtained via a lookup function, by default a child of the
+ * A function that returns {@link InterceptorAwareProfileConfiguration#getInboundInterceptorFlows}() if such a
+ * profile is available from a {@link RelyingPartyContext} obtained via a lookup function, by default a child of the
  * {@link ProfileRequestContext}.
  * 
  * <p>If a specific setting is unavailable, no values are returned.</p>
@@ -47,8 +48,8 @@ public class InboundFlowsLookupFunction extends AbstractRelyingPartyLookupFuncti
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null) {
-                return pc.getInboundInterceptorFlows(input);
+            if (pc instanceof InterceptorAwareProfileConfiguration) {
+                return ((InterceptorAwareProfileConfiguration) pc).getInboundInterceptorFlows(input);
             }
         }
         

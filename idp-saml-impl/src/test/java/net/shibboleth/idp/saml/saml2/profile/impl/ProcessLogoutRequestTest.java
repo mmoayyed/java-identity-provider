@@ -27,7 +27,6 @@ import java.util.Map;
 import jakarta.servlet.http.Cookie;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -44,6 +43,7 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
@@ -86,7 +86,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final SingleLogoutProfileConfiguration logoutConfig = new SingleLogoutProfileConfiguration();
         logoutConfig.setQualifiedNameIDFormats(Collections.singletonList(NameID.UNSPECIFIED));
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singletonList(logoutConfig)).buildRequestContext();
+                CollectionSupport.singletonList(logoutConfig)).buildRequestContext();
         
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         

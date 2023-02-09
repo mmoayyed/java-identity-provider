@@ -30,8 +30,8 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
-import net.shibboleth.idp.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
+import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -183,7 +183,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         final Collection<AuthenticationMethodPrincipal> methods =
                 defaultAuthenticationMethodsLookupStrategy.apply(profileRequestContext);
         if (methods != null) {
-            return List.copyOf(methods);
+            return CollectionSupport.copyToList(methods);
         }
         return CollectionSupport.emptyList();
     }
@@ -221,7 +221,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
         
         final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return Set.copyOf(flows);
+            return CollectionSupport.copyToSet(flows);
         }
         return CollectionSupport.emptySet();
     }
@@ -257,7 +257,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
-            return List.copyOf(flows);
+            return CollectionSupport.copyToList(flows);
         }
         return CollectionSupport.emptyList();
     }
@@ -299,7 +299,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwarePr
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> formats = nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext);
         if (formats != null) {
-            return List.copyOf(formats);
+            return CollectionSupport.copyToList(formats);
         }
         return CollectionSupport.emptyList();
     }

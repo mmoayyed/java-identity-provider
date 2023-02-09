@@ -21,7 +21,7 @@ import java.time.Duration;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;

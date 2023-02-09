@@ -27,7 +27,7 @@ import org.opensaml.security.config.SecurityConfiguration;
 import org.opensaml.security.httpclient.HttpClientSecurityConfiguration;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.messaging.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;

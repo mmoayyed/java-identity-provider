@@ -20,12 +20,12 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import java.util.Collections;
 
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -55,7 +55,7 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singletonList(new BrowserSSOProfileConfiguration())).buildRequestContext();
+                CollectionSupport.singletonList(new BrowserSSOProfileConfiguration())).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
         
         action = new PopulateEncryptionParameters();

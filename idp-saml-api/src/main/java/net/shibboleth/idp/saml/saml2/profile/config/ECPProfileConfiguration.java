@@ -76,7 +76,7 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration {
         
         final Set<String> events = localEventsLookupStrategy.apply(profileRequestContext);
         if (events != null) {
-            return Set.copyOf(events);
+            return CollectionSupport.copyToSet(events);
         }
         return CollectionSupport.emptySet();
     }

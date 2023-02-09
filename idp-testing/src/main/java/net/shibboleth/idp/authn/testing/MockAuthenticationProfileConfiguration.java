@@ -33,7 +33,7 @@ import org.opensaml.xmlsec.config.BasicXMLSecurityConfiguration;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -43,7 +43,7 @@ import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /** Mock implementation of {@link AuthenticationProfileConfiguration}. */
-public class MockAuthenticationProfileConfiguration extends AbstractProfileConfiguration
+public class MockAuthenticationProfileConfiguration extends AbstractInterceptorAwareProfileConfiguration
         implements AuthenticationProfileConfiguration {
 
     /** Selects, and limits, the authentication methods to use for requests. */
