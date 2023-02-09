@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.cas.service;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -50,7 +50,7 @@ public class PatternServiceRegistry extends AbstractIdentifiableInitializableCom
     /** Map of service definitions to compiled patterns. */
     @Nonnull
     @NonnullElements
-    private Map<ServiceDefinition, Pattern> definitions = Collections.emptyMap();
+    private Map<ServiceDefinition, Pattern> definitions = CollectionSupport.emptyMap();
 
     /**
      * Sets the list of service definitions that back the registry.

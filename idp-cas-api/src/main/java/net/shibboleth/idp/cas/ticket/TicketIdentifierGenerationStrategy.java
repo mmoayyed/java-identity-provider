@@ -101,7 +101,9 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
         if (ticketSuffix != null) {
             builder.append('-').append(ticketSuffix);
         }
-        return builder.toString();
+        final String result = builder.toString();
+        assert result != null;
+        return result;
     }
 
     @Override

@@ -20,7 +20,8 @@ package net.shibboleth.idp.cas.service;
 import java.util.Arrays;
 import java.util.List;
 
-import net.shibboleth.idp.cas.service.Service;
+import javax.annotation.Nonnull;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -57,14 +58,15 @@ public class PatternServiceRegistryTest {
 
     @Test(dataProvider = "services")
     public void testLookup(
-            final List<ServiceDefinition> services, final String serviceURL, final Service expected)
+            final @Nonnull List<ServiceDefinition> services, @Nonnull final String serviceURL, final Service expected)
             throws Exception {
         final PatternServiceRegistry registry = new PatternServiceRegistry();
         registry.setDefinitions(services);
         final Service actual = registry.lookup(serviceURL);
         if (expected == null) {
-            assertNull(actual);
+            assert actual == null;
         } else {
+            assert actual != null;
             assertEquals(actual.getName(), expected.getName());
             assertEquals(actual.getGroup(), expected.getGroup());
             assertEquals(actual.isAuthorizedToProxy(), expected.isAuthorizedToProxy());

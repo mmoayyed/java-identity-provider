@@ -78,7 +78,8 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
         log.trace("Beginning to encode attribute {}", attributeId);
 
         final String name = rule.getOrDefault(PROP_NAME, String.class, attributeId);
-        
+        // by construction if attribute id is nonnnul then the so if name.
+        assert name != null;
         final Attribute casAttribute = new Attribute(name);
         
         for (final IdPAttributeValue o : attribute.getValues()) {

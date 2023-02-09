@@ -51,7 +51,7 @@ public class TicketState {
     @Nonnull private String authenticationMethod;
 
     /** Attribute IDs that were consented to during the ticket request. */
-    @Nonnull @NonnullElements private Set<String> consentedAttributeIds;
+    @Nullable @NonnullElements private Set<String> consentedAttributeIds;
 
     /**
      * Creates a new instance with required fields.

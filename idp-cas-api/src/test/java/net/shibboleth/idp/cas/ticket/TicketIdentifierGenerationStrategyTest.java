@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -88,7 +90,7 @@ public class TicketIdentifierGenerationStrategyTest {
     }
 
     @Test(dataProvider = "url-safety", expectedExceptions = ConstraintViolationException.class)
-    public void testUrlSafety(final String prefix, final String suffix) {
+    public void testUrlSafety(@Nonnull final String prefix, final String suffix) {
         new TicketIdentifierGenerationStrategy(prefix, 10).setSuffix(suffix);
     }
 

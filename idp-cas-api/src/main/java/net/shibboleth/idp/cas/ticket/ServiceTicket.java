@@ -59,7 +59,7 @@ public class ServiceTicket extends Ticket {
 
     /** {@inheritDoc} */
     @Override
-    protected Ticket newInstance(final String newId) {
+    protected Ticket newInstance(@Nonnull final String newId) {
         return new ServiceTicket(newId, getService(), getExpirationInstant(), forceAuthn);
     }
 
