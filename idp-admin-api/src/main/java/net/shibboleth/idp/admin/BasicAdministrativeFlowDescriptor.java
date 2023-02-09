@@ -40,7 +40,6 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.security.config.SecurityConfiguration;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;

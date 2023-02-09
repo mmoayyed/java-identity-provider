@@ -19,7 +19,6 @@ package net.shibboleth.idp.module;
 
 import java.io.PrintStream;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 
