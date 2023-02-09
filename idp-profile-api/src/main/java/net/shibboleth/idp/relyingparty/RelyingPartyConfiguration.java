@@ -18,7 +18,6 @@
 package net.shibboleth.idp.relyingparty;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.IdentifiedComponent;
@@ -146,9 +146,9 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
         
         final Map<String,ProfileConfiguration> map = profileConfigurationsLookupStrategy.apply(profileRequestContext);
         if (map != null) {
-            return Map.copyOf(map);
+            return CollectionSupport.copyToMap(map);
         }
-        return Collections.emptyMap();
+        return CollectionSupport.emptyMap();
     }
 
     /**

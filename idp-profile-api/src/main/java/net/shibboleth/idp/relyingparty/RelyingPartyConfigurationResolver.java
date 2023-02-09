@@ -20,6 +20,7 @@ package net.shibboleth.idp.relyingparty;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.IdentifiedComponent;
 import net.shibboleth.shared.resolver.Resolver;
@@ -34,8 +35,8 @@ public interface RelyingPartyConfigurationResolver extends Resolver<RelyingParty
     /**
      * Return the default security configuration for the profile.
      * 
-     * @param profileId the profile ID (available via
-     *      {@link net.shibboleth.idp.profile.config.ProfileConfiguration#getId()}
+     * @param profileId the profile ID (available via {@link ProfileConfiguration#getId()}
+     * 
      * @return the configured default configuration
      */
     @Nullable SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty final String profileId);

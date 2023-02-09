@@ -19,6 +19,9 @@ package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 // TODO: move attribute related events into that module?
@@ -30,28 +33,28 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 public final class IdPEventIds {
 
     /**
-     * ID of event returned if the {@link net.shibboleth.idp.profile.context.RelyingPartyContext} is missing or corrupt.
+     * ID of event returned if the {@link RelyingPartyContext} is missing or corrupt.
      */
     @Nonnull @NotEmpty public static final String INVALID_RELYING_PARTY_CTX = "InvalidRelyingPartyContext";
 
     /**
-     * ID of event returned if the {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} is missing or
+     * ID of event returned if the {@link RelyingPartyConfiguration} is missing or
      * corrupt.
      */
     @Nonnull @NotEmpty public static final String INVALID_RELYING_PARTY_CONFIG = "InvalidRelyingPartyConfiguration";
 
     /**
-     * ID of event returned if the {@link net.shibboleth.idp.profile.config.ProfileConfiguration} is missing or corrupt.
+     * ID of event returned if the {@link ProfileConfiguration} is missing or corrupt.
      */
     @Nonnull @NotEmpty public static final String INVALID_PROFILE_CONFIG = "InvalidProfileConfiguration";
 
     /**
-     * ID of event returned if the @link net.shibboleth.idp.attribute.context.AttributeContext is missing or corrupt.
+     * ID of event returned if the @link AttributeContext is missing or corrupt.
      */
     @Nonnull @NotEmpty public static final String INVALID_ATTRIBUTE_CTX = "InvalidAttributeContext";
 
     /**
-     * ID of event returned if the @link net.shibboleth.idp.authn.context.SubjectContext is missing or corrupt.
+     * ID of event returned if the @link SubjectContext is missing or corrupt.
      */
     @Nonnull @NotEmpty public static final String INVALID_SUBJECT_CTX = "InvalidSubjectContext";
 
