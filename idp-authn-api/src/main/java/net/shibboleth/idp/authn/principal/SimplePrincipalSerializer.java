@@ -95,7 +95,9 @@ public class SimplePrincipalSerializer<T extends Principal> extends AbstractPrin
                 .write(fieldName, getName(principal))
                 .writeEnd();
         }
-        return sink.toString();
+        final String result = sink.toString();
+        assert result != null;
+        return result;
     }
     
     /**
@@ -108,7 +110,9 @@ public class SimplePrincipalSerializer<T extends Principal> extends AbstractPrin
      * @throws IOException if an error occurs
      */
     @Nonnull @NotEmpty protected String getName(@Nonnull final Principal principal) throws IOException {
-        return principal.getName();
+        final String result = principal.getName();
+        assert result != null;
+        return result;
     }
 
     /** {@inheritDoc} */

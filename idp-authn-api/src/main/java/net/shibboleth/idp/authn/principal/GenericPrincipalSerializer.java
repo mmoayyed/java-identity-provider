@@ -68,6 +68,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
     @Nonnull @NotEmpty private static final String PRINCIPAL_NAME_FIELD = "nam";
 
     /** Pattern used to determine if input is supported. */
+    @SuppressWarnings("null")
     @Nonnull private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"typ\":.*,\"nam\":.*\\}$");
 
     /** Class logger. */
@@ -139,7 +140,9 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
                 
             gen.writeEnd();
         }
-        return sink.toString();
+        final String result = sink.toString();
+        assert result != null;
+        return result;
     }
 
     /** {@inheritDoc} */

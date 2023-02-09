@@ -82,7 +82,9 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
     
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getName() {
-        return authorities.toString();
+        final String result = authorities.toString();
+        assert result != null;
+        return result;
     }
     
     /**

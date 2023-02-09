@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import com.google.common.base.MoreObjects;
 import net.shibboleth.idp.authn.TemplateSearchDnResolver;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 import org.apache.velocity.app.VelocityEngine;
@@ -620,6 +621,14 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     public void setUserFilter(final String filter) {
         userFilter = filter;
     }
+    
+    /**
+     *Get the {@link #userFilter}.
+     * @return the userfilter
+     */
+    @Nonnull private String getUserFilter() {
+        return Constraint.isNotNull(userFilter, "p:userFilter must be specified");
+    }
 
     /** Set {@link #subtreeSearch}.
      * @param b what to set
@@ -648,6 +657,15 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     public void setVelocityEngine(final VelocityEngine engine) {
         velocityEngine = engine;
     }
+
+    /**
+     *Get the {@link #velocityEngine}.
+     * @return the velocityEngine
+     */
+    @Nonnull private VelocityEngine getVelocityEngine() {
+        return Constraint.isNotNull(velocityEngine, "p:velocityEngine must be specified");
+    }
+
 
     /** Set {@link #bindDn}.
      * @param dn what to set
@@ -909,16 +927,16 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         switch (authenticatorType) {
         case BIND_SEARCH:
             if (disablePooling) {
-                final TemplateSearchDnResolver bindSearchDnResolver = new TemplateSearchDnResolver(velocityEngine,
-                        userFilter);
+                final TemplateSearchDnResolver bindSearchDnResolver = new TemplateSearchDnResolver(getVelocityEngine(),
+                        getUserFilter());
                 bindSearchDnResolver.setBaseDn(baseDn);
                 bindSearchDnResolver.setSubtreeSearch(subtreeSearch);
                 bindSearchDnResolver.setConnectionFactory(new DefaultConnectionFactory(createConnectionConfig(
                         new BindConnectionInitializer(bindDn, new Credential(bindDnCredential)))));
                 authenticator.setDnResolver(bindSearchDnResolver);
             } else {
-                final TemplateSearchDnResolver bindSearchDnResolver = new TemplateSearchDnResolver(velocityEngine,
-                        userFilter);
+                final TemplateSearchDnResolver bindSearchDnResolver = new TemplateSearchDnResolver(getVelocityEngine(),
+                        getUserFilter());
                 bindSearchDnResolver.setBaseDn(baseDn);
                 bindSearchDnResolver.setSubtreeSearch(subtreeSearch);
                 bindSearchDnResolver.setConnectionFactory(createPooledConnectionFactory("dn-search-pool",
@@ -939,15 +957,15 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
             break;
         case ANON_SEARCH:
             if (disablePooling) {
-                final TemplateSearchDnResolver anonSearchDnResolver = new TemplateSearchDnResolver(velocityEngine,
-                        userFilter);
+                final TemplateSearchDnResolver anonSearchDnResolver = new TemplateSearchDnResolver(getVelocityEngine(),
+                        getUserFilter());
                 anonSearchDnResolver.setBaseDn(baseDn);
                 anonSearchDnResolver.setSubtreeSearch(subtreeSearch);
                 anonSearchDnResolver.setConnectionFactory(new DefaultConnectionFactory(createConnectionConfig()));
                 authenticator.setDnResolver(anonSearchDnResolver);
             } else {
-                final TemplateSearchDnResolver anonSearchDnResolver = new TemplateSearchDnResolver(velocityEngine,
-                        userFilter);
+                final TemplateSearchDnResolver anonSearchDnResolver = new TemplateSearchDnResolver(getVelocityEngine(),
+                        getUserFilter());
                 anonSearchDnResolver.setBaseDn(baseDn);
                 anonSearchDnResolver.setSubtreeSearch(subtreeSearch);
                 anonSearchDnResolver.setConnectionFactory(createPooledConnectionFactory("dn-search-pool",

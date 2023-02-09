@@ -139,8 +139,9 @@ public abstract class ExternalAuthentication {
         url.append(baseLocation.indexOf('?') == -1 ? '?' : '&');
         url.append(CONVERSATION_KEY).append('=').append(
                 UrlEscapers.urlFormParameterEscaper().escape(conversationValue));
-        
-        return url.toString();
+        final String result = url.toString();
+        assert result != null;
+        return result;
     }
     
     /**

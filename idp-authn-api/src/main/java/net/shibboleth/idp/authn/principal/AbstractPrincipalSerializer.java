@@ -50,6 +50,7 @@ public abstract class AbstractPrincipalSerializer<Type> extends AbstractInitiali
      */
     public AbstractPrincipalSerializer() {
         final JsonProvider provider = JsonProvider.provider();
+        assert provider != null;
         generatorFactory = provider.createGeneratorFactory(null);
         readerFactory = provider.createReaderFactory(null);
     }

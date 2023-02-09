@@ -63,6 +63,8 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getAPIHost() {
+        checkComponentActive();
+        assert apiHost != null;
         return apiHost;
     }
     
@@ -93,6 +95,8 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getIntegrationKey() {
+        checkComponentActive();
+        assert integrationKey != null;
         return integrationKey;
     }
     
@@ -108,6 +112,8 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String getSecretKey() {
+        checkComponentActive();
+        assert secretKey != null;
         return secretKey;
     }
     
@@ -124,7 +130,9 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @Unmodifiable
     public <T extends Principal> Set<T> getSupportedPrincipals(@Nonnull final Class<T> c) {
-        return supportedPrincipals.getPrincipals(c);
+        final Set<T> result = supportedPrincipals.getPrincipals(c);
+        assert result != null;
+        return result;
     }
     
     /**

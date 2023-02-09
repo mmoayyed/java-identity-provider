@@ -247,6 +247,7 @@ public abstract class AbstractSubjectCanonicalizationAction
             }
         }
         
+        assert s != null;
         return s;
     }
     

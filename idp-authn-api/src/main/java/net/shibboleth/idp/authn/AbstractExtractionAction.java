@@ -124,7 +124,11 @@ public abstract class AbstractExtractionAction extends AbstractAuthenticationAct
      * 
      * @return  the result of applying the expressions
      */
-    @Nonnull @NotEmpty protected String applyTransforms(@Nonnull @NotEmpty final String input) {
+    @Nullable @NotEmpty protected String applyTransforms(@Nullable final String input) {
+        
+        if (input == null) {
+            return null;
+        }
         
         String s = input;
         
@@ -155,7 +159,7 @@ public abstract class AbstractExtractionAction extends AbstractAuthenticationAct
                 log.debug("{} Result of replacement is '{}'", getLogPrefix(), s);
             }
         }
-        
+
         return s;
     }
 

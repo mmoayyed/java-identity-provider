@@ -31,6 +31,7 @@ import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -133,7 +134,8 @@ public final class SubjectContext extends BaseContext {
         return authenticationResults.values()
                 .stream()
                 .map(AuthenticationResult::getSubject)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).
+                get();
     }
     
 }

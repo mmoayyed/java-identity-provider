@@ -561,7 +561,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
             supportedPrincipals.getPrincipals().clear();
             
             stringBasedPrincipals.forEach(v -> {
-                assert principalServiceManager != null;
+                assert principalServiceManager != null && v != null;
                 final Principal p = principalServiceManager.principalFromString(v);
                 if (p != null) {
                     supportedPrincipals.getPrincipals().add(p);

@@ -304,6 +304,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
         }
         
         if (transforms.isEmpty()) {
+            assert s != null;
             return s;
         }
         
@@ -318,6 +319,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
             }
         }
         
+        assert s != null;
         return s;
     }
 

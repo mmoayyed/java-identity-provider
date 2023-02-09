@@ -90,7 +90,15 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     @Override
     @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
-        return customPrincipals != null ? customPrincipals.getPrincipals(c) : CollectionSupport.emptySet();
+        final Subject localCopy = customPrincipals;
+        if (localCopy == null) {
+            return CollectionSupport.emptySet();
+        }
+        final Set<T> result = localCopy.getPrincipals(c);
+        if (result == null) {
+            return CollectionSupport.emptySet();
+        }
+        return result;
     }
     
     /**
@@ -103,7 +111,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
         checkSetterPreconditions();
         
         if (principals != null) {
-            final Collection<Principal> copy = Set.copyOf(principals);
+            final Collection<Principal> copy = CollectionSupport.copyToSet(principals);
             if (!copy.isEmpty()) {
                 customPrincipals = new Subject();
                 customPrincipals.getPrincipals().addAll(copy);
