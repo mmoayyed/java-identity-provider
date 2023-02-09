@@ -434,6 +434,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     /** Authentication handler account state login failures. */
     private int accountStateLoginFailures;
 
+    /** Set {@link #authenticatorType}.
+     * @param type what to set
+     */
     public void setAuthenticatorType(@Nonnull @NotEmpty final String type) {
         authenticatorType = AuthenticatorType.fromLabel(type);
         if (authenticatorType == null) {
@@ -441,6 +444,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         }
     }
 
+    /** Set {@link #trustType}.
+     * @param type what to set
+     */
     public void setTrustType(@Nonnull @NotEmpty final String type) {
         trustType = TrustType.fromLabel(type);
         if (trustType == null) {
@@ -448,6 +454,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         }
     }
 
+    /** Set {@link #connectionStrategyType}.
+     * @param type what to set
+     */
     public void setConnectionStrategyType(@Nonnull @NotEmpty final String type) {
         connectionStrategyType = ConnectionStrategyType.fromLabel(type);
         if (connectionStrategyType == null) {
@@ -455,70 +464,121 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         }
     }
 
+    /** Set {@link #ldapUrl}.
+     * @param url what to set
+     */
     public void setLdapUrl(@Nullable @NotEmpty final String url) {
         ldapUrl = url;
     }
 
+    /** Set {@link #useStartTLS}.
+     * @param b what to set
+     */
     public void setUseStartTLS(final boolean b) {
         useStartTLS = b;
     }
 
+    /** Set {@link #disableHostnameVerification}.
+     * @param b what to set
+     */
     public void setDisableHostnameVerification(final boolean b) {
         disableHostnameVerification = b;
     }
 
+    /** Set {@link #connectTimeout}.
+     * @param timeout what to set
+     */
     public void setConnectTimeout(@Nullable final Duration timeout) {
         connectTimeout = timeout;
     }
 
+    /** Set {@link #responseTimeout}.
+     * @param timeout what to set
+     */
     public void setResponseTimeout(@Nullable final Duration timeout) {
         responseTimeout = timeout;
     }
 
+    /** Set {@link #trustCertificatesCredentialConfig}.
+     * @param config to set
+     */
     public void setTrustCertificatesCredentialConfig(final CredentialConfig config) {
         trustCertificatesCredentialConfig = config;
     }
 
+    /** Set {@link #truststoreCredentialConfig}.
+     * @param config to set
+     */
     public void setTruststoreCredentialConfig(final CredentialConfig config) {
         truststoreCredentialConfig = config;
     }
 
+    /** Set {@link #disablePooling}.
+     * @param b what to set
+     */
     public void setDisablePooling(final boolean b) {
         disablePooling = b;
     }
 
+    /** Set {@link #blockWaitTime}.
+     * @param time what to set
+     */
     public void setBlockWaitTime(@Nullable final Duration time) {
         blockWaitTime = time;
     }
 
+    /** Set {@link #minPoolSize}.
+     * @param size what to set
+     */
     public void setMinPoolSize(final int size) {
         minPoolSize = size;
     }
 
+    /** Set {@link #maxPoolSize}.
+     * @param size what to set
+     */
     public void setMaxPoolSize(final int size) {
         maxPoolSize = size;
     }
 
+    /** Set {@link #validateOnCheckout}.
+     * @param b what to set
+     */
     public void setValidateOnCheckout(final boolean b) {
         validateOnCheckout = b;
     }
 
+    /** Set {@link #validatePeriodically}.
+     * @param b what to set
+     */
     public void setValidatePeriodically(final boolean b) {
         validatePeriodically = b;
     }
 
+    /** Set {@link #validatePeriod}.
+     * @param period what to set
+     */
     public void setValidatePeriod(@Nullable final Duration period) {
         validatePeriod = period;
     }
 
+    /** Set {@link #validateDn}.
+     * @param dn what to set
+     */
     public void setValidateDn(final String dn) {
         validateDn = dn;
     }
 
+    /** Set {@link #validateFilter}.
+     * @param filter what to set
+     */
     public void setValidateFilter(final String filter) {
         validateFilter = filter;
     }
 
+    /** Set {@link #bindPoolPassivatorType}.
+     * @param type what to set
+     */
     public void setBindPoolPassivatorType(@Nonnull @NotEmpty final String type) {
         bindPoolPassivatorType = PassivatorType.fromLabel(type);
         if (bindPoolPassivatorType == null) {
@@ -526,78 +586,135 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         }
     }
 
+    /** Set {@link #prunePeriod}.
+     * @param period what to set
+     */
     public void setPrunePeriod(@Nullable final Duration period) {
         prunePeriod = period;
     }
 
+    /** Set {@link #idleTime}.
+     * @param time what to set
+     */
     public void setIdleTime(@Nullable final Duration time) {
         idleTime = time;
     }
 
+    /** Set {@link #dnFormat}.
+     * @param format what to set
+     */
     public void setDnFormat(final String format) {
         dnFormat = format;
     }
 
+    /** Set {@link #baseDn}.
+     * @param dn what to set
+     */
     public void setBaseDn(final String dn) {
         baseDn = dn;
     }
 
+    /** Set {@link #userFilter}.
+     * @param filter what to set
+     */
     public void setUserFilter(final String filter) {
         userFilter = filter;
     }
 
+    /** Set {@link #subtreeSearch}.
+     * @param b what to set
+     */
     public void setSubtreeSearch(final boolean b) {
         subtreeSearch = b;
     }
 
+    /** Set {@link #resolveEntryOnFailure}.
+     * @param b what to set
+     */
     public void setResolveEntryOnFailure(final boolean b) {
         resolveEntryOnFailure = b;
     }
 
+    /** Set {@link #resolveEntryWithBindDn}.
+     * @param b what to set
+     */
     public void setResolveEntryWithBindDn(final boolean b) {
         resolveEntryWithBindDn = b;
     }
 
+    /** Set {@link #velocityEngine}.
+     * @param engine what to set
+     */
     public void setVelocityEngine(final VelocityEngine engine) {
         velocityEngine = engine;
     }
 
+    /** Set {@link #bindDn}.
+     * @param dn what to set
+     */
     public void setBindDn(final String dn) {
         bindDn = dn;
     }
 
+    /** Set {@link #bindDnCredential}.
+     * @param credential what to set
+     */
     public void setBindDnCredential(final String credential) {
         bindDnCredential = credential;
     }
 
+    /** Set {@link #usePasswordExpiration}.
+     * @param b what to set
+     */
     public void setUsePasswordPolicy(final boolean b) {
         usePasswordPolicy = b;
     }
 
+    /** Set {@link #usePasswordExpiration}.
+     * @param b what to set
+     */
     public void setUsePasswordExpiration(final boolean b) {
         usePasswordExpiration = b;
     }
 
+    /** Set {@link #isActiveDirectory}.
+     * @param b what to set
+     */
     public void setActiveDirectory(final boolean b) {
         isActiveDirectory = b;
     }
 
+    /** Set {@link #isFreeIPA}.
+     * @param b what to set
+     */
     public void setFreeIPA(final boolean b) {
         isFreeIPA = b;
     }
 
+    /** Set {@link #isEDirectory}.
+     * @param b what to set
+     */
     public void setEDirectory(final boolean b) {
         isEDirectory = b;
     }
 
+    /** Set {@link #accountStateExpirationPeriod}.
+     * @param period what to set
+     */
     public void setAccountStateExpirationPeriod(@Nullable final Period period) {
         accountStateExpirationPeriod = period;
     }
 
+    /** Set {@link #accountStateWarningPeriod}.
+     * @param period what to set
+     */
     public void setAccountStateWarningPeriod(@Nullable final Period period) {
         accountStateWarningPeriod = period;
     }
 
+    /** Set {@link #accountStateLoginFailures}.
+     * @param loginFailures what to set
+     */
     public void setAccountStateLoginFailures(final int loginFailures) {
         accountStateLoginFailures = loginFailures;
     }
