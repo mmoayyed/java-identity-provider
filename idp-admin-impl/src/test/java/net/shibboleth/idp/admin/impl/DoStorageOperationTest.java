@@ -248,6 +248,7 @@ public class DoStorageOperationTest {
         Assert.assertEquals(response.getStatus(), HttpServletResponse.SC_CREATED);
         
         final StorageRecord<?> record = storageService.read(CONTEXT, KEY);
+        assert record != null;
         Assert.assertEquals(record.getVersion(), 1);
         Assert.assertEquals(record.getValue(), VALUE);
     }
@@ -296,6 +297,7 @@ public class DoStorageOperationTest {
         Assert.assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
         
         final StorageRecord<?> record = storageService.read(CONTEXT, KEY);
+        assert record != null;
         Assert.assertEquals(record.getVersion(), 2);
         Assert.assertEquals(record.getValue(), "changed");
     }
@@ -320,6 +322,7 @@ public class DoStorageOperationTest {
         Assert.assertEquals(response.getStatus(), HttpServletResponse.SC_CREATED);
         
         final StorageRecord<?> record = storageService.read(CONTEXT, KEY);
+        assert record != null;
         Assert.assertEquals(record.getVersion(), 1);
         Assert.assertEquals(record.getValue(), VALUE);
     }
@@ -346,6 +349,7 @@ public class DoStorageOperationTest {
         Assert.assertEquals(response.getStatus(), HttpServletResponse.SC_OK);
         
         final StorageRecord<?> record = storageService.read(CONTEXT, KEY);
+        assert record != null;
         Assert.assertEquals(record.getVersion(), 2);
         Assert.assertEquals(record.getValue(), "changed");
     }
@@ -372,6 +376,7 @@ public class DoStorageOperationTest {
         Assert.assertEquals(response.getStatus(), HttpServletResponse.SC_CONFLICT);
         
         final StorageRecord<?> record = storageService.read(CONTEXT, KEY);
+        assert record != null;
         Assert.assertEquals(record.getVersion(), 1);
         Assert.assertEquals(record.getValue(), VALUE);
     }

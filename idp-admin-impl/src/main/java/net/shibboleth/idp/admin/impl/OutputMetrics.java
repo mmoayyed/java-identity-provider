@@ -22,7 +22,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -53,6 +52,7 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -106,7 +106,7 @@ public class OutputMetrics extends AbstractProfileAction {
     
     /** Constructor. */
     public OutputMetrics() {
-        metricFilterMap = Collections.emptyMap();
+        metricFilterMap = CollectionSupport.emptyMap();
         dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
     }
 
@@ -216,7 +216,7 @@ public class OutputMetrics extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -240,12 +240,18 @@ public class OutputMetrics extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
+        final HttpServletResponse response = getHttpServletResponse();
+        if (response == null) {
+            log.warn("{} No HttpServletResponse available", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false;
+        }
 
         metricId = (String) requestContext.getFlowScope().get(METRIC_ID);
         if (metricId == null) {
             log.warn("{} No {} flow variable found in request", getLogPrefix(), METRIC_ID);
             try {
-                getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
             } catch (final IOException e) {
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
@@ -256,7 +262,7 @@ public class OutputMetrics extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         MetricFilter filter = ALL_METRICS.equals(metricId) ? MetricFilter.ALL : metricFilterMap.get(metricId);
         if (filter == null) {
@@ -273,7 +279,7 @@ public class OutputMetrics extends AbstractProfileAction {
         
         try {
             final HttpServletResponse response = getHttpServletResponse();
-            
+            assert response != null;
             response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
             response.setStatus(HttpServletResponse.SC_OK);
             if (allowedOrigin != null) {
@@ -331,7 +337,7 @@ public class OutputMetrics extends AbstractProfileAction {
         
         /** {@inheritDoc} */
         public boolean matches(final String name, final Metric metric) {
-            return parentFilter.matches(name, metric) && metricFilter.matches(name, metric);
+            return parentFilter.matches(name, metric) && metricFilter != null && metricFilter.matches(name, metric);
         }
 
     }

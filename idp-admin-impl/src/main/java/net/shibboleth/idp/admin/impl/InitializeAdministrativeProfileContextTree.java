@@ -33,7 +33,10 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.spring.util.SpringSupport;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * An action that processes settings from a supplied {@link AdministrativeFlowDescriptor} to prepare
@@ -91,14 +94,23 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
             return false;
         }
         
-        if (flowDescriptor == null) {
+        final AdministrativeFlowDescriptor descriptor = flowDescriptor;
+        if (descriptor == null) {
             log.warn("{} Administrative profile '{}' not enabled", getLogPrefix(),
                     profileRequestContext.getProfileId());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return false;
-        } else if (!flowDescriptor.getId().equals(profileRequestContext.getProfileId())) {
+        }
+        final String id = descriptor.getId(); 
+        if (id == null ||!id.equals(profileRequestContext.getProfileId())) {
             log.warn("{} Profile ID '{}' doesn't match descriptor ID '{}", getLogPrefix(),
-                    profileRequestContext.getProfileId(), flowDescriptor.getId());
+                    profileRequestContext.getProfileId(), id);
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+            return false;
+        }
+        if (getHttpServletRequest() == null) {
+            log.warn("{} Profile ID '{}' No HttpRequestSupplier available", getLogPrefix(),
+                    profileRequestContext.getProfileId());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return false;
         }
@@ -110,18 +122,22 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
-        profileRequestContext.setLoggingId(flowDescriptor.getLoggingId());
-        profileRequestContext.setBrowserProfile(!flowDescriptor.isNonBrowserSupported(profileRequestContext));
+        final AdministrativeFlowDescriptor descriptor = flowDescriptor;
+        assert descriptor != null;
+        profileRequestContext.setLoggingId(descriptor.getLoggingId());
+        profileRequestContext.setBrowserProfile(!descriptor.isNonBrowserSupported(profileRequestContext));
         
         final RelyingPartyContext rpCtx = new RelyingPartyContext();
         profileRequestContext.addSubcontext(rpCtx, true);
-        rpCtx.setRelyingPartyId(flowDescriptor.getId());
-        rpCtx.setProfileConfig(flowDescriptor);
+        rpCtx.setRelyingPartyId(descriptor.getId());
+        rpCtx.setProfileConfig(descriptor);
         
-        final RelyingPartyUIContext uiCtx = rpCtx.getSubcontext(RelyingPartyUIContext.class, true);
-        uiCtx.setRPUInfo(flowDescriptor.getUIInfo());
-        uiCtx.setBrowserLanguageRanges(SpringSupport.getLanguageRange(getHttpServletRequest()));
-        uiCtx.setRequestSupplier(getHttpServletRequestSupplier());
+        final RelyingPartyUIContext uiCtx = rpCtx.getOrCreateSubcontext(RelyingPartyUIContext.class);
+        uiCtx.setRPUInfo(descriptor.getUIInfo());
+        final NonnullSupplier<HttpServletRequest> supplier = getHttpServletRequestSupplier();
+        assert supplier != null;
+        uiCtx.setBrowserLanguageRanges(SpringSupport.getLanguageRange(supplier.get()));
+        uiCtx.setRequestSupplier(supplier);
         
         if (null != fallbackLanguages) {
             uiCtx.setFallbackLanguages(fallbackLanguages);
