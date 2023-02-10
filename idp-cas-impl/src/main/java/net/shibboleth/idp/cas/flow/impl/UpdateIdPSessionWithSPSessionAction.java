@@ -107,19 +107,22 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         IdPSession session = null;
+        final Ticket tckt = ticket;
+        assert tckt != null;
         try {
-            log.debug("{} Attempting to retrieve session {}", getLogPrefix(), ticket.getSessionId());
-            session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(ticket.getSessionId())));
+            log.debug("{} Attempting to retrieve session {}", getLogPrefix(), tckt.getSessionId());
+            session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(
+                    Constraint.isNotNull(tckt.getSessionId(), "Null Session Id"))));
         } catch (final ResolverException e) {
             log.warn("{} Possible sign of misconfiguration, IdPSession resolution error: {}", getLogPrefix(), e);
         }
         if (session != null) {
             final Instant now = Instant.now();
             final SPSession sps = new CASSPSession(
-                    ticket.getService(),
+                    tckt.getService(),
                     now,
                     now.plus(sessionLifetime),
-                    ticket.getId());
+                    tckt.getId());
             log.debug("{} Created SP session {}", getLogPrefix(), sps);
             try {
                 session.addSPSession(sps);

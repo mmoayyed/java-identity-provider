@@ -91,11 +91,12 @@ public class BuildProxyChainAction
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        if (!(ticket instanceof ProxyTicket)) {
+        if (ticket == null || !(ticket instanceof ProxyTicket)) {
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.InvalidTicketType.event(this));
             return;
         }
         final ProxyTicket pt = (ProxyTicket) ticket;
+        assert pt != null;
         ProxyGrantingTicket pgt;
         String pgtId = pt.getPgtId();
         do {
@@ -105,6 +106,7 @@ public class BuildProxyChainAction
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.BrokenProxyChain.event(this));
                 return;
             }
+            assert response != null;
             response.addProxy(pgt.getProxyCallbackUrl());
             pgtId = pgt.getParentId();
         } while (pgtId != null);

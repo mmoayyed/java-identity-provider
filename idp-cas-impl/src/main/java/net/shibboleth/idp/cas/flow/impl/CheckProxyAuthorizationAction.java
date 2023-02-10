@@ -71,8 +71,10 @@ public class CheckProxyAuthorizationAction<RequestType,ResponseType>
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        if (!service.isAuthorizedToProxy()) {
-            log.info("{} Service '{}' is not authorized to proxy", getLogPrefix(), service.getName());
+        final Service svc = service;
+        assert svc != null;
+        if (!svc.isAuthorizedToProxy()) {
+            log.info("{} Service '{}' is not authorized to proxy", getLogPrefix(), svc.getName());
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.ProxyNotAuthorized.event(this));
         }
     }

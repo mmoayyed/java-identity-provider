@@ -18,6 +18,7 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -73,7 +74,7 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
     }
 
     @Override
-    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+    @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
         
         final ParameterMap params = springRequestContext.getRequestParameters();

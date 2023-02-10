@@ -56,6 +56,7 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -103,7 +104,7 @@ public class PrepareTicketValidationResponseAction extends
     @Nullable private ValidateConfiguration validateConfiguration;
     
     /** CAS response. */
-    @Nullable private TicketValidationResponse response;
+    @Nullable private TicketValidationResponse ticketValidationResponse;
 
     /** Constructor. */
     public PrepareTicketValidationResponseAction() {
@@ -136,7 +137,7 @@ public class PrepareTicketValidationResponseAction extends
         final AttributeTranscoder<?> transcoder = new CASStringAttributeTranscoder();
         transcoder.initialize();
         defaultTranscodingRule = new TranscodingRule(
-                Collections.singletonMap(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder));
+                CollectionSupport.singletonMap(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder));
     }
     
     @Override
@@ -160,7 +161,7 @@ public class PrepareTicketValidationResponseAction extends
         }
         
         try {
-            response = getCASResponse(profileRequestContext);
+            ticketValidationResponse = getCASResponse(profileRequestContext);
             final TicketState state = getCASTicket(profileRequestContext).getTicketState();
             if (state != null) {
                 consentedAttributeIds = state.getConsentedAttributeIds();
@@ -178,10 +179,14 @@ public class PrepareTicketValidationResponseAction extends
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final String principal;
+        final AttributeContext aCtx = attributeContext;
+        TicketValidationResponse response = ticketValidationResponse;
+        assert aCtx != null && response != null;
+        assert validateConfiguration != null;
         final String userAttributeName = validateConfiguration.getUserAttribute(profileRequestContext);
         if (userAttributeName != null) {
             log.debug("{} Using {} for CAS username", getLogPrefix(), userAttributeName);
-            final IdPAttribute attribute = attributeContext.getIdPAttributes().get(userAttributeName);
+            final IdPAttribute attribute = aCtx.getIdPAttributes().get(userAttributeName);
             if (attribute != null && !attribute.getValues().isEmpty()) {
                 final IdPAttributeValue value = attribute.getValues().get(0);
                 if (value instanceof ScopedStringAttributeValue) {
@@ -210,13 +215,15 @@ public class PrepareTicketValidationResponseAction extends
 
         response.setUserName(principal);
         
-        final Collection<IdPAttribute> inputAttributes = attributeContext.getIdPAttributes().values();
+        final Collection<IdPAttribute> inputAttributes = aCtx.getIdPAttributes().values();
         final ArrayList<Attribute> encodedAttributes = new ArrayList<>(inputAttributes.size());
 
         try (final ServiceableComponent<AttributeTranscoderRegistry> component =
                     transcoderRegistry.getServiceableComponent()) {
             for (final IdPAttribute attribute : inputAttributes) {
-                if (consentedAttributeIds == null || consentedAttributeIds.contains(attribute.getId())) {
+                assert attribute != null;
+                final Set<String> ids = consentedAttributeIds;
+                if (ids == null || ids.contains(attribute.getId())) {
                     encodeAttribute(component.getComponent(), profileRequestContext, attribute, encodedAttributes);
                 } else {
                     log.info("{} Skipping attribute {} not in stored consent list from ticket", getLogPrefix(),
@@ -229,7 +236,7 @@ public class PrepareTicketValidationResponseAction extends
             return;
         }
         
-        encodedAttributes.forEach(a -> response.addAttribute(a));
+        encodedAttributes.forEach(a -> {assert a!=null; response.addAttribute(a);});
     }
     // Checkstyle: CyclomaticComplexity ON
 
@@ -257,6 +264,7 @@ public class PrepareTicketValidationResponseAction extends
         int count = 0;
         
         for (final TranscodingRule rules : transcodingRules) {
+            assert rules != null;
             try {
                 final AttributeTranscoder<Attribute> transcoder = TranscoderSupport.<Attribute>getTranscoder(rules);
                 final Attribute encodedAttribute =

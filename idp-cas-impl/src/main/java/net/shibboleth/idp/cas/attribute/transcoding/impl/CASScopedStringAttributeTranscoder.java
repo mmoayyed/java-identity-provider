@@ -71,14 +71,16 @@ public class CASScopedStringAttributeTranscoder extends AbstractCASAttributeTran
         }
         
         final String scopeDelimiter = rule.getOrDefault(PROP_SCOPE_DELIMITER, String.class, "@");
+        assert scopeDelimiter != null;
         final int offset = value.indexOf(scopeDelimiter);
         if (offset < 0) {
             log.warn("Ignoring value with no scope delimiter ({})", scopeDelimiter);
             return null;
         }
-
-        return ScopedStringAttributeValue.valueOf(value.substring(0, offset),
-                value.substring(offset + scopeDelimiter.length()));
+        final String valuePart = value.substring(0, offset);
+        final String scopePart = value.substring(offset + scopeDelimiter.length());
+        assert scopePart != null;
+        return ScopedStringAttributeValue.valueOf(valuePart, scopePart);
     }
     
 }

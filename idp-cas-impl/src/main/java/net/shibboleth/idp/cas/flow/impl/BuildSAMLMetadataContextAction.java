@@ -96,16 +96,20 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
     protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        final EntityDescriptor entity = service.getEntityDescriptor() != null
-                ? service.getEntityDescriptor()
-                : new ServiceEntityDescriptor(service);
+        final Service svc = service;
+        assert svc != null;
+        final EntityDescriptor entity = svc.getEntityDescriptor() != null
+                ? svc.getEntityDescriptor()
+                : new ServiceEntityDescriptor(svc);
         mdCtx.setEntityDescriptor(entity);
-        mdCtx.setRoleDescriptor(service.getRoleDescriptor());
+        mdCtx.setRoleDescriptor(svc.getRoleDescriptor());
         
         if (relyingPartyIdFromMetadata) {
+            assert rpCtx != null;
             rpCtx.setRelyingPartyId(entity.getEntityID());
         }
         
+        assert rpCtx != null;
         rpCtx.setRelyingPartyIdContextTree(mdCtx);
     }
 

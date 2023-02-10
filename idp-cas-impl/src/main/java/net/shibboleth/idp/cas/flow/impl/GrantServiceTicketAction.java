@@ -144,13 +144,13 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             return false;
         }
         
-        loginConfig = configLookupFunction.apply(profileRequestContext);
-        if (loginConfig == null) {
+        final LoginConfiguration lCfg = loginConfig= configLookupFunction.apply(profileRequestContext);
+        if (lCfg == null) {
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return false;
         }
         
-        securityConfig = loginConfig.getSecurityConfiguration(profileRequestContext);
+        securityConfig = lCfg.getSecurityConfiguration(profileRequestContext);
         if (securityConfig == null) {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
             return false;
@@ -186,13 +186,13 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             return false;
         }
 
-        if (loginConfig.getPostAuthenticationFlows(profileRequestContext).contains("attribute-release")) {
-            attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
-            if (attributeCtx != null) {
-                storeConsent = attributeCtx.isConsented() || loginConfig.isStoreConsentInTickets(profileRequestContext);
+        if (lCfg.getPostAuthenticationFlows(profileRequestContext).contains("attribute-release")) {
+            AttributeContext aCtx = attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
+            if (aCtx  != null) {
+                storeConsent = aCtx.isConsented() || lCfg.isStoreConsentInTickets(profileRequestContext);
                 if (storeConsent) {
                     log.debug("{} Storing consented attribute IDs into ticket: {}", getLogPrefix(),
-                            attributeCtx.getIdPAttributes().keySet());
+                            aCtx.getIdPAttributes().keySet());
                 }
             }
         }
@@ -204,32 +204,40 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
                 
         final ServiceTicket ticket;
+        final ServiceTicketRequest stReq = request;
+        final AuthenticationResult aRes = authnResult;
+        final LoginConfiguration lCfg = loginConfig;
+        assert stReq != null && aRes != null && lCfg != null;
+
         try {
-            log.debug("{} Granting service ticket for {}", getLogPrefix(), request.getService());
+            log.debug("{} Granting service ticket for {}", getLogPrefix(), stReq.getService());
+            assert session != null;
             final TicketState state = new TicketState(
-                    session.getId(),
+                    Constraint.isNotNull(session.getId(), "Session ID was non null"),
                     getPrincipalName(profileRequestContext),
-                    authnResult.getAuthenticationInstant(),
-                    authnResult.getAuthenticationFlowId());
+                    aRes.getAuthenticationInstant(),
+                    aRes.getAuthenticationFlowId());
             
             if (storeConsent) {
+                assert attributeCtx != null;
                 state.setConsentedAttributeIds(attributeCtx.getIdPAttributes().keySet());
             }
             
+            assert securityConfig != null;
             ticket = casTicketService.createServiceTicket(
                     securityConfig.getIdGenerator().generateIdentifier(),
-                    Instant.now().plus(loginConfig.getTicketValidityPeriod(profileRequestContext)),
-                    request.getService(),
+                    Instant.now().plus(lCfg.getTicketValidityPeriod(profileRequestContext)),
+                    stReq.getService(),
                     state,
-                    request.isRenew());
+                    stReq.isRenew());
         } catch (final RuntimeException e) {
             log.error("{} Failed granting service ticket due to error.", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketCreationError.event(this));
             return;
         }
         
-        final ServiceTicketResponse response = new ServiceTicketResponse(request.getService(), ticket.getId());
-        if (request.isSAML()) {
+        final ServiceTicketResponse response = new ServiceTicketResponse(stReq.getService(), ticket.getId());
+        if (stReq.isSAML()) {
             response.setSaml(true);
         }
         
@@ -240,7 +248,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             return;
         }
 
-        log.info("{} Granted service ticket for {}", getLogPrefix(), request.getService());
+        log.info("{} Granted service ticket for {}", getLogPrefix(), stReq.getService());
     }
 
     /**
@@ -278,7 +286,8 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      */
     @Nullable private AuthenticationResult getLatestAuthenticationResult() {
         AuthenticationResult latest = null;
-        
+
+        assert session != null;
         for (final AuthenticationResult result : session.getAuthenticationResults()) {
             if (latest == null || result.getAuthenticationInstant().isAfter(latest.getAuthenticationInstant())) {
                 latest = result;

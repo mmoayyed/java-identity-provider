@@ -18,6 +18,7 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventException;
@@ -36,6 +37,7 @@ import net.shibboleth.idp.cas.protocol.SamlParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -57,7 +59,7 @@ public class ProcessSamlMessageAction extends
     @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessSamlMessageAction.class);
 
     @Override
-    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+    @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
 
         profileRequestContext.setProfileId(ValidateConfiguration.PROFILE_ID);
@@ -69,16 +71,20 @@ public class ProcessSamlMessageAction extends
         }
 
         // Extract ticket from SAML request
-        final MessageContext msgContext = profileRequestContext.getInboundMessageContext();
+        @Nonnull final MessageContext msgContext = Constraint.isNotNull(profileRequestContext.getInboundMessageContext(), "no inbound Context");
         String ticket = null;
-        if (msgContext.getMessage() instanceof Request) {
-            final Request request = (Request) msgContext.getMessage();
+        final Object message = msgContext.getMessage();
+        if (message != null && message instanceof Request) {
+            final Request request = (Request) message;
             for (final AssertionArtifact artifact : request.getAssertionArtifacts()) {
                 ticket = artifact.getValue();
                 break;
             }
+        } else if (message == null) {
+            log.warn("{} Unexpected null message", getLogPrefix());
+            return ProtocolError.ProtocolViolation.event(this);            
         } else {
-            log.warn("{} Unexpected SAMLObject type {}", getLogPrefix(), msgContext.getMessage().getClass().getName());
+            log.warn("{} Unexpected SAMLObject type {}", getLogPrefix(), message.getClass().getName());
             return ProtocolError.ProtocolViolation.event(this);
         }
         if (ticket == null) {

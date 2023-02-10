@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -37,6 +36,7 @@ import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 /**
@@ -70,7 +70,7 @@ public class BuildRelyingPartyContextAction<RequestType,ResponseType>
      * @param registries One or more service registries to query for CAS services.
      */
     public BuildRelyingPartyContextAction(@Nonnull @NotEmpty final ServiceRegistry ... registries) {
-        serviceRegistries = Arrays.asList(Constraint.isNotEmpty(registries, "Service registries cannot be null"));
+        serviceRegistries = CollectionSupport.listOf(Constraint.isNotEmpty(registries, "Service registries cannot be null"));
     }
     
     @Override
@@ -135,7 +135,7 @@ public class BuildRelyingPartyContextAction<RequestType,ResponseType>
      * 
      * @return the result of the lookup or null
      */
-    @Nullable private Service query(final String serviceURL) {
+    @Nullable private Service query(@Nonnull final String serviceURL) {
         
         for (final ServiceRegistry registry : serviceRegistries) {
             log.debug("Querying {} for CAS service URL {}", registry.getClass().getName(), serviceURL);

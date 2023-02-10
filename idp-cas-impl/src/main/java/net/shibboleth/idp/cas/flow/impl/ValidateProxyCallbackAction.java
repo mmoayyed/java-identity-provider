@@ -119,6 +119,7 @@ public class ValidateProxyCallbackAction
             return false;
         }
         
+        assert validateConfig != null;
         securityConfig = validateConfig.getSecurityConfiguration(profileRequestContext);
         if (securityConfig == null) {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
@@ -139,17 +140,24 @@ public class ValidateProxyCallbackAction
 
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final IdentifierGenerationStrategy pgtGenerator = securityConfig.getIdGenerator();
-        final IdentifierGenerationStrategy pgtIOUGenerator = validateConfig.getPGTIOUGenerator(profileRequestContext);
-        final Instant expiration = Instant.now().plus(validateConfig.getTicketValidityPeriod(profileRequestContext));
-        final String pgtId = pgtGenerator.generateIdentifier();
+        final ValidateConfiguration vCfg = validateConfig;
+        final SecurityConfiguration sCfg = securityConfig;
+        final Ticket tkt = ticket;
+        final TicketValidationRequest request = this.request;
+        final TicketValidationResponse response = this.response;
+        assert vCfg != null && sCfg != null && tkt != null && request != null && response != null;
+        
+        @Nonnull final IdentifierGenerationStrategy pgtGenerator = sCfg.getIdGenerator();
+        @Nonnull final IdentifierGenerationStrategy pgtIOUGenerator = vCfg.getPGTIOUGenerator(profileRequestContext);
+        @Nonnull final Instant expiration = Instant.now().plus(vCfg.getTicketValidityPeriod(profileRequestContext));
+        @Nonnull final String pgtId = pgtGenerator.generateIdentifier();
         final ProxyGrantingTicket pgt;
         if (ticket instanceof ServiceTicket) {
             pgt = casTicketService.createProxyGrantingTicket(
-                pgtId, expiration, (ServiceTicket) ticket, request.getPgtUrl());
+                pgtId, expiration, (ServiceTicket) tkt, request.getPgtUrl());
         } else {
             pgt = casTicketService.createProxyGrantingTicket(
-                pgtId, expiration, (ProxyTicket) ticket, request.getPgtUrl());
+                pgtId, expiration, (ProxyTicket) tkt, request.getPgtUrl());
         }
         // The ID of the proxy-granting ticket MAY be different from the generated value above.
         // ALWAYS use the value from the ticket object.
@@ -165,7 +173,7 @@ public class ValidateProxyCallbackAction
             ActionSupport.buildEvent(profileRequestContext, EventIds.RUNTIME_EXCEPTION);
             return;
         }
-        
+        assert proxyCallbackUri != null;
         try {
             log.debug("{} Attempting proxy authentication to {}", getLogPrefix(), proxyCallbackUri);
             proxyValidator.validate(profileRequestContext, proxyCallbackUri);
