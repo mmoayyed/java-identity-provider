@@ -81,7 +81,8 @@
         p:operationLookupStrategy="#{getObject('shibboleth.AdminOperationLookupStrategy') ?: getObject('DefaultOperationLookupStrategy')}"
         p:resourceLookupStrategy="#{getObject('shibboleth.AdminResourceLookupStrategy') ?: getObject('DefaultResourceLookupStrategy')}" />
 
-    <bean id="DescriptorPolicyLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
+    <bean id="DescriptorPolicyLookupStrategy"
+        class="net.shibboleth.profile.context.navigate.SpringExpressionContextLookupFunction"
         c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
         c:outputType="#{T(java.lang.String)}"
         c:expression="#input.getSubcontext(T(net.shibboleth.profile.context.RelyingPartyContext)).getProfileConfig().getPolicyName(#input)" />
