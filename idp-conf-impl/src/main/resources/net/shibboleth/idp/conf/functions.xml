@@ -55,9 +55,9 @@
     </bean>
 
     <bean id="shibboleth.ContextFunctions.Scripted"
-        class="net.shibboleth.idp.profile.context.navigate.ScriptedContextLookupFunction" abstract="true" />
+        class="net.shibboleth.profile.context.navigate.ScriptedContextLookupFunction" abstract="true" />
     <bean id="shibboleth.ContextFunctions.Expression"
-        class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction" abstract="true"
+        class="net.shibboleth.profile.context.navigate.SpringExpressionContextLookupFunction" abstract="true"
         c:_0="#{ T(org.opensaml.profile.context.ProfileRequestContext) }" />
 
     <bean id="shibboleth.MessageContextLookup.Inbound"

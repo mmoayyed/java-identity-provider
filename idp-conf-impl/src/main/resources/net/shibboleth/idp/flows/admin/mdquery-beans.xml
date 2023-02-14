@@ -23,8 +23,7 @@
     
     <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="read" />
         
-    <bean id="shibboleth.AdminResourceLookupStrategy"
-        class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
+    <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
         c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
         c:outputType="#{T(java.lang.String)}"
         c:expression="#input.getInboundMessageContext().getMessage().getEntityID()" />
