@@ -23,9 +23,7 @@
     
     <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="reload" />
         
-    <bean id="shibboleth.AdminResourceLookupStrategy"
-        class="net.shibboleth.profile.context.navigate.SpringExpressionContextLookupFunction"
-        c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
+    <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"
         c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('resolverId')" />
 

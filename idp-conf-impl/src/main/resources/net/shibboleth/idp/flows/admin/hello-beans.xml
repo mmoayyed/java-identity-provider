@@ -22,16 +22,14 @@
 
     <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="hello" />
         
-    <bean id="shibboleth.AdminResourceLookupStrategy"
-        class="net.shibboleth.profile.context.navigate.SpringExpressionContextLookupFunction"
-        c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
+    <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"
         c:expression="'subject/' + #custom.apply(#input)">
-        <property name="customObject">
-            <bean parent="shibboleth.Functions.Compose"
-                c:g-ref="shibboleth.PrincipalNameLookup.Subject"
-                c:f-ref="shibboleth.ChildLookup.SubjectContext" />
-        </property>    
+            <property name="customObject">
+                <bean parent="shibboleth.Functions.Compose"
+                    c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                    c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+            </property>    
     </bean>
     
     <!--  Work beans. -->

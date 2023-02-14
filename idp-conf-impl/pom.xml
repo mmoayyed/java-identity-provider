@@ -92,6 +92,12 @@
 
         <dependency>
             <groupId>net.shibboleth</groupId>
+            <artifactId>shib-profile-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.shibboleth</groupId>
             <artifactId>shib-metadata-spring</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -99,7 +105,6 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-messaging-impl</artifactId>
-            <version>${opensaml.version}</version>
             <scope>runtime</scope>
         </dependency>
 
