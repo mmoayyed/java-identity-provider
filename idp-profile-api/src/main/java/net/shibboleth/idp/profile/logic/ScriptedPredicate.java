@@ -27,12 +27,10 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.scripting.EvaluableScript;
 
 /**
@@ -41,9 +39,6 @@ import net.shibboleth.shared.scripting.EvaluableScript;
 @SuppressWarnings("removal")
 public class ScriptedPredicate
         extends net.shibboleth.shared.logic.ScriptedPredicate<ProfileRequestContext> {
-    
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedPredicate.class);
     
     /**
      * Constructor.

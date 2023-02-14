@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.context.navigate;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -26,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.springframework.webflow.execution.Event;
@@ -43,7 +43,7 @@ public class SpringEventToViewLookupFunction implements Function<Event,String> {
     
     /** Constructor. */
     public SpringEventToViewLookupFunction() {
-        eventMap = Collections.emptyMap();
+        eventMap = CollectionSupport.emptyMap();
     }
     
     /**
@@ -62,7 +62,7 @@ public class SpringEventToViewLookupFunction implements Function<Event,String> {
      */
     public void setEventMap(@Nullable @NonnullElements final Map<String,String> map) {
         if (map == null) {
-            eventMap = Collections.emptyMap();
+            eventMap = CollectionSupport.emptyMap();
         } else {
             eventMap = new HashMap<>(map.size());
             for (final Map.Entry<String,String> entry : map.entrySet()) {

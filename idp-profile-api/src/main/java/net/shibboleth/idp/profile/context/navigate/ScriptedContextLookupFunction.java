@@ -166,7 +166,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
      * @throws IOException if the file doesn't exist.
      */
     @Nonnull
-    public static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(final Resource resource)
+    public static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(@Nonnull final Resource resource)
             throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource, null);
     }
@@ -182,7 +182,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
      * @throws IOException if the file doesn't exist.
      */
     @Nonnull
-    public static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(final Resource resource,
+    public static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(@Nonnull final Resource resource,
             @Nullable final Class<?> outputType) throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource, outputType);
     }
@@ -302,8 +302,8 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
      * @throws IOException if the file doesn't exist.
      */
     @Nonnull
-    public static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(final Resource resource)
-            throws ScriptException, IOException {
+    public static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(
+            @Nonnull final Resource resource) throws ScriptException, IOException {
         return resourceMessageContextScript(DEFAULT_ENGINE, resource, null);
     }
 
@@ -317,8 +317,8 @@ public class ScriptedContextLookupFunction<T extends BaseContext> extends Abstra
      * @throws IOException if the file doesn't exist.
      */
     @Nonnull
-    public static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(final Resource resource,
-            @Nullable final Class<?> outputType) throws ScriptException, IOException {
+    public static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(
+            @Nonnull final Resource resource, @Nullable final Class<?> outputType) throws ScriptException, IOException {
         return resourceMessageContextScript(DEFAULT_ENGINE, resource, outputType);
     }
 

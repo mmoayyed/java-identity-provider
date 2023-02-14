@@ -16,9 +16,7 @@
  */
 
 /** 
- * Classes pertaining to request-time profile configuration options.   The classes representing the request-time 
- * configuration options for a given profile generally hang off of a 
- * {@link net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration} but some profile handlers may do this differently.
+ * Classes pertaining to IdP-specific request-time profile configuration options.
  */
 
 package net.shibboleth.idp.profile.config;

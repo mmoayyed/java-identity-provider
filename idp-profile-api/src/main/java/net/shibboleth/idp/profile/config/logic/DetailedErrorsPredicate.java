@@ -20,8 +20,8 @@ package net.shibboleth.idp.profile.config.logic;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
+import net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -35,9 +35,9 @@ public class DetailedErrorsPredicate extends AbstractRelyingPartyPredicate {
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null) {
-                final RelyingPartyConfiguration config = rpc.getConfiguration();
-                if (config instanceof net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) {
-                    return ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) config).isDetailedErrors(input);
+                final net.shibboleth.profile.relyingparty.RelyingPartyConfiguration config = rpc.getConfiguration();
+                if (config instanceof RelyingPartyConfiguration) {
+                    return ((RelyingPartyConfiguration) config).isDetailedErrors(input);
                 }
             }
         }
