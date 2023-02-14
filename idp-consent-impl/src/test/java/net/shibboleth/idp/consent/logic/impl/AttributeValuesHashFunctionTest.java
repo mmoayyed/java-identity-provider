@@ -38,6 +38,7 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 
 /** {@link AttributeValuesHashFunction} unit test. */
+@SuppressWarnings("javadoc")
 public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
 
     private AttributeValuesHashFunction function;

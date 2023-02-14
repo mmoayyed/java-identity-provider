@@ -29,9 +29,11 @@ import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.config.XMLSecurityConfiguration;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.idp.profile.context.navigate.messaging.AbstractRelyingPartyLookupFunction;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 
 /**
  * A {@link MessageContext} function that returns a {@link SignatureSigningConfiguration} list 
@@ -43,19 +45,20 @@ public class SignatureSigningConfigurationLookupFunction
         extends AbstractRelyingPartyLookupFunction<List<SignatureSigningConfiguration>> {
     
     /** A resolver for default security configurations. */
-    @Nullable private RelyingPartyConfigurationResolver rpResolver;
-
+    @Nullable private ReloadableService<RelyingPartyConfigurationResolver> rpResolver;
+    
     /**
      * Set the resolver for default security configurations.
      * 
      * @param resolver the resolver to use
      */
-    public void setRelyingPartyConfigurationResolver(@Nullable final RelyingPartyConfigurationResolver resolver) {
+    public void setRelyingPartyConfigurationResolver(
+            @Nullable final ReloadableService<RelyingPartyConfigurationResolver> resolver) {
         rpResolver = resolver;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override
     @Nullable public List<SignatureSigningConfiguration> apply(@Nullable final MessageContext input) {
         
         final List<SignatureSigningConfiguration> configs = new ArrayList<>();
@@ -75,10 +78,15 @@ public class SignatureSigningConfigurationLookupFunction
             if (pc != null) {
                 final String id = pc.getId();
                 if (id != null && rpResolver != null) {
-                    final SecurityConfiguration defaultConfig = rpResolver.getDefaultSecurityConfiguration(id);
-                    if (defaultConfig instanceof XMLSecurityConfiguration xsc &&
-                            xsc.getSignatureSigningConfiguration() != null) {
-                        configs.add(xsc.getSignatureSigningConfiguration());
+                    try {
+                        final SecurityConfiguration defaultConfig =
+                                rpResolver.getServiceableComponent().getComponent().getDefaultSecurityConfiguration(id);
+                        if (defaultConfig instanceof XMLSecurityConfiguration xsc &&
+                                xsc.getSignatureSigningConfiguration() != null) {
+                            configs.add(xsc.getSignatureSigningConfiguration());
+                        }
+                    } catch (final ServiceException e) {
+                        
                     }
                 }
             }
@@ -88,5 +96,6 @@ public class SignatureSigningConfigurationLookupFunction
         
         return configs;
     }
+// Checkstyle: CyclomaticComplexity ON
 
 }

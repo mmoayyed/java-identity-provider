@@ -40,6 +40,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit tests for {@link ConsentSerializer}. */
+@SuppressWarnings("javadoc")
 public class ConsentSerializerTest {
 
     /** Class logger. */

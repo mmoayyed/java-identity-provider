@@ -28,6 +28,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link FlowIdLookupFunction} unit test. */
+@SuppressWarnings("javadoc")
 public class FlowIdLookupFunctionTest {
 
     private RequestContext src;

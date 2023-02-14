@@ -20,8 +20,8 @@ package net.shibboleth.idp.session.impl;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.AuditContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.InOutOperationContext;

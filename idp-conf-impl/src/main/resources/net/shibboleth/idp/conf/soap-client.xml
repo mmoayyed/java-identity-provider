@@ -19,13 +19,13 @@
 
     <bean id="shibboleth.MessageContext.SignatureValidationConfigurationLookup"
         class="net.shibboleth.idp.profile.config.navigate.messaging.SignatureValidationConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
     <bean id="shibboleth.MessageContext.SignatureSigningConfigurationLookup"
         class="net.shibboleth.idp.profile.config.navigate.messaging.SignatureSigningConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
     <bean id="shibboleth.MessageContext.HttpClientSecurityConfigurationLookup"
         class="net.shibboleth.idp.profile.config.navigate.messaging.HttpClientSecurityConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
 
     <!-- SOAP client and pipeline factory definitions. -->
          

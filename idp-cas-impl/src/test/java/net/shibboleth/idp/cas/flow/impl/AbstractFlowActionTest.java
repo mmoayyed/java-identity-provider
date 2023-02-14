@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
@@ -153,18 +152,21 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
         /** Static key. */
         private final SecretKey key;
 
+        /**
+         * Constructor.
+         */
         public MockDataSealerKeyStrategy() {
             final byte[] bytes = new byte[32];
             new SecureRandom().nextBytes(bytes);
             key = new SecretKeySpec(bytes, "AES");
         }
 
-        @Override
+        /** {@inheritDoc} */
         public Pair<String, SecretKey> getDefaultKey() throws KeyException {
             return new Pair<>("default", key);
         }
 
-        @Override
+        /** {@inheritDoc} */
         public SecretKey getKey(final String s) throws KeyException {
             return key;
         }

@@ -21,8 +21,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.OverriddenIssuerProfileConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -52,8 +52,8 @@ public class ResponderIdLookupFunction extends AbstractRelyingPartyLookupFunctio
                 }
                 
                 final RelyingPartyConfiguration rpConfig = rpc.getConfiguration();
-                if (rpConfig != null) {
-                    return rpConfig.getResponderId(input);
+                if (rpConfig instanceof net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) {
+                    return ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) rpConfig).getResponderId(input);
                 }
             }
         }

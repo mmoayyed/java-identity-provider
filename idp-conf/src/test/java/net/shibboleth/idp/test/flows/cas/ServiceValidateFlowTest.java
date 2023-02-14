@@ -38,12 +38,12 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 
@@ -55,6 +55,7 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 @ContextConfiguration(locations = {
         "/test/test-cas-beans.xml",
 })
+@SuppressWarnings("javadoc")
 public class ServiceValidateFlowTest extends AbstractFlowTest {
 
     /** Flow id. */

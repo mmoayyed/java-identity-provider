@@ -27,7 +27,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.logic.Constraint;
 
 /**

@@ -45,6 +45,7 @@ import static org.testng.Assert.*;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class EncodingTicketServiceTest {
 
     private EncodingTicketService ticketService;

@@ -52,6 +52,10 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
+/**
+ * Unit test for {@link ProcessAssertionsForAuthentication} action.
+ */
+@SuppressWarnings("javadoc")
 public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTestCase {
     
     private ProcessAssertionsForAuthentication action;
@@ -81,7 +85,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         
         prc = new RequestContextBuilder().buildProfileRequestContext();
         
-        AuthenticationContext authnContext = prc.getSubcontext(AuthenticationContext.class, true);
+        final AuthenticationContext authnContext = prc.getSubcontext(AuthenticationContext.class, true);
         samlAuthnContext = new SAMLAuthnContext(new MockProfileAction(), new MockMessageDecoderFunction());
         authnContext.addSubcontext(samlAuthnContext);
         authnContext.addSubcontext(prcInner);
@@ -89,7 +93,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testValid() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
         action.initialize();
@@ -103,7 +107,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testInvalid() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.INVALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.INVALID);
         samlResponse.getAssertions().add(assertion1);
         
         action.initialize();
@@ -117,7 +121,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testIndeterminate() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.INDETERMINATE);
+        final Assertion assertion1 = buildAssertion(ValidationResult.INDETERMINATE);
         samlResponse.getAssertions().add(assertion1);
         
         action.initialize();
@@ -131,9 +135,9 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testMultipleValidNoSessionInstant() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
-        Assertion assertion2 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion2 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion2);
         
         action.initialize();
@@ -148,9 +152,9 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     @Test
     public void testMultipleValidMixedSessionInstant() throws ComponentInitializationException {
         // Assertion1 doesn't have session instant, so pick assertion 2
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
-        Assertion assertion2 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion2 = buildAssertion(ValidationResult.VALID);
         assertion2.getAuthnStatements().get(0).setSessionNotOnOrAfter(Instant.now().plus(Duration.ofHours(2)));
         samlResponse.getAssertions().add(assertion2);
         
@@ -165,13 +169,13 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testMixedValidity() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.INVALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.INVALID);
         samlResponse.getAssertions().add(assertion1);
-        Assertion assertion2 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion2 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion2);
-        Assertion assertion3 = buildAssertion(ValidationResult.INDETERMINATE);
+        final Assertion assertion3 = buildAssertion(ValidationResult.INDETERMINATE);
         samlResponse.getAssertions().add(assertion3);
-        Assertion assertion4 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion4 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion4);
         
         action.initialize();
@@ -186,10 +190,10 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     @Test
     public void testMultipleValidBothSessionInstant() throws ComponentInitializationException {
         // Assertion1 has earlier session instant, so pick assertion 1
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         assertion1.getAuthnStatements().get(0).setSessionNotOnOrAfter(Instant.now().plus(Duration.ofHours(1)));
         samlResponse.getAssertions().add(assertion1);
-        Assertion assertion2 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion2 = buildAssertion(ValidationResult.VALID);
         assertion2.getAuthnStatements().get(0).setSessionNotOnOrAfter(Instant.now().plus(Duration.ofHours(2)));
         samlResponse.getAssertions().add(assertion2);
         
@@ -204,7 +208,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testMultipleAuthnStatementsNoSessionInstant() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         assertion1.getAuthnStatements().add(SAML2ActionTestingSupport.buildAuthnStatement());
         samlResponse.getAssertions().add(assertion1);
         
@@ -219,7 +223,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testMultipleAuthnStatementsMixedSessionInstant() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         assertion1.getAuthnStatements().add(SAML2ActionTestingSupport.buildAuthnStatement());
         assertion1.getAuthnStatements().get(1).setSessionNotOnOrAfter(Instant.now().plus(Duration.ofHours(2)));
         samlResponse.getAssertions().add(assertion1);
@@ -235,7 +239,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testMultipleAuthnStatementsBothSessionInstant() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         assertion1.getAuthnStatements().get(0).setSessionNotOnOrAfter(Instant.now().plus(Duration.ofHours(1)));
         assertion1.getAuthnStatements().add(SAML2ActionTestingSupport.buildAuthnStatement());
         assertion1.getAuthnStatements().get(1).setSessionNotOnOrAfter(Instant.now().plus(Duration.ofHours(2)));
@@ -276,7 +280,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testNoSAMLAuthnContext() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
         prc.getSubcontext(AuthenticationContext.class).removeSubcontext(SAMLAuthnContext.class);
@@ -292,7 +296,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testAssertionNotValidated() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(null);
+        final Assertion assertion1 = buildAssertion(null);
         samlResponse.getAssertions().add(assertion1);
         
         action.initialize();
@@ -306,7 +310,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testNoAuthnStatement() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         assertion1.getAuthnStatements().clear();
         samlResponse.getAssertions().add(assertion1);
         
@@ -321,7 +325,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testNoConfirmedSubject() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         assertion1.getObjectMetadata().get(ValidationProcessingData.class).get(0)
             .getContext().getDynamicParameters().remove(SAML2AssertionValidationParameters.CONFIRMED_SUBJECT_CONFIRMATION);
         samlResponse.getAssertions().add(assertion1);
@@ -337,7 +341,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testActionInactive() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
         action.setActivationCondition(Predicates.alwaysFalse());
@@ -353,7 +357,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test(expectedExceptions = ComponentInitializationException.class)
     public void testNullAuthnAssertionStrategy() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
         action.setAuthnAssertionSelectionStrategy(null);
@@ -363,7 +367,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test(expectedExceptions = ComponentInitializationException.class)
     public void testNullAuthnStatementStrategy() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
         action.setAuthnStatementSelectionStrategy(null);
@@ -373,7 +377,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test(expectedExceptions = ComponentInitializationException.class)
     public void testNullResponseResolver() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
         action.setResponseResolver(null);
@@ -383,7 +387,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test(expectedExceptions = ComponentInitializationException.class)
     public void testNullSAMLAuthnContextStrategy() throws ComponentInitializationException {
-        Assertion assertion1 = buildAssertion(ValidationResult.VALID);
+        final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
         action.setSAMLAuthnContextLookupStrategy(null);
@@ -395,11 +399,11 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     // Helpers
     
     private Assertion buildAssertion(ValidationResult validationResult) {
-        SubjectConfirmation sc = (SubjectConfirmation) XMLObjectSupport.buildXMLObject(SubjectConfirmation.DEFAULT_ELEMENT_NAME);
-        Subject subject = SAML2ActionTestingSupport.buildSubject("testUser");
+        final SubjectConfirmation sc = (SubjectConfirmation) XMLObjectSupport.buildXMLObject(SubjectConfirmation.DEFAULT_ELEMENT_NAME);
+        final Subject subject = SAML2ActionTestingSupport.buildSubject("testUser");
         subject.getSubjectConfirmations().add(sc);
         
-        Assertion assertion = SAML2ActionTestingSupport.buildAssertion();
+        final Assertion assertion = SAML2ActionTestingSupport.buildAssertion();
         assertion.setSubject(subject);
         assertion.getAuthnStatements().add(SAML2ActionTestingSupport.buildAuthnStatement());
         
@@ -412,7 +416,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     }
     
     private ValidationContext buildValidationContext(SubjectConfirmation sc) {
-        ValidationContext vc = new ValidationContext();
+        final ValidationContext vc = new ValidationContext();
         vc.getDynamicParameters().put(SAML2AssertionValidationParameters.CONFIRMED_SUBJECT_CONFIRMATION, sc);
         return vc;
     }

@@ -31,6 +31,7 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ExtractConsent} unit test. */
+@SuppressWarnings("javadoc")
 public class ExtractConsentTest extends AbstractConsentActionTest {
 
     @BeforeMethod public void setUpCurrentConsents() throws Exception {

@@ -27,12 +27,11 @@ import static org.testng.Assert.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * Unit test for {@link ServiceTicketSerializer}.
  */
+@SuppressWarnings("javadoc")
 public class ServiceTicketSerializerTest {
 
     private ServiceTicketSerializer serializer = new ServiceTicketSerializer();
@@ -100,7 +99,7 @@ public class ServiceTicketSerializerTest {
                 true);
         final TicketState state = new TicketState("idpsess-d2db22058dc178d3b917363859e", "bob",
                 Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password");
-        state.setConsentedAttributeIds(Collections.emptySet());
+        state.setConsentedAttributeIds(CollectionSupport.emptySet());
         st1.setTicketState(state);
         final String serialized = serializer.serialize(st1);
         final ServiceTicket st2 = serializer.deserialize(1, "notused", st1.getId(), serialized, null);

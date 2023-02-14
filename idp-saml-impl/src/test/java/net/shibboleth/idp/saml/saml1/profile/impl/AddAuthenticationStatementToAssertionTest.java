@@ -41,12 +41,12 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.saml1.profile.testing.SAML1ActionTestingSupport;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
@@ -58,7 +58,12 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
     private ProfileRequestContext prc;
 
     private AddAuthenticationStatementToAssertion action;
-    
+
+    /**
+     * Test setup.
+     * 
+     * @throws ComponentInitializationException
+     */
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().setOutboundMessage(
                 SAML1ActionTestingSupport.buildResponse()).buildRequestContext();

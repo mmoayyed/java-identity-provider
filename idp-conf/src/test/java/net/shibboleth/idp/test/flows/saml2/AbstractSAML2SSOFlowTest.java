@@ -55,6 +55,7 @@ import net.shibboleth.shared.net.URLBuilder;
 /**
  * Abstract SAML 2 SSO flow test.
  */
+@SuppressWarnings("javadoc")
 public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
 
     /** Class logger. */

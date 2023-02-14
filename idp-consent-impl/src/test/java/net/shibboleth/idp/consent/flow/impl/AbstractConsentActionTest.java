@@ -37,6 +37,11 @@ public abstract class AbstractConsentActionTest {
 
     protected AbstractConsentAction action;
 
+    /**
+     * Set up for tests.
+     * 
+     * @throws Exception
+     */
     @BeforeMethod public void setUp() throws Exception {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);

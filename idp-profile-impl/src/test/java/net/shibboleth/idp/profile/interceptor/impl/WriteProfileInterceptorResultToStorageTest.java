@@ -40,6 +40,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link WriteProfileInterceptorResultToStorage} unit test. */
+@SuppressWarnings("javadoc")
 public class WriteProfileInterceptorResultToStorageTest {
 
     private RequestContext src;

@@ -29,9 +29,9 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.session.SAML1SPSession;
 import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.logic.Constraint;
 
 /**

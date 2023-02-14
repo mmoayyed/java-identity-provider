@@ -25,9 +25,9 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -37,6 +37,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AttributeValueLookupFunction} unit test. */
+@SuppressWarnings("javadoc")
 public class AttributeValueLookupFunctionTest {
 
     private AttributeValueLookupFunction function;
@@ -60,7 +61,7 @@ public class AttributeValueLookupFunctionTest {
         unfilteredAttributes.put(attribute4.getId(), attribute4);
         attributeCtx.setUnfilteredIdPAttributes(unfilteredAttributes.values());
         
-        prc.getSubcontext(RelyingPartyContext.class, true).addSubcontext(attributeCtx);
+        prc.getOrCreateSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testEmptyConstructor() {
@@ -90,7 +91,7 @@ public class AttributeValueLookupFunctionTest {
 
     @Test public void testAttributeWithNoValues() {
         final AttributeContext attributeCtx =
-                prc.getSubcontext(RelyingPartyContext.class, true).getSubcontext(AttributeContext.class);
+                prc.getOrCreateSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         attributeCtx.setIdPAttributes(Collections.singleton(new IdPAttribute("EmptyAttribute")));
 
         function = new AttributeValueLookupFunction("EmptyAttribute");
@@ -104,7 +105,7 @@ public class AttributeValueLookupFunctionTest {
         byteAttribute.setValues(Collections.singletonList(new ByteAttributeValue(data)));
 
         final AttributeContext attributeCtx =
-                prc.getSubcontext(RelyingPartyContext.class, true).getSubcontext(AttributeContext.class);
+                prc.getOrCreateSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         attributeCtx.setIdPAttributes(Collections.singleton(byteAttribute));
 
         function = new AttributeValueLookupFunction("ByteAttribute");

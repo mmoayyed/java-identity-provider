@@ -22,7 +22,8 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.annotations.Test;
 
@@ -37,6 +38,7 @@ import static org.testng.Assert.*;
 /**
  * Unit test for {@link SimpleAttributePredicate}.
  */
+@SuppressWarnings("javadoc")
 public class SimpleAttributePredicateTest {
 
     @Test

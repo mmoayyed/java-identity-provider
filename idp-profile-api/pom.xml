@@ -62,6 +62,10 @@
         </dependency>
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-spring</artifactId>
         </dependency>
 

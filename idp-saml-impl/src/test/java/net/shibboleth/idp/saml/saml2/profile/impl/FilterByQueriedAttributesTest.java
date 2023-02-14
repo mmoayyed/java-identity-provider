@@ -43,10 +43,10 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -54,6 +54,7 @@ import net.shibboleth.shared.testing.MockReloadableService;
 import net.shibboleth.shared.xml.XMLParserException;
 
 /** Tests for {@link FilterByQueriedAttributes} */
+@SuppressWarnings("javadoc")
 public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
 
     static final String PATH = "/net/shibboleth/idp/saml/impl/profile/";

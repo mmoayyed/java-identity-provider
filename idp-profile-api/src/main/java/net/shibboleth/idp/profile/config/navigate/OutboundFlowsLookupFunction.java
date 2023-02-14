@@ -23,8 +23,8 @@ import java.util.Collections;
 import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.config.InterceptorAwareProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;

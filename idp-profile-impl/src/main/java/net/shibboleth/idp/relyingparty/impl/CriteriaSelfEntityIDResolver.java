@@ -30,9 +30,9 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.CriteriaRelyingPartyConfigurationResolver;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -40,18 +40,19 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.IdentifiableComponent;
-import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.Resolver;
 import net.shibboleth.shared.resolver.ResolverException;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 
 /**
- * Resolver which uses an instance of {@link CriteriaRelyingPartyConfigurationResolver} to
- * resolve the self entityID.
+ * Resolver which uses an instance of {@link RelyingPartyConfigurationResolver} to
+ * resolve our own entityID.
  * 
  * <p>
- * The required and allowed criteria are the same as the {@link CriteriaRelyingPartyConfigurationResolver}
+ * The required and allowed criteria are the same as the {@link RelyingPartyConfigurationResolver}
  * implementation in use.
  * </p>
  */
@@ -61,17 +62,18 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
     /** Logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(CriteriaSelfEntityIDResolver.class);
     
-    /** The CriteriaRelyingPartyConfigurationResolver to which to delegate. */
-    @NonnullAfterInit private CriteriaRelyingPartyConfigurationResolver rpcResolver;
+    /** The RelyingPartyConfigurationResolver to which to delegate. */
+    @NonnullAfterInit private ReloadableService<RelyingPartyConfigurationResolver> rpcResolver;
     
     /**
-     * Set the {@link CriteriaRelyingPartyConfigurationResolver} instance to which to delegate.
+     * Set the {@link RelyingPartyConfigurationResolver} instance to which to delegate.
      * 
      * @param resolver the relying party resolver 
      */
     public void setRelyingPartyConfigurationResolver(
-            @Nullable final CriteriaRelyingPartyConfigurationResolver resolver) {
+            @Nullable final ReloadableService<RelyingPartyConfigurationResolver> resolver) {
         checkSetterPreconditions();
+        
         rpcResolver = resolver;
     }
 
@@ -83,8 +85,9 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+        
         if (rpcResolver == null) {
-            throw new ComponentInitializationException("CriteriaRelyingPartyConfigurationResolver was null");
+            throw new ComponentInitializationException("RelyingPartyConfigurationResolver cannot be null");
         }
     }
 
@@ -95,8 +98,8 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements public Iterable<String> resolve(
-            @Nullable final CriteriaSet criteria) throws ResolverException {
+    @Nonnull @NonnullElements public Iterable<String> resolve(@Nullable final CriteriaSet criteria)
+            throws ResolverException {
         checkComponentActive();
         final String entityID = resolveSingle(criteria);
         if (entityID != null) {
@@ -108,19 +111,30 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
     /** {@inheritDoc} */
     @Nullable public String resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
         checkComponentActive();
-        @Nonnull final ProfileRequestContext prc = Constraint.isNotNull(buildContext(criteria), "Could not build context");
+        
+        final ProfileRequestContext prc = buildContext(criteria);
+        if (prc == null) {
+            log.error("Unable to extract or build ProfileRequestContext for resolution");
+            return null;
+        }
+        
         final CriteriaSet prcSet = new CriteriaSet(new ProfileRequestContextCriterion(prc));
         
-        final RelyingPartyConfiguration rpc = rpcResolver.resolveSingle(prcSet);
-        if (rpc != null) {
-            return rpc.getResponderId(prc);
+        try {
+            final RelyingPartyConfiguration rpc =
+                    rpcResolver.getServiceableComponent().getComponent().resolveSingle(prcSet);
+            if (rpc instanceof net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) {
+                return ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) rpc).getResponderId(prc);
+            }
+        } catch (final ServiceException e) {
+            log.error("RelyingPartyConfiguration resolver unvailable", e);
         }
         return null;
     }
 
     /**
-     * Build and populate the synthetic instance of {@link ProfileRequestContext} which will be passed
-     * in the resolution call to the delegate.
+     * Build and populate the synthetic instance of {@link ProfileRequestContext} which will be used
+     * in the resolution call to the delegate as well as to resolve the entityID setting.
      * 
      * @param criteria the input criteria
      * @return the synthetic context instance, or null if required data is not supplied
@@ -177,7 +191,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
      * @param criteria the input criteria
      * @return the input entityID criterion or null if could not be resolved
      */
-    private String resolveEntityID(@Nonnull final CriteriaSet criteria) {
+    @Nullable private String resolveEntityID(@Nonnull final CriteriaSet criteria) {
         final EntityIdCriterion eic = criteria.get(EntityIdCriterion.class);
         if (eic != null) {
             return eic.getEntityId();
@@ -197,7 +211,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
      * @param criteria the input criteria
      * @return the input entity descriptor criterion, or null if could not be resolved
      */
-    private EntityDescriptor resolveEntityDescriptor(@Nonnull final CriteriaSet criteria) {
+    @Nullable private EntityDescriptor resolveEntityDescriptor(@Nonnull final CriteriaSet criteria) {
         final RoleDescriptor rd = resolveRoleDescriptor(criteria);
         if (rd != null && rd.getParent() != null && rd.getParent() instanceof EntityDescriptor) {
             return (EntityDescriptor)rd.getParent();
@@ -212,7 +226,7 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
      * @param criteria the input criteria
      * @return the input role descriptor criterion or null if could not be resolved
      */
-    private RoleDescriptor resolveRoleDescriptor(@Nonnull final CriteriaSet criteria) {
+    @Nullable private RoleDescriptor resolveRoleDescriptor(@Nonnull final CriteriaSet criteria) {
         final RoleDescriptorCriterion rdc = criteria.get(RoleDescriptorCriterion.class);
         if (rdc != null) {
             return rdc.getRole();

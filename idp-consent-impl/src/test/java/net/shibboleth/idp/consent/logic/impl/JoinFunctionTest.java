@@ -30,6 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link JoinFunction} unit test. */
+@SuppressWarnings("javadoc")
 public class JoinFunctionTest {
 
     private RequestContext src;

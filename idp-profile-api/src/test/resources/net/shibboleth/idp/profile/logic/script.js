@@ -1,5 +1,5 @@
 value = true;
-if (null == profileContext.getSubcontext("net.shibboleth.idp.profile.context.RelyingPartyContext")) {
+if (null == profileContext.getSubcontext("net.shibboleth.profile.context.RelyingPartyContext")) {
   value = false;
 }
 value;

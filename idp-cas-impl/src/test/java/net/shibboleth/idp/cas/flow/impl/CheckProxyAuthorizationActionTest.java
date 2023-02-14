@@ -31,6 +31,7 @@ import static org.testng.Assert.*;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class CheckProxyAuthorizationActionTest extends AbstractFlowActionTest {
 
     @Autowired

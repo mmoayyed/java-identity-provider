@@ -30,6 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link InitializeConsentContext} unit test. */
+@SuppressWarnings("javadoc")
 public class InitializeConsentContextTest {
 
     private RequestContext src;

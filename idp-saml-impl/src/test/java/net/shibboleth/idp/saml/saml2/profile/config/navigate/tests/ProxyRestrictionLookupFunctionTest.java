@@ -25,10 +25,10 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyRestrictionLookupFunction;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -40,6 +40,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ProxyRestrictionLookupFunction}. */
+@SuppressWarnings("javadoc")
 public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase {
     
     private ProfileRequestContext prc;
@@ -56,7 +57,7 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         config = (BrowserSSOProfileConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getProfileConfiguration(
                 prc, BrowserSSOProfileConfiguration.PROFILE_ID);
         prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(config);
-        sc = prc.getSubcontext(SubjectContext.class, true);
+        sc = prc.getOrCreateSubcontext(SubjectContext.class);
         sc.getAuthenticationResults().put("test1", new AuthenticationResult("test1", new Subject()));
         sc.getAuthenticationResults().put("test2", new AuthenticationResult("test2", new Subject()));
         fn = new ProxyRestrictionLookupFunction();

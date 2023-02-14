@@ -31,6 +31,7 @@ import java.net.URI;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class TestProxyValidator extends HttpClientProxyValidator {
 
     /** Validation repsonse HTTP status code to return. */

@@ -26,8 +26,8 @@ import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -35,6 +35,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ReleaseAttributes} unit test. */
+@SuppressWarnings("javadoc")
 public class ReleaseAttributesTest extends AbstractAttributeReleaseActionTest {
 
     private AttributeReleaseContext arc;

@@ -18,16 +18,14 @@
 package net.shibboleth.idp.saml.profile.impl;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
-
-import java.util.Set;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.action.EventIds;
@@ -44,6 +42,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 
 /** {@link InitializeAuthenticationContext} unit test. */
+@SuppressWarnings("javadoc")
 public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCase {
 
     private InitializeAuthenticationContext action;
@@ -182,7 +181,7 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         config.setDisallowedFeatures(BrowserSSOProfileConfiguration.FEATURE_SCOPING);
         
-        prc.getSubcontext(RelyingPartyContext.class, true).setProfileConfig(config);
+        prc.getOrCreateSubcontext(RelyingPartyContext.class).setProfileConfig(config);
         
         final Event event = action.execute(requestCtx);
         ActionTestingSupport.assertEvent(event, EventIds.ACCESS_DENIED);

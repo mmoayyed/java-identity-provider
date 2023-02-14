@@ -43,10 +43,10 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -54,6 +54,7 @@ import net.shibboleth.shared.testing.MockReloadableService;
 import net.shibboleth.shared.xml.XMLParserException;
 
 /** Tests for {@link FilterByQueriedAttributeDesignators} */
+@SuppressWarnings("javadoc")
 public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCase {
 
     static final String PATH = "/net/shibboleth/idp/saml/impl/profile/";
@@ -74,7 +75,7 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
 
         final GenericApplicationContext context = new GenericApplicationContext();
         contexts.add(context);
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
@@ -82,7 +83,7 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
 
         context.refresh();
 
-        Collection<Type> beans = context.getBeansOfType(claz).values();
+        final Collection<Type> beans = context.getBeansOfType(claz).values();
         Assert.assertEquals(beans.size(), 1);
 
         return beans.iterator().next();
@@ -110,7 +111,7 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
     }
 
     @Test public void noAttributes() {
-        prc.getSubcontext(RelyingPartyContext.class,true);
+        prc.getOrCreateSubcontext(RelyingPartyContext.class);
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
     }

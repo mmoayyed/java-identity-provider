@@ -28,6 +28,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link PreferExplicitOrderComparator} unit test. */
+@SuppressWarnings("javadoc")
 public class PreferExplicitOrderComparatorTest {
 
     private Comparator<String> c;

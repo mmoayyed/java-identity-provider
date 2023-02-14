@@ -21,10 +21,10 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.collection.CollectionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -40,7 +40,6 @@ import javax.annotation.Nonnull;
 import static org.testng.Assert.*;
 
 import java.time.Instant;
-import java.util.Set;
 
 /**
  * Tests the flow behind the <code>/samlValidate</code> endpoint.
@@ -50,6 +49,7 @@ import java.util.Set;
 @ContextConfiguration(locations = {
         "/test/test-cas-beans.xml",
 })
+@SuppressWarnings("javadoc")
 public class SamlValidateFlowTest extends AbstractFlowTest {
 
     /** Flow id. */

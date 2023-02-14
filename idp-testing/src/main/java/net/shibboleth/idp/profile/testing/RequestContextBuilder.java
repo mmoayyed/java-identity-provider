@@ -33,7 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
@@ -399,7 +399,7 @@ public class RequestContextBuilder {
      */
     @Nonnull protected RelyingPartyContext buildRelyingPartyContext(
             @Nonnull final ProfileRequestContext profileRequestContext) throws ComponentInitializationException {
-        final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, true);
+        final RelyingPartyContext rpCtx = profileRequestContext.getOrCreateSubcontext(RelyingPartyContext.class);
         if (Objects.equals(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
             rpCtx.setRelyingPartyId(ActionTestingSupport.INBOUND_MSG_ISSUER);
         } else {

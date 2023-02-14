@@ -34,6 +34,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link SAML2SPSessionSerializer} unit test. */
+@SuppressWarnings("javadoc")
 public class SAML2SPSessionSerializerTest extends OpenSAMLInitBaseTestCase {
 
     private static final String DATAPATH = "/net/shibboleth/idp/saml/impl/session/";

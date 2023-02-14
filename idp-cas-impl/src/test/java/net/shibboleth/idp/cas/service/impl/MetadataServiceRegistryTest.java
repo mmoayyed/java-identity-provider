@@ -47,6 +47,7 @@ import static org.testng.Assert.*;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class MetadataServiceRegistryTest {
 
     private ResourceBackedMetadataResolver metadataResolver;

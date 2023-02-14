@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.logic;
 
 import javax.script.ScriptException;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 /**
  * Tests for {@link ScriptedPredicate}.
  */
+@SuppressWarnings("javadoc")
 public class ScriptedPredicateTest {
 
     private ProfileRequestContext withChild;
@@ -40,7 +41,7 @@ public class ScriptedPredicateTest {
 
     @BeforeClass public void setup() {
         withChild = new ProfileRequestContext();
-        withChild.getSubcontext(RelyingPartyContext.class, true);
+        withChild.getOrCreateSubcontext(RelyingPartyContext.class);
         noChild = new ProfileRequestContext();
     }
 
@@ -70,7 +71,7 @@ public class ScriptedPredicateTest {
     @Test public void inlineBean() throws ScriptException {
 
         try (final GenericApplicationContext ctx = new GenericApplicationContext()) {
-            SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+            final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                     new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
             beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
@@ -88,7 +89,7 @@ public class ScriptedPredicateTest {
     @Test public void resourceBean() throws ScriptException {
 
         try (final GenericApplicationContext ctx = new GenericApplicationContext()) {
-            SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+            final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                     new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
             beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(

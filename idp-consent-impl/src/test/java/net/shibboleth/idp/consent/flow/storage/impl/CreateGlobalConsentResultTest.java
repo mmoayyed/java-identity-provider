@@ -31,6 +31,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link CreateGlobalConsentResult} unit test. */
+@SuppressWarnings("javadoc")
 public class CreateGlobalConsentResultTest extends AbstractConsentIndexedStorageActionTest {
 
     @BeforeMethod public void setUpAction() throws Exception {
@@ -61,4 +62,5 @@ public class CreateGlobalConsentResultTest extends AbstractConsentIndexedStorage
         Assert.assertNull(globalConsent.getValue());
         Assert.assertTrue(globalConsent.isApproved());
     }
+    
 }

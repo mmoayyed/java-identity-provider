@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.session.impl;
 
-import java.util.Collections;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;

@@ -18,8 +18,8 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -33,6 +33,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link TransientSAML1NameIdentifierGenerator} using storage-based generator. */
+@SuppressWarnings("javadoc")
 public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     private MemoryStorageService store;
@@ -94,7 +95,8 @@ public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         
         Assert.assertNotNull(name);
         Assert.assertEquals(name.getFormat(), generator.getFormat());
-        Assert.assertEquals(name.getNameQualifier(), rpc.getConfiguration().getResponderId(prc));
+        Assert.assertEquals(name.getNameQualifier(),
+                ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) rpc.getConfiguration()).getResponderId(prc));
 
         String val = name.getValue();
 

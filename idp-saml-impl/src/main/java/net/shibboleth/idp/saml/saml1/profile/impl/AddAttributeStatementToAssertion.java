@@ -59,7 +59,7 @@ import net.shibboleth.shared.service.ServiceableComponent;
 
  * <p>The {@link IdPAttribute} set to be encoded is drawn from an
  * {@link net.shibboleth.idp.attribute.context.AttributeContext} returned from a lookup strategy, by default located
- * on the {@link net.shibboleth.idp.profile.context.RelyingPartyContext} beneath the profile request context.</p>
+ * on the {@link net.shibboleth.profile.context.RelyingPartyContext} beneath the profile request context.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}

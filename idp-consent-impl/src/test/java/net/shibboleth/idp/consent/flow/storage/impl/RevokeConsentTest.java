@@ -29,6 +29,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link RevokeConsent} unit test. */
+@SuppressWarnings("javadoc")
 public class RevokeConsentTest extends AbstractConsentIndexedStorageActionTest {
 
     @BeforeMethod public void setUpAction() throws Exception {

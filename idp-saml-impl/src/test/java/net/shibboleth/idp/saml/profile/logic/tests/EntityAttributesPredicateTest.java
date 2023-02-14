@@ -53,6 +53,7 @@ import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReade
 /**
  * Unit test for {@link EntityAttributesPredicate} and {@link MappedEntityAttributesPredicate}.
  */
+@SuppressWarnings("javadoc")
 public class EntityAttributesPredicateTest extends XMLObjectBaseTestCase {
     
     private String fooEntityID = "http://foo.example.org/shibboleth";

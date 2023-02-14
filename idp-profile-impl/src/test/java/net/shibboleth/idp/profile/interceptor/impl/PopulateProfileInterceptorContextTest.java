@@ -46,6 +46,11 @@ public class PopulateProfileInterceptorContextTest {
 
     protected ProfileRequestContext prc;
 
+    /**
+     * Test setup.
+     * 
+     * @throws Exception 
+     */ 
     @BeforeMethod public void setUp() throws Exception {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);

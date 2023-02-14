@@ -22,17 +22,22 @@ import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.flow.impl.AbstractConsentActionTest;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 import org.testng.annotations.BeforeMethod;
 
 /** {@link AbstractAttributeReleaseAction} unit test. */
 public abstract class AbstractAttributeReleaseActionTest extends AbstractConsentActionTest {
 
+    /**
+     * Set up tests.
+     * 
+     * @throws Exception
+     */
     @BeforeMethod public void setUpAttributeReleaseAction() throws Exception {
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(ConsentTestingSupport.newAttributeMap().values());
-        prc.getSubcontext(RelyingPartyContext.class, true).addSubcontext(attributeCtx);
+        prc.getOrCreateSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         prc.addSubcontext(new AttributeReleaseContext(), true);
 

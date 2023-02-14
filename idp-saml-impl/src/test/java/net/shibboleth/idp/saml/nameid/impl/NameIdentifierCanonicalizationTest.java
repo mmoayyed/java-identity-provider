@@ -42,6 +42,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link NameIdentifierCanonicalization} unit test. */
+@SuppressWarnings("javadoc")
 public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase {
 
     private ProfileRequestContext prc;

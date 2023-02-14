@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 
 /** {@link ProfileInterceptorFlowDescriptor} unit test. */
+@SuppressWarnings("javadoc")
 public class ProfileInterceptorFlowDescriptorTest {
 
     private ProfileInterceptorFlowDescriptor descriptor;
@@ -55,22 +56,19 @@ public class ProfileInterceptorFlowDescriptorTest {
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class)
-    public void testUnmodifiableActivationCondition()
-            throws Exception {
+    public void testUnmodifiableActivationCondition() throws Exception {
         descriptor.initialize();
         descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class)
-    public void testUnmodifiableStorageService()
-            throws Exception {
+    public void testUnmodifiableStorageService() throws Exception {
         descriptor.initialize();
         descriptor.setStorageService(null);
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class)
-    public void testUnmodifiableNonBrowserSupport()
-            throws Exception {
+    public void testUnmodifiableNonBrowserSupport() throws Exception {
         descriptor.initialize();
         descriptor.setNonBrowserSupported(true);
     }

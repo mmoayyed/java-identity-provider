@@ -28,7 +28,7 @@
     </action-state>
 
     <decision-state id="CheckIfDone">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getProfileConfig().isFlowExecuted()"
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.profile.context.RelyingPartyContext)).getProfileConfig().isFlowExecuted()"
             then="end" else="PromptForPasswords" />
     </decision-state>
     
@@ -59,7 +59,7 @@
 
     <end-state id="end" view="admin/unlock-keys">
         <on-entry>
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getProfileConfig().setFlowExecuted(true)" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.profile.context.RelyingPartyContext)).getProfileConfig().setFlowExecuted(true)" />
             <evaluate expression="WriteAuditLog" />
             <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />

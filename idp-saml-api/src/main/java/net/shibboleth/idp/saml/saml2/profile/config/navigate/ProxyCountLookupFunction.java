@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.saml2.profile.config.navigate;
 import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
 

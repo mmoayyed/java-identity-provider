@@ -50,7 +50,6 @@ import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -58,6 +57,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTrans
 import net.shibboleth.idp.saml.attribute.transcoding.SAML1AttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder;
 import net.shibboleth.idp.saml.saml1.profile.testing.SAML1ActionTestingSupport;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockApplicationContext;
 import net.shibboleth.shared.testing.MockReloadableService;

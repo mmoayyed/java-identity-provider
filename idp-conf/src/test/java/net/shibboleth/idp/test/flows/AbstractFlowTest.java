@@ -84,8 +84,6 @@ import net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean;
 import net.shibboleth.shared.testing.InMemoryDirectory;
 import net.shibboleth.shared.xml.ParserPool;
 
-import static org.testng.Assert.assertEquals;
-
 /**
  * Abstract flow test.
  */

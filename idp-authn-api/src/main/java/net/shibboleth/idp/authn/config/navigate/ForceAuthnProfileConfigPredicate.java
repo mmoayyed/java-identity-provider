@@ -20,9 +20,9 @@ package net.shibboleth.idp.authn.config.navigate;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 

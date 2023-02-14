@@ -40,14 +40,15 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.DatabaseTestingSupport;
 
 /** Test for {@link StoredPersistentIdDecoder}. */
+@SuppressWarnings("javadoc")
 public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
 
     private DataSource testSource;

@@ -32,8 +32,6 @@ import org.slf4j.Logger;
 
 import net.shibboleth.shared.primitive.LoggerFactory;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.cas.config.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;

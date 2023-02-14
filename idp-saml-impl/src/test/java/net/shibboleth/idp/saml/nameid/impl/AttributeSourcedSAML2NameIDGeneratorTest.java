@@ -37,11 +37,12 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** Unit test for {@link AttributeSourcedSAML2NameIDGenerator}. */
+@SuppressWarnings("javadoc")
 public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
@@ -119,7 +120,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
                 Collections.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
@@ -131,7 +132,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
     @Test public void testWrongFormat() throws Exception {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(List.of(saml2NameIdFor(NAME_1)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
                 Collections.singleton(inputAttribute));
 
         generator.setFormat(NameID.EMAIL);
@@ -143,7 +144,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
     @Test public void testNameIDValued() throws Exception {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(List.of(saml2NameIdFor(NAME_1)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
                 Collections.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
@@ -159,7 +160,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
     @Test public void testMultiNameIDValued() throws Exception {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(List.of(saml2NameIdFor(OTHERID), saml1NameIdFor(NAME_1)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
                 Collections.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
@@ -175,7 +176,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
     @Test public void testStringValued() throws Exception {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(List.of(new StringAttributeValue(NAME_1)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
                 Collections.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
@@ -186,7 +187,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
         Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(),
-                prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId(prc));
+                ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration()).getResponderId(prc));
     }
 
     @Test public void testScopeValued() throws Exception {
@@ -203,7 +204,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
         Assert.assertEquals(outputNameId.getValue(), NAME_1 + '@' + QUALIFIER);
         Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(),
-                prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId(prc));
+                ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration()).getResponderId(prc));
         Assert.assertEquals(outputNameId.getSPNameQualifier(),
                 prc.getSubcontext(RelyingPartyContext.class).getRelyingPartyId());
     }

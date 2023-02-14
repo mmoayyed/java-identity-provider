@@ -38,6 +38,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link PrepareInboundMessageContext} unit test. */
+@SuppressWarnings("javadoc")
 public class PrepareInboundMessageContextTest extends OpenSAMLInitBaseTestCase {
 
     private RequestContext src;

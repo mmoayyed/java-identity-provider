@@ -27,10 +27,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
+@SuppressWarnings("javadoc")
 public class RelyingPartyMapJAASLoginConfigStrategyTest {
 
     private static final String DEFAULT_JAAS_CONFIG = "ShibUserPassAuth";
@@ -49,7 +50,7 @@ public class RelyingPartyMapJAASLoginConfigStrategyTest {
     public void setUp() {
         profileRequestContext = new ProfileRequestContext();
 
-        relyingPartyContext = profileRequestContext.getSubcontext(RelyingPartyContext.class, true);
+        relyingPartyContext = profileRequestContext.getOrCreateSubcontext(RelyingPartyContext.class);
         relyingPartyContext.setRelyingPartyId(entityID);
 
         rpMap = new HashMap<>();

@@ -24,7 +24,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.MockProfileConfiguration;

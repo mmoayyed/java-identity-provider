@@ -19,9 +19,9 @@ package net.shibboleth.idp.profile.context.navigate;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 /**
  * A function that returns {@link RelyingPartyContext#getRelyingPartyId()} from a

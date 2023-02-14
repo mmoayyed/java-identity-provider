@@ -19,9 +19,9 @@ package net.shibboleth.idp.profile.logic;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 /**
  * Predicate to determine whether a profile request is from a verified source.

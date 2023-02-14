@@ -38,6 +38,7 @@ import org.testng.annotations.Test;
 
 /** Tests for the profile interceptor flow. */
 @ContextConfiguration(locations = {"classpath:/intercept/test-webflow-config.xml",})
+@SuppressWarnings("javadoc")
 public class InterceptFlowTest extends AbstractFlowTest {
 
     /** Flow id. */

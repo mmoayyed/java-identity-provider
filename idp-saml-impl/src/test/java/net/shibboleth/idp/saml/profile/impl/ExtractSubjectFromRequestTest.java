@@ -44,6 +44,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ExtractSubjectFromRequest}. */
+@SuppressWarnings("javadoc")
 public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
 
     private RequestContext rc;

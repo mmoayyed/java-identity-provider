@@ -31,6 +31,7 @@ import static org.testng.Assert.assertNotNull;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class PublishProtocolResponseActionTest extends AbstractFlowActionTest {
 
     @Test

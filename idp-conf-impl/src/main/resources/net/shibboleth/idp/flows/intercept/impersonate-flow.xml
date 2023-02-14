@@ -52,9 +52,9 @@
     <action-state id="DoImpersonate">
         <on-entry>
             <!-- Clear existing attribute state. -->
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).removeSubcontext(T(net.shibboleth.idp.attribute.context.AttributeContext))" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.profile.context.RelyingPartyContext)).removeSubcontext(T(net.shibboleth.idp.attribute.context.AttributeContext))" />
             <!-- Log the impersonation. -->
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getRelyingPartyId()" result="requestScope.relyingPartyId" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.profile.context.RelyingPartyContext)).getRelyingPartyId()" result="requestScope.relyingPartyId" />
             <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').info('Impersonation by principal ''{}'' as ''{}'' to relying party ''{}''', new Object[]{subjectContext.getPrincipalName(), principalToSpoof, relyingPartyId})" />
             <!-- Swap identities. -->
             <evaluate expression="subjectContext.setImpersonatingPrincipalName(subjectContext.getPrincipalName())" />
@@ -72,7 +72,7 @@
     <end-state id="ImpersonationViolation">
         <on-entry>
             <!-- Log violation. -->
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getRelyingPartyId()" result="requestScope.relyingPartyId" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.profile.context.RelyingPartyContext)).getRelyingPartyId()" result="requestScope.relyingPartyId" />
             <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile.interceptor').warn('Unauthorized impersonation attempt by principal ''{}'' as ''{}'' to relying party ''{}''', new Object[]{subjectContext.getPrincipalName(), principalToSpoof, relyingPartyId})" />
         </on-entry>
     </end-state>

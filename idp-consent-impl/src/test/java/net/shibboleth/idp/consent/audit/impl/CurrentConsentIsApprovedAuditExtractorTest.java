@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.consent.context.ConsentContext;
 
 /** {@link CurrentConsentIsApprovedAuditExtractor} unit test. */
+@SuppressWarnings("javadoc")
 public class CurrentConsentIsApprovedAuditExtractorTest extends AbstractConsentAuditExtractorTest {
 
     private CurrentConsentIsApprovedAuditExtractor extractor;

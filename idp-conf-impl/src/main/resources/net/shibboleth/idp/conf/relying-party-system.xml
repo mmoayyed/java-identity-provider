@@ -18,7 +18,7 @@
     <bean id="entityID" class="java.lang.String" c:_0="%{idp.entityID}" />
 
     <!-- Pulls together the various components that feed the resolver. -->
-    <bean class="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
+    <bean class="net.shibboleth.profile.relyingparty.impl.DefaultRelyingPartyConfigurationResolver"
         p:unverifiedConfiguration-ref="shibboleth.UnverifiedRelyingParty"
         p:defaultConfiguration-ref="shibboleth.DefaultRelyingParty"
         p:relyingPartyConfigurations-ref="shibboleth.RelyingPartyOverrides"

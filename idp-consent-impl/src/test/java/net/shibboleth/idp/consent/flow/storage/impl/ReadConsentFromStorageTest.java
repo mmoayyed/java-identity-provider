@@ -28,6 +28,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ReadConsentFromStorage} unit test. */
+@SuppressWarnings("javadoc")
 public class ReadConsentFromStorageTest extends AbstractConsentStorageActionTest {
 
     @BeforeMethod public void setUpAction() throws Exception {

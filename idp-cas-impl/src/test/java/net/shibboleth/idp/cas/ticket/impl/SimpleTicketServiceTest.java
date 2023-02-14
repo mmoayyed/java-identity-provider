@@ -36,6 +36,7 @@ import java.time.temporal.ChronoUnit;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class SimpleTicketServiceTest {
 
     private static final String TEST_SESSION_ID = "jHXRo42W0ATPEN+X5Zk1cw==";

@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.profile.spring.logic;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
 
@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 public class RelyingPartyIdPredicateTest {
     
     private boolean testCandidate(final RelyingPartyIdPredicate rpIdPredicate, final String rpId) {
-        ProfileRequestContext prc = new ProfileRequestContext();
+        final ProfileRequestContext prc = new ProfileRequestContext();
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, true);
         assert rpc != null;
         rpc.setRelyingPartyId(rpId);
@@ -46,7 +46,7 @@ public class RelyingPartyIdPredicateTest {
     public void constructors() {
         try (final GenericApplicationContext context = new FilesystemGenericApplicationContext()) {
             context.setDisplayName("ApplicationContext: Matcher");
-            SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+            final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                     new SchemaTypeAwareXMLBeanDefinitionReader(context);
     
             beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/profile/spring/logic/relyingPartyIdPredicates.xml");

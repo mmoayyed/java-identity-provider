@@ -41,6 +41,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link DefaultNameIdentifierFormatStrategy}. */
+@SuppressWarnings("javadoc")
 public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTestCase {
 
     private SPSSODescriptor role;

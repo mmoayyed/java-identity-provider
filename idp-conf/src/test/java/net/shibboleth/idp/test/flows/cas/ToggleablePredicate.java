@@ -28,6 +28,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class ToggleablePredicate implements Predicate<ProfileRequestContext> {
     private boolean result;
 

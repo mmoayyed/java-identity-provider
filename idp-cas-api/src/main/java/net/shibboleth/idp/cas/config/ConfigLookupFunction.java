@@ -21,9 +21,9 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 /**
  * Lookup function for extracting CAS profile configuration from the profile request context.

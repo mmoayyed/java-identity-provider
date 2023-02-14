@@ -28,9 +28,11 @@ import org.opensaml.security.httpclient.HttpClientSecurityConfiguration;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.idp.profile.context.navigate.messaging.AbstractRelyingPartyLookupFunction;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 
 /**
  * A {@link MessageContext} function that returns a {@link HttpClientSecurityConfiguration} list 
@@ -42,19 +44,20 @@ public class HttpClientSecurityConfigurationLookupFunction
         extends AbstractRelyingPartyLookupFunction<List<HttpClientSecurityConfiguration>> {
     
     /** A resolver for default security configurations. */
-    @Nullable private RelyingPartyConfigurationResolver rpResolver;
-
+    @Nullable private ReloadableService<RelyingPartyConfigurationResolver> rpResolver;
+    
     /**
      * Set the resolver for default security configurations.
      * 
      * @param resolver the resolver to use
      */
-    public void setRelyingPartyConfigurationResolver(@Nullable final RelyingPartyConfigurationResolver resolver) {
+    public void setRelyingPartyConfigurationResolver(
+            @Nullable final ReloadableService<RelyingPartyConfigurationResolver> resolver) {
         rpResolver = resolver;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override
     @Nullable public List<HttpClientSecurityConfiguration> apply(@Nullable final MessageContext input) {
         
         final List<HttpClientSecurityConfiguration> configs = new ArrayList<>();
@@ -64,7 +67,7 @@ public class HttpClientSecurityConfigurationLookupFunction
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null) {
                 final SecurityConfiguration sc =
-                        pc.getSecurityConfiguration(this.getProfileRequestContextLookupStrategy().apply(input));
+                        pc.getSecurityConfiguration(getProfileRequestContextLookupStrategy().apply(input));
                 if (sc != null && sc.getHttpClientSecurityConfiguration() != null) {
                     configs.add(sc.getHttpClientSecurityConfiguration());
                 }
@@ -74,9 +77,14 @@ public class HttpClientSecurityConfigurationLookupFunction
             if (pc != null) {
                 final String id = pc.getId();
                 if (id != null && rpResolver != null) {
-                    final SecurityConfiguration defaultConfig = rpResolver.getDefaultSecurityConfiguration(id);
-                    if (defaultConfig != null && defaultConfig.getHttpClientSecurityConfiguration() != null) {
-                        configs.add(defaultConfig.getHttpClientSecurityConfiguration());
+                    try {
+                        final SecurityConfiguration defaultConfig =
+                                rpResolver.getServiceableComponent().getComponent().getDefaultSecurityConfiguration(id);
+                        if (defaultConfig != null && defaultConfig.getHttpClientSecurityConfiguration() != null) {
+                            configs.add(defaultConfig.getHttpClientSecurityConfiguration());
+                        }
+                    } catch (final ServiceException e) {
+                        
                     }
                 }
             }
@@ -86,5 +94,6 @@ public class HttpClientSecurityConfigurationLookupFunction
         
         return configs;
     }
-
+// Checkstyle: CyclomaticComplexity ON
+    
 }

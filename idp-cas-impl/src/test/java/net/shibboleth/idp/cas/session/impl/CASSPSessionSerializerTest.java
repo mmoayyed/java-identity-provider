@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import java.time.Duration;
 import java.time.Instant;
 
+@SuppressWarnings("javadoc")
 public class CASSPSessionSerializerTest {
 
     private CASSPSessionSerializer serializer = new CASSPSessionSerializer(Duration.ZERO);

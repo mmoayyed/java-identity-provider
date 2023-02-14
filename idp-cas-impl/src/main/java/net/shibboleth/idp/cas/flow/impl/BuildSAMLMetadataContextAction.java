@@ -30,7 +30,7 @@ import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.impl.ServiceEntityDescriptor;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 /**
  * Builds a {@link SAMLMetadataContext} child of {@link RelyingPartyContext} to facilitate relying party selection

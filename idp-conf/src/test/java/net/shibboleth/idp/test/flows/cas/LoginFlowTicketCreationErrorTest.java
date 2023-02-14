@@ -40,6 +40,7 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
         "/test/test-cas-beans.xml",
         "/test/test-cas-error-beans.xml",
 })
+@SuppressWarnings("javadoc")
 public class LoginFlowTicketCreationErrorTest extends AbstractFlowTest {
     /** Flow id. */
     @Nonnull

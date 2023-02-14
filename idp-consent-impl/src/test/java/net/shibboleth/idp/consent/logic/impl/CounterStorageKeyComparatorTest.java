@@ -28,6 +28,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit tests for {@link CounterStorageKeyComparator}. */
+@SuppressWarnings("javadoc")
 public class CounterStorageKeyComparatorTest {
 
     private CounterStorageKeyComparator c;

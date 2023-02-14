@@ -28,6 +28,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AttributePredicate} unit test. */
+@SuppressWarnings("javadoc")
 public class AttributePredicateTest {
 
     private AttributePredicate p;

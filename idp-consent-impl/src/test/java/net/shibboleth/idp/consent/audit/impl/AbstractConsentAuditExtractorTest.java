@@ -27,7 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.BeforeMethod;
 
 /**
- *
+ * Base class for audit extractor tests.
  */
 public class AbstractConsentAuditExtractorTest {
 
@@ -35,6 +35,11 @@ public class AbstractConsentAuditExtractorTest {
 
     protected ProfileRequestContext prc;
 
+    /**
+     * Set up for tests.
+     * 
+     * @throws Exception
+     */
     @BeforeMethod public void setUp() throws Exception {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);

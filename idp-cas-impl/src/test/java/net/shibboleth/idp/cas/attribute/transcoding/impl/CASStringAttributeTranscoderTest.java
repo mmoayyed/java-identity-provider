@@ -47,6 +47,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockApplicationContext;
 
 /** {@link CASStringAttributeTranscoder} unit test. */
+@SuppressWarnings("javadoc")
 public class CASStringAttributeTranscoderTest {
 
     private AttributeTranscoderRegistryImpl registry;

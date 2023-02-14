@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 
 /** Tests for the profile interceptor flow. */
 @ContextConfiguration(locations = {"classpath:/exception/test-webflow-config.xml",})
+@SuppressWarnings("javadoc")
 public class ExceptionFlowTest extends AbstractFlowTest {
 
     @Nonnull public final static String TEST_EXCEPTION_FLOW_ID = "test-exception-flow";

@@ -26,6 +26,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 /** {@link UpdateCounter} unit test. */
+@SuppressWarnings("javadoc")
 public class UpdateCounterTest extends AbstractConsentStorageActionTest {
 
     @BeforeMethod public void setUpAction() throws Exception {

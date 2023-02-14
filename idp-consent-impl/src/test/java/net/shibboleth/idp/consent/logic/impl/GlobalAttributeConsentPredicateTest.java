@@ -30,6 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link GlobalAttributeConsentPredicate} unit test. */
+@SuppressWarnings("javadoc")
 public class GlobalAttributeConsentPredicateTest {
 
     private RequestContext src;

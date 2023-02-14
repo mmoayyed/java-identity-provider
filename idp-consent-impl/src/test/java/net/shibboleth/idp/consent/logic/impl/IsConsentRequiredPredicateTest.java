@@ -35,6 +35,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link IsConsentRequiredPredicate} unit test. */
+@SuppressWarnings("javadoc")
 public class IsConsentRequiredPredicateTest {
 
     private RequestContext src;

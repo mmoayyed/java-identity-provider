@@ -17,23 +17,29 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.time.Instant;
+import java.util.Collection;
 import java.util.Collections;
 
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceableComponent;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.config.SecurityConfiguration;
+import org.opensaml.security.credential.Credential;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -42,6 +48,11 @@ import org.testng.annotations.Test;
 /** {@link SelectRelyingPartyConfiguration} unit test. */
 public class SelectRelyingPartyConfigurationTest {
 
+    /**
+     * Test action with no resolver.
+     * 
+     * @throws ComponentInitializationException
+     */
     @Test(expectedExceptions = ComponentInitializationException.class) public void testNoResolver()
             throws ComponentInitializationException {
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
@@ -58,10 +69,8 @@ public class SelectRelyingPartyConfigurationTest {
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.removeSubcontext(RelyingPartyContext.class);
 
-        final RelyingPartyConfigurationResolver resolver = new MockResolver(null, null);
-
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
-        action.setRelyingPartyConfigurationResolver(resolver);
+        action.setRelyingPartyConfigurationResolver(new MockResolver(null, null));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -79,10 +88,8 @@ public class SelectRelyingPartyConfigurationTest {
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
-        final RelyingPartyConfigurationResolver resolver = new MockResolver(null, null);
-
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
-        action.setRelyingPartyConfigurationResolver(resolver);
+        action.setRelyingPartyConfigurationResolver(new MockResolver(null, null));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -100,16 +107,14 @@ public class SelectRelyingPartyConfigurationTest {
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
-        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        final var config = new net.shibboleth.idp.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
         config.setDetailedErrors(true);
         config.initialize();
 
-        final RelyingPartyConfigurationResolver resolver = new MockResolver(config, new ResolverException());
-
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
-        action.setRelyingPartyConfigurationResolver(resolver);
+        action.setRelyingPartyConfigurationResolver(new MockResolver(config, new ResolverException()));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -127,16 +132,14 @@ public class SelectRelyingPartyConfigurationTest {
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
-        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        final var config = new net.shibboleth.idp.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
         config.setDetailedErrors(true);
         config.initialize();
 
-        final RelyingPartyConfigurationResolver resolver = new MockResolver(config, null);
-
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
-        action.setRelyingPartyConfigurationResolver(resolver);
+        action.setRelyingPartyConfigurationResolver(new MockResolver(config, null));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -144,37 +147,43 @@ public class SelectRelyingPartyConfigurationTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         final RelyingPartyConfiguration resolvedConfig =
-                prc.getSubcontext(RelyingPartyContext.class).getConfiguration();
+                (RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration();
         Assert.assertEquals(resolvedConfig.getId(), config.getId());
-        Assert.assertEquals(resolvedConfig.getResponderId(prc), config.getResponderId(prc));
+        Assert.assertEquals(((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) resolvedConfig).getResponderId(prc),
+                config.getResponderId(prc));
         Assert.assertEquals(resolvedConfig.getProfileConfigurations(prc), config.getProfileConfigurations(prc));
     }
 
-    /** A resolver that returns a relying party configuration or throws an exception. */
-    private class MockResolver extends AbstractIdentifiedInitializableComponent implements
-            RelyingPartyConfigurationResolver {
+    /**
+     * A resolver that returns a relying party configuration or throws an exception. */
+    private class MockResolver extends AbstractIdentifiedInitializableComponent
+                implements ReloadableService<RelyingPartyConfigurationResolver>,
+                    ServiceableComponent<RelyingPartyConfigurationResolver>, RelyingPartyConfigurationResolver {
 
         /** The relying party configuration to be returned. */
         private RelyingPartyConfiguration configuration;
 
-        /** Exception thrown by {@link #resolve(ProfileRequestContext)} and {@link #resolveSingle(ProfileRequestContext)} */
+        /** Exception thrown by resolution attempts. */
         private ResolverException exception;
 
         /**
          * Constructor.
          * 
          * @param relyingPartyConfiguration the relying party configuration to be returned
-         * @param resolverException exception thrown by {@link #resolve(ProfileRequestContext)} and
-         *            {@link #resolveSingle(ProfileRequestContext)}
+         * @param resolverException exception thrown on failed resolution
+         *            
+         * @throws ComponentInitializationException 
          */
         public MockResolver(@Nullable final RelyingPartyConfiguration relyingPartyConfiguration,
-                @Nullable final ResolverException resolverException) {
+                @Nullable final ResolverException resolverException) throws ComponentInitializationException {
             configuration = relyingPartyConfiguration;
             exception = resolverException;
+            setId("mock");
+            initialize();
         }
 
         /** {@inheritDoc} */
-        @Override public Iterable<RelyingPartyConfiguration> resolve(final ProfileRequestContext context)
+        @Override public Iterable<RelyingPartyConfiguration> resolve(final CriteriaSet criteria)
                 throws ResolverException {
             if (exception != null) {
                 throw exception;
@@ -183,7 +192,7 @@ public class SelectRelyingPartyConfigurationTest {
         }
 
         /** {@inheritDoc} */
-        @Override public RelyingPartyConfiguration resolveSingle(final ProfileRequestContext context)
+        @Override public RelyingPartyConfiguration resolveSingle(final CriteriaSet criteria)
                 throws ResolverException {
             if (exception != null) {
                 throw exception;
@@ -194,6 +203,59 @@ public class SelectRelyingPartyConfigurationTest {
         /** {@inheritDoc} */
         @Override public SecurityConfiguration getDefaultSecurityConfiguration(String profileId) {
             return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Collection<Credential> getSigningCredentials() {
+            return Collections.emptyList();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Collection<Credential> getEncryptionCredentials() {
+            return Collections.emptyList();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Instant getLastSuccessfulReloadInstant() {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Instant getLastReloadAttemptInstant() {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Throwable getReloadFailureCause() {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void reload() {
+            
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public ServiceableComponent<RelyingPartyConfigurationResolver> getServiceableComponent() {
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public RelyingPartyConfigurationResolver getComponent() {
+            return this;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void close() {
         }
     }
 

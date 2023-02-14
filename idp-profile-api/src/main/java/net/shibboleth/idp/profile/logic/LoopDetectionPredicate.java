@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.logic;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -33,9 +32,10 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricRegistry.MetricSupplier;
 import com.codahale.metrics.SlidingTimeWindowMovingAverages;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.Positive;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -62,7 +62,7 @@ public class LoopDetectionPredicate extends AbstractRelyingPartyPredicate {
     /** Constructor. */
     public LoopDetectionPredicate() {
         threshold = 20;
-        relyingPartyMap = Collections.emptyMap();
+        relyingPartyMap = CollectionSupport.emptyMap();
         usernameLookupStrategy = FunctionSupport.constant(null);
     }
     
@@ -84,9 +84,9 @@ public class LoopDetectionPredicate extends AbstractRelyingPartyPredicate {
      */
     public void setRelyingPartyMap(@Nullable @NonnullElements final Map<String,String> map) {
         if (map != null) {
-            relyingPartyMap = Map.copyOf(map);
+            relyingPartyMap = CollectionSupport.copyToMap(map);
         } else {
-            relyingPartyMap = Collections.emptyMap();
+            relyingPartyMap = CollectionSupport.emptyMap();
         }
     }
     

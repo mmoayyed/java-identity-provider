@@ -48,6 +48,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** {@link CASScopedStringAttributeTranscoder} unit test. */
+@SuppressWarnings("javadoc")
 public class CASScopedStringAttributeTranscoderTest {
 
     private AttributeTranscoderRegistryImpl registry;

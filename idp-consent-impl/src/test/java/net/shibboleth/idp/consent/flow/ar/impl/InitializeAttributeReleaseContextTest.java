@@ -30,6 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link InitializeAttributeReleaseContext} unit test. */
+@SuppressWarnings("javadoc")
 public class InitializeAttributeReleaseContextTest {
 
     private RequestContext src;

@@ -23,9 +23,11 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.config.SecurityConfiguration;
@@ -42,14 +44,15 @@ public class EncryptionConfigurationLookupFunction
         extends AbstractRelyingPartyLookupFunction<List<EncryptionConfiguration>> {
 
     /** A resolver for default security configurations. */
-    @Nullable private RelyingPartyConfigurationResolver rpResolver;
-
+    @Nullable private ReloadableService<RelyingPartyConfigurationResolver> rpResolver;
+    
     /**
      * Set the resolver for default security configurations.
      * 
      * @param resolver the resolver to use
      */
-    public void setRelyingPartyConfigurationResolver(@Nullable final RelyingPartyConfigurationResolver resolver) {
+    public void setRelyingPartyConfigurationResolver(
+            @Nullable final ReloadableService<RelyingPartyConfigurationResolver> resolver) {
         rpResolver = resolver;
     }
     
@@ -72,10 +75,15 @@ public class EncryptionConfigurationLookupFunction
         
         // Check for a per-profile default (relying party independent) config.
         if (input != null && rpResolver != null) {
-            final SecurityConfiguration defaultConfig =
-                    rpResolver.getDefaultSecurityConfiguration(input.getProfileId());
-            if (defaultConfig instanceof XMLSecurityConfiguration xsc && xsc.getEncryptionConfiguration() != null) {
-                configs.add(xsc.getEncryptionConfiguration());
+            try {
+                final SecurityConfiguration defaultConfig =
+                        rpResolver.getServiceableComponent().getComponent().getDefaultSecurityConfiguration(
+                                input.getProfileId());
+                if (defaultConfig instanceof XMLSecurityConfiguration xsc && xsc.getEncryptionConfiguration() != null) {
+                    configs.add(xsc.getEncryptionConfiguration());
+                }
+            } catch (final ServiceException e) {
+                
             }
         }
 

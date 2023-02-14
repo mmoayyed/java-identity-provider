@@ -43,6 +43,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class ValidateTicketActionTest extends AbstractFlowActionTest {
 
     private static final String TEST_SERVICE = "https://example.com/widget";

@@ -20,23 +20,23 @@ package net.shibboleth.idp.profile.context;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.collect.ArrayListMultimap;
-//import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 
 /**
@@ -72,7 +72,7 @@ public final class MultiRelyingPartyContext extends BaseContext {
      * @return  immutable collection of RP contexts
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<RelyingPartyContext> getRelyingPartyContexts() {
-        return List.copyOf(relyingPartyIdMap.values());
+        return CollectionSupport.copyToList(relyingPartyIdMap.values());
     }
     
     /**
@@ -84,7 +84,7 @@ public final class MultiRelyingPartyContext extends BaseContext {
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<RelyingPartyContext> getRelyingPartyContexts(
             @Nonnull @NotEmpty final String label) {
-        return List.copyOf(relyingPartyLabelMap.get(
+        return CollectionSupport.copyToList(relyingPartyLabelMap.get(
                 Constraint.isNotNull(StringSupport.trimOrNull(label), "Label cannot be null or empty")));
     }
     

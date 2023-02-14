@@ -33,6 +33,7 @@ import org.testng.annotations.Test;
 /**
  * {@link FlowDescriptorLookupFunction} unit test.
  */
+@SuppressWarnings("javadoc")
 public class FlowDescriptorLookupFunctionTest {
 
     private RequestContext src;

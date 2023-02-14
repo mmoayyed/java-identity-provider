@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.relyingparty.impl.tests;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,92 +42,87 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
-import net.shibboleth.idp.relyingparty.impl.DelegatingCriteriaRelyingPartyConfigurationResolver;
 import net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.profile.relyingparty.VerifiedProfileCriterion;
+import net.shibboleth.profile.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 
-/** Unit tests for {@link DelegatingCriteriaRelyingPartyConfigurationResolver}. */
-public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase {
+/** Advanced unit tests for {@link RelyingPartyConfigurationResolver}. */
+@SuppressWarnings("javadoc")
+public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase {
     
-    private RelyingPartyConfiguration anonRP, defaultRP; 
+    private net.shibboleth.idp.relyingparty.RelyingPartyConfiguration anonRP, defaultRP; 
     
-    private RelyingPartyConfiguration oneByName, twoByName, threeByName;
-    private RelyingPartyConfiguration oneByGroup, twoByGroup;
-    private RelyingPartyConfiguration oneByTag, twoByTag;
+    private net.shibboleth.idp.relyingparty.RelyingPartyConfiguration oneByName, twoByName, threeByName;
+    private net.shibboleth.idp.relyingparty.RelyingPartyConfiguration oneByGroup, twoByGroup;
+    private net.shibboleth.idp.relyingparty.RelyingPartyConfiguration oneByTag, twoByTag;
     
-    private DefaultRelyingPartyConfigurationResolver delegate;
-    
-    private DelegatingCriteriaRelyingPartyConfigurationResolver resolver;
-    
+    private DefaultRelyingPartyConfigurationResolver resolver;
+        
     @BeforeMethod
     public void setup() throws ComponentInitializationException {
-        anonRP = new RelyingPartyConfiguration();
+        anonRP = new net.shibboleth.idp.relyingparty.RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
         anonRP.setResponderId("anonRPResp");
         anonRP.setDetailedErrors(true);
         anonRP.initialize();
         
-        defaultRP = new RelyingPartyConfiguration();
+        defaultRP = new net.shibboleth.idp.relyingparty.RelyingPartyConfiguration();
         defaultRP.setId("defaultRPId");
         defaultRP.setResponderId("defaultRPResp");
         defaultRP.setDetailedErrors(true);
         defaultRP.initialize();
         
-        oneByName = RelyingPartyConfigurationSupport.byName(Collections.singleton("rp1"));
+        oneByName = RelyingPartyConfigurationSupport.byName(CollectionSupport.singleton("rp1"));
         oneByName.setResponderId("foo");
         oneByName.setDetailedErrors(true);
         oneByName.initialize();
 
-        twoByName = RelyingPartyConfigurationSupport.byName(Collections.singleton("rp2"));
+        twoByName = RelyingPartyConfigurationSupport.byName(CollectionSupport.singleton("rp2"));
         twoByName.setResponderId("foo");
         twoByName.setDetailedErrors(true);
         twoByName.initialize();
 
-        threeByName = RelyingPartyConfigurationSupport.byName(Collections.singleton("rp3"));
+        threeByName = RelyingPartyConfigurationSupport.byName(CollectionSupport.singleton("rp3"));
         threeByName.setResponderId("foo");
         threeByName.setDetailedErrors(true);
         threeByName.initialize();
         
-        oneByGroup = RelyingPartyConfigurationSupport.byGroup(Collections.singleton("group1"), null);
+        oneByGroup = RelyingPartyConfigurationSupport.byGroup(CollectionSupport.singleton("group1"), null);
         oneByGroup.setResponderId("foo");
         oneByGroup.setDetailedErrors(true);
         oneByGroup.initialize();
         
-        twoByGroup = RelyingPartyConfigurationSupport.byGroup(Collections.singleton("group2"), null);
+        twoByGroup = RelyingPartyConfigurationSupport.byGroup(CollectionSupport.singleton("group2"), null);
         twoByGroup.setResponderId("foo");
         twoByGroup.setDetailedErrors(true);
         twoByGroup.initialize();
         
         Candidate candidate1 = new EntityAttributesPredicate.Candidate("urn:test:attr:tag", Attribute.URI_REFERENCE);
-        candidate1.setValues(Collections.singleton("tag1"));
-        oneByTag = RelyingPartyConfigurationSupport.byTag(Collections.singleton(candidate1), true, true);
+        candidate1.setValues(CollectionSupport.singleton("tag1"));
+        oneByTag = RelyingPartyConfigurationSupport.byTag(CollectionSupport.singleton(candidate1), true, true);
         oneByTag.setId("byTag1");
         oneByTag.setResponderId("foo");
         oneByTag.setDetailedErrors(true);
         oneByTag.initialize();
         
         Candidate candidate2 = new EntityAttributesPredicate.Candidate("urn:test:attr:tag", Attribute.URI_REFERENCE);
-        candidate2.setValues(Collections.singleton("tag2"));
-        twoByTag = RelyingPartyConfigurationSupport.byTag(Collections.singleton(candidate2), true, true);
+        candidate2.setValues(CollectionSupport.singleton("tag2"));
+        twoByTag = RelyingPartyConfigurationSupport.byTag(CollectionSupport.singleton(candidate2), true, true);
         twoByTag.setId("byTag2");
         twoByTag.setResponderId("foo");
         twoByTag.setDetailedErrors(true);
         twoByTag.initialize();
         
-        // Complete the population and init this in the individual tests.
-        delegate = new DefaultRelyingPartyConfigurationResolver();
-        delegate.setId("delegate");
-        delegate.setUnverifiedConfiguration(anonRP);
-        delegate.setDefaultConfiguration(defaultRP);
-        
-        resolver = new DelegatingCriteriaRelyingPartyConfigurationResolver();
+        resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("resolver");
-        resolver.setDelegate(delegate);
-        resolver.initialize();
+        resolver.setUnverifiedConfiguration(anonRP);
+        resolver.setDefaultConfiguration(defaultRP);
     }
     
     @Test
@@ -137,13 +130,12 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         Iterable<RelyingPartyConfiguration> results = null;
         RelyingPartyConfiguration result = null;
         
-        final List<RelyingPartyConfiguration> rpConfigs = Arrays.asList(oneByName, twoByName, threeByName);
+        final List<RelyingPartyConfiguration> rpConfigs = CollectionSupport.listOf(oneByName, twoByName, threeByName);
 
-        delegate.setId("delegate");
-        delegate.setRelyingPartyConfigurations(rpConfigs);
-        delegate.initialize();
+        resolver.setRelyingPartyConfigurations(rpConfigs);
+        resolver.initialize();
         
-        results = resolver.resolve(new CriteriaSet(new EntityIdCriterion("rp1")));
+        results = resolver.resolve(new CriteriaSet(new EntityIdCriterion("rp1"), new VerifiedProfileCriterion(true)));
         Assert.assertNotNull(results);
 
         Iterator<RelyingPartyConfiguration> resultItr = results.iterator();
@@ -151,10 +143,10 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         Assert.assertSame(resultItr.next(), oneByName);
         Assert.assertFalse(resultItr.hasNext());
 
-        result = resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("rp2")));
+        result = resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("rp2"), new VerifiedProfileCriterion(true)));
         Assert.assertSame(result, twoByName);
         
-        result = resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("doesNotExist")));
+        result = resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("doesNotExist"), new VerifiedProfileCriterion(true)));
         Assert.assertSame(result, defaultRP);
         
         results = resolver.resolve(null);
@@ -170,18 +162,17 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         Iterable<RelyingPartyConfiguration> results = null;
         RelyingPartyConfiguration result = null;
         
-        final List<RelyingPartyConfiguration> rpConfigs = Arrays.asList(oneByName, twoByName, threeByName);
+        final List<RelyingPartyConfiguration> rpConfigs = CollectionSupport.listOf(oneByName, twoByName, threeByName);
 
-        delegate.setId("delegate");
-        delegate.setRelyingPartyConfigurations(rpConfigs);
-        delegate.initialize();
+        resolver.setRelyingPartyConfigurations(rpConfigs);
+        resolver.initialize();
         
         EntityDescriptor ed = (EntityDescriptor) XMLObjectSupport.buildXMLObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
         ed.setEntityID("rp3");
         RoleDescriptor rd = (RoleDescriptor) XMLObjectSupport.buildXMLObject(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
         ed.getRoleDescriptors().add(rd);
         
-        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd)));
+        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd), new VerifiedProfileCriterion(true)));
         Assert.assertNotNull(results);
         
         Iterator<RelyingPartyConfiguration> resultItr = results.iterator();
@@ -189,7 +180,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         Assert.assertSame(resultItr.next(), threeByName);
         Assert.assertFalse(resultItr.hasNext());
         
-        result = resolver.resolveSingle(new CriteriaSet(new RoleDescriptorCriterion(rd)));
+        result = resolver.resolveSingle(new CriteriaSet(new RoleDescriptorCriterion(rd), new VerifiedProfileCriterion(true)));
         Assert.assertSame(result, threeByName);
     }
     
@@ -198,11 +189,10 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         Iterable<RelyingPartyConfiguration> results = null;
         RelyingPartyConfiguration result = null;
         
-        final List<RelyingPartyConfiguration> rpConfigs = Arrays.asList(oneByGroup, twoByGroup);
+        final List<RelyingPartyConfiguration> rpConfigs = CollectionSupport.listOf(oneByGroup, twoByGroup);
 
-        delegate.setId("delegate");
-        delegate.setRelyingPartyConfigurations(rpConfigs);
-        delegate.initialize();
+        resolver.setRelyingPartyConfigurations(rpConfigs);
+        resolver.initialize();
         
         EntityDescriptor ed = (EntityDescriptor) XMLObjectSupport.buildXMLObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
         ed.setEntityID("rp3");
@@ -210,7 +200,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         RoleDescriptor rd = (RoleDescriptor) XMLObjectSupport.buildXMLObject(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
         ed.getRoleDescriptors().add(rd);
         
-        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd)));
+        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd), new VerifiedProfileCriterion(true)));
         Assert.assertNotNull(results);
         
         Iterator<RelyingPartyConfiguration> resultItr = results.iterator();
@@ -218,14 +208,14 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         Assert.assertSame(resultItr.next(), oneByGroup);
         Assert.assertFalse(resultItr.hasNext());
         
-        result = resolver.resolveSingle(new CriteriaSet(new RoleDescriptorCriterion(rd)));
+        result = resolver.resolveSingle(new CriteriaSet(new RoleDescriptorCriterion(rd), new VerifiedProfileCriterion(true)));
         Assert.assertSame(result, oneByGroup);
         
         // With 2 known group names and 1 unknown, should resolve 2 by group
         ed.getObjectMetadata().put(new EntityGroupName("group2"));
         ed.getObjectMetadata().put(new EntityGroupName("unknown"));
         
-        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd)));
+        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd), new VerifiedProfileCriterion(true)));
         Assert.assertNotNull(results);
         
         resultItr = results.iterator();
@@ -241,11 +231,10 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         Iterable<RelyingPartyConfiguration> results = null;
         RelyingPartyConfiguration result = null;
         
-        final List<RelyingPartyConfiguration> rpConfigs = Arrays.asList(oneByTag, twoByTag);
+        final List<RelyingPartyConfiguration> rpConfigs = CollectionSupport.listOf(oneByTag, twoByTag);
 
-        delegate.setId("delegate");
-        delegate.setRelyingPartyConfigurations(rpConfigs);
-        delegate.initialize();
+        resolver.setRelyingPartyConfigurations(rpConfigs);
+        resolver.initialize();
         
         EntityDescriptor ed = (EntityDescriptor) XMLObjectSupport.buildXMLObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
         ed.setEntityID("rp3");
@@ -254,7 +243,7 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         
         addTag(ed, "tag1");
         
-        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd)));
+        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd), new VerifiedProfileCriterion(true)));
         Assert.assertNotNull(results);
         
         Iterator<RelyingPartyConfiguration> resultItr = results.iterator();
@@ -262,14 +251,14 @@ public class DelegatingCriteriaRelyingPartyConfigurationResolverTest extends XML
         Assert.assertSame(resultItr.next(), oneByTag);
         Assert.assertFalse(resultItr.hasNext());
         
-        result = resolver.resolveSingle(new CriteriaSet(new RoleDescriptorCriterion(rd)));
+        result = resolver.resolveSingle(new CriteriaSet(new RoleDescriptorCriterion(rd), new VerifiedProfileCriterion(true)));
         Assert.assertSame(result, oneByTag);
         
         // With 2 known tags names and 1 unknown, should resolve 2 by tag
         addTag(ed, "tag2");
         addTag(ed, "unknown");
         
-        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd)));
+        results = resolver.resolve(new CriteriaSet(new RoleDescriptorCriterion(rd), new VerifiedProfileCriterion(true)));
         Assert.assertNotNull(results);
         
         resultItr = results.iterator();

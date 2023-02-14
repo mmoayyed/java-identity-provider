@@ -19,12 +19,12 @@ package net.shibboleth.idp.saml.profile.impl;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
+
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 /**
  * A lookup strategy that returns a SAML entityID if the {@link RelyingPartyContext} contains a reference

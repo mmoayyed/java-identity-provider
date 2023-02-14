@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.logic;
 
 import java.util.Map;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -29,6 +29,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link LoopDetectionPredicate}. */
+@SuppressWarnings("javadoc")
 public class LoopDetectionPredicateTest extends OpenSAMLInitBaseTestCase {
 
     private ProfileRequestContext prc;
@@ -38,7 +39,7 @@ public class LoopDetectionPredicateTest extends OpenSAMLInitBaseTestCase {
     @BeforeMethod
     public void setUp() {
         prc = new ProfileRequestContext();
-        rpCtx = prc.getSubcontext(RelyingPartyContext.class, true);
+        rpCtx = prc.getOrCreateSubcontext(RelyingPartyContext.class);
         pred = new LoopDetectionPredicate();
         pred.setUsernameLookupStrategy(FunctionSupport.constant("jdoe.1"));
     }

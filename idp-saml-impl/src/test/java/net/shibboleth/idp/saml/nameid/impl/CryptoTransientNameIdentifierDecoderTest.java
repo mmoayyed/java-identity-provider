@@ -43,8 +43,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * test for {@link CryptoTransientNameIdentifierDecoder}.
+ * Unit test for {@link CryptoTransientNameIdentifierDecoder}.
  */
+@SuppressWarnings("javadoc")
 public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTestCase {
 
     private final static Duration TIMEOUT = Duration.ofSeconds(5);

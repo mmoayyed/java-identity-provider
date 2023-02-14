@@ -32,7 +32,8 @@ import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
@@ -113,7 +114,11 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
         final String baseURL = discoveryURLLookupStrategy.apply(input.getSecond());
         Constraint.isNotEmpty(baseURL, "Discovery URL cannot be null or empty");
 
-        final String entityID = rpCtx.getConfiguration().getResponderId(input.getSecond());
+        final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
+        Constraint.isTrue(rpConfig instanceof net.shibboleth.idp.relyingparty.RelyingPartyConfiguration,
+                "RelyingPartyConfiguration was not of expected subclass");
+        final String entityID = ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) rpConfig).getResponderId(
+                input.getSecond());
 
         final StringBuilder builder = new StringBuilder(baseURL);
         

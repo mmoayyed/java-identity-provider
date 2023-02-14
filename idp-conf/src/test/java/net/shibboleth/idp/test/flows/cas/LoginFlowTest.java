@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.criterion.ProfileRequestContextCriterion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -51,15 +52,17 @@ import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.consent.context.ConsentContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.profile.relyingparty.VerifiedProfileCriterion;
 import net.shibboleth.shared.net.URISupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.service.ReloadableService;
 
 /**
  * Tests the flow behind the <code>/login</code> endpoint.
@@ -69,6 +72,7 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 @ContextConfiguration(locations = {
         "/test/test-cas-beans.xml"
 })
+@SuppressWarnings("javadoc")
 public class LoginFlowTest extends AbstractFlowTest {
 
     /** Flow id. */
@@ -83,9 +87,8 @@ public class LoginFlowTest extends AbstractFlowTest {
     private StorageBackedSessionManager sessionManager;
 
     @Autowired
-    @Qualifier("shibboleth.RelyingPartyConfigurationResolver")
-    private RelyingPartyConfigurationResolver relyingPartyConfigurationResolver;
-
+    @Qualifier("shibboleth.RelyingPartyResolverService")
+    private ReloadableService<RelyingPartyConfigurationResolver> relyingPartyConfigurationResolver;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -277,7 +280,10 @@ public class LoginFlowTest extends AbstractFlowTest {
     private void setPostAuthenticationFlows(final List<String> flowIdentifiers) throws Exception {
         final ProfileRequestContext prc = new ProfileRequestContext();
         prc.setProfileId(LoginConfiguration.PROFILE_ID);
-        final RelyingPartyConfiguration rpConfig = relyingPartyConfigurationResolver.resolveSingle(prc);
+        final RelyingPartyConfiguration rpConfig =
+                relyingPartyConfigurationResolver.getServiceableComponent().getComponent().resolveSingle(
+                        new CriteriaSet(new ProfileRequestContextCriterion(prc),
+                                new VerifiedProfileCriterion(true)));
         if (rpConfig == null) {
             throw new IllegalStateException("Relying party configuration not found");
         }

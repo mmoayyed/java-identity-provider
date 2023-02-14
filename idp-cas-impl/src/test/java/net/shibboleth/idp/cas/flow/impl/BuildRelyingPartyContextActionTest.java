@@ -30,6 +30,7 @@ import static org.testng.Assert.*;
 
 import org.opensaml.profile.action.EventException;
 
+@SuppressWarnings("javadoc")
 public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
 
     @Autowired

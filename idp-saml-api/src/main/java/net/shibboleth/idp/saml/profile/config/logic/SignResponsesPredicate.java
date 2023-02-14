@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.profile.config.logic;
 import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 

@@ -27,6 +27,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link BaseTransformingDecoder} unit test. */
+@SuppressWarnings("javadoc")
 public class TransformingDecoderTest {
 
     private static final String PRINCIPAL="ThePrincipalName@foo.edu";

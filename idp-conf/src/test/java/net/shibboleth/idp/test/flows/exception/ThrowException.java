@@ -25,6 +25,9 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+/**
+ * Test action that throws exception.
+ */
 public class ThrowException extends AbstractProfileAction {
     
     final boolean commitResponse;

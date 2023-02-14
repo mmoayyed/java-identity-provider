@@ -192,7 +192,7 @@
     
     <decision-state id="TestForDoNotRememberConsent">
         <on-entry>
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getSubcontext(T(net.shibboleth.idp.attribute.context.AttributeContext)).setConsented(requestParameters._shib_idp_consentOptions == '_shib_idp_doNotRememberConsent') " />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.profile.context.RelyingPartyContext)).getSubcontext(T(net.shibboleth.idp.attribute.context.AttributeContext)).setConsented(requestParameters._shib_idp_consentOptions == '_shib_idp_doNotRememberConsent') " />
         </on-entry>
         <if test="requestParameters._shib_idp_consentOptions == '_shib_idp_doNotRememberConsent'"
             then="ReleaseAttributes" else="CreateResult" />

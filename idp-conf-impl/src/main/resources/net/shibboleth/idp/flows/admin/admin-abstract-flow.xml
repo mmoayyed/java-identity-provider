@@ -18,7 +18,7 @@
         <transition on="proceed" to="CheckIfAuthenticationNeeded" />
         
         <on-exit>
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext))" result="flowScope.relyingPartyContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.profile.context.RelyingPartyContext))" result="flowScope.relyingPartyContext" />
         </on-exit>
     </action-state>
 

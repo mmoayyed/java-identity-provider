@@ -25,10 +25,10 @@ import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -42,6 +42,7 @@ import org.springframework.webflow.test.MockRequestContext;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class TestContextBuilder {
 
     /** Root of context tree for our tests. */

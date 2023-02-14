@@ -31,15 +31,18 @@ import org.opensaml.messaging.handler.AbstractMessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.CriteriaRelyingPartyConfigurationResolver;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.profile.relyingparty.VerifiedProfileCriterion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 
 /**
  * This message handler attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the 
@@ -47,7 +50,7 @@ import net.shibboleth.shared.resolver.ResolverException;
  * 
  * @post If a {@link RelyingPartyContext} is located, it will be populated with a non-null result of applying
  * the supplied 
- * {@link CriteriaRelyingPartyConfigurationResolver} to the {@link RelyingPartyContext#getRelyingPartyId()}.
+ * {@link RelyingPartyConfigurationResolver} to the {@link RelyingPartyContext#getRelyingPartyId()}.
  */
 public final class SelectRelyingPartyConfiguration extends AbstractMessageHandler {
 
@@ -55,7 +58,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
     @Nonnull private final Logger log = LoggerFactory.getLogger(SelectRelyingPartyConfiguration.class);
 
     /** Resolver used to look up relying party configurations. */
-    @NonnullAfterInit private CriteriaRelyingPartyConfigurationResolver rpConfigResolver;
+    @NonnullAfterInit private ReloadableService<RelyingPartyConfigurationResolver> rpConfigResolver;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link MessageContext}.
@@ -78,7 +81,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
      * @param resolver  the resolver to use
      */
     public void setRelyingPartyConfigurationResolver(
-            @Nonnull final CriteriaRelyingPartyConfigurationResolver resolver) {
+            @Nonnull final ReloadableService<RelyingPartyConfigurationResolver> resolver) {
         checkSetterPreconditions();
         rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver cannot be null");
     }
@@ -129,8 +132,11 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
     public void doInvoke(@Nonnull final MessageContext messageContext) throws MessageHandlerException {
 
         try {
-            final CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(relyingPartyCtx.getRelyingPartyId()));
-            final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(criteria);
+            // Implicitly "verified", so we include the criterion for that.
+            final CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(relyingPartyCtx.getRelyingPartyId()),
+                    new VerifiedProfileCriterion(true));
+            final RelyingPartyConfiguration config =
+                    rpConfigResolver.getServiceableComponent().getComponent().resolveSingle(criteria);
             if (config == null) {
                 log.debug("{} No relying party configuration applies to this request", getLogPrefix());
                 throw new MessageHandlerException("No relying party configuration resolved for this request");
@@ -141,6 +147,9 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
         } catch (final ResolverException e) {
             log.error("{} Error trying to resolve relying party configuration: {}", getLogPrefix(), e.getMessage());
             throw new MessageHandlerException("Error trying to resolve relying party configuration", e);
+        } catch (final ServiceException e) {
+            log.error("{} Invalid relying party configuration: {}", getLogPrefix(), e.getMessage());
+            throw new MessageHandlerException("Invalid relying party configuration", e);
         }
     }
 }

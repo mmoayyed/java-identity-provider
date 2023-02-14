@@ -22,7 +22,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -39,6 +39,7 @@ import static org.testng.Assert.*;
 /**
  * Unit test for {@link DynamicAttributePredicate}.
  */
+@SuppressWarnings("javadoc")
 public class DynamicAttributePredicateTest {
 
     @Test

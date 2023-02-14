@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.time.Duration;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
@@ -39,6 +39,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link TransientSAML1NameIdentifierGenerator} using crypto-based generator. */
+@SuppressWarnings("javadoc")
 public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     private static final Duration TIMEOUT = Duration.ofMillis(500);
@@ -119,7 +120,8 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         
         Assert.assertNotNull(name);
         Assert.assertEquals(name.getFormat(), generator.getFormat());
-        Assert.assertEquals(name.getNameQualifier(), rpc.getConfiguration().getResponderId(prc));
+        Assert.assertEquals(name.getNameQualifier(),
+                ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) rpc.getConfiguration()).getResponderId(prc));
 
         final String val = name.getValue();
 

@@ -38,6 +38,7 @@ import net.shibboleth.shared.testing.ConstantSupplier;
 /**
  * Test the {@link IdPInitiatedSSORequestMessageDecoder}.
  */
+@SuppressWarnings("javadoc")
 public class IdPInitiatedSSORequestMessageDecoderTest {
     
     private IdPInitiatedSSORequestMessageDecoder decoder;

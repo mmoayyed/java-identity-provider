@@ -46,6 +46,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockApplicationContext;
 
 /** {@link CASDateTimeAttributeTranscoder} unit test. */
+@SuppressWarnings("javadoc")
 public class CASDateTimeAttributeTranscoderTest {
 
     private AttributeTranscoderRegistryImpl registry;
@@ -53,9 +54,7 @@ public class CASDateTimeAttributeTranscoderTest {
     private final static String ATTR_ID = "foo";
     private final static String ATTR_NAME = "bar";
     private final static String STRING_SECS = "1659979872";
-    private final static String STRING_MSECS = "1659979872969";
     private final static String STRING_ISO = "2022-08-08T17:31:12.969Z";
-    private final static String STRING_INVALID = "invalid";
 
     @BeforeClass public void setUp() throws ComponentInitializationException {
         

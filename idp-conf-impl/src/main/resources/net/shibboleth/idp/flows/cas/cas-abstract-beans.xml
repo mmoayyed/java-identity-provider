@@ -64,7 +64,7 @@
 
     <bean id="SelectRelyingPartyConfiguration"
           class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
-          p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+          p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
 
     <bean id="PopulateSubjectContext"
           class="net.shibboleth.idp.profile.impl.PopulateSubjectContext" scope="prototype"

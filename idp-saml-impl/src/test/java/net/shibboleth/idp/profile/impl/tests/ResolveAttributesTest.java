@@ -18,7 +18,6 @@
 package net.shibboleth.idp.profile.impl.tests;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -35,12 +34,13 @@ import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.testing.MockAttributeDefinition;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.impl.ResolveAttributes;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.LazySet;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockReloadableService;
@@ -59,6 +59,11 @@ public class ResolveAttributesTest {
     
     private ProfileRequestContext prc;
     
+    /**
+     * Test setup.
+     * 
+     * @throws ComponentInitializationException
+     */
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
@@ -73,7 +78,7 @@ public class ResolveAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
+        attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
@@ -103,11 +108,16 @@ public class ResolveAttributesTest {
         Assert.assertEquals(resolvedAttributes.get("ad1"), attribute);
     }
 
+    /**
+     * Test that the action resolves specific attributes and proceeds properly.
+     * 
+     * @throws Exception if something goes wrong
+     */
     @Test public void testResolveSpecificAttributes() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
+        attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
@@ -118,7 +128,7 @@ public class ResolveAttributesTest {
         resolver.initialize();
 
         AttributeResolutionContext attributeResolutionCtx = new AttributeResolutionContext();
-        attributeResolutionCtx.setRequestedIdPAttributeNames(Collections.singleton("ad1"));
+        attributeResolutionCtx.setRequestedIdPAttributeNames(CollectionSupport.singleton("ad1"));
         prc.addSubcontext(attributeResolutionCtx);
 
         final ResolveAttributes action = new ResolveAttributes(new MockReloadableService<>(resolver));
@@ -146,7 +156,7 @@ public class ResolveAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         attributeResolutionCtx = new AttributeResolutionContext();
-        attributeResolutionCtx.setRequestedIdPAttributeNames(Collections.singleton("dne"));
+        attributeResolutionCtx.setRequestedIdPAttributeNames(CollectionSupport.singleton("dne"));
         prc.addSubcontext(attributeResolutionCtx, true);
 
         event = action.execute(src);
@@ -170,7 +180,7 @@ public class ResolveAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
+        attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", new ResolutionException());
@@ -199,7 +209,7 @@ public class ResolveAttributesTest {
         prc.getSubcontext(SubjectContext.class, true);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
+        attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
@@ -212,14 +222,23 @@ public class ResolveAttributesTest {
         ActionTestingSupport.assertEvent(event, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
     }
     
+    /**
+     * Create the resolver.
+     * 
+     * @param resolverId resolver ID
+     * @param definitions attribute definitions
+     * @param connectors data connectors
+     * 
+     * @return the resolver implementation
+     */
     public static AttributeResolverImpl newAttributeResolverImpl(@Nonnull @NotEmpty final String resolverId,
             @Nullable final Collection<AttributeDefinition> definitions,
             @Nullable final Collection<DataConnector> connectors) {
         final AttributeResolverImpl result = new AttributeResolverImpl();
         result.setId(resolverId);
         
-        result.setAttributeDefinitions(definitions == null ? Collections.EMPTY_LIST : definitions);
-        result.setDataConnectors(connectors == null ? Collections.EMPTY_LIST : connectors);
+        result.setAttributeDefinitions(definitions == null ? CollectionSupport.emptyList() : definitions);
+        result.setDataConnectors(connectors == null ? CollectionSupport.emptyList() : connectors);
         return result;
     }
 

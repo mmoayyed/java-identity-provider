@@ -134,10 +134,10 @@
             p:serviceConfigurations-ref="ExtendedRelyingPartyResolverResources"
             p:failFast="%{idp.service.relyingparty.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:PT0S}">
-        <constructor-arg name="claz" value="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver" />
+        <constructor-arg name="claz" value="net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.shared.spring.service.ClassBasedServiceStrategy"
-                c:serviceableClaz="net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver" />
+                c:serviceableClaz="net.shibboleth.profile.relyingparty.impl.DefaultRelyingPartyConfigurationResolver" />
         </constructor-arg>
     </bean>
     <!-- Auto-append system config file to resource set. -->
@@ -229,14 +229,6 @@
     These are proxies/facades that expose a service-unaware interface to client components.
     Services without such facades are being consumed directly in a service-aware way.
     -->
-    
-    <bean id="shibboleth.RelyingPartyConfigurationResolver"
-        class="net.shibboleth.idp.relyingparty.impl.ReloadingRelyingPartyConfigurationResolver"
-        c:resolverService-ref="shibboleth.RelyingPartyResolverService" />
-        
-    <bean id="shibboleth.CriteriaRelyingPartyConfigurationResolver" 
-        class="net.shibboleth.idp.relyingparty.impl.DelegatingCriteriaRelyingPartyConfigurationResolver"
-        p:delegate-ref="shibboleth.RelyingPartyConfigurationResolver" />
         
     <bean id="shibboleth.MetadataResolver"
         class="net.shibboleth.idp.saml.metadata.impl.ReloadableMetadataResolver"

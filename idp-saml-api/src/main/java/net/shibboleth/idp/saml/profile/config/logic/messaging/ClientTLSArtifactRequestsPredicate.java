@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.MessageContext;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.logic.messaging.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
 

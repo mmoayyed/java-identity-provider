@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
@@ -35,9 +35,9 @@ public class TestAfterFilter extends AbstractProfileAction {
     protected void doExecute(
             @Nonnull final ProfileRequestContext profileRequestContext) {
 
-        RelyingPartyContext rpc = profileRequestContext.getSubcontext(RelyingPartyContext.class);
+        final RelyingPartyContext rpc = profileRequestContext.getSubcontext(RelyingPartyContext.class);
         
-        AttributeContext ac = rpc.getSubcontext(AttributeContext.class);
+        final AttributeContext ac = rpc.getSubcontext(AttributeContext.class);
         
         Assert.assertNull(ac.getIdPAttributes().get("IdPNotOK"));
         Assert.assertNull(ac.getIdPAttributes().get("IdPEA1"));

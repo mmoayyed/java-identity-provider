@@ -28,9 +28,9 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.impl.ComputedPairwiseIdStore;
 import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.testing.DatabaseTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
@@ -49,6 +49,7 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link PersistentSAML2NameIDGenerator}.
  */
+@SuppressWarnings("javadoc")
 public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     /** Value calculated using V2 version. DO NOT CHANGE WITHOUT TESTING AGAINST 2.0 */

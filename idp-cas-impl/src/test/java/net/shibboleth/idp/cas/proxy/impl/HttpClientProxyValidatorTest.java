@@ -52,6 +52,7 @@ import net.shibboleth.idp.cas.service.ServiceContext;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
 
     @Autowired

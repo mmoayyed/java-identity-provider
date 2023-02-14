@@ -33,6 +33,7 @@ import static org.testng.Assert.*;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class GrantProxyTicketActionTest extends AbstractFlowActionTest {
 
     @Autowired

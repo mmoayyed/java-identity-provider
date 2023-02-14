@@ -28,6 +28,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link PopulateConsentContext} unit test. */
+@SuppressWarnings("javadoc")
 public class PopulateConsentContextTest extends AbstractConsentActionTest {
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullCurrentConsentsFunction()

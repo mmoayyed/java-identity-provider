@@ -29,6 +29,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * Unit test for {@link ProxyTicketSerializer}.
  */
+@SuppressWarnings("javadoc")
 public class ProxyTicketSerializerTest {
 
     private ProxyTicketSerializer serializer = new ProxyTicketSerializer();

@@ -40,6 +40,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link MessageSourceConsentFunction} unit test. */
+@SuppressWarnings("javadoc")
 public class MessageSourceConsentFunctionTest {
 
     private RequestContext src;

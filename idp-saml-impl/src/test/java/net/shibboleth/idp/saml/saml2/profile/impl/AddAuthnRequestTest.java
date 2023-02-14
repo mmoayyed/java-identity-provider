@@ -30,7 +30,6 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -40,6 +39,7 @@ import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.testing.SAML2ActionTestingSupport;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -78,11 +78,11 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().buildRequestContext();
         prc1 = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
-        ac = prc1.getSubcontext(AuthenticationContext.class, true);
-        prc2 = ac.getSubcontext(ProfileRequestContext.class, true);
+        ac = prc1.getOrCreateSubcontext(AuthenticationContext.class);
+        prc2 = ac.getOrCreateSubcontext(ProfileRequestContext.class);
         prc2.setOutboundMessageContext(new MessageContext());
         
-        rpc = prc2.getSubcontext(RelyingPartyContext.class, true);
+        rpc = prc2.getOrCreateSubcontext(RelyingPartyContext.class);
         rpc.setRelyingPartyId(ActionTestingSupport.INBOUND_MSG_ISSUER);
         final RelyingPartyConfiguration rp = new RelyingPartyConfiguration();
         rp.setId("mock");

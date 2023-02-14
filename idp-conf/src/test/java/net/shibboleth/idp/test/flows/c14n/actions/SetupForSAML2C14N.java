@@ -38,9 +38,10 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.nameid.impl.TransientSAML2NameIDGenerator;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -119,7 +120,8 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true);
         scc.setSubject(sub);
         scc.setRequesterId(rpc.getRelyingPartyId());
-        scc.setResponderId(rpc.getConfiguration().getResponderId(profileRequestContext));
+        final RelyingPartyConfiguration rpConfig = (RelyingPartyConfiguration) rpc.getConfiguration();
+        scc.setResponderId(rpConfig.getResponderId(profileRequestContext));
     }
     
 }

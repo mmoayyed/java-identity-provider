@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** Unit tests for {@link CollectionSerializer}. */
+@SuppressWarnings("javadoc")
 public class CollectionSerializerTest {
 
     protected CollectionSerializer serializer;
@@ -60,4 +61,5 @@ public class CollectionSerializerTest {
         final Collection<String> deserialized = serializer.deserialize(-1, "context", "key", serialized, null);
         Assert.assertEquals(deserialized, collection);
     }
+
 }

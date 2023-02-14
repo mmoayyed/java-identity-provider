@@ -27,8 +27,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**

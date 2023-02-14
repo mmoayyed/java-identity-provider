@@ -30,6 +30,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link AbstractConsentIndexedStorageAction} unit test. */
+@SuppressWarnings("javadoc")
 public abstract class AbstractConsentIndexedStorageActionTest extends AbstractConsentStorageActionTest {
 
     protected void populateAction() throws Exception {

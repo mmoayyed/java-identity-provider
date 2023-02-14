@@ -25,6 +25,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link Consent} unit test. */
+@SuppressWarnings("javadoc")
 public class ConsentTest {
 
     private Consent consent;

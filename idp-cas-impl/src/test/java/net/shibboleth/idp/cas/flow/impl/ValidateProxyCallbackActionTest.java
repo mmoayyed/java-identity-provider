@@ -40,6 +40,7 @@ import static org.testng.Assert.*;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
 
     @Test
@@ -87,4 +88,5 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
                 .build();
         return context;
     }
+
 }

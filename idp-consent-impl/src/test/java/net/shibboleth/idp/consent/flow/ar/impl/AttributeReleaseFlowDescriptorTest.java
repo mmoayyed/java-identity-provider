@@ -30,6 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AttributeReleaseFlowDescriptor} unit test. */
+@SuppressWarnings("javadoc")
 public class AttributeReleaseFlowDescriptorTest {
 
     private AttributeReleaseFlowDescriptor descriptor;

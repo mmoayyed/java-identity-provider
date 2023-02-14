@@ -36,6 +36,7 @@ import static org.testng.Assert.*;
  * Unit test for {@link BuildSAMLMetadataContextAction}.
  *
  */
+@SuppressWarnings("javadoc")
 public class BuildSAMLMetadataContextActionTest extends AbstractFlowActionTest {
 
     @Autowired

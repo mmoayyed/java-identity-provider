@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.profile.logic;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -26,10 +25,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -145,7 +145,7 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
         if (fromConfig.isEmpty()) {
             if (fromMetadata.isEmpty()) {
                 log.debug("No formats specified in configuration or in metadata, returning default");
-                return Collections.singletonList(defaultFormat);
+                return CollectionSupport.singletonList(defaultFormat);
             }
             log.debug("Configuration did not specify any formats, relying on metadata alone");
             return fromMetadata;

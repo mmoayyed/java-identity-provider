@@ -25,7 +25,6 @@ import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.cas.ticket.TicketState;
-import net.shibboleth.idp.cas.ticket.impl.EncodingTicketService;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
@@ -34,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.executor.FlowExecutionResult;
-import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -49,6 +47,7 @@ import java.time.Instant;
 @ContextConfiguration(locations = {
         "/test/test-cas-beans.xml",
 })
+@SuppressWarnings("javadoc")
 public class ProxyValidateFlowTest extends AbstractFlowTest {
 
     /** Flow id. */

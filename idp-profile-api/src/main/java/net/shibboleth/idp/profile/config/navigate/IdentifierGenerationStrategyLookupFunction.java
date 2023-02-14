@@ -20,10 +20,12 @@ package net.shibboleth.idp.profile.config.navigate;
 import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.config.SecurityConfiguration;
@@ -38,7 +40,7 @@ public class IdentifierGenerationStrategyLookupFunction
         extends AbstractRelyingPartyLookupFunction<IdentifierGenerationStrategy> {
     
     /** A resolver for default security configurations. */
-    @Nullable private RelyingPartyConfigurationResolver rpResolver;
+    @Nullable private ReloadableService<RelyingPartyConfigurationResolver> rpResolver;
 
     /** Default strategy to return. */
     @Nullable private IdentifierGenerationStrategy defaultGenerator;
@@ -48,7 +50,8 @@ public class IdentifierGenerationStrategyLookupFunction
      * 
      * @param resolver the resolver to use
      */
-    public void setRelyingPartyConfigurationResolver(@Nullable final RelyingPartyConfigurationResolver resolver) {
+    public void setRelyingPartyConfigurationResolver(
+            @Nullable final ReloadableService<RelyingPartyConfigurationResolver> resolver) {
         rpResolver = resolver;
     }
     
@@ -79,10 +82,15 @@ public class IdentifierGenerationStrategyLookupFunction
 
         // Check for a per-profile default (relying party independent) config.
         if (input != null && rpResolver != null) {
-            final SecurityConfiguration defaultConfig =
-                    rpResolver.getDefaultSecurityConfiguration(input.getProfileId());
-            if (defaultConfig != null && defaultConfig.getIdGenerator() != null) {
-                return defaultConfig.getIdGenerator();
+            try {
+                final SecurityConfiguration defaultConfig =
+                        rpResolver.getServiceableComponent().getComponent().getDefaultSecurityConfiguration(
+                                input.getProfileId());
+                if (defaultConfig != null && defaultConfig.getIdGenerator() != null) {
+                    return defaultConfig.getIdGenerator();
+                }
+            } catch (final ServiceException e) {
+                
             }
         }
 

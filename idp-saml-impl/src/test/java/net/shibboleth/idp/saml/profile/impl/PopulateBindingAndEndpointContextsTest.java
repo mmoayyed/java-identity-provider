@@ -29,7 +29,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -66,6 +66,7 @@ import org.w3c.dom.Document;
 import com.google.common.base.Predicates;
 
 /** Unit test for {@link PopulateBindingAndEndpointContexts}. */
+@SuppressWarnings("javadoc")
 public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCase {
 
     private static final String RELAY_STATE = "foo";

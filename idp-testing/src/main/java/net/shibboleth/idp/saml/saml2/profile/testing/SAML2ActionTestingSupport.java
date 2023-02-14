@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration;
@@ -74,7 +74,7 @@ public final class SAML2ActionTestingSupport extends org.opensaml.saml.saml2.tes
         rpConfig.setProfileConfigurations(buildProfileConfigurations());
         rpConfig.initialize();
 
-        final RelyingPartyContext subcontext = parent.getSubcontext(RelyingPartyContext.class, true);
+        final RelyingPartyContext subcontext = parent.getOrCreateSubcontext(RelyingPartyContext.class);
         subcontext.setRelyingPartyId(id);
         subcontext.setProfileConfig(rpConfig.getProfileConfiguration(null, BrowserSSOProfileConfiguration.PROFILE_ID));
         subcontext.setConfiguration(rpConfig);

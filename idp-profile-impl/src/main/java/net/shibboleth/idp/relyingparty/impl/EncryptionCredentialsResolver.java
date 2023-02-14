@@ -24,7 +24,7 @@ import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.CredentialResolver;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.IdentifiableComponent;
@@ -86,12 +86,8 @@ public class EncryptionCredentialsResolver implements CredentialResolver, Identi
             throws ResolverException {
         try(final ServiceableComponent<RelyingPartyConfigurationResolver> component = service.getServiceableComponent()) {
             final RelyingPartyConfigurationResolver resolver = component.getComponent();
-            if (resolver instanceof DefaultRelyingPartyConfigurationResolver) {
-                log.trace("Saw expected instance of DefaultRelyingPartyConfigurationResolver");
-                return ((DefaultRelyingPartyConfigurationResolver)resolver).getEncryptionCredentials();
-            }
-            log.trace("Did NOT see expected instance of DefaultRelyingPartyConfigurationResolver");
-            return CollectionSupport.emptyList();
+            log.trace("Saw expected instance of DefaultRelyingPartyConfigurationResolver");
+            return resolver.getEncryptionCredentials();
         } catch (final ServiceException e) {
             log.error("EncryptionCredentialsResolver '{}': Invalid RelyingPartyResolver configuration", getId(), e);
         }

@@ -17,9 +17,8 @@
 
 package net.shibboleth.idp.profile.logic;
 
-import java.util.Collections;
-
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -28,6 +27,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link RelyingPartyIdPredicate}. */
+@SuppressWarnings("javadoc")
 public class RelyingPartyIdPredicateTest {
 
     private ProfileRequestContext prc;
@@ -42,7 +42,7 @@ public class RelyingPartyIdPredicateTest {
     
     @Test
     public void testNone() throws ComponentInitializationException {
-        final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate(Collections.<String>emptySet());
+        final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate(CollectionSupport.emptySet());
         
         Assert.assertFalse(pred.test(prc));
         
@@ -52,7 +52,7 @@ public class RelyingPartyIdPredicateTest {
 
     @Test
     public void testMatch() throws ComponentInitializationException {
-        final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate(Collections.singleton("foo"));
+        final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate(CollectionSupport.singleton("foo"));
         
         Assert.assertFalse(pred.test(prc));
         
@@ -62,7 +62,7 @@ public class RelyingPartyIdPredicateTest {
 
     @Test
     public void testNoMatch() throws ComponentInitializationException {
-        final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate(Collections.singleton("bar"));
+        final RelyingPartyIdPredicate pred = new RelyingPartyIdPredicate(CollectionSupport.singleton("bar"));
         
         Assert.assertFalse(pred.test(prc));
         

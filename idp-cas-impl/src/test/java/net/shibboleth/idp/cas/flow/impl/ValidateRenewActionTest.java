@@ -34,6 +34,7 @@ import static org.testng.Assert.*;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("javadoc")
 public class ValidateRenewActionTest extends AbstractFlowActionTest {
 
     private static final String TEST_SERVICE = "https://example.com/widget";
@@ -88,4 +89,5 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
                 .build();
         assertNull(action.execute(context));
     }
+
 }

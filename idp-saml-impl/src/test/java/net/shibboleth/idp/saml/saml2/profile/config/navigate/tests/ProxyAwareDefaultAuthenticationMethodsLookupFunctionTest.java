@@ -41,6 +41,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ProxyAwareDefaultAuthenticationMethodsLookupFunction}. */
+@SuppressWarnings("javadoc")
 public class ProxyAwareDefaultAuthenticationMethodsLookupFunctionTest extends OpenSAMLInitBaseTestCase {
     
     private ProfileRequestContext prc1,prc2;

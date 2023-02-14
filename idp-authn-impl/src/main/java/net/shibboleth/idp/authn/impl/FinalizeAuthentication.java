@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.authn.impl;
 
-
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,8 +43,8 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**

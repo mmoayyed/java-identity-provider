@@ -19,8 +19,8 @@ package net.shibboleth.idp.saml.profile.context.navigate.messaging;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.messaging.AbstractRelyingPartyLookupFunction;
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;

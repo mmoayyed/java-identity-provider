@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 
 import net.shibboleth.idp.profile.context.MultiRelyingPartyContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 
 /** A function that returns {@link MultiRelyingPartyContext#getCurrentRelyingPartyContext()}. */
 public class RelyingPartyContextLookupByCurrent

@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile.interceptor.impl;
 
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.idp.profile.interceptor.impl.SelectProfileInterceptorFlow;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -31,6 +30,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 
 /** {@link SelectProfileInterceptorFlow} unit test. */
+@SuppressWarnings("javadoc")
 public class SelectProfileInterceptorFlowTest extends PopulateProfileInterceptorContextTest {
 
     private SelectProfileInterceptorFlow action;
