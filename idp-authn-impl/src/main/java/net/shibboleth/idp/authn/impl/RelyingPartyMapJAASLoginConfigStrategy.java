@@ -27,8 +27,8 @@ import javax.security.auth.Subject;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.Pair;

@@ -23,7 +23,7 @@
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
             p:messageType="#{T(org.opensaml.saml.saml2.core.Response).DEFAULT_ELEMENT_NAME}">
         <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+            <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>
     </bean>
@@ -33,7 +33,7 @@
             p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
             p:addressLookupStrategy="#{getObject('shibboleth.SubjectLocalityAddressStrategy')}">
         <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+            <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>
         <property name="classRefLookupStrategy">
@@ -67,7 +67,7 @@
             <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
         </property>
         <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+            <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>
     </bean>

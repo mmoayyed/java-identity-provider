@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
+import net.shibboleth.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;

@@ -81,7 +81,7 @@
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
             p:messageType="#{T(org.opensaml.saml.saml2.core.LogoutResponse).DEFAULT_ELEMENT_NAME}">
         <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+            <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>
     </bean>

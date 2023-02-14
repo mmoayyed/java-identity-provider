@@ -46,6 +46,7 @@ import net.shibboleth.shared.resolver.Resolver;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceException;
+import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
  * Resolver which uses an instance of {@link RelyingPartyConfigurationResolver} to
@@ -120,14 +121,18 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
         
         final CriteriaSet prcSet = new CriteriaSet(new ProfileRequestContextCriterion(prc));
         
-        try {
-            final RelyingPartyConfiguration rpc =
-                    rpcResolver.getServiceableComponent().getComponent().resolveSingle(prcSet);
+        try (final ServiceableComponent<RelyingPartyConfigurationResolver> resolver =
+                rpcResolver.getServiceableComponent()) {
+            final RelyingPartyConfiguration rpc = resolver.getComponent().resolveSingle(prcSet);
             if (rpc instanceof net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) {
                 return ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) rpc).getResponderId(prc);
+            } else {
+                log.error("RelyingPartyConfigurationResolver returned null or unexpected configuration type");
             }
+        } catch (final ResolverException e) {
+            log.error("RelyingPartyConfigurationResolver did not resolve a RelyingPartyConfiguration: {}", e.getMessage());
         } catch (final ServiceException e) {
-            log.error("RelyingPartyConfiguration resolver unvailable", e);
+            log.error("RelyingPartyConfiguration resolver unvailable: {}", e.getMessage());
         }
         return null;
     }

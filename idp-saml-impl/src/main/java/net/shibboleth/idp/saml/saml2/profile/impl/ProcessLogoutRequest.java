@@ -45,7 +45,6 @@ import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.saml.profile.config.navigate.QualifiedNameIDFormatsLookupFunction;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
@@ -55,6 +54,7 @@ import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.SPSessionCriterion;
+import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;

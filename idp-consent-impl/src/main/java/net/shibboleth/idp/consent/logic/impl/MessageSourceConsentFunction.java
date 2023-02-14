@@ -33,7 +33,7 @@ import org.springframework.context.NoSuchMessageException;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
-import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.StringDigester;

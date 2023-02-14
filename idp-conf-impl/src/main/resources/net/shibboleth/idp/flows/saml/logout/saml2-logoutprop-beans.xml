@@ -63,7 +63,7 @@
             p:overwriteExisting="true"
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
         <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+            <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>

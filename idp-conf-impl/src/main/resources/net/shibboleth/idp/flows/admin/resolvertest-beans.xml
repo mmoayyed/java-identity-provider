@@ -135,7 +135,7 @@
             class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype"
             p:transcoderRegistry-ref="shibboleth.AttributeRegistryService">
         <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+            <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>
     </bean>
@@ -160,7 +160,7 @@
             class="net.shibboleth.idp.saml.saml2.profile.impl.AddAttributeStatementToAssertion" scope="prototype"
             p:transcoderRegistry-ref="shibboleth.AttributeRegistryService">
         <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+            <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>
     </bean>

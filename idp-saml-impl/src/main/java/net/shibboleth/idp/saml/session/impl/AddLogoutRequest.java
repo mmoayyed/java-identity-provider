@@ -42,10 +42,9 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.SessionIndex;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
-
-import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
+import net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 

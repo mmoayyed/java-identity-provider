@@ -23,6 +23,7 @@ import net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.profile.config.OverriddenIssuerProfileConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 

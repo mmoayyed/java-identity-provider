@@ -183,7 +183,7 @@
         class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />
 
     <bean id="shibboleth.RelyingPartyIdLookup.Simple"
-        class="net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction" />
+        class="net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction" />
 
     <bean id="shibboleth.PrincipalNameLookup.Subject"
         class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />

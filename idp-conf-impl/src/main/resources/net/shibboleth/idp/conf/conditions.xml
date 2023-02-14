@@ -34,7 +34,7 @@
     <bean id="shibboleth.Conditions.BrowserProfile"
         class="org.opensaml.profile.logic.BrowserProfilePredicate" />
     <bean id="shibboleth.Conditions.RelyingPartyId"
-        class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate" abstract="true" />
+        class="net.shibboleth.profile.logic.RelyingPartyIdPredicate" abstract="true" />
         
     <bean id="shibboleth.Conditions.Scripted"
         class="net.shibboleth.idp.profile.logic.ScriptedPredicate" abstract="true" />
