@@ -68,12 +68,12 @@ public class SAML1ActionSupportTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(response.getAssertions().size(), 0, "Expected zarro assertions before insert");
         final Assertion assertion = SAML1ActionSupport.addAssertionToResponse(action, response,
                 relyingPartyCtx.getProfileConfig().getSecurityConfiguration(profileRequestContext).getIdGenerator(),
-                ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) relyingPartyCtx.getConfiguration()).getResponderId(profileRequestContext));
+                ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) relyingPartyCtx.getConfiguration()).getResponderId(profileRequestContext));
         Assert.assertEquals(response.getAssertions().size(), 1, "Expected but one assertion after insert");
         Assert.assertTrue(response.getAssertions().contains(assertion), "Inserted assertion should be there");
         final Assertion second = SAML1ActionSupport.addAssertionToResponse(action, response,
                 relyingPartyCtx.getProfileConfig().getSecurityConfiguration(profileRequestContext).getIdGenerator(),
-                ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) relyingPartyCtx.getConfiguration()).getResponderId(profileRequestContext));
+                ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) relyingPartyCtx.getConfiguration()).getResponderId(profileRequestContext));
         Assert.assertEquals(response.getAssertions().size(), 2, "Expected two assertions after two inserts");
         Assert.assertTrue(response.getAssertions().contains(assertion), "Inserted assertion should be there");
         Assert.assertNotSame(second, assertion, "Two separate assertions should have been added");

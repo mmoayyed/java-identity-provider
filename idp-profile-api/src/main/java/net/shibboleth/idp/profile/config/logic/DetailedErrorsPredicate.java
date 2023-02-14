@@ -36,8 +36,8 @@ public class DetailedErrorsPredicate extends AbstractRelyingPartyPredicate {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null) {
                 final RelyingPartyConfiguration config = rpc.getConfiguration();
-                if (config instanceof net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) {
-                    return ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) config).isDetailedErrors(input);
+                if (config instanceof net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) {
+                    return ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) config).isDetailedErrors(input);
                 }
             }
         }

@@ -81,8 +81,7 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
     }
     
     /**
-     * Set the profile configuration ID to locate in the
-     * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} for the purposes of
+     * Set the profile configuration ID to locate in the {@link RelyingPartyConfiguration} for the purposes of
      * establishing format precedence rules.
      * 
      * <p>By default/without one set, the strategy is to use the configuration object populated in the

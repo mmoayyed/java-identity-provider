@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.profile.relyingparty;
 
 import java.util.function.Function;
 import java.util.function.Predicate;

@@ -107,7 +107,7 @@ public class SelectRelyingPartyConfigurationTest {
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
-        final var config = new net.shibboleth.idp.relyingparty.RelyingPartyConfiguration();
+        final var config = new net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
         config.setDetailedErrors(true);
@@ -132,7 +132,7 @@ public class SelectRelyingPartyConfigurationTest {
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
 
-        final var config = new net.shibboleth.idp.relyingparty.RelyingPartyConfiguration();
+        final var config = new net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
         config.setDetailedErrors(true);
@@ -149,7 +149,7 @@ public class SelectRelyingPartyConfigurationTest {
         final RelyingPartyConfiguration resolvedConfig =
                 (RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration();
         Assert.assertEquals(resolvedConfig.getId(), config.getId());
-        Assert.assertEquals(((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) resolvedConfig).getResponderId(prc),
+        Assert.assertEquals(((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) resolvedConfig).getResponderId(prc),
                 config.getResponderId(prc));
         Assert.assertEquals(resolvedConfig.getProfileConfigurations(prc), config.getProfileConfigurations(prc));
     }

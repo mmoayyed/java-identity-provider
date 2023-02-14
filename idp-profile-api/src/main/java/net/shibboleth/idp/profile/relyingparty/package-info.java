@@ -17,4 +17,4 @@
 
 /** APIs for retrieving the per-relying party configuration for a given profile request. */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.profile.relyingparty;

@@ -96,7 +96,7 @@ public class StoredTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         Assert.assertNotNull(name);
         Assert.assertEquals(name.getFormat(), generator.getFormat());
         Assert.assertEquals(name.getNameQualifier(),
-                ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) rpc.getConfiguration()).getResponderId(prc));
+                ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) rpc.getConfiguration()).getResponderId(prc));
 
         String val = name.getValue();
 

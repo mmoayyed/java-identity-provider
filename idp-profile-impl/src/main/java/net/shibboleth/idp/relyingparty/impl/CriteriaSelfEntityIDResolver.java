@@ -123,8 +123,8 @@ public class CriteriaSelfEntityIDResolver extends AbstractIdentifiedInitializabl
         try {
             final RelyingPartyConfiguration rpc =
                     rpcResolver.getServiceableComponent().getComponent().resolveSingle(prcSet);
-            if (rpc instanceof net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) {
-                return ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) rpc).getResponderId(prc);
+            if (rpc instanceof net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) {
+                return ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) rpc).getResponderId(prc);
             }
         } catch (final ServiceException e) {
             log.error("RelyingPartyConfiguration resolver unvailable", e);

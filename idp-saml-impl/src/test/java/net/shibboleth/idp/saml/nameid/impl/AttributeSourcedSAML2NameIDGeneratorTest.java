@@ -187,7 +187,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
         Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(),
-                ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration()).getResponderId(prc));
+                ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration()).getResponderId(prc));
     }
 
     @Test public void testScopeValued() throws Exception {
@@ -204,7 +204,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
         Assert.assertEquals(outputNameId.getValue(), NAME_1 + '@' + QUALIFIER);
         Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(),
-                ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration()).getResponderId(prc));
+                ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration()).getResponderId(prc));
         Assert.assertEquals(outputNameId.getSPNameQualifier(),
                 prc.getSubcontext(RelyingPartyContext.class).getRelyingPartyId());
     }

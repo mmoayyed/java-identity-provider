@@ -16,7 +16,7 @@
  */
 
 /**
- * Helpers for constructing {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} objects
+ * Helpers for constructing {@link net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration} objects
  * with SAML-specific predicates.
  */
 

@@ -27,7 +27,7 @@ import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A function that returns {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId}() if
+ * A function that returns {@link net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration#getResponderId}() if
  * available from a {@link RelyingPartyContext} obtained via a lookup function, by default a child of the
  * {@link ProfileRequestContext}.
  * 
@@ -52,8 +52,8 @@ public class ResponderIdLookupFunction extends AbstractRelyingPartyLookupFunctio
                 }
                 
                 final RelyingPartyConfiguration rpConfig = rpc.getConfiguration();
-                if (rpConfig instanceof net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) {
-                    return ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) rpConfig).getResponderId(input);
+                if (rpConfig instanceof net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) {
+                    return ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) rpConfig).getResponderId(input);
                 }
             }
         }

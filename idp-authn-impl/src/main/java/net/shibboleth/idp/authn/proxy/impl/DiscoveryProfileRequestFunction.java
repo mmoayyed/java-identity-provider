@@ -115,9 +115,9 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
         Constraint.isNotEmpty(baseURL, "Discovery URL cannot be null or empty");
 
         final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
-        Constraint.isTrue(rpConfig instanceof net.shibboleth.idp.relyingparty.RelyingPartyConfiguration,
+        Constraint.isTrue(rpConfig instanceof net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration,
                 "RelyingPartyConfiguration was not of expected subclass");
-        final String entityID = ((net.shibboleth.idp.relyingparty.RelyingPartyConfiguration) rpConfig).getResponderId(
+        final String entityID = ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) rpConfig).getResponderId(
                 input.getSecond());
 
         final StringBuilder builder = new StringBuilder(baseURL);

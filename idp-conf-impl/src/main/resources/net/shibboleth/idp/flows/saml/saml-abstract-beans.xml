@@ -345,7 +345,7 @@
     <!-- Non-ProfileRequestContext oriented beans, for example for us in SOAPClient. -->        
     
     <bean id="ArtifactSupport.SelfEntityIDResolver" 
-        class="net.shibboleth.idp.relyingparty.impl.CriteriaSelfEntityIDResolver"
+        class="net.shibboleth.idp.profile.relyingparty.impl.CriteriaSelfEntityIDResolver"
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
 
 </beans>

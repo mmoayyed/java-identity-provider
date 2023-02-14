@@ -56,23 +56,23 @@ import net.shibboleth.shared.resolver.ResolverException;
 @SuppressWarnings("javadoc")
 public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase {
     
-    private net.shibboleth.idp.relyingparty.RelyingPartyConfiguration anonRP, defaultRP; 
+    private net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration anonRP, defaultRP; 
     
-    private net.shibboleth.idp.relyingparty.RelyingPartyConfiguration oneByName, twoByName, threeByName;
-    private net.shibboleth.idp.relyingparty.RelyingPartyConfiguration oneByGroup, twoByGroup;
-    private net.shibboleth.idp.relyingparty.RelyingPartyConfiguration oneByTag, twoByTag;
+    private net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration oneByName, twoByName, threeByName;
+    private net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration oneByGroup, twoByGroup;
+    private net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration oneByTag, twoByTag;
     
     private DefaultRelyingPartyConfigurationResolver resolver;
         
     @BeforeMethod
     public void setup() throws ComponentInitializationException {
-        anonRP = new net.shibboleth.idp.relyingparty.RelyingPartyConfiguration();
+        anonRP = new net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
         anonRP.setResponderId("anonRPResp");
         anonRP.setDetailedErrors(true);
         anonRP.initialize();
         
-        defaultRP = new net.shibboleth.idp.relyingparty.RelyingPartyConfiguration();
+        defaultRP = new net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration();
         defaultRP.setId("defaultRPId");
         defaultRP.setResponderId("defaultRPResp");
         defaultRP.setDetailedErrors(true);
