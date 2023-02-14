@@ -17,4 +17,4 @@
 
 /** Implementation of APIs for describing a relying party and its configuration. */
 
-package net.shibboleth.idp.relyingparty.impl;
+package net.shibboleth.idp.profile.relyingparty.impl;

@@ -91,7 +91,7 @@
 	    <constructor-arg name="strategy">
             <bean class="net.shibboleth.idp.attribute.transcoding.impl.AttributeRegistryServiceStrategy">
                 <property name="extendedConditionFactory">
-                    <bean class="net.shibboleth.idp.relyingparty.impl.RelyingPartiesActivationConditionFactory" />
+                    <bean class="net.shibboleth.idp.profile.relyingparty.impl.RelyingPartiesActivationConditionFactory" />
                 </property>
             </bean>
 	    </constructor-arg>

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty.impl;
+package net.shibboleth.idp.profile.relyingparty.impl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
