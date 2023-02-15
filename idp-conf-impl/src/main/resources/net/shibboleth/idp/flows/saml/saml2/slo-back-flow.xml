@@ -73,7 +73,7 @@
             <evaluate expression="conversationScope.LogoutStatus and opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext)).getResult() == T(net.shibboleth.idp.session.context.LogoutPropagationContext.Result).Success"
                 result="conversationScope.LogoutStatus" />
             <evaluate expression="opensamlProfileRequestContext.removeSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext))" />
-            <evaluate expression="opensamlProfileRequestContext.removeSubcontext(T(net.shibboleth.idp.profile.context.AuditContext))" />
+            <evaluate expression="opensamlProfileRequestContext.removeSubcontext(T(net.shibboleth.profile.context.AuditContext))" />
         </on-exit>
     </subflow-state>
     

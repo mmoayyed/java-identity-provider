@@ -81,7 +81,7 @@
         <constructor-arg name="g">
             <bean id="shibboleth.ChildLookup.AuditContext"
                 class="org.opensaml.messaging.context.navigate.ChildContextLookup"
-                c:type="#{ T(net.shibboleth.idp.profile.context.AuditContext) }"
+                c:type="#{ T(net.shibboleth.profile.context.AuditContext) }"
                 c:createContext="true" />
         </constructor-arg>
         <constructor-arg name="f">

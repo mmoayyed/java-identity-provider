@@ -27,10 +27,10 @@ import java.util.function.Function;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.audit.impl.PopulateAuditContext.FormattingMapParser;
-import net.shibboleth.idp.profile.context.AuditContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.profile.context.AuditContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.springframework.webflow.execution.Event;

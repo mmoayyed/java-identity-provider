@@ -42,7 +42,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPAuditFields;
-import net.shibboleth.idp.profile.context.AuditContext;
+import net.shibboleth.profile.context.AuditContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;

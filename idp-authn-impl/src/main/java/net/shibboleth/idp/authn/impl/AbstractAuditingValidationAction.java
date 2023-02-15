@@ -33,7 +33,7 @@ import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.audit.impl.PopulateAuditContext;
 import net.shibboleth.idp.profile.audit.impl.WriteAuditLog;
-import net.shibboleth.idp.profile.context.AuditContext;
+import net.shibboleth.profile.context.AuditContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 

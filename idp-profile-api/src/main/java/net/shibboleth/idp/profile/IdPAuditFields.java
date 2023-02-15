@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
- * Constants to use for audit logging fields stored in an {@link net.shibboleth.idp.profile.context.AuditContext}.
+ * Constants to use for audit logging fields stored in an {@link net.shibboleth.profile.context.AuditContext}.
  */
 public final class IdPAuditFields {
 
