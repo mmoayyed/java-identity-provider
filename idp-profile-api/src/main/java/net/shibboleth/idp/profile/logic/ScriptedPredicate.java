@@ -23,22 +23,23 @@ import java.io.InputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.script.ScriptContext;
 import javax.script.ScriptException;
 
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.shared.scripting.EvaluableScript;
 
 /**
- * A {@link java.util.function.Predicate} which calls out to a supplied script.
+ * Deprecated stub for relocated class.
+ * 
+ * @deprecated
  */
-@SuppressWarnings("removal")
-public class ScriptedPredicate
-        extends net.shibboleth.shared.logic.ScriptedPredicate<ProfileRequestContext> {
+@Deprecated(since="5.0.0", forRemoval=true)
+public class ScriptedPredicate extends net.shibboleth.profile.context.logic.ScriptedPredicate {
     
     /**
      * Constructor.
@@ -49,7 +50,8 @@ public class ScriptedPredicate
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
             @Nullable @NotEmpty @ParameterName(name="extraInfo") final String extraInfo) {
         super(theScript, extraInfo);
-        setInputType(ProfileRequestContext.class);
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
+                net.shibboleth.profile.context.logic.ScriptedPredicate.class.getName());
     }
 
     /**
@@ -59,14 +61,8 @@ public class ScriptedPredicate
      */
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
         super(theScript);
-        setInputType(ProfileRequestContext.class);
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
-        super.prepareContext(scriptContext, input);
-        scriptContext.setAttribute("profileContext", input != null ? input[0] : null, ScriptContext.ENGINE_SCOPE);
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
+                net.shibboleth.profile.context.logic.ScriptedPredicate.class.getName());
     }
     
     /**

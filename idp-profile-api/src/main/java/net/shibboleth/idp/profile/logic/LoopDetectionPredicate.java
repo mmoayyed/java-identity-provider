@@ -17,120 +17,21 @@
 
 package net.shibboleth.idp.profile.logic;
 
-import java.util.Map;
-import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.opensaml.core.metrics.MetricsSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.MetricRegistry.MetricSupplier;
-import com.codahale.metrics.SlidingTimeWindowMovingAverages;
-
-import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.annotation.constraint.Positive;
-import net.shibboleth.shared.collection.CollectionSupport;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.logic.FunctionSupport;
-import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 
 /**
- * A condition that relies on a {@link Meter} to detect looping SPs. 
- *
- * @since 4.1.0
+ * Deprecated stub for relocated class.
+ * 
+ * @deprecated
  */
-public class LoopDetectionPredicate extends AbstractRelyingPartyPredicate {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(LoopDetectionPredicate.class);
-
-    /** Count to trigger warning. */
-    private long threshold;
-    
-    /** Map of RP names to meter names. */
-    @Nonnull @NonnullElements private Map<String,String> relyingPartyMap;
-    
-    /** Lookup strategy to obtain subject name. */
-    @Nonnull private Function<ProfileRequestContext,String> usernameLookupStrategy;
+@Deprecated(since="5.0.0", forRemoval=true)
+public class LoopDetectionPredicate extends net.shibboleth.profile.context.logic.LoopDetectionPredicate {
     
     /** Constructor. */
     public LoopDetectionPredicate() {
-        threshold = 20;
-        relyingPartyMap = CollectionSupport.emptyMap();
-        usernameLookupStrategy = FunctionSupport.constant(null);
-    }
-    
-    /**
-     * Set the warning threshold for the 1 minute moving average to exceed.
-     * 
-     * <p>Defaults to 20.</p>
-     * 
-     * @param value threshold to use
-     */
-    public void setThreshold(@Positive final long value) {
-        threshold = Constraint.isGreaterThan(0, value, "Threshold must be positive");
-    }
-    
-    /**
-     * Set the map of relying party names to meter names to track counts.
-     * 
-     * @param map map of RP/meter mappings
-     */
-    public void setRelyingPartyMap(@Nullable @NonnullElements final Map<String,String> map) {
-        if (map != null) {
-            relyingPartyMap = CollectionSupport.copyToMap(map);
-        } else {
-            relyingPartyMap = CollectionSupport.emptyMap();
-        }
-    }
-    
-    /**
-     * Set lookup strategy to obtain username.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
-    }
-    
-    /** {@inheritDoc} */
-    public boolean test(@Nullable final ProfileRequestContext input) {
-        
-        final String username = usernameLookupStrategy.apply(input);
-        final RelyingPartyContext rpCtx = getRelyingPartyContextLookupStrategy().apply(input);
-        
-        if (username != null && rpCtx != null && rpCtx.getRelyingPartyId() != null) {
-            String meterName = relyingPartyMap.get(rpCtx.getRelyingPartyId());
-            if (meterName != null) {
-                meterName = MetricRegistry.name("net.shibboleth.idp.loopDetection", meterName,
-                        username.replace(".",""));
-                final MetricRegistry registry = MetricsSupport.getMetricRegistry();
-                if (registry == null) {
-                    log.error("MetricRegistry was unavailable");
-                    return false;
-                }
-                final Meter meter = registry.meter(meterName,
-                        new MetricSupplier<Meter>() {
-                            public Meter newMetric() {
-                                return new Meter(new SlidingTimeWindowMovingAverages());
-                            }
-                        });
-                meter.mark();
-                final double rate = meter.getOneMinuteRate();
-                if (rate > threshold) {
-                    log.warn("Meter {} rate of {} exceeded threshold of {}", meterName, rate, threshold);
-                    return true;
-                }
-            }
-        }
-        
-        return false;
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
+                net.shibboleth.profile.context.logic.LoopDetectionPredicate.class.getName());
     }
 
 }

@@ -18,21 +18,19 @@
 package net.shibboleth.idp.profile.logic;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.expression.EvaluationContext;
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 
 /**
- * Predicate whose condition is defined by an Spring EL expression.
+ * Deprecated stub for relocated class.
  * 
- * @author Daniel Lutz
+ * @deprecated
  */
-public class SpringExpressionPredicate
-    extends net.shibboleth.shared.spring.expression.SpringExpressionPredicate<ProfileRequestContext> {
+@Deprecated(since="5.0.0", forRemoval=true)
+public class SpringExpressionPredicate extends net.shibboleth.profile.context.logic.SpringExpressionPredicate {
 
     /**
      * Constructor.
@@ -41,14 +39,8 @@ public class SpringExpressionPredicate
      */
     public SpringExpressionPredicate(@Nonnull @NotEmpty @ParameterName(name="expression") final String expression) {
         super(expression);
-        setInputType(ProfileRequestContext.class);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void prepareContext(@Nonnull final EvaluationContext context, @Nullable final Object... input) {
-        super.prepareContext(context, input);
-        context.setVariable("profileContext", input != null ? input[0] : input);
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
+                net.shibboleth.profile.context.logic.SpringExpressionPredicate.class.getName());
     }
 
 }

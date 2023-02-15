@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
+import net.shibboleth.profile.context.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -71,7 +71,7 @@ public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPred
             return true;
         }
         
-        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        final RelyingPartyContext rpc = getRelyingPartyContext(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             

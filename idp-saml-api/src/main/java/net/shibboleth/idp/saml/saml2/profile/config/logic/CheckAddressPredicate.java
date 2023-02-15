@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
+import net.shibboleth.profile.context.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -39,7 +39,7 @@ public class CheckAddressPredicate extends AbstractRelyingPartyPredicate {
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
         
-        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        final RelyingPartyContext rpc = getRelyingPartyContext(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc instanceof BrowserSSOProfileConfiguration) {

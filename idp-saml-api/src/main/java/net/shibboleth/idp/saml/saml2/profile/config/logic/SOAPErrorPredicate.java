@@ -28,7 +28,7 @@ import org.opensaml.profile.context.navigate.CurrentOrPreviousEventLookup;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
+import net.shibboleth.profile.context.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -68,7 +68,7 @@ public class SOAPErrorPredicate extends AbstractRelyingPartyPredicate {
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
         
-        final RelyingPartyContext rpCtx = getRelyingPartyContextLookupStrategy().apply(input);
+        final RelyingPartyContext rpCtx = getRelyingPartyContext(input);
         if (rpCtx == null) {
             log.debug("No RelyingPartyContext found, assuming error handled with SOAP fault");
             return true;

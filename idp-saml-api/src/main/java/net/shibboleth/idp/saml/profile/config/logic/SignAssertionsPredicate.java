@@ -29,7 +29,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
+import net.shibboleth.profile.context.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
@@ -87,7 +87,7 @@ public class SignAssertionsPredicate extends AbstractRelyingPartyPredicate {
             }
         }
         
-        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        final RelyingPartyContext rpc = getRelyingPartyContext(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc instanceof SAMLProfileConfiguration) {

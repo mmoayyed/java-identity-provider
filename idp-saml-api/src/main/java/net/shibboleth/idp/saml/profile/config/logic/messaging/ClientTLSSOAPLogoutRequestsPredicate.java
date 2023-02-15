@@ -23,7 +23,7 @@ import org.opensaml.messaging.context.MessageContext;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.logic.messaging.AbstractRelyingPartyPredicate;
+import net.shibboleth.profile.context.logic.messaging.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 
 /** A predicate implementation that forwards to 
@@ -32,7 +32,7 @@ public class ClientTLSSOAPLogoutRequestsPredicate extends AbstractRelyingPartyPr
     
     /** {@inheritDoc} */
     public boolean test(@Nullable final MessageContext input) {
-        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        final RelyingPartyContext rpc = getRelyingPartyContext(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SingleLogoutProfileConfiguration) {

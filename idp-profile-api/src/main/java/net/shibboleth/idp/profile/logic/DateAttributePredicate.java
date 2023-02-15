@@ -17,51 +17,22 @@
 
 package net.shibboleth.idp.profile.logic;
 
-import java.time.DateTimeException;
-import java.time.Duration;
-import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-
-import net.shibboleth.idp.attribute.DateTimeAttributeValue;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 
 /**
- * Provides a date/time matching predicate that compares a date-based attribute value against
- * current system time with optional offset. By convention the predicate returns true if and only if
- * the date represented by the attribute value is after the current system time; false otherwise.
- * Thus the semantics are well-suited for cases such as evaluation of expiration dates.
- *
- * @author Marvin S. Addison
+ * Deprecated stub for relocated class.
+ * 
+ * @deprecated
  */
-public class DateAttributePredicate extends AbstractAttributePredicate {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(DateAttributePredicate.class);
-
-    /** Name of attribute to query for. */
-    @Nonnull @NotEmpty private final String attributeName;
-
-    /** Formatter used to parse string-based date attribute values. */
-    @Nullable private final DateTimeFormatter dateTimeFormatter;
-
-    /** Offset from system time used for date comparisons. */
-    @Nonnull private Duration systemTimeOffset;
-    
-    /** Result of predicate if attribute is missing or has no values. */
-    private boolean resultIfMissing;
+@Deprecated(since="5.0.0", forRemoval=true)
+public class DateAttributePredicate extends net.shibboleth.profile.context.logic.DateAttributePredicate {
 
     /**
      * Create a new instance that performs date comparisons against the given attribute.
@@ -69,9 +40,9 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      * @param attribute Attribute name that provides candidate date values to test.
      */
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute) {
-        attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
-        dateTimeFormatter = null;
-        systemTimeOffset = Duration.ZERO;
+        super(attribute);
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
+                net.shibboleth.profile.context.logic.DateAttributePredicate.class.getName());
     }
 
     /**
@@ -83,10 +54,9 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      */
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute,
             @Nonnull @ParameterName(name="formatter") final DateTimeFormatter formatter) {
-        
-        attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
-        dateTimeFormatter = Constraint.isNotNull(formatter, "Formatter cannot be null");
-        systemTimeOffset = Duration.ZERO;
+        super(attribute, formatter);
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
+                net.shibboleth.profile.context.logic.DateAttributePredicate.class.getName());
     }
 
     /**
@@ -98,78 +68,9 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      */
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute,
             @Nonnull @NotEmpty @ParameterName(name="formatString") final String formatString) {
-        attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
-        dateTimeFormatter = DateTimeFormatter.ofPattern(
-                Constraint.isNotNull(formatString, "Format string cannot be null"));
-        systemTimeOffset = Duration.ZERO;
-    }
-
-    /**
-     * Set the system time offset, which affects the reference date for comparisons.
-     * 
-     * <p>By default all comparisons are against system time, i.e. zero offset.</p>
-     *
-     * @param offset System time offset. A negative value decreases the target date (sooner);
-     *                         a positive value increases the target date (later).
-     */
-    public void setOffset(@Nonnull final java.time.Duration offset) {
-        systemTimeOffset = Constraint.isNotNull(offset, "Offset cannot be null");
-    }
-    
-    /**
-     * Set the result to return if the attribute to check is missing or has no values.
-     * 
-     * @param flag  flag to set
-     */
-    public void setResultIfMissing(final boolean flag) {
-        resultIfMissing = flag;
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected boolean allowNullAttributeContext() {
-        return resultIfMissing;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean hasMatch(@Nonnull @NonnullElements final Map<String,IdPAttribute> attributeMap) {
-        
-        final IdPAttribute attribute = attributeMap.get(attributeName);
-        if (attribute == null) {
-            log.debug("Attribute {} not found in context, returning {}", attributeName, resultIfMissing);
-            return resultIfMissing;
-        } else if (attribute.getValues().isEmpty()) {
-            log.debug("Attribute {} has no values, returning {}", attributeName, resultIfMissing);
-            return resultIfMissing;
-        }
-        
-        final Instant now = Instant.now();
-        
-        String dateString;
-        for (final IdPAttributeValue value : attribute.getValues()) {
-            if (value instanceof DateTimeAttributeValue &&
-                    ((DateTimeAttributeValue) value).getValue().plus(systemTimeOffset).isAfter(now)) {
-                    return true;
-            } else if (value instanceof StringAttributeValue) {
-                if (dateTimeFormatter == null) {
-                    log.warn("No DateTimeFormatter configured, ignoring string value");
-                    continue;
-                }
-                dateString = ((StringAttributeValue) value).getValue();
-                try {
-                    assert dateTimeFormatter != null;
-                    if (Instant.from(dateTimeFormatter.parse(dateString)).plus(systemTimeOffset).isAfter(now)) {
-                        return true;
-                    }
-                } catch (final DateTimeException e) {
-                    log.warn("{} is not a valid date for the configured formatting string", dateString, e);
-                }
-            } else {
-                log.warn("Ignoring unsupported value type: {}", value.getClass().getName());
-            }
-        }
-        return false;
+        super(attribute, formatString);
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
+                net.shibboleth.profile.context.logic.DateAttributePredicate.class.getName());
     }
     
 }

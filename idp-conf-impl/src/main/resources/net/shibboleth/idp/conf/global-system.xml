@@ -39,90 +39,89 @@
 
     <!-- This BeanFactoryPostProcessor rewrites class and parent references to relocated classes or beans. -->
     <bean id="shibboleth.RelocatedBeanFactoryPostProcessor"
-            class="net.shibboleth.shared.spring.config.RelocatedBeanFactoryPostProcessor">
-        <property name="classes">
-            <map>
-                <!-- At present all of these are being added for V5 and would be removable for V6. -->
-                
-                <entry key="net.shibboleth.utilities.java.support.codec.StringDigester"
-                    value="net.shibboleth.shared.codec.StringDigester" />
-                
-                <entry key="net.shibboleth.utilities.java.support.logic.FunctionSupport"
-                    value="net.shibboleth.shared.logic.FunctionSupport" />
-                <entry key="net.shibboleth.utilities.java.support.logic.PredicateSupport"
-                    value="net.shibboleth.shared.logic.PredicateSupport" />
-                <entry key="net.shibboleth.utilities.java.support.logic.RegexPredicate"
-                    value="net.shibboleth.shared.logic.RegexPredicate" />
-                <entry key="net.shibboleth.utilities.java.support.logic.ScriptedBiConsumer"
-                    value="net.shibboleth.shared.logic.ScriptedBiConsumer" />
-                <entry key="net.shibboleth.utilities.java.support.logic.ScriptedBiFunction"
-                    value="net.shibboleth.shared.logic.ScriptedBiFunction" />
-                <entry key="net.shibboleth.utilities.java.support.logic.ScriptedBiPredicate"
-                    value="net.shibboleth.shared.logic.ScriptedBiPredicate" />
-                <entry key="net.shibboleth.utilities.java.support.logic.ScriptedConsumer"
-                    value="net.shibboleth.shared.logic.ScriptedConsumer" />
-                <entry key="net.shibboleth.utilities.java.support.logic.ScriptedFunction"
-                    value="net.shibboleth.shared.logic.ScriptedFunction" />
-                <entry key="net.shibboleth.utilities.java.support.logic.ScriptedPredicate"
-                    value="net.shibboleth.shared.logic.ScriptedPredicate" />
-                <entry key="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate"
-                    value="net.shibboleth.shared.logic.StrategyIndirectedPredicate" />
-                
-                <entry key="net.shibboleth.utilities.java.support.net.DynamicResponseHeaderFilter"
-                    value="net.shibboleth.shared.net.impl.DynamicResponseHeaderFilter" />
-                <entry key="net.shibboleth.utilities.java.support.net.SameSiteCookieHeaderFilter"
-                    value="net.shibboleth.shared.net.impl.SameSiteCookieHeaderFilter" />
-                
-                <entry key="net.shibboleth.utilities.java.support.velocity.Template"
-                    value="net.shibboleth.shared.velocity.Template" />
-                
-                <entry key="net.shibboleth.ext.spring.factory.KeyStoreFactoryBean"
-                    value="net.shibboleth.shared.spring.security.factory.KeyStoreFactoryBean" />
-                <entry key="net.shibboleth.ext.spring.factory.PKCS11PrivateKeyFactoryBean"
-                    value="net.shibboleth.shared.spring.security.factory.PKCS11PrivateKeyFactoryBean" />
-                <entry key="net.shibboleth.ext.spring.factory.PrivateKeyFactoryBean"
-                    value="net.shibboleth.shared.spring.security.factory.PrivateKeyFactoryBean" />
-                <entry key="net.shibboleth.ext.spring.factory.PublicKeyFactoryBean"
-                    value="net.shibboleth.shared.spring.security.factory.PublicKeyFactoryBean" />
-                <entry key="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
-                    value="net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean" />
-                <entry key="net.shibboleth.ext.spring.factory.X509CertificateChainFactoryBean"
-                    value="net.shibboleth.shared.spring.security.factory.X509CertificateChainFactoryBean" />
-                    
-                <entry key="net.shibboleth.ext.spring.resource.HTTPResource"
-                    value="net.shibboleth.shared.spring.httpclient.resource.HTTPResource" />
-                <entry key="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
-                    value="net.shibboleth.shared.spring.httpclient.resource.FileBackedHTTPResource" />
-                    
-                <entry key="net.shibboleth.ext.spring.util.SpringExpressionBiConsumer"
-                    value="net.shibboleth.shared.spring.expression.SpringExpressionBiConsumer" />
-                <entry key="net.shibboleth.ext.spring.util.SpringExpressionBiFunction"
-                    value="net.shibboleth.shared.spring.expression.SpringExpressionBiFunction" />
-                <entry key="net.shibboleth.ext.spring.util.SpringExpressionBiPredicate"
-                    value="net.shibboleth.shared.spring.expression.SpringExpressionBiPredicate" />
-                <entry key="net.shibboleth.ext.spring.util.SpringExpressionConsumer"
-                    value="net.shibboleth.shared.spring.expression.SpringExpressionConsumer" />
-                <entry key="net.shibboleth.ext.spring.util.SpringExpressionFunction"
-                    value="net.shibboleth.shared.spring.expression.SpringExpressionFunction" />
-                <entry key="net.shibboleth.ext.spring.util.SpringExpressionPredicate"
-                    value="net.shibboleth.shared.spring.expression.SpringExpressionPredicate" />
-                    
-                <entry key="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
-                    value="net.shibboleth.shared.spring.factory.CombiningListFactoryBean" />
-                <entry key="net.shibboleth.ext.spring.factory.DOMDocumentFactoryBean"
-                    value="net.shibboleth.shared.spring.factory.DOMDocumentFactoryBean" />
-                <entry key="net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean"
-                    value="net.shibboleth.shared.spring.factory.EvaluableScriptFactoryBean" />
-                <entry key="net.shibboleth.ext.spring.factory.PatternFactoryBean"
-                    value="net.shibboleth.shared.spring.factory.PatternFactoryBean" />
+        class="net.shibboleth.shared.spring.config.RelocatedBeanFactoryPostProcessor"
+        p:classes-ref="shibboleth.RelocatedClassMap"/>
 
-                <entry key="net.shibboleth.ext.spring.resource.ConditionalResource"
-                    value="net.shibboleth.shared.spring.resource.ConditionalResource" />
-                <entry key="net.shibboleth.ext.spring.resource.RunnableFileSystemResource"
-                    value="net.shibboleth.shared.spring.resource.RunnableFileSystemResource" />
-            </map>
-        </property>
-    </bean>
+    <util:map id="shibboleth.RelocatedClassMap">
+        <!-- At present all of these are being added for V5 and would be removable for V6. -->
+        
+        <entry key="net.shibboleth.utilities.java.support.codec.StringDigester"
+            value="net.shibboleth.shared.codec.StringDigester" />
+        
+        <entry key="net.shibboleth.utilities.java.support.logic.FunctionSupport"
+            value="net.shibboleth.shared.logic.FunctionSupport" />
+        <entry key="net.shibboleth.utilities.java.support.logic.PredicateSupport"
+            value="net.shibboleth.shared.logic.PredicateSupport" />
+        <entry key="net.shibboleth.utilities.java.support.logic.RegexPredicate"
+            value="net.shibboleth.shared.logic.RegexPredicate" />
+        <entry key="net.shibboleth.utilities.java.support.logic.ScriptedBiConsumer"
+            value="net.shibboleth.shared.logic.ScriptedBiConsumer" />
+        <entry key="net.shibboleth.utilities.java.support.logic.ScriptedBiFunction"
+            value="net.shibboleth.shared.logic.ScriptedBiFunction" />
+        <entry key="net.shibboleth.utilities.java.support.logic.ScriptedBiPredicate"
+            value="net.shibboleth.shared.logic.ScriptedBiPredicate" />
+        <entry key="net.shibboleth.utilities.java.support.logic.ScriptedConsumer"
+            value="net.shibboleth.shared.logic.ScriptedConsumer" />
+        <entry key="net.shibboleth.utilities.java.support.logic.ScriptedFunction"
+            value="net.shibboleth.shared.logic.ScriptedFunction" />
+        <entry key="net.shibboleth.utilities.java.support.logic.ScriptedPredicate"
+            value="net.shibboleth.shared.logic.ScriptedPredicate" />
+        <entry key="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate"
+            value="net.shibboleth.shared.logic.StrategyIndirectedPredicate" />
+        
+        <entry key="net.shibboleth.utilities.java.support.net.DynamicResponseHeaderFilter"
+            value="net.shibboleth.shared.net.impl.DynamicResponseHeaderFilter" />
+        <entry key="net.shibboleth.utilities.java.support.net.SameSiteCookieHeaderFilter"
+            value="net.shibboleth.shared.net.impl.SameSiteCookieHeaderFilter" />
+        
+        <entry key="net.shibboleth.utilities.java.support.velocity.Template"
+            value="net.shibboleth.shared.velocity.Template" />
+        
+        <entry key="net.shibboleth.ext.spring.factory.KeyStoreFactoryBean"
+            value="net.shibboleth.shared.spring.security.factory.KeyStoreFactoryBean" />
+        <entry key="net.shibboleth.ext.spring.factory.PKCS11PrivateKeyFactoryBean"
+            value="net.shibboleth.shared.spring.security.factory.PKCS11PrivateKeyFactoryBean" />
+        <entry key="net.shibboleth.ext.spring.factory.PrivateKeyFactoryBean"
+            value="net.shibboleth.shared.spring.security.factory.PrivateKeyFactoryBean" />
+        <entry key="net.shibboleth.ext.spring.factory.PublicKeyFactoryBean"
+            value="net.shibboleth.shared.spring.security.factory.PublicKeyFactoryBean" />
+        <entry key="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
+            value="net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean" />
+        <entry key="net.shibboleth.ext.spring.factory.X509CertificateChainFactoryBean"
+            value="net.shibboleth.shared.spring.security.factory.X509CertificateChainFactoryBean" />
+            
+        <entry key="net.shibboleth.ext.spring.resource.HTTPResource"
+            value="net.shibboleth.shared.spring.httpclient.resource.HTTPResource" />
+        <entry key="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
+            value="net.shibboleth.shared.spring.httpclient.resource.FileBackedHTTPResource" />
+            
+        <entry key="net.shibboleth.ext.spring.util.SpringExpressionBiConsumer"
+            value="net.shibboleth.shared.spring.expression.SpringExpressionBiConsumer" />
+        <entry key="net.shibboleth.ext.spring.util.SpringExpressionBiFunction"
+            value="net.shibboleth.shared.spring.expression.SpringExpressionBiFunction" />
+        <entry key="net.shibboleth.ext.spring.util.SpringExpressionBiPredicate"
+            value="net.shibboleth.shared.spring.expression.SpringExpressionBiPredicate" />
+        <entry key="net.shibboleth.ext.spring.util.SpringExpressionConsumer"
+            value="net.shibboleth.shared.spring.expression.SpringExpressionConsumer" />
+        <entry key="net.shibboleth.ext.spring.util.SpringExpressionFunction"
+            value="net.shibboleth.shared.spring.expression.SpringExpressionFunction" />
+        <entry key="net.shibboleth.ext.spring.util.SpringExpressionPredicate"
+            value="net.shibboleth.shared.spring.expression.SpringExpressionPredicate" />
+            
+        <entry key="net.shibboleth.ext.spring.factory.CombiningListFactoryBean"
+            value="net.shibboleth.shared.spring.factory.CombiningListFactoryBean" />
+        <entry key="net.shibboleth.ext.spring.factory.DOMDocumentFactoryBean"
+            value="net.shibboleth.shared.spring.factory.DOMDocumentFactoryBean" />
+        <entry key="net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean"
+            value="net.shibboleth.shared.spring.factory.EvaluableScriptFactoryBean" />
+        <entry key="net.shibboleth.ext.spring.factory.PatternFactoryBean"
+            value="net.shibboleth.shared.spring.factory.PatternFactoryBean" />
+
+        <entry key="net.shibboleth.ext.spring.resource.ConditionalResource"
+            value="net.shibboleth.shared.spring.resource.ConditionalResource" />
+        <entry key="net.shibboleth.ext.spring.resource.RunnableFileSystemResource"
+            value="net.shibboleth.shared.spring.resource.RunnableFileSystemResource" />
+    </util:map>
 
     <!-- This extends the original user-space resource list with the classpath-embedded message tree. -->
     <bean id ="ExtendedMessageSourceResources" parent="shibboleth.ListCombiner"

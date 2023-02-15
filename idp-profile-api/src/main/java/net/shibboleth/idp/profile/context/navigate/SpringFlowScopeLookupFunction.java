@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.function;
+package net.shibboleth.idp.profile.context.navigate;
 
 import java.util.function.Function;
 

@@ -26,22 +26,10 @@
             <groupId>net.shibboleth</groupId>
             <artifactId>shib-profile-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-api</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-security-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
@@ -49,34 +37,12 @@
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-xmlsec-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-messaging-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-spring</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
         </dependency>
 
         <dependency>
@@ -90,10 +56,6 @@
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-expression</artifactId>
         </dependency>
         <dependency>
             <groupId>${spring-webflow.groupId}</groupId>
@@ -110,41 +72,8 @@
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
-        <!-- Needed for XMLObject providers. -->
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-testing</artifactId>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
-
-    <profiles>
-        <!--
-            Pull in a Javascript engine for testing in Java
-            versions where the JDK doesn't provide one.
-        -->
-        <profile>
-            <id>get-nashorn</id>
-            <activation>
-                <jdk>[15,</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-		    <groupId>org.openjdk.nashorn</groupId>
-		    <artifactId>nashorn-core</artifactId>
-		    <version>${nashorn.jdk.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 
     <scm>
         <connection>${shibboleth.scm.connection}java-identity-provider</connection>

@@ -16,7 +16,7 @@
  */
 
 /**
- * Functions and predicates supporting other profile components.
+ * This is a legacy package and will be removed in V6.
  */
 
 package net.shibboleth.idp.profile.logic;
