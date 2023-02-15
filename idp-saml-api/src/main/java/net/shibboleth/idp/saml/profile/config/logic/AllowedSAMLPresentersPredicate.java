@@ -38,8 +38,10 @@ import org.slf4j.Logger;
 /**
  * Predicate which evaluates the inbound {@link SAMLPresenterEntityContext#getEntityId()}
  * against a specified collection of entityIDs.
+ * 
+ * @deprecated
  */
-@SuppressWarnings("removal")
+@Deprecated(since="5.0.0", forRemoval=true)
 public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestContext> {
     
     /** Logger. */

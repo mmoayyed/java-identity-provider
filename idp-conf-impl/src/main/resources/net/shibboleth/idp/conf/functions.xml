@@ -50,7 +50,7 @@
             <bean class="org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction" />
         </constructor-arg>
         <constructor-arg name="f">
-            <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
+            <bean class="net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
         </constructor-arg>
     </bean>
 

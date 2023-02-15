@@ -196,7 +196,7 @@
         <constructor-arg>
             <map>
                 <entry key="SAML2.ArtifactDecoder">
-                    <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.ClientTLSArtifactRequestsPredicate" />
+                    <bean class="net.shibboleth.saml.profile.config.logic.messaging.ClientTLSArtifactRequestsPredicate" />
                 </entry>
                 <entry key="SAML2.Logout">
                     <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.ClientTLSSOAPLogoutRequestsPredicate" />
@@ -210,7 +210,7 @@
         <constructor-arg>
             <map>
                 <entry key="SAML2.ArtifactDecoder">
-                    <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.SignArtifactRequestsPredicate" />
+                    <bean class="net.shibboleth.saml.profile.config.logic.messaging.SignArtifactRequestsPredicate" />
                 </entry>
                 <entry key="SAML2.Logout">
                     <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.SignSOAPLogoutRequestsPredicate" />

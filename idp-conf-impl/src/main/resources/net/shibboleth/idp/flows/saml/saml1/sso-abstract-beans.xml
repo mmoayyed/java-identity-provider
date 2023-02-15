@@ -36,7 +36,7 @@
     <bean id="AddNameIdentifierToSubjects"
             class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype">
         <property name="formatLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy"
+            <bean class="net.shibboleth.idp.saml.profile.context.navigate.DefaultNameIdentifierFormatStrategy"
                 p:defaultFormat="%{idp.nameid.saml1.default:urn:mace:shibboleth:1.0:nameIdentifier}" />
         </property>
         <property name="nameIdentifierGenerator">

@@ -1,3 +1,0 @@
-id = subject-id-req
-transcoder = SAML2StringTranscoder
-saml2.name = urn:oasis:names:tc:SAML:profiles:subject-id:req

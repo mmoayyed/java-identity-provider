@@ -23,7 +23,7 @@
     duplicate bean IDs. 
     -->
         
-    <bean id="shibboleth.BindingDescriptor" class="net.shibboleth.idp.saml.binding.BindingDescriptor" abstract="true" />
+    <bean id="shibboleth.BindingDescriptor" class="net.shibboleth.saml.binding.BindingDescriptor" abstract="true" />
     
     <!-- SAML 1 Bindings -->
     <bean parent="shibboleth.BindingDescriptor" id="shibboleth.Binding.LegacyShibboleth"

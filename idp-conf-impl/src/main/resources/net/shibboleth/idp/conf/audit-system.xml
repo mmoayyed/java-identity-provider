@@ -921,7 +921,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
                     </key>
-                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor">
+                    <bean class="net.shibboleth.profile.audit.impl.AttributesAuditExtractor">
                         <property name="activationCondition">
                             <bean parent="shibboleth.Conditions.OR">
                                 <constructor-arg>
@@ -1054,7 +1054,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
                     </key>
-                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
+                    <bean class="net.shibboleth.profile.audit.impl.AttributesAuditExtractor" />
                 </entry>
                 <entry>
                     <key>
@@ -1557,7 +1557,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
                     </key>
-                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
+                    <bean class="net.shibboleth.profile.audit.impl.AttributesAuditExtractor" />
                 </entry>
             </map>
         </property>

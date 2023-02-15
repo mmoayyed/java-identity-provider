@@ -31,7 +31,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import net.shibboleth.idp.saml.binding.BindingDescriptor;
+import net.shibboleth.saml.binding.BindingDescriptor;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 

@@ -134,7 +134,7 @@
             p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver"
             p:noResultIsError="true">
         <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.profile.config.logic.SignResponsesPredicate" />
+            <bean class="net.shibboleth.saml.profile.config.logic.SignResponsesPredicate" />
         </property>
     </bean>
 

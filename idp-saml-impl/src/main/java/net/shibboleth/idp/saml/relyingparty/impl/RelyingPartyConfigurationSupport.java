@@ -31,9 +31,9 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 import net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
-import net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate;
 import net.shibboleth.profile.context.logic.RelyingPartyIdPredicate;
+import net.shibboleth.saml.profile.context.logic.MappedEntityAttributesPredicate;
+import net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.StrategyIndirectedPredicate;

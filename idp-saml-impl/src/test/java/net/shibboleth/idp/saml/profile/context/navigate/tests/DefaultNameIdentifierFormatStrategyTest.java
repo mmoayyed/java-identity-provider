@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.logic.tests;
+package net.shibboleth.idp.saml.profile.context.navigate.tests;
 
 import java.util.Arrays;
 import java.util.List;
 
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy;
+import net.shibboleth.idp.saml.profile.context.navigate.DefaultNameIdentifierFormatStrategy;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;

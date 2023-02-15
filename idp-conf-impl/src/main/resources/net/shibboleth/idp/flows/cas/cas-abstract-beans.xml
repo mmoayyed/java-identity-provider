@@ -81,7 +81,7 @@
           p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}"
           p:metadataResolver-ref="shibboleth.MetadataResolver">
         <property name="metadataContextLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
+            <bean class="net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
         </property>
     </bean>
 

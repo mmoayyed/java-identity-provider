@@ -30,8 +30,8 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.logic.AbstractRelyingPartyPredicate;
+import net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
-import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
 
 /** A predicate implementation that forwards to

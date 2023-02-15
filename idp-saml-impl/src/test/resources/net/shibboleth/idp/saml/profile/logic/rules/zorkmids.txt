@@ -1,4 +1,0 @@
-id = zorkmids
-transcoder = SAML2StringTranscoder
-saml2.name = zorkmids
-saml2.nameFormat = urn:oasis:names:tc:SAML:2.0:attrname-format:basic

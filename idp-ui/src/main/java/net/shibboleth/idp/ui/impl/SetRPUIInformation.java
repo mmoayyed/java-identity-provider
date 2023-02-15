@@ -40,8 +40,8 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
+import net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;

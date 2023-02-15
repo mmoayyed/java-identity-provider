@@ -54,6 +54,10 @@
         </dependency>
         <dependency>
             <groupId>net.shibboleth</groupId>
+            <artifactId>shib-saml-profile-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth</groupId>
             <artifactId>shib-profile-impl</artifactId>
         </dependency>
         <dependency>

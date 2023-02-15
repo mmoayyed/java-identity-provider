@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.logic;
+package net.shibboleth.idp.saml.profile.context.navigate;
 
 import java.util.ArrayList;
 import java.util.List;

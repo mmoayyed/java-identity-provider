@@ -29,7 +29,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
+import net.shibboleth.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;

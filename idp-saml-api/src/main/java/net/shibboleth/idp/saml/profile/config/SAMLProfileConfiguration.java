@@ -30,8 +30,9 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 
-/** Common interface for SAML profile configurations. */
-public interface SAMLProfileConfiguration extends InterceptorAwareProfileConfiguration {
+/** Common interface for IdP SAML profile configurations. */
+public interface SAMLProfileConfiguration extends net.shibboleth.saml.profile.config.SAMLProfileConfiguration,
+        InterceptorAwareProfileConfiguration {
 
     /**
      * Get the predicate used to determine if generated assertions should be signed.
@@ -41,24 +42,6 @@ public interface SAMLProfileConfiguration extends InterceptorAwareProfileConfigu
      * @return predicate used to determine if generated assertions should be signed
      */
     boolean isSignAssertions(@Nullable final ProfileRequestContext profileRequestContext);
-
-    /**
-     * Get the predicate used to determine if generated requests should be signed.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return predicate used to determine if generated requests should be signed
-     */
-    boolean isSignRequests(@Nullable final ProfileRequestContext profileRequestContext);
-
-    /**
-     * Get the predicate used to determine if generated responses should be signed.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return predicate used to determine if generated responses should be signed
-     */
-    boolean isSignResponses(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Get the lifetime of generated assertions.
