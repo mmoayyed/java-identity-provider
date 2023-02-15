@@ -32,6 +32,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ScriptedAction}. */
+@SuppressWarnings("javadoc")
 public class ScriptedActionTest {
 
     private RequestContext rc;

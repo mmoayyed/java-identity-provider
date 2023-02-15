@@ -26,6 +26,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link PathInfoSupportingFlowUrlHandler} unit test. */
+@SuppressWarnings("javadoc")
 public class PathInfoSupportingFlowUrlHandlerTest {
 
     MockHttpServletRequest request;

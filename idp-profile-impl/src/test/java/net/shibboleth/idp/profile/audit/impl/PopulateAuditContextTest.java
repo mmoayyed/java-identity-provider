@@ -40,6 +40,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link PopulateAuditContext} unit test. */
+@SuppressWarnings("javadoc")
 public class PopulateAuditContextTest {
 
     private RequestContext src;

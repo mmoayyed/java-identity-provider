@@ -27,6 +27,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link ProfileActionBeanPostProcessor} unit test. */
 @ContextConfiguration({"ProfileActionBeanPostProcessorTest.xml"})
+@SuppressWarnings("javadoc")
 public class ProfileActionBeanPostProcessorTest extends AbstractTestNGSpringContextTests {
 
     @Test public void testPostProcessAfterInitialization() {

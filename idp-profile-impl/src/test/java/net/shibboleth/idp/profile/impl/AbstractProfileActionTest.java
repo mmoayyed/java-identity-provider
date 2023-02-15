@@ -30,6 +30,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link AbstractProfileAction}. */
+@SuppressWarnings("javadoc")
 public class AbstractProfileActionTest {
 
     @Test public void testActionExecution() throws Exception {

@@ -28,6 +28,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link RecordResponseComplete}. */
+@SuppressWarnings("javadoc")
 public class RecordResponseCompleteTest {
 
     RecordResponseComplete action;

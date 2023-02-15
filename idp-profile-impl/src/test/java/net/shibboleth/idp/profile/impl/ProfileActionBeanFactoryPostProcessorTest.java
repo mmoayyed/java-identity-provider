@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.shared.annotation.Prototype;
 
 /** {@link ProfileActionBeanFactoryPostProcessor} unit test. */
+@SuppressWarnings("javadoc")
 @ContextConfiguration({"ProfileActionBeanFactoryPostProcessorTest.xml"})
 public class ProfileActionBeanFactoryPostProcessorTest extends AbstractTestNGSpringContextTests {
 

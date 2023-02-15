@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /** Unit test for {@link AbstractProfileConfiguration}. */
+@SuppressWarnings("javadoc")
 public class AbstractProfileConfigurationTest {
 
     @Test

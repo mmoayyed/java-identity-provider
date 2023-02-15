@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 
 /** Unit test for {@link InitializeProfileRequestContext}. */
+@SuppressWarnings("javadoc")
 public class InitializeProfileRequestContextTest {
 
     @Test public void testExecute() throws Exception {

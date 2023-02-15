@@ -119,7 +119,6 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
     
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("unchecked")
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
 
         // We have to override execute() because the profile request context doesn't exist yet.
