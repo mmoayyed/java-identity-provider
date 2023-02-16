@@ -92,9 +92,6 @@
         <jdbc:script location="classpath:/test/test-jdbc.sql"/>
     </jdbc:initialize-database>
 
-    <bean id="shibboleth.oidc.OpenIDConfiguration" class="org.springframework.core.io.ClassPathResource"
-        c:path="/static/openid-configuration.json" />
-
     <!--
     <bean id="shibboleth.authn.TOTP.SeedSource" parent="shibboleth.authn.TOTP.StaticSeedSource">
         <property name="seeds">
