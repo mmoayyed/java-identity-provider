@@ -39,11 +39,9 @@ import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
-/** Configuration support for SAML 2 Single Logout. */
-public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration {
-
-    /** ID for this profile configuration. */
-    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/logout";
+/** Configuration support for IdP SAML 2 Single Logout. */
+public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration
+        implements net.shibboleth.saml.saml2.profile.config.SingleLogoutProfileConfiguration {
 
     /** Predicate used to determine if SOAP-based requests should be signed. */
     @Nonnull private Predicate<MessageContext> signSOAPRequestsPredicate;
@@ -76,15 +74,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
         qualifiedNameIDFormatsLookupStrategy = FunctionSupport.constant(null);
     }
 
-    /**
-     * Get whether SOAP-based requests should be signed.
-     * 
-     * @param messageContext current message context
-     * 
-     * @return whether SOAP-based requests should be signed
-     * 
-     * @since 4.0.0
-     */
+    /** {@inheritDoc} */
     public boolean isSignSOAPRequests(@Nullable final MessageContext messageContext) {
         return signSOAPRequestsPredicate.test(messageContext);
     }
@@ -112,15 +102,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
                 "Predicate used to determine SOAP-based signing cannot be null");
     }
 
-    /**
-     * Get whether SOAP-based requests should use client TLS.
-     * 
-     * @param messageContext current message context
-     * 
-     * @return whether SOAP-based requests should use client TLS
-     * 
-     * @since 4.0.0
-     */
+    /** {@inheritDoc} */
     public boolean isClientTLSSOAPRequests(@Nullable final MessageContext messageContext) {
         return clientTLSSOAPRequestsPredicate.test(messageContext);
     }
@@ -148,21 +130,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
                 "Predicate used to determine SOAP-based client TLS use cannot be null");
     }
     
-    /**
-     * Get a collection of {@link org.opensaml.saml.saml2.core.NameID} Format values for which the use of
-     * the NameQualifier and SPNameQualifier attributes is defined to allow default/implicit values
-     * derived from the asserting and relying parties.
-     * 
-     * <p>In the core standard, only the {@link org.opensaml.saml.saml2.core.NameIDType#PERSISTENT} and
-     * {@link org.opensaml.saml.saml2.core.NameIDType#TRANSIENT} Formats are defined in this manner. This
-     * setting identifies <strong>additional</strong> Formats that should be handled in this way.</p>
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return additional Formats for which defaulting of qualifiers is permissable
-     * 
-     * @since 3.4.0
-     */
+    /** {@inheritDoc} */
     @Nonnull @NonnullElements @NotLive public Collection<String> getQualifiedNameIDFormats(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> formats = qualifiedNameIDFormatsLookupStrategy.apply(profileRequestContext);

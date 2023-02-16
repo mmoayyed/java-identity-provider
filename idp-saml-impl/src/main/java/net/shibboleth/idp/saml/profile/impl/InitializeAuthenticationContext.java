@@ -43,8 +43,8 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.logic.IgnoreScopingProfileConfigPredicate;
-import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyCountLookupFunction;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.saml.saml2.profile.config.navigate.ProxyCountLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
 
 /**

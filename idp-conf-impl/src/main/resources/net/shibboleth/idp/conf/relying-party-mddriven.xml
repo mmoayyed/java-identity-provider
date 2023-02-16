@@ -84,7 +84,7 @@
             <bean class="org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction" />
         </constructor-arg>
         <constructor-arg name="f">
-            <bean class="net.shibboleth.idp.saml.profile.context.navigate.messaging.SAMLMetadataContextLookupFunction" />
+            <bean class="net.shibboleth.saml.profile.context.navigate.messaging.SAMLMetadataContextLookupFunction" />
         </constructor-arg>
     </bean>
     
@@ -218,12 +218,6 @@
                 </constructor-arg>
                 <constructor-arg value="false" />
             </bean>
-        </property>
-        <property name="proxyCountLookupStrategy">
-            <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="proxyCount" />
-        </property>
-        <property name="proxyAudiencesLookupStrategy">
-            <bean parent="shibboleth.MDDrivenSetProperty" p:propertyName="proxyAudiences" />
         </property>
     </bean>
 
@@ -426,6 +420,12 @@
                 </constructor-arg>
                 <constructor-arg value="false" />
             </bean>
+        </property>
+        <property name="proxyCountLookupStrategy">
+            <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="proxyCount" />
+        </property>
+        <property name="proxyAudiencesLookupStrategy">
+            <bean parent="shibboleth.MDDrivenSetProperty" p:propertyName="proxyAudiences" />
         </property>
         <property name="proxiedAuthnInstantPredicate">
             <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">

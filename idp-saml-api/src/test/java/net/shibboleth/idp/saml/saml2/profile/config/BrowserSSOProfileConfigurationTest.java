@@ -250,5 +250,60 @@ public class BrowserSSOProfileConfigurationTest {
         Assert.assertTrue(config.isClientTLSArtifactRequests(null));
     }
      
+    
+    @Test public void testProxyCount() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertNull(config.getProxyCount(null));
+
+        config.setProxyCount(1);
+        Assert.assertEquals(config.getProxyCount(null), Integer.valueOf(1));
+    }
+
+    @Test public void testIndirectProxyCount() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+
+        config.setProxyCountLookupStrategy(FunctionSupport.constant(1));
+        Assert.assertEquals(config.getProxyCount(null), Integer.valueOf(1));
+    }
+
+    @Test public void testProxyAudiences() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertNotNull(config.getProxyAudiences(null));
+        Assert.assertTrue(config.getProxyAudiences(null).isEmpty());
+
+        final Set<String> audiences = new HashSet<>();
+        audiences.add("foo");
+        audiences.add("bar");
+
+        config.setProxyAudiences(audiences);
+        Assert.assertNotSame(config.getProxyAudiences(null), audiences);
+        Assert.assertEquals(config.getProxyAudiences(null), audiences);
+
+        try {
+            config.getProxyAudiences(null).add("baz");
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+            // expected this
+        }
+    }
+
+    @Test public void testIndirectProxyAudiences() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+
+        final Set<String> audiences = new HashSet<>();
+        audiences.add("foo");
+        audiences.add("bar");
+
+        config.setProxyAudiencesLookupStrategy(FunctionSupport.constant(audiences));
+        Assert.assertNotSame(config.getProxyAudiences(null), audiences);
+        Assert.assertEquals(config.getProxyAudiences(null), audiences);
+
+        try {
+            config.getProxyAudiences(null).add("baz");
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+            // expected this
+        }
+    }
 
 }

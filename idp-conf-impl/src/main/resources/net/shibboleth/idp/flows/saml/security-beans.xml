@@ -117,7 +117,7 @@
 
     <bean id="NotIgnoreRequestSignaturesPredicate" parent="shibboleth.Conditions.NOT">
         <constructor-arg>
-            <bean class="net.shibboleth.idp.saml.saml2.profile.config.logic.IgnoreRequestSignaturesPredicate" />
+            <bean class="net.shibboleth.saml.saml2.profile.config.logic.IgnoreRequestSignaturesPredicate" />
         </constructor-arg>
     </bean>
 

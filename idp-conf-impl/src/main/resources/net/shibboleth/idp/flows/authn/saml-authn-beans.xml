@@ -386,10 +386,10 @@
         <property name="clockSkew" value="%{idp.policy.clockSkew:PT3M}" />
         <property name="lifetime" value="%{idp.policy.assertionLifetime:PT3M}" />
         <property name="checkAddress">
-            <bean class="net.shibboleth.idp.saml.saml2.profile.config.logic.CheckAddressPredicate" />
+            <bean class="net.shibboleth.saml.saml2.profile.config.logic.CheckAddressPredicate" />
         </property>
         <property name="maximumTimeSinceAuthn">
-            <bean class="net.shibboleth.idp.saml.saml2.profile.config.navigate.MaximumTimeSinceAuthnLookupFunction" />
+            <bean class="net.shibboleth.saml.saml2.profile.config.navigate.MaximumTimeSinceAuthnLookupFunction" />
         </property>
         <property name="additionalAudiences">
             <bean class="net.shibboleth.idp.saml.profile.config.navigate.AdditionalAudiencesForAssertionLookupFunction" />

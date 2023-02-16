@@ -52,22 +52,15 @@ import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.SubjectLocality;
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 
-/** Configuration support for SAML 2 Browser SSO. */
+/** Configuration support for IdP and proxied SAML 2.0 Browser SSO. */
 public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration
-        implements AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration {
-    
-    /** ID for this profile configuration. */
-    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/browser";
+        implements AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration,
+            net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration{
     
     /** Default maximum delegation chain length. */
     @Nonnull public static final Long DEFAULT_DELEGATION_CHAIN_LENGTH = 1L;
-        
-    /** Bit constant for RequestedAuthnContext feature. */
-    public static final int FEATURE_AUTHNCONTEXT = 0x1;
-
-    /** Bit constant for Scoping feature. */
-    public static final int FEATURE_SCOPING = 0x2;
     
     /** Whether attributes should be resolved in the course of the profile. */
     @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;
@@ -87,6 +80,12 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     /** Whether the response endpoint should be validated if the request is signed. */
     @Nonnull private Predicate<ProfileRequestContext> skipEndpointValidationWhenSignedPredicate;
 
+    /** Lookup function to supply proxyCount property. */
+    @Nonnull private Function<ProfileRequestContext,Integer> proxyCountLookupStrategy;
+
+    /** Lookup function to supply proxy audiences. */
+    @Nonnull private Function<ProfileRequestContext,Collection<String>> proxyAudiencesLookupStrategy;
+    
     /** Whether authentication results should carry the proxied AuthnInstant. */
     @Nonnull private Predicate<ProfileRequestContext> proxiedAuthnInstantPredicate;
 
@@ -156,6 +155,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
         forceAuthnPredicate = new ProxyAwareForceAuthnPredicate();
         checkAddressPredicate = PredicateSupport.alwaysTrue();
         skipEndpointValidationWhenSignedPredicate = PredicateSupport.alwaysFalse();
+        proxyCountLookupStrategy = FunctionSupport.constant(null);
+        proxyAudiencesLookupStrategy = FunctionSupport.constant(null);
         proxiedAuthnInstantPredicate = PredicateSupport.alwaysTrue();
         suppressAuthenticatingAuthorityPredicate = PredicateSupport.alwaysFalse();
         requireSignedRequestsPredicate = PredicateSupport.alwaysFalse();
@@ -363,6 +364,82 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     }
 
     /**
+     * Gets the maximum number of times an assertion may be proxied.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return maximum number of times an assertion may be proxied
+     */
+    @Nullable public Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext) {
+        final Integer count = proxyCountLookupStrategy.apply(profileRequestContext);
+        if (count != null) {
+            Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
+        }
+        return count;
+    }
+
+    /**
+     * Set the maximum number of times an assertion may be proxied.
+     * 
+     * @param count maximum number of times an assertion may be proxied
+     */
+    public void setProxyCount(@Nullable @NonNegative final Integer count) {
+        if (count != null) {
+            Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
+        }
+        proxyCountLookupStrategy = FunctionSupport.constant(count);
+    }
+
+    /**
+     * Set a lookup strategy for the maximum number of times an assertion may be proxied.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setProxyCountLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
+        proxyCountLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+
+    /**
+     * Gets the unmodifiable collection of audiences for a proxied assertion.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return audiences for a proxied assertion
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getProxyAudiences(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        final Collection<String> audiences = proxyAudiencesLookupStrategy.apply(profileRequestContext);
+        if (audiences != null) {
+            return CollectionSupport.copyToSet(audiences);
+        }
+        return CollectionSupport.emptySet();
+    }
+
+    /**
+     * Set the proxy audiences to be added to responses.
+     * 
+     * @param audiences proxy audiences to be added to responses
+     */
+    public void setProxyAudiences(@Nullable @NonnullElements final Collection<String> audiences) {
+        if (audiences == null || audiences.isEmpty()) {
+            proxyAudiencesLookupStrategy = FunctionSupport.constant(null);
+        } else {
+            proxyAudiencesLookupStrategy = FunctionSupport.constant(
+                    List.copyOf(StringSupport.normalizeStringCollection(audiences)));
+        }
+    }
+
+    /**
+     * Set a lookup strategy for the proxy audiences to be added to responses.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setProxyAudiencesLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+        proxyAudiencesLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+    
+    /**
      * Gets whether to suppress inclusion of {@link AuthenticatingAuthority} element.
      * 
      * <p>Defaults to false.</p>
@@ -527,7 +604,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
      * 
      * @since 4.0.0
      */
-    @Nullable public Duration getMaximumTimeSinceAuthn(@Nullable final ProfileRequestContext profileRequestContext) {
+    @NonNegative @Nullable public Duration getMaximumTimeSinceAuthn(
+            @Nullable final ProfileRequestContext profileRequestContext) {
         final Duration amount = maximumTimeSinceAuthnLookupStrategy.apply(profileRequestContext);
         Constraint.isFalse(amount != null && amount.isNegative(),
                 "Maximum time since authentication must be greater than or equal to 0");
@@ -949,6 +1027,27 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwarePr
     public void setNameIDFormatPrecedenceLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
         nameIDFormatPrecedenceLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    @Nullable
+    public String getNameQualifier(@Nullable final ProfileRequestContext profileRequestContext) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Nullable
+    public String getAttributeIndex(@Nullable final ProfileRequestContext profileRequestContext) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull public Collection<RequestedAttribute> getRequestedAttributes(
+            @Nullable final ProfileRequestContext profileRequestContext) {
+        // TODO Auto-generated method stub
+        return CollectionSupport.emptyList();
     }
 
 }

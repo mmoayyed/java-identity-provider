@@ -27,10 +27,10 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.AbstractRelyingPartyLookupFunction;
-import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
@@ -77,9 +77,9 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc instanceof SAML2ProfileConfiguration) {
-                proxyCount = ((SAML2ProfileConfiguration) pc).getProxyCount(input);
-                final Set<String> configAudiences = ((SAML2ProfileConfiguration) pc).getProxyAudiences(input);
+            if (pc != null && pc instanceof BrowserSSOProfileConfiguration) {
+                proxyCount = ((BrowserSSOProfileConfiguration) pc).getProxyCount(input);
+                final Set<String> configAudiences = ((BrowserSSOProfileConfiguration) pc).getProxyAudiences(input);
                 if (configAudiences != null && !configAudiences.isEmpty()) {
                     audiences.addAll(configAudiences);
                 }

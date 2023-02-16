@@ -17,9 +17,11 @@
 
 package net.shibboleth.idp.saml.saml1.profile.config;
 
+import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
+
 /**
  * Marker interface for SAML 1.x profile configuration interfaces, currently empty.
  */
-public interface SAML1ProfileConfiguration {
+public interface SAML1ProfileConfiguration extends SAMLProfileConfiguration {
 
 }

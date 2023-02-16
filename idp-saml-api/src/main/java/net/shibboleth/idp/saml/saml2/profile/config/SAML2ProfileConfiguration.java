@@ -17,70 +17,14 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import java.util.Set;
-
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.shared.annotation.constraint.NonNegative;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.annotation.constraint.NotLive;
-import net.shibboleth.shared.annotation.constraint.Unmodifiable;
-
 /**
  * Base interface for SAML 2 profile configurations. 
  */
-public interface SAML2ProfileConfiguration {
-
-    /**
-     * Gets the maximum number of times an assertion may be proxied.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return maximum number of times an assertion may be proxied
-     */
-    @NonNegative @Nullable Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext);
-
-    /**
-     * Gets the unmodifiable collection of audiences for a proxied assertion.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return audiences for a proxied assertion
-     */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getProxyAudiences(
-            @Nullable final ProfileRequestContext profileRequestContext);
-    
-    /**
-     * Gets whether to bypass verification of request signatures.
-     * 
-     * <p>This is typically of use to deal with broken services or to allow a
-     * signer's key to be bypassed in the event that it is managed improperly.</p>
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return true iff request signatures should be ignored
-     * 
-     * @since 4.0.0
-     */
-    boolean isIgnoreRequestSignatures(@Nonnull final ProfileRequestContext profileRequestContext);
-
-    /**
-     * Gets whether to ignore an inability to encrypt due to external factors.
-     * 
-     *  <p>This allows a deployer to signal that encryption is "best effort" and
-     *  can be omitted if a relying party doesn't possess a key, support a compatible
-     *  algorithm, etc.</p>
-     *  
-     *  <p>Defaults to false.</p>
-     *  
-     * @param profileRequestContext current profile request context
-     * 
-     * @return true iff encryption should be treated as optional
-     */
-    boolean isEncryptionOptional(@Nullable final ProfileRequestContext profileRequestContext);
+public interface SAML2ProfileConfiguration extends net.shibboleth.saml.saml2.profile.config.SAML2ProfileConfiguration {
     
     /**
      * Gets the predicate used to determine if assertions should be encrypted.
@@ -90,15 +34,6 @@ public interface SAML2ProfileConfiguration {
      * @return predicate used to determine if assertions should be encrypted
      */
     boolean isEncryptAssertions(@Nullable final ProfileRequestContext profileRequestContext);
-
-    /**
-     * Gets the predicate used to determine if name identifiers should be encrypted.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return predicate used to determine if name identifiers should be encrypted
-     */
-    boolean isEncryptNameIDs(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
      * Gets the predicate used to determine if attributes should be encrypted.

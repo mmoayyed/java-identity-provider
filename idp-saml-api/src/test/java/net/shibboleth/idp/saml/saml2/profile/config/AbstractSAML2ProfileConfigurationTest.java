@@ -17,10 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.testng.Assert;
@@ -66,61 +62,6 @@ public class AbstractSAML2ProfileConfigurationTest {
 
         config.setEncryptAttributes(true);
         Assert.assertTrue(config.isEncryptAttributes(null));
-    }
-    
-    @Test public void testProxyCount() {
-        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
-        Assert.assertNull(config.getProxyCount(null));
-
-        config.setProxyCount(1);
-        Assert.assertEquals(config.getProxyCount(null), Integer.valueOf(1));
-    }
-
-    @Test public void testIndirectProxyCount() {
-        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
-
-        config.setProxyCountLookupStrategy(FunctionSupport.constant(1));
-        Assert.assertEquals(config.getProxyCount(null), Integer.valueOf(1));
-    }
-
-    @Test public void testProxyAudiences() {
-        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
-        Assert.assertNotNull(config.getProxyAudiences(null));
-        Assert.assertTrue(config.getProxyAudiences(null).isEmpty());
-
-        final Set<String> audiences = new HashSet<>();
-        audiences.add("foo");
-        audiences.add("bar");
-
-        config.setProxyAudiences(audiences);
-        Assert.assertNotSame(config.getProxyAudiences(null), audiences);
-        Assert.assertEquals(config.getProxyAudiences(null), audiences);
-
-        try {
-            config.getProxyAudiences(null).add("baz");
-            Assert.fail();
-        } catch (UnsupportedOperationException e) {
-            // expected this
-        }
-    }
-
-    @Test public void testIndirectProxyAudiences() {
-        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
-
-        final Set<String> audiences = new HashSet<>();
-        audiences.add("foo");
-        audiences.add("bar");
-
-        config.setProxyAudiencesLookupStrategy(FunctionSupport.constant(audiences));
-        Assert.assertNotSame(config.getProxyAudiences(null), audiences);
-        Assert.assertEquals(config.getProxyAudiences(null), audiences);
-
-        try {
-            config.getProxyAudiences(null).add("baz");
-            Assert.fail();
-        } catch (UnsupportedOperationException e) {
-            // expected this
-        }
     }
 
     /** Mock class for testing {@link AbstractSAML2ProfileConfiguration}. */

@@ -199,7 +199,7 @@
                     <bean class="net.shibboleth.saml.profile.config.logic.messaging.ClientTLSArtifactRequestsPredicate" />
                 </entry>
                 <entry key="SAML2.Logout">
-                    <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.ClientTLSSOAPLogoutRequestsPredicate" />
+                    <bean class="net.shibboleth.saml.saml2.profile.config.logic.messaging.ClientTLSSOAPLogoutRequestsPredicate" />
                 </entry>
             </map>
         </constructor-arg>
@@ -213,7 +213,7 @@
                     <bean class="net.shibboleth.saml.profile.config.logic.messaging.SignArtifactRequestsPredicate" />
                 </entry>
                 <entry key="SAML2.Logout">
-                    <bean class="net.shibboleth.idp.saml.profile.config.logic.messaging.SignSOAPLogoutRequestsPredicate" />
+                    <bean class="net.shibboleth.saml.saml2.profile.config.logic.messaging.SignSOAPLogoutRequestsPredicate" />
                 </entry>
             </map>
         </constructor-arg>
