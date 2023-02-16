@@ -22,11 +22,12 @@ import javax.annotation.Nonnull;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 1 artifact resolution requests. */
-public class ArtifactResolutionProfileConfiguration
-        extends AbstractSAMLProfileConfiguration implements SAML1ProfileConfiguration {
+public class ArtifactResolutionProfileConfiguration extends AbstractSAMLProfileConfiguration
+        implements SAMLProfileConfiguration {
 
     /** ID for this profile configuration. */
     @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/artifact";

@@ -37,7 +37,7 @@ import net.shibboleth.shared.logic.FunctionSupport;
  * @since 3.4.0
  */
 public abstract class AbstractSAML1ArtifactAwareProfileConfiguration extends AbstractSAMLProfileConfiguration
-        implements SAML1ProfileConfiguration, SAMLArtifactAwareProfileConfiguration {
+        implements SAMLArtifactAwareProfileConfiguration {
     
     /** Lookup function to supply artifactConfiguration property. */
     @Nonnull private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;

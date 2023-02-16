@@ -26,14 +26,13 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
-import net.shibboleth.saml.saml2.profile.config.SAML2AssertionProducingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.PredicateSupport;
 
-/** Configuration support for SAML 2 artifact resolution requests. */
+/** Configuration support for IdP SAML 2.0 artifact resolution profile. */
 public class ArtifactResolutionProfileConfiguration extends AbstractSAML2ProfileConfiguration
-        implements SAML2AssertionProducingProfileConfiguration {
+        implements net.shibboleth.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration {
 
     /** ID for this profile configuration. */
     @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/query/artifact";
@@ -47,8 +46,6 @@ public class ArtifactResolutionProfileConfiguration extends AbstractSAML2Profile
     /** Constructor. */
     public ArtifactResolutionProfileConfiguration() {
         this(PROFILE_ID);
-        encryptAssertionsPredicate = PredicateSupport.alwaysFalse();
-        encryptAttributesPredicate = PredicateSupport.alwaysFalse();
     }
 
     /**
@@ -59,8 +56,7 @@ public class ArtifactResolutionProfileConfiguration extends AbstractSAML2Profile
     protected ArtifactResolutionProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
-        setEncryptAssertionsPredicate(new NoConfidentialityMessageChannelPredicate());
-        encryptAssertionsPredicate = PredicateSupport.alwaysFalse();
+        encryptAssertionsPredicate = new NoConfidentialityMessageChannelPredicate();
         encryptAttributesPredicate = PredicateSupport.alwaysFalse();
     }
     

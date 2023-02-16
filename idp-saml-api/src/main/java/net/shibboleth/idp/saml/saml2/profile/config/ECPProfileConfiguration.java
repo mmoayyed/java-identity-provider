@@ -35,18 +35,16 @@ import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
-/** Configuration support for SAML 2 ECP. */
-public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration {
-
-    /** ID for this profile configuration. */
-    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/ecp";
+/** Configuration support for IdP SAML 2.0 ECP profile. */
+public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration 
+        implements net.shibboleth.saml.saml2.profile.config.ECPProfileConfiguration {
 
     /** Lookup function to supply Local error events to handle without a SOAP fault. */
     @Nonnull private Function<ProfileRequestContext,Set<String>> localEventsLookupStrategy;
         
     /** Constructor. */
     public ECPProfileConfiguration() {
-        this(PROFILE_ID);
+        this(net.shibboleth.saml.saml2.profile.config.ECPProfileConfiguration.PROFILE_ID);
         
         localEventsLookupStrategy = FunctionSupport.constant(null);
     }

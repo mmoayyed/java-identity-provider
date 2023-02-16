@@ -24,12 +24,9 @@ import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
-/** Configuration support for SAML 2 attribute query requests. */
-public class AttributeQueryProfileConfiguration extends AbstractSAML2AssertionProducingProfileConfiguration {
-
-    /** ID for this profile configuration. */
-    @Nonnull @NotEmpty public static final String PROFILE_ID =
-            "http://shibboleth.net/ns/profiles/saml2/query/attribute";
+/** Configuration support for IdP SAML 2.0 attribute query profile. */
+public class AttributeQueryProfileConfiguration extends AbstractSAML2AssertionProducingProfileConfiguration
+        implements net.shibboleth.saml.saml2.profile.config.AttributeQueryProfileConfiguration {
     
     /** Constructor. */
     public AttributeQueryProfileConfiguration() {
