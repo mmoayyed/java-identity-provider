@@ -25,7 +25,7 @@ import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 2 attribute query requests. */
-public class AttributeQueryProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration {
+public class AttributeQueryProfileConfiguration extends AbstractSAML2AssertionProducingProfileConfiguration {
 
     /** ID for this profile configuration. */
     @Nonnull @NotEmpty public static final String PROFILE_ID =

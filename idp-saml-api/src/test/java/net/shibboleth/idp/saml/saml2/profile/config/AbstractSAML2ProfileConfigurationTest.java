@@ -50,20 +50,6 @@ public class AbstractSAML2ProfileConfigurationTest {
         Assert.assertTrue(config.isEncryptNameIDs(null));
     }
 
-    @Test public void testEncryptAssertionsPredicate() {
-        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
-
-        config.setEncryptAssertions(true);
-        Assert.assertTrue(config.isEncryptAssertions(null));
-    }
-
-    @Test public void testEncryptAttributesPredicate() {
-        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
-
-        config.setEncryptAttributes(true);
-        Assert.assertTrue(config.isEncryptAttributes(null));
-    }
-
     /** Mock class for testing {@link AbstractSAML2ProfileConfiguration}. */
     private static class MockSAML2ProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 

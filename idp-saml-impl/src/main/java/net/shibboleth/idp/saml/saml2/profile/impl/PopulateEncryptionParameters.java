@@ -50,9 +50,10 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.saml.saml2.profile.config.SAML2AssertionProducingProfileConfiguration;
+import net.shibboleth.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -240,10 +241,6 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
             log.debug("{} Unable to locate RelyingPartyContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
-        } else if (rpContext.getProfileConfig() == null) {
-            log.debug("{} Unable to locate RelyingPartyContext", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
-            return false;
         } else if (!(rpContext.getProfileConfig() instanceof SAML2ProfileConfiguration)) {
             log.debug("{} Not a SAML 2 profile configuration, nothing to do", getLogPrefix());
             return false;
@@ -275,9 +272,11 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
             // Encryption can only be optional if the request didn't specify it above.
             encryptionOptional = profileConfiguration.isEncryptionOptional(profileRequestContext);
         }
-        
-        encryptAssertions = profileConfiguration.isEncryptAssertions(profileRequestContext);
-        encryptAttributes = profileConfiguration.isEncryptAttributes(profileRequestContext);
+
+        if (profileConfiguration instanceof SAML2AssertionProducingProfileConfiguration appc) {
+            encryptAssertions = appc.isEncryptAssertions(profileRequestContext);
+            encryptAttributes = appc.isEncryptAttributes(profileRequestContext);
+        }
         
         if (!encryptAssertions && !encryptIdentifiers && !encryptAttributes) {
             log.debug("{} No encryption requested, nothing to do", getLogPrefix());

@@ -29,7 +29,22 @@ public class ArtifactResolutionProfileConfigurationTest {
         Assert.assertEquals(ArtifactResolutionProfileConfiguration.PROFILE_ID,
                 "http://shibboleth.net/ns/profiles/saml2/query/artifact");
 
-        ArtifactResolutionProfileConfiguration config = new ArtifactResolutionProfileConfiguration();
+        final ArtifactResolutionProfileConfiguration config = new ArtifactResolutionProfileConfiguration();
         Assert.assertEquals(config.getId(), ArtifactResolutionProfileConfiguration.PROFILE_ID);
     }
+
+    @Test public void testEncryptAssertionsPredicate() {
+        final ArtifactResolutionProfileConfiguration config = new ArtifactResolutionProfileConfiguration();
+
+        config.setEncryptAssertions(true);
+        Assert.assertTrue(config.isEncryptAssertions(null));
+    }
+
+    @Test public void testEncryptAttributesPredicate() {
+        final ArtifactResolutionProfileConfiguration config = new ArtifactResolutionProfileConfiguration();
+
+        config.setEncryptAttributes(true);
+        Assert.assertTrue(config.isEncryptAttributes(null));
+    }
+
 }

@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
+import net.shibboleth.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.PredicateSupport;
@@ -41,14 +42,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     /** Whether encryption is optional in the face of no key, etc. */
     @Nonnull private Predicate<ProfileRequestContext> encryptionOptionalPredicate;
     
-    /** Predicate used to determine if assertions should be encrypted. */
-    @Nonnull private Predicate<ProfileRequestContext> encryptAssertionsPredicate;
-
     /** Predicate used to determine if name identifiers should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptNameIDsPredicate;
-
-    /** Predicate used to determine if attributes should be encrypted. */
-    @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
 
     /**
      * Constructor.
@@ -60,9 +55,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
 
         ignoreRequestSignaturesPredicate = PredicateSupport.alwaysFalse();
         encryptionOptionalPredicate = PredicateSupport.alwaysFalse();
-        encryptAssertionsPredicate = PredicateSupport.alwaysFalse();
         encryptNameIDsPredicate = PredicateSupport.alwaysFalse();
-        encryptAttributesPredicate = PredicateSupport.alwaysFalse();
     }
     
     /** {@inheritDoc} */
@@ -118,31 +111,6 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     }
     
     /** {@inheritDoc} */
-    public boolean isEncryptAssertions(@Nullable final ProfileRequestContext profileRequestContext) {
-        return encryptAssertionsPredicate.test(profileRequestContext);
-    }
-
-    /**
-     * Set whether assertions should be encrypted.
-     * 
-     * @param flag  flag to set
-     */
-    public void setEncryptAssertions(final boolean flag) {
-        encryptAssertionsPredicate = PredicateSupport.constant(flag);
-    }
-    
-    /**
-     * Set the predicate used to determine if assertions should be encrypted.
-     * 
-     * @param predicate predicate used to determine if assertions should be encrypted
-     * 
-     * @since 4.0.0
-     */
-    public void setEncryptAssertionsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        encryptAssertionsPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
-    }
-
-    /** {@inheritDoc} */
     public boolean isEncryptNameIDs(@Nullable final ProfileRequestContext profileRequestContext) {
         return encryptNameIDsPredicate.test(profileRequestContext);
     }
@@ -165,31 +133,6 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      */
     public void setEncryptNameIDsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         encryptNameIDsPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
-    }
-
-    /** {@inheritDoc} */
-    public boolean isEncryptAttributes(@Nullable final ProfileRequestContext profileRequestContext) {
-        return encryptAttributesPredicate.test(profileRequestContext);
-    }
-
-    /**
-     * Set whether attributes should be encrypted.
-     * 
-     * @param flag  flag to set
-     */
-    public void setEncryptAttributes(final boolean flag) {
-        encryptAttributesPredicate = PredicateSupport.constant(flag);
-    }
-    
-    /**
-     * Set the predicate used to determine if attributes should be encrypted.
-     * 
-     * @param predicate predicate used to determine if attributes should be encrypted
-     * 
-     * @since 4.0.0
-     */
-    public void setEncryptAttributesPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        encryptAttributesPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
     }
     
     /**

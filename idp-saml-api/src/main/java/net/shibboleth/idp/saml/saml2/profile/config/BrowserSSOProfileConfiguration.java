@@ -55,7 +55,7 @@ import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 
 /** Configuration support for IdP and proxied SAML 2.0 Browser SSO. */
-public class BrowserSSOProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration
+public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProducingProfileConfiguration
         implements AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration,
             net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration{
     

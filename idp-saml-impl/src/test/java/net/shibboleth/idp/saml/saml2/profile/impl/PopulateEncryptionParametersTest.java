@@ -84,7 +84,7 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
         prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(null);
         
         final Event event = action.execute(rc);
-        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
+        ActionTestingSupport.assertProceedEvent(event);
     }
 
     @Test public void testWrongConfig() throws Exception {

@@ -195,26 +195,10 @@
                 <constructor-arg value="%{idp.encryption.optional:false}" />
             </bean>
         </property>
-        <property name="encryptAssertionsPredicate">
-            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
-                <constructor-arg>
-                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAssertions" />
-                </constructor-arg>
-                <constructor-arg value="false" />
-            </bean>
-        </property>
         <property name="encryptNameIDsPredicate">
             <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
                 <constructor-arg>
                     <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptNameIDs" />
-                </constructor-arg>
-                <constructor-arg value="false" />
-            </bean>
-        </property>
-        <property name="encryptAttributesPredicate">
-            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
-                <constructor-arg>
-                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAttributes" />
                 </constructor-arg>
                 <constructor-arg value="false" />
             </bean>
@@ -614,6 +598,14 @@
                 </constructor-arg>
             </bean>
         </property>
+        <property name="encryptAttributesPredicate">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAttributes" />
+                </constructor-arg>
+                <constructor-arg value="false" />
+            </bean>
+        </property>
     </bean>
 
     <bean id="SAML2.ArtifactResolution.MDDriven" parent="AbstractMDDrivenSAML2Profile" lazy-init="true"
@@ -636,6 +628,14 @@
                 <constructor-arg>
                     <bean class="org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate" />
                 </constructor-arg>
+            </bean>
+        </property>
+        <property name="encryptAttributesPredicate">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="encryptAttributes" />
+                </constructor-arg>
+                <constructor-arg value="false" />
             </bean>
         </property>
     </bean>

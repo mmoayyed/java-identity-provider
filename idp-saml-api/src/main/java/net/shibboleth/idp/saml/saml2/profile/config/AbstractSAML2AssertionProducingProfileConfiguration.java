@@ -22,44 +22,32 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
-import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
-
 import net.shibboleth.saml.saml2.profile.config.SAML2AssertionProducingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.PredicateSupport;
 
-/** Configuration support for SAML 2 artifact resolution requests. */
-public class ArtifactResolutionProfileConfiguration extends AbstractSAML2ProfileConfiguration
-        implements SAML2AssertionProducingProfileConfiguration {
+import org.opensaml.profile.context.ProfileRequestContext;
 
-    /** ID for this profile configuration. */
-    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/query/artifact";
+/** Base class for SAML 2 profile configurations. */
+public abstract class AbstractSAML2AssertionProducingProfileConfiguration
+        extends AbstractSAML2ArtifactAwareProfileConfiguration
+        implements SAML2AssertionProducingProfileConfiguration {
 
     /** Predicate used to determine if assertions should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAssertionsPredicate;
-    
+
     /** Predicate used to determine if attributes should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
-
-    /** Constructor. */
-    public ArtifactResolutionProfileConfiguration() {
-        this(PROFILE_ID);
-        encryptAssertionsPredicate = PredicateSupport.alwaysFalse();
-        encryptAttributesPredicate = PredicateSupport.alwaysFalse();
-    }
 
     /**
      * Constructor.
      * 
-     * @param profileId unique ID for this profile
+     * @param profileId ID of the communication profile, never null or empty
      */
-    protected ArtifactResolutionProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
+    public AbstractSAML2AssertionProducingProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
-        setEncryptAssertionsPredicate(new NoConfidentialityMessageChannelPredicate());
+
         encryptAssertionsPredicate = PredicateSupport.alwaysFalse();
         encryptAttributesPredicate = PredicateSupport.alwaysFalse();
     }
@@ -82,6 +70,8 @@ public class ArtifactResolutionProfileConfiguration extends AbstractSAML2Profile
      * Set the predicate used to determine if assertions should be encrypted.
      * 
      * @param predicate predicate used to determine if assertions should be encrypted
+     * 
+     * @since 4.0.0
      */
     public void setEncryptAssertionsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         encryptAssertionsPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
@@ -105,9 +95,11 @@ public class ArtifactResolutionProfileConfiguration extends AbstractSAML2Profile
      * Set the predicate used to determine if attributes should be encrypted.
      * 
      * @param predicate predicate used to determine if attributes should be encrypted
+     * 
+     * @since 4.0.0
      */
     public void setEncryptAttributesPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         encryptAttributesPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
     }
-
+    
 }

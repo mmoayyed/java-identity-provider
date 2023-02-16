@@ -74,4 +74,18 @@ public class AttributeQueryProfileConfigurationTest {
         Assert.assertTrue(config.isClientTLSArtifactRequests(null));
     }
 
+    @Test public void testEncryptAssertionsPredicate() {
+        final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
+
+        config.setEncryptAssertions(true);
+        Assert.assertTrue(config.isEncryptAssertions(null));
+    }
+
+    @Test public void testEncryptAttributesPredicate() {
+        final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
+
+        config.setEncryptAttributes(true);
+        Assert.assertTrue(config.isEncryptAttributes(null));
+    }
+
 }
