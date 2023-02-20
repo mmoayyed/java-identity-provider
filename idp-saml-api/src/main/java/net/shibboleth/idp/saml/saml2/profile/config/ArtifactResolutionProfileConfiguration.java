@@ -34,15 +34,15 @@ import net.shibboleth.shared.logic.PredicateSupport;
 public class ArtifactResolutionProfileConfiguration extends AbstractSAML2ProfileConfiguration
         implements net.shibboleth.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration {
 
-    /** ID for this profile configuration. */
-    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/query/artifact";
+    /** Predicate used to determine whether to sign assertions. */
+    @Nonnull private Predicate<ProfileRequestContext> signAssertionsPredicate;
 
     /** Predicate used to determine if assertions should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAssertionsPredicate;
     
     /** Predicate used to determine if attributes should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
-
+    
     /** Constructor. */
     public ArtifactResolutionProfileConfiguration() {
         this(PROFILE_ID);
@@ -56,10 +56,36 @@ public class ArtifactResolutionProfileConfiguration extends AbstractSAML2Profile
     protected ArtifactResolutionProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         setSignResponsesPredicate(new NoIntegrityMessageChannelPredicate());
+
+        signAssertionsPredicate = PredicateSupport.alwaysFalse();
+
         encryptAssertionsPredicate = new NoConfidentialityMessageChannelPredicate();
         encryptAttributesPredicate = PredicateSupport.alwaysFalse();
     }
+
+    /** {@inheritDoc} */
+    public boolean isSignAssertions(@Nullable final ProfileRequestContext profileRequestContext) {
+        return signAssertionsPredicate.test(profileRequestContext);
+    }
+
+    /**
+     * Set whether generated assertions should be signed.
+     * 
+     * @param flag flag to set
+     */
+    public void setSignAssertions(final boolean flag) {
+        signAssertionsPredicate = PredicateSupport.constant(flag);
+    }
     
+    /**
+     * Set the predicate used to determine if generated assertions should be signed.
+     * 
+     * @param predicate predicate used to determine if generated assertions should be signed
+     */
+    public void setSignAssertionsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+        signAssertionsPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
+    }
+            
     /** {@inheritDoc} */
     public boolean isEncryptAssertions(@Nullable final ProfileRequestContext profileRequestContext) {
         return encryptAssertionsPredicate.test(profileRequestContext);

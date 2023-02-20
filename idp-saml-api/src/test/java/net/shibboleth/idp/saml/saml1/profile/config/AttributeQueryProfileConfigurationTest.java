@@ -31,9 +31,6 @@ public class AttributeQueryProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        Assert.assertEquals(AttributeQueryProfileConfiguration.PROFILE_ID,
-                "http://shibboleth.net/ns/profiles/saml1/query/attribute");
-
         final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
         Assert.assertEquals(config.getId(), AttributeQueryProfileConfiguration.PROFILE_ID);
     }
@@ -60,4 +57,10 @@ public class AttributeQueryProfileConfigurationTest {
         Assert.assertSame(config.getArtifactConfiguration(null), artifactConfiguration);
     }
 
+    @Test public void testSignAssertionsCriteria() {
+        final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
+
+        config.setSignAssertions(false);
+        Assert.assertFalse(config.isSignAssertions(null));
+    }
 }

@@ -77,7 +77,7 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc instanceof BrowserSSOProfileConfiguration) {
+            if (pc instanceof BrowserSSOProfileConfiguration) {
                 proxyCount = ((BrowserSSOProfileConfiguration) pc).getProxyCount(input);
                 final Set<String> configAudiences = ((BrowserSSOProfileConfiguration) pc).getProxyAudiences(input);
                 if (configAudiences != null && !configAudiences.isEmpty()) {

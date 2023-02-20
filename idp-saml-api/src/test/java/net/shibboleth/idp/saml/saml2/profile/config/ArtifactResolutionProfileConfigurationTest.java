@@ -26,11 +26,15 @@ public class ArtifactResolutionProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        Assert.assertEquals(ArtifactResolutionProfileConfiguration.PROFILE_ID,
-                "http://shibboleth.net/ns/profiles/saml2/query/artifact");
-
         final ArtifactResolutionProfileConfiguration config = new ArtifactResolutionProfileConfiguration();
         Assert.assertEquals(config.getId(), ArtifactResolutionProfileConfiguration.PROFILE_ID);
+    }
+
+    @Test public void testSignAssertionsCriteria() {
+        final ArtifactResolutionProfileConfiguration config = new ArtifactResolutionProfileConfiguration();
+
+        config.setSignAssertions(false);
+        Assert.assertFalse(config.isSignAssertions(null));
     }
 
     @Test public void testEncryptAssertionsPredicate() {

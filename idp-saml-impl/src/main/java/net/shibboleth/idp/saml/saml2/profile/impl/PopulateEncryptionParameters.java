@@ -52,6 +52,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.saml.saml2.profile.config.SAML2AssertionProducingProfileConfiguration;
 import net.shibboleth.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
@@ -276,6 +277,9 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         if (profileConfiguration instanceof SAML2AssertionProducingProfileConfiguration appc) {
             encryptAssertions = appc.isEncryptAssertions(profileRequestContext);
             encryptAttributes = appc.isEncryptAttributes(profileRequestContext);
+        } else if (profileConfiguration instanceof ArtifactResolutionProfileConfiguration arpc) {
+            encryptAssertions = arpc.isEncryptAssertions(profileRequestContext);
+            encryptAttributes = arpc.isEncryptAttributes(profileRequestContext);
         }
         
         if (!encryptAssertions && !encryptIdentifiers && !encryptAttributes) {

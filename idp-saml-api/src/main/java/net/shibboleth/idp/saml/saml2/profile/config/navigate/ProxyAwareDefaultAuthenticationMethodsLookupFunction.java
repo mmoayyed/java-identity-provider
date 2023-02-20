@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.saml2.profile.config.navigate;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +94,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunction
                                 if (principalMappings.containsKey(p)) {
                                     return principalMappings.get(p);
                                 }
-                                return Collections.singletonList(p);
+                                return CollectionSupport.singletonList(p);
                             })
                             .flatMap(Collection::stream)
                             .filter(AuthnContextClassRefPrincipal.class::isInstance)

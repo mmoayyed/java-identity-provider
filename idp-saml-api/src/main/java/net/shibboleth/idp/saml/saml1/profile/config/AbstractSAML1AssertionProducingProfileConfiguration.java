@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.saml2.profile.config;
+package net.shibboleth.idp.saml.saml1.profile.config;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -27,7 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.saml.profile.config.SAMLAssertionProducingProfileConfiguration;
-import net.shibboleth.saml.saml2.profile.config.SAML2AssertionProducingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
@@ -41,10 +40,10 @@ import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-/** Base class for IdP SAML 2.0 profile configurations that produce assertions. */
-public abstract class AbstractSAML2AssertionProducingProfileConfiguration
-        extends AbstractSAML2ArtifactAwareProfileConfiguration
-        implements SAML2AssertionProducingProfileConfiguration {
+/** Base class for IdP SAML 1.x profile configurations that produce assertions. */
+public abstract class AbstractSAML1AssertionProducingProfileConfiguration
+        extends AbstractSAML1ArtifactAwareProfileConfiguration
+        implements SAMLAssertionProducingProfileConfiguration {
 
     /** Predicate used to determine whether to sign assertions. */
     @Nonnull private Predicate<ProfileRequestContext> signAssertionsPredicate;
@@ -59,21 +58,14 @@ public abstract class AbstractSAML2AssertionProducingProfileConfiguration
     @Nonnull private Function<ProfileRequestContext,Duration> assertionLifetimeLookupStrategy;
 
     /** Lookup function to supply assertionAudiences property. */
-    @Nonnull private Function<ProfileRequestContext,Set<String>> additionalAudiencesLookupStrategy;
-
-    /** Predicate used to determine if assertions should be encrypted. */
-    @Nonnull private Predicate<ProfileRequestContext> encryptAssertionsPredicate;
-
-    /** Predicate used to determine if attributes should be encrypted. */
-    @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
-    
+    @Nonnull private Function<ProfileRequestContext,Set<String>> additionalAudiencesLookupStrategy;    
 
     /**
      * Constructor.
      * 
      * @param profileId ID of the communication profile, never null or empty
      */
-    public AbstractSAML2AssertionProducingProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
+    public AbstractSAML1AssertionProducingProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
 
         signAssertionsPredicate = PredicateSupport.alwaysFalse();
@@ -81,9 +73,6 @@ public abstract class AbstractSAML2AssertionProducingProfileConfiguration
         assertionLifetimeLookupStrategy =
                 FunctionSupport.constant(SAMLAssertionProducingProfileConfiguration.DEFAULT_ASSERTION_LIFETIME);
         additionalAudiencesLookupStrategy = FunctionSupport.constant(null);
-        
-        encryptAssertionsPredicate = PredicateSupport.alwaysFalse();
-        encryptAttributesPredicate = PredicateSupport.alwaysFalse();
     }
     
     /** {@inheritDoc} */
@@ -227,56 +216,6 @@ public abstract class AbstractSAML2AssertionProducingProfileConfiguration
     public void setAssertionAudiencesLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Set<String>> strategy) {
         additionalAudiencesLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
-    }
-    
-    /** {@inheritDoc} */
-    public boolean isEncryptAssertions(@Nullable final ProfileRequestContext profileRequestContext) {
-        return encryptAssertionsPredicate.test(profileRequestContext);
-    }
-
-    /**
-     * Set whether assertions should be encrypted.
-     * 
-     * @param flag  flag to set
-     */
-    public void setEncryptAssertions(final boolean flag) {
-        encryptAssertionsPredicate = PredicateSupport.constant(flag);
-    }
-    
-    /**
-     * Set the predicate used to determine if assertions should be encrypted.
-     * 
-     * @param predicate predicate used to determine if assertions should be encrypted
-     * 
-     * @since 4.0.0
-     */
-    public void setEncryptAssertionsPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        encryptAssertionsPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
-    }
-
-    /** {@inheritDoc} */
-    public boolean isEncryptAttributes(@Nullable final ProfileRequestContext profileRequestContext) {
-        return encryptAttributesPredicate.test(profileRequestContext);
-    }
-
-    /**
-     * Set whether attributes should be encrypted.
-     * 
-     * @param flag  flag to set
-     */
-    public void setEncryptAttributes(final boolean flag) {
-        encryptAttributesPredicate = PredicateSupport.constant(flag);
-    }
-    
-    /**
-     * Set the predicate used to determine if attributes should be encrypted.
-     * 
-     * @param predicate predicate used to determine if attributes should be encrypted
-     * 
-     * @since 4.0.0
-     */
-    public void setEncryptAttributesPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        encryptAttributesPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
     }
     
 }

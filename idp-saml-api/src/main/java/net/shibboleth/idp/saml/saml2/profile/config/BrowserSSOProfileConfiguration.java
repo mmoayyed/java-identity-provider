@@ -96,7 +96,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     
     /** Whether to require requests be signed. */
     @Nonnull private Predicate<ProfileRequestContext> requireSignedRequestsPredicate;
-    
+
+    /** Whether to require assertions be signed. */
+    @Nonnull private Predicate<ProfileRequestContext> requireSignedAssertionsPredicate;
+
     /** Lookup function to supply maximum session lifetime. */
     @Nonnull private Function<ProfileRequestContext,Duration> maximumSPSessionLifetimeLookupStrategy;
 
@@ -134,7 +137,16 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     
     /** Lookup function to supply NameID formats. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> nameIDFormatPrecedenceLookupStrategy;
+
+    /** Lookup function to supply SPNameQualifier in request. */
+    @Nonnull private Function<ProfileRequestContext,String> spNameQualifierLookupStrategy;
+
+    /** Lookup function to supply AttributeConsumingServiceIndex in request. */
+    @Nonnull private Function<ProfileRequestContext,String> attributeIndexLookupStrategy;
     
+    /** Lookup function to supply RequestedAttributes in request. */
+    @Nonnull private Function<ProfileRequestContext,Collection<RequestedAttribute>> requestedAttributesLookupStrategy;
+
     /** Constructor. */
     public BrowserSSOProfileConfiguration() {
         this(PROFILE_ID);
@@ -160,6 +172,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
         proxiedAuthnInstantPredicate = PredicateSupport.alwaysTrue();
         suppressAuthenticatingAuthorityPredicate = PredicateSupport.alwaysFalse();
         requireSignedRequestsPredicate = PredicateSupport.alwaysFalse();
+        requireSignedAssertionsPredicate = PredicateSupport.alwaysFalse();
         maximumSPSessionLifetimeLookupStrategy = FunctionSupport.constant(null);
         maximumTimeSinceAuthnLookupStrategy = FunctionSupport.constant(null);
         maximumTokenDelegationChainLengthLookupStrategy = FunctionSupport.constant(DEFAULT_DELEGATION_CHAIN_LENGTH);
@@ -171,6 +184,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
         authnContextComparisonLookupStrategy = new ProxyAwareAuthnContextComparisonLookupFunction();
         defaultAuthenticationContextsLookupStrategy = new ProxyAwareDefaultAuthenticationMethodsLookupFunction();
         nameIDFormatPrecedenceLookupStrategy = FunctionSupport.constant(null);
+        spNameQualifierLookupStrategy = FunctionSupport.constant(null);
+        attributeIndexLookupStrategy = FunctionSupport.constant(null);
+        requestedAttributesLookupStrategy = FunctionSupport.constant(null);
     }
     
     /** {@inheritDoc} */
@@ -551,6 +567,34 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
      */
     public void setRequireSignedRequestsPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         requireSignedRequestsPredicate = Constraint.isNotNull(condition, "Signed requests predicate cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    public boolean isRequireSignedAssertions(@Nullable final ProfileRequestContext profileRequestContext) {
+        return requireSignedAssertionsPredicate.test(profileRequestContext);
+    }
+    
+    /**
+     * Set whether to require signed assertions.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 5.0.0
+     */
+    public void setRequireSignedAssertions(final boolean flag) {
+        requireSignedAssertionsPredicate = PredicateSupport.constant(flag);
+    }
+    
+    /**
+     * Set a condition to determine whether to require signed assertions.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 5.0.0
+     */
+    public void setRequireSignedAssertionsPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        requireSignedAssertionsPredicate = Constraint.isNotNull(condition,
+                "Signed assertions predicate cannot be null");
     }
     
     /**
@@ -1030,24 +1074,94 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nullable
-    public String getNameQualifier(@Nullable final ProfileRequestContext profileRequestContext) {
-        // TODO Auto-generated method stub
-        return null;
+    @Nullable public String getSPNameQualifier(@Nullable final ProfileRequestContext profileRequestContext) {
+        return spNameQualifierLookupStrategy.apply(profileRequestContext);
+    }
+    
+    /**
+     * Sets the SPNameQualifier to include in requests. 
+     * 
+     * @param qualifier the SPNameQualifier to include
+     * 
+     * @since 5.0.0
+     */
+    public void setSPNameQualifier(@Nullable final String qualifier) {
+        spNameQualifierLookupStrategy = FunctionSupport.constant(qualifier);
+    }
+    
+    /**
+     * Sets a lookup strategy for the SPNameQualifier to include in requests. 
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 5.0.0
+     */
+    public void setSPNameQualifierLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        spNameQualifierLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Nullable
-    public String getAttributeIndex(@Nullable final ProfileRequestContext profileRequestContext) {
-        // TODO Auto-generated method stub
-        return null;
+    @Nullable public String getAttributeIndex(@Nullable final ProfileRequestContext profileRequestContext) {
+        return attributeIndexLookupStrategy.apply(profileRequestContext);
+    }
+
+    /**
+     * Sets the AttributeConsumingServiceIndex to include in requests. 
+     * 
+     * @param index the index to include
+     * 
+     * @since 5.0.0
+     */
+    public void setAttributeIndex(@Nullable final String index) {
+        attributeIndexLookupStrategy = FunctionSupport.constant(index);
+    }
+    
+    /**
+     * Sets a lookup strategy for the AttributeConsumingServiceIndex to include in requests. 
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 5.0.0
+     */
+    public void setAttributeIndexLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        attributeIndexLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Collection<RequestedAttribute> getRequestedAttributes(
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<RequestedAttribute> getRequestedAttributes(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        // TODO Auto-generated method stub
+        final Collection<RequestedAttribute> attrs = requestedAttributesLookupStrategy.apply(profileRequestContext);
+        if (attrs != null) {
+            return CollectionSupport.copyToList(attrs);
+        }
         return CollectionSupport.emptyList();
+    }
+
+    /**
+     * Set the {@link RequestedAttribute} objects to include in request.
+     * 
+     * @param attrs   requested attributes to include
+     * 
+     * @since 5.0.0
+     */
+    public void setRequestedAttributes(@Nullable @NonnullElements final Collection<RequestedAttribute> attrs) {
+        if (attrs != null) {
+            requestedAttributesLookupStrategy = FunctionSupport.constant(CollectionSupport.copyToList(attrs));
+        } else {
+            requestedAttributesLookupStrategy = FunctionSupport.constant(null);
+        }
+    }
+
+    /**
+     * Set a lookup strategy for the name identifier formats to use.
+     *
+     * @param strategy  lookup strategy
+     * 
+     * @since 5.0.0
+     */
+    public void setRequestedAttributesLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Collection<RequestedAttribute>> strategy) {
+        requestedAttributesLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
 }

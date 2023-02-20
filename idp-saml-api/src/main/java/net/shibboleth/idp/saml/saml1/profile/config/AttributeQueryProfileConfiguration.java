@@ -21,14 +21,13 @@ import javax.annotation.Nonnull;
 
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
+import net.shibboleth.saml.profile.config.SAMLAssertionProducingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 1 attribute query requests. */
-public class AttributeQueryProfileConfiguration extends AbstractSAML1ArtifactAwareProfileConfiguration {
-
-    /** ID for this profile configuration. */
-    @Nonnull @NotEmpty public static final String PROFILE_ID =
-            "http://shibboleth.net/ns/profiles/saml1/query/attribute";
+public class AttributeQueryProfileConfiguration extends AbstractSAML1AssertionProducingProfileConfiguration
+        implements net.shibboleth.saml.saml1.profile.config.AttributeQueryProfileConfiguration,
+            SAMLAssertionProducingProfileConfiguration {
     
     /** Constructor. */
     public AttributeQueryProfileConfiguration() {

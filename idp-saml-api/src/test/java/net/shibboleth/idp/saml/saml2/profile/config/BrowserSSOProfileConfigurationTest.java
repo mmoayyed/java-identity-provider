@@ -20,11 +20,13 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.logic.PredicateSupport;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,11 +41,101 @@ public class BrowserSSOProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        Assert.assertEquals(BrowserSSOProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml2/sso/browser");
-
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         Assert.assertEquals(config.getId(), BrowserSSOProfileConfiguration.PROFILE_ID);
     }
+
+    @Test public void testSignAssertions() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+
+        config.setSignAssertions(false);
+        Assert.assertFalse(config.isSignAssertions(null));
+    }
+
+    @Test public void testAssertionLifetime() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertTrue(config.getAssertionLifetime(null).toMillis() > 0);
+
+        config.setAssertionLifetime(Duration.ofMillis(100));
+        Assert.assertEquals(config.getAssertionLifetime(null), Duration.ofMillis(100));
+
+        try {
+            config.setAssertionLifetime(Duration.ZERO);
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            // expected this
+        }
+
+        try {
+            config.setAssertionLifetime(Duration.ofMillis(-100));
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            // expected this
+        }
+    }
+
+    @Test public void testIndirectAssertionLifetime() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        config.setAssertionLifetimeLookupStrategy(FunctionSupport.constant(Duration.ofMillis(500)));
+        Assert.assertEquals(config.getAssertionLifetime(null), Duration.ofMillis(500));
+
+        config.setAssertionLifetimeLookupStrategy(FunctionSupport.constant(null));
+        try {
+            config.getAssertionLifetime(null);
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            // expected this
+        }
+    }
+
+    @Test public void testIncludeNotBefore() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertTrue(config.isIncludeConditionsNotBefore(null));
+
+        config.setIncludeConditionsNotBefore(false);
+        Assert.assertFalse(config.isIncludeConditionsNotBefore(null));
+    }
+
+    @Test public void testIndirectIncludeNotBefore() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+
+        config.setIncludeConditionsNotBeforePredicate(PredicateSupport.alwaysFalse());
+        Assert.assertFalse(config.isIncludeConditionsNotBefore(null));
+    }
+
+    @Test public void testAdditionalAudiencesForAssertion() {
+        final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertNotNull(config.getAssertionAudiences(null));
+        Assert.assertTrue(config.getAssertionAudiences(null).isEmpty());
+
+        config.setAssertionAudiences(Arrays.asList("", null, " foo"));
+
+        final Set<String> audiences = config.getAssertionAudiences(null);
+        Assert.assertNotNull(audiences);
+        Assert.assertEquals(audiences.size(), 1);
+        Assert.assertTrue(audiences.contains("foo"));
+
+        try {
+            audiences.add("bar");
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+            // expected this
+        }
+
+        config.setAssertionAudiences(null);
+        Assert.assertNotNull(config.getAssertionAudiences(null));
+        Assert.assertTrue(config.getAssertionAudiences(null).isEmpty());
+    }
+
+    @Test public void testIndirectAudiencesForAssertion() {
+final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        final Set<String> audiences = new HashSet<>();
+        audiences.add("foo");
+        audiences.add("bar");
+        config.setAssertionAudiencesLookupStrategy(FunctionSupport.constant(audiences));
+        Assert.assertEquals(config.getAssertionAudiences(null), audiences);
+    }
+    
 
     @Test
     public void testResolveAttributes(){

@@ -32,6 +32,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
+import net.shibboleth.saml.profile.config.SAMLAssertionProducingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -44,11 +45,10 @@ import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /** Configuration for SAML 1 Browser SSO profile requests. */
-public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwareProfileConfiguration
-        implements AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration {
-
-    /** ID for this profile configuration. */
-    @Nonnull @NotEmpty public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/sso/browser";
+public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProducingProfileConfiguration
+        implements net.shibboleth.saml.saml1.profile.config.BrowserSSOProfileConfiguration,
+            AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration,
+            SAMLAssertionProducingProfileConfiguration {
 
     /** Whether attributes should be resolved in the course of the profile. */
     @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;

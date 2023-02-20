@@ -17,28 +17,12 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import net.shibboleth.shared.logic.ConstraintViolationException;
-import net.shibboleth.shared.logic.FunctionSupport;
-import net.shibboleth.shared.logic.PredicateSupport;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link AbstractSAMLProfileConfiguration}. */
 @SuppressWarnings("javadoc")
 public class AbstractSAMLProfileConfigurationTest {
-
-    @Test public void testSignAssertionsCriteria() {
-        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-
-        config.setSignAssertions(false);
-        Assert.assertFalse(config.isSignAssertions(null));
-    }
 
     @Test public void testSignResponsesCriteria() {
         final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
@@ -52,90 +36,6 @@ public class AbstractSAMLProfileConfigurationTest {
 
         config.setSignRequests(false);
         Assert.assertFalse(config.isSignRequests(null));
-    }
-
-    @Test public void testAssertionLifetime() {
-        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        Assert.assertTrue(config.getAssertionLifetime(null).toMillis() > 0);
-
-        config.setAssertionLifetime(Duration.ofMillis(100));
-        Assert.assertEquals(config.getAssertionLifetime(null), Duration.ofMillis(100));
-
-        try {
-            config.setAssertionLifetime(Duration.ZERO);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // expected this
-        }
-
-        try {
-            config.setAssertionLifetime(Duration.ofMillis(-100));
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // expected this
-        }
-    }
-
-    @Test public void testIndirectAssertionLifetime() {
-        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        config.setAssertionLifetimeLookupStrategy(FunctionSupport.constant(Duration.ofMillis(500)));
-        Assert.assertEquals(config.getAssertionLifetime(null), Duration.ofMillis(500));
-
-        config.setAssertionLifetimeLookupStrategy(FunctionSupport.constant(null));
-        try {
-            config.getAssertionLifetime(null);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-            // expected this
-        }
-    }
-
-    @Test public void testIncludeNotBefore() {
-        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        Assert.assertTrue(config.isIncludeConditionsNotBefore(null));
-
-        config.setIncludeConditionsNotBefore(false);
-        Assert.assertFalse(config.isIncludeConditionsNotBefore(null));
-    }
-
-    @Test public void testIndirectIncludeNotBefore() {
-        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-
-        config.setIncludeConditionsNotBeforePredicate(PredicateSupport.alwaysFalse());
-        Assert.assertFalse(config.isIncludeConditionsNotBefore(null));
-    }
-
-    @Test public void testAdditionalAudiencesForAssertion() {
-        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        Assert.assertNotNull(config.getAdditionalAudiencesForAssertion(null));
-        Assert.assertTrue(config.getAdditionalAudiencesForAssertion(null).isEmpty());
-
-        config.setAdditionalAudiencesForAssertion(Arrays.asList("", null, " foo"));
-
-        final Set<String> audiences = config.getAdditionalAudiencesForAssertion(null);
-        Assert.assertNotNull(audiences);
-        Assert.assertEquals(audiences.size(), 1);
-        Assert.assertTrue(audiences.contains("foo"));
-
-        try {
-            audiences.add("bar");
-            Assert.fail();
-        } catch (UnsupportedOperationException e) {
-            // expected this
-        }
-
-        config.setAdditionalAudiencesForAssertion(null);
-        Assert.assertNotNull(config.getAdditionalAudiencesForAssertion(null));
-        Assert.assertTrue(config.getAdditionalAudiencesForAssertion(null).isEmpty());
-    }
-
-    @Test public void testIndirectAudiencesForAssertion() {
-        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
-        final Set<String> audiences = new HashSet<>();
-        audiences.add("foo");
-        audiences.add("bar");
-        config.setAdditionalAudiencesForAssertionLookupStrategy(FunctionSupport.constant(audiences));
-        Assert.assertEquals(config.getAdditionalAudiencesForAssertion(null), audiences);
     }
 
     /** Mock class for test {@link AbstractSAMLProfileConfiguration}. */

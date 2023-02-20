@@ -17,59 +17,10 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
-import java.time.Duration;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.profile.config.InterceptorAwareProfileConfiguration;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.annotation.constraint.NotLive;
-import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 
 /** Common interface for IdP SAML profile configurations. */
 public interface SAMLProfileConfiguration extends net.shibboleth.saml.profile.config.SAMLProfileConfiguration,
         InterceptorAwareProfileConfiguration {
-
-    /**
-     * Get the predicate used to determine if generated assertions should be signed.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return predicate used to determine if generated assertions should be signed
-     */
-    boolean isSignAssertions(@Nullable final ProfileRequestContext profileRequestContext);
-
-    /**
-     * Get the lifetime of generated assertions.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return lifetime of generated assertions
-     */
-    @Nonnull Duration getAssertionLifetime(@Nullable final ProfileRequestContext profileRequestContext);
-
-    /**
-     * Get an unmodifiable set of audiences, in addition to the relying party(ies) to which the IdP is issuing the
-     * assertion, with which an assertion may be shared.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return additional audiences to which an assertion may be shared
-     */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAdditionalAudiencesForAssertion(
-            @Nullable final ProfileRequestContext profileRequestContext);
-    
-    /**
-     * Get whether to include a NotBefore attribute in the Conditions of generated assertions.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return  whether to include a NotBefore attribute in the Conditions of generated assertions
-     */
-    boolean isIncludeConditionsNotBefore(@Nullable final ProfileRequestContext profileRequestContext);
     
 }
