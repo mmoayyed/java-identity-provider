@@ -55,11 +55,11 @@ import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
+import net.shibboleth.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;

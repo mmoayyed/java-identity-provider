@@ -18,8 +18,8 @@
 package net.shibboleth.idp.saml.saml1.profile.config;
 
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
-import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.saml.profile.config.BasicSAMLArtifactConfiguration;
+import net.shibboleth.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.logic.PredicateSupport;

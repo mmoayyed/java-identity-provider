@@ -20,8 +20,8 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.saml.profile.config.BasicSAMLArtifactConfiguration;
+import net.shibboleth.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 /** Unit test for {@link SingleLogoutProfileConfiguration}. */

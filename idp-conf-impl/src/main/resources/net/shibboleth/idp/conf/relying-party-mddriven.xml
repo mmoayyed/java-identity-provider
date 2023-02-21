@@ -272,7 +272,7 @@
             p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration">
         <property name="artifactConfigurationLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
-                p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
+                p:propertyType="#{T(net.shibboleth.saml.profile.config.SAMLArtifactConfiguration)}" />
         </property>
         <property name="signResponsesPredicate">
             <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
@@ -362,7 +362,7 @@
             p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration">
         <property name="artifactConfigurationLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
-                p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
+                p:propertyType="#{T(net.shibboleth.saml.profile.config.SAMLArtifactConfiguration)}" />
         </property>
         <property name="signArtifactRequestsPredicate">
             <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
@@ -554,7 +554,7 @@
             p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration">
         <property name="artifactConfigurationLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="artifactConfiguration"
-                p:propertyType="#{T(net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration)}" />
+                p:propertyType="#{T(net.shibboleth.saml.profile.config.SAMLArtifactConfiguration)}" />
         </property>
         <property name="signArtifactRequestsPredicate">
             <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">

@@ -27,8 +27,8 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate;
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
+import net.shibboleth.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.saml.profile.config.SAMLArtifactConsumerProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;

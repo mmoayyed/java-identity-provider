@@ -145,7 +145,7 @@
     <!-- Artifact Configuration Defaults -->
     
     <bean id="shibboleth.DefaultArtifactConfiguration"
-        class="net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration"
+        class="net.shibboleth.saml.profile.config.BasicSAMLArtifactConfiguration"
         p:artifactResolutionServiceIndex="%{idp.artifact.endpointIndex:2}" />
     
     <!--
