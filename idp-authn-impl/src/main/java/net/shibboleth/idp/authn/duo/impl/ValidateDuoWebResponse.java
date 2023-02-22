@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -165,8 +166,8 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
             return false;
         }
         
-        signedResponse = servletRequest.getParameter(RESPONSE_PARAM);
-        if (signedResponse == null || signedResponse.isEmpty()) {
+        final String response =  signedResponse = servletRequest.getParameter(RESPONSE_PARAM);
+        if (response == null || response.isEmpty()) {
             log.warn("{} No signed Duo response in the request", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                     AuthnEventIds.NO_CREDENTIALS);
@@ -186,6 +187,7 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
                 
         final String usernameFromDuo;
         try {
+            assert duoIntegration != null && signedResponse != null;
             usernameFromDuo = DuoSupport.validateSignedResponseToken(duoIntegration, signedResponse);
         } catch (final InvalidKeyException | NoSuchAlgorithmException | DuoWebException | IOException e) {
             log.warn("{} Error validating signed Duo response for username '{}'", getLogPrefix(), username, e);
@@ -193,7 +195,7 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
             recordFailure(profileRequestContext);
             return;
         }
-        
+        assert username != null;
         if (!username.equals(usernameFromDuo)) {
             log.warn("{} Username '{}' from Duo response does not match previously established username '{}'",
                     getLogPrefix(), usernameFromDuo, username);
@@ -209,9 +211,15 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
     
     /** {@inheritDoc} */
     @Override
-    protected Subject populateSubject(@Nonnull final Subject subject) {
-        subject.getPrincipals().add(new DuoPrincipal(username));
-        subject.getPrincipals().addAll(duoIntegration.getSupportedPrincipals(Principal.class));
+    protected @Nonnull Subject populateSubject(@Nonnull final Subject subject) {
+
+        assert username != null;
+        final DuoPrincipal princ = new DuoPrincipal(username);
+        subject.getPrincipals().add(princ);
+        assert duoIntegration != null;
+        final Set<Principal> princs = duoIntegration.getSupportedPrincipals(Principal.class);
+        subject.getPrincipals().addAll(princs);
+
         return subject;
     }
 
@@ -222,7 +230,7 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
         super.buildAuthenticationResult(profileRequestContext, authenticationContext);
         
         // Bypass c14n. We already operate on a canonical name, so just re-confirm it.
-        profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName(username);
+        profileRequestContext.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName(username);
     }
 
     /** {@inheritDoc} */

@@ -21,6 +21,7 @@ package net.shibboleth.idp.authn.duo.impl;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -46,6 +47,7 @@ import net.shibboleth.idp.authn.duo.context.DuoAuthenticationContext;
 import net.shibboleth.idp.authn.impl.AbstractAuditingValidationAction;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -91,13 +93,13 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
     @Nonnull private Function<ProfileRequestContext,String> usernameLookupStrategy;
 
     /** Implementation of Duo AuthApi /auth endpoint. */
-    @Nonnull private DuoAuthAuthenticator authAuthenticator;
+    @NonnullAfterInit private DuoAuthAuthenticator authAuthenticator;
 
     /** Implementation of Duo AuthApi /preauth enpoint. */
-    @Nonnull private DuoPreauthAuthenticator preauthAuthenticator;
+    @NonnullAfterInit private DuoPreauthAuthenticator preauthAuthenticator;
 
-    /** DuoApi context for tokens. **/
-    @Nonnull @NotEmpty private DuoAuthenticationContext duoContext;
+    /** DuoApi context for tokens. Non-Null after preExecute **/
+    @Nullable @NotEmpty private DuoAuthenticationContext duoContext;
 
     /** Duo integration to use. */
     @Nullable private DuoIntegration duoIntegration;
@@ -175,6 +177,7 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
         if (preauthAuthenticator == null) {
             throw new ComponentInitializationException("DuoPreauthAuthenticator cannot be null");
         }
+
     }
 
     /** {@inheritDoc} */
@@ -199,14 +202,14 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
             return false;
         }
 
-        duoContext = authenticationContext.getSubcontext(DuoAuthenticationContext.class);
-        if (duoContext == null) {
+        final DuoAuthenticationContext context = duoContext = authenticationContext.getSubcontext(DuoAuthenticationContext.class);
+        if (context == null) {
             log.info("{} No DuoAuthenticationContext available", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, "No DuoAuthenticationContext context available",
                     AuthnEventIds.INVALID_AUTHN_CTX);
             recordFailure(profileRequestContext);
             return false;
-        } else if (duoContext.getFactor() == null) {
+        } else if (context.getFactor() == null) {
             log.info("{} No factor set in DuoAuthenticationContext", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, "No Duo factor set in DuoAuthenticationContext",
                     AuthnEventIds.REQUEST_UNSUPPORTED);
@@ -214,7 +217,7 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
             return false;
         }
 
-        duoContext.setUsername(username);
+        context.setUsername(username);
 
         return true;
     }
@@ -225,10 +228,13 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
 
         log.trace("{} Attempting Duo AuthAPI authentication", getLogPrefix());
-
+        final DuoAuthenticationContext duoCtx = duoContext;
+        assert duoCtx != null;
+        
         try {
             // Duo AuthAPI pre-authentication
-            final DuoPreauthResponse preAuthResponse = preauthAuthenticator.authenticate(duoContext, duoIntegration);
+            assert duoIntegration != null;
+            final DuoPreauthResponse preAuthResponse = preauthAuthenticator.authenticate(duoCtx, duoIntegration);
             if (preAuthResponse == null) {
                 log.info("{} No Duo AuthAPI preauthentication response", getLogPrefix());
                 throw new DuoWebException("No preauthentication response");
@@ -256,23 +262,25 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
             }
             
             // Validate device ID specified against the enrolled set.
-            if (duoContext.getDeviceID() != null && !DuoAuthAPI.DUO_DEVICE_AUTO.equals(duoContext.getDeviceID())) {
+            if (duoCtx.getDeviceID() != null && !DuoAuthAPI.DUO_DEVICE_AUTO.equals(duoCtx.getDeviceID())) {
                 boolean found = false;
                 for (final DuoDevice device : preAuthResponse.getDevices()) {
-                    if (duoContext.getDeviceID().equals(device.getDevice())) {
+                    final String deviceId = duoCtx.getDeviceID();
+                    assert deviceId != null;
+                    if (deviceId.equals(device.getDevice())) {
                         found = true;
                         break;
-                    } else if (duoContext.getDeviceID().equals(device.getName())) {
+                    } else if (deviceId.equals(device.getName())) {
                         log.debug("{} Remapped device ID based on device name ({}) for '{}'", getLogPrefix(),
                                 device.getName(), username);
-                        duoContext.setDeviceID(device.getDevice());
+                        duoCtx.setDeviceID(device.getDevice());
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
                     log.info("{} Duo authentication failed for '{}': non-existent device ID ({})", getLogPrefix(),
-                            username, duoContext.getDeviceID());
+                            username, duoCtx.getDeviceID());
                     handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                             AuthnEventIds.INVALID_CREDENTIALS);
                     recordFailure(profileRequestContext);
@@ -281,7 +289,8 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
             }
 
             // Duo AuthAPI authentication
-            final DuoAuthResponse authenticationResponse = authAuthenticator.authenticate(duoContext, duoIntegration);
+            assert duoIntegration != null;
+            final DuoAuthResponse authenticationResponse = authAuthenticator.authenticate(duoCtx, duoIntegration);
             if (authenticationResponse == null) {
                 log.info("{} No Duo AuthAPI authentication response", getLogPrefix());
                 throw new DuoWebException("No authentication response");
@@ -290,7 +299,7 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
             final String authResult = authenticationResponse.getResult();
             if (DuoAuthAPI.DUO_AUTH_RESULT_ALLOW.equals(authResult)) {
                 log.info("{} Duo authentication succeeded for '{}' (Factor: {}, Device: {})", getLogPrefix(), username,
-                        duoContext.getFactor(), duoContext.getDeviceID());
+                        duoCtx.getFactor(), duoCtx.getDeviceID());
                 recordSuccess(profileRequestContext);
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
             } else if (DuoAuthAPI.DUO_AUTH_RESULT_DENY.equals(authResult)) {
@@ -310,9 +319,13 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
     // CheckStyle: CyclomaticComplexity|MethodLength|ReturnCount OFF
 
     /** {@inheritDoc} */
-    @Override protected Subject populateSubject(@Nonnull final Subject subject) {
-        subject.getPrincipals().add(new DuoPrincipal(username));
-        subject.getPrincipals().addAll(duoIntegration.getSupportedPrincipals(Principal.class));
+    @Override protected @Nonnull Subject populateSubject(@Nonnull final Subject subject) {
+        assert username != null;
+        final DuoPrincipal princ = new DuoPrincipal(username);
+        subject.getPrincipals().add(princ);
+        assert duoIntegration != null;
+        final Set<Principal> princs = duoIntegration.getSupportedPrincipals(Principal.class);
+        subject.getPrincipals().addAll(princs);
         return subject;
     }
 
@@ -322,7 +335,7 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
         super.buildAuthenticationResult(profileRequestContext, authenticationContext);
 
         // Bypass c14n. We already operate on a canonical name, so just re-confirm it.
-        profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName(username);
+        profileRequestContext.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName(username);
     }
 
     /** {@inheritDoc} */
@@ -337,13 +350,13 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
         if (duoIntegration != null) {
             fields.put(AuthnAuditFields.DUO_CLIENT_ID, duoIntegration.getIntegrationKey());
         }
-        
-        if (duoContext != null) {
-            if (duoContext.getDeviceID() != null) {
-                fields.put(AuthnAuditFields.DUO_DEVICE_ID, duoContext.getDeviceID());
+        final DuoAuthenticationContext duoCtx = duoContext;
+        if (duoCtx != null) {
+            if (duoCtx.getDeviceID() != null) {
+                fields.put(AuthnAuditFields.DUO_DEVICE_ID, duoCtx.getDeviceID());
             }
-            if (duoContext.getFactor() != null) {
-                fields.put(AuthnAuditFields.DUO_FACTOR, duoContext.getFactor());
+            if (duoCtx.getFactor() != null) {
+                fields.put(AuthnAuditFields.DUO_FACTOR, duoCtx.getFactor());
             }
         }
         

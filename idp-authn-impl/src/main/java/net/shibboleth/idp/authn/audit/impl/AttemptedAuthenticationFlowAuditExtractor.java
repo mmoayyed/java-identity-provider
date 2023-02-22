@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 /**
@@ -33,11 +34,16 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 public class AttemptedAuthenticationFlowAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** {@inheritDoc} */
-    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public String apply(final @Nullable ProfileRequestContext input) {
 
+        assert input != null;
         final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
-        if (authnCtx != null && authnCtx.getAttemptedFlow() != null) {
-            return authnCtx.getAttemptedFlow().getId();
+        AuthenticationFlowDescriptor flow = null;
+        if (authnCtx != null) {
+            flow = authnCtx.getAttemptedFlow();
+        }
+        if (flow != null) {
+            return flow.getId();
         }
         
         return null;

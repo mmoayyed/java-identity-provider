@@ -39,6 +39,7 @@ public class AuthenticationErrorAuditExtractor implements Function<ProfileReques
     /** {@inheritDoc} */
     @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
 
+        assert input != null;
         final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
         if (authnCtx != null) {
             final AuthenticationErrorContext errorCtx = authnCtx.getSubcontext(AuthenticationErrorContext.class);

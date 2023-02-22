@@ -37,6 +37,7 @@ public class TransformedUsernameAuditExtractor implements Function<ProfileReques
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
 
+        assert input != null;
         final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
         if (authnCtx != null) {
             final UsernamePasswordContext upContext = authnCtx.getSubcontext(UsernamePasswordContext.class);

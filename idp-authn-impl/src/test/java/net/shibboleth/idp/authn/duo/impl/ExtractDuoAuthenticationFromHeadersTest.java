@@ -24,6 +24,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.duo.DuoAuthAPI;
@@ -56,6 +57,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
         Assert.assertNull(duoCtx);
     }
@@ -71,6 +73,7 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
 
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
         Assert.assertNull(duoCtx);
     }
@@ -83,62 +86,79 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
-        Assert.assertNotNull(duoCtx);
+        assert duoCtx != null;
         Assert.assertEquals(duoCtx.getFactor(), DuoAuthAPI.DUO_FACTOR_AUTO);
         Assert.assertEquals(duoCtx.getDeviceID(), DuoAuthAPI.DUO_DEVICE_AUTO);
         Assert.assertNull(duoCtx.getPasscode());
     }
     
     @Test public void testFactorAutoDevice() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_FACTOR_HEADER_NAME, DuoAuthAPI.DUO_FACTOR_PUSH);
+        assert action != null;
+        final MockHttpServletRequest request = ((MockHttpServletRequest) action.getHttpServletRequest());
+        assert request != null;
+        request.addHeader(DuoAuthAPI.DUO_FACTOR_HEADER_NAME, DuoAuthAPI.DUO_FACTOR_PUSH);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
 
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
-        Assert.assertNotNull(duoCtx);
+        assert duoCtx != null;
         Assert.assertEquals(duoCtx.getFactor(), DuoAuthAPI.DUO_FACTOR_PUSH);
         Assert.assertEquals(duoCtx.getDeviceID(), DuoAuthAPI.DUO_DEVICE_AUTO);
         Assert.assertNull(duoCtx.getPasscode());
     }
     
     @Test public void testDeviceAutoFactor() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_DEVICE_HEADER_NAME, "foo");
+        assert action != null;
+        final MockHttpServletRequest request = ((MockHttpServletRequest) action.getHttpServletRequest());
+        assert request != null;
+        request.addHeader(DuoAuthAPI.DUO_DEVICE_HEADER_NAME, "foo");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
 
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
-        Assert.assertNotNull(duoCtx);
+        assert duoCtx != null;
         Assert.assertEquals(duoCtx.getFactor(), DuoAuthAPI.DUO_FACTOR_AUTO);
         Assert.assertEquals(duoCtx.getDeviceID(), "foo");
         Assert.assertNull(duoCtx.getPasscode());
     }
     
     @Test public void testNoPasscode() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_FACTOR_HEADER_NAME, DuoAuthAPI.DUO_FACTOR_PASSCODE);
+        assert action != null;
+        final MockHttpServletRequest request = ((MockHttpServletRequest) action.getHttpServletRequest());
+        assert request != null;
+        request.addHeader(DuoAuthAPI.DUO_FACTOR_HEADER_NAME, DuoAuthAPI.DUO_FACTOR_PASSCODE);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
 
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
-        Assert.assertNull(duoCtx);
+        assert duoCtx == null;
     }
 
     @Test public void testPasscode() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_FACTOR_HEADER_NAME, DuoAuthAPI.DUO_FACTOR_PASSCODE);
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(DuoAuthAPI.DUO_PASSCODE_HEADER_NAME, "foo");
+        assert action != null;
+        final MockHttpServletRequest request = ((MockHttpServletRequest) action.getHttpServletRequest());
+        assert request != null;
+        request.addHeader(DuoAuthAPI.DUO_FACTOR_HEADER_NAME, DuoAuthAPI.DUO_FACTOR_PASSCODE);
+        request.addHeader(DuoAuthAPI.DUO_PASSCODE_HEADER_NAME, "foo");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
 
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
-        Assert.assertNotNull(duoCtx);
+        assert duoCtx != null;
         Assert.assertEquals(duoCtx.getFactor(), DuoAuthAPI.DUO_FACTOR_PASSCODE);
         Assert.assertNull(duoCtx.getDeviceID());
         Assert.assertEquals(duoCtx.getPasscode(), "foo");

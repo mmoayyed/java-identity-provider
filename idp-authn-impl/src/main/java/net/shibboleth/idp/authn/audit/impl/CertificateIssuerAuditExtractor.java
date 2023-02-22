@@ -34,6 +34,7 @@ public class CertificateIssuerAuditExtractor implements Function<ProfileRequestC
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
 
+        assert input != null;
         final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
         if (authnCtx != null) {
             final CertificateContext cc = authnCtx.getSubcontext(CertificateContext.class);

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 
 /** {@link Function} that returns the authentication flow ID used to satisfy a request. */
@@ -31,9 +32,14 @@ public class AuthenticationFlowAuditExtractor implements Function<ProfileRequest
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
 
+        assert input != null;
         final AuthenticationContext authnCtx = input.getSubcontext(AuthenticationContext.class);
-        if (authnCtx != null && authnCtx.getAuthenticationResult() != null) {
-            return authnCtx.getAuthenticationResult().getAuthenticationFlowId();
+        AuthenticationResult result = null;
+        if (authnCtx != null) {
+            result = authnCtx.getAuthenticationResult();
+        }
+        if (result != null) {
+            return result.getAuthenticationFlowId();
         }
         
         return null;

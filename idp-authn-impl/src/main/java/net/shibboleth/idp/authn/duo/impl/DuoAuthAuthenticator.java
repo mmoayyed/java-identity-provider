@@ -53,6 +53,7 @@ public class DuoAuthAuthenticator extends AbstractDuoAuthenticator {
     @Nonnull private final TypeReference<DuoResponseWrapper<DuoAuthResponse>> wrapperTypeRef;
     
     /** Constructor. */
+    @SuppressWarnings("null")
     public DuoAuthAuthenticator() {
         wrapperTypeRef = new TypeReference<>() {};
         paramEscaper = UrlEscapers.urlFormParameterEscaper();
@@ -77,6 +78,7 @@ public class DuoAuthAuthenticator extends AbstractDuoAuthenticator {
                     .setPath("/auth/v2/auth").build();
             final ClassicRequestBuilder rb =
                     ClassicRequestBuilder.post().setUri(uri).addParameter(DuoAuthAPI.DUO_USERNAME, duoContext.getUsername());
+            assert rb != null;
             if (duoContext.getClientAddress() != null) {
                 rb.addParameter(DuoAuthAPI.DUO_IPADDR, duoContext.getClientAddress());
             }
@@ -98,6 +100,7 @@ public class DuoAuthAuthenticator extends AbstractDuoAuthenticator {
             }
             DuoSupport.signRequest(rb, duoIntegration);
             final ClassicHttpRequest request = rb.build();
+            assert request != null;
 
             // do it
             return doAPIRequest(request, wrapperTypeRef).getResponse();

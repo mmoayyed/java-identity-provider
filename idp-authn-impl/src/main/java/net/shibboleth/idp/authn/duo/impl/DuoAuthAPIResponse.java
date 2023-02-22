@@ -33,11 +33,11 @@ public abstract class DuoAuthAPIResponse {
 
     /** the result. */
     @JsonProperty("result")
-    @Nonnull private String result;
+    private String result;
     
     /** the status message. */
     @JsonProperty("status_msg")
-    @Nonnull private String statusMessage;
+    private String statusMessage;
     
     /**
      * Get the Duo result string.
@@ -45,6 +45,7 @@ public abstract class DuoAuthAPIResponse {
      * @return the result string
      */
     @Nonnull public String getResult() {
+        assert result != null;
         return result;
     }
     
@@ -54,6 +55,7 @@ public abstract class DuoAuthAPIResponse {
      * @return the Duo status message
      */
     @Nonnull public String getStatusMessage() {
+        assert statusMessage  != null;
         return statusMessage;
     }
 

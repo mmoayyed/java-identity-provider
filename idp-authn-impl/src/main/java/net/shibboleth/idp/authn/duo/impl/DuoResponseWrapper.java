@@ -33,11 +33,11 @@ public class DuoResponseWrapper<T extends DuoAuthAPIResponse> {
     
     /** the inner response. */
     @JsonProperty("response")
-    @Nonnull private T response;
+    private T response;
     
     /** the response status. */
     @JsonProperty("stat")
-    @Nonnull private String stat;
+    private String stat;
     
     /**
      * Get the inner response.
@@ -45,6 +45,7 @@ public class DuoResponseWrapper<T extends DuoAuthAPIResponse> {
      * @return inner response
      */
     @Nonnull public T getResponse() {
+        assert response != null;
         return response;
     }
 
@@ -54,6 +55,7 @@ public class DuoResponseWrapper<T extends DuoAuthAPIResponse> {
      * @return response status
      */
     @Nonnull public String getStat() {
+        assert stat != null;
         return stat;
     }
 

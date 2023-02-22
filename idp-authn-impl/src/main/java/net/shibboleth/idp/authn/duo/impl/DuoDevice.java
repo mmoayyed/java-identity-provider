@@ -59,7 +59,8 @@ public class DuoDevice {
      * 
      * @return the device identifier
      */
-    @Nullable public String getDevice() {
+    @Nonnull public String getDevice() {
+        assert device != null;
         return device;
     }
 
@@ -68,7 +69,8 @@ public class DuoDevice {
      * 
      * @return the device type
      */
-    @Nullable public String getType() {
+    @Nonnull public String getType() {
+        assert type != null;
         return type;
     }
 
@@ -77,7 +79,8 @@ public class DuoDevice {
      * 
      * @return the device number
      */
-    @Nullable public String getNumber() {
+    @Nonnull public String getNumber() {
+        assert number != null;
         return number;
     }
 
@@ -86,7 +89,8 @@ public class DuoDevice {
      * 
      * @return the device name
      */
-    @Nullable public String getName() {
+    @Nonnull public String getName() {
+        assert name != null;
         return name;
     }
 
@@ -96,6 +100,7 @@ public class DuoDevice {
      * @return the device capabilities
      */
     @Nonnull public Collection<String> getCapabilities() {
+        assert capabilities != null;
         return capabilities;
     }
 

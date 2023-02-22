@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.duo.impl;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class DuoPreauthResponse extends DuoAuthAPIResponse {
 
     /** the {@link List} of {@link DuoDevice}s registered. */
-    @JsonProperty("devices") @Nonnull private List<DuoDevice> devices;
+    @JsonProperty("devices") @Nonnull private List<DuoDevice> devices = new ArrayList<>();
 
     /** the {@link URL} for the self-enrollment portal. */
     @JsonProperty("enroll_portal_url") @Nullable private URL enrollPortalURL;

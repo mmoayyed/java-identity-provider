@@ -119,10 +119,13 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
 
         // Make the request.
         final HttpClientContext clientContext = HttpClientContext.create();
+        assert clientContext != null;
         HttpClientSecuritySupport.marshalSecurityParameters(clientContext, httpClientSecurityParameters, true);
         HttpClientSecuritySupport.addDefaultTLSTrustEngineCriteria(clientContext, request);
         final ClassicHttpResponse httpResponse = httpClient.executeOpen(null, request, clientContext);
-        HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getScheme());
+        final String scheme = request.getScheme();
+        assert scheme != null;
+        HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, scheme);
 
         // Check the HTTP response code.
         final int httpStatusCode = httpResponse.getCode();

@@ -31,10 +31,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class DuoAuthResponse extends DuoAuthAPIResponse {
 
     /** the status string. */
-    @JsonProperty("status") @Nonnull private String status;
+    @JsonProperty("status") private String status;
 
     /** the trusted device token string. */
-    @JsonProperty("trusted_device_token") @Nullable private String trustedDeviceToken;
+    @JsonProperty("trusted_device_token") private String trustedDeviceToken;
 
     /**
      * Get the Duo status string.
@@ -42,6 +42,7 @@ public class DuoAuthResponse extends DuoAuthAPIResponse {
      * @return Duo status string
      */
     @Nonnull public String getStatus() {
+        assert status != null;
         return status;
     }
 
@@ -51,6 +52,7 @@ public class DuoAuthResponse extends DuoAuthAPIResponse {
      * @return Duo trusted device token string
      */
     @Nullable public String getTrustedDeviceToken() {
+        assert trustedDeviceToken != null;
         return trustedDeviceToken;
     }
 

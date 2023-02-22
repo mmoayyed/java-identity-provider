@@ -109,6 +109,7 @@ public final class DuoSupport {
             }
             final String username = DuoWeb.verifyResponse(duo.getIntegrationKey(), duo.getSecretKey(),
                     duo.getApplicationKey(), signedResponseToken);
+            assert username != null;
             return username;
         } catch (final ArrayIndexOutOfBoundsException e) {
             // This guard is to prevent an unusual issue being encountered by at least one deployer.
@@ -136,6 +137,7 @@ public final class DuoSupport {
         final String skey = duo.getSecretKey();
         final int sigVersion = 2;
         final String date = RFC_2822_DATE_FORMAT.format(ZonedDateTime.now());
+        assert date != null;
         final String canon = canonRequest(request, date, sigVersion);
         final String sig = Util.hmacSign(skey, canon);
 
@@ -166,7 +168,9 @@ public final class DuoSupport {
         canon += request.getMethod().toUpperCase() + "\n";
         canon += uri.getHost().toLowerCase() + "\n";
         canon += uri.getPath() + "\n";
-        canon += createQueryString(request.getParameters());
+        final List<NameValuePair> parms = request.getParameters();
+        assert parms != null;
+        canon += createQueryString(parms);
 
         return canon;
     }
