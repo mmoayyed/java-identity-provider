@@ -542,7 +542,7 @@
             <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="spNameQualifier" />
         </property>
         <property name="attributeIndexLookupStrategy">
-            <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="attributeIndex" />
+            <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="attributeIndex" />
         </property>
     </bean>
 

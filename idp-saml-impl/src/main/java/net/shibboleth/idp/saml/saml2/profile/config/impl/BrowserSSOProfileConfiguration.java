@@ -139,7 +139,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     @Nonnull private Function<ProfileRequestContext,String> spNameQualifierLookupStrategy;
 
     /** Lookup function to supply AttributeConsumingServiceIndex in request. */
-    @Nonnull private Function<ProfileRequestContext,String> attributeIndexLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Integer> attributeIndexLookupStrategy;
     
     /** Lookup function to supply RequestedAttributes in request. */
     @Nonnull private Function<ProfileRequestContext,Collection<RequestedAttribute>> requestedAttributesLookupStrategy;
@@ -956,7 +956,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nullable public String getAttributeIndex(@Nullable final ProfileRequestContext profileRequestContext) {
+    @Nullable public Integer getAttributeIndex(@Nullable final ProfileRequestContext profileRequestContext) {
         return attributeIndexLookupStrategy.apply(profileRequestContext);
     }
 
@@ -967,7 +967,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
      * 
      * @since 5.0.0
      */
-    public void setAttributeIndex(@Nullable final String index) {
+    public void setAttributeIndex(@Nullable final Integer index) {
         attributeIndexLookupStrategy = FunctionSupport.constant(index);
     }
     
@@ -978,7 +978,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
      * 
      * @since 5.0.0
      */
-    public void setAttributeIndexLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+    public void setAttributeIndexLookupStrategy(@Nonnull final Function<ProfileRequestContext,Integer> strategy) {
         attributeIndexLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
