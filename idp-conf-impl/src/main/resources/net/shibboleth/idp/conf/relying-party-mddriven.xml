@@ -206,7 +206,7 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
-        <property name="requestDecorator">
+        <property name="requestDecoratorLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="requestDecorator"
                 p:propertyType="#{T(java.util.function.BiConsumer)}" />
         </property>
