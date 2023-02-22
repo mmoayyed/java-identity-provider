@@ -23,7 +23,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -92,7 +92,7 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
         action.initialize();
         
         prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(
-                new net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration());
+                new net.shibboleth.idp.saml.saml1.profile.config.impl.BrowserSSOProfileConfiguration());
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);

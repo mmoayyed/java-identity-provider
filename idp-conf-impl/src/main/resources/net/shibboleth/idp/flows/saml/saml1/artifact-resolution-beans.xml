@@ -19,7 +19,7 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration).PROFILE_ID}"
+        p:profileId="#{T(net.shibboleth.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration).PROFILE_ID}"
         p:loggingId="%{idp.service.logging.saml1artifact:ArtifactResolution}" />
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">

@@ -24,7 +24,7 @@
                 p:artifactEndpointResolver-ref="shibboleth.EndpointResolver"
                 p:SOAPClient-ref="shibboleth.SOAPClient.SAML"
                 p:SOAPPipelineName="SAML2.ArtifactDecoder"
-                p:SOAPClientSecurityConfigurationProfileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration).PROFILE_ID}"
+                p:SOAPClientSecurityConfigurationProfileId="#{T(net.shibboleth.saml.saml2.profile.config.SingleLogoutProfileConfiguration).PROFILE_ID}"
                 />
         </constructor-arg>
     </bean>

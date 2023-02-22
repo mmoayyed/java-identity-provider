@@ -44,7 +44,7 @@
     <!-- Explicitly wrapped by a non-nested action adaptor. -->
     <bean id="InitializeProxyProfileRequestContext"
         class="net.shibboleth.idp.authn.proxy.impl.InitializeProxyProfileRequestContext"
-        p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
+        p:profileId="#{T(net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
         p:loggingId="%{idp.service.logging.saml2sso:SSO}"
         p:browserProfile="true" />
 

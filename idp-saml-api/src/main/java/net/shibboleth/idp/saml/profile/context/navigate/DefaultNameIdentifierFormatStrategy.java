@@ -129,10 +129,9 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
                         .getNameIDFormatPrecedence(input));
                 log.debug("Configuration specifies the following formats: {}", fromConfig);
             } else if (profileConfig instanceof
-                    net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
+                    net.shibboleth.idp.saml.profile.config.BrowserSSOProfileConfiguration sso) {
                 fromConfig.addAll(
-                        ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) profileConfig)
-                        .getNameIDFormatPrecedence(input));
+                        sso.getNameIDFormatPrecedence(input));
                 log.debug("Configuration specifies the following formats: {}", fromConfig);
             } else {
                 log.debug("No ProfileConfiguraton available (or not a BrowserSSOProfileConfiguration)");

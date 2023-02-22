@@ -13,7 +13,7 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
+        p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration).PROFILE_ID}"
         p:loggingId="%{idp.service.logging.saml2sso:SSO}"
         p:browserProfile="true" />
 
@@ -30,7 +30,7 @@
                 p:artifactEndpointResolver-ref="shibboleth.EndpointResolver"
                 p:SOAPClient-ref="shibboleth.SOAPClient.SAML"
                 p:SOAPPipelineName="SAML2.ArtifactDecoder"
-                p:SOAPClientSecurityConfigurationProfileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
+                p:SOAPClientSecurityConfigurationProfileId="#{T(net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
                 />
         </constructor-arg>
     </bean>

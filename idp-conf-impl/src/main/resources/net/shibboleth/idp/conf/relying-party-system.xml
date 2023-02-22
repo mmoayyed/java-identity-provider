@@ -81,17 +81,17 @@
     -->
     
     <bean id="Shibboleth.SSO" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration"
+        class="net.shibboleth.idp.saml.saml1.profile.config.impl.BrowserSSOProfileConfiguration"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration" />
         
     <bean id="SAML1.AttributeQuery" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration" />
+        class="net.shibboleth.idp.saml.saml1.profile.config.impl.AttributeQueryProfileConfiguration" />
 
     <bean id="SAML1.ArtifactResolution" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration" />
+        class="net.shibboleth.idp.saml.saml1.profile.config.impl.ArtifactResolutionProfileConfiguration" />
 
     <bean id="SAML2.SSO" lazy-init="true"
-	        class="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration"
+	        class="net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration"
 	        p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
 	        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}">
         <property name="defaultAuthenticationMethodsLookupStrategy">
@@ -105,31 +105,31 @@
     </bean>
 
     <util:constant id="SAML2.SSO.FEATURE_AUTHNCONTEXT"
-        static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT"/>
+        static-field="net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT"/>
 
     <util:constant id="SAML2.SSO.FEATURE_SCOPING"
-        static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_SCOPING"/>
+        static-field="net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration.FEATURE_SCOPING"/>
 
     <bean id="SAML2.ECP" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
+        class="net.shibboleth.idp.saml.saml2.profile.config.impl.ECPProfileConfiguration"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.Logout" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration"
+        class="net.shibboleth.idp.saml.saml2.profile.config.impl.SingleLogoutProfileConfiguration"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.AttributeQuery" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
+        class="net.shibboleth.idp.saml.saml2.profile.config.impl.AttributeQueryProfileConfiguration"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.ArtifactResolution" lazy-init="true"
-        class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
+        class="net.shibboleth.idp.saml.saml2.profile.config.impl.ArtifactResolutionProfileConfiguration"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <!-- Remove in V6. -->
     <bean id="Liberty.SSOS" lazy-init="true"
-        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />
+        class="net.shibboleth.idp.saml.saml2.profile.config.impl.SSOSProfileConfiguration" />
 
     <bean id="CAS.LoginConfiguration" lazy-init="true"
         class="net.shibboleth.idp.cas.config.LoginConfiguration" />

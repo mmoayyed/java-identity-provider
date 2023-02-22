@@ -13,7 +13,7 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration).PROFILE_ID}"
+        p:profileId="#{T(net.shibboleth.saml.saml2.profile.config.ECPProfileConfiguration).PROFILE_ID}"
         p:loggingId="%{idp.service.logging.saml2sso:SSO}"
         p:browserProfile="false" />
 

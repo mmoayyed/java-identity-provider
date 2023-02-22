@@ -31,7 +31,7 @@
             <bean class="org.opensaml.profile.logic.ProfileIdPredicate">
                 <constructor-arg>
                     <util:constant
-                        static-field="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration.PROFILE_ID"/>
+                        static-field="net.shibboleth.saml.saml2.profile.config.ECPProfileConfiguration.PROFILE_ID"/>
                 </constructor-arg>
             </bean>
         </property>

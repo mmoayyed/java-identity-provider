@@ -75,15 +75,11 @@ public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPred
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             
-            if (pc instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
-                return ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration)
-                        pc).isIncludeAttributeStatement(input);
-            } else if (pc instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
-                return ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration)
-                        pc).isIncludeAttributeStatement(input);
-            } else if (pc instanceof net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration) {
+            if (pc instanceof net.shibboleth.idp.saml.profile.config.BrowserSSOProfileConfiguration sso) {
+                return sso.isIncludeAttributeStatement(input);
+            } else if (pc instanceof net.shibboleth.saml.saml1.profile.config.AttributeQueryProfileConfiguration) {
                 return true;
-            } else if (pc instanceof net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration) {
+            } else if (pc instanceof net.shibboleth.saml.saml2.profile.config.AttributeQueryProfileConfiguration) {
                 return true;
             }
         }

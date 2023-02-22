@@ -19,7 +19,11 @@ package net.shibboleth.idp.saml.profile.config;
 
 import net.shibboleth.idp.profile.config.InterceptorAwareProfileConfiguration;
 
-/** Common interface for IdP SAML profile configurations. */
+/**
+ * Common interface for IdP SAML profile configurations.
+ * 
+ * <p>This hooks all SAML profiles against the inbound and outbound interceptor support interface.</p>
+ */
 public interface SAMLProfileConfiguration extends net.shibboleth.saml.profile.config.SAMLProfileConfiguration,
         InterceptorAwareProfileConfiguration {
     

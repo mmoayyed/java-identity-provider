@@ -42,8 +42,8 @@ public class IgnoreScopingProfileConfigPredicate extends AbstractRelyingPartyPre
         final RelyingPartyContext rpc = getRelyingPartyContext(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc instanceof BrowserSSOProfileConfiguration) {
-                return ((BrowserSSOProfileConfiguration) pc).isIgnoreScoping(input);
+            if (pc instanceof BrowserSSOProfileConfiguration sso) {
+                return sso.isIgnoreScoping(input);
             }
         }
         

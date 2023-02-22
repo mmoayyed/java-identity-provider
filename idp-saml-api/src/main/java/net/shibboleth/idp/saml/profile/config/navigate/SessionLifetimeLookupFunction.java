@@ -42,8 +42,8 @@ public class SessionLifetimeLookupFunction extends AbstractRelyingPartyLookupFun
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc instanceof BrowserSSOProfileConfiguration) {
-                return ((BrowserSSOProfileConfiguration) pc).getMaximumSPSessionLifetime(input);
+            if (pc instanceof BrowserSSOProfileConfiguration sso) {
+                return sso.getMaximumSPSessionLifetime(input);
             }
         }
         

@@ -4,7 +4,7 @@
 
     <!-- Rewrite the profile ID so that configuration is driven by the SAML2 SLO profile config. -->
     <on-start>
-        <evaluate expression="opensamlProfileRequestContext.setProfileId(T(net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration).PROFILE_ID)" />
+        <evaluate expression="opensamlProfileRequestContext.setProfileId(T(net.shibboleth.saml.saml2.profile.config.SingleLogoutProfileConfiguration).PROFILE_ID)" />
     </on-start>
 
     <action-state id="PrepareContextTree">

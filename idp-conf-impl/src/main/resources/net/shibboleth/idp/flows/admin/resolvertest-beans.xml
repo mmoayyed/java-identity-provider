@@ -144,7 +144,7 @@
             <bean class="net.shibboleth.idp.saml.profile.context.navigate.DefaultNameIdentifierFormatStrategy"
                     p:defaultFormat="%{idp.nameid.saml1.default:urn:mace:shibboleth:1.0:nameIdentifier}">
                 <property name="profileId">
-                    <util:constant static-field="net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration.PROFILE_ID" />
+                    <util:constant static-field="net.shibboleth.saml.saml1.profile.config.BrowserSSOProfileConfiguration.PROFILE_ID" />
                 </property>
             </bean>
         </property>
@@ -169,7 +169,7 @@
             <bean class="net.shibboleth.idp.saml.profile.context.navigate.DefaultNameIdentifierFormatStrategy"
                     p:defaultFormat="%{idp.nameid.saml2.default:urn:oasis:names:tc:SAML:2.0:nameid-format:transient}">
                 <property name="profileId">
-                    <util:constant static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.PROFILE_ID" />
+                    <util:constant static-field="net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration.PROFILE_ID" />
                 </property>
             </bean>
         </property>

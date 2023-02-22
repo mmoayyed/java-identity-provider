@@ -42,8 +42,8 @@ public class SuppressAuthenticatingAuthorityPredicate extends AbstractRelyingPar
         final RelyingPartyContext rpc = getRelyingPartyContext(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc instanceof BrowserSSOProfileConfiguration) {
-                return ((BrowserSSOProfileConfiguration) pc).isSuppressAuthenticatingAuthority(input);
+            if (pc instanceof BrowserSSOProfileConfiguration sso) {
+                return sso.isSuppressAuthenticatingAuthority(input);
             }
         }
         
