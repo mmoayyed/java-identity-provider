@@ -111,7 +111,6 @@ public abstract class AbstractDuoAuthenticator extends AbstractInitializableComp
      * @return a {@link DuoResponseWrapper}
      * 
      * @throws IOException on an I/O error
-     * @throws ClientProtocolException on an HTTP error 
      * @throws DuoWebException on a Duo-related error
      */
     protected <T extends DuoResponseWrapper<?>> T doAPIRequest(@Nonnull final ClassicHttpRequest request,

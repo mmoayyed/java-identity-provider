@@ -70,7 +70,7 @@ public interface IdPModule extends IdentifiedComponent {
     @Nullable @NotEmpty String getOwnerId();
     
     /**
-     * Gets whether module enablement requires access to an {@link HttpClient}.
+     * Gets whether module enablement requires access to an {@link org.apache.hc.client5.http.classic.HttpClient}.
      * 
      * @return true iff enabling the module requires HTTP client
      */

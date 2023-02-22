@@ -41,7 +41,7 @@ public abstract class AbstractIdPHomeAwareCommandLineArguments
     @Parameter(names = "--home")
     @Nullable private String idpHome;
     
-    /** Name for the {@link HttpClient} . */
+    /** Name for the {@link org.apache.hc.client5.http.classic.HttpClient} . */
     @Parameter(names= {"-hc", "--http-client"})
     @Nullable @NotEmpty private String httpClientName;
 
@@ -59,7 +59,7 @@ public abstract class AbstractIdPHomeAwareCommandLineArguments
     }
 
     /**
-     * Get bean name for the {@link HttpClient} (if specified).
+     * Get bean name for the {@link org.apache.hc.client5.http.classic.HttpClient} (if specified).
      * 
      * @return the name or null
      */
@@ -68,7 +68,7 @@ public abstract class AbstractIdPHomeAwareCommandLineArguments
     }
     
     /**
-     * Set bean name for the {@link HttpClient}.
+     * Set bean name for the {@link org.apache.hc.client5.http.classic.HttpClient}.
      * 
      * @param name bean name
      */
