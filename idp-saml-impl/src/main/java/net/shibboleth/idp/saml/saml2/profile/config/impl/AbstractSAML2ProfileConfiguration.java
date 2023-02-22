@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.config.impl;
 
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -27,6 +28,7 @@ import net.shibboleth.idp.saml.profile.config.impl.AbstractSAMLProfileConfigurat
 import net.shibboleth.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -44,6 +46,10 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     
     /** Predicate used to determine if name identifiers should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptNameIDsPredicate;
+    
+    /** Lookup strategy for request decorator. */
+    @Nonnull Function<ProfileRequestContext,BiConsumer<ProfileRequestContext,? extends RequestAbstractType>>
+    requestDecoratorLookupStrategy;
 
     /**
      * Constructor.
@@ -56,6 +62,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
         ignoreRequestSignaturesPredicate = PredicateSupport.alwaysFalse();
         encryptionOptionalPredicate = PredicateSupport.alwaysFalse();
         encryptNameIDsPredicate = PredicateSupport.alwaysFalse();
+        
+        requestDecoratorLookupStrategy = FunctionSupport.constant(null);
     }
     
     /** {@inheritDoc} */
@@ -135,17 +143,35 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
         encryptNameIDsPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
     }
     
-    /**
-     * Get a decorator for the SAML request.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return request decorator
-     */
+    /** {@inheritDoc} */
     @Nullable public BiConsumer<ProfileRequestContext,? extends RequestAbstractType> getRequestDecorator(
             @Nullable final ProfileRequestContext profileRequestContext) {
-        // TODO: implement this feature....
-        return null;
+        return requestDecoratorLookupStrategy.apply(profileRequestContext);
+    }
+    
+    /**
+     * Set a decorator for the SAML request.
+     * 
+     * @param decorator request decorator
+     * 
+     * @since 5.0.0
+     */
+    public void setRequestDecorator(
+            @Nullable BiConsumer<ProfileRequestContext,? extends RequestAbstractType> decorator) {
+        requestDecoratorLookupStrategy = FunctionSupport.constant(decorator);
+    }
+    
+    /**
+     * Set a lookup strategy decorator for the SAML request.
+     * 
+     * @param strategy lookup strategy 
+     * 
+     * @since 5.0.0
+     */
+    public void setRequestDecoratorLookupStrategy(
+            @Nonnull Function<ProfileRequestContext,BiConsumer<ProfileRequestContext,? extends RequestAbstractType>>
+                strategy) {
+        requestDecoratorLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
     
 }

@@ -206,6 +206,10 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
+        <property name="requestDecorator">
+            <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="requestDecorator"
+                p:propertyType="#{T(java.util.function.BiConsumer)}" />
+        </property>
     </bean>
 
     <bean id="AbstractMDDrivenSAML2AssertionProducingProfile" parent="AbstractMDDrivenSAML2Profile" abstract="true">
