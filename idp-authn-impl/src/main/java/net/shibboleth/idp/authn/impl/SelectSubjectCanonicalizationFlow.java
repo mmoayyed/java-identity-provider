@@ -58,11 +58,12 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
         
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same (probably failed) flow again.
-        if (c14nContext.getAttemptedFlow() != null) {
+        final SubjectCanonicalizationFlowDescriptor flow = c14nContext.getAttemptedFlow(); 
+        if (flow != null) {
             log.info("{} Moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
-                    c14nContext.getAttemptedFlow().getId());
+                    flow.getId());
             c14nContext.getIntermediateFlows().put(
-                    c14nContext.getAttemptedFlow().getId(), c14nContext.getAttemptedFlow());
+                    flow.getId(), c14nContext.getAttemptedFlow());
         }
         
         return super.doPreExecute(profileRequestContext, c14nContext);
@@ -79,9 +80,11 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
         }
+        final String flowId = flow.getId();
+        assert flowId != null;
 
-        log.debug("{} Selecting canonicalization flow {}", getLogPrefix(), flow.getId());
-        ActionSupport.buildEvent(profileRequestContext, flow.getId());
+        log.debug("{} Selecting canonicalization flow {}", getLogPrefix(), flowId);
+        ActionSupport.buildEvent(profileRequestContext, flowId);
     }
 
     /**
@@ -103,8 +106,9 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
                 if (flow.test(profileRequestContext)) {
                     return flow;
                 }
+                final Exception ctxException = c14nContext.getException();
                 log.debug("{} Canonicalization flow {} was not applicable: {}", getLogPrefix(), flow.getId(),
-                        c14nContext.getException() != null ? c14nContext.getException().getMessage()
+                        ctxException!= null ? ctxException.getMessage()
                                 : "reason unknown");
                 c14nContext.setException(null);
                 

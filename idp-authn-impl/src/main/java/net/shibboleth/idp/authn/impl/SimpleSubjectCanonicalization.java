@@ -22,18 +22,16 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
@@ -49,7 +47,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizationAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(SelectAuthenticationFlow.class);
+   // @Nonnull private final Logger log = LoggerFactory.getLogger(SelectAuthenticationFlow.class);
 
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
@@ -68,7 +66,9 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
         if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
-            usernamePrincipal = c14nContext.getSubject().getPrincipals(UsernamePrincipal.class).iterator().next();
+            final Subject c14CtxSubject = c14nContext.getSubject();
+            assert c14CtxSubject != null;
+            usernamePrincipal = c14CtxSubject.getPrincipals(UsernamePrincipal.class).iterator().next();
             return super.doPreExecute(profileRequestContext, c14nContext);
         }
         
@@ -79,7 +79,7 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
-        
+        assert usernamePrincipal != null;
         c14nContext.setPrincipalName(applyTransforms(usernamePrincipal.getName()));
     }
      
@@ -114,8 +114,9 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
                 @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
 
             final Set<UsernamePrincipal> usernames;
-            if (c14nContext.getSubject() != null) {
-                usernames = c14nContext.getSubject().getPrincipals(UsernamePrincipal.class);
+            final Subject c14CtxSubject = c14nContext.getSubject();
+            if (c14CtxSubject  != null) {
+                usernames = c14CtxSubject .getPrincipals(UsernamePrincipal.class);
             } else {
                 usernames = null;
             }

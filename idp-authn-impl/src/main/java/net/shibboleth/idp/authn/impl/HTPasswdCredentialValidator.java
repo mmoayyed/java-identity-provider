@@ -99,18 +99,19 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
         super.doInitialize();
 
         try {
-            if (htPasswdResource == null) {
+            final Resource resource = htPasswdResource;
+            if (resource == null) {
                 throw new ComponentInitializationException("Resource cannot be null");
             }
 
             digester = new StringDigester("SHA1", OutputFormat.BASE64);
             
-            try (final InputStream is = htPasswdResource.getInputStream()) {
+            try (final InputStream is = resource.getInputStream()) {
                 credentialMap.putAll(readCredentials(is));
             }
 
-            if (htPasswdResource.isFile()) {
-                lastModified = htPasswdResource.lastModified();
+            if (resource.isFile()) {
+                lastModified = resource.lastModified();
             } else {
                 htPasswdResource = null;
             }
@@ -195,15 +196,17 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
      * Check for file refresh.
      */
     private void refreshCredentials() {
-        if (htPasswdResource == null) {
+        final Resource resource = htPasswdResource;
+
+        if (resource == null) {
             // Nothing to do.
             return;
         }
         
         try {
-            if (htPasswdResource.isFile() && htPasswdResource.exists()
-                    && (htPasswdResource.lastModified() > lastModified)) {
-                try (final InputStream is = htPasswdResource.getInputStream()) {
+            if (resource.isFile() && resource.exists()
+                    && (resource.lastModified() > lastModified)) {
+                try (final InputStream is = resource.getInputStream()) {
                     credentialMap.clear();
                     credentialMap.putAll(readCredentials(is));
                 }
@@ -254,3 +257,4 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
     }
     
 }
+

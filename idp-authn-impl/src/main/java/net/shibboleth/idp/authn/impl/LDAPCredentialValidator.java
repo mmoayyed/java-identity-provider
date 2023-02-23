@@ -60,7 +60,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
     @Nonnull private final Logger log = LoggerFactory.getLogger(LDAPCredentialValidator.class);
 
     /** LDAP authenticator. */
-    @Nonnull private Authenticator authenticator;
+    @NonnullAfterInit private Authenticator authenticator;
 
     /** Attributes to return from authentication. */
     @Nullable private String[] returnAttributes;
@@ -148,9 +148,14 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
         log.debug("{} Attempting to authenticate user {}", getLogPrefix(), username);
         final VelocityContext context = new VelocityContext();
         context.put("usernamePasswordContext", usernamePasswordContext);
-        final char[] password = passwordLookupStrategy != null ?
-          passwordLookupStrategy.apply(profileRequestContext) :
-          usernamePasswordContext.getPassword().toCharArray();
+        final char[] password;
+        if (passwordLookupStrategy != null) {
+            password = passwordLookupStrategy.apply(profileRequestContext);
+        } else {
+            final String ctxPassword = usernamePasswordContext.getPassword();
+            assert ctxPassword != null;
+            password = ctxPassword.toCharArray();
+        }
         final AuthenticationRequest request = new AuthenticationRequest(
           new User(username, context), new Credential(password), returnAttributes);
         final AuthenticationResponse response;
@@ -167,7 +172,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
         }
 
         log.debug("{} Authentication response {}", getLogPrefix(), response);
-        authenticationContext.getSubcontext(LDAPResponseContext.class, true).setAuthenticationResponse(response);
+        authenticationContext.getOrCreateSubcontext(LDAPResponseContext.class).setAuthenticationResponse(response);
         if (response.isSuccess()) {
             log.info("{} Login by '{}' succeeded", getLogPrefix(), username);
             if (response.getAccountState() != null) {

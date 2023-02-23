@@ -24,7 +24,6 @@ import java.security.Principal;
 import java.security.URIParameter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -51,6 +50,7 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -80,7 +80,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
     @Nullable private Configuration.Parameters loginConfigParameters;
     
     /** Holder for simple configurations defined by name. */
-    @Nullable @NonnullElements private Collection<String> loginConfigNames;
+    @Nonnull @NonnullElements private Collection<String> loginConfigNames;
     
     /** Application name(s) in JAAS configuration to use. */
     @Nonnull @NonnullElements private Collection<Pair<String,Subject>> loginConfigurations;
@@ -91,8 +91,8 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
     /** Constructor. */
     public JAASCredentialValidator() {
         // For compatibility with V2.
-        loginConfigNames = Collections.singletonList("ShibUserPassAuth");
-        loginConfigurations = Collections.emptyList();
+        loginConfigNames = CollectionSupport.singletonList("ShibUserPassAuth");
+        loginConfigurations = CollectionSupport.emptyList();
     }
     
     /**
@@ -162,11 +162,12 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
             for (final Pair<String,Collection<Principal>> config : configs) {
                 final String trimmed = StringSupport.trimOrNull(config.getFirst());
                 if (trimmed != null) {
-                    if (config.getSecond() == null || config.getSecond().isEmpty()) {
+                    final Collection<Principal> second = config.getSecond();
+                    if (second == null || second.isEmpty()) {
                         loginConfigurations.add(new Pair<>(trimmed, null));
                     } else {
                         final Subject subject = new Subject();
-                        subject.getPrincipals().addAll(config.getSecond());
+                        subject.getPrincipals().addAll(second);
                         loginConfigurations.add(new Pair<>(trimmed, subject));
                     }
                 }
@@ -244,11 +245,12 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
         
         for (final Pair<String,Subject> loginConfig : configs) {
             
-            if (!isAcceptable(requestedPrincipalCtx, loginConfig.getSecond(), loginConfig.getFirst())) {
+            final String currentLoginConfigName = loginConfig.getFirst();
+            assert currentLoginConfigName != null;
+            if (!isAcceptable(requestedPrincipalCtx, loginConfig.getSecond(), currentLoginConfigName)) {
                 continue;
             }
 
-            final String currentLoginConfigName = loginConfig.getFirst();
 
             try {
                 log.debug("{} Attempting to authenticate user '{}' via '{}'", getLogPrefix(),
@@ -302,10 +304,12 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
         final javax.security.auth.login.LoginContext jaasLoginCtx;
         
         if (getLoginConfigType() != null) {
+            final Configuration.Parameters params = getLoginConfigParameters();
+            assert params != null;
             log.debug("{} Using custom JAAS configuration type {} with parameters of type {}", getLogPrefix(),
-                    getLoginConfigType(), getLoginConfigParameters().getClass().getName());
+                    getLoginConfigType(), params.getClass().getName());
             final Configuration loginConfig =
-                    Configuration.getInstance(getLoginConfigType(), getLoginConfigParameters());
+                    Configuration.getInstance(getLoginConfigType(), params);
             jaasLoginCtx = new javax.security.auth.login.LoginContext(loginConfigName, null,
                     new SimpleCallbackHandler(usernamePasswordContext), loginConfig);
         } else {
@@ -316,7 +320,9 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
 
         jaasLoginCtx.login();
         
-        return jaasLoginCtx.getSubject();
+        final Subject result = jaasLoginCtx.getSubject();
+        assert result != null;
+        return result;
     }
 
     /**
@@ -377,7 +383,9 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
                     ncb.setName(context.getTransformedUsername());
                 } else if (cb instanceof PasswordCallback) {
                     final PasswordCallback pcb = (PasswordCallback) cb;
-                    pcb.setPassword(context.getPassword().toCharArray());
+                    final String password = context.getPassword();
+                    assert password != null;
+                    pcb.setPassword(password.toCharArray());
                 }
             }
         }

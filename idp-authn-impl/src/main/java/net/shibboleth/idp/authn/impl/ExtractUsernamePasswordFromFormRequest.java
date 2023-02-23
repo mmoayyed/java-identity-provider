@@ -104,7 +104,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final UsernamePasswordContext upCtx = authenticationContext.getSubcontext(UsernamePasswordContext.class, true);
+        final UsernamePasswordContext upCtx = authenticationContext.getOrCreateSubcontext(UsernamePasswordContext.class);
         upCtx.setUsername(null);
         upCtx.setPassword(null);
         

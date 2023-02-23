@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,8 +42,10 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -116,8 +117,14 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             log.debug("{} Canonical principal name was established as '{}'", getLogPrefix(), canonicalPrincipalName);
         } else if (canonicalPrincipalName == null) {
             final SessionContext sessionCtx = profileRequestContext.getSubcontext(SessionContext.class);
-            if (sessionCtx != null && sessionCtx.getIdPSession() != null) {
-                canonicalPrincipalName = sessionCtx.getIdPSession().getPrincipalName();
+            final IdPSession idpSession;
+            if (sessionCtx != null) {
+                idpSession = sessionCtx.getIdPSession();
+            } else {
+                idpSession = null;
+            }
+            if (idpSession!= null) {
+                canonicalPrincipalName = idpSession.getPrincipalName();
                 log.debug("{} Canonical principal name established from session as '{}'", getLogPrefix(),
                         canonicalPrincipalName);
             }
@@ -181,6 +188,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
     
+        final String canonicalPrincipalName = this.canonicalPrincipalName;
         if (canonicalPrincipalName != null) {
             if (authenticationContext.getRequiredName() != null &&
                     !canonicalPrincipalName.equals(authenticationContext.getRequiredName())) {
@@ -190,7 +198,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                 return;
             }
             
-            final SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, true);
+            final SubjectContext sc = profileRequestContext.getOrCreateSubcontext(SubjectContext.class);
             sc.setPrincipalName(canonicalPrincipalName);
             
             log.info("{} Principal {} authenticated", getLogPrefix(), canonicalPrincipalName);
@@ -224,13 +232,16 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                 
         // Maintain a list of each Principal that matches the request.
         final ArrayList<Principal> matches = new ArrayList<>();
-        
+        final AuthenticationResult ar = authenticationContext.getAuthenticationResult();
+        assert ar != null;
         for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+            final String op = requestedPrincipalCtx.getOperator();
+            assert op != null;
             log.debug("{} Checking result for compatibility with operator '{}' and principal '{}'",
-                    getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
+                    getLogPrefix(), op, p.getName());
             final PrincipalEvalPredicateFactory factory =
-                    requestedPrincipalCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                            p.getClass(), requestedPrincipalCtx.getOperator());
+                    requestedPrincipalCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(p.getClass(), op);
+
             if (factory != null) {
                 final PrincipalEvalPredicate predicate = factory.getPredicate(p);
     
@@ -239,12 +250,12 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                 // at a time, wrap it to apply the predicate, and then record it if it succeeds.
                 
                 matches.clear();
-                for (final Principal candidate
-                        : authenticationContext.getAuthenticationResult().getSupportedPrincipals(p.getClass())) {
+                for (final Principal candidate : ar.getSupportedPrincipals(p.getClass())) {
+                    assert candidate != null;
                     if (predicate.test(new PrincipalSupportingComponent() {
                         @SuppressWarnings("unchecked")
-                        public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
-                            return Collections.<T>singleton((T) candidate);
+                        public @Nonnull <T extends Principal> Set<T> getSupportedPrincipals(@Nonnull final Class<T> c) {
+                            return CollectionSupport.<T>singleton((T) candidate);
                         }
                     })) {
                         log.debug("{} Principal '{}' in authentication result satisfies request for principal '{}'",
@@ -269,8 +280,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             return null;
         }
         
-        final AuthenticationFlowDescriptor flowDescriptor = authenticationContext.getAvailableFlows().get(
-                authenticationContext.getAuthenticationResult().getAuthenticationFlowId());
+        final AuthenticationFlowDescriptor flowDescriptor = authenticationContext.getAvailableFlows().get(ar.getAuthenticationFlowId());
         return flowDescriptor.getHighestWeighted(matches);
     }
 

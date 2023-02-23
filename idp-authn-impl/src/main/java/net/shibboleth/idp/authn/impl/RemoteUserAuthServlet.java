@@ -22,9 +22,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,6 +33,11 @@ import org.slf4j.Logger;
 
 import com.google.common.base.Strings;
 
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
@@ -42,14 +45,9 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
-
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Extracts authentication information from the request and returns it via the IdP's external authentication
@@ -110,8 +108,8 @@ public class RemoteUserAuthServlet extends HttpServlet {
     /** Constructor. */
     public RemoteUserAuthServlet() {
         checkRemoteUser = true;
-        checkAttributes = Collections.emptyList();
-        checkHeaders = Collections.emptyList();
+        checkAttributes = CollectionSupport.emptyList();
+        checkHeaders = CollectionSupport.emptyList();
     }
 
     /**
@@ -129,7 +127,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
      * @param attributes    list of request attributes to check
      */
     public void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
-        checkAttributes = List.copyOf(attributes);
+        checkAttributes = CollectionSupport.copyToList(attributes);
     }
 
     /**
@@ -138,7 +136,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
      * @param headers list of request headers to check
      */
     public void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
-        checkHeaders = List.copyOf(headers);
+        checkHeaders = CollectionSupport.copyToList(headers);
     }
     
     /**
@@ -234,6 +232,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
     protected void service(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
             throws ServletException, IOException {
         
+        assert httpRequest != null && httpResponse != null;
         try {
             final String key = ExternalAuthentication.startExternalAuthentication(httpRequest);
 
@@ -314,6 +313,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
                         while (methods.hasMoreElements()) {
                             final String method = methods.nextElement();
                             if (!Strings.isNullOrEmpty(method)) {
+                                assert method != null;
                                 final Principal p = getPrincipal(authnFlow, method);
                                 if (p != null) {
                                     log.debug("{}: Successfully processed authentication method from header {}: {}",

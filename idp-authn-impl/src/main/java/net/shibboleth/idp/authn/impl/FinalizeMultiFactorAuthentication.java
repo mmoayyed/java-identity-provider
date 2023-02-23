@@ -34,6 +34,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -193,9 +194,9 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
         }
         
         authenticationContext.setAuthenticationResult(result);
+        final AuthenticationFlowDescriptor flow = Constraint.isNotNull(authenticationContext.getAttemptedFlow(), "Expected an attempted flow");
         
-        final BiConsumer<ProfileRequestContext,Subject> decorator =
-                authenticationContext.getAttemptedFlow().getSubjectDecorator();
+        final BiConsumer<ProfileRequestContext,Subject> decorator = flow.getSubjectDecorator();
         if (decorator != null) {
             decorator.accept(profileRequestContext, result.getSubject());
         }
@@ -249,6 +250,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
                             
                             final Subject subject = new Subject();
                             for (final AuthenticationResult result : results) {
+                                assert result != null;
                                 subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
                                 subject.getPrincipals().addAll(result.getSubject().getPrincipals());
                                 subject.getPublicCredentials().addAll(result.getSubject().getPublicCredentials());
@@ -256,8 +258,11 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
                                 allPreviousResults = allPreviousResults && result.isPreviousResult();
                             }
                             
-                            final AuthenticationResult merged = new AuthenticationResult(
-                                    mfaContext.getAuthenticationFlowDescriptor().getId(), subject);
+                            final AuthenticationFlowDescriptor afd = mfaContext.getAuthenticationFlowDescriptor();
+                            assert afd != null;
+                            final String afdId = afd.getId();
+                            assert afdId != null;
+                            final AuthenticationResult merged = new AuthenticationResult(afdId, subject);
                             merged.setPreviousResult(allPreviousResults);
                             return merged;
                         }

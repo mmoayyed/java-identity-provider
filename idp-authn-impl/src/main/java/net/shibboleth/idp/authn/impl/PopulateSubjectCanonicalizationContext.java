@@ -18,8 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -30,6 +28,7 @@ import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -51,7 +50,7 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
 
     /** Constructor. */
     PopulateSubjectCanonicalizationContext() {
-        availableFlows = Collections.emptyList();
+        availableFlows = CollectionSupport.emptyList();
     }
     
     /**
@@ -62,7 +61,7 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
     public void setAvailableFlows(
             @Nonnull @NonnullElements final Collection<SubjectCanonicalizationFlowDescriptor> flows) {
         checkSetterPreconditions();
-        availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
+        availableFlows = CollectionSupport.copyToList(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
         
     /** {@inheritDoc} */

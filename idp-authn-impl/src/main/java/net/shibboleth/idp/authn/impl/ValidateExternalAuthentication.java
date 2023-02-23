@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -41,6 +43,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext.Direction;
 import net.shibboleth.idp.authn.AbstractValidationAction;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.CertificateContext;
@@ -50,6 +53,7 @@ import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.service.ReloadableService;
@@ -165,9 +169,11 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
             @Nonnull final AuthenticationContext authenticationContext) {
 
         @Nonnull ExternalAuthenticationContext localExtContext = Constraint.isNotNull(extContext, "external Authn Context cannot be null");
-        if (localExtContext.getAuthnException() != null) {
+        final Exception authnExp = localExtContext.getAuthnException();
+        final String principalName = localExtContext.getPrincipalName();
+        if (authnExp != null) {
             log.info("{} External authentication produced exception", getLogPrefix(), localExtContext.getAuthnException());
-            handleError(profileRequestContext, authenticationContext, localExtContext.getAuthnException(),
+            handleError(profileRequestContext, authenticationContext, authnExp,
                     AuthnEventIds.AUTHN_EXCEPTION);
             recordFailure(profileRequestContext);
             return;
@@ -186,11 +192,10 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
                     localExtContext.getPrincipal());
             localExtContext.setSubject(new Subject(false, Collections.singleton(localExtContext.getPrincipal()),
                     Collections.emptySet(), Collections.emptySet()));
-        } else if (localExtContext.getPrincipalName() != null) {
-            log.info("{} External authentication succeeded for user: {}", getLogPrefix(),
-                    localExtContext.getPrincipalName());
+        } else if (principalName!= null) {
+            log.info("{} External authentication succeeded for user: {}", getLogPrefix(), principalName);
             localExtContext.setSubject(new Subject(false,
-                    Collections.singleton(new UsernamePrincipal(localExtContext.getPrincipalName())),
+                    Collections.singleton(new UsernamePrincipal(principalName)),
                     Collections.emptySet(), Collections.emptySet()));
         } else {
             log.info("{} External authentication failed, no user identity or error information returned",
@@ -199,8 +204,10 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
                     AuthnEventIds.NO_CREDENTIALS);
             return;
         }
+        final Subject subject = localExtContext.getSubject();
+        assert subject != null;
         
-        if (!checkUsername(localExtContext.getSubject())) {
+        if (!checkUsername(subject)) {
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                     AuthnEventIds.INVALID_CREDENTIALS);
             recordFailure(profileRequestContext);
@@ -212,7 +219,7 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         if (!localExtContext.getAuthenticatingAuthorities().isEmpty()) {
             final ProxyAuthenticationPrincipal proxied =
                     new ProxyAuthenticationPrincipal(localExtContext.getAuthenticatingAuthorities());
-            localExtContext.getSubject().getPrincipals().add(proxied);
+            subject.getPrincipals().add(proxied);
         }
         
         if (localExtContext.doNotCache()) {
@@ -220,16 +227,18 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
             authenticationContext.setResultCacheable(false);
         }
         
-        filterAttributes();
+        filterAttributes(localExtContext);
         
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         
-        if (authenticationContext.getAuthenticationResult() != null) {
-            if (localExtContext.getAuthnInstant() != null) {
-                authenticationContext.getAuthenticationResult().setAuthenticationInstant(localExtContext.getAuthnInstant());
+        final AuthenticationResult ar = authenticationContext.getAuthenticationResult();
+        if (ar != null) {
+            final Instant ai = localExtContext.getAuthnInstant();
+            if (ai != null) {
+                ar.setAuthenticationInstant(ai);
             }
             if (localExtContext.isPreviousResult()) {
-                authenticationContext.getAuthenticationResult().setPreviousResult(true);
+                ar.setPreviousResult(true);
             }
         }
     }
@@ -241,16 +250,21 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         // Override supplied Subject with our own, after transferring over any custom Principals
         // and adding any filtered inbound attributes.
         @Nonnull ExternalAuthenticationContext localExtContext = Constraint.isNotNull(extContext, "external Authn Context cannot be null");
-        localExtContext.getSubject().getPrincipals().addAll(subject.getPrincipals());
-        
-        if (attributeContext != null && !attributeContext.getIdPAttributes().isEmpty()) {
+        final Subject localSubject = Constraint.isNotNull(localExtContext.getSubject(), "external Authn Subject cannot be null");
+        localSubject.getPrincipals().addAll(subject.getPrincipals());
+
+        final AttributeContext ac= attributeContext;
+        if (ac != null && !ac.getIdPAttributes().isEmpty()) {
             log.debug("{} Adding filtered inbound attributes to Subject", getLogPrefix());
-            localExtContext.getSubject().getPrincipals().addAll(
-                attributeContext.getIdPAttributes().values().stream().map(
-                        (IdPAttribute a) -> new IdPAttributePrincipal(a)).collect(Collectors.toList()));
+            localSubject.getPrincipals().addAll(
+                ac.getIdPAttributes().
+                values().
+                stream().
+                map((IdPAttribute a) -> {assert a != null;return new IdPAttributePrincipal(a);}).
+                collect(CollectionSupport.nonnullCollector(Collectors.toList())).get());
         }
         
-        return localExtContext.getSubject();
+        return localSubject;
     }
     
     /**
@@ -265,6 +279,7 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         if (matchExpression != null) {
             final String name = getUsername(subject);
             if (name != null) {
+                assert matchExpression != null;
                 if (matchExpression.matcher(name).matches()) {
                     return true;
                 }
@@ -300,9 +315,14 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
     /** {@inheritDoc} */
     @Override
     @Nullable protected Map<String,String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
-        
-        if (extContext != null && extContext.getSubject() != null) {
-            final String name = getUsername(extContext.getSubject());
+        final Subject subject;
+        if (extContext != null) {
+            subject = extContext.getSubject();
+        } else {
+            subject = null;
+        }
+        if (subject != null) {
+            final String name = getUsername(subject);
             if (name != null) {
                 return Collections.singletonMap(IdPAuditFields.USERNAME, name);
             }
@@ -313,40 +333,44 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
     
     /**
      * Check for inbound attributes and apply filtering.
+     * @param localExtContext nonnull value of {@link #extContext}
      */
-    private void filterAttributes() {
+    private void filterAttributes(@Nonnull final ExternalAuthenticationContext localExtContext) {
         
-        attributeContext = extContext.getSubcontext(AttributeContext.class);
-        if (attributeContext == null) {
+        final AttributeContext ac = attributeContext = localExtContext.getSubcontext(AttributeContext.class);
+        if (ac == null) {
             log.debug("{} No attribute context, no attributes to filter", getLogPrefix());
             return;
         }
 
-        if (attributeContext.getIdPAttributes().isEmpty()) {
+        if (ac.getIdPAttributes().isEmpty()) {
             log.debug("{} No attributes to filter", getLogPrefix());
             return;
         }
 
         if (attributeFilterService == null) {
             log.warn("{} No AttributeFilter service provided, clearing inbound attributes", getLogPrefix());
-            attributeContext.setIdPAttributes(null);
+            ac.setIdPAttributes(null);
             return;
         }
-        final AttributeFilterContext filterContext = extContext.getSubcontext(AttributeFilterContext.class, true);
+        final AttributeFilterContext filterContext = localExtContext.getOrCreateSubcontext(AttributeFilterContext.class);
         
         populateFilterContext(filterContext);
         
+        assert attributeFilterService != null;
         try (final ServiceableComponent<AttributeFilter> component = attributeFilterService.getServiceableComponent()) {
             final AttributeFilter filter = component.getComponent();
             filter.filterAttributes(filterContext);
-            filterContext.getParent().removeSubcontext(filterContext);
-            attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
+            final BaseContext parent = filterContext.getParent();
+            assert parent != null;
+            parent.removeSubcontext(filterContext);
+            ac.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
         } catch (final AttributeFilterException e) {
             log.error("{} Error while filtering inbound attributes", getLogPrefix(), e);
-            attributeContext.setIdPAttributes(null);
+            ac.setIdPAttributes(null);
         } catch (final ServiceException e) {
             log.error("{} Invalid AttributeFilter configuration", getLogPrefix(), e);
-            attributeContext.setIdPAttributes(null);
+            ac.setIdPAttributes(null);
         }
     }
     
@@ -360,14 +384,17 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
      */
     private void populateFilterContext(@Nonnull final AttributeFilterContext filterContext) {
         
+        final AttributeContext ac = attributeContext;
+        final ExternalAuthenticationContext ec = extContext;
+        assert ac != null && ec != null;
         filterContext.setDirection(Direction.INBOUND)
-            .setPrefilteredIdPAttributes(attributeContext.getIdPAttributes().values())
+            .setPrefilteredIdPAttributes(ac.getIdPAttributes().values())
             .setMetadataResolver(metadataResolver)
             .setRequesterMetadataContextLookupStrategy(null)
             .setProxiedRequesterContextLookupStrategy(null);
         
-        if (!extContext.getAuthenticatingAuthorities().isEmpty()) {
-            filterContext.setAttributeIssuerID(extContext.getAuthenticatingAuthorities().iterator().next());
+        if (!ec.getAuthenticatingAuthorities().isEmpty()) {
+            filterContext.setAttributeIssuerID(ec.getAuthenticatingAuthorities().iterator().next());
         }
     }
 

@@ -142,10 +142,12 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
      * @param profileRequestContext profile request context
      */
     protected void doAudit(@Nonnull final ProfileRequestContext profileRequestContext) {
+
         if (populateAuditContextAction != null && writeAuditLogAction != null) {
             final EventContext existingEvent = profileRequestContext.getSubcontext(EventContext.class);
             
             try {
+                assert populateAuditContextAction != null;
                 populateAuditContextAction.execute(requestContext);
                 
                 final Map<String,String> fields = getAuditFields(profileRequestContext);
@@ -153,7 +155,9 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
                     final AuditContext ac = getAuditContext(profileRequestContext);
                     if (ac != null) {
                         for (final Map.Entry<String,String> field : fields.entrySet()) {
-                            ac.getFieldValues(field.getKey()).add(field.getValue());
+                            final String key = field.getKey();
+                            assert key != null;
+                            ac.getFieldValues(key).add(field.getValue());
                         }
                     }
                 }
@@ -164,6 +168,7 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
             }
             
             try {
+                assert writeAuditLogAction != null;
                 writeAuditLogAction.execute(requestContext);
             } finally {
                 if (existingEvent != null) {
@@ -183,5 +188,4 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
             @Nonnull final ProfileRequestContext profileRequestContext) {
         return null;
     }
-    
 }

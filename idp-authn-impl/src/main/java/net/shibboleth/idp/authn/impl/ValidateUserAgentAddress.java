@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.net.InetAddress;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +40,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.net.IPRange;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -76,7 +76,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
     /** Constructor. */
     public ValidateUserAgentAddress() {
         setMetricName(DEFAULT_METRIC_NAME);
-        mappings = Collections.emptyMap();
+        mappings = CollectionSupport.emptyMap();
     }
     
     /**
@@ -94,7 +94,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
                 }
             }
         } else {
-            mappings = Collections.emptyMap();
+            mappings = CollectionSupport.emptyMap();
         }
     }
     
@@ -107,15 +107,15 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
             return false;
         }
 
-        uaContext = authenticationContext.getSubcontext(UserAgentContext.class, false);
-        if (uaContext == null) {
+        final UserAgentContext uaCtx = uaContext = authenticationContext.getSubcontext(UserAgentContext.class, false);
+        if (uaCtx == null) {
             log.debug("{} No UserAgentContext available within authentication context", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                     AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
-        if (uaContext.getAddress() == null) {
+        if (uaCtx.getAddress() == null) {
             log.debug("{} No address available within UserAgentContext", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                     AuthnEventIds.NO_CREDENTIALS);
@@ -130,11 +130,17 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
+        final UserAgentContext uaCtx = uaContext;
+        assert uaCtx != null;
+        final InetAddress addr = uaCtx.getAddress();
+        assert addr != null;
         for (final Map.Entry<String,Collection<IPRange>> e : mappings.entrySet()) {
-            if (isAuthenticated(uaContext.getAddress(), e.getValue())) {
+            final Collection<IPRange> ranges = e.getValue();
+            assert ranges != null;
+            if (isAuthenticated(addr, ranges)) {
                 principalName = e.getKey();
                 log.info("{} Authenticated user agent with address {} as {}",
-                        getLogPrefix(), uaContext.getAddress().getHostAddress(), principalName);
+                        getLogPrefix(), addr.getHostAddress(), principalName);
                 recordSuccess(profileRequestContext);
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 return;
@@ -142,7 +148,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
         }
 
         log.debug("{} User agent with address {} was not authenticated", getLogPrefix(),
-                uaContext.getAddress().getHostAddress());
+                addr.getHostAddress());
         handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                 AuthnEventIds.INVALID_CREDENTIALS);
         recordFailure(profileRequestContext);
@@ -159,7 +165,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
     private boolean isAuthenticated(@Nonnull final InetAddress address,
             @Nonnull @NonnullElements final Collection<IPRange> ranges) {
         final byte[] resolvedAddress = address.getAddress();
-
+        assert resolvedAddress != null;
         for (final IPRange range : ranges) {
             if (range.contains(resolvedAddress)) {
                 return true;
@@ -172,7 +178,9 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
-        subject.getPrincipals().add(new UsernamePrincipal(principalName));
+        assert principalName != null;
+        final UsernamePrincipal principal = new UsernamePrincipal(principalName);
+        subject.getPrincipals().add(principal);
         return subject;
     }
 

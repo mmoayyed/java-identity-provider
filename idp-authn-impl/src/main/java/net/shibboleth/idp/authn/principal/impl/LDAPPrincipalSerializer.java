@@ -74,7 +74,9 @@ public class LDAPPrincipalSerializer extends AbstractPrincipalSerializer<String>
 
     /** Constructor. */
     public LDAPPrincipalSerializer() {
-        objectBuilderFactory = Json.createBuilderFactory(null);
+        final JsonBuilderFactory factory = Json.createBuilderFactory(null);
+        assert factory != null;
+        objectBuilderFactory = factory;
     }
     
     /** {@inheritDoc} */
@@ -103,7 +105,9 @@ public class LDAPPrincipalSerializer extends AbstractPrincipalSerializer<String>
             }
             gen.writeEnd();
         }
-        return sink.toString();
+        final String result = sink.toString();
+        assert result != null;
+        return result;
     }
     
     /** {@inheritDoc} */
@@ -157,7 +161,9 @@ public class LDAPPrincipalSerializer extends AbstractPrincipalSerializer<String>
      * @return  an object builder
      */
     @Nonnull private synchronized JsonObjectBuilder getJsonObjectBuilder() {
-        return objectBuilderFactory.createObjectBuilder();
+        final JsonObjectBuilder result = objectBuilderFactory.createObjectBuilder();
+        assert result != null;
+        return result;
     }
 
     /**
@@ -166,7 +172,9 @@ public class LDAPPrincipalSerializer extends AbstractPrincipalSerializer<String>
      * @return  an array builder
      */
     @Nonnull private synchronized JsonArrayBuilder getJsonArrayBuilder() {
-        return objectBuilderFactory.createArrayBuilder();
+        final JsonArrayBuilder result = objectBuilderFactory.createArrayBuilder();
+        assert result != null;
+        return result;
     }
-    
+
 }

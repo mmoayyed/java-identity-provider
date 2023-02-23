@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -92,8 +92,8 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
     /** Constructor. */
     public AttributeSourcedSubjectCanonicalization() {
         delimiter = '@';
-        attributeSourceIds = Collections.emptyList();
-        subjectSourcedAttributes = Collections.emptyMap();
+        attributeSourceIds = CollectionSupport.emptyList();
+        subjectSourcedAttributes = CollectionSupport.emptyMap();
         
         attributeContextLookupStrategy =
                 new ChildContextLookup<>(AttributeContext.class).compose(
@@ -165,16 +165,16 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
         }
         
         if (resolveFromSubject) {
-            final Set<IdPAttributePrincipal> subjectSourced =
-                    c14nContext.getSubject().getPrincipals(IdPAttributePrincipal.class);
+            @Nonnull final Subject subject = Constraint.isNotNull(c14nContext.getSubject(), "Expected a non-null Subject");
+            final Set<IdPAttributePrincipal> subjectSourced = subject.getPrincipals(IdPAttributePrincipal.class);
             if (subjectSourced != null && !subjectSourced.isEmpty()) {
                 subjectSourcedAttributes = new HashMap<>(subjectSourced.size());
                 subjectSourced.forEach(a -> subjectSourcedAttributes.put(a.getAttribute().getId(), a.getAttribute()));
             }
         }
         
-        attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
-        if (subjectSourcedAttributes.isEmpty() && (attributeCtx == null || attributeCtx.getIdPAttributes().isEmpty())) {
+        final AttributeContext aCtx = attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
+        if (subjectSourcedAttributes.isEmpty() && (aCtx == null || aCtx.getIdPAttributes().isEmpty())) {
             log.warn("{} No attributes found, canonicalization not possible", getLogPrefix());
             c14nContext.setException(new SubjectCanonicalizationException("No attributes were found"));
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
@@ -244,8 +244,6 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
                 log.warn("{} Unsupported attribute value type: {}", getLogPrefix(), val.getClass().getName());
             }
         }
-        
         return null;
     }
-    
 }

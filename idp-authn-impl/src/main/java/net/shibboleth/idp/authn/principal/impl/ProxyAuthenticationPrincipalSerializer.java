@@ -33,7 +33,6 @@ import javax.json.JsonBuilderFactory;
 import javax.json.JsonException;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
@@ -41,12 +40,9 @@ import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonGenerator;
 
-import org.slf4j.Logger;
-
 import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Principal serializer for {@link ProxyAuthenticationPrincipal}.
@@ -66,15 +62,14 @@ public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSer
     /** Pattern used to determine if input is supported. */
     private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"AA\":.*\\}$");
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ProxyAuthenticationPrincipalSerializer.class);
-    
     /** JSON object bulder factory. */
     @Nonnull private final JsonBuilderFactory objectBuilderFactory;
 
     /** Constructor. */
     public ProxyAuthenticationPrincipalSerializer() {
-        objectBuilderFactory = Json.createBuilderFactory(null);
+        final JsonBuilderFactory factory = Json.createBuilderFactory(null);
+        assert factory != null;
+        objectBuilderFactory = factory;
     }
     
     /** {@inheritDoc} */
@@ -96,8 +91,9 @@ public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSer
         try (final JsonGenerator gen = getJsonGenerator(sink)) {
             gen.writeStartObject().write(PROXY_AUTH_FIELD, arrayBuilder.build());
             
-            if (proxyPrincipal.getProxyCount() != null) {
-                gen.write(PROXY_COUNT_FIELD, proxyPrincipal.getProxyCount());
+            final Integer proxyCount = proxyPrincipal.getProxyCount();
+            if (proxyCount != null) {
+                gen.write(PROXY_COUNT_FIELD, proxyCount );
             }
             
             if (!proxyPrincipal.getAudiences().isEmpty()) {
@@ -108,7 +104,9 @@ public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSer
             
             gen.writeEnd();
         }
-        return sink.toString();
+        final String result = sink.toString();
+        assert result != null;
+        return result;
     }
     
     /** {@inheritDoc} */
@@ -169,22 +167,16 @@ public class ProxyAuthenticationPrincipalSerializer extends AbstractPrincipalSer
     }
 // Checkstyle: CyclomaticComplexity ON
 
-    /**
-     * Get a {@link JsonObjectBuilder} in a thread-safe manner.
-     * 
-     * @return  an object builder
-     */
-    @Nonnull private synchronized JsonObjectBuilder getJsonObjectBuilder() {
-        return objectBuilderFactory.createObjectBuilder();
-    }
 
-    /**
-     * Get a {@link JsonArrayBuilder} in a thread-safe manner.
-     * 
-     * @return  an array builder
-     */
-    @Nonnull private synchronized JsonArrayBuilder getJsonArrayBuilder() {
-        return objectBuilderFactory.createArrayBuilder();
-    }
-    
+     /**
+      * Get a {@link JsonArrayBuilder} in a thread-safe manner.
+      *
+      * @return  an array builder
+      */
+     @Nonnull private synchronized JsonArrayBuilder getJsonArrayBuilder() {
+        final JsonArrayBuilder result = objectBuilderFactory.createArrayBuilder();
+        assert result != null;
+        return result;
+     }   
 }
+

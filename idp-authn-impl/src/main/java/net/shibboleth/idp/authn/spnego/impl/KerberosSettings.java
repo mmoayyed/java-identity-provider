@@ -18,17 +18,15 @@
 package net.shibboleth.idp.authn.spnego.impl;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -44,12 +42,12 @@ public class KerberosSettings {
     private boolean refreshKrb5Config;
 
     /** List of realms (KerberosRealmSettings objects). */
-    @NonnullAfterInit @NonnullElements private Collection<KerberosRealmSettings> realmSettings;
+    @Nonnull @NonnullElements private Collection<KerberosRealmSettings> realmSettings;
 
     /** Constructor. */
     public KerberosSettings() {
         loginModuleClassName = "com.sun.security.auth.module.Krb5LoginModule";
-        realmSettings = Collections.emptyList();
+        realmSettings = CollectionSupport.emptyList();
     }
 
     /**
@@ -96,9 +94,9 @@ public class KerberosSettings {
      */
     public void setRealms(@Nullable @NonnullElements final Collection<KerberosRealmSettings> realms) {
         if (realms != null) {
-            realmSettings = List.copyOf(realms);
+            realmSettings = CollectionSupport.copyToList(realms);
         } else {
-            realmSettings = Collections.emptyList();
+            realmSettings = CollectionSupport.emptyList();
         }
     }
 

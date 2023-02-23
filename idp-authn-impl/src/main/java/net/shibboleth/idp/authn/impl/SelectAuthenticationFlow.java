@@ -120,10 +120,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         noProxying = authenticationContext.getProxyCount() != null && authenticationContext.getProxyCount() == 0;
         
-        requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
-        if (requestedPrincipalCtx != null) {
-            if (requestedPrincipalCtx.getOperator() == null
-                    || requestedPrincipalCtx.getRequestedPrincipals().isEmpty()) {
+        final RequestedPrincipalContext rpc = requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
+        if (rpc != null) {
+            if (rpc.getOperator() == null || rpc.getRequestedPrincipals().isEmpty()) {
                 requestedPrincipalCtx = null;
             }
         }
@@ -135,12 +134,11 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same (probably failed) flow again as part of
-        // general flow selection. A flow might signal to explicitly re-run another flow anyway.
-        if (authenticationContext.getAttemptedFlow() != null) {
-            log.info("{} Moving incomplete flow {} to intermediate set", getLogPrefix(),
-                    authenticationContext.getAttemptedFlow().getId());
-            authenticationContext.getIntermediateFlows().put(
-                    authenticationContext.getAttemptedFlow().getId(), authenticationContext.getAttemptedFlow());
+        // general flow selection. A flow might signal to explicitly re-run another flow anyway
+        final AuthenticationFlowDescriptor flow = authenticationContext.getAttemptedFlow();
+        if (flow != null) {
+            log.info("{} Moving incomplete flow {} to intermediate set", getLogPrefix(), flow.getId());
+            authenticationContext.getIntermediateFlows().put(flow.getId(), authenticationContext.getAttemptedFlow());
         }
         
         return true;
@@ -206,10 +204,12 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             }
         }
         
+        final RequestedPrincipalContext rpc = requestedPrincipalCtx;
         if (activeResult != null) {
-            if (requestedPrincipalCtx != null) {
-                for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
-                    final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+            if (rpc != null) {
+                for (final Principal p : rpc.getRequestedPrincipals()) {
+                    assert p!= null;
+                    final PrincipalEvalPredicate predicate = rpc.getPredicate(p);
                     if (predicate != null) {
                         if (predicate.test(activeResult)) {
                             selectActiveResult(profileRequestContext, authenticationContext, activeResult);
@@ -218,7 +218,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     } else {
                         log.warn("{} Configuration does not support requested principal evaluation with "
                                 + "operator '{}' and type '{}'", getLogPrefix(),
-                                requestedPrincipalCtx.getOperator(), p.getClass());
+                                rpc.getOperator(), p.getClass());
                     }
                 }
             } else {
@@ -234,9 +234,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             log.error("{} Signaled flow {} does not support passive authentication", getLogPrefix(), flow.getId());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_PASSIVE);
             return;
-        } else if (requestedPrincipalCtx != null) {
-            for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
-                final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+        } else if (rpc != null) {
+            for (final Principal p : rpc.getRequestedPrincipals()) {
+                assert p != null;
+                final PrincipalEvalPredicate predicate = rpc.getPredicate(p);
                 if (predicate != null) {
                     if (predicate.test(flow) && flow.test(profileRequestContext)) {
                         selectInactiveFlow(profileRequestContext, authenticationContext, flow);
@@ -244,7 +245,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     }
                 } else {
                     log.warn("{} Configuration does not support requested principal evaluation with "
-                            + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                            + "operator '{}' and type '{}'", getLogPrefix(), rpc.getOperator(),
                             p.getClass());
                 }
             }
@@ -293,7 +294,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         for (final AuthenticationResult activeResult : authenticationContext.getActiveResults().values()) {
             if (activeResult.test(profileRequestContext)) {
                 resultToSelect = activeResult;
-                if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(activeResult)) {
+                final PreferredPrincipalContext ppCtx = preferredPrincipalCtx;
+                if (ppCtx == null || ppCtx.isAcceptable(activeResult)) {
                     break;
                 }
             } else {
@@ -341,7 +343,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     if (!noProxying || !flow.isProxyScopingEnforced()) {
                         if (flow.test(profileRequestContext)) {
                             selectedFlow = flow;
-                            if (preferredPrincipalCtx == null || preferredPrincipalCtx.isAcceptable(flow)) {
+                            final PreferredPrincipalContext ppCtx = preferredPrincipalCtx;
+                            if (ppCtx == null || ppCtx.isAcceptable(flow)) {
                                 break;
                             }
                         }
@@ -364,9 +367,11 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext,
             @Nonnull final AuthenticationFlowDescriptor descriptor) {
 
-        log.debug("{} Selecting inactive authentication flow {}", getLogPrefix(), descriptor.getId());
+        final String id = descriptor.getId();
+        assert id != null;
+        log.debug("{} Selecting inactive authentication flow {}", getLogPrefix(), id);
         authenticationContext.setAttemptedFlow(descriptor);
-        ActionSupport.buildEvent(profileRequestContext, descriptor.getId());
+        ActionSupport.buildEvent(profileRequestContext, id);
     }    
     
     /**
@@ -396,8 +401,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     private void doSelectRequestedPrincipals(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        final RequestedPrincipalContext rpCtx = requestedPrincipalCtx;
+        assert rpCtx != null;
         log.debug("{} Specific principals requested with '{}' operator: {}", getLogPrefix(),
-                requestedPrincipalCtx.getOperator(), requestedPrincipalCtx.getRequestedPrincipals());
+                rpCtx.getOperator(), rpCtx.getRequestedPrincipals());
 
         
         if (authenticationContext.isForceAuthn()) {
@@ -422,13 +429,15 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
 
         final Map<String,AuthenticationFlowDescriptor> potentialFlows = authenticationContext.getPotentialFlows();
+        final RequestedPrincipalContext rpCtx = requestedPrincipalCtx;
+        assert rpCtx != null;
         
         // Check each flow for compatibility with request. Don't check for an active result also.
         // Also omit anything in the intermediates collection already.
-        for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+        for (final Principal p : rpCtx.getRequestedPrincipals()) {
             log.debug("{} Checking for inactive flow compatible with operator '{}' and principal '{}'",
-                    getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
-            final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+                    getLogPrefix(), rpCtx.getOperator(), p.getName());
+            final PrincipalEvalPredicate predicate = rpCtx.getPredicate(p);
             if (predicate != null) {
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                     if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
@@ -445,7 +454,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 }
             } else {
                 log.warn("{} Configuration does not support requested principal evaluation with "
-                        + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                        + "operator '{}' and type '{}'", getLogPrefix(), rpCtx.getOperator(),
                         p.getClass());
             }
         }
@@ -470,14 +479,17 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext,
             @Nonnull @NonnullElements final Map<String,AuthenticationResult> activeResults) {
 
+        final RequestedPrincipalContext rpCtx = requestedPrincipalCtx;
+        assert rpCtx != null;
+
         if (favorSSO) {
             log.debug("{} Giving priority to active results that meet request requirements");
             
             // Check each active result for compatibility with request.
-            for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+            for (final Principal p : rpCtx.getRequestedPrincipals()) {
                 log.debug("{} Checking for an active result compatible with operator '{}' and principal '{}'",
-                        getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
-                final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+                        getLogPrefix(), rpCtx.getOperator(), p.getName());
+                final PrincipalEvalPredicate predicate = rpCtx.getPredicate(p);
                 if (predicate != null) {
                     for (final AuthenticationResult result : activeResults.values()) {
                         if (result.test(profileRequestContext) &&
@@ -490,7 +502,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     }
                 } else {
                     log.warn("{} Configuration does not support requested principal evaluation with "
-                            + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                            + "operator '{}' and type '{}'", getLogPrefix(), rpCtx.getOperator(),
                             p.getClass());
                 }
             }
@@ -506,11 +518,11 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         // In this branch, we check each flow for compatibility *and* then double check to see if an active
         // result from that flow also exists and is compatible. This favors a matching inactive flow that is
         // higher in request precedence than an active result.
-        for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+        for (final Principal p : rpCtx.getRequestedPrincipals()) {
             log.debug("{} Checking for an inactive flow or active result compatible with "
-                    + "operator '{}' and principal '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                    + "operator '{}' and principal '{}'", getLogPrefix(), rpCtx.getOperator(),
                     p.getName());
-            final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+            final PrincipalEvalPredicate predicate = rpCtx.getPredicate(p);
             if (predicate != null) {
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                     if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
@@ -541,7 +553,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 }
             } else {
                 log.warn("{} Configuration does not support requested principal evaluation with "
-                        + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                        + "operator '{}' and type '{}'", getLogPrefix(), rpCtx.getOperator(),
                         p.getClass());
             }
         }

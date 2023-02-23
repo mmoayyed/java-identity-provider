@@ -355,7 +355,9 @@ public class KerberosCredentialValidator extends AbstractUsernamePasswordCredent
                     ncb.setName(context.getTransformedUsername());
                 } else if (cb instanceof PasswordCallback) {
                     final PasswordCallback pcb = (PasswordCallback) cb;
-                    pcb.setPassword(context.getPassword().toCharArray());
+                    final String password = context.getPassword();
+                    assert password != null;
+                    pcb.setPassword(password.toCharArray());
                 }
             }
         }

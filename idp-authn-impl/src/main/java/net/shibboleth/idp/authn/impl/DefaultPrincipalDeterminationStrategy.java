@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.logic.Constraint;
@@ -87,14 +88,14 @@ public class DefaultPrincipalDeterminationStrategy<T extends Principal> implemen
         if (ac == null || ac.getAuthenticationResult() == null) {
             return defaultPrincipal;
         }
-        
-        final AuthenticationFlowDescriptor descriptor = ac.getAvailableFlows().get(
-                ac.getAuthenticationResult().getAuthenticationFlowId());
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        final AuthenticationFlowDescriptor descriptor = ac.getAvailableFlows().get(ar.getAuthenticationFlowId());
         if (descriptor == null) {
             return defaultPrincipal;
         }
 
-        final Set<T> principals = ac.getAuthenticationResult().getSupportedPrincipals(principalType);
+        final Set<T> principals = ar.getSupportedPrincipals(principalType);
         if (principals.isEmpty()) {
             return defaultPrincipal;
         }

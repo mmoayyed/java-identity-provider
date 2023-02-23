@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -35,6 +34,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -75,7 +75,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     
     /** Constructor. */
     public PopulateAuthenticationContext() {
-        availableFlows = Collections.emptyList();
+        availableFlows = CollectionSupport.emptyList();
         potentialFlowsLookupStrategy = FunctionSupport.constant(Collections.emptyList());
         activeFlowsLookupStrategy = new AuthenticationFlowsLookupFunction();
     }
@@ -87,7 +87,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
         checkSetterPreconditions();
-        availableFlows = List.copyOf(Constraint.isNotNull(flows, "Flow collection cannot be null"));
+        availableFlows = CollectionSupport.copyToList(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }
 
     /**
@@ -119,7 +119,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      * 
      * @return predicate factory registry
      */
-    @Nonnull public PrincipalEvalPredicateFactoryRegistry getPrincipalPredicateFactoryEvalRegistry() {
+    @Nullable public PrincipalEvalPredicateFactoryRegistry getPrincipalPredicateFactoryEvalRegistry() {
         return evalRegistry;
     }
     

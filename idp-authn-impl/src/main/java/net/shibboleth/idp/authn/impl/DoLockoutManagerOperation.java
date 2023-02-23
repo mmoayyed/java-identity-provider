@@ -114,7 +114,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -166,20 +166,22 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        profileRequestContext.getSubcontext(LockoutManagerContext.class, true).setKey(key);
+        profileRequestContext.getOrCreateSubcontext(LockoutManagerContext.class).setKey(key);
         
         try {
             final HttpServletRequest request = getHttpServletRequest();
             final HttpServletResponse response = getHttpServletResponse();
-            
+            assert response != null && request != null;
+            final AccountLockoutManager lckManager = this.lockoutManager;
+            assert lckManager != null;
             response.setContentType("application/json");
             response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
             
             if ("GET".equals(request.getMethod())) {
                 try {
-                    final boolean lockout = lockoutManager.check(profileRequestContext);
+                    final boolean lockout = lckManager.check(profileRequestContext);
                     response.setStatus(HttpServletResponse.SC_OK);
                     final JsonFactory jsonFactory = new JsonFactory();
                     try (final JsonGenerator g = jsonFactory.createGenerator(
@@ -199,7 +201,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
                 
             } else if ("POST".equals(request.getMethod())) {
                 try {
-                    if (lockoutManager.increment(profileRequestContext)) {
+                    if (lckManager.increment(profileRequestContext)) {
                         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                     } else {
                         throw new IOException();
@@ -211,7 +213,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
                 
             } else if ("DELETE".equals(request.getMethod())) {
                 try {
-                    if (lockoutManager.clear(profileRequestContext)) {
+                    if (lckManager.clear(profileRequestContext)) {
                         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
                     } else {
                         throw new IOException();
@@ -242,14 +244,15 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
      */
     @Nullable private AccountLockoutManager getLockoutManager(@Nonnull final RequestContext requestContext) {
         
-        managerId = (String) requestContext.getFlowScope().get(MANAGER_ID);
-        if (managerId == null) {
+        final String mgrId = this.managerId = (String) requestContext.getFlowScope().get(MANAGER_ID);
+        if (mgrId == null) {
             log.warn("{} No {} flow variable found in request", getLogPrefix(), MANAGER_ID);
             return null;
         }
         
         try {
-            final Object bean = requestContext.getActiveFlow().getApplicationContext().getBean(managerId);
+            assert mgrId != null;
+            final Object bean = requestContext.getActiveFlow().getApplicationContext().getBean(mgrId);
             if (bean != null && bean instanceof AccountLockoutManager) {
                 return (AccountLockoutManager) bean;
             }
@@ -257,7 +260,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
             
         }
         
-        log.warn("{} No bean of the correct type found named {}", getLogPrefix(), managerId);
+        log.warn("{} No bean of the correct type found named {}", getLogPrefix(), mgrId);
         return null;
     }
 
@@ -274,6 +277,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
             @Nonnull @NotEmpty final String detail) throws IOException {
         
         final HttpServletResponse response = getHttpServletResponse();
+        assert response != null;
         response.setContentType("application/json");
         response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
         response.setStatus(status);

@@ -20,7 +20,6 @@ package net.shibboleth.idp.authn.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -29,9 +28,11 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -56,7 +57,7 @@ public class PreserveAuthenticationFlowState extends AbstractAuthenticationActio
     
     /** Constructor. */
     PreserveAuthenticationFlowState() {
-        parameterNames = Collections.emptyList();
+        parameterNames = CollectionSupport.emptyList();
     }
     
     /**
@@ -67,7 +68,7 @@ public class PreserveAuthenticationFlowState extends AbstractAuthenticationActio
     public void setParameterNames(@Nullable @NonnullElements final Collection<String> names) {
         checkSetterPreconditions();
         if (names == null) {
-            parameterNames = Collections.emptyList();
+            parameterNames = CollectionSupport.emptyList();
         } else {
             parameterNames = new ArrayList<>(StringSupport.normalizeStringCollection(names));
         }
@@ -96,8 +97,10 @@ public class PreserveAuthenticationFlowState extends AbstractAuthenticationActio
 
         final Map<String,Object> state = authenticationContext.getAuthenticationStateMap();
         state.clear();
+        final HttpServletRequest request = getHttpServletRequest();
+        assert request != null;
 
-        final Map<String,String[]> params = getHttpServletRequest().getParameterMap();
+        final Map<String,String[]> params = request.getParameterMap();
         for (final String name : parameterNames) {
             final String[] values = params.get(name);
             if (values != null) {

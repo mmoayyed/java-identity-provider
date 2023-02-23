@@ -46,7 +46,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.xml.DOMTypeSupport;
-
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
@@ -122,7 +122,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -162,6 +162,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
                 return false;
             }
 
+            assert cacheId != null;
             revocationCache = getBean(requestContext, cacheId, RevocationCache.class);
             if (revocationCache == null) {
                 sendError(HttpServletResponse.SC_NOT_FOUND,
@@ -181,11 +182,13 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(final ProfileRequestContext profileRequestContext) {
-        
+    protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
+
         try {
-            final String method = getHttpServletRequest().getMethod();
+            final HttpServletRequest request = getHttpServletRequest();
             final HttpServletResponse response = getHttpServletResponse();
+            assert request != null && response != null;
+            final String method = request.getMethod();
             
             response.setContentType("application/json");
             response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
@@ -215,12 +218,16 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
      */
     private void doGet() throws IOException {
         try {
+            assert revocationCache!=null && context!=null && key!=null;
             final String revocation = revocationCache.getRevocationRecord(context, key);
+            final HttpServletRequest request = getHttpServletRequest();
+            final HttpServletResponse response = getHttpServletResponse();
+            assert request != null && response != null;
             if (revocation != null) {
-                getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+                response.setStatus(HttpServletResponse.SC_OK);
                 final JsonFactory jsonFactory = new JsonFactory();
                 try (final JsonGenerator g = jsonFactory.createGenerator(
-                        getHttpServletResponse().getOutputStream()).useDefaultPrettyPrinter()) {
+                        response.getOutputStream()).useDefaultPrettyPrinter()) {
                     g.setCodec(objectMapper);
                     g.writeStartObject();
                     g.writeObjectFieldStart("data");
@@ -230,7 +237,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
                     g.writeStringField("revocation", revocation);
                 }
             } else {
-                getHttpServletResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         } catch (final IOException e) {
             sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
@@ -245,8 +252,11 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
      */
     private void doPost() throws IOException {
         
-        final String value = getHttpServletRequest().getParameter("value");
-        final String duration = getHttpServletRequest().getParameter("duration");
+        final HttpServletRequest request = getHttpServletRequest();
+        final HttpServletResponse response = getHttpServletResponse();
+        assert request != null && response != null;
+        final String value = request.getParameter("value");
+        final String duration = request.getParameter("duration");
         
         if (value == null) {
             sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad Request", "Request missing value parameter.");
@@ -271,13 +281,15 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
         
         final boolean result;
         if (durationSeconds != null) {
+            assert revocationCache!=null && context!=null && key!=null;
             result = revocationCache.revoke(context, key, value, durationSeconds);
         } else {
+            assert revocationCache!=null && context!=null && key!=null;
             result = revocationCache.revoke(context, key, value);
         }
         
         if (result) {
-            getHttpServletResponse().setStatus(HttpServletResponse.SC_ACCEPTED);
+            response.setStatus(HttpServletResponse.SC_ACCEPTED);
         } else {
             sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
                     "Attempt to insert revocation record failed.");
@@ -290,10 +302,13 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
      * @throws IOException if an I/O error occurs
      */
     private void doDelete() throws IOException {
+        final HttpServletResponse response = getHttpServletResponse();
+        assert response != null;
+        assert revocationCache!=null && context!=null && key!=null;
         if (revocationCache.unrevoke(context, key)) {
-            getHttpServletResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         } else {
-            getHttpServletResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
@@ -310,6 +325,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
             @Nonnull @NotEmpty final String detail) throws IOException {
         
         final HttpServletResponse response = getHttpServletResponse();
+        assert response != null;
         response.setContentType("application/json");
         response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
         response.setStatus(status);

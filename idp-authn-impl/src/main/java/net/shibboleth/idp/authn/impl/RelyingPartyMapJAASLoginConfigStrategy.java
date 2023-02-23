@@ -18,10 +18,10 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -31,6 +31,7 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -84,28 +85,28 @@ public class RelyingPartyMapJAASLoginConfigStrategy
 
     /** {@inheritDoc} */
     @Nonnull public Collection<Pair<String, Subject>> apply(
-            @Nonnull final ProfileRequestContext profileRequestContext) {
+            final @Nullable ProfileRequestContext profileRequestContext) {
 
         final RelyingPartyContext relyingPartyContext =
                 getRelyingPartyContextLookupStrategy().apply(profileRequestContext);
         if (relyingPartyContext == null) {
             log.warn("No RelyingPartyContext was available, using default config name");
-            return Collections.singleton(new Pair<>(defaultConfigName, (Subject)null));
+            return CollectionSupport.singleton(new Pair<>(defaultConfigName, (Subject)null));
         }
 
         final String relyingPartyId = relyingPartyContext.getRelyingPartyId();
         if (relyingPartyId == null) {
             log.warn("No relying party ID was available, using default config name");
-            return Collections.singleton(new Pair<>(defaultConfigName, (Subject)null));
+            return CollectionSupport.singleton(new Pair<>(defaultConfigName, (Subject)null));
         }
 
         final String config = StringSupport.trimOrNull(relyingPartyMap.get(relyingPartyId));
         if (config != null) {
             log.debug("For relying party ID '{}' resolved JAAS config name '{}'", relyingPartyId, config);
-            return Collections.singleton(new Pair<>(config, (Subject)null));
+            return CollectionSupport.singleton(new Pair<>(config, (Subject)null));
         }
         log.debug("For relying party ID '{}' resolved no JAAS config name, returning default", relyingPartyId);
-        return Collections.singleton(new Pair<>(defaultConfigName, (Subject)null));
+        return CollectionSupport.singleton(new Pair<>(defaultConfigName, (Subject)null));
     }
 
 }

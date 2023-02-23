@@ -115,7 +115,9 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
         if (certContext == null) {
             log.debug("{} No CertificateContext available within authentication context", getLogPrefix());
             return null;
-        } else if (certContext.getCertificate() == null || !(certContext.getCertificate() instanceof X509Certificate)) {
+        }
+        final Certificate cert = certContext.getCertificate();
+        if (cert == null || !(cert instanceof X509Certificate)) {
             log.debug("{} No X.509 certificate available within CertificateContext", getLogPrefix());
             return null;
         }
@@ -123,8 +125,7 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
         if (trustEngine != null) {
             log.debug("{} Attempting to validate certificate using trust engine", getLogPrefix());
             try {
-                final BasicX509Credential cred =
-                        new BasicX509Credential((X509Certificate) certContext.getCertificate());
+                final BasicX509Credential cred = new BasicX509Credential((X509Certificate) cert);
                 if (!certContext.getIntermediates().isEmpty()) {
                     cred.getEntityCertificateChain().add((X509Certificate) certContext.getCertificate());
                     for (final Certificate extra : certContext.getIntermediates()) {
@@ -133,6 +134,7 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
                         }
                     }
                 }
+                assert trustEngine != null;
                 if (trustEngine.validate(cred, new CriteriaSet())) {
                     log.debug("{} Trust engine validated X.509 certificate", getLogPrefix());
                 } else {
@@ -157,9 +159,9 @@ public class X509CertificateCredentialValidator extends AbstractCredentialValida
         }
 
         log.info("{} Login by '{}' succeeded", getLogPrefix(),
-                ((X509Certificate) certContext.getCertificate()).getSubjectX500Principal().getName());
+                ((X509Certificate) cert).getSubjectX500Principal().getName());
         
-        return populateSubject((X509Certificate) certContext.getCertificate());
+        return populateSubject((X509Certificate) cert);
     }
 // Checkstyle: CyclomaticComplexity ON
     

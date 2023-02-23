@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -44,6 +43,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -87,7 +87,7 @@ public class ValidateCredentials extends AbstractAuditingValidationAction implem
     /** Constructor. */
     public ValidateCredentials() {
         setMetricName(DEFAULT_METRIC_NAME);
-        credentialValidators = Collections.emptyList();
+        credentialValidators = CollectionSupport.emptyList();
         results = new ArrayList<>(1);
     }
     
@@ -109,9 +109,9 @@ public class ValidateCredentials extends AbstractAuditingValidationAction implem
     public void setValidators(@Nullable @NonnullElements final List<CredentialValidator> validators) {
         checkSetterPreconditions();
         if (validators != null) {
-            credentialValidators = List.copyOf(validators);
+            credentialValidators = CollectionSupport.copyToList(validators);
         } else {
-            credentialValidators = Collections.emptyList();
+            credentialValidators = CollectionSupport.emptyList();
         }
     }
     
@@ -129,7 +129,10 @@ public class ValidateCredentials extends AbstractAuditingValidationAction implem
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty public String getMetricName() {
-        return super.getMetricName() + '.' + currentValidator.getId();
+        // only called in execute when we know the field is non-null
+        assert currentValidator != null;
+        final String cvId = currentValidator.getId();
+        return super.getMetricName() + '.' + cvId;
     }
        
     /** {@inheritDoc} */
@@ -269,6 +272,8 @@ public class ValidateCredentials extends AbstractAuditingValidationAction implem
     @Override
     @Nullable @NonnullElements protected Map<String,String> getAuditFields(
             @Nonnull final ProfileRequestContext profileRequestContext) {
+        // only called in execute when we know the field is non-null
+        assert currentValidator!=null;
         return Map.of(AuthnAuditFields.CREDENTIAL_VALIDATOR, currentValidator.getId());
     }
     

@@ -89,7 +89,9 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
 
     /** Constructor. */
     public IdPAttributePrincipalSerializer() {
-        objectBuilderFactory = Json.createBuilderFactory(null);
+        final JsonBuilderFactory factory = Json.createBuilderFactory(null);
+        assert factory != null;
+        objectBuilderFactory = factory;
     }
     
     /** {@inheritDoc} */
@@ -107,6 +109,7 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
             final IdPAttribute attribute = ((IdPAttributePrincipal) principal).getAttribute();
             final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
             for (final IdPAttributeValue value : attribute.getValues()) {
+                assert value != null;
                 final JsonObject obj = serializeValue(value);
                 if (obj != null) {
                     arrayBuilder.add(obj);
@@ -117,7 +120,9 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
             gen.write(PRINCIPAL_ENTRY_FIELD, arrayBuilder.build());
             gen.writeEnd();
         }
-        return sink.toString();
+        final String result = sink.toString();
+        assert result != null;
+        return result;
     }
         
     /** {@inheritDoc} */
@@ -138,8 +143,14 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
             final JsonObject obj = (JsonObject) st;
             final JsonString str = obj.getJsonString(PRINCIPAL_NAME_FIELD);
             final JsonArray vals = obj.getJsonArray(PRINCIPAL_ENTRY_FIELD);
-            if (str != null && !Strings.isNullOrEmpty(str.getString()) && vals != null) {
-                final IdPAttribute attribute = new IdPAttribute(str.getString());
+            final String nativeString;
+            if (str != null) {
+                nativeString = str.getString();
+            } else {
+                nativeString = null;
+            }
+            if (nativeString != null && !Strings.isNullOrEmpty(nativeString ) && vals != null) {
+                final IdPAttribute attribute = new IdPAttribute(nativeString);
                 final List<IdPAttributeValue> values = new ArrayList<>();
                 
                 for (final JsonValue entry : vals) {
@@ -175,7 +186,7 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
      * 
      * @return the object
      */
-    @Nonnull protected JsonObject serializeValue(@Nonnull final IdPAttributeValue value) {
+    @Nullable protected JsonObject serializeValue(@Nonnull final IdPAttributeValue value) {
         final JsonObjectBuilder builder = getJsonObjectBuilder();
         
         if (value instanceof EmptyAttributeValue) {
@@ -243,7 +254,9 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
      * @return  an object builder
      */
     @Nonnull private synchronized JsonObjectBuilder getJsonObjectBuilder() {
-        return objectBuilderFactory.createObjectBuilder();
+        final JsonObjectBuilder result = objectBuilderFactory.createObjectBuilder();
+        assert result != null;
+        return result;
     }
 
     /**
@@ -252,7 +265,9 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
      * @return  an array builder
      */
     @Nonnull private synchronized JsonArrayBuilder getJsonArrayBuilder() {
-        return objectBuilderFactory.createArrayBuilder();
+        final JsonArrayBuilder result = objectBuilderFactory.createArrayBuilder();
+        assert result != null;
+        return result;
     }
     
 }

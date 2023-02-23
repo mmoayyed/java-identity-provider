@@ -26,12 +26,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonBuilderFactory;
 import javax.json.JsonException;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
@@ -40,14 +36,11 @@ import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonGenerator;
 import javax.security.auth.x500.X500Principal;
 
-import org.slf4j.Logger;
-
 import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.Base64Support;
 import net.shibboleth.shared.codec.DecodingException;
 import net.shibboleth.shared.codec.EncodingException;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Principal serializer for {@link X500Principal}.
@@ -62,17 +55,6 @@ public class X500PrincipalSerializer extends AbstractPrincipalSerializer<String>
 
     /** Pattern used to determine if input is supported. */
     private static final Pattern JSON_PATTERN = Pattern.compile("^\\{\"X500\":.*\\}$");
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(X500PrincipalSerializer.class);
-    
-    /** JSON object bulder factory. */
-    @Nonnull private final JsonBuilderFactory objectBuilderFactory;
-
-    /** Constructor. */
-    public X500PrincipalSerializer() {
-        objectBuilderFactory = Json.createBuilderFactory(null);
-    }
     
     /** {@inheritDoc} */
     @Override
@@ -87,7 +69,9 @@ public class X500PrincipalSerializer extends AbstractPrincipalSerializer<String>
 
         final String name;
         try {
-            name = Base64Support.encode(x500Principal.getEncoded(), false);
+            final byte encoded[] = x500Principal.getEncoded();
+            assert encoded != null;
+            name = Base64Support.encode(encoded, false);
         } catch (final EncodingException e) {
             throw new IOException(e);
         }
@@ -97,7 +81,9 @@ public class X500PrincipalSerializer extends AbstractPrincipalSerializer<String>
         try (final JsonGenerator gen = getJsonGenerator(sink)) {
             gen.writeStartObject().write(X500_NAME_FIELD, name).writeEnd();
         }
-        return sink.toString();
+        final String result = sink.toString();
+        assert result != null;
+        return result;
     }
     
     /** {@inheritDoc} */
@@ -117,31 +103,15 @@ public class X500PrincipalSerializer extends AbstractPrincipalSerializer<String>
             
             final JsonValue jsonValue = ((JsonObject) st).get(X500_NAME_FIELD);
             if (jsonValue != null && ValueType.STRING.equals(jsonValue.getValueType())) {
-                return new X500Principal(Base64Support.decode(((JsonString) jsonValue).getString()));
+                final String nativeString = ((JsonString) jsonValue).getString();
+                assert nativeString != null;
+                return new X500Principal(Base64Support.decode(nativeString));
             }
             
             throw new IOException("Serialized X500Principal missing name field");
         } catch (final JsonException | DecodingException | IllegalArgumentException e) {
             throw new IOException("Found invalid data while parsing X500Principal", e);
         }
-    }
-
-    /**
-     * Get a {@link JsonObjectBuilder} in a thread-safe manner.
-     * 
-     * @return  an object builder
-     */
-    @Nonnull private synchronized JsonObjectBuilder getJsonObjectBuilder() {
-        return objectBuilderFactory.createObjectBuilder();
-    }
-
-    /**
-     * Get a {@link JsonArrayBuilder} in a thread-safe manner.
-     * 
-     * @return  an array builder
-     */
-    @Nonnull private synchronized JsonArrayBuilder getJsonArrayBuilder() {
-        return objectBuilderFactory.createArrayBuilder();
-    }
-    
+    }    
 }
+ 

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -182,8 +183,16 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             
             if (input != null) {
                 final AuthenticationContext ac = input.getSubcontext(AuthenticationContext.class);
-                if (ac != null && ac.getAttemptedFlow() != null) {
-                    final AuthenticationResult mfaResult = ac.getActiveResults().get(ac.getAttemptedFlow().getId());
+                final AuthenticationFlowDescriptor acf;
+                if (ac != null) {
+                    acf = ac.getAttemptedFlow();
+                }
+                else {
+                    acf = null;
+                }
+                if (acf != null) {
+                    assert ac != null;
+                    final AuthenticationResult mfaResult = ac.getActiveResults().get(acf.getId());
                     if (mfaResult != null) {
                         if (ac.isForceAuthn()) {
                             log.debug("{} Ignoring active result due to forced authentication requirement",
@@ -231,13 +240,14 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             if (descriptor != null) {
                 if (descriptor.test(profileRequestContext)) {
                     if (descriptor.isResultActive(candidate)) {
+                        final BiPredicate<ProfileRequestContext, AuthenticationResult> revocationCondition = descriptor.getRevocationCondition();
                         if (authenticationContext.getMaxAge() != null
                                 && candidate.getAuthenticationInstant().plus(
                                         authenticationContext.getMaxAge()).isBefore(Instant.now())) {
                             log.debug("{} Ignoring active result from login flow {} due to maxAge on request",
                                     getLogPrefix(), candidate.getAuthenticationFlowId());
-                        } else if (descriptor.getRevocationCondition() != null &&
-                                descriptor.getRevocationCondition().test(profileRequestContext, candidate)) {
+                        } else if (revocationCondition != null &&
+                                revocationCondition.test(profileRequestContext, candidate)) {
                             log.debug("{} Ignoring active but revoked result from login flow {}", getLogPrefix(),
                                     candidate.getAuthenticationFlowId());
                         } else {

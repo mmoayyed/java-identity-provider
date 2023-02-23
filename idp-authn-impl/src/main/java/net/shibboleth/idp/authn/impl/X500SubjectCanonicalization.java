@@ -18,13 +18,13 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.cert.X509Certificate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
 import javax.security.auth.x500.X500Principal;
 
 import org.cryptacular.x509.dn.Attribute;
@@ -42,6 +42,7 @@ import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -72,9 +73,6 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(X500SubjectCanonicalization.class);
     
-    /** Supplies logic for pre-execute test. */
-    @Nonnull private final ActivationCondition embeddedPredicate;
-    
     /** subjectAltName types to search for. */
     @Nonnull @NonnullElements private List<Integer> subjectAltNameTypes;
     
@@ -89,9 +87,8 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     
     /** Constructor. */
     public X500SubjectCanonicalization() {
-        embeddedPredicate = new ActivationCondition();
-        subjectAltNameTypes = Collections.emptyList();
-        objectIds = Collections.singletonList(CN_OID);
+        subjectAltNameTypes = CollectionSupport.emptyList();
+        objectIds = CollectionSupport.singletonList(CN_OID);
     }
 
     /**
@@ -102,9 +99,9 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     public void setSubjectAltNameTypes(@Nullable @NonnullElements final List<Integer> types) {
         checkSetterPreconditions();
         if (types != null) {
-            subjectAltNameTypes = List.copyOf(types);
+            subjectAltNameTypes = CollectionSupport.copyToList(types);
         } else {
-            subjectAltNameTypes = Collections.emptyList();
+            subjectAltNameTypes = CollectionSupport.emptyList();
         }
     }
 
@@ -115,7 +112,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      */
     public void setObjectIds(@Nullable @NonnullElements final List<String> ids) {
         checkSetterPreconditions();
-        objectIds = List.copyOf(StringSupport.normalizeStringCollection(ids));
+        objectIds = CollectionSupport.copyToList(StringSupport.normalizeStringCollection(ids));
     }
     
     /** {@inheritDoc} */
@@ -123,13 +120,16 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
+        final Subject subject = c14nContext.getSubject();
+        assert subject != null;
         final Set<X509Certificate> certificates =
-                c14nContext.getSubject().getPublicCredentials(X509Certificate.class);
+                subject.getPublicCredentials(X509Certificate.class);
         if (certificates != null && certificates.size() == 1) {
             certificate = certificates.iterator().next();
+            assert certificate != null;
             x500Principal = certificate.getSubjectX500Principal();
         } else {
-            final Set<X500Principal> principals = c14nContext.getSubject().getPrincipals(X500Principal.class);
+            final Set<X500Principal> principals = subject.getPrincipals(X500Principal.class);
             if (principals != null && principals.size() == 1) {
                 x500Principal = principals.iterator().next();
             }
@@ -154,6 +154,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
         if (certificate != null && !subjectAltNameTypes.isEmpty()) {
             log.debug("{} Searching for subjectAltName types ({})", getLogPrefix(), subjectAltNameTypes);
             final List<?> altnames = X509Support.getAltNames(certificate, subjectAltNameTypes.toArray(new Integer[0]));
+            assert altnames != null;
             for (final Object altname : altnames) {
                 if (altname instanceof String) {
                     log.debug("{} Extracted String-valued subjectAltName: {}", getLogPrefix(), altname);
@@ -163,12 +164,15 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
             }
             log.debug("{} No suitable subjectAltName extension");
         }
-        
-        log.debug("{} Searching for RDN to extract from DN: {}", getLogPrefix(), x500Principal.getName());
+        assert x500Principal != null;
+        final String x509PrincipalName =x500Principal.getName();
+        log.debug("{} Searching for RDN to extract from DN: {}", getLogPrefix(), x509PrincipalName);
         
         try {
             final RDNSequence dnAttrs = NameReader.readX500Principal(x500Principal);
+            assert dnAttrs != null;
             for (final String oid : objectIds) {
+                assert oid != null;
                 final String rdn = findRDN(dnAttrs, oid);
                 if (rdn != null) {
                     log.debug("{} Extracted RDN with OID {}: {}", getLogPrefix(), oid, rdn);
@@ -177,11 +181,11 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
                 }
             }
             
-            log.warn("{} Unable to extract a suitable RDN from DN: {}", getLogPrefix(), x500Principal.getName());
+            log.warn("{} Unable to extract a suitable RDN from DN: {}", getLogPrefix(), x509PrincipalName);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
             
         } catch (final IllegalArgumentException e) {
-            log.warn("{} Unable to parse subject DN: {}", getLogPrefix(),  x500Principal.getName(), e);
+            log.warn("{} Unable to parse subject DN: {}", getLogPrefix(),  x509PrincipalName, e);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
             return;
         }
@@ -240,14 +244,15 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
         public boolean apply(@Nonnull final ProfileRequestContext profileRequestContext,
                 @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
 
-            if (c14nContext.getSubject() != null) {
+            final Subject subject = c14nContext.getSubject();
+            if (subject != null) {
                 final Set<X509Certificate> certificates =
-                        c14nContext.getSubject().getPublicCredentials(X509Certificate.class);
+                        subject.getPublicCredentials(X509Certificate.class);
                 if (certificates != null && certificates.size() == 1) {
                     return true;
                 }
                 
-                final Set<X500Principal> principals = c14nContext.getSubject().getPrincipals(X500Principal.class);
+                final Set<X500Principal> principals = subject.getPrincipals(X500Principal.class);
                 if (principals != null && principals.size() == 1) {
                     return true;
                 }

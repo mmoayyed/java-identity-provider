@@ -27,7 +27,6 @@ import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,7 +132,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
         generatorFactory = Json.createGeneratorFactory(null);
         readerFactory = Json.createReaderFactory(null);
         
-        principalSerializers = Collections.emptyList();
+        principalSerializers = CollectionSupport.emptyList();
         authnResultPrincipalSerializer = new AuthenticationResultPrincipalSerializer(this);
         principalServiceManager = new PrincipalServiceManager(null);
         genericSerializer = new GenericPrincipalSerializer();
@@ -153,7 +152,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
         generatorFactory = Json.createGeneratorFactory(null);
         readerFactory = Json.createReaderFactory(null);
         
-        principalSerializers = Collections.emptyList();
+        principalSerializers = CollectionSupport.emptyList();
         authnResultPrincipalSerializer = new AuthenticationResultPrincipalSerializer(this);
         principalServiceManager = Constraint.isNotNull(manager, "PrincipalServiceManager cannot be null");
         genericSerializer = Constraint.isNotNull(defaultSerializer, "Default serializer cannot be null");
@@ -210,6 +209,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             
             gen.writeStartArray(PRINCIPAL_ARRAY_FIELD);
             for (final Principal p : instance.getSubject().getPrincipals()) {
+                assert p != null;
                 serializePrincipal(gen, p);
             }
             gen.writeEnd();
@@ -218,6 +218,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             if (publicCreds != null && !publicCreds.isEmpty()) {
                 gen.writeStartArray(PUB_CREDS_ARRAY_FIELD);
                 for (final Principal p : publicCreds) {
+                    assert p != null;
                     serializePrincipal(gen, p);
                 }
                 gen.writeEnd();
@@ -227,6 +228,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             if (privateCreds != null && !privateCreds.isEmpty()) {
                 gen.writeStartArray(PRIV_CREDS_ARRAY_FIELD);
                 for (final Principal p : privateCreds) {
+                    assert p != null;
                     serializePrincipal(gen, p);
                 }
                 gen.writeEnd();
@@ -291,6 +293,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             final JsonArray principals = obj.getJsonArray(PRINCIPAL_ARRAY_FIELD);
             if (principals != null) {
                 for (final JsonValue val : principals) {
+                    assert val != null;
                     final Principal principal = deserializePrincipal(val);
                     if (principal != null) {
                         result.getSubject().getPrincipals().add(principal);
@@ -301,6 +304,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             final JsonArray publicCreds = obj.getJsonArray(PUB_CREDS_ARRAY_FIELD);
             if (publicCreds != null) {
                 for (final JsonValue val : publicCreds) {
+                    assert val != null;
                     final Principal principal = deserializePrincipal(val);
                     if (principal != null) {
                         result.getSubject().getPublicCredentials().add(principal);
@@ -311,6 +315,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             final JsonArray privateCreds = obj.getJsonArray(PRIV_CREDS_ARRAY_FIELD);
             if (privateCreds != null) {
                 for (final JsonValue val : privateCreds) {
+                    assert val != null;
                     final Principal principal = deserializePrincipal(val);
                     if (principal != null) {
                         result.getSubject().getPrivateCredentials().add(principal);
@@ -323,7 +328,9 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
                 for (final JsonValue val : x509Creds) {
                     if (val.getValueType() == ValueType.STRING) {
                         try {
-                            final X509Certificate cert = X509Support.decodeCertificate(val.toString());
+                            final String valStr = val.toString();
+                            assert valStr != null;
+                            final X509Certificate cert = X509Support.decodeCertificate(valStr);
                             result.getSubject().getPublicCredentials().add(cert);
                         } catch (final CertificateException e) {
                             log.warn("Unable to parse certificate", e);
@@ -388,6 +395,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     @Nullable private Principal deserializePrincipal(@Nonnull final JsonValue jsonValue) throws IOException {
         if (jsonValue instanceof JsonObject) {
             final String json = ((JsonObject) jsonValue).toString();
+            assert json != null;
             for (final PrincipalSerializer<? super String> serializer : principalSerializers) {
                 if (serializer.supports(json)) {
                     return serializer.deserialize(json);

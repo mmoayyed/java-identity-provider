@@ -26,12 +26,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonBuilderFactory;
 import javax.json.JsonException;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
@@ -66,9 +62,6 @@ public class AuthenticationResultPrincipalSerializer extends AbstractPrincipalSe
     /** Circular reference back to the parent serializer. */
     @Nonnull private final StorageSerializer<AuthenticationResult> resultSerializer;
     
-    /** JSON object bulder factory. */
-    @Nonnull private final JsonBuilderFactory objectBuilderFactory;
-
     /**
      * Constructor.
      * 
@@ -77,7 +70,6 @@ public class AuthenticationResultPrincipalSerializer extends AbstractPrincipalSe
     public AuthenticationResultPrincipalSerializer(
             @Nonnull final StorageSerializer<AuthenticationResult> serializer) {
         resultSerializer = Constraint.isNotNull(serializer, "AuthenticationResult serializer cannot be null");
-        objectBuilderFactory = Json.createBuilderFactory(null);
     }
     
     /** {@inheritDoc} */
@@ -97,7 +89,9 @@ public class AuthenticationResultPrincipalSerializer extends AbstractPrincipalSe
             
             gen.writeEnd();
         }
-        return sink.toString();
+        final String result = sink.toString();
+        assert result != null;
+        return result;
     }
         
     /** {@inheritDoc} */
@@ -117,8 +111,10 @@ public class AuthenticationResultPrincipalSerializer extends AbstractPrincipalSe
             final JsonObject obj = (JsonObject) st;
             final JsonValue str = obj.get(PRINCIPAL_NAME_FIELD);
             if (str != null && str instanceof JsonString) {
+                final String nativeString = ((JsonString) str).getString();
+                assert nativeString != null;
                 return new AuthenticationResultPrincipal(
-                        resultSerializer.deserialize(1, "context", "key", ((JsonString) str).getString(), null));
+                        resultSerializer.deserialize(1, "context", "key", nativeString, null));
             }
             log.warn("Skipping non-string principal value");
             
@@ -126,24 +122,5 @@ public class AuthenticationResultPrincipalSerializer extends AbstractPrincipalSe
         } catch (final JsonException e) {
             throw new IOException("Found invalid data structure while parsing AuthenticationResultPrincipal", e);
         }
-    }
-
-    /**
-     * Get a {@link JsonObjectBuilder} in a thread-safe manner.
-     * 
-     * @return  an object builder
-     */
-    @Nonnull private synchronized JsonObjectBuilder getJsonObjectBuilder() {
-        return objectBuilderFactory.createObjectBuilder();
-    }
-
-    /**
-     * Get a {@link JsonArrayBuilder} in a thread-safe manner.
-     * 
-     * @return  an array builder
-     */
-    @Nonnull private synchronized JsonArrayBuilder getJsonArrayBuilder() {
-        return objectBuilderFactory.createArrayBuilder();
-    }
-    
+    }    
 }

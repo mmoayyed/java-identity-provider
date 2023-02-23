@@ -95,7 +95,8 @@ public class GSSAcceptorLoginModule {
      * @throws LoginException if an error occurs
      */
     public Subject login() throws LoginException {
-        if (krbModule == null) {
+        final LoginModule module = krbModule;
+        if (module == null) {
             throw new LoginException("No JAAS module for Kerberos available");
         }
 
@@ -103,9 +104,9 @@ public class GSSAcceptorLoginModule {
         final UsernamePasswordCallbackHandler callbackH =
                 new UsernamePasswordCallbackHandler(realm.getServicePrincipal(), realm.getPassword());
         final Subject subject = new Subject();
-        krbModule.initialize(subject, callbackH, state, options);
-        if (krbModule.login()) {
-            krbModule.commit();
+        module.initialize(subject, callbackH, state, options);
+        if (module.login()) {
+            module.commit();
         }
         return subject;
     }
@@ -116,8 +117,9 @@ public class GSSAcceptorLoginModule {
      * @throws LoginException if an error occurs
      */
     public void logout() throws LoginException {
-        if (krbModule != null) {
-            krbModule.logout();
+        final LoginModule module = krbModule;
+        if (module != null) {
+            module .logout();
         }
     }
 
@@ -148,19 +150,21 @@ public class GSSAcceptorLoginModule {
         @Override
         public void handle(@Nullable final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
             if (callbacks != null && callbacks.length > 0) {
-                if (name == null || name.length() == 0) {
+                final String nm = name;
+                if (nm == null || nm.length() == 0) {
                     throw new IllegalArgumentException("No username provided");
                 }
 
-                if (password == null || password.length() == 0) {
+                final String pwd = password;
+                if (pwd == null || pwd.length() == 0) {
                     throw new IllegalArgumentException("No password provided");
                 }
 
                 for (final Callback c : callbacks) {
                     if (c instanceof NameCallback) {
-                        ((NameCallback) c).setName(name);
+                        ((NameCallback) c).setName(nm);
                     } else if (c instanceof PasswordCallback) {
-                        ((PasswordCallback) c).setPassword(password.toCharArray());
+                        ((PasswordCallback) c).setPassword(pwd.toCharArray());
                     } else {
                         throw new UnsupportedCallbackException(c);
                     }

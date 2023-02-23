@@ -1,4 +1,4 @@
-/*
+ /*
  * Licensed to the University Corporation for Advanced Internet Development,
  * Inc. (UCAID) under one or more contributor license agreements.  See the
  * NOTICE file distributed with this work for additional information regarding
@@ -25,12 +25,12 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
@@ -39,9 +39,6 @@ import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.LoggerFactory;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A {@link Function} that produces a discovery request URL using the protocol defined in
@@ -55,9 +52,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public class DiscoveryProfileRequestFunction extends AbstractInitializableComponent
         implements Function<Pair<RequestContext,ProfileRequestContext>,String> {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(DiscoveryProfileRequestFunction.class);
-
     /** URL query parameter escaper. */
     @Nonnull private Escaper escaper;
     
@@ -69,7 +63,9 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
     
     /** Constructor. */
     public DiscoveryProfileRequestFunction() {
-        escaper = UrlEscapers.urlFormParameterEscaper();
+        final Escaper esc = UrlEscapers.urlFormParameterEscaper();
+        assert esc != null;
+        escaper = esc;
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
     
@@ -105,8 +101,9 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
     }
     
     /** {@inheritDoc} */
-    @Nullable public String apply(@Nonnull final Pair<RequestContext,ProfileRequestContext> input) {
+    @Nullable public String apply(final @Nullable Pair<RequestContext,ProfileRequestContext> input) {
         
+        assert input != null;
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(input.getSecond());
         Constraint.isNotNull(rpCtx, "RelyingPartyContext cannot be null");
         Constraint.isNotNull(rpCtx.getConfiguration(), "RelyingPartyConfiguration cannot be null");
@@ -115,6 +112,7 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
         Constraint.isNotEmpty(baseURL, "Discovery URL cannot be null or empty");
 
         final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
+        assert rpConfig!=null;
         Constraint.isTrue(rpConfig instanceof net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration,
                 "RelyingPartyConfiguration was not of expected subclass");
         final String entityID = ((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) rpConfig).getResponderId(
@@ -124,14 +122,17 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
         
         builder.append(baseURL.contains("?") ? '&' : '?').append("entityID=").append(escaper.escape(entityID));
         
+        final RequestContext requestCtx = input.getFirst();
+        final ProfileRequestContext prc = input.getSecond();
+        assert requestCtx != null && prc != null;
         final AuthenticationContext authenticationContext =
-                input.getSecond().getSubcontext(AuthenticationContext.class);
+                prc.getSubcontext(AuthenticationContext.class);
         if (authenticationContext != null && authenticationContext.isPassive()) {
             builder.append("&isPassive=true");
         }
         
         final HttpServletRequest httpServletRequest =
-                (HttpServletRequest) input.getFirst().getExternalContext().getNativeRequest();
+                (HttpServletRequest) requestCtx.getExternalContext().getNativeRequest();
         
         final StringBuilder selfBuilder = new StringBuilder(httpServletRequest.getScheme());
         selfBuilder.append("://").append(httpServletRequest.getServerName());
@@ -141,7 +142,7 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
             selfBuilder.append(':').append(port);
         }
         
-        selfBuilder.append(input.getFirst().getFlowExecutionUrl()).append("&_eventId_proceed=1");
+        selfBuilder.append(requestCtx.getFlowExecutionUrl()).append("&_eventId_proceed=1");
         
         builder.append("&return=").append(escaper.escape(selfBuilder.toString()));
         

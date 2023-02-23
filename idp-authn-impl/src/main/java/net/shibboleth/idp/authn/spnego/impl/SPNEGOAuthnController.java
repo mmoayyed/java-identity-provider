@@ -26,6 +26,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.kerberos.KerberosPrincipal;
 
 import org.apache.commons.codec.binary.Base64;
+import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.GSSName;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -153,8 +154,10 @@ public class SPNEGOAuthnController {
                 return null;
             }
         }
+        assert acceptor != null;
 
         final byte[] gssapiData = Base64.decodeBase64(authorizationHeader.substring(10).getBytes());
+        assert gssapiData != null;
         log.trace("SPNEGO negotiation, Authorization header received, gssapi-data: {}", gssapiData);
 
         // NTLM Authentication is not supported.
@@ -179,10 +182,11 @@ public class SPNEGOAuthnController {
 
         // If the context is established, we can attempt to retrieve the name of the "context initiator."
         // In the case of the Kerberos mechanism, the context initiator is the Kerberos principal of the client.
-        if (acceptor.getContext() != null && acceptor.getContext().isEstablished()) {
+        final GSSContext ctx = acceptor.getContext();
+        if (ctx != null && ctx.isEstablished()) {
             log.debug("GSS security context is complete");
             try {
-                final GSSName clientGSSName = acceptor.getContext().getSrcName();
+                final GSSName clientGSSName = ctx.getSrcName();
                 if (clientGSSName == null) {
                     // This case should never happen, but we observed it. Handle it as authentication failure.
                     log.error("Error extracting principal name from security context, " +
@@ -208,7 +212,9 @@ public class SPNEGOAuthnController {
             // The context is not complete yet.
             // return "WWW-Authenticate: Negotiate <data>" to the browser
             log.trace("SPNEGO negotiation in process, output token: {}", tokenBytes);
-            return replyUnauthorizedNegotiate(prc, httpRequest, httpResponse, Base64.encodeBase64String(tokenBytes));
+            final String encoded = Base64.encodeBase64String(tokenBytes);
+            assert encoded != null;
+            return replyUnauthorizedNegotiate(prc, httpRequest, httpResponse, encoded);
         }
         
         return null;
@@ -226,7 +232,7 @@ public class SPNEGOAuthnController {
      * @throws ExternalAuthenticationException ...
      */
     @RequestMapping(value = "/{conversationKey}/error", method = RequestMethod.GET)
-    public void handleError(@PathVariable final String conversationKey, @Nonnull final HttpServletRequest httpRequest,
+    public void handleError(@PathVariable @Nonnull final String conversationKey, @Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse) throws ExternalAuthenticationException, IOException {
 
         log.warn("SPNEGO authentication problem signaled by client");
@@ -252,7 +258,9 @@ public class SPNEGOAuthnController {
 
         // Store the user as a username and as a real KerberosPrincipal object.
         final Subject subject = new Subject();
-        subject.getPrincipals().add(new UsernamePrincipal(kerberosPrincipal.getName()));
+        final String name = kerberosPrincipal.getName();
+        assert name != null;
+        subject.getPrincipals().add(new UsernamePrincipal(name));
         subject.getPrincipals().add(kerberosPrincipal);
 
         // Finish the external authentication task and return to the flow.
@@ -326,7 +334,9 @@ public class SPNEGOAuthnController {
      */
     @Nonnull
     protected GSSContextAcceptor createGSSContextAcceptor(@Nonnull final SPNEGOContext spnegoCtx) throws GSSException {
-        return new GSSContextAcceptor(spnegoCtx.getKerberosSettings());
+        final KerberosSettings settings = spnegoCtx.getKerberosSettings();
+        assert settings != null;
+        return new GSSContextAcceptor(settings);
     }
 
     /**

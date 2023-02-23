@@ -139,16 +139,18 @@ public class ValidateFunctionResult extends AbstractAuditingValidationAction {
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         
-        if (result instanceof String) {
-            subject.getPrincipals().add(new UsernamePrincipal((String) result));
+        final Object res = result;
+        assert res != null;
+        if (res instanceof String) {
+            subject.getPrincipals().add(new UsernamePrincipal((String) res));
             return subject;
-        } else if (result instanceof Principal) {
-            subject.getPrincipals().add((Principal) result);
+        } else if (res instanceof Principal) {
+            subject.getPrincipals().add((Principal) res);
             return subject;
-        } else if (result instanceof Subject) {
+        } else if (res instanceof Subject) {
             // Override supplied Subject with our own, after transferring over any custom Principals.
-            ((Subject) result).getPrincipals().addAll(subject.getPrincipals());
-            return (Subject) result;
+            ((Subject) res).getPrincipals().addAll(subject.getPrincipals());
+            return (Subject) res;
         }
         
         // Save my walrus!

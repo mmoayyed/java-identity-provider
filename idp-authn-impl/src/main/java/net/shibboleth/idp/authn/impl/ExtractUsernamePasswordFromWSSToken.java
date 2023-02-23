@@ -41,6 +41,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.shared.collection.Pair;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 
@@ -78,7 +79,7 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-        
+        assert inboundMessage != null;
         final Pair<String, String> usernamePassword = extractUsernamePassword(inboundMessage);
         if (usernamePassword == null) {
             log.debug("{} inbound message does not contain a username and password", getLogPrefix());
@@ -86,7 +87,7 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
             return;
         }
 
-        authenticationContext.getSubcontext(UsernamePasswordContext.class, true)
+        authenticationContext.getOrCreateSubcontext(UsernamePasswordContext.class)
                 .setUsername(usernamePassword.getFirst()).setPassword(usernamePassword.getSecond());
     }
 
@@ -140,7 +141,7 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
      * @return the extracted token
      */
     @Nullable private UsernameToken getUsernameToken(@Nonnull final Envelope message) {
-        final Header header = message.getHeader();
+        final Header header = Constraint.isNotNull(message.getHeader(), "Expected a Header");
 
         final List<XMLObject> securityHeaders = header.getUnknownXMLObjects(Security.ELEMENT_NAME);
         if (securityHeaders == null || securityHeaders.size() == 0) {

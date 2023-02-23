@@ -21,13 +21,13 @@ import java.time.DateTimeException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -44,6 +44,7 @@ import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -171,10 +172,11 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
         log.debug("Checking revocation for principal name {} for {} result via attribute resolver", principal,
                 input2.getAuthenticationFlowId());
         
-        final ScratchContext context = input.getSubcontext(ScratchContext.class, true);
+        final ScratchContext context = input.getOrCreateSubcontext(ScratchContext.class);
         
         if (!context.getMap().containsKey(getClass())) {
             final AttributeResolutionContext resolutionContext = buildResolutionContext(input, principal);
+            assert attributeResolver != null;
             resolutionContext.resolveAttributes(attributeResolver);
             
             final Collection<Instant> records = new ArrayList<>();
@@ -201,7 +203,9 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
             }
             
             context.getMap().put(getClass(), records);
-            resolutionContext.getParent().removeSubcontext(resolutionContext);
+            final BaseContext parent = resolutionContext.getParent();
+            assert parent != null;
+            parent.removeSubcontext(resolutionContext);
         }
         
         return isRevoked(principal, input2, (Collection<Instant>) context.getMap().get(getClass()));
@@ -222,8 +226,9 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
         
         resolutionContext
             .setPrincipal(principal)
-            .setResolutionLabel("authn/revocation")
-            .setRequestedIdPAttributeNames(Collections.singletonList(attributeId));
+            .setResolutionLabel("authn/revocation");
+        assert attributeId != null;
+        resolutionContext.setRequestedIdPAttributeNames(CollectionSupport.singletonList(attributeId));
         
         if (recipientLookupStrategy != null) {
             resolutionContext.setAttributeRecipientID(recipientLookupStrategy.apply(profileRequestContext));

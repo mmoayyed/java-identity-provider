@@ -175,15 +175,23 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        final MultiFactorAuthenticationContext mfaCtxt = mfaContext;
+        assert mfaCtxt != null;
+        
         // Swap MFA flow back into top-level context so that other components see only MFA flow.
-        authenticationContext.setAttemptedFlow(mfaContext.getAuthenticationFlowDescriptor());
+        authenticationContext.setAttemptedFlow(mfaCtxt.getAuthenticationFlowDescriptor());
 
         // If the holding variable is already set, this is a recursive invocation.
         if (previousEvent == null) {
             // Event transitions require normalizing empty/null events into "proceed".
             final EventContext eventCtx = eventContextLookupStrategy.apply(profileRequestContext);
-            previousEvent = eventCtx != null && eventCtx.getEvent() != null
-                    ? eventCtx.getEvent().toString() : EventIds.PROCEED_EVENT_ID;
+            final Object event;
+            if (eventCtx != null) {
+                event = eventCtx.getEvent();
+            } else {
+                event = null;
+            }
+            previousEvent = event != null ? event.toString() : EventIds.PROCEED_EVENT_ID;
         }
 
         // Check for an authentication result and move it into the MFA context.
@@ -192,7 +200,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
             if (EventIds.PROCEED_EVENT_ID.equals(previousEvent)) {                
                 log.debug("{} Preserving authentication result from '{}' flow", getLogPrefix(),
                         result.getAuthenticationFlowId());
-                mfaContext.getActiveResults().put(result.getAuthenticationFlowId(), result);
+                mfaCtxt.getActiveResults().put(result.getAuthenticationFlowId(), result);
             } else {
                 log.debug("{} Discarding incomplete authentication result from '{}' flow", getLogPrefix(),
                         result.getAuthenticationFlowId());
@@ -202,8 +210,8 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
 
         // The "next" flow here is the "previous" flow run by the system that we're branching from.
         // This value can be null (on the first entry) and a rule should be defined for the null value.
-        final String prevFlowId = mfaContext.getNextFlowId();
-        mfaContext.setNextFlowId(null);        
+        final String prevFlowId = mfaCtxt.getNextFlowId();
+        mfaCtxt.setNextFlowId(null);
         if (prevFlowId == null) {
             log.debug("{} Applying MFA transition rule to determine initial state", getLogPrefix());
         } else {
@@ -211,8 +219,9 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         }
 
         String flowId = null;
-        final MultiFactorAuthenticationTransition transition = mfaContext.getTransitionMap().get(prevFlowId);
+        final MultiFactorAuthenticationTransition transition = mfaCtxt.getTransitionMap().get(prevFlowId);
         if (transition != null) {
+            assert previousEvent != null;
             flowId = transition.getNextFlowStrategy(previousEvent).apply(profileRequestContext);
             if (flowId == null) {
                 flowId = transition.getNextFlowStrategy("*").apply(profileRequestContext);
@@ -220,10 +229,12 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         }
         if (flowId != null) {
             log.debug("{} MFA flow transition after '{}' event to '{}' flow", getLogPrefix(), previousEvent, flowId);
-            mfaContext.setNextFlowId(flowId);
+            mfaCtxt.setNextFlowId(flowId);
+            assert transition != null;
             doTransition(profileRequestContext, authenticationContext, transition);
         } else {
-            final String event = mfaContext.getEvent() != null ? mfaContext.getEvent() : previousEvent;
+            final String event = mfaCtxt.getEvent() != null ? mfaCtxt.getEvent() : previousEvent;
+            assert event != null;
             log.debug("{} MFA flow completing with event '{}'", getLogPrefix(), event);
             if (EventIds.PROCEED_EVENT_ID.equals(event)) {
                 ActionSupport.buildProceedEvent(profileRequestContext);
@@ -245,9 +256,12 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
     private void doTransition(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext,
             @Nonnull final MultiFactorAuthenticationTransition transition) {
-        
+
+        MultiFactorAuthenticationContext mfaCtxt = mfaContext;
+        assert mfaCtxt != null;
+
         // Non-authentication flows can just be executed (via a "proceed" event).
-        final String flowId = mfaContext.getNextFlowId();
+        final String flowId = Constraint.isNotNull(mfaCtxt.getNextFlowId(), "No previous flow");
         if (!flowId.startsWith("authn/")) {
             ActionSupport.buildProceedEvent(profileRequestContext);
             return;
@@ -266,7 +280,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         // constraint is assumed to be enforced by limiting which active results are made available.
         // To bypass, we just call ourselves again, implicitly looping back. The protection against
         // infinite recursion is the configuration of transitions supplied by the deployer.
-        final AuthenticationResult activeResult = mfaContext.getActiveResults().get(flowId);
+        final AuthenticationResult activeResult = mfaCtxt.getActiveResults().get(flowId);
         if (activeResult != null) {
             if (activeResult.test(profileRequestContext)) {
                 log.debug("{} Reusing active result for flow {}", getLogPrefix(), flowId);
@@ -277,7 +291,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
                 return;
             }
             log.debug("{} Active result for flow {} not reusable, ignoring", getLogPrefix(), flowId);
-            mfaContext.getActiveResults().remove(flowId);
+            mfaCtxt.getActiveResults().remove(flowId);
         }
      
         if (validateLoginTransitions) {

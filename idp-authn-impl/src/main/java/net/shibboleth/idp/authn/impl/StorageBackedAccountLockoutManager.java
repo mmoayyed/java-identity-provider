@@ -71,7 +71,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
     @Nonnull private Function<ProfileRequestContext,Duration> counterIntervalLookupStrategy;
 
     /** Lookup function for duration of lockout. */
-    @Nonnull private Function<ProfileRequestContext,Duration> lockoutDurationLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,Duration> lockoutDurationLookupStrategy;
     
     /** Controls whether attempts against locked accounts extend duration. */
     private boolean extendLockoutDuration;
@@ -79,8 +79,15 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
     /** Constructor. */
     public StorageBackedAccountLockoutManager() {
         setMaxAttempts(5);
+        // this paradigm proves to the null checkee that these fields are non null
+        assert maxAttemptsLookupStrategy != null;
+        maxAttemptsLookupStrategy = maxAttemptsLookupStrategy;
         setCounterInterval(Duration.ofMinutes(5));
+        assert counterIntervalLookupStrategy != null;
+        counterIntervalLookupStrategy = counterIntervalLookupStrategy;
         setLockoutDuration(Duration.ofMinutes(5));
+        assert lockoutDurationLookupStrategy != null;
+        lockoutDurationLookupStrategy = lockoutDurationLookupStrategy;
     }
 
     /**
@@ -208,19 +215,32 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         }
     }
     
+    /** Guaranteed non null value for {@link #lockoutKeyStrategy} .
+     * We check for non-nullness in {@link #doInitialize()} so it suffices to check
+     * Component state.
+     * @return
+     */
+    @Nonnull private Function<ProfileRequestContext, String> getLockoutKeyStrategy() {
+        checkComponentActive();
+        assert lockoutKeyStrategy != null;
+        return lockoutKeyStrategy;
+    }
+
     /** {@inheritDoc} */
     public boolean check(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final String key = lockoutKeyStrategy.apply(profileRequestContext);
+        final String key = getLockoutKeyStrategy().apply(profileRequestContext);
         if (key == null) {
             log.warn("No lockout key returned for request");
             return false;
         }
+        final String id = getId();
+        assert id != null;
 
         // Read back account state. No state obviously means no lockout, but in the case of errors
         // that does fail open. Of course, in-memory won't fail...
         StorageRecord<?> sr = null;
         try {
-            sr = storageService.read(getId(), key);
+            sr = storageService.read(id, key);
         } catch (final IOException e) {
             sr = null;
             log.error("Error reading back account lockout state for '{}'", key, e);
@@ -238,7 +258,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
                 // If that's under the lockout duration, we're locked out.
                 final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext).toMillis();
                 final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext).toMillis();
-                final long lastAttempt = sr.getExpiration() - Math.max(lockoutDuration, counterInterval);
+                final Long exp = Constraint.isNotNull(sr.getExpiration(), "Stored expiration canot be null");
+                final long lastAttempt = exp - Math.max(lockoutDuration, counterInterval);
                 final long timeDifference = System.currentTimeMillis() - lastAttempt;
                 if (timeDifference <= lockoutDuration) {
                     log.info("Lockout threshold reached for '{}', invalid count is {}", key, counter);
@@ -261,7 +282,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
     /** {@inheritDoc} */
     public boolean increment(@Nonnull final ProfileRequestContext profileRequestContext) {
         // Work is done by helper method to track storage retries.
-        final String key = lockoutKeyStrategy.apply(profileRequestContext);
+        final String key = getLockoutKeyStrategy().apply(profileRequestContext);
         if (key == null) {
             log.warn("No lockout key returned for request");
             return false;
@@ -273,10 +294,12 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
     /** {@inheritDoc} */
     public boolean clear(@Nonnull final ProfileRequestContext profileRequestContext) {
         try {
-            final String key = lockoutKeyStrategy.apply(profileRequestContext);
+            final String key = getLockoutKeyStrategy().apply(profileRequestContext);
             if (key != null) {
+                final String id = getId();
+                assert id != null;
                 log.debug("Clearing lockout state for '{}'", key);
-                storageService.delete(getId(), key);
+                storageService.delete(id, key);
                 return true;
             }
             log.warn("No lockout key returned for request");
@@ -310,7 +333,9 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         int counter = 0;
         StorageRecord<?> sr = null;
         try {
-            sr = storageService.read(getId(), key);
+            final String id = getId();
+            assert id != null;
+            sr = storageService.read(id, key);
             if (sr != null) {
                 counter = Integer.parseInt(sr.getValue());
             }
@@ -331,7 +356,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         // Compute last access time by backing off from record expiration.
         long lastAccess = now;
         if (sr != null) {
-            lastAccess = sr.getExpiration() - Math.max(lockoutDuration, counterInterval);
+            final Long exp = Constraint.isNotNull(sr.getExpiration(), "Stored expiration canot be null");
+            lastAccess = exp - Math.max(lockoutDuration, counterInterval);
         }
         
         // If difference between now and last access exceeds the counter interval, zero it.
@@ -346,10 +372,12 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         log.debug("Invalid login count for '{}' will be {}, expiring at {}", key, counter,
                 Instant.ofEpochMilli(expiration));
 
+        final String id = getId();
+        assert id != null;
         // Create or update as required. Retry on errors.
         if (sr == null) {
             try {
-                if (storageService.create(getId(), key, Integer.toString(counter), expiration)) {
+                if (storageService.create(id, key, Integer.toString(counter), expiration)) {
                     return true;
                 }
             } catch (final IOException e) {
@@ -357,7 +385,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             }
         } else {
             try {
-                if (storageService.update(getId(), key, Integer.toString(counter), expiration)) {
+                if (storageService.update(id, key, Integer.toString(counter), expiration)) {
                     return true;
                 }
             } catch (final IOException e) {
@@ -398,6 +426,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             if (httpRequestSupplier == null) {
                 return null;
             }
+            assert httpRequestSupplier != null;
             return httpRequestSupplier.get();
         }
 
@@ -430,7 +459,9 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             }
             
             final String username = upContext.getUsername();
-            final String ipAddr = HttpServletSupport.getRemoteAddr(getHttpServletRequest());
+            final HttpServletRequest request = getHttpServletRequest();
+            assert request !=  null;
+            final String ipAddr = HttpServletSupport.getRemoteAddr(request);
             if (username == null || username.isEmpty() || ipAddr == null || ipAddr.isEmpty()) {
                 return null;
             }

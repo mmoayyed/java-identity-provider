@@ -44,6 +44,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
 
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
@@ -110,8 +111,10 @@ public class X509AuthServlet extends HttpServlet {
     public void init(final ServletConfig config) throws ServletException {
         super.init(config);
 
+        final ServletContext servletContext = getServletContext();
+        assert servletContext != null;
         final WebApplicationContext springContext =
-                WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+                WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
         
         String param = config.getInitParameter(TRUST_ENGINE_PARAM);
         if (param != null) {
@@ -136,6 +139,7 @@ public class X509AuthServlet extends HttpServlet {
     protected void service(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
             throws ServletException, IOException {
         
+        assert httpRequest != null && httpResponse != null;
         try {
             final String key = ExternalAuthentication.startExternalAuthentication(httpRequest);
             
@@ -162,7 +166,7 @@ public class X509AuthServlet extends HttpServlet {
             final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, httpRequest);
             final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
             if (authnCtx != null) {
-                final CertificateContext cc = authnCtx.getSubcontext(CertificateContext.class, true);
+                final CertificateContext cc = authnCtx.getOrCreateSubcontext(CertificateContext.class);
                 cc.setCertificate(cert);
                 if (certs.length > 1) {
                     for (int i = 1; i < certs.length; i++) {
@@ -175,6 +179,7 @@ public class X509AuthServlet extends HttpServlet {
                 try {
                     final BasicX509Credential cred = new BasicX509Credential(cert);
                     cred.setEntityCertificateChain(Arrays.asList(certs));
+                    assert trustEngine != null;
                     if (trustEngine.validate(cred, new CriteriaSet())) {
                         log.debug("Trust engine validated X.509 certificate");
                     } else {

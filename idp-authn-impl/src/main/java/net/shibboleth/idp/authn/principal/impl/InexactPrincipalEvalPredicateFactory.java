@@ -57,7 +57,9 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
 
     /** Constructor. */
     InexactPrincipalEvalPredicateFactory() {
-        matchingRules = HashMultimap.create();
+        final HashMultimap<String,String> hm = HashMultimap.create();
+        assert hm != null;
+        matchingRules = hm;
     }
     
     /**
@@ -111,7 +113,8 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
         }
 
         /** {@inheritDoc} */
-        public boolean test(@Nullable final PrincipalSupportingComponent input) {
+        public boolean test(final PrincipalSupportingComponent input) {
+            assert input != null;
             final Set<String> matches = matchingRules.get(principal.getName());
             final Set<? extends Principal> inputs = input.getSupportedPrincipals(principal.getClass());
             

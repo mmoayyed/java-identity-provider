@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -36,6 +35,7 @@ import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -74,8 +74,8 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
     
     /** Constructor. */
     public ValidateRemoteUser() {
-        allowedUsernames = Collections.emptySet();
-        deniedUsernames = Collections.emptySet();
+        allowedUsernames = CollectionSupport.emptySet();
+        deniedUsernames = CollectionSupport.emptySet();
         setMetricName(DEFAULT_METRIC_NAME);
     }
     
@@ -86,7 +86,7 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
      */
     public void setAllowedUsernames(@Nullable @NonnullElements final Collection<String> allowed) {
         checkSetterPreconditions();
-        allowedUsernames = Set.copyOf(StringSupport.normalizeStringCollection(allowed));
+        allowedUsernames = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(allowed));
     }
 
     /**
@@ -96,7 +96,7 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
      */
     public void setDeniedUsernames(@Nullable @NonnullElements final Collection<String> denied) {
         checkSetterPreconditions();
-        deniedUsernames = Set.copyOf(StringSupport.normalizeStringCollection(denied));
+        deniedUsernames = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(denied));
     }
 
     /**
@@ -130,6 +130,7 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
             return false;
         }
 
+        assert usernameContext != null;
         if (usernameContext.getUsername() == null) {
             log.debug("{} No username available within UsernameContext", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
@@ -144,16 +145,20 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-                
-        if (!isAuthenticated(usernameContext.getUsername())) {
-            log.info("{} User '{}' was not valid", getLogPrefix(), usernameContext.getUsername());
+
+        final UsernameContext uCtxt = usernameContext;
+        assert uCtxt != null;
+        final String userName = uCtxt.getUsername();
+        assert userName != null;
+        if (!isAuthenticated(userName)) {
+            log.info("{} User '{}' was not valid", getLogPrefix(), userName);
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                     AuthnEventIds.INVALID_CREDENTIALS);
             recordFailure(profileRequestContext);
             return;
         }
 
-        log.info("{} Validated user '{}'", getLogPrefix(), usernameContext.getUsername());
+        log.info("{} Validated user '{}'", getLogPrefix(), userName);
         recordSuccess(profileRequestContext);
         buildAuthenticationResult(profileRequestContext, authenticationContext);
     }
@@ -165,24 +170,30 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
      * @return  true iff the username is acceptable
      */
     private boolean isAuthenticated(@Nonnull @NotEmpty final String username) {
-        
+
+        final Pattern mc = matchExpression;
         if (!allowedUsernames.isEmpty() && !allowedUsernames.contains(username)) {
             // Not in allowed set. Only accept if a regexp applies.
-            if (matchExpression == null) {
+            if (mc == null) {
                 return false;
             }
-            return matchExpression.matcher(username).matches();
+            return mc.matcher(username).matches();
         }
         
         // In allowed set (or none). Check deny set, and if necessary a regexp.
         return !deniedUsernames.contains(username)
-                && (matchExpression == null || matchExpression.matcher(username).matches());
+                && (mc == null || mc.matcher(username).matches());
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
-        subject.getPrincipals().add(new UsernamePrincipal(usernameContext.getUsername()));
+        final UsernameContext usernameContext = this.usernameContext;
+        assert usernameContext != null;
+        final String userName = usernameContext.getUsername();
+        assert userName != null;
+
+        subject.getPrincipals().add(new UsernamePrincipal(userName));
         return subject;
     }
     

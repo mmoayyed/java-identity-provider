@@ -53,7 +53,7 @@ public class GSSContextAcceptor {
     /** The Kerberos settings. */
     @Nonnull private KerberosSettings kerberosSettings;
 
-    /** The realm in use. */
+    /** The realm in use. Debug use only. */
     @Nullable private KerberosRealmSettings realmSettings;
     
     /** The Kerberos login module and server login state. */
@@ -110,14 +110,15 @@ public class GSSContextAcceptor {
     @Nullable public byte[] acceptSecContext(@Nonnull final byte[] inToken, final int offset, final int len)
             throws Exception {
 
-        if (context == null) {
+        final GSSContext ctxt = context;
+        if (ctxt == null) {
             log.trace("Processing first GSS input token");
             return acceptFirstToken(inToken, offset, len);
         }
         
         log.trace("Processing an additional GSS input token");
-        final byte[] tokenOut = context.acceptSecContext(inToken, offset, len);
-        if (context.isEstablished()) {
+        final byte[] tokenOut = ctxt.acceptSecContext(inToken, offset, len);
+        if (ctxt.isEstablished()) {
             log.trace("Security context established");
         } else {
             log.trace("Security context partially established");
@@ -171,16 +172,17 @@ public class GSSContextAcceptor {
         // We loop over each realm to determine which one might work.
         
         Exception preserved = null;
-        
         for (final KerberosRealmSettings realm : kerberosSettings.getRealms()) {
             
             log.debug("Validating the first GSS input token against service principal: {}",
                     realm.getServicePrincipal());
             try {
                 createGSSContext(realm);
+                assert context != null;
                 final byte[] tokenOut = context.acceptSecContext(inToken, offset, len);
                 realmSettings = realm;
-                if (getContext().isEstablished()) {
+                assert context != null;
+                if (context.isEstablished()) {
                     log.trace("Security context fully established");
                 } else {
                     log.trace("Security context partially established");
@@ -209,11 +211,12 @@ public class GSSContextAcceptor {
             throws GSSException, LoginException, PrivilegedActionException {
         
         // Establish server login credentials.
-        Subject krbSubject = null;
+        final Subject krbSubject;
         krbLoginModule = new GSSAcceptorLoginModule(realm, kerberosSettings.getRefreshKrb5Config(),
                 kerberosSettings.getLoginModuleClassName());
         try {
             krbSubject = krbLoginModule.login();
+            assert krbSubject != null;
         } catch (final LoginException e) {
             log.error("Server login error using principal: {}", realm.getServicePrincipal());
             throw e;
@@ -255,7 +258,8 @@ public class GSSContextAcceptor {
                 return newServerCreds;
             }
         };
-        return Subject.doAs(subject, action);
+        final GSSCredential result = Subject.doAs(subject, action);
+        assert result != null;
+        return result;
     }
-
 }
