@@ -30,7 +30,6 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.profile.AbstractSAML2NameIDGenerator;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -43,6 +42,7 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.idp.saml.nameid.AbstractSAML2NameIDGenerator;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
@@ -125,7 +125,8 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
         checkSetterPreconditions();
-        attributeSourceIds = CollectionSupport.copyToList(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
+        attributeSourceIds = CollectionSupport.copyToList(
+                Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
     }
 
     /**

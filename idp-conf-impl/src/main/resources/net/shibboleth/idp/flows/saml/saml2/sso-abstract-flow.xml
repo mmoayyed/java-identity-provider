@@ -17,6 +17,7 @@
     </action-state>
 
     <action-state id="DoProfileWork">
+        <evaluate expression="EnforceDisallowedSSOFeatures" />
         <evaluate expression="VerifyChannelBindings" />
         <evaluate expression="PopulateECPContext" />
         <evaluate expression="ExtractProxiedRequesters" />

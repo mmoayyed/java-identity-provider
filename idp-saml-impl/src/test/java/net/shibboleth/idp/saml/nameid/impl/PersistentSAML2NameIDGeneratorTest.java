@@ -30,8 +30,10 @@ import net.shibboleth.idp.attribute.impl.JDBCPairwiseIdStore;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
+import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.testing.DatabaseTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -72,7 +74,9 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         testSource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "StoredIDDataConnectorStore");
         prc = new RequestContextBuilder()
                 .setInboundMessageIssuer(TestSources.SP_ENTITY_ID)
-                .setOutboundMessageIssuer(TestSources.IDP_ENTITY_ID).buildProfileRequestContext();
+                .setOutboundMessageIssuer(TestSources.IDP_ENTITY_ID)
+                .setRelyingPartyProfileConfigurations(CollectionSupport.singletonList(new BrowserSSOProfileConfiguration()))
+                .buildProfileRequestContext();
         generator = new PersistentSAML2NameIDGenerator();
         generator.setId("test");
         generator.setOmitQualifiers(false);
@@ -237,6 +241,14 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         Assert.assertEquals(id.getSPNameQualifier(), "https://affiliation.org");
         
         storedvalue = id.getValue();
+        id = generator.generate(prc, NameID.PERSISTENT);
+        Assert.assertNotNull(id);
+        Assert.assertEquals(id.getValue(), storedvalue);
+        Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
+        Assert.assertEquals(id.getSPNameQualifier(), "https://affiliation.org");
+        
+        prc.getInboundMessageContext().setMessage(null);
+        ((BrowserSSOProfileConfiguration) prc.getSubcontext(RelyingPartyContext.class).getProfileConfig()).setSPNameQualifier("https://affiliation.org");
         id = generator.generate(prc, NameID.PERSISTENT);
         Assert.assertNotNull(id);
         Assert.assertEquals(id.getValue(), storedvalue);
