@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.security.Principal;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -42,6 +43,9 @@ import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.core.xml.io.UnmarshallingException;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
@@ -53,8 +57,10 @@ import org.opensaml.profile.context.ProxiedRequesterContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.ext.reqattr.RequestedAttributes;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -62,6 +68,7 @@ import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Scoping;
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -259,6 +266,13 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         object.setID(idGenerator.generateIdentifier());
         object.setIssueInstant(Instant.now());
         object.setVersion(SAMLVersion.VERSION_20);
+        
+        final Integer index = profileConfiguration.getAttributeIndex(profileRequestContext);
+        if (index != null) {
+            log.debug("{} Setting AttributeConsumingServiceIndex to '{}' for SAML AuthnRequest", getLogPrefix(),
+                    index);
+            object.setAttributeConsumingServiceIndex(index);
+        }
 
         if (issuerId != null) {
             log.debug("{} Setting Issuer to {}", getLogPrefix(), issuerId);
@@ -286,6 +300,12 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         final NameIDPolicy nip = nipBuilder.buildObject();
         nip.setAllowCreate(true);
+        final String qualifier = profileConfiguration.getSPNameQualifier(profileRequestContext);
+        if (qualifier != null) {
+            log.debug("{} Setting NameIDPolicy SPNameQualifier to '{}' for SAML AuthnRequest", getLogPrefix(),
+                    qualifier);
+            nip.setSPNameQualifier(qualifier);
+        }
         
         // TODO: use metadata for NameID Formats too?
         final List<String> formats = profileConfiguration.getNameIDFormatPrecedence(profileRequestContext);
@@ -293,7 +313,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
             log.debug("{} Setting NameIDPolicy Format to '{}' for SAML AuthnRequest", getLogPrefix(), formats.get(0));
             nip.setFormat(formats.get(0));
         }
-        
+
         object.setNameIDPolicy(nip);
 
         final RequestedAuthnContext rac = getRequestedAuthnContext(profileRequestContext);
@@ -309,6 +329,8 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         object.setScoping(buildScoping(profileRequestContext, authenticationContext.getProxyCount(),
                 authenticationContext.getProxiableAuthorities()));
+
+        object.setExtensions(buildExtensions(profileRequestContext));
         
         profileRequestContext.getOutboundMessageContext().setMessage(object);
     }
@@ -393,7 +415,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
      * 
      * @return populated {@link Scoping}
      */
-    @Nullable public Scoping buildScoping(@Nonnull final ProfileRequestContext profileRequestContext,
+    @Nullable private Scoping buildScoping(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nullable final Integer count, @Nonnull @NonnullElements final Set<String> idplist) {
 
         boolean include = false;
@@ -453,6 +475,41 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         }
         
         return include ? scoping : null;
+    }
+ 
+    /**
+     * Build {@link RequestedAttributes} extension if required.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return extension or null
+     */
+    @Nullable private Extensions buildExtensions(
+            @Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        final Collection<RequestedAttribute> attrs = profileConfiguration.getRequestedAttributes(profileRequestContext);
+        if (!attrs.isEmpty()) {
+            final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
+            final SAMLObjectBuilder<Extensions> extBuilder =
+                    (SAMLObjectBuilder<Extensions>) bf.<Extensions>getBuilderOrThrow(
+                            Extensions.DEFAULT_ELEMENT_NAME);
+            final SAMLObjectBuilder<RequestedAttributes> reqExtBuilder =
+                    (SAMLObjectBuilder<RequestedAttributes>) bf.<RequestedAttributes>getBuilderOrThrow(
+                            RequestedAttributes.DEFAULT_ELEMENT_NAME);
+            final RequestedAttributes reqExt = reqExtBuilder.buildObject();
+            attrs.forEach(attr -> {
+                try {
+                    reqExt.getRequestedAttributes().add(XMLObjectSupport.cloneXMLObject(attr));
+                } catch (final MarshallingException|UnmarshallingException e) {
+                    log.error("{} Error cloning RequestedAttribute from profile configuration", getLogPrefix(), e);
+                }
+            });
+            final Extensions ext = extBuilder.buildObject();
+            ext.getUnknownXMLObjects().add(reqExt);
+            return ext;
+        }
+        
+        return null;
     }
     
 }
