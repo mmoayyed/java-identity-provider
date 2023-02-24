@@ -17,17 +17,16 @@
 
 package net.shibboleth.idp.profile.interceptor.impl;
 
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 /** {@link SelectProfileInterceptorFlow} unit test. */
 @SuppressWarnings("javadoc")
@@ -49,33 +48,36 @@ public class SelectProfileInterceptorFlowTest extends PopulateProfileInterceptor
     @Test public void testSelect() {
 
         final Event event = action.execute(src);
+        assert event != null;
         ActionTestingSupport.assertEvent(event, ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test1");
 
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow(),
-                interceptorCtx.getAvailableFlows().get(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test1"));
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), event.getId());
+        final ProfileInterceptorFlowDescriptor flow =interceptorCtx.getAttemptedFlow();
+        assert flow != null && flow.equals(interceptorCtx.getAvailableFlows().get(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test1"));
+        Assert.assertEquals(flow.getId(), event.getId());
     }
 
     @Test public void testIncompleteFlows() {
         action.execute(src);
         final Event event = action.execute(src);
+        assert event != null;
         ActionTestingSupport.assertEvent(event, ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test2");
 
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow(),
-                interceptorCtx.getAvailableFlows().get(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test2"));
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), event.getId());
+        final ProfileInterceptorFlowDescriptor flow =interceptorCtx.getAttemptedFlow();
+        assert flow != null && flow.equals(interceptorCtx.getAvailableFlows().get(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test2"));
+        Assert.assertEquals(flow.getId(), event.getId());
     }
 
     @Test public void testPredicate() {
         interceptorCtx.getAvailableFlows().get(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test1")
-                .setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
+                .setActivationCondition(PredicateSupport.<ProfileRequestContext> alwaysFalse());
 
         final Event event = action.execute(src);
+        assert event != null;
         ActionTestingSupport.assertEvent(event, ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test2");
 
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow(),
-                interceptorCtx.getAvailableFlows().get(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test2"));
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), event.getId());
+        final ProfileInterceptorFlowDescriptor flow =interceptorCtx.getAttemptedFlow();
+        assert flow != null && flow.equals(interceptorCtx.getAvailableFlows().get(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test2"));
+        Assert.assertEquals(flow.getId(), event.getId());
     }
 
 }

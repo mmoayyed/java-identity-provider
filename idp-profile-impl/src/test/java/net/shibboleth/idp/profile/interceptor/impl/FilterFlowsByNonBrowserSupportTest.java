@@ -20,6 +20,8 @@ package net.shibboleth.idp.profile.interceptor.impl;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 
+import static org.testng.Assert.assertEquals;
+
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -40,6 +42,7 @@ public class FilterFlowsByNonBrowserSupportTest extends PopulateProfileIntercept
 
     @Test public void testBrowserProfile() {
         final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert interceptorCtx != null;
         prc.setBrowserProfile(true);
 
         final Event event = action.execute(src);
@@ -49,6 +52,7 @@ public class FilterFlowsByNonBrowserSupportTest extends PopulateProfileIntercept
 
     @Test public void testNoFiltering() {
         final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert interceptorCtx != null;
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -57,6 +61,7 @@ public class FilterFlowsByNonBrowserSupportTest extends PopulateProfileIntercept
 
     @Test public void testPartialFiltering() {
         final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert interceptorCtx != null;
         interceptorCtx.getAvailableFlows().get("intercept/test1").setNonBrowserSupported(false);
 
         final Event event = action.execute(src);

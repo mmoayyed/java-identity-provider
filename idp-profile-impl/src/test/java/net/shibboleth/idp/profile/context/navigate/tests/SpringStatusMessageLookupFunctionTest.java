@@ -19,6 +19,9 @@ package net.shibboleth.idp.profile.context.navigate.tests;
 
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.profile.context.SpringRequestContext;
@@ -46,7 +49,7 @@ public class SpringStatusMessageLookupFunctionTest {
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         springRequestContext = (MockRequestContext) new RequestContextBuilder().buildRequestContext();
         prc = (ProfileRequestContext) springRequestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
-        prc.getSubcontext(SpringRequestContext.class, true).setRequestContext(springRequestContext);
+        prc.getOrCreateSubcontext(SpringRequestContext.class).setRequestContext(springRequestContext);
     }
 
     @Test public void testMappedMessage() {
@@ -67,7 +70,7 @@ public class SpringStatusMessageLookupFunctionTest {
     private class MockMessageSource implements MessageSource {
 
         /** {@inheritDoc} */
-        public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+        public String getMessage(@Nonnull String code, @Nullable Object[] args, @Nullable String defaultMessage, @Nonnull Locale locale) {
             if (code.equals("Mappable")) {
                 return "Mapped";
             }
@@ -75,7 +78,7 @@ public class SpringStatusMessageLookupFunctionTest {
         }
 
         /** {@inheritDoc} */
-        public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
+        public @Nonnull String getMessage(@Nonnull String code, @Nullable Object[] args, @Nonnull Locale locale) throws NoSuchMessageException {
             if (code.equals("Mappable")) {
                 return "Mapped";
             }
@@ -83,8 +86,10 @@ public class SpringStatusMessageLookupFunctionTest {
         }
 
         /** {@inheritDoc} */
-        public String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException {
-            if (resolvable.getCodes()[0].equals("Mappable")) {
+        public @Nonnull String getMessage(@Nonnull MessageSourceResolvable resolvable, @Nonnull Locale locale) throws NoSuchMessageException {
+            final String[] codes = resolvable.getCodes();
+            assert codes != null && codes.length >=1;
+            if (codes[0].equals("Mappable")) {
                 return "Mapped";
             }
             throw new NoSuchMessageException("No such message");

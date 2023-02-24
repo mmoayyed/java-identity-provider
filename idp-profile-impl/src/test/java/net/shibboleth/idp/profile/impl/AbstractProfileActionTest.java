@@ -22,6 +22,8 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.UninitializedComponentException;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.profile.context.PreviousEventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
@@ -119,13 +121,13 @@ public class AbstractProfileActionTest {
 
         /** {@inheritDoc} */
         @Override
-        protected void doExecute(ProfileRequestContext profileRequestContext) {
+        protected void doExecute(@Nonnull ProfileRequestContext profileRequestContext) {
 
             executed = true;
             
             final PreviousEventContext<?> prevCtx = profileRequestContext.getSubcontext(PreviousEventContext.class, false);
             if (prevEvent != null) {
-                if (prevCtx == null || !prevCtx.getEvent().equals(prevEvent)) {
+                if (prevCtx == null || !prevEvent.equals(prevCtx.getEvent())) {
                     org.opensaml.profile.action.ActionSupport.buildEvent(profileRequestContext, "InvalidPreviousEvent");
                     return;
                 }

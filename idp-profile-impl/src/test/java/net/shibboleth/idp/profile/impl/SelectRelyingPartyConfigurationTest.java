@@ -19,23 +19,9 @@ package net.shibboleth.idp.profile.impl;
 
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Collections;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
-import net.shibboleth.shared.component.AbstractIdentifiedInitializableComponent;
-import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.resolver.CriteriaSet;
-import net.shibboleth.shared.resolver.ResolverException;
-import net.shibboleth.shared.service.ReloadableService;
-import net.shibboleth.shared.service.ServiceableComponent;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.config.SecurityConfiguration;
@@ -44,6 +30,21 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.component.AbstractIdentifiedInitializableComponent;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceableComponent;
 
 /** {@link SelectRelyingPartyConfiguration} unit test. */
 public class SelectRelyingPartyConfigurationTest {
@@ -67,6 +68,7 @@ public class SelectRelyingPartyConfigurationTest {
     @Test public void testNoRelyingPartyContext() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
+        assert prc != null;
         prc.removeSubcontext(RelyingPartyContext.class);
 
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
@@ -86,7 +88,10 @@ public class SelectRelyingPartyConfigurationTest {
     @Test public void testNoRelyingPartyConfiguration() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
+        assert prc != null;
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx != null;
+        rpCtx.setConfiguration(null);
 
         final SelectRelyingPartyConfiguration action = new SelectRelyingPartyConfiguration();
         action.setRelyingPartyConfigurationResolver(new MockResolver(null, null));
@@ -105,7 +110,10 @@ public class SelectRelyingPartyConfigurationTest {
     @Test public void testUnableToResolveRelyingPartyConfiguration() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
+        assert prc != null;
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx != null;
+        rpCtx.setConfiguration(null);
 
         final var config = new net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
@@ -130,7 +138,10 @@ public class SelectRelyingPartyConfigurationTest {
     @Test public void testResolveRelyingPartyConfiguration() throws Exception {
         final RequestContext src = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        prc.getSubcontext(RelyingPartyContext.class).setConfiguration(null);
+        assert prc != null;
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx != null;
+        rpCtx.setConfiguration(null);
 
         final var config = new net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
@@ -146,8 +157,9 @@ public class SelectRelyingPartyConfigurationTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final RelyingPartyConfiguration resolvedConfig =
-                (RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration();
+        
+        final RelyingPartyConfiguration resolvedConfig = (RelyingPartyConfiguration) rpCtx.getConfiguration();
+        assert resolvedConfig != null;
         Assert.assertEquals(resolvedConfig.getId(), config.getId());
         Assert.assertEquals(((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) resolvedConfig).getResponderId(prc),
                 config.getResponderId(prc));
@@ -161,7 +173,7 @@ public class SelectRelyingPartyConfigurationTest {
                     ServiceableComponent<RelyingPartyConfigurationResolver>, RelyingPartyConfigurationResolver {
 
         /** The relying party configuration to be returned. */
-        private RelyingPartyConfiguration configuration;
+        @Nullable RelyingPartyConfiguration configuration;
 
         /** Exception thrown by resolution attempts. */
         private ResolverException exception;
@@ -174,7 +186,7 @@ public class SelectRelyingPartyConfigurationTest {
          *            
          * @throws ComponentInitializationException 
          */
-        public MockResolver(@Nullable final RelyingPartyConfiguration relyingPartyConfiguration,
+        public MockResolver(@Nullable RelyingPartyConfiguration relyingPartyConfiguration,
                 @Nullable final ResolverException resolverException) throws ComponentInitializationException {
             configuration = relyingPartyConfiguration;
             exception = resolverException;
@@ -183,16 +195,17 @@ public class SelectRelyingPartyConfigurationTest {
         }
 
         /** {@inheritDoc} */
-        @Override public Iterable<RelyingPartyConfiguration> resolve(final CriteriaSet criteria)
+        @Override public @Nonnull Iterable<RelyingPartyConfiguration> resolve(final @Nullable CriteriaSet criteria)
                 throws ResolverException {
             if (exception != null) {
                 throw exception;
             }
-            return Collections.singleton(configuration);
+            assert configuration != null;
+            return CollectionSupport.singleton(configuration);
         }
 
         /** {@inheritDoc} */
-        @Override public RelyingPartyConfiguration resolveSingle(final CriteriaSet criteria)
+        @Override public RelyingPartyConfiguration resolveSingle(final @Nullable CriteriaSet criteria)
                 throws ResolverException {
             if (exception != null) {
                 throw exception;
@@ -201,20 +214,20 @@ public class SelectRelyingPartyConfigurationTest {
         }
 
         /** {@inheritDoc} */
-        @Override public SecurityConfiguration getDefaultSecurityConfiguration(String profileId) {
+        @Override public SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull String profileId) {
             return null;
         }
 
         /** {@inheritDoc} */
         @Override
-        public Collection<Credential> getSigningCredentials() {
-            return Collections.emptyList();
+        public @Nonnull Collection<Credential> getSigningCredentials() {
+            return CollectionSupport.emptyList();
         }
 
         /** {@inheritDoc} */
         @Override
-        public Collection<Credential> getEncryptionCredentials() {
-            return Collections.emptyList();
+        public @Nonnull Collection<Credential> getEncryptionCredentials() {
+            return CollectionSupport.emptyList();
         }
 
         /** {@inheritDoc} */
@@ -243,13 +256,13 @@ public class SelectRelyingPartyConfigurationTest {
 
         /** {@inheritDoc} */
         @Override
-        public ServiceableComponent<RelyingPartyConfigurationResolver> getServiceableComponent() {
+        public @Nonnull ServiceableComponent<RelyingPartyConfigurationResolver> getServiceableComponent() {
             return this;
         }
 
         /** {@inheritDoc} */
         @Override
-        public RelyingPartyConfigurationResolver getComponent() {
+        public @Nonnull RelyingPartyConfigurationResolver getComponent() {
             return this;
         }
 

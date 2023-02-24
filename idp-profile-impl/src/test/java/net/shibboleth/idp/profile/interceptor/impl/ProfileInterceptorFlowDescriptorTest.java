@@ -21,8 +21,10 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageService;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -39,6 +41,8 @@ public class ProfileInterceptorFlowDescriptorTest {
     private RequestContext src;
 
     private ProfileRequestContext prc;
+    
+    private Object nullObj;
 
     @BeforeMethod public void setUp() throws Exception {
         descriptor = new ProfileInterceptorFlowDescriptor();
@@ -58,13 +62,14 @@ public class ProfileInterceptorFlowDescriptorTest {
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableActivationCondition() throws Exception {
         descriptor.initialize();
-        descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
+        descriptor.setActivationCondition(PredicateSupport.<ProfileRequestContext> alwaysFalse());
     }
 
+    @SuppressWarnings("null")
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableStorageService() throws Exception {
         descriptor.initialize();
-        descriptor.setStorageService(null);
+        descriptor.setStorageService((StorageService) nullObj);
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class)
@@ -84,7 +89,7 @@ public class ProfileInterceptorFlowDescriptorTest {
     }
 
     @Test public void testMutatingPredicate() throws Exception {
-        descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
+        descriptor.setActivationCondition(PredicateSupport.<ProfileRequestContext> alwaysFalse());
         descriptor.initialize();
 
         Assert.assertFalse(descriptor.test(prc));

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
@@ -30,10 +31,12 @@ import net.shibboleth.shared.annotation.Prototype;
 public class ProfileActionBeanFactoryPostProcessorTest extends AbstractTestNGSpringContextTests {
 
     @Test public void testPostProcessBeanFactory() {
-        Assert.assertTrue(applicationContext.isPrototype("MockIdPActionWithoutScopeProperty"));
-        Assert.assertTrue(applicationContext.isPrototype("MockPrototypeAnnotatedIdPActionWithoutScopeProperty"));
-        Assert.assertTrue(applicationContext.isPrototype("MockOpenSAMLActionWithoutScopeProperty"));
-        Assert.assertTrue(applicationContext.isPrototype("MockPrototypeAnnotatedOpenSAMLActionWithoutScopeProperty"));
+        final ApplicationContext ac = applicationContext;
+        assert  ac != null;
+        Assert.assertTrue(ac.isPrototype("MockIdPActionWithoutScopeProperty"));
+        Assert.assertTrue(ac.isPrototype("MockPrototypeAnnotatedIdPActionWithoutScopeProperty"));
+        Assert.assertTrue(ac.isPrototype("MockOpenSAMLActionWithoutScopeProperty"));
+        Assert.assertTrue(ac.isPrototype("MockPrototypeAnnotatedOpenSAMLActionWithoutScopeProperty"));
     }
 
     public static class MockIdPAction extends net.shibboleth.idp.profile.AbstractProfileAction {

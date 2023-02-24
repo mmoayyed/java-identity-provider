@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.impl;
 
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
@@ -31,17 +32,21 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 public class ProfileActionBeanPostProcessorTest extends AbstractTestNGSpringContextTests {
 
     @Test public void testPostProcessAfterInitialization() {
-        Object bean = null;
+        final ApplicationContext ac = applicationContext;
+        assert  ac != null;
 
-        bean = applicationContext.getBean("IdPActionWithDefaultID");
+        Object bean = null;
+        
+        bean = ac.getBean("IdPActionWithDefaultID");
         Assert.assertFalse(bean instanceof WebFlowProfileActionAdaptor);
 
-        bean = applicationContext.getBean("OpenSAMLActionWithDefaultID");
+        bean = ac.getBean("OpenSAMLActionWithDefaultID");
         Assert.assertTrue(bean instanceof WebFlowProfileActionAdaptor);
         Assert.assertTrue(((WebFlowProfileActionAdaptor) bean).isInitialized());
     }
 
     @Test(expectedExceptions = BeanCreationException.class) public void testBeanCreationException() {
+        assert applicationContext!= null;
         applicationContext.getBean("OpenSAMLExceptionAction");
     }
 

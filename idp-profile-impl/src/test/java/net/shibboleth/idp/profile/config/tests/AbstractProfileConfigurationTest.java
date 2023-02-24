@@ -33,14 +33,17 @@ import java.util.List;
 /** Unit test for {@link AbstractProfileConfiguration}. */
 @SuppressWarnings("javadoc")
 public class AbstractProfileConfigurationTest {
+    
+    private Object nullObj;
 
+    @SuppressWarnings("null")
     @Test
     public void testProfileId() {
         MockProfileConfiguration config = new MockProfileConfiguration("mock");
         Assert.assertEquals(config.getId(), "mock");
 
         try {
-            config = new MockProfileConfiguration(null);
+            config = new MockProfileConfiguration((String) nullObj);
             Assert.fail();
         } catch (final ConstraintViolationException e) {
 

@@ -78,7 +78,8 @@ public class WriteProfileInterceptorResultToStorageTest {
 
     @Test public void testNoAttemptedFlow() {
         prc.addSubcontext(new ProfileInterceptorContext(), true);
-        Assert.assertNull(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow());
+        final ProfileInterceptorContext ctx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert ctx != null && ctx.getAttemptedFlow() == null;
 
         final Event event = action.execute(src);
 
@@ -86,8 +87,11 @@ public class WriteProfileInterceptorResultToStorageTest {
     }
 
     @Test public void testNoStorageService() {
-        prc.getSubcontext(ProfileInterceptorContext.class).setAttemptedFlow(new ProfileInterceptorFlowDescriptor());
-        Assert.assertNull(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow().getStorageService());
+        final ProfileInterceptorContext ctx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert ctx != null;
+        ctx.setAttemptedFlow(new ProfileInterceptorFlowDescriptor());
+        final ProfileInterceptorFlowDescriptor flow = ctx.getAttemptedFlow();
+        assert flow != null && flow.getStorageService()==null;
 
         final Event event = action.execute(src);
 
@@ -96,14 +100,16 @@ public class WriteProfileInterceptorResultToStorageTest {
 
     @Test public void testCreateStorageRecord() throws Exception {
         final MockProfileInterceptorResult result = new MockProfileInterceptorResult("context", "key", "value", null);
-        prc.getSubcontext(ProfileInterceptorContext.class).getResults().add(result);
+        final ProfileInterceptorContext ctx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert ctx != null;
+        ctx. getResults().add(result);
 
         final Event event = action.execute(src);
 
         ActionTestingSupport.assertProceedEvent(event);
 
         final StorageRecord<?> storageRecord = ss.read("context", "key");
-        Assert.assertNotNull(storageRecord);
+        assert storageRecord != null;
         Assert.assertEquals(storageRecord.getValue(), "value");
         Assert.assertEquals(storageRecord.getExpiration(), null);
     }
@@ -112,14 +118,16 @@ public class WriteProfileInterceptorResultToStorageTest {
         final Instant expiration = Instant.now().plusSeconds(60);
         final MockProfileInterceptorResult result =
                 new MockProfileInterceptorResult("context", "key", "value", expiration);
-        prc.getSubcontext(ProfileInterceptorContext.class).getResults().add(result);
+        final ProfileInterceptorContext ctx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert ctx != null;
+        ctx.getResults().add(result);
 
         final Event event = action.execute(src);
 
         ActionTestingSupport.assertProceedEvent(event);
 
         final StorageRecord<?> storageRecord = ss.read("context", "key");
-        Assert.assertNotNull(storageRecord);
+        assert storageRecord != null;
         Assert.assertEquals(storageRecord.getValue(), "value");
         Assert.assertEquals(storageRecord.getExpiration(), Long.valueOf(expiration.toEpochMilli()));
     }
@@ -127,27 +135,29 @@ public class WriteProfileInterceptorResultToStorageTest {
     @Test public void testUpdateStorageRecord() throws Exception {
         final Instant expiration = Instant.now().plusSeconds(60);
         MockProfileInterceptorResult result = new MockProfileInterceptorResult("context", "key", "value", null);
-        prc.getSubcontext(ProfileInterceptorContext.class).getResults().add(result);
+        final ProfileInterceptorContext ctx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert ctx != null;
+        ctx.getResults().add(result);
 
         Event event = action.execute(src);
 
         ActionTestingSupport.assertProceedEvent(event);
 
         StorageRecord<?> storageRecord = ss.read("context", "key");
-        Assert.assertNotNull(storageRecord);
+        assert storageRecord != null;
         Assert.assertEquals(storageRecord.getValue(), "value");
         Assert.assertEquals(storageRecord.getExpiration(), null);
 
         result = new MockProfileInterceptorResult("context", "key", "value2", expiration);
-        prc.getSubcontext(ProfileInterceptorContext.class).getResults().clear();
-        prc.getSubcontext(ProfileInterceptorContext.class).getResults().add(result);
+        ctx.getResults().clear();
+        ctx.getResults().add(result);
 
         event = action.execute(src);
 
         ActionTestingSupport.assertProceedEvent(event);
 
         storageRecord = ss.read("context", "key");
-        Assert.assertNotNull(storageRecord);
+        assert storageRecord != null;
         Assert.assertEquals(storageRecord.getValue(), "value2");
         Assert.assertEquals(storageRecord.getExpiration(), Long.valueOf(expiration.toEpochMilli()));
     }

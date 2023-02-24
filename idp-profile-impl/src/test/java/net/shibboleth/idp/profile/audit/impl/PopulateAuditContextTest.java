@@ -31,6 +31,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.AuditContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.springframework.webflow.execution.Event;
@@ -68,7 +69,7 @@ public class PopulateAuditContextTest {
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuditContext ac = prc.getSubcontext(AuditContext.class);
-        Assert.assertNotNull(ac);
+        assert ac != null;
         Assert.assertEquals(ac.getFieldValues("a").size(), 1);
         Assert.assertEquals(ac.getFieldValues("a").iterator().next(), "foo");
         Assert.assertTrue(ac.getFieldValues("b").isEmpty());
@@ -86,7 +87,7 @@ public class PopulateAuditContextTest {
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuditContext ac = prc.getSubcontext(AuditContext.class);
-        Assert.assertNotNull(ac);
+        assert ac != null;
         Assert.assertEquals(ac.getFieldValues("a").size(), 1);
         Assert.assertEquals(ac.getFieldValues("a").iterator().next(), "foo");
         Assert.assertTrue(ac.getFieldValues("b").isEmpty());
@@ -100,14 +101,14 @@ public class PopulateAuditContextTest {
         map.put("A", new MockFunction(Arrays.asList("bar", "baz")));
         
         action.setFieldExtractors(map);
-        action.setFormattingMapParser(new FormattingMapParser(Collections.singletonMap("foo", "%A - %b %%")));
+        action.setFormattingMapParser(new FormattingMapParser(CollectionSupport.singletonMap("foo", "%A - %b %%")));
         action.initialize();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuditContext ac = prc.getSubcontext(AuditContext.class);
-        Assert.assertNotNull(ac);
+        assert ac != null;
         Assert.assertTrue(ac.getFieldValues("a").isEmpty());
         Assert.assertTrue(ac.getFieldValues("b").isEmpty());
         Assert.assertEquals(ac.getFieldValues("A").size(), 2);

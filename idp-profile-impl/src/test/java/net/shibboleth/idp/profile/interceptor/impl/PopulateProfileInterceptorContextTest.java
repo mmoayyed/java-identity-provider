@@ -22,12 +22,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -40,7 +43,7 @@ import org.testng.annotations.Test;
 /** {@link PopulateProfileInterceptorContext} unit test. */
 public class PopulateProfileInterceptorContextTest {
 
-    protected List<ProfileInterceptorFlowDescriptor> interceptorFlows;
+    @Nonnull protected List<ProfileInterceptorFlowDescriptor> interceptorFlows = CollectionSupport.emptyList();
 
     protected RequestContext src;
 
@@ -55,7 +58,7 @@ public class PopulateProfileInterceptorContextTest {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
-        interceptorFlows = List.of(new ProfileInterceptorFlowDescriptor(), new ProfileInterceptorFlowDescriptor(),
+        interceptorFlows = CollectionSupport.listOf(new ProfileInterceptorFlowDescriptor(), new ProfileInterceptorFlowDescriptor(),
                         new ProfileInterceptorFlowDescriptor());
         interceptorFlows.get(0).setId("intercept/test1");
         interceptorFlows.get(1).setId("intercept/test2");
@@ -78,7 +81,7 @@ public class PopulateProfileInterceptorContextTest {
      */
     @Test public void testAction() throws Exception {
         final ProfileInterceptorContext interceptorContext = prc.getSubcontext(ProfileInterceptorContext.class);
-        Assert.assertNotNull(interceptorContext);
+        assert interceptorContext != null;
         final List<ProfileInterceptorFlowDescriptor> availableFlows =
                 List.copyOf(interceptorContext.getAvailableFlows().values());
         Assert.assertEquals(availableFlows.size(), 3);

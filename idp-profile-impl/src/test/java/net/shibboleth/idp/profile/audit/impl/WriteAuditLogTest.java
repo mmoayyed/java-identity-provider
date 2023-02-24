@@ -104,7 +104,7 @@ public class WriteAuditLogTest {
     }
     
     @Test public void testTwo() throws ComponentInitializationException {
-        final AuditContext ac = prc.getSubcontext(AuditContext.class, true);
+        final AuditContext ac = prc.getOrCreateSubcontext(AuditContext.class);
         ac.getFieldValues("A").add("foo");
         ac.getFieldValues("B").add("bar");
         ac.getFieldValues("B").add("baz");
@@ -118,7 +118,7 @@ public class WriteAuditLogTest {
     }
 
     @Test public void testMissing() throws ComponentInitializationException {
-        final AuditContext ac = prc.getSubcontext(AuditContext.class, true);
+        final AuditContext ac = prc.getOrCreateSubcontext(AuditContext.class);
         ac.getFieldValues("A").add("foo");
         ac.getFieldValues("B").add("bar");
         ac.getFieldValues("B").add("baz");
