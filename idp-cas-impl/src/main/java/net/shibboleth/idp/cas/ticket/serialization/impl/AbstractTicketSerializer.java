@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
@@ -44,6 +45,7 @@ import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 
@@ -86,10 +88,12 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
     @Nonnull private final Logger logger = LoggerFactory.getLogger(AbstractTicketSerializer.class);
 
     /** JSON generator factory. */
+    @SuppressWarnings("null")
     @Nonnull
     private final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory(null);
 
     /** JSON reader factory. */
+    @SuppressWarnings("null")
     @Nonnull
     private final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
@@ -109,17 +113,18 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
             gen.writeStartObject()
                     .write(SERVICE_FIELD, ticket.getService())
                     .write(EXPIRATION_FIELD, ticket.getExpirationInstant().toEpochMilli());
-            
-            if (ticket.getTicketState() != null) {
+            final TicketState state = ticket.getTicketState();
+            if (state != null) {
                 gen.writeStartObject(STATE_FIELD)
-                        .write(SESSION_FIELD, ticket.getTicketState().getSessionId())
-                        .write(PRINCIPAL_FIELD, ticket.getTicketState().getPrincipalName())
-                        .write(AUTHN_INSTANT_FIELD, ticket.getTicketState().getAuthenticationInstant().toEpochMilli())
-                        .write(AUTHN_METHOD_FIELD, ticket.getTicketState().getAuthenticationMethod());
+                        .write(SESSION_FIELD, state.getSessionId())
+                        .write(PRINCIPAL_FIELD, state.getPrincipalName())
+                        .write(AUTHN_INSTANT_FIELD, state.getAuthenticationInstant().toEpochMilli())
+                        .write(AUTHN_METHOD_FIELD, state.getAuthenticationMethod());
                 
-                if (ticket.getTicketState().getConsentedAttributeIds() != null) {
+                final Set<String> consentedIds = state.getConsentedAttributeIds(); 
+                if (consentedIds != null) {
                     gen.writeStartArray(CONSENTED_ATTRS_FIELD);
-                    for (final String id : ticket.getTicketState().getConsentedAttributeIds()) {
+                    for (final String id : consentedIds) {
                         gen.write(id);
                     }
                     gen.writeEnd();
@@ -133,7 +138,9 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
             logger.error("Exception serializing {}", ticket, e);
             throw new IOException("Exception serializing ticket", e);
         }
-        return buffer.toString();
+        final String result = buffer.toString();
+        assert result != null;
+        return result;
     }
 
     @Override
@@ -147,16 +154,23 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
 
         try (final JsonReader reader = readerFactory.createReader(new StringReader(value))) {
             final JsonObject to = reader.readObject();
-            final String service = to.getString(SERVICE_FIELD);
-            final Instant expiry = Instant.ofEpochMilli(to.getJsonNumber(EXPIRATION_FIELD).longValueExact());
+            final String service = Constraint.isNotNull(to.getString(SERVICE_FIELD), "Service field was not present");
+            final Instant expiry = Instant.ofEpochMilli(Constraint.isNotNull(to.getJsonNumber(EXPIRATION_FIELD), "Expriation Field was not present").longValueExact());
+            assert expiry != null;
             final JsonObject so = to.getJsonObject(STATE_FIELD);
             final TicketState state;
             if (so != null) {
+                final String sessionField = Constraint.isNotNull(so.getString(SESSION_FIELD), "Session field was not present");
+                final String principalField = Constraint.isNotNull(so.getString(PRINCIPAL_FIELD), "Principal field was not present");
+                final JsonNumber authnInstantField = Constraint.isNotNull(so.getJsonNumber(AUTHN_INSTANT_FIELD), "Authn Instant field was not present");
+                final Instant authnInstant = Instant.ofEpochMilli(authnInstantField.longValueExact());
+                assert authnInstant!=null;
+                final String authnMethodField = Constraint.isNotNull(so.getString(AUTHN_METHOD_FIELD), "Authn Method field was not present");
                 state = new TicketState(
-                        so.getString(SESSION_FIELD),
-                        so.getString(PRINCIPAL_FIELD),
-                        Instant.ofEpochMilli(so.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact()),
-                        so.getString(AUTHN_METHOD_FIELD));
+                        sessionField, 
+                        principalField,
+                        authnInstant,
+                        authnMethodField);
                 final JsonValue consent = so.get(CONSENTED_ATTRS_FIELD);
                 if (consent instanceof JsonArray) {
                     final Set<String> idset = new HashSet<>();

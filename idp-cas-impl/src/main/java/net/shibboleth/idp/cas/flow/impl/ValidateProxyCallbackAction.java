@@ -152,13 +152,15 @@ public class ValidateProxyCallbackAction
         @Nonnull final IdentifierGenerationStrategy pgtIOUGenerator = vCfg.getPGTIOUGenerator(profileRequestContext);
         @Nonnull final Instant expiration = Instant.now().plus(vCfg.getTicketValidityPeriod(profileRequestContext));
         @Nonnull final String pgtId = pgtGenerator.generateIdentifier();
+        final String pgtUrl = request.getPgtUrl();
+        assert pgtUrl != null;
         final ProxyGrantingTicket pgt;
         if (ticket instanceof ServiceTicket) {
             pgt = casTicketService.createProxyGrantingTicket(
-                pgtId, expiration, (ServiceTicket) tkt, request.getPgtUrl());
+                pgtId, expiration, (ServiceTicket) tkt, pgtUrl);
         } else {
             pgt = casTicketService.createProxyGrantingTicket(
-                pgtId, expiration, (ProxyTicket) tkt, request.getPgtUrl());
+                pgtId, expiration, (ProxyTicket) tkt, pgtUrl);
         }
         // The ID of the proxy-granting ticket MAY be different from the generated value above.
         // ALWAYS use the value from the ticket object.

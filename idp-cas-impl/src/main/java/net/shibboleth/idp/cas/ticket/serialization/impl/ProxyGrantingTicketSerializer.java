@@ -24,6 +24,7 @@ import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Serializes proxy-granting tickets in simple field-delimited form.
@@ -55,6 +56,10 @@ public class ProxyGrantingTicketSerializer extends AbstractTicketSerializer<Prox
             @Nonnull final String id,
             @Nonnull final String service,
             @Nonnull final Instant expiry) {
-        return new ProxyGrantingTicket(id, service, expiry, o.getString(PGTURL_FIELD), o.getString(PARENT_FIELD, null));
+        return new ProxyGrantingTicket(id, 
+                service,
+                expiry,
+                Constraint.isNotNull(o.getString(PGTURL_FIELD), "pgtUrl was not present"),
+                o.getString(PARENT_FIELD, null));
     }
 }

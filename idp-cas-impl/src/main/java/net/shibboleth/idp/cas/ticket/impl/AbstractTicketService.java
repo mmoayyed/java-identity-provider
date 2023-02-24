@@ -165,8 +165,9 @@ public abstract class AbstractTicketService implements TicketService {
      *
      * @return Storage service serializer.
      */
-    protected static <T extends Ticket> StorageSerializer<T> serializer(final Class<T> clazz) {
-        return (StorageSerializer<T>) SERIALIZER_MAP.get(clazz);
+    @Nonnull protected static <T extends Ticket> StorageSerializer<T> serializer(@Nonnull final Class<T> clazz) {
+        final StorageSerializer<T> result = (StorageSerializer<T>) Constraint.isNotNull(SERIALIZER_MAP.get(clazz), "Serializer for " + clazz + " not found");
+        return result;
     }
 
     /**
@@ -175,10 +176,10 @@ public abstract class AbstractTicketService implements TicketService {
      * @param ticket Ticket to store
      * @param <T> Type of ticket.
      */
-    protected <T extends Ticket> void store(final T ticket) {
-        final String context = context(ticket.getClass());
+    protected <T extends Ticket> void store(@Nonnull final T ticket) {
+        final String context = Constraint.isNotNull(context(ticket.getClass()), "Could not find context for ticket of type " + ticket.getClass());
         try {
-            final String sessionId = ticket.getSessionId();
+            final String sessionId = Constraint.isNotNull(ticket.getSessionId(), "No session Id");
             final long expiry = ticket.getExpirationInstant().toEpochMilli();
             log.debug("Storing mapping of {} to {} in context {}", ticket, sessionId, context);
             if (!storageService.create(context, ticket.getId(), sessionId, expiry)) {
@@ -203,11 +204,11 @@ public abstract class AbstractTicketService implements TicketService {
      *
      * @return Ticket or null if ticket not found.
      */
-    protected <T extends Ticket> T read(final String id, final Class<T> clazz) {
+    protected <T extends Ticket> T read(@Nonnull final String id, @Nonnull final Class<T> clazz) {
         log.debug("Reading {}", id);
         final T ticket;
         try {
-            final String context = context(clazz);
+            final String context = Constraint.isNotNull(context(clazz), "Could not find context for ticket of type " + clazz);
             final StorageRecord<T> sessionRecord = storageService.read(context, id);
             if (sessionRecord == null) {
                 log.debug("{} not found in context {}", id, context);
@@ -235,18 +236,18 @@ public abstract class AbstractTicketService implements TicketService {
      *
      * @return Deleted ticket or null if ticket not found.
      */
-    protected <T extends Ticket> T delete(final String id, final Class<T> clazz) {
+    protected <T extends Ticket> T delete(@Nonnull final String id, @Nonnull final Class<T> clazz) {
         final T ticket = read(id, clazz);
         if (ticket == null) {
             return null;
         }
         try {
-            final String context = context(clazz);
+            final String context = Constraint.isNotNull(context(clazz), "Could not find context for ticket of type " + clazz);
             log.debug("Attempting to delete {} from context {}", id, context);
             if (!storageService.delete(context, id)) {
                 log.info("Failed deleting {} from context {}.", id, context);
             }
-            final String sessionId = ticket.getSessionId();
+            final String sessionId = Constraint.isNotNull(ticket.getSessionId(), "No session Id");
             log.debug("Attempting to delete {} from context {}", id, sessionId);
             if (!storageService.delete(sessionId, id)) {
                 log.info("Failed deleting {} from context {}.", id, sessionId);

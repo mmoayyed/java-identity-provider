@@ -73,8 +73,11 @@ public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidat
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
+        final Ticket localTicket = ticket;
+        final TicketValidationRequest localRequest = request; 
+        assert localTicket != null && localRequest != null;
         if (ticket instanceof ServiceTicket) {
-            if (request.isRenew() != ((ServiceTicket) ticket).isRenew()) {
+            if (localRequest.isRenew() != ((ServiceTicket) localTicket).isRenew()) {
                 log.debug("{} Renew=true requested at validation time but ticket not issued with renew=true",
                         getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketNotFromRenew.event(this));
@@ -82,7 +85,7 @@ public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidat
             }
         } else {
             // Proxy ticket validation
-            if (request.isRenew()) {
+            if (localRequest.isRenew()) {
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.RenewIncompatibleWithProxy.event(this));
                 return;
             }

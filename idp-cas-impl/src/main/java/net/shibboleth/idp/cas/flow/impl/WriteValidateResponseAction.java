@@ -30,6 +30,8 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 /**
  * CAS 1.0 protocol response handler.
  *
@@ -76,12 +78,15 @@ public class WriteValidateResponseAction extends
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
+        final TicketValidationResponse localResponse = response;
+        final HttpServletResponse servletResponse = getHttpServletResponse();
+        assert localResponse!=null && servletResponse!=null;
         try {
-            getHttpServletResponse().setContentType(CONTENT_TYPE);
-            final PrintWriter output = getHttpServletResponse().getWriter();
+            servletResponse.setContentType(CONTENT_TYPE);
+            final PrintWriter output = servletResponse.getWriter();
             if (success) {
                 output.print("yes\n");
-                output.print(response.getUserName() + '\n');
+                output.print(localResponse.getUserName() + '\n');
             } else {
                 output.print("no\n\n");
             }

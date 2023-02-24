@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.webflow.execution.Event;
 
 /**
@@ -46,7 +48,7 @@ public enum Events {
      *
      * @return Spring webflow event.
      */
-    public Event event(final Object source) {
+    @Nonnull public Event event(final Object source) {
         return new Event(source, name());
     }
 }

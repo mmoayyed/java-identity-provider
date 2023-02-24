@@ -56,6 +56,7 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
@@ -156,14 +157,18 @@ public class HttpClientProxyValidator implements ProxyValidator {
      */
     protected int connect(@Nonnull final URI uri, @Nonnull final Service service) throws GeneralSecurityException {
         final HttpClientContext clientContext = HttpClientContext.create();
+        assert clientContext != null;
         HttpClientSecuritySupport.marshalSecurityParameters(clientContext, securityParameters, true);
         setCASTLSTrustEngineCriteria(clientContext, uri, service);
         ClassicHttpResponse response = null;
         try {
             log.debug("Attempting to validate CAS proxy callback URI {}", uri);
             final HttpGet request = new HttpGet(uri);
+            assert request != null;
             response = httpClient.executeOpen(null, request, clientContext);
-            HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getScheme());
+            final String scheme = request.getScheme();
+            assert scheme != null;
+            HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, scheme);
             return response.getCode();
         } catch (final ClientProtocolException e) {
             throw new GeneralSecurityException("HTTP protocol error", e);
@@ -195,10 +200,11 @@ public class HttpClientProxyValidator implements ProxyValidator {
      * @param service CAS service
      */
     private static void setCASTLSTrustEngineCriteria(
-            final HttpClientContext context, final URI requestUri, final Service service) {
+            @Nonnull final HttpClientContext context, @Nonnull final URI requestUri, @Nonnull final Service service) {
         final String entityID;
-        if (service.getEntityDescriptor() != null) {
-            entityID = service.getEntityDescriptor().getEntityID();
+        final EntityDescriptor entityDescriptor = service.getEntityDescriptor();
+        if (entityDescriptor != null) {
+            entityID = entityDescriptor.getEntityID();
         } else {
             entityID = service.getName();
         }

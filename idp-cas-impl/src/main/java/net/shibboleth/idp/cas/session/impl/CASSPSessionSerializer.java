@@ -29,6 +29,7 @@ import net.shibboleth.idp.session.AbstractSPSessionSerializer;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * JSON serializer for {@link CASSPSession} class.
@@ -61,7 +62,8 @@ public class CASSPSessionSerializer extends AbstractSPSessionSerializer {
     @Override
     @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj, @Nonnull @NotEmpty final String id,
             @Nonnull final Instant creation, @Nonnull final Instant expiration) throws IOException {
-        return new CASSPSession(id, creation, expiration, obj.getString(TICKET_FIELD));
+        final String ticketField = Constraint.isNotNull(obj.getString(TICKET_FIELD), "No ticket field");
+        return new CASSPSession(id, creation, expiration, ticketField);
     }
     
 }

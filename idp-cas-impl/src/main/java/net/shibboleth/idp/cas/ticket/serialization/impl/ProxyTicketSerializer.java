@@ -24,6 +24,7 @@ import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Proxy ticket storage serializer.
@@ -47,6 +48,6 @@ public class ProxyTicketSerializer extends AbstractTicketSerializer<ProxyTicket>
             @Nonnull final String id,
             @Nonnull final String service,
             @Nonnull final Instant expiry) {
-        return new ProxyTicket(id, service, expiry, o.getString(PGTID_FIELD));
+        return new ProxyTicket(id, service, expiry, Constraint.isNotNull(o.getString(PGTID_FIELD), "pgtId was not present"));
     }
 }

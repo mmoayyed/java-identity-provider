@@ -118,10 +118,13 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
         }
         if (session != null) {
             final Instant now = Instant.now();
+            assert now != null;
+            final Instant expiration = now.plus(sessionLifetime); 
+            assert expiration != null;
             final SPSession sps = new CASSPSession(
                     tckt.getService(),
                     now,
-                    now.plus(sessionLifetime),
+                    expiration,
                     tckt.getId());
             log.debug("{} Created SP session {}", getLogPrefix(), sps);
             try {

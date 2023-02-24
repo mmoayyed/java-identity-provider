@@ -156,6 +156,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
     protected Service create(@Nonnull final String serviceURL, @Nonnull final SPSSODescriptor role) {
         
         final EntityDescriptor entity = (EntityDescriptor) role.getParent();
+        assert entity!=null;
         final XMLObject parent = entity.getParent();
                 
         final Service service = new Service(
@@ -207,6 +208,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
         
         /** {@inheritDoc} */
         public boolean test(@Nullable final Endpoint endpoint) {
+            assert endpoint != null;
             return LOGIN_BINDING.equals(endpoint.getBinding());
         }
     }

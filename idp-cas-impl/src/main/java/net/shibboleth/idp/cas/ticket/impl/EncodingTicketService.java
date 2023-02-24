@@ -82,15 +82,15 @@ public class EncodingTicketService extends AbstractTicketService {
     private final DataSealer dataSealer;
 
     /** Service ticket prefix. */
-    @NotEmpty
+    @Nonnull @NotEmpty
     private String serviceTicketPrefix = SERVICE_TICKET_PREFIX;
 
     /** Proxy ticket prefix. */
-    @NotEmpty
+    @Nonnull @NotEmpty
     private String proxyTicketPrefix = PROXY_TICKET_PREFIX;
 
     /** Proxy granting ticket prefix. */
-    @NotEmpty
+    @Nonnull @NotEmpty
     private String proxyGrantingTicketPrefix = PROXY_GRANTING_TICKET_PREFIX;
 
     /**
@@ -181,9 +181,8 @@ public class EncodingTicketService extends AbstractTicketService {
         return decode(ProxyTicket.class, id, proxyTicketPrefix);
     }
 
-    @Nullable
     @Override
-    public ProxyGrantingTicket createProxyGrantingTicket(
+    public @Nonnull ProxyGrantingTicket createProxyGrantingTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
             @Nonnull final ServiceTicket serviceTicket,
@@ -229,14 +228,16 @@ public class EncodingTicketService extends AbstractTicketService {
      * 
      * @return ticket encoded ticket
      */
-    private <T extends Ticket> T encode(final Class<T> ticketClass, final T ticket, final String prefix) {
+    @Nonnull  <T extends Ticket> T encode(@Nonnull final Class<T> ticketClass, @Nonnull final T ticket, @Nonnull final String prefix) {
         final String opaque;
         try {
             opaque = dataSealer.wrap(serializer(ticketClass).serialize(ticket), ticket.getExpirationInstant());
         } catch (final Exception e) {
             throw new RuntimeException("Ticket encoding failed", e);
         }
-        return ticketClass.cast(ticket.clone(prefix + '-' + opaque));
+        final T  clone = ticketClass.cast(ticket.clone(prefix + '-' + opaque));
+        assert clone != null;
+        return clone;
     }
 
     /**
@@ -249,9 +250,11 @@ public class EncodingTicketService extends AbstractTicketService {
      * 
      * @return decoded ticket
      */
-    private <T extends Ticket> T decode(final Class<T> ticketClass, final String id, final String prefix) {
+    private <T extends Ticket> T decode(@Nonnull final Class<T> ticketClass, @Nonnull final String id, @Nonnull final String prefix) {
         try {
-            final String decrypted = dataSealer.unwrap(id.substring(prefix.length() + 1));
+            final String subString = id.substring(prefix.length() + 1);
+            assert subString != null;
+            final String decrypted = dataSealer.unwrap(subString);
             return serializer(ticketClass).deserialize(0, NOT_USED, id, decrypted, 0L);
         } catch (final Exception e) {
             log.warn("Ticket decoding failed with error: " + e.getMessage());

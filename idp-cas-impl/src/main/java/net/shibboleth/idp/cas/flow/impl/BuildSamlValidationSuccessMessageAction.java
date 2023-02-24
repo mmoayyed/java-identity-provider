@@ -106,7 +106,9 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         final Ticket ticket = getCASTicket(profileRequestContext);
         final TicketState state = ticket.getTicketState();
         if (state == null) {
-            throw new EventException(ProtocolError.IllegalState.name());
+            final String name = ProtocolError.IllegalState.name();
+            assert name != null;
+            throw new EventException(name);
         }
         log.debug("Building SAML response for {} in IdP session {}", request.getService(), state.getSessionId());
 

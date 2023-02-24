@@ -195,7 +195,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
 
     /** {@inheritDoc} */
     @Nonnull public AttributeMap getUnknownAttributes() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
@@ -208,7 +208,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
      * 
      * {@inheritDoc}
      */
-    public void setCacheDuration(final Duration duration) {
+    public void setCacheDuration(final @Nullable Duration duration) {
         throw new UnsupportedOperationException();
     }
 
