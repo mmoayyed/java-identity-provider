@@ -42,8 +42,9 @@ public class ProfileActionBeanFactoryPostProcessor implements BeanFactoryPostPro
 
     /** {@inheritDoc} */
     @Override
-    public void postProcessBeanFactory(final ConfigurableListableBeanFactory beanFactory) {
+    public void postProcessBeanFactory(final @Nonnull ConfigurableListableBeanFactory beanFactory) {
         for (final String beanName : beanFactory.getBeanNamesForAnnotation(Prototype.class)) {
+            assert beanName != null;
             final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
             if (!beanDefinition.isPrototype()) {
                 log.warn("Profile action '{}' is not '{}' scope but must be, please check your configuration.",

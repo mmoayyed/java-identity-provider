@@ -22,7 +22,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -44,6 +43,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -93,11 +93,12 @@ public class PopulateAuditContext extends AbstractProfileAction {
     @Nullable private AuditContext auditCtx;
     
     /** Constructor. */
+    @SuppressWarnings("null")
     public PopulateAuditContext() {
         auditContextCreationStrategy = new ChildContextLookup<>(AuditContext.class, true);
-        fieldExtractors = Collections.emptyMap();
-        fieldsToExtract = Collections.emptySet();
-        fieldReplacements = Collections.emptyMap();
+        fieldExtractors = CollectionSupport.emptyMap();
+        fieldsToExtract = CollectionSupport.emptySet();
+        fieldReplacements = CollectionSupport.emptyMap();
         
         dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
     }
@@ -160,7 +161,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
         if (map != null) {
             fieldReplacements = new HashMap<>(map);
         } else {
-            fieldReplacements = Collections.emptyMap();
+            fieldReplacements = CollectionSupport.emptyMap();
         }
     }
     
@@ -169,6 +170,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * 
      * @param format formatting string
      */
+    @SuppressWarnings("null")
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
         checkSetterPreconditions();
         if (format != null) {
@@ -201,6 +203,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
     }
     
     /** {@inheritDoc} */
+    @SuppressWarnings("null")
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -235,12 +238,15 @@ public class PopulateAuditContext extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (clearAuditContext) {
+            assert auditCtx != null;
             auditCtx.getFields().clear();
         }
         
         for (final Map.Entry<String,Function<ProfileRequestContext,Object>> entry : fieldExtractors.entrySet()) {
             
-            if (!fieldsToExtract.isEmpty() && !fieldsToExtract.contains(entry.getKey())) {
+            final String key = entry.getKey();
+            assert key != null;
+            if (!fieldsToExtract.isEmpty() && !fieldsToExtract.contains(key)) {
                 log.trace("{} Skipping field '{}' not included in audit format", getLogPrefix(), entry.getKey());
                 continue;
             }
@@ -252,12 +258,12 @@ public class PopulateAuditContext extends AbstractProfileAction {
                         log.trace("{} Adding {} value(s) for field '{}'", getLogPrefix(),
                                 ((Collection<?>) values).size(), entry.getKey());
                         for (final Object value : (Collection<?>) values) {
-                            addField(entry.getKey(), value);
+                            addField(key, value);
                         }
                     }
                 } else {
                     log.trace("{} Adding 1 value for field '{}'", getLogPrefix(), entry.getKey());
-                    addField(entry.getKey(), values);
+                    addField(key, values);
                 }
             }
         }
@@ -271,16 +277,18 @@ public class PopulateAuditContext extends AbstractProfileAction {
      */
     private void addField(@Nonnull @NotEmpty final String key, @Nullable final Object value) {
         
+        final AuditContext ctx = auditCtx;
+        assert ctx != null;
         if (value != null) {
             if (value instanceof TemporalAccessor) {
-                auditCtx.getFieldValues(key).add(dateTimeFormatter.format((TemporalAccessor) value));
+                ctx.getFieldValues(key).add(dateTimeFormatter.format((TemporalAccessor) value));
             } else {
                 String s = value.toString();
                 if (fieldReplacements.containsKey(s)) {
                     s = fieldReplacements.get(s);
                 }
                 if (s != null) {
-                    auditCtx.getFieldValues(key).add(s);
+                    ctx.getFieldValues(key).add(s);
                 }
             }
         }
@@ -330,7 +338,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
                 }
             }
             
-            fields = Set.copyOf(fieldsToExtract);
+            fields = CollectionSupport.copyToSet(fieldsToExtract);
         }
         
         /**

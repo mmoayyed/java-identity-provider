@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -75,12 +76,12 @@ public class LogSpringContextInfo extends AbstractProfileAction implements Appli
     }
     
     /** {@inheritDoc} */
-    public void setApplicationContext(final ApplicationContext context) throws BeansException {
+    public void setApplicationContext(final @Nonnull ApplicationContext context) throws BeansException {
         applicationContext = context;
     }
 
     /** {@inheritDoc} */
-    protected void doExecute(final ProfileRequestContext profileRequestContext) {
+    protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         if (!log.isDebugEnabled()) {
             // short-circuit if not logging at debug
             return;
@@ -92,6 +93,7 @@ public class LogSpringContextInfo extends AbstractProfileAction implements Appli
                 profileRequestContext.getSubcontext(SpringRequestContext.class);
         if (springRequestContext != null && springRequestContext.getRequestContext() != null) {
             final RequestContext requestContext = springRequestContext.getRequestContext();
+            assert requestContext!= null;
             contextualDescription = requestContext.getAttributes().getString(ATTRIB_DESC);
         }
         
@@ -117,9 +119,12 @@ public class LogSpringContextInfo extends AbstractProfileAction implements Appli
             log.debug("");
             
             for (final String beanName : current.getBeanDefinitionNames()) {
+                assert beanName != null;
+                final Class<?> type = current.getType(beanName);
+                assert type != null;
                 log.debug(String.format("Spring Bean id: %s, singleton?: %s, prototype?: %s, type: %s",
                         beanName, current.isSingleton(beanName), current.isPrototype(beanName), 
-                        current.getType(beanName).getName()));
+                        type.getName()));
             }
             
             log.debug("**********************************************************************************************");

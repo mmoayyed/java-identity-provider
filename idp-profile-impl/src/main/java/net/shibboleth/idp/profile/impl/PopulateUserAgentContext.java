@@ -24,6 +24,8 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.BrowserProfilePredicate;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * An action that conditionally populates a {@link UserAgentContext} as a child of the {@link ProfileRequestContext}.
  * By default, the action is activated by a {@link BrowserProfilePredicate} condition such that only browser profiles
@@ -42,7 +44,9 @@ public class PopulateUserAgentContext extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         final UserAgentContext uac = new UserAgentContext();
-        uac.setIdentifier(getHttpServletRequest().getHeader("User-Agent"));
+        final HttpServletRequest request = getHttpServletRequest();
+        assert request!= null;
+        uac.setIdentifier(request.getHeader("User-Agent"));
         profileRequestContext.addSubcontext(uac);
     }
 }

@@ -85,7 +85,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
     }
     
     /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
+    @Override protected boolean doPreExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -99,7 +99,9 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
         if (service == null) {
             log.warn("{} Unable to locate service to reload", getLogPrefix());
             try {
-                getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+                final HttpServletResponse response = getHttpServletResponse();
+                assert response != null;
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
             } catch (final IOException e) {
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
@@ -110,7 +112,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         final String id;
         if (service instanceof IdentifiedComponent) {
@@ -120,16 +122,19 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
         }
         
         log.debug("{} Reloading configuration for '{}'", getLogPrefix(), id);
-        
+        final HttpServletResponse response = getHttpServletResponse();
+        assert response != null;
+
         try {
+            assert service != null;
             service.reload();
             log.debug("{} Reloaded configuration for '{}'", getLogPrefix(), id);
-            getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
-            getHttpServletResponse().getWriter().println("Configuration reloaded for '" + id + "'");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().println("Configuration reloaded for '" + id + "'");
         } catch (final ServiceException e) {
             log.error("{} Error reloading service configuration for '{}'", getLogPrefix(), id);
             try {
-                getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (final IOException e2) {
                 log.error("{} I/O error responding to request", getLogPrefix(), e2);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
@@ -149,7 +154,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
         /** {@inheritDoc} */
         @Override
         @Nullable public ReloadableService<?> apply(@Nullable final ProfileRequestContext input) {
-            
+            assert input != null;
             final SpringRequestContext springRequestContext = input.getSubcontext(SpringRequestContext.class);
             if (springRequestContext == null) {
                 log.warn("{} Spring request context not found in profile request context", getLogPrefix());

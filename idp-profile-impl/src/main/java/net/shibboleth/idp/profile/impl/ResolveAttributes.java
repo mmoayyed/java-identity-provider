@@ -29,6 +29,7 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
+import org.springframework.webflow.execution.RequestContext;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -242,8 +243,9 @@ public final class ResolveAttributes extends AbstractProfileAction {
 
         if (resolutionLabel == null) {
             final SpringRequestContext springContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
-            if (springContext != null && springContext.getRequestContext() != null) {
-                resolutionLabel = springContext.getRequestContext().getActiveFlow().getId();
+            final RequestContext requestContext = springContext != null ? springContext.getRequestContext() :null; 
+            if (requestContext != null) {
+                resolutionLabel = requestContext.getActiveFlow().getId();
             }
         }
         
@@ -308,7 +310,10 @@ public final class ResolveAttributes extends AbstractProfileAction {
         // Populate requested attributes, if not already set.
         if (resolutionContext.getRequestedIdPAttributeNames() == null
                 || resolutionContext.getRequestedIdPAttributeNames().isEmpty()) {
-            resolutionContext.setRequestedIdPAttributeNames(attributesLookupStrategy.apply(profileRequestContext));
+            assert attributesLookupStrategy != null;
+            final Collection<String> names = attributesLookupStrategy.apply(profileRequestContext);
+            assert names != null;
+            resolutionContext.setRequestedIdPAttributeNames(names);
         }
         
         if (null != principalNameLookupStrategy) {

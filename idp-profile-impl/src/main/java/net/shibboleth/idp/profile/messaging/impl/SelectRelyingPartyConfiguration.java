@@ -113,13 +113,13 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
     /** {@inheritDoc} */
     @Override
     public boolean doPreInvoke(@Nonnull final MessageContext messageContext) throws MessageHandlerException {
-        relyingPartyCtx = relyingPartyContextLookupStrategy.apply(messageContext);
-        if (relyingPartyCtx == null) {
+        final RelyingPartyContext ctx = relyingPartyCtx = relyingPartyContextLookupStrategy.apply(messageContext);
+        if (ctx == null) {
             log.debug("{} No relying party context available", getLogPrefix());
             throw new MessageHandlerException("No relying party context available");
         }
         
-        if (relyingPartyCtx.getRelyingPartyId() == null) {
+        if (ctx.getRelyingPartyId() == null) {
             log.debug("{} No relying party ID available", getLogPrefix());
             throw new MessageHandlerException("No relying party ID available");
         }
@@ -132,8 +132,12 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
     public void doInvoke(@Nonnull final MessageContext messageContext) throws MessageHandlerException {
 
         try {
+            final RelyingPartyContext ctx = relyingPartyCtx;
+            assert ctx!=null;
             // Implicitly "verified", so we include the criterion for that.
-            final CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(relyingPartyCtx.getRelyingPartyId()),
+            final String rpId =  ctx.getRelyingPartyId();
+            assert rpId != null;
+            final CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(rpId),
                     new VerifiedProfileCriterion(true));
             final RelyingPartyConfiguration config =
                     rpConfigResolver.getServiceableComponent().getComponent().resolveSingle(criteria);
@@ -143,7 +147,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
             }
 
             log.debug("{} Found relying party configuration {} for request", getLogPrefix(), config.getId());
-            relyingPartyCtx.setConfiguration(config);
+            ctx.setConfiguration(config);
         } catch (final ResolverException e) {
             log.error("{} Error trying to resolve relying party configuration: {}", getLogPrefix(), e.getMessage());
             throw new MessageHandlerException("Error trying to resolve relying party configuration", e);

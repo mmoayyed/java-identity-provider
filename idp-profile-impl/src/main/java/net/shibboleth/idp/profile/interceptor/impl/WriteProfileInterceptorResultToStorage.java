@@ -69,12 +69,12 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
             return false;
         }
 
-        flowDescriptor = interceptorContext.getAttemptedFlow();
+         flowDescriptor = interceptorContext.getAttemptedFlow();
         if (flowDescriptor == null) {
             log.warn("{} No flow descriptor within interceptor context", getLogPrefix());
             return false;
         }
-
+        assert flowDescriptor != null;
         storageService = flowDescriptor.getStorageService();
         if (storageService == null) {
             log.warn("{} No storage service available from interceptor flow descriptor", getLogPrefix());
@@ -89,7 +89,9 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         try {
+            assert results != null;
             for (final ProfileInterceptorResult result : results) {
+                assert result != null;
                 store(result);
             }
         } catch (final IOException e) {
@@ -114,10 +116,12 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
         int attempts = 10;
         boolean success = false;
         do {
-            success = storageService.create(context, key, value, expiration != null ? expiration.toEpochMilli() : null);
+            final StorageService service = storageService;
+            assert service != null;
+            success = service.create(context, key, value, expiration != null ? expiration.toEpochMilli() : null);
             if (!success) {
                 // The record already exists, so we need to overwrite via an update.
-                success = storageService.update(context, key, value,
+                success = service.update(context, key, value,
                         expiration != null ? expiration.toEpochMilli() : null);
             }
         } while (!success && attempts-- > 0);

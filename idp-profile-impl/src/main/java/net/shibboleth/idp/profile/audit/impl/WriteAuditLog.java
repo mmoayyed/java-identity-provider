@@ -90,6 +90,7 @@ public class WriteAuditLog extends AbstractProfileAction {
     @Nullable private AuditContext auditCtx;
 
     /** Constructor. */
+    @SuppressWarnings("null")
     public WriteAuditLog() {
         auditContextLookupStrategy = new ChildContextLookup<>(AuditContext.class);
         formattingMap = CollectionSupport.emptyMap();
@@ -202,6 +203,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * 
      * @param format formatting string
      */
+    @SuppressWarnings("null")
     public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
         checkSetterPreconditions();
         if (format != null) {
@@ -234,6 +236,7 @@ public class WriteAuditLog extends AbstractProfileAction {
     }
     
     /** {@inheritDoc} */
+    @SuppressWarnings("null")
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -247,7 +250,7 @@ public class WriteAuditLog extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+    @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
         requestContext = springRequestContext;
         return super.doExecute(springRequestContext, profileRequestContext);
@@ -291,6 +294,7 @@ public class WriteAuditLog extends AbstractProfileAction {
                         if (IdPAuditFields.EVENT_TIME.equals(field)) {
                             record.append(dateTimeFormatter.format(Instant.now()));
                         } else if (IdPAuditFields.EVENT_TYPE.equals(field)) {
+                            assert requestContext != null;
                             final Event event = requestContext.getCurrentEvent();
                             if (event != null && !event.getId().equals(EventIds.PROCEED_EVENT_ID)) {
                                 record.append(event.getId());
@@ -306,6 +310,7 @@ public class WriteAuditLog extends AbstractProfileAction {
                         } else if (IdPAuditFields.USER_AGENT.equals(field) && httpRequest != null) {
                             record.append(httpRequest.getHeader("User-Agent"));
                         } else if (auditCtx != null) {
+                            assert field != null;
                             final Iterator<String> iter = auditCtx.getFieldValues(field).iterator();
                             while (iter.hasNext()) {
                                 record.append(iter.next());
@@ -328,7 +333,7 @@ public class WriteAuditLog extends AbstractProfileAction {
             } else {
                 category = entry.getKey();
             }
-            
+            assert category != null;
             LoggerFactory.getLogger(category).info(record.toString());
         }
     }

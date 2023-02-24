@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile.impl;
 
 import java.util.Map;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -119,10 +118,10 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) {
+    @Nullable public Event execute(final @Nullable RequestContext springRequestContext) {
 
+        assert springRequestContext != null;
         // We have to override execute() because the profile request context doesn't exist yet.
-        
         checkComponentActive();
         
         final ProfileRequestContext prc = new ProfileRequestContext();
@@ -145,7 +144,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         if (captureQueryParameters) {
             final HttpServletRequest request = getHttpServletRequest();
             if (request != null) {
-                ((Map<Object,Object>) prc.getSubcontext(ScratchContext.class, true).getMap()).putAll(
+                ((Map<Object,Object>) prc.getOrCreateSubcontext(ScratchContext.class).getMap()).putAll(
                         request.getParameterMap());
             }
         }

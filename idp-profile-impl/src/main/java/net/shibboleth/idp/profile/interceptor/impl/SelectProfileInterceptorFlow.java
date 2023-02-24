@@ -61,10 +61,11 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
 
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same flow again.
-        if (interceptorContext.getAttemptedFlow() != null) {
+        final ProfileInterceptorFlowDescriptor attemptedFlow = interceptorContext.getAttemptedFlow();
+        if (attemptedFlow != null) {
             log.debug("{} Moving completed flow {} to completed set, selecting next one", getLogPrefix(),
-                    interceptorContext.getAttemptedFlow().getId());
-            interceptorContext.getAvailableFlows().remove(interceptorContext.getAttemptedFlow().getId());
+                    attemptedFlow.getId());
+            interceptorContext.getAvailableFlows().remove(attemptedFlow.getId());
             interceptorContext.setAttemptedFlow(null);
         }
 
@@ -80,9 +81,10 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
             log.debug("{} No flows available to choose from", getLogPrefix());
             return;
         }
-
-        log.debug("{} Selecting flow {}", getLogPrefix(), flow.getId());
-        ActionSupport.buildEvent(profileRequestContext, flow.getId());
+        final String id = flow.getId();
+        assert id != null;
+        log.debug("{} Selecting flow {}", getLogPrefix(), id);
+        ActionSupport.buildEvent(profileRequestContext, id);
     }
 
     /**

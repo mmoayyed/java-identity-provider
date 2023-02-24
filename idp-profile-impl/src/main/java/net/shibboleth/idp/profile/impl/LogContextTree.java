@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -71,7 +72,7 @@ public class LogContextTree extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected void doExecute(final ProfileRequestContext profileRequestContext) {
+    protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         if (!log.isDebugEnabled()) {
             // short-circuit if not logging at debug
             return;
@@ -83,6 +84,7 @@ public class LogContextTree extends AbstractProfileAction {
                 profileRequestContext.getSubcontext(SpringRequestContext.class);
         if (springRequestContext != null && springRequestContext.getRequestContext() != null) {
             final RequestContext requestContext = springRequestContext.getRequestContext();
+            assert requestContext != null;
             contextualDescription = requestContext.getAttributes().getString(ATTRIB_DESC);
         }
         

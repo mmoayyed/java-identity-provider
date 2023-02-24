@@ -27,13 +27,10 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLProtocolContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.slf4j.Logger;
-
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.primitive.LoggerFactory;
-import net.shibboleth.shared.primitive.StringSupport;
 
 import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Decodes an incoming resolver test message.
@@ -58,9 +55,6 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
     /** Name of the query parameter for the SAML 2 protocol: {@value} . */
     @Nonnull @NotEmpty public static final String SAML2_PARAM = "saml2";
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ResolverTestRequestDecoder.class);
-    
     /** {@inheritDoc} */
     @Override
     protected void doDecode() throws MessageDecodingException {
@@ -81,7 +75,7 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
         messageContext.addSubcontext(peerCtx, true);
         
         if (message.getProtocol() != null) {
-            messageContext.getSubcontext(SAMLProtocolContext.class, true).setProtocol(message.getProtocol());
+            messageContext.getOrCreateSubcontext(SAMLProtocolContext.class).setProtocol(message.getProtocol());
         }
     }
 

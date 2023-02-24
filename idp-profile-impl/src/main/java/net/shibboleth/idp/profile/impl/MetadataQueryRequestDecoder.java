@@ -29,13 +29,10 @@ import org.opensaml.saml.common.messaging.context.SAMLProtocolContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.DetectDuplicateEntityIDs;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.slf4j.Logger;
-
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.primitive.LoggerFactory;
-import net.shibboleth.shared.primitive.StringSupport;
 
 import jakarta.servlet.http.HttpServletRequest;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Decodes an incoming metadata query request.
@@ -59,10 +56,6 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
     
     /** Name of the query parameter carrying the detectDuplicateEntityIDs: {@value} . */
     @Nonnull @NotEmpty public static final String DETECT_DUPLICATES_PARAM= "detectDuplicateEntityIDs";
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(MetadataQueryRequestDecoder.class);
-    
     /** {@inheritDoc} */
     @Override
     protected void doDecode() throws MessageDecodingException {
@@ -86,11 +79,11 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
         messageContext.addSubcontext(peerCtx, true);
         
         if (message.getProtocol() != null) {
-            messageContext.getSubcontext(SAMLProtocolContext.class, true).setProtocol(message.getProtocol());
+            messageContext.getOrCreateSubcontext(SAMLProtocolContext.class).setProtocol(message.getProtocol());
         }
         
         if (message.getDetectDuplicateEntityIDs() != null) {
-           messageContext.getSubcontext(SAMLMetadataLookupParametersContext.class, true)
+           messageContext.getOrCreateSubcontext(SAMLMetadataLookupParametersContext.class)
                .setDetectDuplicateEntityIDs(message.getDetectDuplicateEntityIDs());
         }
     }

@@ -143,6 +143,11 @@ public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
         }
 
         if (handler == null) {
+            if (handlerLookupStrategy == null) {
+                log.error("{} Neither c:messageHandler not c:lookupStrategy specified", getLogPrefix());
+                return false;
+            }
+            assert handlerLookupStrategy != null;
             handler = handlerLookupStrategy.apply(profileRequestContext);
             if (handler == null) {
                 log.debug("{} No message handler returned by lookup function, nothing to do", getLogPrefix());
@@ -152,7 +157,10 @@ public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
         
         final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
         if (metricCtx != null) {
-            metricCtx.start(handler.getClass().getSimpleName());
+            assert handler != null;
+            final String className = handler.getClass().getSimpleName();
+            assert className!=null; 
+            metricCtx.start(className);
         }
         
         return true;
@@ -162,17 +170,19 @@ public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
 //CheckStyle: ReturnCount OFF
     @Override public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
+        final MessageHandler msgHandler = handler;
+        assert msgHandler != null;
         MessageContext target = null;
         switch (direction) {
             case INBOUND:
                 target = profileRequestContext.getInboundMessageContext();
                 log.debug("{} Invoking message handler of type '{}' on INBOUND message context", getLogPrefix(), 
-                        handler.getClass().getName());
+                        msgHandler.getClass().getName());
                 break;
             case OUTBOUND:
                 target = profileRequestContext.getOutboundMessageContext();
                 log.debug("{} Invoking message handler of type '{}' on OUTBOUND message context", getLogPrefix(), 
-                        handler.getClass().getName());
+                        msgHandler.getClass().getName());
                 break;
             default:
                 log.warn("{} Specified direction '{}' was unknown, skipping handler invocation", getLogPrefix(),
@@ -186,13 +196,14 @@ public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
             return;
         }
 
-        if (target.getMessage() != null) {
+        final Object message = target.getMessage();
+        if (message != null) {
             log.debug("{} Invoking message handler on message context containing a message of type '{}'",
-                    getLogPrefix(),  target.getMessage().getClass().getName());
+                    getLogPrefix(), message.getClass().getName());
         }
         
         try {
-            handler.invoke(target);
+            msgHandler.invoke(target);
         } catch (final MessageHandlerException e) {
             log.warn("{} Exception handling message", getLogPrefix(), e);
             if (errorEvent != null) {
@@ -210,7 +221,9 @@ public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
         
         final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
         if (metricCtx != null) {
+            assert handler != null;
             final String name = handler.getClass().getSimpleName();
+            assert name != null;
             metricCtx.stop(name);
             metricCtx.inc(name);
         }

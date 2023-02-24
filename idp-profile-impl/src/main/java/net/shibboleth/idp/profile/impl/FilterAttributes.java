@@ -23,6 +23,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.RootContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -173,6 +174,7 @@ public class FilterAttributes extends AbstractProfileAction {
                                 new InboundMessageContextLookup()));
         
         // This is always set to navigate to the PRC and then apply the previous function.
+        assert metadataContextLookupStrategy != null;
         metadataFromFilterLookupStrategy = metadataContextLookupStrategy.compose(
                 profileRequestContextFromFilterLookupStrategy);
 
@@ -181,6 +183,7 @@ public class FilterAttributes extends AbstractProfileAction {
                 new ChildContextLookup<>(ProxiedRequesterContext.class).compose(new InboundMessageContextLookup());
         
         // This is always set to navigate to the PRC and then apply the previous function.
+        assert proxiedRequesterContextLookupStrategy!=null;
         proxiesFromFilterLookupStrategy = proxiedRequesterContextLookupStrategy.compose(
                 profileRequestContextFromFilterLookupStrategy);
         
@@ -267,7 +270,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setIssuerMetadataContextLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
         checkSetterPreconditions();
         issuerMetadataContextLookupStrategy = strategy;
         issuerMetadataFromFilterLookupStrategy = strategy != null ?
@@ -282,11 +285,10 @@ public class FilterAttributes extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setMetadataContextLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
         checkSetterPreconditions();
-        metadataContextLookupStrategy = strategy;
         metadataFromFilterLookupStrategy = strategy != null ?
-                metadataContextLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
+                strategy.compose(profileRequestContextFromFilterLookupStrategy) : null;
     }
 
     /**
@@ -299,7 +301,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @since 3.4.0
      */
     public void setProxiedRequesterContextLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,ProxiedRequesterContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,ProxiedRequesterContext> strategy) {
         checkSetterPreconditions();
         proxiedRequesterContextLookupStrategy = strategy;
         proxiesFromFilterLookupStrategy = strategy != null ?
@@ -314,7 +316,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * @since 4.2.0
      */
     public void setProxiedRequesterMetadataContextLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
+            @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
         checkSetterPreconditions();
         proxiedRequesterMetadataLookupStrategy = strategy;
         proxiedMetadataFromFilterLookupStrategy = strategy != null ?
@@ -341,13 +343,13 @@ public class FilterAttributes extends AbstractProfileAction {
             return false;
         }
         
-        attributeContext = attributeContextLookupStrategy.apply(profileRequestContext);
-        if (attributeContext == null) {
+        final AttributeContext ctx = attributeContext = attributeContextLookupStrategy.apply(profileRequestContext);
+        if (ctx == null) {
             log.debug("{} No attribute context, no attributes to filter", getLogPrefix());
             return false;
         }
 
-        if (attributeContext.getIdPAttributes().isEmpty()) {
+        if (ctx.getIdPAttributes().isEmpty()) {
             log.debug("{} No attributes to filter", getLogPrefix());
             return false;
         }
@@ -361,12 +363,14 @@ public class FilterAttributes extends AbstractProfileAction {
 
         // Get the filter context from the profile request
         // this may already exist but if not, auto-create it.
+        final AttributeContext ac = attributeContext;
+        assert ac != null;
         final AttributeFilterContext filterContext = filterContextCreationStrategy.apply(profileRequestContext);
         if (filterContext == null) {
             log.error("{} Unable to locate or create AttributeFilterContext", getLogPrefix());
             if (maskFailures) {
                 log.warn("Filter error masked, clearing resolved attributes");
-                attributeContext.setIdPAttributes(null);
+                ac.setIdPAttributes(null);
             } else {
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
             }
@@ -378,13 +382,15 @@ public class FilterAttributes extends AbstractProfileAction {
         try (final ServiceableComponent<AttributeFilter> component = attributeFilterService.getServiceableComponent()) {
             final AttributeFilter filter = component.getComponent();
             filter.filterAttributes(filterContext);
-            filterContext.getParent().removeSubcontext(filterContext);
-            attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
+            final BaseContext parent = filterContext.getParent();
+            assert parent != null;
+            parent.removeSubcontext(filterContext);
+            ac.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
         } catch (final AttributeFilterException e) {
             log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
             if (maskFailures) {
                 log.warn("Filter error masked, clearing resolved attributes");
-                attributeContext.setIdPAttributes(Collections.emptySet());
+                ac.setIdPAttributes(Collections.emptySet());
             } else {
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
             }
@@ -392,7 +398,7 @@ public class FilterAttributes extends AbstractProfileAction {
             log.error("{} Invalid Attribute Filter service configuration", getLogPrefix(), e);
             if (maskFailures) {
                 log.warn("Filter error masked, clearing resolved attributes");
-                attributeContext.setIdPAttributes(null);
+                ac.setIdPAttributes(null);
             } else {
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
             }
@@ -423,6 +429,7 @@ public class FilterAttributes extends AbstractProfileAction {
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the AttributeContext.
         if (filterContext.getPrefilteredIdPAttributes().isEmpty()) {
+            assert attributeContext != null;
             filterContext.setPrefilteredIdPAttributes(attributeContext.getIdPAttributes().values());
         }
     }

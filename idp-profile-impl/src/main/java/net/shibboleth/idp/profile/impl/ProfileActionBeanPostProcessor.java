@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.profile.action.ProfileAction;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -31,13 +33,13 @@ public class ProfileActionBeanPostProcessor implements BeanPostProcessor {
 
     /** {@inheritDoc} */
     @Override
-    public Object postProcessBeforeInitialization(final Object bean, final String beanName) {
+    public Object postProcessBeforeInitialization(final @Nonnull Object bean, final @Nonnull String beanName) {
         return bean;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Object postProcessAfterInitialization(final Object bean, final String beanName) {
+    public Object postProcessAfterInitialization(final @Nonnull Object bean, final @Nonnull String beanName) {
         if (bean instanceof ProfileAction && !(bean instanceof Action)) {
             final WebFlowProfileActionAdaptor wrapper = new WebFlowProfileActionAdaptor((ProfileAction) bean);
             try {

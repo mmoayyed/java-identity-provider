@@ -137,15 +137,17 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
     @Override
     public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
+        final RelyingPartyContext rpCtx = relyingPartyCtx;
+        assert rpCtx != null;
         try (final ServiceableComponent<RelyingPartyConfigurationResolver> resolver =
                 rpConfigResolver.getServiceableComponent()) {
             
             final RelyingPartyConfiguration config;
             final CriteriaSet criteria = new CriteriaSet();
-            if (relyingPartyCtx.isVerified()) {
+            if (rpCtx.isVerified()) {
                 criteria.add(new VerifiedProfileCriterion(true));
             }
-            if (relyingPartyCtx.getParent() == profileRequestContext) {
+            if (rpCtx.getParent() == profileRequestContext) {
                 // Works as is.
                 criteria.add(new ProfileRequestContextCriterion(profileRequestContext));
                 config = resolver.getComponent().resolveSingle(criteria);
@@ -154,12 +156,12 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
                 // TODO: I think this *may* be moot now with the addition of the
                 // explicit VerifiedProfileCriterion.
                 final ProfileRequestContext newPRC = new ProfileRequestContext();
-                final BaseContext originalParent = relyingPartyCtx.getParent();
-                newPRC.addSubcontext(relyingPartyCtx);
+                final BaseContext originalParent = rpCtx.getParent();
+                newPRC.addSubcontext(rpCtx);
                 criteria.add(new ProfileRequestContextCriterion(newPRC));
                 config = resolver.getComponent().resolveSingle(criteria);
                 if (originalParent != null) {
-                    originalParent.addSubcontext(relyingPartyCtx);
+                    originalParent.addSubcontext(rpCtx);
                 }
             }
             
@@ -170,7 +172,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
             }
 
             log.debug("{} Found relying party configuration {} for request", getLogPrefix(), config.getId());
-            relyingPartyCtx.setConfiguration(config);
+            rpCtx.setConfiguration(config);
         } catch (final ResolverException e) {
             log.error("{} Error trying to resolve relying party configuration", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);

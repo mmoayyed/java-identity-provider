@@ -21,6 +21,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
@@ -31,8 +32,9 @@ public class ResolverTestPrincipalLookup implements Function<ProfileRequestConte
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         
-        if (input != null && input.getInboundMessageContext() != null) {
-            final Object request = input.getInboundMessageContext().getMessage();
+        final MessageContext messageContext = input != null ? input.getInboundMessageContext() : null;  
+        if (messageContext != null) {
+            final Object request = messageContext .getMessage();
             if (request != null && request instanceof ResolverTestRequest) {
                 return ((ResolverTestRequest) request).getPrincipal();
             }

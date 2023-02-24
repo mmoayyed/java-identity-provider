@@ -85,9 +85,11 @@ public class RecordResponseComplete extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        if (!externalContext.isResponseComplete()) {
+        final ExternalContext ec = externalContext;
+        assert ec != null;
+        if (!ec.isResponseComplete()) {
             log.debug("{} Record response complete", getLogPrefix());
-            externalContext.recordResponseComplete();
+            ec.recordResponseComplete();
         }
     }
     

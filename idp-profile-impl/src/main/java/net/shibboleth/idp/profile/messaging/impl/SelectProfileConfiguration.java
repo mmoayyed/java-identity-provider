@@ -64,7 +64,7 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
     /**
      * Strategy used to locate the effective profile ID associated with a given {@link MessageContext}.
      */
-    @Nonnull private Function<MessageContext,String> profileIdLookupStrategy;
+    @NonnullAfterInit private Function<MessageContext,String> profileIdLookupStrategy;
 
     /** The RelyingPartyContext to operate on. */
     @Nullable private RelyingPartyContext rpCtx;
@@ -145,13 +145,13 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
             return false;
         }
         
-        rpCtx = relyingPartyContextLookupStrategy.apply(messageContext);
-        if (rpCtx == null) {
+        final RelyingPartyContext ctx = rpCtx = relyingPartyContextLookupStrategy.apply(messageContext);
+        if (ctx == null) {
             log.debug("{} No relying party context associated with this profile request", getLogPrefix());
             throw new MessageHandlerException("No relying party context associated with this message context");
         }
 
-        if (rpCtx.getConfiguration() == null) {
+        if (ctx.getConfiguration() == null) {
             log.debug("{} No relying party configuration associated with this profile request", getLogPrefix());
             throw new MessageHandlerException("No relying party configuration associated with this message context");
         }
@@ -163,12 +163,14 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
     @Override
     protected void doInvoke(@Nonnull final MessageContext messageContext) throws MessageHandlerException {
 
-        final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
-
+        final RelyingPartyContext ctx =  rpCtx = relyingPartyContextLookupStrategy.apply(messageContext);
+        assert ctx != null;
+        final RelyingPartyConfiguration rpConfig = ctx.getConfiguration();
+        assert rpConfig != null;
         final String profileId = profileIdLookupStrategy.apply(messageContext);
         if (profileId == null) {
             log.warn("{} Profile ID is not available from message context for RP configuration (RPID {})",
-                    new Object[] {getLogPrefix(), rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                    new Object[] {getLogPrefix(), rpConfig.getId(), ctx.getRelyingPartyId(),});
             throw new MessageHandlerException("Profile ID is not available from message context");
         }
         
@@ -176,10 +178,10 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
                 rpConfig.getProfileConfiguration(profileRequestContextLookupStrategy.apply(messageContext), profileId);
         if (profileConfiguration == null) {
             log.warn("{} Profile {} is not available for RP configuration {} (RPID {})",
-                    new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                    new Object[] {getLogPrefix(), profileId, rpConfig.getId(), ctx.getRelyingPartyId(),});
             throw new MessageHandlerException("Profile is not available for RP configuration");
         }
-        rpCtx.setProfileConfig(profileConfiguration);
+        ctx.setProfileConfig(profileConfiguration);
     }
     
 }

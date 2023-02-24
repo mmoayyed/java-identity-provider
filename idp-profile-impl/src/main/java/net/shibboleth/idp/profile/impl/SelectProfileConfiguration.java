@@ -122,14 +122,14 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
             return false;
         }
         
-        rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx == null) {
+        RelyingPartyContext ctx = rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (ctx  == null) {
             log.debug("{} No relying party context associated with this profile request", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return false;
         }
 
-        if (rpCtx.getConfiguration() == null) {
+        if (ctx.getConfiguration() == null) {
             log.debug("{} No relying party configuration associated with this profile request", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
             return false;
@@ -148,8 +148,10 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
             targetId = profileRequestContext.getProfileId();
         }
         
-        final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
-
+        final RelyingPartyContext ctx = rpCtx;
+        assert ctx != null;
+        final RelyingPartyConfiguration rpConfig = ctx.getConfiguration();
+        assert rpConfig != null;
         ProfileConfiguration profileConfiguration = rpConfig.getProfileConfiguration(profileRequestContext, targetId);
         if (profileConfiguration == null && profileId == null && profileRequestContext.getLegacyProfileId() != null) {
             // Try the legacy ID.
@@ -164,25 +166,25 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
         if (profileConfiguration == null) {
             if (failIfMissing) {
                 log.warn("{} Profile {} is not available for RP configuration {} (RPID {})",
-                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), ctx.getRelyingPartyId(),});
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             } else {
                 log.debug("{} Profile {} is not available for RP configuration {} (RPID {})",
-                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), ctx.getRelyingPartyId(),});
             }
         } else if (profileConfiguration instanceof ConditionalProfileConfiguration
                 && !((ConditionalProfileConfiguration) profileConfiguration).getActivationCondition().test(
                         profileRequestContext)) {
             if (failIfMissing) {
                 log.warn("{} Profile {} is not active for RP configuration {} (RPID {})",
-                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), ctx.getRelyingPartyId(),});
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             } else {
                 log.debug("{} Profile {} is not active for RP configuration {} (RPID {})",
-                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+                        new Object[] {getLogPrefix(), targetId, rpConfig.getId(), ctx.getRelyingPartyId(),});
             }
         } else {
-            rpCtx.setProfileConfig(profileConfiguration);
+            ctx.setProfileConfig(profileConfiguration);
         }
     }
 // Checkstyle: CyclomaticComplexity ON
