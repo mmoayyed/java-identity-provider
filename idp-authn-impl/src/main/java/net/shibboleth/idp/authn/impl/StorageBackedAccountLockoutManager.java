@@ -215,10 +215,10 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         }
     }
     
-    /** Guaranteed non null value for {@link #lockoutKeyStrategy} .
+    /** Guaranteed non null value for {@link #lockoutKeyStrategy}.
      * We check for non-nullness in {@link #doInitialize()} so it suffices to check
      * Component state.
-     * @return
+     * @return a null-safe {@link #lockoutKeyStrategy}
      */
     @Nonnull private Function<ProfileRequestContext, String> getLockoutKeyStrategy() {
         checkComponentActive();
