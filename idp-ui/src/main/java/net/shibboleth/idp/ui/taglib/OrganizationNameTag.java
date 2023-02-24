@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.codec.HTMLEncoder;
 
 import org.slf4j.Logger;
@@ -43,10 +44,11 @@ public class OrganizationNameTag extends ServiceTagSupport {
      * @return null or an appropriate string
      */
     @Nullable private String getOrganizationName() {
-        if (getRelyingPartyUIContext() == null) {
+        final RelyingPartyUIContext ctx = getRelyingPartyUIContext();
+        if (ctx == null) {
             return null;
         }
-        return getRelyingPartyUIContext().getOrganizationName();
+        return ctx.getOrganizationName();
     }
 
     /** {@inheritDoc} */

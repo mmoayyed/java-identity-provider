@@ -125,7 +125,7 @@ public class ServiceTagSupport extends BodyTagSupport {
      * @param text what to embed
      * @return the hyperlink.
      */
-    @Nonnull protected String buildHyperLink(@Nonnull final String url, @Nonnull final String text) {
+    @Nonnull protected String buildHyperLink(@Nonnull final String url, @Nullable final String text) {
         final String encodedUrl;
 
         try {
@@ -149,7 +149,9 @@ public class ServiceTagSupport extends BodyTagSupport {
         sb.append(encodedUrl).append('"');
         addClassAndId(sb);
         sb.append(">").append(HTMLEncoder.encodeForHTML(text)).append("</a>");
-        return sb.toString();
+        final String result = sb.toString();
+        assert result != null;
+        return result;
     }
 
     /**
@@ -180,10 +182,11 @@ public class ServiceTagSupport extends BodyTagSupport {
      */
     @Nullable protected String getServiceName() {
 
-        if (getRelyingPartyUIContext() == null) {
+        final RelyingPartyUIContext ctx = getRelyingPartyUIContext();
+        if (ctx == null) {
             return null;
         }
-        return getRelyingPartyUIContext().getServiceName();
+        return ctx.getServiceName();
     }
 
 }

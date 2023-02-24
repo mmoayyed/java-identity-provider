@@ -20,9 +20,7 @@ package net.shibboleth.idp.ui.context;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Locale.LanguageRange;
@@ -43,7 +41,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.attribute.AttributesMapContainer;
@@ -58,6 +55,7 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.spring.util.SpringSupport;
@@ -865,7 +863,7 @@ public final class RelyingPartyUIContext extends BaseContext {
                 }
             }
         }
-        for (final Logo logo : rpUIInfo.getNonLocaleLogos()) {
+        for (final Logo logo : info.getNonLocaleLogos()) {
             log.trace("Found logo in UIInfo, ({} x {})", logo.getWidth(), logo.getHeight());
             if (!logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
                 log.trace("Size Mismatch");

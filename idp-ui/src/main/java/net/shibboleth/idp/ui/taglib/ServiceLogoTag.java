@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.codec.HTMLEncoder;
 
 import org.slf4j.Logger;
@@ -112,10 +113,11 @@ public class ServiceLogoTag extends ServiceTagSupport {
      * 
      */
     @Nullable private String getLogoFromUIInfo() {
-        if (getRelyingPartyUIContext() == null) {
+        final RelyingPartyUIContext ctx = getRelyingPartyUIContext();
+        if (ctx == null) {
             return null;
         }
-        return getRelyingPartyUIContext().getLogo(minWidth, minHeight, maxWidth, maxHeight);
+        return ctx.getLogo(minWidth, minHeight, maxWidth, maxHeight);
   
     }
 

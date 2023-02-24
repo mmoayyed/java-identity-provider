@@ -18,7 +18,6 @@
 package net.shibboleth.idp.ui.csrf.impl;
 
 import java.util.function.Predicate;
-import javax.annotation.Nonnull;
 
 import org.springframework.webflow.execution.RequestContext;
 
@@ -38,8 +37,9 @@ public class DefaultViewRequiresCSRFTokenPredicate
             extends BaseCSRFTokenPredicate implements Predicate<RequestContext>{
     
     /** {@inheritDoc} */
-    public boolean test(@Nonnull final RequestContext context) {
+    public boolean test(final RequestContext context) {
         
+        assert context != null;
         final boolean excluded = safeGetBooleanStateAttribute(context.getCurrentState(),
                 CSRF_EXCLUDED_ATTRIBUTE_NAME,false);
         //if NOT excluded from CSRF checks, return true, else return false.

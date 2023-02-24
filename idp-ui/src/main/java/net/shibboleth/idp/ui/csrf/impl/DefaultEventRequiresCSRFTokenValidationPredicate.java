@@ -19,7 +19,6 @@ package net.shibboleth.idp.ui.csrf.impl;
 
 
 import java.util.function.BiPredicate;
-import javax.annotation.Nonnull;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -46,9 +45,9 @@ public class DefaultEventRequiresCSRFTokenValidationPredicate
             extends BaseCSRFTokenPredicate implements BiPredicate<RequestContext,Event>{
     
    /** {@inheritDoc} */
-   public boolean test(@Nonnull final RequestContext context, @Nonnull final Event event) {
+   public boolean test(final RequestContext context, final Event event) {
        
-       
+       assert context != null && event != null;
        final boolean excluded = safeGetBooleanStateAttribute(context.getCurrentState(),
                CSRF_EXCLUDED_ATTRIBUTE_NAME,false);
        //if NOT excluded from CSRF checks, return true, else return false.

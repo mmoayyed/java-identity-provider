@@ -28,37 +28,44 @@ import net.shibboleth.shared.logic.ConstraintViolationException;
  * Test the {@link SimpleCSRFToken}.
  */
 public class SimpleCSRFTokenTest {
+
+    /** Something to spoof the null checker. */
+    private Object nullObj;
     
     /** Test token construction with valid parameters.*/
     @Test public void testTokenConstruction() {
         
         final String tokenValue = UUID.randomUUID().toString();
         final String paramName = "csrf_token";
+        assert tokenValue != null;
         SimpleCSRFToken token = new SimpleCSRFToken(tokenValue, paramName);
         Assert.assertEquals(tokenValue, token.getToken());
         Assert.assertEquals(paramName, token.getParameterName());
     }
     
     /** Test token construction with an invalid null token value parameter.*/
+    @SuppressWarnings("null")
     @Test(expectedExceptions=ConstraintViolationException.class) public void testNullValueConstruction() {        
        
         final String paramName = "csrf_token";
-        new SimpleCSRFToken(null, paramName);
+        new SimpleCSRFToken((String) nullObj, paramName);
       
     }
     
     /** Test token construction with an invalid null parameter name parameter.*/
+    @SuppressWarnings("null")
     @Test(expectedExceptions=ConstraintViolationException.class) public void testNullParamConstruction() {        
         
         final String tokenValue = UUID.randomUUID().toString();
-        new SimpleCSRFToken(tokenValue, null);
+        new SimpleCSRFToken(tokenValue, (String) nullObj);
       
     }
     
     /** Test token construction with all invalid null parameters.*/
+    @SuppressWarnings("null")
     @Test(expectedExceptions=ConstraintViolationException.class) public void testNullValueAndParamConstruction() {        
     
-        new SimpleCSRFToken(null, null);
+        new SimpleCSRFToken((String) nullObj, (String) nullObj);
       
     }
 

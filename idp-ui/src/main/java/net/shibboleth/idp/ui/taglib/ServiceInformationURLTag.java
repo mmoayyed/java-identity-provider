@@ -20,11 +20,13 @@ package net.shibboleth.idp.ui.taglib;
 import java.io.IOException;
 
 import javax.annotation.Nullable;
+
+import org.slf4j.Logger;
+
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
-
-import org.slf4j.Logger;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** Service InformationURL - directly from the metadata if present. */
@@ -54,10 +56,11 @@ public class ServiceInformationURLTag extends ServiceTagSupport {
      * @return null or an appropriate string.
      */
     @Nullable private String getInformationURLFromUIIinfo() {
-        if (getRelyingPartyUIContext() == null) {
+        final RelyingPartyUIContext ctx = getRelyingPartyUIContext();
+        if (ctx == null) {
             return null;
         }
-        return getRelyingPartyUIContext().getInformationURL();
+        return ctx.getInformationURL();
     }
 
     /** {@inheritDoc} */

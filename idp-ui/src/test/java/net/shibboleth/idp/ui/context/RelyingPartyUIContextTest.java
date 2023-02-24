@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.ui.context;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Locale.LanguageRange;
 
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
@@ -30,6 +30,8 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.collection.CollectionSupport;
 
 @SuppressWarnings({"javadoc", "removal"})
 public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
@@ -58,7 +60,9 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         if (null != theUiInfos[which]) {
             result.setRPUInfo(theUiInfos[which]);
         }
-        result.setBrowserLanguageRanges(LanguageRange.parse("en,fr"));
+        final List<LanguageRange> r = LanguageRange.parse("en,fr");
+        assert r != null;
+        result.setBrowserLanguageRanges(r);
         return result;
     }
 
@@ -67,7 +71,9 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         theSPSSOs[0] = theEntities[0].getSPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol");
         final Extensions exts = theSPSSOs[0].getExtensions();
         if (exts != null) {
-            for (XMLObject object : exts.getOrderedChildren()) {
+            final List<XMLObject> children = exts.getOrderedChildren();
+            assert children != null;
+            for (XMLObject object : children) {
                 if (object instanceof UIInfo) {
                     theUiInfos[0] = (UIInfo) object;
                 }
@@ -164,7 +170,7 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         Assert.assertNull(ctx.getLogo(66, 1, 100, 10000));
         Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.png");
         
-        ctx.setBrowserLanguages(Collections.singletonList("de"));
+        ctx.setBrowserLanguages(CollectionSupport.singletonList("de"));
         Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.pngde");
 
     }
@@ -172,9 +178,9 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
     @Test public void fallbackLanguage() {
         RelyingPartyUIContext ctx = getContext();
         
-        ctx.setBrowserLanguages(Collections.singletonList("zh"));
+        ctx.setBrowserLanguages(CollectionSupport.singletonList("zh"));
         Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.png");
-        ctx.setFallbackLanguages(Collections.singletonList("de"));
+        ctx.setFallbackLanguages(CollectionSupport.singletonList("de"));
         Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.pngde");
 
     }

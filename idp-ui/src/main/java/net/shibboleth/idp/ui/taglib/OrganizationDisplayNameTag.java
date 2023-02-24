@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.codec.HTMLEncoder;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -45,10 +46,11 @@ public class OrganizationDisplayNameTag extends ServiceTagSupport {
      * @return null or an appropriate string
      */
     @Nullable private String getOrganizationDisplayName() {
-        if (getRelyingPartyUIContext() == null) {
+        final RelyingPartyUIContext ctx = getRelyingPartyUIContext();
+        if (ctx == null) {
             return null;
         }
-        return getRelyingPartyUIContext().getOrganizationDisplayName();
+        return ctx.getOrganizationDisplayName();
     }
 
     /** {@inheritDoc} */

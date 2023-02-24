@@ -22,6 +22,7 @@ import java.io.IOException;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.codec.HTMLEncoder;
 
 import org.slf4j.Logger;
@@ -44,8 +45,9 @@ public class ServiceDescriptionTag extends ServiceTagSupport {
     @Override public int doEndTag() throws JspException {
 
         String result = null;
-        if (getRelyingPartyUIContext() != null) {
-            result = getRelyingPartyUIContext().getServiceDescription();
+        final RelyingPartyUIContext ctx = getRelyingPartyUIContext();
+        if (ctx != null) {
+            result = ctx.getServiceDescription();
         }
         try {
             if (null == result) {

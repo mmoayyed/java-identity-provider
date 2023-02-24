@@ -21,6 +21,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -124,9 +125,9 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
      * {@inheritDoc}
      */
     @Override
-    public void viewRendering(@Nonnull final RequestContext context, @Nonnull final View view, 
-            @Nonnull final StateDefinition viewState) {        
-      
+    public void viewRendering(final RequestContext context, final View view,
+            final StateDefinition viewState) {
+
         //state here should always be a view-state, but guard anyway.
         if (enabled && viewState.isViewState() && viewRequiresCSRFTokenPredicate.test(context)) {
             context.getViewScope().put(CSRF_TOKEN_VIEWSCOPE_NAME, csrfTokenManager.generateCSRFToken());            
@@ -146,8 +147,9 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
      * {@inheritDoc}
      */
     @Override
-    public void eventSignaled(@Nonnull final RequestContext context, @Nonnull final Event event) {
+    public void eventSignaled(final @Nullable RequestContext context, final @Nullable Event event) {
 
+        assert context != null && event != null;
         //always make sure listener is enabled and the current state is an active view-state.
         if (enabled && context.inViewState() && 
                 eventRequiresCSRFTokenValidationPredicate.test(context,event)){            
@@ -157,11 +159,12 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
             log.trace("Event '{}' signaled from view '{}' requires a CSRF token", event.getId(),stateId);
 
             final Object storedCsrfTokenObject = context.getViewScope().get(CSRF_TOKEN_VIEWSCOPE_NAME);
-            
+            final String activeFlowId = context.getActiveFlow().getId();
+            assert activeFlowId != null;
             if (storedCsrfTokenObject == null || (!(storedCsrfTokenObject instanceof CSRFToken))) {
                 log.warn("CSRF token is required but was not found in the view-scope; for "
                         + "view-state '{}' and event '{}'.",stateId,event.getId());
-                throw new InvalidCSRFTokenException(context.getActiveFlow().getId(), stateId,
+                throw new InvalidCSRFTokenException(activeFlowId, stateId,
                         "Invalid CSRF token");               
             }
 
@@ -174,7 +177,7 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
             if (csrfTokenFromRequest == null || !(csrfTokenFromRequest instanceof String)) {    
                 log.warn("CSRF token is required but was not found in the request; for "
                         + "view-state '{}' and event '{}'.",stateId,event.getId());
-                throw new InvalidCSRFTokenException(context.getActiveFlow().getId(), stateId,
+                throw new InvalidCSRFTokenException(activeFlowId, stateId,
                         "Invalid CSRF token");
             }
 
@@ -184,7 +187,7 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
             if (!csrfTokenManager.isValidCSRFToken(storedCsrfToken, (String) csrfTokenFromRequest)) {
                 log.warn("CSRF token in the request did not match that stored in the view-scope; for "
                         + "view-state '{}' and event '{}'.",stateId,event.getId());
-                throw new InvalidCSRFTokenException(context.getActiveFlow().getId(), stateId,
+                throw new InvalidCSRFTokenException(activeFlowId, stateId,
                         "Invalid CSRF token");
             }
 

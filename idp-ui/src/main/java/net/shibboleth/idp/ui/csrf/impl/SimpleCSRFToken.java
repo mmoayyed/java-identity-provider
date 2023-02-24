@@ -54,12 +54,12 @@ public class SimpleCSRFToken implements CSRFToken{
     }
 
     /** {@inheritDoc} */
-    public String getParameterName() {
+    @Nonnull public String getParameterName() {
         return parameterName;
     }
 
     /** {@inheritDoc} */
-    public String getToken() {
+    public @Nonnull String getToken() {
        return token;
     }
 

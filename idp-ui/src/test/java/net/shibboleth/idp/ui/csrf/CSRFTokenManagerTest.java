@@ -34,7 +34,8 @@ public class CSRFTokenManagerTest {
     
     /** Test token manager instance.*/
     private CSRFTokenManager manager;
-    
+    /** Something to spoof the null checker.*/
+    private Object nullObj;
     /**
      * Test setup. 
      * @throws ComponentInitializationException 
@@ -45,9 +46,10 @@ public class CSRFTokenManagerTest {
     }
     
     /** Test setting an invalid csrf parameter name, which should trigger an exception.*/
+    @SuppressWarnings("null")
     @Test(expectedExceptions=ConstraintViolationException.class) public void testSetNullCsrfParameterName() {
         manager = new CSRFTokenManager();
-        manager.setCsrfParameterName(null);
+        manager.setCsrfParameterName((String) nullObj);
     }
     
     /** Test setting a valid csrf parameter name, which should not trigger an exception.*/
@@ -57,9 +59,10 @@ public class CSRFTokenManagerTest {
     }
     
     /** Test setting an invalid token generation strategy, which should trigger an exception.*/
+    @SuppressWarnings("null")
     @Test(expectedExceptions=ConstraintViolationException.class) public void testSetNullTokenGenerationStrategy() {
         manager = new CSRFTokenManager();
-        manager.setTokenGenerationStrategy(null);
+        manager.setTokenGenerationStrategy((IdentifierGenerationStrategy) nullObj);
     }
     
     /** Test setting a valid token generation strategy, which should not trigger an exception.*/

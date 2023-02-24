@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 import jakarta.servlet.jsp.JspException;
@@ -56,10 +57,11 @@ public class OrganizationURLTag extends ServiceTagSupport {
      * @return null or an appropriate string
      */
     @Nullable private String getOrganizationURL() {
-        if (getRelyingPartyUIContext() == null) {
+        final RelyingPartyUIContext ctx = getRelyingPartyUIContext();
+        if (ctx == null) {
             return null;
         }
-        return getRelyingPartyUIContext().getOrganizationURL();
+        return ctx.getOrganizationURL();
     }
 
     /** {@inheritDoc} */

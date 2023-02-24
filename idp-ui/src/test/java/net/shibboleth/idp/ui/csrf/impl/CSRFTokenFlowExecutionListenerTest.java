@@ -20,6 +20,7 @@ package net.shibboleth.idp.ui.csrf.impl;
 
 import java.util.UUID;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.webflow.engine.ActionState;
@@ -53,6 +54,9 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
 
     /** The listener instance to test.*/
     private CSRFTokenFlowExecutionListener listener;
+
+    /** Something to spoof the null checker. */
+    private Object nullObj;
 
     
     @BeforeMethod public void setup() throws ComponentInitializationException {
@@ -104,6 +108,7 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         MockViewState currentState = new MockViewState("testFlow", "a-view-state");
         flowSession.setState(currentState);
         
+        @SuppressWarnings("null")
         CSRFToken viewScopeToken = new SimpleCSRFToken(UUID.randomUUID().toString(), CSRF_PARAM_NAME);
         flowSession.getViewScope().put(CSRFTokenFlowExecutionListener.CSRF_TOKEN_VIEWSCOPE_NAME, viewScopeToken);
        
@@ -131,6 +136,7 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         MockViewState currentState = new MockViewState("testFlow", "a-view-state");
         flowSession.setState(currentState);
         
+        @SuppressWarnings("null")
         CSRFToken viewScopeToken = new SimpleCSRFToken(UUID.randomUUID().toString(), CSRF_PARAM_NAME);
         flowSession.getViewScope().put(CSRFTokenFlowExecutionListener.CSRF_TOKEN_VIEWSCOPE_NAME, viewScopeToken);
        
@@ -161,6 +167,7 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         currentState.getAttributes().put(BaseCSRFTokenPredicate.CSRF_EXCLUDED_ATTRIBUTE_NAME, true);
         flowSession.setState(currentState);
         
+        @SuppressWarnings("null")
         CSRFToken viewScopeToken = new SimpleCSRFToken(UUID.randomUUID().toString(), CSRF_PARAM_NAME);
         flowSession.getViewScope().put(CSRFTokenFlowExecutionListener.CSRF_TOKEN_VIEWSCOPE_NAME, viewScopeToken);
        
@@ -192,6 +199,7 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         MockViewState currentState = new MockViewState("testFlow", "a-view-state");
         flowSession.setState(currentState);
         
+        @SuppressWarnings("null")
         CSRFToken viewScopeToken = new SimpleCSRFToken(UUID.randomUUID().toString(), CSRF_PARAM_NAME);
         flowSession.getViewScope().put(CSRFTokenFlowExecutionListener.CSRF_TOKEN_VIEWSCOPE_NAME, viewScopeToken);
        
@@ -259,6 +267,7 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         MockViewState currentState = new MockViewState("testFlow", "a-view-state");
         flowSession.setState(currentState);
         
+        @SuppressWarnings("null")
         CSRFToken viewScopeToken = new SimpleCSRFToken(UUID.randomUUID().toString(), "csrf_token");
         flowSession.getViewScope().put(CSRFTokenFlowExecutionListener.CSRF_TOKEN_VIEWSCOPE_NAME, viewScopeToken);
         
@@ -293,6 +302,7 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         MockViewState currentState = new MockViewState("testFlow", "a-view-state");
         flowSession.setState(currentState);
         
+        @SuppressWarnings("null")
         CSRFToken viewScopeToken = new SimpleCSRFToken(UUID.randomUUID().toString(), CSRF_PARAM_NAME);
         flowSession.getViewScope().put(CSRFTokenFlowExecutionListener.CSRF_TOKEN_VIEWSCOPE_NAME, viewScopeToken);
        
@@ -343,14 +353,14 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
         CSRFTokenFlowExecutionListener theListener = new CSRFTokenFlowExecutionListener();
         // test default is false.
         Object enabledObject = ReflectionTestUtils.getField(theListener, "enabled");
-        Assert.assertNotNull(enabledObject);
+        assert enabledObject != null;
         Assert.assertTrue(enabledObject instanceof Boolean);
         Assert.assertFalse(((Boolean) enabledObject));
 
         // test enabling
         theListener.setEnabled(true);
         enabledObject = ReflectionTestUtils.getField(theListener, "enabled");
-        Assert.assertNotNull(enabledObject);
+        assert enabledObject != null;
         Assert.assertTrue(enabledObject instanceof Boolean);
         Assert.assertTrue(((Boolean) enabledObject));
     }
@@ -381,18 +391,21 @@ public class CSRFTokenFlowExecutionListenerTest extends BaseCSRFTest{
 
     
     /** Test setting a null CSRF token manager triggers a {@link ConstraintViolationException}.*/
+    @SuppressWarnings({ "null"})
     @Test(expectedExceptions = ConstraintViolationException.class) public void testSetNullCsrfTokenManager() {       
-        listener.setCsrfTokenManager(null);
+        listener.setCsrfTokenManager((CSRFTokenManager) nullObj);
     }
     
     /** Test setting a null event requires csrf validation predicate triggers a {@link ConstraintViolationException}.*/
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = ConstraintViolationException.class) public void testSetNullEventRequiresCSRFValidationPredicate() {       
-        listener.setEventRequiresCSRFTokenValidationPredicate(null);
+        listener.setEventRequiresCSRFTokenValidationPredicate((BiPredicate<RequestContext, Event>) nullObj);
     }
     
     /** Test setting a null view requires csrf token predicate triggers a {@link ConstraintViolationException}.*/
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = ConstraintViolationException.class) public void testSetNullViewRequiresCSRFTokenPredicate() {       
-        listener.setViewRequiresCSRFTokenPredicate(null);
+        listener.setViewRequiresCSRFTokenPredicate((Predicate<RequestContext>) nullObj);
     }
     
     /**

@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.ui.csrf.impl.SimpleCSRFToken;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -44,7 +45,7 @@ public final class CSRFTokenManager extends AbstractInitializableComponent {
    @Nonnull private String csrfParameterName;
    
    /** The strategy used to generate a CSRF token value. */
-   @Nonnull private IdentifierGenerationStrategy tokenGenerationStrategy;
+   @NonnullAfterInit private IdentifierGenerationStrategy tokenGenerationStrategy;
    
    /** Predicate to validate the CSRF token.*/
    @Nonnull private BiPredicate<CSRFToken,String> csrfTokenValidationPredicate;

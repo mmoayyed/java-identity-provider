@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.shared.codec.HTMLEncoder;
 
 import org.opensaml.saml.saml2.metadata.ContactPerson;
@@ -149,10 +150,11 @@ public class ServiceContactTag extends ServiceTagSupport {
      */
     @Nullable protected String getContactFromEntity() {
 
-        if (getRelyingPartyUIContext() == null) {
+        final RelyingPartyUIContext ctx = getRelyingPartyUIContext();
+        if (ctx == null) {
             return null;
         }
-        final ContactPerson contact = getRelyingPartyUIContext().getContactPerson(contactType);
+        final ContactPerson contact = ctx.getContactPerson(contactType);
         if (null == contact) {
             return null;
         }

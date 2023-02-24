@@ -38,6 +38,7 @@ import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
@@ -45,6 +46,7 @@ import net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFun
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.spring.util.SpringSupport;
 
@@ -154,7 +156,8 @@ public class SetRPUIInformation extends AbstractProfileAction {
         if (spSSODescriptor != null) {
             final Extensions exts = spSSODescriptor.getExtensions();
             if (exts != null) {
-                for (final XMLObject object : exts.getOrderedChildren()) {
+                final List<XMLObject> children = Constraint.isNotNull(exts.getOrderedChildren(), "Extension Object had no children");
+                for (final XMLObject object : children) {
                     if (object instanceof UIInfo) {
                         return (UIInfo) object;
                     }
@@ -165,7 +168,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -193,7 +196,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         rpUIContext = rpUIContextCreateStrategy.apply(profileRequestContext);
         if (rpUIContext == null) {
@@ -209,8 +212,11 @@ public class SetRPUIInformation extends AbstractProfileAction {
         rpUIContext.setRPSPSSODescriptor(spSSODescriptor);
         rpUIContext.setRPAttributeConsumingService(acsDesriptor);
         rpUIContext.setRPUInfo(getRPUInfo());
-        rpUIContext.setBrowserLanguageRanges(SpringSupport.getLanguageRange(getHttpServletRequest()));
-        rpUIContext.setRequestSupplier(getHttpServletRequestSupplier());
+        final HttpServletRequest request = getHttpServletRequest();
+        final NonnullSupplier<HttpServletRequest> supplier = getHttpServletRequestSupplier();
+        assert request != null && supplier!= null;;
+        rpUIContext.setBrowserLanguageRanges(SpringSupport.getLanguageRange(request));
+        rpUIContext.setRequestSupplier(supplier);
    }
 
 }
