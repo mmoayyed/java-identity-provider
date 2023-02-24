@@ -80,7 +80,7 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Convert date/time fields to default time zone. */
     private boolean useDefaultTimeZone;
 
-    /* Include profile's logging ID in category. */
+    /** Include profile's logging ID in category. */
     private boolean includeProfileLoggingId;
     
     /** The Spring RequestContext to operate on. */
