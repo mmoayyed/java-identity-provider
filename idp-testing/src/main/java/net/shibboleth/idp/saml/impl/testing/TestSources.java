@@ -58,6 +58,7 @@ public final class TestSources {
     /** The name of the attribute we use as source. */
     @Nonnull public static final String DEPENDS_ON_ATTRIBUTE_NAME_ATTR = "at1";
 
+    /** a attribute connector to depend upon. */
     @Nonnull public static final String DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR = "ac1";
 
     /** The name of another attribute we use as source. */
@@ -90,9 +91,9 @@ public final class TestSources {
             ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
 
     /** Regexp. for CONNECTOR_ATTRIBUTE_VALUE (for map and regexp testing). */
-
     @Nonnull public static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-(.+)or";
 
+    /** a {@Link Pattern} derived from {@link #CONNECTOR_ATTRIBUTE_VALUE_REGEXP}. */
     @SuppressWarnings("null")
     @Nonnull public static final Pattern CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN = Pattern
             .compile(CONNECTOR_ATTRIBUTE_VALUE_REGEXP);
@@ -109,10 +110,13 @@ public final class TestSources {
     /** Authentication method for Principal method tests */
     @Nonnull public static final String TEST_AUTHN_METHOD = "AuthNmEthod";
 
+    /** {@value #IDP_ENTITY_ID}. */
     @Nonnull public static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
 
+    /** {@value #PRINCIPAL_ID}. */
     @Nonnull public static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
 
+    /** {@value #SP_ENTITY_ID}. */
     @Nonnull public static final String SP_ENTITY_ID = "https://sp.example.org/sp";
 
     /** Constructor. */
@@ -218,6 +222,12 @@ public final class TestSources {
         return defn;
     }
 
+    /** create a {@link AttributeResolutionContext}.
+     * @param principal  principal
+     * @param issuerID  issuerID
+     * @param recipientId  recipientId
+     * @return the freshly minted context
+     */
     public static AttributeResolutionContext createResolutionContext(@Nonnull String principal, @Nonnull String issuerID,
             @Nonnull String recipientId) {
         ProfileRequestContext parent = new ProfileRequestContext();
@@ -231,11 +241,20 @@ public final class TestSources {
         return retVal;
     }
 
+    /** Make a {@link ResolverAttributeDefinitionDependency}.
+     * @param attributeId attributeId
+     * @return  the dependency
+     */
     public static ResolverAttributeDefinitionDependency makeAttributeDefinitionDependency(@Nonnull String attributeId) {
         ResolverAttributeDefinitionDependency retVal = new ResolverAttributeDefinitionDependency(attributeId);
         return retVal;
     }
     
+    /** Make a {@link ResolverDataConnectorDependency}.
+     * @param connectorId connectorId
+     * @param attributeId attributeId
+     * @return the dependency
+     */
     public static ResolverDataConnectorDependency makeDataConnectorDependency(@Nonnull String connectorId, @Nullable String attributeId) {
         ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
         if (null == attributeId) {
@@ -246,6 +265,7 @@ public final class TestSources {
         return retVal; 
     }
     
+    /** A static {@link AttributeDefinition} for testing. */
     private static class StaticAttributeDefinition extends AbstractAttributeDefinition {
 
         /** Static value returned by this definition. */
@@ -288,6 +308,7 @@ public final class TestSources {
         }
     }
 
+    /** A static {@link DataConnector}. */
     private static class StaticDataConnector extends AbstractDataConnector {
 
         /** Static collection of values returned by this connector. */

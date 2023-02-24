@@ -23,9 +23,16 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import javax.annotation.Nonnull;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.execution.Action;
 
+/**
+ * A Test {"link {@link Action}. 
+ */
 public class ActionTestSupportAction extends AbstractProfileAction {
 
+    /** Constructor. 
+     * @throws ComponentInitializationException if initialization fails
+     */
     public ActionTestSupportAction() throws ComponentInitializationException {
         initialize();
     }
