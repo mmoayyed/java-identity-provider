@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.impl.testing;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,72 +45,75 @@ import net.shibboleth.idp.saml.attribute.resolver.impl.SAML2NameIDAttributeDefin
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** Basic data sources for testing the attribute generators. */
 @SuppressWarnings({"javadoc", "removal"})
 public final class TestSources {
     /** The name we use in this test for the static connector. */
-    public static final String STATIC_CONNECTOR_NAME = "staticCon";
+    @Nonnull public static final String STATIC_CONNECTOR_NAME = "staticCon";
 
 
     /** The name of the attribute we use as source. */
-    public static final String DEPENDS_ON_ATTRIBUTE_NAME_ATTR = "at1";
+    @Nonnull public static final String DEPENDS_ON_ATTRIBUTE_NAME_ATTR = "at1";
 
-    public static final String DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR = "ac1";
+    @Nonnull public static final String DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR = "ac1";
 
     /** The name of another attribute we use as source. */
-    public static final String DEPENDS_ON_SECOND_ATTRIBUTE_NAME = "at2";
+    @Nonnull public static final String DEPENDS_ON_SECOND_ATTRIBUTE_NAME = "at2";
 
     /** Another attributes values. */
-    public static final String[] SECOND_ATTRIBUTE_VALUE_STRINGS = {"at2-Val1", "at2-Val2"};
+    @Nonnull public static final String[] SECOND_ATTRIBUTE_VALUE_STRINGS = {"at2-Val1", "at2-Val2"};
 
-    public static final StringAttributeValue[] SECOND_ATTRIBUTE_VALUE_RESULTS = {
+    @SuppressWarnings("null")
+    @Nonnull public static final StringAttributeValue[] SECOND_ATTRIBUTE_VALUE_RESULTS = {
             new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),
             new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),};
 
     /** A value from both providers. */
-    public static final String COMMON_ATTRIBUTE_VALUE_STRING = "at1-Data";
+    @Nonnull public static final String COMMON_ATTRIBUTE_VALUE_STRING = "at1-Data";
 
-    public static final StringAttributeValue COMMON_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
+    @Nonnull public static final StringAttributeValue COMMON_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
             COMMON_ATTRIBUTE_VALUE_STRING);
 
     /** A value from the connector. */
-    public static final String CONNECTOR_ATTRIBUTE_VALUE_STRING = "at1-Connector";
+    @Nonnull public static final String CONNECTOR_ATTRIBUTE_VALUE_STRING = "at1-Connector";
 
-    public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
+    @Nonnull public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
             CONNECTOR_ATTRIBUTE_VALUE_STRING);
 
     /** A value from the attribute. */
-    public static final String ATTRIBUTE_ATTRIBUTE_VALUE_STRING = "at1-Attribute";
+    @Nonnull public static final String ATTRIBUTE_ATTRIBUTE_VALUE_STRING = "at1-Attribute";
 
-    public static final StringAttributeValue ATTRIBUTE_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
+    @Nonnull public static final StringAttributeValue ATTRIBUTE_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
             ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
 
     /** Regexp. for CONNECTOR_ATTRIBUTE_VALUE (for map and regexp testing). */
 
-    public static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-(.+)or";
+    @Nonnull public static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-(.+)or";
 
-    public static final Pattern CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN = Pattern
+    @SuppressWarnings("null")
+    @Nonnull public static final Pattern CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN = Pattern
             .compile(CONNECTOR_ATTRIBUTE_VALUE_REGEXP);
 
-    public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = new StringAttributeValue(
+    @Nonnull public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = new StringAttributeValue(
             "Connect");
 
     /** Principal name for Principal method tests */
-    public static final String TEST_PRINCIPAL = "PrincipalName";
+    @Nonnull public static final String TEST_PRINCIPAL = "PrincipalName";
 
     /** Relying party name for Principal method tests */
-    public static final String TEST_RELYING_PARTY = "RP1";
+    @Nonnull public static final String TEST_RELYING_PARTY = "RP1";
 
     /** Authentication method for Principal method tests */
-    public static final String TEST_AUTHN_METHOD = "AuthNmEthod";
+    @Nonnull public static final String TEST_AUTHN_METHOD = "AuthNmEthod";
 
-    public static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
+    @Nonnull public static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
 
-    public static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
+    @Nonnull public static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
 
-    public static final String SP_ENTITY_ID = "https://sp.example.org/sp";
+    @Nonnull public static final String SP_ENTITY_ID = "https://sp.example.org/sp";
 
     /** Constructor. */
     private TestSources() {
@@ -141,6 +143,7 @@ public final class TestSources {
      * @return The connector
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
+    @SuppressWarnings("null")
     public static DataConnector populatedStaticConnector() throws ComponentInitializationException {
         List<IdPAttribute> attributeSet = new ArrayList<>(2);
 
@@ -167,7 +170,7 @@ public final class TestSources {
         return populatedStaticAttribute(DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 2);
     }
     
-    public static AttributeDefinition populatedStaticAttribute(String attributeName,
+    public static AttributeDefinition populatedStaticAttribute(@Nonnull String attributeName,
             int attributeValuesCount) throws ComponentInitializationException {
         
         final List<IdPAttributeValue> valuesList = new ArrayList<>();
@@ -204,21 +207,21 @@ public final class TestSources {
         return definition;
     }
 
-    public static AttributeDefinition nonStringAttributeDefiniton(String name) throws ComponentInitializationException {
+    public static AttributeDefinition nonStringAttributeDefiniton(@Nonnull String name) throws ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(name);
 
         // Set the dependency on the data connector
         ResolverAttributeDefinitionDependency depend = new ResolverAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
-        defn.setAttributeDependencies(Collections.singleton(depend));
+        defn.setAttributeDependencies(CollectionSupport.singleton(depend));
         defn.initialize();
         return defn;
     }
 
-    public static AttributeResolutionContext createResolutionContext(String principal, String issuerID,
-            String recipientId) {
+    public static AttributeResolutionContext createResolutionContext(@Nonnull String principal, @Nonnull String issuerID,
+            @Nonnull String recipientId) {
         ProfileRequestContext parent = new ProfileRequestContext();
-        AttributeResolutionContext retVal = parent.getSubcontext(AttributeResolutionContext.class, true);
+        AttributeResolutionContext retVal = parent.getOrCreateSubcontext(AttributeResolutionContext.class);
 
         retVal.setAttributeIssuerID(issuerID);
         retVal.setAttributeRecipientID(recipientId);
@@ -228,7 +231,7 @@ public final class TestSources {
         return retVal;
     }
 
-    public static ResolverAttributeDefinitionDependency makeAttributeDefinitionDependency(String attributeId) {
+    public static ResolverAttributeDefinitionDependency makeAttributeDefinitionDependency(@Nonnull String attributeId) {
         ResolverAttributeDefinitionDependency retVal = new ResolverAttributeDefinitionDependency(attributeId);
         return retVal;
     }
@@ -238,7 +241,7 @@ public final class TestSources {
         if (null == attributeId) {
             retVal.setAllAttributes(true);
         } else {
-            retVal.setAttributeNames(Collections.singleton(attributeId));
+            retVal.setAttributeNames(CollectionSupport.singleton(attributeId));
         }
         return retVal; 
     }
@@ -269,8 +272,9 @@ public final class TestSources {
 
         /** {@inheritDoc} */
         @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-                final AttributeResolutionContext resolutionContext,
+                final @Nonnull AttributeResolutionContext resolutionContext,
                 @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+            assert value != null;
             return value;
         }
 
@@ -325,6 +329,7 @@ public final class TestSources {
         @Override @Nonnull protected Map<String, IdPAttribute> doDataConnectorResolve(
                 @Nonnull final AttributeResolutionContext resolutionContext,
                 @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+            assert attributes != null;
             return attributes;
         }
 

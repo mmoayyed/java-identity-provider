@@ -20,6 +20,8 @@ package net.shibboleth.idp.saml.profile.testing;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 
 public class ActionTestSupportAction extends AbstractProfileAction {
@@ -30,7 +32,7 @@ public class ActionTestSupportAction extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(ProfileRequestContext profileRequestContext) {
+    protected void doExecute(@Nonnull ProfileRequestContext profileRequestContext) {
 
     }
     

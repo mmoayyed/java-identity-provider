@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.testing;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -30,8 +29,6 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.xmlsec.config.BasicXMLSecurityConfiguration;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
@@ -39,7 +36,9 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /** Mock implementation of {@link AuthenticationProfileConfiguration}. */
@@ -47,22 +46,22 @@ public class MockAuthenticationProfileConfiguration extends AbstractInterceptorA
         implements AuthenticationProfileConfiguration {
 
     /** Selects, and limits, the authentication methods to use for requests. */
-    @Nonnull @NonnullElements private List<Principal> defaultAuthenticationMethods;
+    @Nonnull @NonnullElements private List<Principal> defaultAuthenticationMethods = CollectionSupport.emptyList();
 
     /** Filters the usable authentication flows. */
-    @Nonnull @NonnullElements private Set<String> authenticationFlows;
+    @Nonnull @NonnullElements private Set<String> authenticationFlows = CollectionSupport.emptySet();
 
     /** Enables post-authentication interceptor flows. */
-    @Nonnull @NonnullElements private List<String> postAuthenticationFlows;
+    @Nonnull @NonnullElements private List<String> postAuthenticationFlows = CollectionSupport.emptyList();
 
     /** Precedence of name identifier formats to use for requests. */
-    @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
+    @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence = CollectionSupport.emptyList();
     
     /** ForceAuthn predicate. */
     @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
     
     /** Proxy count. */
-    @Nonnull private Integer proxyCount;
+    private Integer proxyCount;
     
     /**
      * Constructor.
@@ -72,7 +71,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractInterceptorA
      */
     public MockAuthenticationProfileConfiguration(@Nonnull @NotEmpty final String id,
             @Nonnull @NonnullElements final List<Principal> methods) {
-        this(id, methods, Collections.emptySet(), Collections.emptyList());
+        this(id, methods, CollectionSupport.emptySet(), CollectionSupport.emptyList());
     }
 
     /**
@@ -92,7 +91,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractInterceptorA
         setDefaultAuthenticationMethods(methods);
         setAuthenticationFlows(flows);
         setNameIDFormatPrecedence(formats);
-        forceAuthnPredicate = Predicates.alwaysFalse();
+        forceAuthnPredicate = PredicateSupport.alwaysFalse();
     }
     
     /** {@inheritDoc} */
@@ -107,7 +106,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractInterceptorA
      * @param methods   default authentication methods to use
      */
     public void setDefaultAuthenticationMethods(@Nonnull @NonnullElements final List<Principal> methods) {
-        defaultAuthenticationMethods = List.copyOf(Constraint.isNotNull(methods, "List of methods cannot be null"));
+        defaultAuthenticationMethods = CollectionSupport.copyToList(Constraint.isNotNull(methods, "List of methods cannot be null"));
     }
     
     /**
@@ -129,7 +128,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractInterceptorA
     public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
         
-        nameIDFormatPrecedence = List.copyOf(StringSupport.normalizeStringCollection(formats));
+        nameIDFormatPrecedence = CollectionSupport.copyToList(StringSupport.normalizeStringCollection(formats));
     }
 
     /** {@inheritDoc} */
@@ -146,7 +145,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractInterceptorA
     public void setAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         
-        authenticationFlows = Set.copyOf(StringSupport.normalizeStringCollection(flows));
+        authenticationFlows = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(flows));
     }
 
     /** {@inheritDoc} */
@@ -163,11 +162,11 @@ public class MockAuthenticationProfileConfiguration extends AbstractInterceptorA
     public void setPostAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         
-        postAuthenticationFlows = List.copyOf(StringSupport.normalizeStringCollection(flows));
+        postAuthenticationFlows = CollectionSupport.copyToList(StringSupport.normalizeStringCollection(flows));
     }
 
     /** {@inheritDoc} */
-    public boolean isForceAuthn(ProfileRequestContext profileRequestContext) {
+    public boolean isForceAuthn(@Nullable ProfileRequestContext profileRequestContext) {
         return forceAuthnPredicate.test(profileRequestContext);
     }
 
