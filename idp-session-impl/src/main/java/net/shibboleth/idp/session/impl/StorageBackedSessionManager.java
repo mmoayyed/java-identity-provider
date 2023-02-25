@@ -430,6 +430,9 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         return flowDescriptorMap.get(flowId);
     }
     
+    /** Get the {@link HttpServletRequest} associated with this operation.
+     * @return the  {@link HttpServletRequest} 
+     */
     @Nullable final private HttpServletRequest getHttpRequest() {
         final NonnullSupplier<HttpServletRequest> supplier = httpRequestSupplier;
         if (supplier == null) {
