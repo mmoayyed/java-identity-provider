@@ -57,7 +57,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         ActionTestingSupport.assertProceedEvent(prc);
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(authCtx);
+        assert authCtx != null;
 
         Assert.assertEquals(authCtx.getAvailableFlows().size(), 3);
         Assert.assertNotNull(authCtx.getAvailableFlows().get("test1"));
@@ -86,7 +86,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         ActionTestingSupport.assertProceedEvent(prc);
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(authCtx);
+        assert authCtx != null;
 
         Assert.assertEquals(authCtx.getAvailableFlows().size(), 3);
         Assert.assertNotNull(authCtx.getAvailableFlows().get("test1"));
@@ -118,7 +118,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         ActionTestingSupport.assertProceedEvent(prc);
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(authCtx);
+        assert authCtx != null;
 
         Assert.assertEquals(authCtx.getAvailableFlows().size(), 3);
         Assert.assertNotNull(authCtx.getAvailableFlows().get("test1"));

@@ -59,11 +59,16 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         manager.initialize();
         
         ((MockHttpServletRequest) src.getExternalContext().getNativeRequest()).setRemoteAddr("192.168.1.1");
-        prc.getSubcontext(AuthenticationContext.class).getSubcontext(UsernamePasswordContext.class, true).setUsername("jdoe");
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
+        authCtx.getOrCreateSubcontext(UsernamePasswordContext.class).setUsername("jdoe");
     }
 
-    @Test public void noKey() {
-        prc.getSubcontext(AuthenticationContext.class).clearSubcontexts();
+    @Test public void noKey() { 
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
+
+        authCtx.clearSubcontexts();
         Assert.assertFalse(manager.check(prc));
         Assert.assertFalse(manager.increment(prc));
         Assert.assertFalse(manager.clear(prc));

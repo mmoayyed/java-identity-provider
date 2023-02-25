@@ -45,7 +45,7 @@ public class X500PrincipalSerializerTest {
         
         final X500Principal p2 = serializer.deserialize(s);
         Assert.assertEquals(p1, p2);
-        
+        assert p2 != null;
         Assert.assertEquals(p2.getName(), "DC=net,DC=shibboleth,CN=jdoe");
     }
     

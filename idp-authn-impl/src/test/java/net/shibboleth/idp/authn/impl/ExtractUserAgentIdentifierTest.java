@@ -61,13 +61,14 @@ public class ExtractUserAgentIdentifierTest extends BaseAuthenticationContextTes
     }
 
     @Test public void testValidHeader() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader("User-Agent", "foo bar baz");
+        getMockHttpServletRequest(action).addHeader("User-Agent", "foo bar baz");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         UserAgentContext uaCtx = authCtx.getSubcontext(UserAgentContext.class, false);
-        Assert.assertNotNull(uaCtx, "No UserAgentContext attached");
+        assert uaCtx != null;
         Assert.assertEquals(uaCtx.getIdentifier(), "foo bar baz");
     }
 }

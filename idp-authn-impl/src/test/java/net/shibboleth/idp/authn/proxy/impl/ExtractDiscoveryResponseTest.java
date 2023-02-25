@@ -51,22 +51,28 @@ public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest 
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
-        Assert.assertNull(prc.getSubcontext(AuthenticationContext.class).getAuthenticatingAuthority());
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.getAuthenticatingAuthority();
     }
 
     @Test public void testFailure() {
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
-        Assert.assertNull(prc.getSubcontext(AuthenticationContext.class).getAuthenticatingAuthority());
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.getAuthenticatingAuthority();
     }
 
     @Test public void testSuccess() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("entityID", "foo");
+        getMockHttpServletRequest(action).addParameter("entityID", "foo");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertEquals(prc.getSubcontext(AuthenticationContext.class).getAuthenticatingAuthority(), "foo");
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        Assert.assertEquals(ac.getAuthenticatingAuthority(), "foo");
     }
 
 }

@@ -41,6 +41,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
@@ -51,6 +52,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.URISupport;
@@ -120,7 +122,9 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testMissingUser() throws ComponentInitializationException {
-        prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(authenticationFlows.get(0));
         
         validator.initialize();
         action.initialize();
@@ -131,6 +135,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
 
     @Test public void testMissingUser2() throws ComponentInitializationException {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
         
@@ -142,10 +147,11 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testNoConfig() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "foo");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac!= null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         validator.initialize();
@@ -156,15 +162,17 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
+        assert errorCtx != null;
         Assert.assertEquals(errorCtx.getExceptions().size(), 1);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
     }
 
     @Test public void testBadConfig() throws ComponentInitializationException, URISyntaxException, IOException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "foo");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         validator.setLoginConfigNames(Collections.singletonList("ShibBadAuth"));
         validator.setLoginConfigType("JavaLoginConfig");
@@ -179,22 +187,25 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
+        assert errorCtx != null;
         Assert.assertEquals(errorCtx.getExceptions().size(), 1);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
     }
 
     @Test public void testUnsupportedConfig() throws ComponentInitializationException, URISyntaxException, IOException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "foo");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, true);
+        assert rpc!= null;
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
-        rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
+        rpc.setRequestedPrincipals(CollectionSupport.<Principal>singletonList(new TestPrincipal("test1")));
 
         validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
                 Collections.singletonList(new TestPrincipal("test2")))));
@@ -212,10 +223,11 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
     }
     
     @Test public void testUnmatchedUser() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "foo");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
         
@@ -231,10 +243,11 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testBadUsername() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "foo");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         validator.setLoginConfigType("JavaLoginConfig");
         validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
@@ -247,16 +260,18 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "UnknownUsername");
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
+        assert errorCtx != null;
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertTrue(errorCtx.isClassifiedError("UnknownUsername"));
         Assert.assertFalse(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
     @Test public void testBadPassword() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         validator.setLoginConfigType("JavaLoginConfig");
         validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
@@ -269,16 +284,18 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "InvalidPassword");
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
+        assert errorCtx != null; 
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertFalse(errorCtx.isClassifiedError("UnknownUsername"));
         Assert.assertTrue(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
     @Test public void testAuthorized() throws ComponentInitializationException, URISyntaxException, IOException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setLoginConfigType("JavaLoginConfig");
@@ -293,16 +310,18 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
     @Test public void testAuthorizedAndKeep() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac!= null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setLoginConfigType("JavaLoginConfig");
@@ -316,23 +335,25 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
     @Test public void testSupported() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, true);
+        final RequestedPrincipalContext rpc = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
-        rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
+        rpc.setRequestedPrincipals(CollectionSupport.<Principal>singletonList(new TestPrincipal("test1")));
 
         validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
                 Collections.<Principal>singletonList(new TestPrincipal("test1")))));
@@ -347,18 +368,20 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(TestPrincipal.class).iterator()
+        Assert.assertEquals(ar.getSubject().getPrincipals(TestPrincipal.class).iterator()
                 .next().getName(), "test1");
     }
     
     @Test public void testMultiConfigAuthorized() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setLoginConfigNames(Arrays.asList("ShibBadAuth", "ShibUserPassAuth"));
@@ -373,16 +396,18 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
     
     @Test public void testMatchAndAuthorized() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setLoginConfigType("JavaLoginConfig");
@@ -397,8 +422,9 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
     

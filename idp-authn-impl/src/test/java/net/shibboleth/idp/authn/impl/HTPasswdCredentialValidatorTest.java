@@ -34,6 +34,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
@@ -84,7 +85,9 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
     }
 
     @Test public void testMissingUser() throws ComponentInitializationException {
-        prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(authenticationFlows.get(0));
         
         validator.initialize();
         action.initialize();
@@ -95,6 +98,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
 
     @Test public void testMissingUser2() throws ComponentInitializationException {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
         
@@ -106,13 +110,14 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
     }
     
     @Test public void testUnsupported() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "foo");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, true);
+        final RequestedPrincipalContext rpc = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
@@ -130,10 +135,11 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
     }
     
     @Test public void testUnmatchedUser() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "foo");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
         
@@ -149,10 +155,11 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
     }
 
     @Test public void testBadUsername() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "foo");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         validator.initialize();
@@ -164,16 +171,18 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.UNKNOWN_USERNAME);
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
+        assert errorCtx!= null;
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertTrue(errorCtx.isClassifiedError(AuthnEventIds.UNKNOWN_USERNAME));
         Assert.assertFalse(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
     @Test public void testBadPassword() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         validator.initialize();
@@ -185,16 +194,18 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "InvalidPassword");
         AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
+        assert errorCtx != null;
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertFalse(errorCtx.isClassifiedError("UnknownUsername"));
         Assert.assertTrue(errorCtx.isClassifiedError("InvalidPassword"));
     }
 
     @Test public void testAuthorizedMD5() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.initialize();
@@ -206,16 +217,18 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult result = ac.getAuthenticationResult();
+        assert result != null;
+        Assert.assertEquals(result.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
     @Test public void testAuthorizedMD5WithFile() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setResource(new FileSystemResource(DATA_PATH + "htpasswd.txt"));
@@ -228,16 +241,18 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult result = ac.getAuthenticationResult();
+        assert result != null;
+        Assert.assertEquals(result.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
     @Test public void testAuthorizedSHA() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL2");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL2");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.initialize();
@@ -249,16 +264,18 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult result = ac.getAuthenticationResult();
+        assert result != null;
+        Assert.assertEquals(result.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL2");
     }
 
     @Test public void testAuthorizedCrypt() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL3");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL3");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.initialize();
@@ -270,16 +287,18 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult result = ac.getAuthenticationResult();
+        assert result != null;
+        Assert.assertEquals(result.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL3");
     }
     
     @Test public void testAuthorizedAndKeep() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.initialize();
@@ -291,19 +310,21 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult result = ac.getAuthenticationResult();
+        assert result != null;
+        Assert.assertEquals(result.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
     @Test public void testSupported() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+        getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
+        getMockHttpServletRequest(action).addParameter("password", "changeit");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, true);
+        final RequestedPrincipalContext rpc = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
@@ -319,10 +340,11 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+        final AuthenticationResult result = ac.getAuthenticationResult();
+        assert result != null;
+        Assert.assertEquals(result.getSubject().getPrincipals(UsernamePrincipal.class).iterator()
                 .next().getName(), "PETER_THE_PRINCIPAL");
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(TestPrincipal.class).iterator()
+        Assert.assertEquals(result.getSubject().getPrincipals(TestPrincipal.class).iterator()
                 .next().getName(), "test1");
     }
     

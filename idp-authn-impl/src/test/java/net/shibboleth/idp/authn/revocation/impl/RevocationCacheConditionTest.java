@@ -76,6 +76,7 @@ public class RevocationCacheConditionTest extends BaseAuthenticationContextTest 
     @Test public void testNotRevoked() {
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.setActiveResults(Arrays.asList(active));
 
         Assert.assertTrue(active.test(prc));
@@ -84,6 +85,7 @@ public class RevocationCacheConditionTest extends BaseAuthenticationContextTest 
     @Test public void testRevoked() {
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.setActiveResults(Arrays.asList(active));
 
         revocationCache.revoke(RevocationCacheCondition.REVOCATION_CONTEXT,
@@ -97,6 +99,7 @@ public class RevocationCacheConditionTest extends BaseAuthenticationContextTest 
     @Test public void testPastRevoked() {
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.setActiveResults(Arrays.asList(active));
 
         revocationCache.revoke(RevocationCacheCondition.REVOCATION_CONTEXT,

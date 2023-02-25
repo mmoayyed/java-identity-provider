@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -46,7 +48,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 public class SubjectDataConnectorTest {
 
     /** Simple result. */
-    private static final String SIMPLE_VALUE = "simple";
+    @Nonnull private static final String SIMPLE_VALUE = "simple";
     
     @Test public void simpleValue() throws ComponentInitializationException, ResolutionException {
         final List<IdPAttributeValue> list = new ArrayList<>(2);
@@ -68,7 +70,9 @@ public class SubjectDataConnectorTest {
         final AttributeResolutionContext ctx =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
+        final BaseContext parent = ctx.getParent();
+        assert parent != null;
+        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr));
@@ -77,8 +81,7 @@ public class SubjectDataConnectorTest {
         
         
         final Map<String,IdPAttribute> results = defn.resolve(ctx);
-        
-        assertEquals(1, results.size());
+        assert results != null && results.size() == 1;
         
         final IdPAttribute copy = results.get("wibble");
         
@@ -108,7 +111,9 @@ public class SubjectDataConnectorTest {
         final AttributeResolutionContext ctx =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final SubjectCanonicalizationContext sc = ctx.getParent().getSubcontext(SubjectCanonicalizationContext.class, true);
+        final BaseContext parent = ctx.getParent();
+        assert parent != null;
+        final SubjectCanonicalizationContext sc = parent.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         final Subject subject = new Subject();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr));
         subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));
@@ -117,7 +122,7 @@ public class SubjectDataConnectorTest {
         
         final Map<String,IdPAttribute> results = defn.resolve(ctx);
         
-        assertEquals(1, results.size());
+        assert results != null && results.size() == 1;
         
         final IdPAttribute copy = results.get("wibble");
         
@@ -142,7 +147,9 @@ public class SubjectDataConnectorTest {
         final AttributeResolutionContext ctx =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
+        final BaseContext parent = ctx.getParent();
+        assert parent != null;
+        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));
@@ -169,7 +176,9 @@ public class SubjectDataConnectorTest {
         final AttributeResolutionContext ctx =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
+        final BaseContext parent = ctx.getParent();
+        assert parent != null;
+        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));

@@ -74,6 +74,7 @@ public class SPNEGOAuthnControllerTest {
 
     private GSSContextAcceptor mockGSSContextAcceptor;
     
+    private Object nullObject;
     
     @BeforeClass
     public void init() throws EncodingException {        
@@ -97,16 +98,18 @@ public class SPNEGOAuthnControllerTest {
         mockGSSContextAcceptor = mock(GSSContextAcceptor.class);
     }
 
+    @SuppressWarnings("null")
     @Test(expectedExceptions = {ExternalAuthenticationException.class})
     public void withoutConversationKeyParameter_startSPNEGO_shouldThrowExternalAuthenticationException() throws Exception {
         controller.startSPNEGO(TEST_CONVERSATION_KEY,
-                (HttpServletRequest) buildConversationRequestContext(null).getExternalContext().getNativeRequest(), null);
+                (HttpServletRequest) buildConversationRequestContext(null).getExternalContext().getNativeRequest(), (HttpServletResponse) nullObject);
     }
 
+    @SuppressWarnings("null")
     @Test(expectedExceptions = ExternalAuthenticationException.class)
     public void givenMismatchedKeys_startSPNEGO_shouldThrowExternalAuthenticationException() throws Exception {
         controller.startSPNEGO("e1s2",
-                (HttpServletRequest) buildConversationRequestContext(TEST_CONVERSATION_KEY).getExternalContext().getNativeRequest(), null);
+                (HttpServletRequest) buildConversationRequestContext(TEST_CONVERSATION_KEY).getExternalContext().getNativeRequest(), (HttpServletResponse) nullObject);
     }
 
     @Test(expectedExceptions = ExternalAuthenticationException.class)
@@ -133,6 +136,7 @@ public class SPNEGOAuthnControllerTest {
                 (ProfileRequestContext) req.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         SPNEGOContext sc = new SPNEGOContext();
+        assert ac != null;
         ac.addSubcontext(sc);
         ModelAndView mv = controller.startSPNEGO(TEST_CONVERSATION_KEY,
                 (MockHttpServletRequest) req.getExternalContext().getNativeRequest(),
@@ -425,13 +429,14 @@ public class SPNEGOAuthnControllerTest {
 
     private ProfileRequestContext buildKerberosProfileRequestContext(RequestContext rc) {
         ProfileRequestContext prc = (ProfileRequestContext) rc.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         SPNEGOContext sc = new SPNEGOContext();
         KerberosSettings ks = new KerberosSettings();
         List<KerberosRealmSettings> realms = new ArrayList<>();
         realms.add(new KerberosRealmSettings());
         ks.setRealms(realms);
         sc.setKerberosSettings(ks);
+        assert ac != null;
         ac.addSubcontext(sc);
         return prc;
     }
@@ -447,7 +452,8 @@ public class SPNEGOAuthnControllerTest {
                 (ProfileRequestContext) rc.getConversationScope().get(ProfileRequestContext.BINDING_KEY); 
         ((MockServletContext) rc.getExternalContext().getNativeContext()).setAttribute(ExternalAuthentication.SWF_KEY, prc);
         
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, true);
+        final AuthenticationContext ac = prc.getOrCreateSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(new AuthenticationFlowDescriptor());
         
         final ExternalAuthenticationContext eac = (ExternalAuthenticationContext) ac.addSubcontext(

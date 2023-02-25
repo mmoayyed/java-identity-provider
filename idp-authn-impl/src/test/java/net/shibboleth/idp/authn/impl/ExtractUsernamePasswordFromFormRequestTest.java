@@ -64,37 +64,39 @@ public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticati
     }
 
     @Test public void testMissingIdentity2() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_username", "foo");
+        getMockHttpServletRequest(action).addParameter("j_username", "foo");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testValid() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_password", "bar");
+        getMockHttpServletRequest(action).addParameter("j_username", "foo");
+        getMockHttpServletRequest(action).addParameter("j_password", "bar");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         Assert.assertTrue(authCtx.isResultCacheable());
         UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
-        Assert.assertNotNull(upCtx, "No UsernamePasswordContext attached");
+        assert upCtx!= null;
         Assert.assertEquals(upCtx.getUsername(), "foo");
         Assert.assertEquals(upCtx.getPassword(), "bar");
     }
 
     @Test public void testSSOBypass() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_username", "foo");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("j_password", "bar");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("donotcache", "1");
+        getMockHttpServletRequest(action).addParameter("j_username", "foo");
+        getMockHttpServletRequest(action).addParameter("j_password", "bar");
+        getMockHttpServletRequest(action).addParameter("donotcache", "1");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         Assert.assertFalse(authCtx.isResultCacheable());
         UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
-        Assert.assertNotNull(upCtx, "No UsernamePasswordContext attached");
+        assert upCtx != null;
         Assert.assertEquals(upCtx.getUsername(), "foo");
         Assert.assertEquals(upCtx.getPassword(), "bar");
     }

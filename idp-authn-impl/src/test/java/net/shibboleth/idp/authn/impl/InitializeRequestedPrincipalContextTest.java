@@ -34,6 +34,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.MockProfileConfiguration;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.springframework.webflow.execution.Event;
@@ -71,11 +72,14 @@ public class InitializeRequestedPrincipalContextTest {
      */
     @Test public void testNoReplace() throws Exception {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
-        authCtx.getSubcontext(RequestedPrincipalContext.class, true).setOperator("foo");
+        assert authCtx != null;
+        authCtx.getOrCreateSubcontext(RequestedPrincipalContext.class).setOperator("foo");
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertEquals(authCtx.getSubcontext(RequestedPrincipalContext.class).getOperator(), "foo");
+        final RequestedPrincipalContext rpc = authCtx.getSubcontext(RequestedPrincipalContext.class);
+        assert rpc != null;
+        Assert.assertEquals(rpc.getOperator(), "foo");
     }
     
     /**
@@ -89,6 +93,7 @@ public class InitializeRequestedPrincipalContextTest {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+        assert authCtx != null;
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class));
     }
 
@@ -102,6 +107,7 @@ public class InitializeRequestedPrincipalContextTest {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
+        assert authCtx != null;
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class));
     }
 
@@ -118,6 +124,7 @@ public class InitializeRequestedPrincipalContextTest {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
+        assert authCtx != null;
         Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class));
     }
 
@@ -128,13 +135,14 @@ public class InitializeRequestedPrincipalContextTest {
      */
     @Test public void testNoMethods() throws Exception {
         final MockAuthenticationProfileConfiguration mock =
-                new MockAuthenticationProfileConfiguration("mock", Collections.<Principal>emptyList());
+                new MockAuthenticationProfileConfiguration("mock", CollectionSupport.<Principal>emptyList());
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(mock)).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+        assert authCtx != null;
         
-        authCtx.getSubcontext(RequestedPrincipalContext.class, true).setOperator("foo");
+        authCtx.getOrCreateSubcontext(RequestedPrincipalContext.class).setOperator("foo");
 
         action = new InitializeRequestedPrincipalContext();
         action.setReplaceExistingContext(true);
@@ -142,7 +150,9 @@ public class InitializeRequestedPrincipalContextTest {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertEquals(authCtx.getSubcontext(RequestedPrincipalContext.class).getOperator(), "foo");
+        final RequestedPrincipalContext rpc = authCtx.getSubcontext(RequestedPrincipalContext.class);
+        assert rpc != null;
+        Assert.assertEquals(rpc.getOperator(), "foo");
     }
     
     /**
@@ -153,13 +163,14 @@ public class InitializeRequestedPrincipalContextTest {
     @Test public void testWithMethods() throws Exception {
         final Principal method = new TestPrincipal("test");
         final MockAuthenticationProfileConfiguration mock =
-                new MockAuthenticationProfileConfiguration("mock", Collections.singletonList(method));
+                new MockAuthenticationProfileConfiguration("mock", CollectionSupport.singletonList(method));
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(mock)).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+        assert authCtx != null;
 
-        authCtx.getSubcontext(RequestedPrincipalContext.class, true).setOperator("foo");
+        authCtx.getOrCreateSubcontext(RequestedPrincipalContext.class).setOperator("foo");
 
         action = new InitializeRequestedPrincipalContext();
         action.setReplaceExistingContext(true);
@@ -168,7 +179,7 @@ public class InitializeRequestedPrincipalContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         RequestedPrincipalContext rpCtx = authCtx.getSubcontext(RequestedPrincipalContext.class, false);
-        Assert.assertNotNull(rpCtx);
+        assert rpCtx != null;
         Assert.assertEquals(rpCtx.getOperator(), "exact");
         Assert.assertEquals(rpCtx.getRequestedPrincipals().size(), 1);
         Assert.assertSame(method, rpCtx.getRequestedPrincipals().get(0));

@@ -57,6 +57,7 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
      * @throws ComponentInitializationException ...
      */
     @Test public void testNoContext() throws ComponentInitializationException {
+        assert mfa != null;
         ac.removeSubcontext(mfa);
         action.initialize();
         final Event event = action.execute(src);
@@ -86,7 +87,7 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuthenticationResult result = ac.getAuthenticationResult();
-        Assert.assertNotNull(result);
+        assert result!=null;
         Assert.assertEquals(result.getAuthenticationFlowId(), "authn/MFA");
         final Subject merged = result.getSubject();
         Assert.assertEquals(merged.getPrincipals().size(), 3);
@@ -96,8 +97,9 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
         Assert.assertTrue(merged.getPrincipals(TestPrincipal.class).contains(new TestPrincipal("bar")));
         Assert.assertFalse(merged.getPrincipals(TestPrincipal.class).contains(new TestPrincipal("baz")));
         
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class));
-        Assert.assertSame(merged, prc.getSubcontext(SubjectCanonicalizationContext.class).getSubject());
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc != null;
+        Assert.assertSame(merged, scc.getSubject());
     }
 
     /**
@@ -116,7 +118,7 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
         ActionTestingSupport.assertProceedEvent(event);
 
         final AuthenticationResult result = ac.getAuthenticationResult();
-        Assert.assertNotNull(result);
+        assert result != null;
         Assert.assertEquals(result.getAuthenticationFlowId(), "authn/MFA");
         final Subject merged = result.getSubject();
         Assert.assertEquals(merged.getPrincipals().size(), 5);
@@ -127,7 +129,8 @@ public class FinalizeMultiFactorAuthenticationTest extends BaseMultiFactorAuthen
         Assert.assertTrue(merged.getPrincipals(TestPrincipal.class).contains(new TestPrincipal("bar")));
         Assert.assertFalse(merged.getPrincipals(TestPrincipal.class).contains(new TestPrincipal("baz")));
         
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class));
-        Assert.assertSame(merged, prc.getSubcontext(SubjectCanonicalizationContext.class).getSubject());
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc != null;
+        Assert.assertSame(merged, scc.getSubject());
     }
 }

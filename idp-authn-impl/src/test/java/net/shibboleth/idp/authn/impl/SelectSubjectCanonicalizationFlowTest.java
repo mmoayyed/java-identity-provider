@@ -17,15 +17,15 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
+import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 /** {@link SelectSubjectCanonicalizationFlow} unit test. */
 public class SelectSubjectCanonicalizationFlowTest extends PopulateSubjectCanonicalizationContextTest {
@@ -46,9 +46,12 @@ public class SelectSubjectCanonicalizationFlowTest extends PopulateSubjectCanoni
     @Test public void testSelect() {
         
         final Event event = action.execute(src);
+        assert event != null;
         
+        final SubjectCanonicalizationFlowDescriptor flow = c14nCtx.getAttemptedFlow();
+        assert flow != null;
         Assert.assertEquals(c14nCtx.getAttemptedFlow(), c14nCtx.getPotentialFlows().get(event.getId()));
-        Assert.assertEquals(c14nCtx.getAttemptedFlow().getId(), "test1");
+        Assert.assertEquals(flow.getId(), "test1");
     }
 
     @Test public void testIntermediate() {
@@ -56,17 +59,21 @@ public class SelectSubjectCanonicalizationFlowTest extends PopulateSubjectCanoni
         
         final Event event = action.execute(src);
         
+        final SubjectCanonicalizationFlowDescriptor flow = c14nCtx.getAttemptedFlow();
+        assert flow != null && event != null;
         Assert.assertEquals(c14nCtx.getAttemptedFlow(), c14nCtx.getPotentialFlows().get(event.getId()));
-        Assert.assertEquals(c14nCtx.getAttemptedFlow().getId(), "test2");
+        Assert.assertEquals(flow.getId(), "test2");
     }
 
     @Test public void testPredicate() {
-        c14nCtx.getPotentialFlows().get("test1").setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
+        c14nCtx.getPotentialFlows().get("test1").setActivationCondition(PredicateSupport.<ProfileRequestContext>alwaysFalse());
         
         final Event event = action.execute(src);
+        final SubjectCanonicalizationFlowDescriptor flow = c14nCtx.getAttemptedFlow();
+        assert flow != null && event != null;
         
         Assert.assertEquals(c14nCtx.getAttemptedFlow(), c14nCtx.getPotentialFlows().get(event.getId()));
-        Assert.assertEquals(c14nCtx.getAttemptedFlow().getId(), "test2");
+        Assert.assertEquals(flow.getId(), "test2");
     }
 
 }

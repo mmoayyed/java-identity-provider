@@ -55,47 +55,53 @@ public class SimpleSubjectCanonicalizationTest extends BaseAuthenticationContext
 
     @Test public void testNoPrincipal() {
         Subject subject = new Subject();
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc != null;
+        Assert.assertNotNull(scc.getException());
     }
 
     @Test public void testMultiPrincipals() {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
         subject.getPrincipals().add(new UsernamePrincipal("bar"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc != null;
+        Assert.assertNotNull(scc.getException());
     }
 
     @Test public void testSuccess() {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        assert sc != null;
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
 
     @Test public void testTransform() {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        assert sc != null;
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
     

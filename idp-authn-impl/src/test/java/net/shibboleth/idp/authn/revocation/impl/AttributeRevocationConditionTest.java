@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -72,6 +73,7 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
     @Test public void testNotRevoked() {
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.setActiveResults(Arrays.asList(active));
 
         Assert.assertTrue(active.test(prc));
@@ -80,6 +82,7 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
     @Test public void testRevoked() {
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.setActiveResults(Arrays.asList(active));
 
         revocationsToResolve = Collections.singletonList(Instant.now().plusSeconds(3600));
@@ -90,6 +93,7 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
     @Test public void testPastRevoked() {
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.setActiveResults(Arrays.asList(active));
 
         revocationsToResolve = Collections.singletonList(Instant.now().minusSeconds(3600));
@@ -131,10 +135,10 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
         }
 
         /** {@inheritDoc} */
-        public ServiceableComponent<AttributeResolver> getServiceableComponent() {
+        public @Nonnull ServiceableComponent<AttributeResolver> getServiceableComponent() {
             return new ServiceableComponent<AttributeResolver>() {
 
-                public AttributeResolver getComponent() {
+                public @Nonnull AttributeResolver getComponent() {
                     return new AttributeResolver() {
 
                         public String getId() {

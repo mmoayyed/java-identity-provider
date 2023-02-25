@@ -56,10 +56,11 @@ public class InitializeProxyProfileRequestContextTest {
         
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
-
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         final ProfileRequestContext prc2 =
-                prc.getSubcontext(AuthenticationContext.class).getSubcontext(ProfileRequestContext.class);
-        Assert.assertNotNull(prc2);
+                ac.getSubcontext(ProfileRequestContext.class);
+        assert prc2 != null;;
         Assert.assertEquals(prc2.getProfileId(), "nested");
     }
 

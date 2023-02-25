@@ -115,13 +115,14 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         
         final X509Certificate[] certs = new X509Certificate[]{entityCert, otherCert1};
         
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
+        getMockHttpServletRequest(action).setAttribute("jakarta.servlet.request.X509Certificate", certs);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         final CertificateContext certCtx = authCtx.getSubcontext(CertificateContext.class);
-        Assert.assertNotNull(certCtx, "No CertificateContext attached");
+        assert certCtx!= null;
         
         Assert.assertSame(certCtx.getCertificate(), entityCert);
         Assert.assertSame(certCtx.getIntermediates().iterator().next(), otherCert1);
@@ -134,13 +135,14 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         
         final X509Certificate[] certs = new X509Certificate[]{entityCert, otherCert1};
         
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
+        getMockHttpServletRequest(action).setAttribute("jakarta.servlet.request.X509Certificate", certs);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         final CertificateContext certCtx = authCtx.getSubcontext(CertificateContext.class);
-        Assert.assertNotNull(certCtx, "No CertificateContext attached");
+        assert certCtx!= null;
         
         Assert.assertSame(certCtx.getCertificate(), entityCert);
         Assert.assertSame(certCtx.getIntermediates().iterator().next(), otherCert1);

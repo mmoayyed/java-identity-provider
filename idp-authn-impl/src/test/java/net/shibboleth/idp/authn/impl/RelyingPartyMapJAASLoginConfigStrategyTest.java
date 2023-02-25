@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -45,6 +46,8 @@ public class RelyingPartyMapJAASLoginConfigStrategyTest {
     private String entityID = "https://www.example.org/saml";
 
     private HashMap<String, String> rpMap;
+    
+    private Object nullObj;
 
     @BeforeMethod
     public void setUp() {
@@ -62,6 +65,7 @@ public class RelyingPartyMapJAASLoginConfigStrategyTest {
     public void testNoRelyingPartyContext() {
         profileRequestContext.removeSubcontext(RelyingPartyContext.class);
 
+        assert rpMap != null;
         strategy = new RelyingPartyMapJAASLoginConfigStrategy(rpMap);
 
         Collection<Pair<String,Subject>> result = strategy.apply(profileRequestContext);
@@ -76,6 +80,7 @@ public class RelyingPartyMapJAASLoginConfigStrategyTest {
     public void testNoRelyingPartyId() {
         relyingPartyContext.setRelyingPartyId(null);
 
+        assert rpMap != null;
         strategy = new RelyingPartyMapJAASLoginConfigStrategy(rpMap);
 
         Collection<Pair<String,Subject>> result = strategy.apply(profileRequestContext);
@@ -90,6 +95,7 @@ public class RelyingPartyMapJAASLoginConfigStrategyTest {
     public void testNoMappingFound() {
         relyingPartyContext.setRelyingPartyId("SomeOtherRP");
 
+        assert rpMap != null;
         strategy = new RelyingPartyMapJAASLoginConfigStrategy(rpMap);
 
         Collection<Pair<String,Subject>> result = strategy.apply(profileRequestContext);
@@ -102,6 +108,7 @@ public class RelyingPartyMapJAASLoginConfigStrategyTest {
 
     @Test
     public void testMappingFound() {
+        assert rpMap != null;
         strategy = new RelyingPartyMapJAASLoginConfigStrategy(rpMap);
 
         Collection<Pair<String,Subject>> result = strategy.apply(profileRequestContext);
@@ -112,9 +119,10 @@ public class RelyingPartyMapJAASLoginConfigStrategyTest {
         Assert.assertEquals(resultPair.getFirst(), "MyJAAS");
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions=ConstraintViolationException.class)
     public void testNullInputMap() {
-        strategy = new RelyingPartyMapJAASLoginConfigStrategy(null);
+        strategy = new RelyingPartyMapJAASLoginConfigStrategy((Map<String, String>) nullObj);
     }
 
 }

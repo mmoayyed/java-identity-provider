@@ -30,6 +30,8 @@ public class KerberosRealmSettingsTest {
     protected static String KEYTAB = "/opt/kerberos/http_domainA.keytab";
 
     protected static String PASSWORD = "secret";
+    
+    private Object nullObj;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -173,7 +175,7 @@ public class KerberosRealmSettingsTest {
         // principal == null
         try {
             realm = new KerberosRealmSettings();
-            realm.setServicePrincipal(null);
+            realm.setServicePrincipal((String) nullObj);
             realm.setKeytab(KEYTAB);
 
             realm.initialize();

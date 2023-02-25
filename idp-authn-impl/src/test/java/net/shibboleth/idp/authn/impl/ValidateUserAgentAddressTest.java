@@ -29,6 +29,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
@@ -45,6 +46,8 @@ import net.shibboleth.shared.testing.ConstantSupplier;
 public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest {
     
     private ValidateUserAgentAddress action; 
+    
+    private Object nullObj;
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
@@ -64,15 +67,19 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
     }
     
     @Test public void testMissingAddress() {
-        prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(authenticationFlows.get(0));
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
+    @SuppressWarnings("null")
     @Test public void testMissingAddress2() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr(null);
+        getMockHttpServletRequest(action).setRemoteAddr((String) nullObj);
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract();
@@ -83,6 +90,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
 
     @Test public void testUnauthorized() throws ComponentInitializationException {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract();
@@ -92,9 +100,10 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
     }
 
     @Test public void testIncompatible() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("192.168.1.1");
+        getMockHttpServletRequest(action).setRemoteAddr("192.168.1.1");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
@@ -111,9 +120,10 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
     }
 
     @Test public void testCompatible() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("192.168.1.1");
+        getMockHttpServletRequest(action).setRemoteAddr("192.168.1.1");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
@@ -127,8 +137,9 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "foo");
     }
     

@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collections;
-import java.util.List;
 
 import javax.security.auth.Subject;
 
@@ -36,6 +35,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link AttributeSourcedSubjectCanonicalization} unit test. */
@@ -48,7 +48,7 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         super.setUp();
         
         action = new AttributeSourcedSubjectCanonicalization();
-        action.setAttributeSourceIds(List.of("attr1", "attr2"));
+        action.setAttributeSourceIds(CollectionSupport.listOf("attr1", "attr2"));
     }
     
     @Test(expectedExceptions=ComponentInitializationException.class)
@@ -69,12 +69,13 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         action.initialize();
 
         Subject subject = new Subject();
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
+        SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        assert scc != null && scc.getException()!=null;
     }
 
     @Test public void testNoSubjectSourcedAttributes() throws ComponentInitializationException {
@@ -82,12 +83,13 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         action.initialize();
         
         Subject subject = new Subject();
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
+        SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        assert scc != null && scc.getException()!=null;
     }
 
     @Test public void testSuccess() throws ComponentInitializationException {
@@ -96,10 +98,10 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         final IdPAttribute inputAttribute = new IdPAttribute("attr2");
         inputAttribute.setValues(Collections.singletonList(new StringAttributeValue("foo")));
         
-        final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext sc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         sc.setSubject(new Subject());
         
-        sc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(inputAttribute));
+        sc.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(Collections.singleton(inputAttribute));
         
         final Event event = action.execute(src);
         
@@ -113,9 +115,10 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         
         final IdPAttribute inputAttribute = new IdPAttribute("attr2");
         inputAttribute.setValues(Collections.singletonList(new StringAttributeValue("foo")));
-        final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
-        sc.setSubject(new Subject());
-        sc.getSubject().getPrincipals().add(new IdPAttributePrincipal(inputAttribute));
+        final SubjectCanonicalizationContext sc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        final Subject subject = new Subject();
+        sc.setSubject(subject);
+        subject.getPrincipals().add(new IdPAttributePrincipal(inputAttribute));
 
         final Event event = action.execute(src);
         
@@ -129,9 +132,10 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         
         final IdPAttribute inputAttribute = new IdPAttribute("attr2");
         inputAttribute.setValues(Collections.singletonList(new ScopedStringAttributeValue("foo", "scope")));
-        final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
-        sc.setSubject(new Subject());
-        sc.getSubject().getPrincipals().add(new IdPAttributePrincipal(inputAttribute));
+        final SubjectCanonicalizationContext sc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        final Subject subject = new Subject();
+        sc.setSubject(subject);
+        subject.getPrincipals().add(new IdPAttributePrincipal(inputAttribute));
 
         final Event event = action.execute(src);
         
@@ -149,20 +153,21 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         final IdPAttribute attr2bar = new IdPAttribute("attr2");
         attr2bar.setValues(Collections.singletonList(new StringAttributeValue("bar")));
 
-        final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
-        sc.setSubject(new Subject());
-        sc.getSubject().getPrincipals().add(new IdPAttributePrincipal(attr2));
+        final SubjectCanonicalizationContext sc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        final Subject subject = new Subject();
+        sc.setSubject(subject);
+        subject.getPrincipals().add(new IdPAttributePrincipal(attr2));
         
-        sc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(attr2bar));
+        sc.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(Collections.singleton(attr2bar));
         
         Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(sc.getPrincipalName(), "foo");
 
-        sc.getSubject().getPrincipals().clear();
-        sc.getSubject().getPrincipals().add(new IdPAttributePrincipal(attr2bar));
-        sc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(attr2));
+        subject.getPrincipals().clear();
+        subject.getPrincipals().add(new IdPAttributePrincipal(attr2bar));
+        sc.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(Collections.singleton(attr2));
 
         event = action.execute(src);
         
@@ -180,11 +185,12 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         final IdPAttribute attr1 = new IdPAttribute("attr1");
         attr1.setValues(Collections.singletonList(new StringAttributeValue("foo")));
 
-        final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
-        sc.setSubject(new Subject());
-        sc.getSubject().getPrincipals().add(new IdPAttributePrincipal(attr2));
+        final SubjectCanonicalizationContext sc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        final Subject subject = new Subject();
+        sc.setSubject(subject);
+        subject.getPrincipals().add(new IdPAttributePrincipal(attr2));
         
-        sc.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singleton(attr1));
+        sc.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(Collections.singleton(attr1));
         
         final Event event = action.execute(src);
         

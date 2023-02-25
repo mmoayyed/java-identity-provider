@@ -30,6 +30,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -52,8 +53,9 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
-        
-        prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(authenticationFlows.get(0));
         
         ext = new ExternalAuthenticationImpl();
 
@@ -64,7 +66,9 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
     }
 
     @Test public void testMissingFlow() {
-        prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(null);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(null);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
@@ -77,6 +81,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
     @Test public void testNoCredentials() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         
         final Event event = action.execute(src);
@@ -85,34 +90,39 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
 
     @Test public void testPrincipalName() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         final ExternalAuthenticationContext eac =
                 (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setPrincipalName("foo");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertFalse(ac.getAuthenticationResult().isPreviousResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertFalse(ar.isPreviousResult());
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "foo");
     }
     
     @Test public void testPrincipal() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         final ExternalAuthenticationContext eac =
                 (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setPrincipal(new TestPrincipal("foo"));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertFalse(ac.getAuthenticationResult().isPreviousResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertFalse(ar.isPreviousResult());
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 TestPrincipal.class).iterator().next().getName(), "foo");
     }
 
     @Test public void testSubject() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         final ExternalAuthenticationContext eac =
                 (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         final Subject subject = new Subject();
@@ -121,14 +131,16 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertFalse(ac.getAuthenticationResult().isPreviousResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertFalse(ar.isPreviousResult());
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 TestPrincipal.class).iterator().next().getName(), "foo");
     }
 
     @Test public void testAuthnInstant() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         final ExternalAuthenticationContext eac =
                 (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setPrincipalName("foo");
@@ -138,13 +150,15 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertTrue(ac.getAuthenticationResult().isPreviousResult());
-        Assert.assertEquals(ts, ac.getAuthenticationResult().getAuthenticationInstant());
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertTrue(ar.isPreviousResult());
+        Assert.assertEquals(ts, ar.getAuthenticationInstant());
     }
 
     @Test public void testAuthnAuthorities() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         final ExternalAuthenticationContext eac =
                 (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setPrincipalName("foo");
@@ -153,29 +167,32 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertTrue(ac.getAuthenticationResult().isPreviousResult());
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertTrue(ar.isPreviousResult());
         final Set<ProxyAuthenticationPrincipal> prin =
-                ac.getAuthenticationResult().getSubject().getPrincipals(ProxyAuthenticationPrincipal.class);
+                ar.getSubject().getPrincipals(ProxyAuthenticationPrincipal.class);
         Assert.assertEquals(prin.size(), 1);
         Assert.assertEquals(prin.iterator().next().getAuthorities(), Arrays.asList("foo", "bar", "baz"));
     }
 
     @Test public void testException() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         final ExternalAuthenticationContext eac =
                 (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setAuthnException(new LoginException("foo"));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.AUTHN_EXCEPTION);
-        Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNotNull(ac.getSubcontext(AuthenticationErrorContext.class));
-        Assert.assertEquals(ac.getSubcontext(AuthenticationErrorContext.class).getExceptions().size(), 1);
+        final AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        assert aec != null;
+        Assert.assertEquals(aec.getExceptions().size(), 1);
     }
 
     @Test public void testError() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         final ExternalAuthenticationContext eac =
                 (ExternalAuthenticationContext) ac.addSubcontext(new ExternalAuthenticationContext(ext), true);
         eac.setAuthnError("foo");

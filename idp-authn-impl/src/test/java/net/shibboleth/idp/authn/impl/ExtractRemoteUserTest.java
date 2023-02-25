@@ -74,32 +74,34 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testRemoteUser() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("foo");
+        getMockHttpServletRequest(action).setRemoteUser("foo");
         action.initialize();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
-        Assert.assertNotNull(unCtx, "No UsernameContext attached");
+        assert authCtx != null;
+        final UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
+        assert unCtx != null;
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
 
     @Test public void testAttribute() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("Username", "foo");
+        getMockHttpServletRequest(action).setAttribute("Username", "foo");
         action.setCheckAttributes(Arrays.asList("Username"));
         action.initialize();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
-        Assert.assertNotNull(unCtx, "No UsernameContext attached");
+        assert authCtx != null;
+        final UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
+        assert unCtx != null;
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
 
     @Test public void testHeader() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader("X-Username", "foo");
+        getMockHttpServletRequest(action).addHeader("X-Username", "foo");
         action.setCheckAttributes(Arrays.asList("Username"));
         action.setCheckHeaders(Arrays.asList("X-Username"));
         action.initialize();
@@ -107,13 +109,14 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx != null;
         UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
-        Assert.assertNotNull(unCtx, "No UsernameContext attached");
+        assert unCtx != null;
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
 
     @Test public void testTransforms() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser(" Foo@osu.edu ");
+        getMockHttpServletRequest(action).setRemoteUser(" Foo@osu.edu ");
         action.setTrim(true);
         action.setTransforms(Arrays.asList(new Pair<>("^(.+)@osu\\.edu$", "$1")));
         action.setLowercase(true);
@@ -122,8 +125,9 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
-        Assert.assertNotNull(unCtx, "No UsernameContext attached");
+        assert authCtx != null;
+        final UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
+        assert unCtx != null;
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
 }

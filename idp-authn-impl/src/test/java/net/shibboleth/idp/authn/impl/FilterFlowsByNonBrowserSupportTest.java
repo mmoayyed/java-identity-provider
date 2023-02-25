@@ -41,6 +41,7 @@ public class FilterFlowsByNonBrowserSupportTest extends BaseAuthenticationContex
     
     @Test public void testBrowserProfile() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         prc.setBrowserProfile(true);
         
         final Event event = action.execute(src);
@@ -50,6 +51,7 @@ public class FilterFlowsByNonBrowserSupportTest extends BaseAuthenticationContex
 
     @Test public void testNoFiltering() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -58,6 +60,7 @@ public class FilterFlowsByNonBrowserSupportTest extends BaseAuthenticationContex
 
     @Test public void testPartialFiltering() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.getPotentialFlows().get("test1").setNonBrowserSupported(false);
         
         final Event event = action.execute(src);

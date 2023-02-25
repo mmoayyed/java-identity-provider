@@ -24,6 +24,12 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
+import org.springframework.webflow.execution.Event;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -34,11 +40,6 @@ import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactor
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-
-import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /** {@link SelectAuthenticationFlow} unit test. */
 public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest {
@@ -54,42 +55,52 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
     
     @Test public void testNoRequestNoneActive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        
+        assert authCtx != null;
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "test1");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
-        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test1");
+        final AuthenticationFlowDescriptor attemptedFlow = authCtx.getAttemptedFlow();
+        assert attemptedFlow != null && event != null;
+
+        Assert.assertEquals(attemptedFlow, authCtx.getPotentialFlows().get(event.getId()));
+        Assert.assertEquals(attemptedFlow.getId(), "test1");
     }
 
     @Test public void testNoRequestNoneActivePassive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.setIsPassive(true);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "test2");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
-        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test2");
+        final AuthenticationFlowDescriptor attemptedFlow = authCtx.getAttemptedFlow();
+        assert attemptedFlow != null && event != null;
+        Assert.assertEquals(attemptedFlow, authCtx.getPotentialFlows().get(event.getId()));
+        Assert.assertEquals(attemptedFlow.getId(), "test2");
     }
 
     @Test public void testNoRequestNoneActiveIntermediate() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.getIntermediateFlows().put("test1", authCtx.getPotentialFlows().get("test1"));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "test2");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
-        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test2");
+        final AuthenticationFlowDescriptor attemptedFlow = authCtx.getAttemptedFlow();
+        assert attemptedFlow != null && event != null;
+        Assert.assertEquals(attemptedFlow, authCtx.getPotentialFlows().get(event.getId()));
+        Assert.assertEquals(attemptedFlow.getId(), "test2");
     }
     
     @Test public void testNoRequestActive() {
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.setActiveResults(Arrays.asList(active));
         
         final Event event = action.execute(src);
@@ -101,10 +112,12 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
     @Test public void testNoRequestForced() {
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.setForceAuthn(true);
         
         final Event event = action.execute(src);
+        assert event != null;
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
@@ -115,6 +128,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("foo")));
+        assert authCtx != null;
         authCtx.addSubcontext(rpc, true);
         
         final Event event = action.execute(src);
@@ -127,13 +141,17 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
         final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
         ppc.setPreferredPrincipals(principals);
+        assert authCtx != null;
         authCtx.addSubcontext(ppc, true);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "test3");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
+        final AuthenticationFlowDescriptor attemptedFlow = authCtx.getAttemptedFlow();
+        assert attemptedFlow != null && event != null;
+
+        Assert.assertEquals(attemptedFlow.getId(), "test3");
     }
 
     @Test public void testPreferredNoneActive() {
@@ -141,6 +159,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
         final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
         ppc.setPreferredPrincipals(principals);
+        assert authCtx != null;
         authCtx.addSubcontext(ppc, true);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
         
@@ -148,7 +167,10 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         ActionTestingSupport.assertEvent(event, "test3");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
+        final AuthenticationFlowDescriptor attemptedFlow = authCtx.getAttemptedFlow();
+        assert attemptedFlow != null;
+
+        Assert.assertEquals(attemptedFlow.getId(), "test3");
     }
     
     @Test public void testPreferredPickActiveNonMatch() {
@@ -157,6 +179,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
                 new TestPrincipal("test2"));
         final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
         ppc.setPreferredPrincipals(principals);
+        assert authCtx != null;
         authCtx.addSubcontext(ppc, true);
         final AuthenticationResult active = new AuthenticationResult("test1", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test1"));
@@ -175,6 +198,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
                 new TestPrincipal("test2"));
         final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
         ppc.setPreferredPrincipals(principals);
+        assert authCtx != null;
         authCtx.addSubcontext(ppc, true);
         final AuthenticationResult active1 = new AuthenticationResult("test1", new Subject());
         final AuthenticationResult active3 = new AuthenticationResult("test3", new Subject());
@@ -197,6 +221,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(principals);
+        assert authCtx != null;
         authCtx.addSubcontext(rpc, true);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
         
@@ -204,11 +229,14 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         ActionTestingSupport.assertEvent(event, "test3");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
+        final AuthenticationFlowDescriptor attemptedFlow = authCtx.getAttemptedFlow();
+        assert attemptedFlow != null;
+        Assert.assertEquals(attemptedFlow.getId(), "test3");
     }
 
     @Test public void testRequestNoneActiveIntermediate() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         authCtx.getIntermediateFlows().put("test2", authCtx.getPotentialFlows().get("test2"));
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
@@ -225,7 +253,10 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         ActionTestingSupport.assertEvent(event, "test3");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
-        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
+        final AuthenticationFlowDescriptor flow = authCtx.getAttemptedFlow();
+        assert flow != null;
+
+        Assert.assertEquals(flow.getId(), "test3");
     }
     
     @Test public void testRequestPickInactive() {
@@ -237,6 +268,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(principals);
+        assert authCtx != null;
         authCtx.addSubcontext(rpc, true);
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
@@ -259,6 +291,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(principals);
+        assert authCtx != null;
         authCtx.addSubcontext(rpc, true);
         final AuthenticationResult active = new AuthenticationResult("test3", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test3"));
@@ -273,6 +306,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
 
     @Test public void testRequestFavorSSO() throws ComponentInitializationException {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();

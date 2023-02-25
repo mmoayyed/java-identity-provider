@@ -45,7 +45,7 @@ public class PopulateSubjectCanonicalizationContextTest {
     @BeforeMethod public void setUp() throws Exception {        
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(new Subject());
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(new Subject());
 
         c14nFlows = List.of(new SubjectCanonicalizationFlowDescriptor(),
                 new SubjectCanonicalizationFlowDescriptor(), new SubjectCanonicalizationFlowDescriptor());
@@ -69,7 +69,7 @@ public class PopulateSubjectCanonicalizationContextTest {
         
         ActionTestingSupport.assertProceedEvent(prc);
         final SubjectCanonicalizationContext c14nCtx = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
-        Assert.assertNotNull(c14nCtx);
+        assert c14nCtx!=null;
 
         Assert.assertEquals(c14nCtx.getPotentialFlows().size(), 3);
         Assert.assertNotNull(c14nCtx.getPotentialFlows().get("test1"));

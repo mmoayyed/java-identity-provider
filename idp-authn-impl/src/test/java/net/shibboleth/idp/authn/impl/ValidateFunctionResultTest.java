@@ -21,6 +21,7 @@ import java.security.Principal;
 
 import javax.security.auth.Subject;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
@@ -45,14 +46,17 @@ public class ValidateFunctionResultTest extends BaseAuthenticationContextTest {
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
-        
-        prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(authenticationFlows.get(0));
 
         action = new ValidateFunctionResult();
     }
 
     @Test public void testMissingFlow() throws ComponentInitializationException {
-        prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(null);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(null);
         
         action.setResultLookupStrategy(FunctionSupport.<ProfileRequestContext,Object>constant(null));
         action.initialize();
@@ -87,9 +91,11 @@ public class ValidateFunctionResultTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertFalse(ac.getAuthenticationResult().isPreviousResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        assert ac != null;
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertFalse(ar.isPreviousResult());
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "foo");
     }
     
@@ -101,9 +107,11 @@ public class ValidateFunctionResultTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertFalse(ac.getAuthenticationResult().isPreviousResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        assert ac != null;
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertFalse(ar.isPreviousResult());
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 TestPrincipal.class).iterator().next().getName(), "foo");
     }
 
@@ -118,9 +126,11 @@ public class ValidateFunctionResultTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertFalse(ac.getAuthenticationResult().isPreviousResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        assert ac != null;
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertFalse(ar.isPreviousResult());
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 TestPrincipal.class).iterator().next().getName(), "foo");
     }
 

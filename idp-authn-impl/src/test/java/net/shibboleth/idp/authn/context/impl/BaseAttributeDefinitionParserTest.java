@@ -22,6 +22,9 @@ import static org.testng.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -31,12 +34,10 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.AfterMethod;
 
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverServiceStrategy;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.shared.spring.config.StringToDurationConverter;
@@ -44,7 +45,6 @@ import net.shibboleth.shared.spring.config.StringToIPRangeConverter;
 import net.shibboleth.shared.spring.config.StringToResourceConverter;
 import net.shibboleth.shared.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.shared.spring.service.impl.SpringServiceableComponent;
 
 /**
  * Base class for tests for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
@@ -95,7 +95,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         loadFile(fileName, context, false);
     }
 
-    protected <Type> Type getBean(final String fileName, final Class<Type> claz, final GenericApplicationContext context,
+    @Nonnull protected <Type> Type getBean(final String fileName, final Class<Type> claz, final GenericApplicationContext context,
             final boolean supressValid) {
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
@@ -113,33 +113,34 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
         final Collection<Type> beans = context.getBeansOfType(claz).values();
         assertEquals(beans.size(), 1);
-
-        return beans.iterator().next();
+        final Type result = beans.iterator().next();
+        assert result != null;
+        return result;
     }
 
-    protected <Type> Type getBean(final String fileName, final Class<Type> claz, final GenericApplicationContext context) {
+    @Nonnull protected <Type> Type getBean(final String fileName, final Class<Type> claz, final GenericApplicationContext context) {
         return getBean(fileName, claz, context, false);
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz,
+    @Nonnull protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz,
             final GenericApplicationContext context) {
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context);
     }
 
-    private <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz,
+    @Nonnull private <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz,
             final GenericApplicationContext context, final boolean supressValidation) {
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context, supressValidation);
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final String beanFileName,
+    @Nonnull protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final String beanFileName,
             final Class<Type> claz) {
         return getAttributeDefn(fileName, beanFileName, claz, false);
 
     }
 
-    private <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final String beanFileName,
+    @Nonnull private <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final String beanFileName,
             final Class<Type> claz, final boolean supressValidation) {
 
         final GenericApplicationContext context = new GenericApplicationContext();
@@ -161,12 +162,12 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getAttributeDefn(fileName, claz, context, supressValidation);
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz) {
+    @Nonnull protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz) {
         return getAttributeDefn(fileName, claz, false);
 
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz,
+    @Nonnull protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz,
             final boolean supressValid) {
 
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
@@ -176,11 +177,11 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getAttributeDefn(fileName, claz, context, supressValid);
     }
 
-    protected <Type extends DataConnector> Type getDataConnector(final String fileName, final Class<Type> claz) {
+    @Nonnull protected <Type extends DataConnector> Type getDataConnector(final String fileName, final Class<Type> claz) {
         return getDataConnector(fileName, claz, false);
     }
     
-    private <Type extends DataConnector> Type
+    @Nonnull private <Type extends DataConnector> Type
             getDataConnector(final String fileName, final Class<Type> claz, final boolean supressValid) {
 
         final GenericApplicationContext context = new GenericApplicationContext();
@@ -191,12 +192,14 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getBean(DATACONNECTOR_FILE_PATH + fileName, claz, context, supressValid);
     }
 
-    static public AttributeResolverImpl getResolver(final ApplicationContext appContext) throws ComponentInitializationException {
-        final Collection<AttributeDefinition> definitions =
-                appContext.getBeansOfType(AttributeDefinition.class).values();
+    @Nonnull static public AttributeResolverImpl getResolver(final ApplicationContext appContext) throws ComponentInitializationException {
+        final Map<String, AttributeDefinition> attributesMap = appContext.getBeansOfType(AttributeDefinition.class);
+        final Collection<AttributeDefinition> definitions = attributesMap.values();
+        final Map<String, DataConnector> dataConnectorsMap = appContext.getBeansOfType(DataConnector.class);
+        final Collection<DataConnector> connectors = dataConnectorsMap.values();
+        assert connectors != null && definitions != null; 
 
-        final Collection<DataConnector> connectors = appContext.getBeansOfType(DataConnector.class).values();
-        final AttributeResolverImpl resolver = new AttributeResolverImpl();
+        @Nonnull final AttributeResolverImpl resolver = new AttributeResolverImpl();
         resolver.setAttributeDefinitions(definitions);
         resolver.setDataConnectors(connectors);
         resolver.setId("testResolver");

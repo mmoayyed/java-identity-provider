@@ -56,107 +56,117 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
 
     @Test public void testNoPrincipal() {
         final Subject subject = new Subject();
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class).getException());
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc != null;
+        Assert.assertNotNull(scc.getException());
     }
 
     @Test public void testMultiPrincipals() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("CN=foo"));
         subject.getPrincipals().add(new X500Principal("CN=bar"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class).getException());
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc != null;
+        Assert.assertNotNull(scc.getException());
     }
 
     @Test public void testNone() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("CN=foo@example.edu"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
         final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
-        Assert.assertNull(sc.getPrincipalName());
+        assert sc!= null && sc.getPrincipalName() ==null;
     }
     
     @Test public void testSuccess() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert sc != null;
         Assert.assertEquals(sc.getPrincipalName(), "foo@example.edu");
     }
 
     @Test public void testComplex() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu\\, EMAILADDRESS=bar@example.edu"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert sc != null;
         Assert.assertEquals(sc.getPrincipalName(), "foo@example.edu, EMAILADDRESS=bar@example.edu");
     }
     
     @Test public void testTransform() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@osu.edu"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert sc != null;
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
     
     @Test public void testMultipleTypes() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu, 0.9.2342.19200300.100.1.1=bar@example.edu"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert sc != null;
         Assert.assertEquals(sc.getPrincipalName(), "foo@example.edu");
     }
 
     @Test public void testMultipleValues() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu, EMAILADDRESS=bar@example.edu"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert sc != null;
         Assert.assertEquals(sc.getPrincipalName(), "foo@example.edu");
     }
 
     @Test public void testSecondary() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("0.9.2342.19200300.100.1.1=bar@example.edu"));
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
-        Assert.assertEquals(sc.getPrincipalName(), "bar@example.edu");
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc != null;
+        Assert.assertEquals(scc.getPrincipalName(), "bar@example.edu");
     }
 }

@@ -18,6 +18,8 @@
 package net.shibboleth.idp.authn.impl;
 
 
+import java.net.InetAddress;
+
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -35,7 +37,9 @@ import net.shibboleth.shared.testing.ConstantSupplier;
 /** {@link ExtractUserAgentAddress} unit test. */
 public class ExtractUserAgentAddressTest extends BaseAuthenticationContextTest {
     
-    private ExtractUserAgentAddress action; 
+    private ExtractUserAgentAddress action;
+    
+    public Object nullObj;
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         super.setUp();
@@ -46,8 +50,9 @@ public class ExtractUserAgentAddressTest extends BaseAuthenticationContextTest {
         action.initialize();
     }
     
+    @SuppressWarnings("null")
     @Test public void testMissingAddress() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr(null);
+        getMockHttpServletRequest(action).setRemoteAddr((String) nullObj);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
@@ -57,13 +62,16 @@ public class ExtractUserAgentAddressTest extends BaseAuthenticationContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        assert authCtx!=null;
         UserAgentContext uaCtx = authCtx.getSubcontext(UserAgentContext.class, false);
-        Assert.assertNotNull(uaCtx, "No UserAgentContext attached");
-        Assert.assertEquals(uaCtx.getAddress().getHostAddress(), MockHttpServletRequest.DEFAULT_REMOTE_ADDR);
+        assert uaCtx!=null;
+        InetAddress addr = uaCtx.getAddress();
+        assert addr !=null;
+        Assert.assertEquals(addr.getHostAddress(), MockHttpServletRequest.DEFAULT_REMOTE_ADDR);
     }
 
     @Test public void testInvalidAddress() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("zorkmids");
+        getMockHttpServletRequest(action).setRemoteAddr("zorkmids");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);

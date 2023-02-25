@@ -127,7 +127,8 @@ public class AuthenticationContextTest {
         Thread.sleep(50);
 
         ctx.setCompletionInstant();
-        Assert.assertTrue(ctx.getCompletionInstant().isAfter(now));
+        final Instant completion = ctx.getCompletionInstant();
+        assert completion != null && completion.isAfter(now);
     }
     
     /**
@@ -141,7 +142,7 @@ public class AuthenticationContextTest {
         
         ctx.addRequestedPrincipalContext("foo", new TestPrincipal("bar"), false);
         RequestedPrincipalContext rpCtx = ctx.getSubcontext(RequestedPrincipalContext.class);
-        Assert.assertNotNull(rpCtx);
+        assert rpCtx!=null;
         Assert.assertEquals(rpCtx.getOperator(), "foo");
         Assert.assertEquals(rpCtx.getRequestedPrincipals(), Collections.singletonList(new TestPrincipal("bar")));
         
@@ -149,13 +150,13 @@ public class AuthenticationContextTest {
         
         ctx.addRequestedPrincipalContext("fob", TestPrincipal.class.getName(), "baz", true);
         rpCtx = ctx.getSubcontext(RequestedPrincipalContext.class);
-        Assert.assertNotNull(rpCtx);
+        assert rpCtx!=null;
         Assert.assertEquals(rpCtx.getOperator(), "fob");
         Assert.assertEquals(rpCtx.getRequestedPrincipals(), Collections.singletonList(new TestPrincipal("baz")));
 
         ctx.addRequestedPrincipalContext("fog", TestPrincipal.class.getName(), Arrays.asList("baf", "bag"), true);
         rpCtx = ctx.getSubcontext(RequestedPrincipalContext.class);
-        Assert.assertNotNull(rpCtx);
+        assert rpCtx!=null;
         Assert.assertEquals(rpCtx.getOperator(), "fog");
         Assert.assertEquals(rpCtx.getRequestedPrincipals().size(), 2);
     }

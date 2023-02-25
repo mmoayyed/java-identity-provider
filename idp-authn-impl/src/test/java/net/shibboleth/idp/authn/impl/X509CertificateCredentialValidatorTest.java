@@ -22,6 +22,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
 import javax.security.auth.x500.X500Principal;
 
 import org.opensaml.security.credential.CredentialResolver;
@@ -37,6 +38,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.unboundid.util.NotNull;
+
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
@@ -47,7 +51,7 @@ import net.shibboleth.shared.testing.ConstantSupplier;
 /** {@link X509CertificateCredentialValidator} unit test. */
 public class X509CertificateCredentialValidatorTest extends BaseAuthenticationContextTest {
     
-    private String entityCertBase64 = 
+    @Nonnull final private String entityCertBase64 = 
             "MIIDjDCCAnSgAwIBAgIBKjANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +
             "cm5ldDIxFzAVBgNVBAMTDmNhLmV4YW1wbGUub3JnMB4XDTA3MDQwOTA2MTIwOVoX" +
             "DTE3MDQwNjA2MTIwOVowMTESMBAGA1UEChMJSW50ZXJuZXQyMRswGQYDVQQDExJm" +
@@ -68,7 +72,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
             "uLdeRCZmi93vq1D4JVGsXC4UaHjg114+a+9q0XZdz6a1UW4pt1ryXIPotCS62M71" +
             "pkJf5neHUinKAqgoRfPXowudZg1Zl8DjzoOBn+MNHRrR5KYbVGvdHcxoJLCwVB/v";
     
-    private String otherCert1Base64 = 
+    @NotNull final private String otherCert1Base64 = 
             "MIIECTCCAvGgAwIBAgIBMzANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +
             "cm5ldDIxFzAVBgNVBAMTDmNhLmV4YW1wbGUub3JnMB4XDTA3MDUyNTIwMTYxMVoX" +
             "DTE3MDUyMjIwMTYxMVowGjEYMBYGA1UEAxMPaWRwLmV4YW1wbGUub3JnMIIBtjCC" +
@@ -114,7 +118,9 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
     }
     
     @Test public void testMissingCert() throws ComponentInitializationException {
-        prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(authenticationFlows.get(0));
         
         validator.initialize();
         
@@ -125,10 +131,11 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
     @Test public void testNoTrustEngine() throws ComponentInitializationException, CertificateException {
         final X509Certificate entityCert = X509Support.decodeCertificate(entityCertBase64);
         final X509Certificate[] certs = new X509Certificate[]{entityCert};
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
+        getMockHttpServletRequest(action).setAttribute("jakarta.servlet.request.X509Certificate", certs);
 
         
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.initialize();
@@ -137,33 +144,36 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 X500Principal.class).iterator().next().getName(), "CN=foobar.example.org,O=Internet2");
     }
 
     @Test public void testTrustEngineSuccess() throws ComponentInitializationException, CertificateException {
         final X509Certificate entityCert = X509Support.decodeCertificate(entityCertBase64);
         final X509Certificate[] certs = new X509Certificate[]{entityCert};
-
+        assert entityCert != null;
         final CredentialResolver resolver = new StaticCredentialResolver(new BasicX509Credential(entityCert));
         final TrustEngine<X509Credential> engine = new ExplicitX509CertificateTrustEngine(resolver);
         
         validator.setTrustEngine(engine);
         validator.initialize();
 
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
+        getMockHttpServletRequest(action).setAttribute("jakarta.servlet.request.X509Certificate", certs);
 
         
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 X500Principal.class).iterator().next().getName(), "CN=foobar.example.org,O=Internet2");
     }
 
@@ -172,6 +182,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         final X509Certificate[] certs = new X509Certificate[]{entityCert};
 
         final X509Certificate otherCert1 = X509Support.decodeCertificate(otherCert1Base64);
+        assert otherCert1 != null;
         
         final CredentialResolver resolver = new StaticCredentialResolver(new BasicX509Credential(otherCert1));
         final TrustEngine<X509Credential> engine = new ExplicitX509CertificateTrustEngine(resolver);
@@ -179,9 +190,10 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         validator.setTrustEngine(engine);
         validator.initialize();
         
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setAttribute("jakarta.servlet.request.X509Certificate", certs);
+        getMockHttpServletRequest(action).setAttribute("jakarta.servlet.request.X509Certificate", certs);
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract();

@@ -26,8 +26,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -52,6 +54,11 @@ public class SubjectDerivedAttributeValuesFunctionTest {
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
     
+    @Nonnull private List<IdPAttributeValue> doResolve(@Nonnull final ContextDerivedAttributeDefinition defn, @Nonnull final AttributeResolutionContext ctx) throws ResolutionException {
+        final IdPAttribute attr = defn.resolve(ctx);
+        assert attr!=null;
+        return attr.getValues();
+    }
 
     @Test public void noSubjectContext() throws ComponentInitializationException, ResolutionException {
 
@@ -100,7 +107,9 @@ public class SubjectDerivedAttributeValuesFunctionTest {
         final AttributeResolutionContext ctx =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
+        final BaseContext parent = ctx.getParent();
+        assert parent != null;
+        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr));
@@ -108,7 +117,7 @@ public class SubjectDerivedAttributeValuesFunctionTest {
         authnResults.put("one", new AuthenticationResult("1", subject));
         
         
-      final List<IdPAttributeValue> foo = defn.resolve(ctx).getValues();
+      final List<IdPAttributeValue> foo = doResolve(defn, ctx);
         
         assertEquals(2, foo.size());
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
@@ -145,7 +154,7 @@ public class SubjectDerivedAttributeValuesFunctionTest {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);        
         
-        final List<IdPAttributeValue> foo = defn.resolve(ctx).getValues();
+        final List<IdPAttributeValue> foo =  doResolve(defn, ctx);
         
         assertEquals(2, foo.size());
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
@@ -180,10 +189,13 @@ public class SubjectDerivedAttributeValuesFunctionTest {
 
         final AttributeResolutionContext ctx =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-                        TestSources.SP_ENTITY_ID);        
-        ctx.getParent().getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+                        TestSources.SP_ENTITY_ID);
+        final BaseContext parent = ctx.getParent();
+        assert parent != null;
+        final SubjectCanonicalizationContext sc = parent.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        sc.setSubject(subject);
         
-        final List<IdPAttributeValue> foo = defn.resolve(ctx).getValues();
+        final List<IdPAttributeValue> foo =  doResolve(defn, ctx);
         
         assertEquals(2, foo.size());
         assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
@@ -212,7 +224,9 @@ public class SubjectDerivedAttributeValuesFunctionTest {
         final AttributeResolutionContext ctx =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
+        final BaseContext parent = ctx.getParent();
+        assert parent != null;
+        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr));

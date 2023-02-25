@@ -71,7 +71,7 @@ public class SPNEGOAutoLoginManagerTest {
         autoLoginManager.enable();
 
         Cookie cookie = res.getCookie("spnego_autologin");
-        Assert.assertNotNull(cookie);
+        assert cookie != null;
         Assert.assertEquals(cookie.getValue(), SPNEGOAutoLoginManager.AUTOLOGIN_COOKIE_VALUE_TRUE);
     }
 
@@ -83,7 +83,7 @@ public class SPNEGOAutoLoginManagerTest {
         autoLoginManager.disable();
 
         Cookie cookie = res.getCookie("spnego_autologin");
-        Assert.assertNotNull(cookie);
+        assert cookie != null;
         Assert.assertNull(cookie.getValue());
     }
 

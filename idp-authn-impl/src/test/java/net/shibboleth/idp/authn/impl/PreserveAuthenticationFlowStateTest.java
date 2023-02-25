@@ -18,7 +18,10 @@
 package net.shibboleth.idp.authn.impl;
 
 
+import static org.testng.Assert.assertTrue;
+
 import java.util.Arrays;
+import java.util.Map;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
@@ -54,7 +57,10 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertTrue(prc.getSubcontext(AuthenticationContext.class).getAuthenticationStateMap().isEmpty());
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        final Map<String, Object> asm = ac.getAuthenticationStateMap();
+        Assert.assertTrue(asm.isEmpty());
     }
 
     @Test public void testNoParameters() throws ComponentInitializationException {
@@ -66,7 +72,10 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertTrue(prc.getSubcontext(AuthenticationContext.class).getAuthenticationStateMap().isEmpty());
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        final Map<String, Object> asm = ac.getAuthenticationStateMap();
+        Assert.assertTrue(asm.isEmpty());
     }
 
     @Test public void testNoneFound(){
@@ -74,18 +83,22 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertTrue(prc.getSubcontext(AuthenticationContext.class).getAuthenticationStateMap().isEmpty());
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        final Map<String, Object> asm = ac.getAuthenticationStateMap();
+        Assert.assertTrue(asm.isEmpty());
     }
     
     @Test public void testNoValues() {
         
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("foo", (String) null);
+        getMockHttpServletRequest(action).addParameter("foo", (String) null);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         Assert.assertEquals(authCtx.getAuthenticationStateMap().size(), 1);
         Assert.assertTrue(authCtx.getAuthenticationStateMap().containsKey("foo"));
         Assert.assertNull(authCtx.getAuthenticationStateMap().get("foo"));
@@ -93,14 +106,15 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
     
     @Test public void testSingleValued() {
         
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("foo", "bar");
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("foo2", "bar2");
+        getMockHttpServletRequest(action).addParameter("foo", "bar");
+        getMockHttpServletRequest(action).addParameter("foo2", "bar2");
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         Assert.assertEquals(authCtx.getAuthenticationStateMap().size(), 2);
         Assert.assertEquals(authCtx.getAuthenticationStateMap().get("foo"), "bar");
         Assert.assertEquals(authCtx.getAuthenticationStateMap().get("foo2"), "bar2");
@@ -108,13 +122,14 @@ public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationConte
     
     @Test public void testMultiValued() {
         
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("foo", new String[]{"bar", "bar2"});
+        getMockHttpServletRequest(action).addParameter("foo", new String[]{"bar", "bar2"});
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authCtx != null;
         Assert.assertEquals(authCtx.getAuthenticationStateMap().size(), 1);
         Assert.assertEquals(authCtx.getAuthenticationStateMap().get("foo"), Arrays.asList("bar", "bar2"));
     }

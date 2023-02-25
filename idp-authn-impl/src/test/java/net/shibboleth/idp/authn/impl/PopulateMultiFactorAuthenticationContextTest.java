@@ -55,11 +55,12 @@ public class PopulateMultiFactorAuthenticationContextTest {
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
-        ac = prc.getSubcontext(AuthenticationContext.class, true);
-        ac.setAttemptedFlow(new AuthenticationFlowDescriptor());
-        ac.getAttemptedFlow().setId("authn/MFA");
-        ac.getAttemptedFlow().setResultSerializer(new DefaultAuthenticationResultSerializer());
-        ac.getAttemptedFlow().initialize();
+        final AuthenticationContext authCtx = ac = prc.getOrCreateSubcontext(AuthenticationContext.class);
+        final AuthenticationFlowDescriptor flow =new AuthenticationFlowDescriptor();
+        authCtx.setAttemptedFlow(flow);
+        flow.setId("authn/MFA");
+        flow.setResultSerializer(new DefaultAuthenticationResultSerializer());
+        flow.initialize();
         action = new PopulateMultiFactorAuthenticationContext();
     }
 
@@ -81,7 +82,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
         ActionTestingSupport.assertProceedEvent(event);
         
         final MultiFactorAuthenticationContext mfa = ac.getSubcontext(MultiFactorAuthenticationContext.class);
-        Assert.assertNotNull(mfa);
+        assert mfa != null;
         Assert.assertEquals(ac.getAttemptedFlow(), mfa.getAuthenticationFlowDescriptor());
         Assert.assertEquals(mfa.getTransitionMap().size(), 1);
         Assert.assertNotNull(mfa.getTransitionMap().get(null));
@@ -144,7 +145,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
         ActionTestingSupport.assertProceedEvent(event);
         
         final MultiFactorAuthenticationContext mfa = ac.getSubcontext(MultiFactorAuthenticationContext.class);
-        Assert.assertNotNull(mfa);
+        assert mfa != null;
         Assert.assertEquals(ac.getAttemptedFlow(), mfa.getAuthenticationFlowDescriptor());
         Assert.assertEquals(mfa.getActiveResults().size(), 2);
         Assert.assertNull(mfa.getActiveResults().get("foo"));

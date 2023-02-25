@@ -63,21 +63,21 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthentication
     }
 
     @Test public void testMissingIdentity2() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "foo");
+        getMockHttpServletRequest(action).addHeader(HttpHeaders.AUTHORIZATION, "foo");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testInvalid() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic foo:bar");
+        getMockHttpServletRequest(action).addHeader(HttpHeaders.AUTHORIZATION, "Basic foo:bar");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
     @Test public void testInvalid2() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOg==");
+        getMockHttpServletRequest(action).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOg==");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
@@ -85,31 +85,33 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthentication
     
     /* Test invalid base64 trailing bits. */
     @Test public void testInvalidBase64() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic AB==");
+        getMockHttpServletRequest(action).addHeader(HttpHeaders.AUTHORIZATION, "Basic AB==");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
     
     @Test public void testValid() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOmJhcg==");
+        getMockHttpServletRequest(action).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOmJhcg==");
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
-        Assert.assertNotNull(upCtx, "No UsernamePasswordContext attached");
+        assert authCtx != null;
+        final UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
+        assert upCtx != null;
         Assert.assertEquals(upCtx.getUsername(), "foo");
         Assert.assertEquals(upCtx.getPassword(), "bar");
     }
 
     @Test public void idp1968() {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOuKYr++4j2Jhcg==");
+        getMockHttpServletRequest(action).addHeader(HttpHeaders.AUTHORIZATION, "Basic Zm9vOuKYr++4j2Jhcg==");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
-        UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
-        Assert.assertNotNull(upCtx, "No UsernamePasswordContext attached");
+        assert authCtx != null;
+        final UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
+        assert upCtx != null;
         Assert.assertEquals(upCtx.getUsername(), "foo");
         Assert.assertEquals(upCtx.getPassword(), "☯️bar");
     }

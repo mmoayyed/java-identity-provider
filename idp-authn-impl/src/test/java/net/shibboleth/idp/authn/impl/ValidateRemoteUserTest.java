@@ -27,6 +27,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
@@ -58,13 +59,16 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     }
     
     @Test public void testMissingUser() {
-        prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(authenticationFlows.get(0));
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
     @Test public void testMissingUser2() throws ComponentInitializationException {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract();
@@ -74,9 +78,10 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testUnauthorized() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("bam");
+        getMockHttpServletRequest(action).setRemoteUser("bam");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract();
@@ -86,24 +91,27 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testAuthorized() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("baz");
+        getMockHttpServletRequest(action).setRemoteUser("baz");
         
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "baz");
     }
 
     @Test public void testDenyist() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("foo");
+        getMockHttpServletRequest(action).setRemoteUser("foo");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract();
@@ -113,17 +121,19 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     }
     
     @Test public void testPattern() throws ComponentInitializationException {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("ban");
+        getMockHttpServletRequest(action).setRemoteUser("ban");
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
         doExtract();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        Assert.assertEquals(ar.getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "ban");
     }
     

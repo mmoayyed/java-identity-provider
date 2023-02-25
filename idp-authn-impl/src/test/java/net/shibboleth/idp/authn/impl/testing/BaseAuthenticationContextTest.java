@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl.testing;
 
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.PopulateAuthenticationContext;
@@ -27,9 +28,14 @@ import net.shibboleth.shared.logic.FunctionSupport;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.RequestContext;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /** Base class for further action tests. */
 public class BaseAuthenticationContextTest extends OpenSAMLInitBaseTestCase {
@@ -55,11 +61,19 @@ public class BaseAuthenticationContextTest extends OpenSAMLInitBaseTestCase {
         initializeMembers();
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
+        assert authenticationFlows!= null;
         action.setAvailableFlows(authenticationFlows);
         action.setPotentialFlowsLookupStrategy(FunctionSupport.constant(authenticationFlows));
         action.initialize();
 
         action.execute(src);
+    }
+
+    @Nonnull protected final MockHttpServletRequest getMockHttpServletRequest(final AbstractAuthenticationAction action) {
+        assert action != null;
+        final HttpServletRequest req = action.getHttpServletRequest();
+        assert req != null;
+        return (MockHttpServletRequest)req;
     }
 
 }
