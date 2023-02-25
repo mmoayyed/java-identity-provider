@@ -27,11 +27,11 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.session.IdPSession;
@@ -41,6 +41,7 @@ import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An authentication action that establishes a record of the {@link net.shibboleth.idp.authn.AuthenticationResult}
@@ -149,6 +150,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             }
             
             // We can only do work if a session exists or a non-empty SubjectContext exists.
+            assert sessionCtx != null;
             return sessionCtx.getIdPSession() != null || (subjectCtx != null && subjectCtx.getPrincipalName() != null);
         }
         
@@ -159,8 +161,10 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
+        final SessionContext sc = sessionCtx;
+        assert sc != null;;
 
-        final IdPSession session = sessionCtx.getIdPSession();
+        final IdPSession session = sc.getIdPSession();
         if (session != null) {
             try {
                 updateIdPSession(authenticationContext, session);
@@ -172,8 +176,9 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             try {
                 createIdPSession(authenticationContext);
             } catch (final SessionException e) {
-                log.error("{} Error creating session for principal {}", getLogPrefix(),
-                        subjectCtx.getPrincipalName(), e);
+                assert subjectCtx != null;
+                final String principalName = subjectCtx.getPrincipalName();
+                log.error("{} Error creating session for principal {}", getLogPrefix(), principalName, e);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
         }
@@ -192,17 +197,19 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     private void updateIdPSession(@Nonnull final AuthenticationContext authenticationContext,
             @Nonnull final IdPSession session) throws SessionException {
         
+        final AuthenticationResult ar = authenticationContext.getAuthenticationResult();
+        assert ar != null;
         if (authenticationContext.getAttemptedFlow() != null) {
             if (authenticationContext.isResultCacheable()) {
                 log.debug("{} Adding new AuthenticationResult for flow {} to existing session {}", getLogPrefix(),
-                        authenticationContext.getAuthenticationResult().getAuthenticationFlowId(), session.getId());
-                session.addAuthenticationResult(authenticationContext.getAuthenticationResult());
+                        ar.getAuthenticationFlowId(), session.getId());
+                session.addAuthenticationResult(ar);
             }
         } else {
             log.debug("{} Updating activity time on reused AuthenticationResult for flow {} in existing session {}",
-                    getLogPrefix(), authenticationContext.getAuthenticationResult().getAuthenticationFlowId(),
+                    getLogPrefix(), ar.getAuthenticationFlowId(),
                     session.getId());
-            session.updateAuthenticationResultActivity(authenticationContext.getAuthenticationResult());
+            session.updateAuthenticationResultActivity(ar);
         }
     }
     
@@ -215,11 +222,20 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     private void createIdPSession(@Nonnull final AuthenticationContext authenticationContext)
             throws SessionException {
 
-        log.debug("{} Creating new session for principal {}", getLogPrefix(), subjectCtx.getPrincipalName());
+        final SessionContext sc = sessionCtx;
+        final SubjectContext sbc = subjectCtx;
+        assert sbc != null && sc != null;;
+        final String principalName = sbc.getPrincipalName();
+        assert principalName != null;
+        log.debug("{} Creating new session for principal {}", getLogPrefix(), principalName);
         
-        sessionCtx.setIdPSession(sessionManager.createSession(subjectCtx.getPrincipalName()));
+        sc.setIdPSession(sessionManager.createSession(principalName));
         if (authenticationContext.isResultCacheable()) {
-            sessionCtx.getIdPSession().addAuthenticationResult(authenticationContext.getAuthenticationResult());
+            final AuthenticationResult ar = authenticationContext.getAuthenticationResult();
+            assert ar != null;
+            final IdPSession idPSession = sc.getIdPSession();
+            assert idPSession != null;
+            idPSession.addAuthenticationResult(ar);
         }
     }
 }

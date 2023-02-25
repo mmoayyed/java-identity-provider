@@ -62,7 +62,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(UpdateSessionWithSPSession.class);
     
     /** A function that returns the {@link SPSession} to add. */
-    @Nonnull private Function<ProfileRequestContext,SPSession> spSessionCreationStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,SPSession> spSessionCreationStrategy;
 
     /** SessionManager. */
     @NonnullAfterInit private SessionManager sessionManager;
@@ -147,8 +147,9 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
             log.debug("{} SPSession was not returned, nothing to do", getLogPrefix());
             return;
         }
-        
+        assert sessionCtx != null;
         final IdPSession idpSession = sessionCtx.getIdPSession();
+        assert idpSession != null;
         try {
             log.debug("{} Adding new SPSession for relying party {} to existing session {}", getLogPrefix(),
                     spSession.getId(), idpSession.getId());

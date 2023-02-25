@@ -95,9 +95,10 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
         }
-
-        log.debug("{} Selecting logout propagation flow {}", getLogPrefix(), flow.getId());
-        ActionSupport.buildEvent(profileRequestContext, flow.getId());
+        final String flowId = flow.getId();
+        assert flowId != null;
+        log.debug("{} Selecting logout propagation flow {}", getLogPrefix(), flowId);
+        ActionSupport.buildEvent(profileRequestContext, flowId);
     }
     
 }

@@ -31,6 +31,7 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.session.AbstractIdPSession;
 import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
@@ -169,7 +170,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             final Map.Entry<String,Optional<AuthenticationResult>> entry = entries.next();
             if (entry.getValue().isEmpty()) {
                 try {
-                    final AuthenticationResult result = loadAuthenticationResultFromStorage(entry.getKey());
+                    final String key = entry.getKey();
+                    assert key != null;
+                    final AuthenticationResult result = loadAuthenticationResultFromStorage(key);
                     if (result != null) {
                         entry.setValue(Optional.of(result));
                     } else {
@@ -202,7 +205,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         
         // Load and add to map.
         try {
-            result = loadAuthenticationResultFromStorage(trimmed);
+            result = loadAuthenticationResultFromStorage(Constraint.isNotNull(trimmed, "FlowID was empty"));
             if (result != null) {
                 doAddAuthenticationResult(result);
             } else {
@@ -337,7 +340,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 final Map.Entry<String, Optional<SPSession>> entry = entries.next();
                 if (entry.getValue().isEmpty()) {
                     try {
-                        final SPSession result = loadSPSessionFromStorage(entry.getKey());
+                        final String key = entry.getKey();
+                        assert key != null;
+                        final SPSession result = loadSPSessionFromStorage(key);
                         if (result != null) {
                             entry.setValue(Optional.of(result));
                         } else {
@@ -372,7 +377,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             
             // Load and add to map.
             try {
-                result = loadSPSessionFromStorage(trimmed);
+                result = loadSPSessionFromStorage(Constraint.isNotNull(trimmed, "ServiceId was empty"));
                 if (result != null) {
                     doAddSPSession(result);
                 } else {
@@ -400,7 +405,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             try {
                 // Prime things to make sure any previous instance from this SP is loaded so
                 // we know to remove it.
-                getSPSession(spSession.getId());
+                getSPSession(Constraint.isNotNull(spSession.getId(), "SessionID was empty"));
 
                 // Store the record.
                 if (!saveSPSessionToStorage(spSession) && !sessionManager.isMaskStorageFailure()) {
@@ -448,7 +453,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         if (super.removeSPSession(spSession)) {
             try {
                 // Remove the separate record.
-                sessionManager.getStorageService().delete(getId(), getSPSessionStorageKey(spSession.getId()));
+                sessionManager.getStorageService().delete(getId(), getSPSessionStorageKey(Constraint.isNotNull(spSession.getId(), "SessionID was empty")));
             } catch (final IOException e) {
                 log.error("Exception removing SPSession record for IdP session {} and service {}", getId(),
                         spSession.getId(), e);
@@ -633,11 +638,12 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             }
             
             final String sessionClassName = record.getValue().substring(0,  pos);
-            
+            final SPSessionSerializerRegistry registry = Constraint.isNotNull(sessionManager.getSPSessionSerializerRegistry(), "Session Serializer Registry not set up");
+
             // Look up the serializer instance for that class type.
-            final StorageSerializer<? extends SPSession> spSessionSerializer =
-                    sessionManager.getSPSessionSerializerRegistry().lookup(
-                            Class.forName(sessionClassName).asSubclass(SPSession.class));
+            final Class<? extends SPSession> claz = Class.forName(sessionClassName).asSubclass(SPSession.class);
+            assert claz != null;
+            final StorageSerializer<? extends SPSession> spSessionSerializer = registry.lookup(claz);
             if (spSessionSerializer == null) {
                 throw new IOException("No serializer registered for SPSession type " + sessionClassName);
             }
@@ -667,15 +673,18 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     private boolean saveSPSessionToStorage(@Nonnull final SPSession session) throws IOException {
         log.debug("Saving SPSession for service {} in session {}", session.getId(), getId());
 
+        final SPSessionSerializerRegistry registry = Constraint.isNotNull(sessionManager.getSPSessionSerializerRegistry(), "Session Serializer Registry not set up");
         // Look up the serializer instance for that class type.
+        final Class<? extends SPSession> claz = session.getClass();
+        assert claz != null;
         final StorageSerializer<SPSession> spSessionSerializer =
-                (StorageSerializer<SPSession>) sessionManager.getSPSessionSerializerRegistry().lookup(
-                        session.getClass());
+                (StorageSerializer<SPSession>) registry.lookup(claz);
         if (spSessionSerializer == null) {
             throw new IOException("No serializer registered for SPSession type " + session.getClass().getName());
         }
-
-        final String key = getSPSessionStorageKey(session.getId());
+        final String id = session.getId();
+        assert id != null;
+        final String key = getSPSessionStorageKey(id);
         
         // Prefix the class name to the serialized data.
         final StringBuilder builder = new StringBuilder(session.getClass().getName());
@@ -687,12 +696,12 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             boolean success = false;
             do {
                 final Instant exp = session.getExpirationInstant().plus(sessionManager.getSessionSlop());
-                success = sessionManager.getStorageService().create(getId(), key, builder.toString(),
-                        exp.toEpochMilli());
+                final String builtString = builder.toString();
+                assert builtString != null; 
+                success = sessionManager.getStorageService().create(getId(), key, builtString, exp.toEpochMilli());
                 if (!success) {
                     // The record already exists, so we need to overwrite via an update.
-                    success = sessionManager.getStorageService().update(getId(), key, builder.toString(),
-                            exp.toEpochMilli());
+                    success = sessionManager.getStorageService().update(getId(), key, builtString, exp.toEpochMilli());
                 }
             } while (!success && attempts-- > 0);
             
@@ -712,12 +721,14 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
      * Convert a service identifier into a suitable key for the underlying storage service.
      * 
      * @param serviceId the service identifier
-     * 
+     * = 
      * @return  an appropriately sized storage key
      */
     @Nonnull @NotEmpty private String getSPSessionStorageKey(@Nonnull @NotEmpty final String serviceId) {
         if (serviceId.length() > sessionManager.getStorageService().getCapabilities().getKeySize()) {
-            return DigestUtils.sha256Hex(serviceId);
+            final String result = DigestUtils.sha256Hex(serviceId);
+            assert result != null;
+            return result;
         }
         return serviceId;
     }

@@ -34,6 +34,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Stores the {@link LogoutContext} in the servlet session to facilitate lookup by logout propagation flows.
@@ -67,7 +68,7 @@ public class SaveLogoutContext extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+    @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
 
         final LogoutContext logoutContext = logoutContextLookup.apply(profileRequestContext);

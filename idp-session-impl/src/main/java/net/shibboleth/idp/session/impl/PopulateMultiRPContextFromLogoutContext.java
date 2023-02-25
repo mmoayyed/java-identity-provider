@@ -74,7 +74,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
     @Nonnull private Function<ProfileRequestContext,LogoutContext> logoutContextLookupStrategy;
     
     /** Role to resolve metadata for. */
-    @NonnullAfterInit private QName role; 
+    @Nonnull private QName role; 
     
     /** {@link LogoutContext} to process. */
     @Nullable private LogoutContext logoutCtx;
@@ -148,21 +148,28 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         checkComponentActive();
         
+        final LogoutContext lCtx = logoutCtx;
+        assert lCtx != null;
         final MultiRelyingPartyContext multiCtx = new MultiRelyingPartyContext();
         profileRequestContext.addSubcontext(multiCtx, true);
         
-        for (final String relyingPartyId : logoutCtx.getSessionMap().keySet()) {
+        for (final String relyingPartyId : lCtx.getSessionMap().keySet()) {
+            assert relyingPartyId != null;
             final RelyingPartyContext rpCtx = new RelyingPartyContext();
             rpCtx.setRelyingPartyId(relyingPartyId);
             multiCtx.addRelyingPartyContext(LABEL, rpCtx);
             
-            final EntityIdCriterion entityIdCriterion = new EntityIdCriterion(rpCtx.getRelyingPartyId());
+            final String id = rpCtx.getRelyingPartyId();
+            assert id != null;
+            final EntityIdCriterion entityIdCriterion = new EntityIdCriterion(id);
+            
             final EntityRoleCriterion roleCriterion = new EntityRoleCriterion(role);
             
             ProtocolCriterion protocolCriterion = null;
-            final SPSession spSession = logoutCtx.getSessions(relyingPartyId).iterator().next();
-            if (spSession.getProtocol() != null) {
-                protocolCriterion = new ProtocolCriterion(spSession.getProtocol());
+            final SPSession spSession = lCtx.getSessions(relyingPartyId).iterator().next();
+            final String protocol = spSession.getProtocol();
+            if (protocol != null) {
+                protocolCriterion = new ProtocolCriterion(protocol);
             }
             
             final CriteriaSet criteria = new CriteriaSet(entityIdCriterion, protocolCriterion, roleCriterion);
@@ -180,7 +187,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
                     continue;
                 }
 
-                final SAMLMetadataContext metadataCtx = rpCtx.getSubcontext(SAMLMetadataContext.class, true);
+                final SAMLMetadataContext metadataCtx = rpCtx.getOrCreateSubcontext(SAMLMetadataContext.class);
                 metadataCtx.setEntityDescriptor((EntityDescriptor) roleMetadata.getParent());
                 metadataCtx.setRoleDescriptor(roleMetadata);
 

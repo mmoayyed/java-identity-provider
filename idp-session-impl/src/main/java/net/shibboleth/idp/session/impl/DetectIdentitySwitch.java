@@ -176,7 +176,9 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
                 idpSession.getPrincipalName());
         
         try {
-            sessionManager.destroySession(idpSession.getId(), true);
+            final String id = idpSession.getId();
+            assert id != null;
+            sessionManager.destroySession(id, true);
         } catch (final SessionException e) {
             log.error("{} Error destroying session {}", getLogPrefix(), idpSession.getId(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);

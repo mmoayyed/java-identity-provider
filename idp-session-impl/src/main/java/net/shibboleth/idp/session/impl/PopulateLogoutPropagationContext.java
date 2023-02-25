@@ -253,6 +253,8 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      */
     @Nonnull private SPSession getSessionByValue(@Nonnull final String sessionVal) throws MessageDecodingException {
         try {
+            // checked in calling method.
+            assert dataSealer != null;
             final String decrypted = dataSealer.unwrap(sessionVal);
             final int pos = decrypted.indexOf(':');
             if (pos <= 0) {
@@ -260,17 +262,20 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
             }
 
             final String sessionClassName = decrypted.substring(0,  pos);
-
-            final StorageSerializer<? extends SPSession> spSessionSerializer =
-                    spSessionSerializerRegistry.lookup(Class.forName(sessionClassName).asSubclass(SPSession.class));
+            final Class<? extends SPSession> claz = Class.forName(sessionClassName).asSubclass(SPSession.class);
+            assert claz != null;
+            // checked in calling method.
+            assert spSessionSerializerRegistry != null;
+            final StorageSerializer<? extends SPSession> spSessionSerializer = spSessionSerializerRegistry.lookup(claz);
             if (spSessionSerializer == null) {
                 throw new MessageDecodingException("No serializer registered for session type: " + sessionClassName);
             }
 
             // Deserialize starting past the colon delimiter. The fields are mostly irrelevant here,
             // we're just after the session data itself.
-            return spSessionSerializer.deserialize(
-                    1, "session", "key", decrypted.substring(pos + 1), System.currentTimeMillis());
+            final String sub = decrypted.substring(pos + 1);
+            assert sub != null;
+            return spSessionSerializer.deserialize(1, "session", "key", sub, System.currentTimeMillis());
         } catch (final ClassNotFoundException | IOException | DataSealerException e) {
             throw new MessageDecodingException("Error deserializing encrypted SPSession", e);
         }

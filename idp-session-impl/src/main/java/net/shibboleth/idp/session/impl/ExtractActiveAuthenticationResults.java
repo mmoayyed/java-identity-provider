@@ -105,15 +105,17 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
+        final IdPSession theSession = session;
+        assert theSession != null;
         if (authenticationContext.getHintedName() == null) {
-            authenticationContext.setHintedName(session.getPrincipalName());
+            authenticationContext.setHintedName(theSession.getPrincipalName());
         }
         
         final Instant now = Instant.now();
         final Duration maxAge = authenticationContext.getMaxAge();
         
         final List<AuthenticationResult> actives = new ArrayList<>();
-        for (final AuthenticationResult result : session.getAuthenticationResults()) {
+        for (final AuthenticationResult result : theSession.getAuthenticationResults()) {
             final AuthenticationFlowDescriptor descriptor =
                     authenticationContext.getPotentialFlows().get(result.getAuthenticationFlowId());
             if (descriptor == null) {
