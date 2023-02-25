@@ -19,6 +19,7 @@ package net.shibboleth.idp.session.impl;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -32,6 +33,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -97,47 +99,49 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         final Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getRequest().setCookies(cookie);
 
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
-
+        assert session!= null;
+        
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!= null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        Assert.assertNotNull(logoutCtx);
-        Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
-        Assert.assertEquals(logoutCtx.getIdPSessions().iterator().next().getId(), session.getId());
+        assert logoutCtx!= null;
+        final Collection<IdPSession> sessions = logoutCtx.getIdPSessions(); 
+        Assert.assertEquals(sessions.size(), 1);
+        Assert.assertEquals(sessions.iterator().next().getId(), session.getId());
         Assert.assertTrue(logoutCtx.getSessionMap().isEmpty());
-        
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id != null;
+        sessionManager.destroySession(id, false);
     }
 
     @Test public void testSessionSPSessions() throws SessionException, ResolverException {
         final Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getRequest().setCookies(cookie);
 
         // Limit granularity to milliseconds for storage roundtrip.
         final Instant creation = Instant.ofEpochMilli(System.currentTimeMillis());
         final Instant expiration = creation.plusSeconds(3600);
 
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session != null;
         session.addSPSession(new BasicSPSession("https://sp.example.org", creation, expiration));
         session.addSPSession(new BasicSPSession("https://sp2.example.org", creation, expiration));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!= null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        Assert.assertNotNull(logoutCtx);
+        assert logoutCtx!= null;
         Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
         Assert.assertEquals(logoutCtx.getIdPSessions().iterator().next().getId(), session.getId());
         
@@ -151,34 +155,38 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
         
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id != null;
+        sessionManager.destroySession(id, false);
 }
     
     @Test public void testAddressRebind() throws SessionException, ResolverException {
         final Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setRemoteAddr("::1");
+        getRequest().setCookies(cookie);
+        getRequest().setRemoteAddr("::1");
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
-        
+        assert session != null;
+
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!= null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id != null;
+        sessionManager.destroySession(id, false);
     }
     
     @Test public void testAddressMismatch() throws SessionException {
         final Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setRemoteAddr("192.168.1.1");
+        getRequest().setCookies(cookie);
+        getRequest().setRemoteAddr("192.168.1.1");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -191,26 +199,31 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         action.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
         action.setHttpServletResponseSupplier(new ThreadLocalHttpServletResponseSupplier());
         action.setSessionResolver(sessionManager);
-        action.setAddressLookupStrategy(input -> action.getHttpServletRequest().getHeader("User-Agent"));
+        action.setAddressLookupStrategy(input -> {
+            final HttpServletRequest req = action.getHttpServletRequest();
+            assert req != null;
+            return req.getHeader("User-Agent");});
         action.initialize();
         
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).addHeader("User-Agent", "UnitTest-Client");
+        getRequest().setCookies(cookie);
+        getRequest().addHeader("User-Agent", "UnitTest-Client");
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session != null;
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!=null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         Assert.assertTrue(session.checkAddress("UnitTest-Client"));
         
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id != null;
+        sessionManager.destroySession(id, false);
     }
 
 }

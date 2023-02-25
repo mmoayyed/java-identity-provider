@@ -57,6 +57,7 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
         
         sessionManager = new StorageBackedSessionManager();
         sessionManager.setSessionTimeout(Duration.ofSeconds(15));
+        assert storageService != null;
         sessionManager.setStorageService(storageService);
         sessionManager.setIDGenerator(IdentifierGenerationStrategy.getInstance(ProviderType.SECURE));
         sessionManager.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
@@ -93,11 +94,31 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
      * 
      * @throws SessionException ...
      */
-    protected Cookie createSession(@Nonnull @NotEmpty final String principalName) throws SessionException {
+    @Nonnull protected Cookie createSession(@Nonnull @NotEmpty final String principalName) throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         sessionManager.createSession(principalName);
-        Cookie cookie = ((MockHttpServletResponse) HttpServletRequestResponseContext.getResponse()).getCookies()[0];
+        Cookie cookie = getResponse().getCookies()[0];
         HttpServletRequestResponseContext.clearCurrent();
         return cookie;
     }
+    
+    
+    /** return a null safe {@link MockHttpServletRequest}.
+     * @return the request
+     */
+    @Nonnull protected MockHttpServletRequest getRequest() {
+        final MockHttpServletRequest result = (MockHttpServletRequest) HttpServletRequestResponseContext.getRequest();
+        assert result != null;
+        return result;
+    }
+    
+    /** return a null safe {@link MockHttpServletResponse}.
+     * @return the response
+     */
+    @Nonnull protected MockHttpServletResponse getResponse() {
+        final MockHttpServletResponse result = (MockHttpServletResponse) HttpServletRequestResponseContext.getResponse();
+        assert result != null;
+        return result;
+    }
+
 }

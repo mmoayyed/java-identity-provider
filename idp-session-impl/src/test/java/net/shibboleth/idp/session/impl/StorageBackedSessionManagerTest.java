@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
 import jakarta.servlet.http.Cookie;
@@ -70,6 +71,8 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
     private Collection<AuthenticationFlowDescriptor> flowDescriptors;
     
     private SPSessionSerializerRegistry serializerRegistry;
+    
+    private Object nullObj;
     
     @BeforeClass public void setUp() throws ComponentInitializationException {
         serializerRegistry = new SPSessionSerializerRegistry();
@@ -135,7 +138,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
 
         // Username should be required.
         try {
-            sessionManager.createSession(null);
+            sessionManager.createSession((String) nullObj);
             Assert.fail("A null username should not have worked");
         } catch (ConstraintViolationException e) {
             
@@ -148,8 +151,9 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertEquals(session.getPrincipalName(), "joe");
         Assert.assertTrue(session.getAuthenticationResults().isEmpty());
         Assert.assertTrue(session.getSPSessions().isEmpty());
-        Assert.assertEquals(mockResponse.getCookie(StorageBackedSessionManager.DEFAULT_COOKIE_NAME).getValue(),
-                session.getId());
+        Cookie cookie = mockResponse.getCookie(StorageBackedSessionManager.DEFAULT_COOKIE_NAME);
+        assert cookie != null;
+        Assert.assertEquals(cookie.getValue(), session.getId());
         
         log.trace("testSimpleSession({}): \n\tTime before sleep: {} \n\tCreation Instant: {}\n\t Last Activity : {} ",
                 Thread.currentThread().toString(),
@@ -172,9 +176,11 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         // Do a lookup and compare the results.
         final Instant creation = session.getCreationInstant();
         final Instant lastActivity = session.getLastActivityInstant();
+        assert session!=null;
         String sessionId = session.getId();
+        assert sessionId!=null;
         session = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId)));
-        Assert.assertNotNull(session);
+        assert session !=null;
         Assert.assertEquals(session.getPrincipalName(), "joe");
         Assert.assertEquals(session.getCreationInstant(), creation.truncatedTo(ChronoUnit.MILLIS));
         Assert.assertEquals(session.getLastActivityInstant(), lastActivity.truncatedTo(ChronoUnit.MILLIS));
@@ -205,8 +211,12 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         
         // Interleave manipulation of a session between two copies to check for resync.
         IdPSession one = sessionManager.createSession("joe");
-        IdPSession two = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(one.getId())));
-        
+        assert one!=null;
+        String oneId = one.getId();
+        assert oneId!=null;
+        IdPSession two = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(oneId)));
+        assert two!=null;
+
         Assert.assertTrue(one.checkAddress("192.168.1.1"));
         Assert.assertFalse(two.checkAddress("192.168.1.2"));
         Assert.assertTrue(two.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
@@ -214,7 +224,10 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertTrue(one.checkAddress("zorkmid"));
         Assert.assertFalse(two.checkAddress("bugbear"));
         
-        sessionManager.destroySession(session.getId(), true);
+        assert session!=null;
+        String sessionId = session.getId();
+        assert sessionId!=null;
+        sessionManager.destroySession(sessionId, true);
     }
 
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
@@ -260,20 +273,25 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         session.updateAuthenticationResultActivity(foo);
         
         // Load from storage and re-test.
-        IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
+        assert session!=null;
+        String sessionId = session.getId();
+        assert sessionId!=null;
+        IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId)));
+        assert session2 != null;
         Assert.assertNull(session2.getAuthenticationResult("AuthenticationFlow/Bar"));
         foo2 = session2.getAuthenticationResult("AuthenticationFlow/Foo");
-        Assert.assertNotNull(foo2);
+        assert foo2!=null;
         Assert.assertEquals(foo.getAuthenticationInstant().truncatedTo(ChronoUnit.MILLIS), foo2.getAuthenticationInstant());
         Assert.assertEquals(foo.getLastActivityInstant(), foo2.getLastActivityInstant());
         Assert.assertEquals(foo.getSubject(), foo2.getSubject());
         
         // Test removal while multiple objects are active.
-        session2 = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
+        session2 = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId)));
         Assert.assertTrue(session.removeAuthenticationResult(foo));
+        assert session2 != null;
         Assert.assertNull(session2.getAuthenticationResult("AuthenticationFlow/Foo"));
         
-        sessionManager.destroySession(session.getId(), true);
+        sessionManager.destroySession(sessionId, true);
     }
     
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
@@ -304,24 +322,30 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         // Test access and compare to original.
         Assert.assertNull(session.getSPSession("https://sp2.example.org/shibboleth"));
         SPSession foo2 = session.getSPSession("https://sp.example.org/shibboleth");
-        Assert.assertNotNull(foo2);
+        assert foo2!=null;
         Assert.assertEquals(foo.getCreationInstant(), foo2.getCreationInstant());
         Assert.assertEquals(foo.getExpirationInstant(), foo2.getExpirationInstant());
         
         // Load from storage and re-test.
-        IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
+        assert session!=null;
+        String sessionId = session.getId();
+        assert sessionId!=null;
+        IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId)));
+
         Assert.assertNull(session.getSPSession("https://sp2.example.org/shibboleth"));
+        assert session2!=null;
         foo2 = session2.getSPSession("https://sp.example.org/shibboleth");
-        Assert.assertNotNull(foo2);
+        assert foo2!=null;
         Assert.assertEquals(foo.getCreationInstant().truncatedTo(ChronoUnit.MILLIS), foo2.getCreationInstant());
         Assert.assertEquals(foo.getExpirationInstant().truncatedTo(ChronoUnit.MILLIS), foo2.getExpirationInstant());
 
         // Test removal while multiple objects are active.
-        session2 = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(session.getId())));
+        session2 = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId)));
         Assert.assertTrue(session.removeSPSession(foo));
+        assert session2!=null;
         Assert.assertNull(session2.getSPSession("https://sp.example.org/shibboleth"));
         
-        sessionManager.destroySession(session.getId(), true);
+        sessionManager.destroySession(sessionId, true);
     }
     
     @Test
@@ -355,8 +379,10 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
             sessions.add(s);
         }
         Assert.assertEquals(sessions.size(), 2);
-        
-        sessionManager.destroySession(session.getId(), true);
+        String sessionId = session.getId();
+        assert sessionId!=null;
+
+        sessionManager.destroySession(sessionId, true);
         
         sessions.clear();
         for (final IdPSession s : sessionManager.resolve(
@@ -365,8 +391,10 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
             sessions.add(s);
         }
         Assert.assertEquals(sessions.size(), 1);
-        
-        sessionManager.destroySession(session2.getId(), true);
+        String session2Id = session2.getId();
+        assert session2Id!=null;
+
+        sessionManager.destroySession(session2Id, true);
         
         sessions.clear();
         for (final IdPSession s : sessionManager.resolve(
@@ -381,7 +409,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
 
         public static final String SESSION_KEY = "PerSessionNameWouldGoHere";
         
-        public ExtendedSPSession(String id, Instant creation, Instant expiration) {
+        public ExtendedSPSession(@Nonnull String id, @Nonnull Instant creation, @Nonnull Instant expiration) {
             super(id, creation, expiration);
         }
 
@@ -399,7 +427,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         
         /** {@inheritDoc} */
         @Override
-        protected SPSession doDeserialize(JsonObject obj, String id, Instant creation, Instant expiration)
+        protected @Nonnull SPSession doDeserialize(JsonObject obj, String id, Instant creation, Instant expiration)
                 throws IOException {
             // Check if field got serialized.
             obj.getString("sk");

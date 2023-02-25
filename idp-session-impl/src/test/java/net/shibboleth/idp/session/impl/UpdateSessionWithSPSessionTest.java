@@ -89,7 +89,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         final IdPSession session = sessionManager.createSession("joe");
-        prc.getSubcontext(SessionContext.class, true).setIdPSession(session);
+        prc.getOrCreateSubcontext(SessionContext.class).setIdPSession(session);
         
         action.setSPSessionCreationStrategy(FunctionSupport.constant(null));
         action.initialize();
@@ -102,7 +102,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         final IdPSession session = sessionManager.createSession("joe");
-        prc.getSubcontext(SessionContext.class, true).setIdPSession(session);
+        prc.getOrCreateSubcontext(SessionContext.class).setIdPSession(session);
         
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);
@@ -113,7 +113,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         ActionTestingSupport.assertProceedEvent(event);
         
         final SPSession spSession = session.getSPSession("https://sp.example.org");
-        Assert.assertNotNull(spSession);
+        assert spSession!=null;
         Assert.assertEquals(spSession.getCreationInstant(), creation);
         Assert.assertEquals(spSession.getExpirationInstant(), expiration);
     }

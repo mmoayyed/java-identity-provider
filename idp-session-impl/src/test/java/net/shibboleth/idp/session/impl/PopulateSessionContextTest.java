@@ -27,9 +27,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -54,6 +56,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         action = new PopulateSessionContext();
         action.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
         action.setHttpServletResponseSupplier(new ThreadLocalHttpServletResponseSupplier());
+        assert sessionManager != null;
         action.setSessionResolver(sessionManager);
         action.initialize();
     }
@@ -69,37 +72,41 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getRequest().setCookies(cookie);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
-        Assert.assertNotNull(sessionCtx);
+        assert sessionCtx != null;
+        final IdPSession session = sessionCtx.getIdPSession();
+        assert session != null;
         
-        Assert.assertEquals(sessionCtx.getIdPSession().getPrincipalName(), "joe");
+        Assert.assertEquals(session.getPrincipalName(), "joe");
     }
 
     @Test public void testAddressRebind() throws SessionException {
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setRemoteAddr("::1");
+        getRequest().setCookies(cookie);
+        getRequest().setRemoteAddr("::1");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
-        Assert.assertNotNull(sessionCtx);
-        
-        Assert.assertEquals(sessionCtx.getIdPSession().getPrincipalName(), "joe");
+        assert sessionCtx != null;
+        final IdPSession session = sessionCtx.getIdPSession();
+        assert session != null;
+
+        Assert.assertEquals(session.getPrincipalName(), "joe");
     }
     
     @Test public void testAddressMismatch() throws SessionException {
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setRemoteAddr("192.168.1.1");
+        getRequest().setCookies(cookie);
+        getRequest().setRemoteAddr("192.168.1.1");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -110,7 +117,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getRequest().setCookies(cookie);
         
         Thread.sleep(16000);
         
@@ -124,22 +131,26 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         action.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
         action.setHttpServletResponseSupplier(new ThreadLocalHttpServletResponseSupplier());
         action.setSessionResolver(sessionManager);
-        action.setAddressLookupStrategy(input -> action.getHttpServletRequest().getHeader("User-Agent"));
+        final HttpServletRequest req = action.getHttpServletRequest();
+        assert req != null;
+        action.setAddressLookupStrategy(input -> req.getHeader("User-Agent"));
         action.initialize();
         
         Cookie cookie = createSession("joe");
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).addHeader("User-Agent", "UnitTest-Client");
+        getRequest().setCookies(cookie);
+        getRequest().addHeader("User-Agent", "UnitTest-Client");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
-        Assert.assertNotNull(sessionCtx);
+        assert sessionCtx != null;
         
-        Assert.assertEquals(sessionCtx.getIdPSession().getPrincipalName(), "joe");
-        Assert.assertTrue(sessionCtx.getIdPSession().checkAddress("UnitTest-Client"));
+        final IdPSession idpSession =sessionCtx.getIdPSession();
+        assert idpSession!= null;
+        Assert.assertEquals(idpSession.getPrincipalName(), "joe");
+        Assert.assertTrue(idpSession.checkAddress("UnitTest-Client"));
     }
     
 }

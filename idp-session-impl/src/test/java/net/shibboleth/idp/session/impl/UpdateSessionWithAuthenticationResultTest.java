@@ -93,18 +93,20 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
 
     @Test public void testNoFlow() throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("joe");
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("joe");
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test2", new UsernamePrincipal("joe")));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.IO_ERROR);
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
-        Assert.assertNotNull(sessionCtx);
+        assert sessionCtx!=null;
+        final IdPSession idpSession = sessionCtx.getIdPSession();
+        assert idpSession!=null;
         
-        Assert.assertEquals(sessionCtx.getIdPSession().getPrincipalName(), "joe");
-        Assert.assertEquals(sessionCtx.getIdPSession().getAuthenticationResults().size(), 0);
-        Assert.assertNotNull((((MockHttpServletResponse) HttpServletRequestResponseContext.getResponse()).getCookies()[0]));
+        Assert.assertEquals(idpSession.getPrincipalName(), "joe");
+        Assert.assertEquals(idpSession.getAuthenticationResults().size(), 0);
+        Assert.assertNotNull(getResponse().getCookies()[0]);
     }
 
     @Test public void testNotCacheable() throws SessionException {
@@ -114,16 +116,20 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         ac.setResultCacheable(false);
         
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
+        assert sessionCtx!=null;
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertEquals(sessionCtx.getIdPSession().getAuthenticationResults().size(), 0);
+        final IdPSession idpSession = sessionCtx.getIdPSession();
+        assert idpSession!=null;
+
+        Assert.assertEquals(idpSession.getAuthenticationResults().size(), 0);
     }
     
     @Test public void testNewSession() throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("joe");
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("joe");
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
@@ -131,10 +137,13 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         ActionTestingSupport.assertProceedEvent(event);
         SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
         Assert.assertNotNull(sessionCtx);
-        
-        Assert.assertEquals(sessionCtx.getIdPSession().getPrincipalName(), "joe");
-        Assert.assertSame(sessionCtx.getIdPSession().getAuthenticationResult("test1"), ac.getAuthenticationResult());
-        Assert.assertNotNull((((MockHttpServletResponse) HttpServletRequestResponseContext.getResponse()).getCookies()[0]));
+        assert sessionCtx!=null;
+        final IdPSession idpSession = sessionCtx.getIdPSession();
+        assert idpSession!=null;
+
+        Assert.assertEquals(idpSession.getPrincipalName(), "joe");
+        Assert.assertSame(idpSession.getAuthenticationResult("test1"), ac.getAuthenticationResult());
+        Assert.assertNotNull(getResponse().getCookies()[0]);
     }
     
     @Test public void testAddToSession() throws SessionException {
@@ -142,48 +151,58 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
-        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
+        SessionContext sessionCtx = prc.getOrCreateSubcontext(SessionContext.class);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        
-        Assert.assertSame(sessionCtx.getIdPSession().getAuthenticationResult("test1"), ac.getAuthenticationResult());
+        final IdPSession idpSession = sessionCtx.getIdPSession();
+        assert idpSession!=null;
+
+        Assert.assertSame(idpSession.getAuthenticationResult("test1"), ac.getAuthenticationResult());
     }
 
     @Test public void testUpdateSessionNoResult() throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
-        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
+        SessionContext sessionCtx = prc.getOrCreateSubcontext(SessionContext.class);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        
-        Assert.assertEquals(sessionCtx.getIdPSession().getAuthenticationResults().size(), 0);
+        final IdPSession idpSession = sessionCtx.getIdPSession();
+        assert idpSession!=null;
+
+        Assert.assertEquals(idpSession.getAuthenticationResults().size(), 0);
     }
     
     @Test public void testUpdateSession() throws SessionException, ResolverException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
-        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
+        final SessionContext sessionCtx = prc.getOrCreateSubcontext(SessionContext.class);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
-        sessionCtx.getIdPSession().addAuthenticationResult(ac.getAuthenticationResult());
+        final IdPSession idpSession = sessionCtx.getIdPSession();
+        assert idpSession!=null;
+        final AuthenticationResult ar = ac.getAuthenticationResult();
+        assert ar != null;
+        idpSession.addAuthenticationResult(ar);
         
         // Limit granularity to milliseconds for storage roundtrip.
         final Instant ts = Instant.ofEpochMilli(System.currentTimeMillis()).plusSeconds(300);
-        ac.getAuthenticationResult().setLastActivityInstant(ts);
+        ar.setLastActivityInstant(ts);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertSame(sessionCtx.getIdPSession().getAuthenticationResult("test1"), ac.getAuthenticationResult());
+        Assert.assertSame(idpSession.getAuthenticationResult("test1"), ac.getAuthenticationResult());
         
-        IdPSession session2 = sessionManager.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(sessionCtx.getIdPSession().getId())));
+        final String idpSessionId = idpSession.getId();
+        assert idpSessionId!=null;
+        IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(idpSessionId)));
+        assert session2!= null;
         AuthenticationResult result = session2.getAuthenticationResult("test1");
-        Assert.assertNotNull(result);
+        assert result!=null;
         Assert.assertEquals(result.getLastActivityInstant(), ts);
     }
 
