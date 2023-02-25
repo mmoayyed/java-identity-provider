@@ -67,6 +67,7 @@ public final class TestSources {
     /** Another attributes values. */
     @Nonnull public static final String[] SECOND_ATTRIBUTE_VALUE_STRINGS = {"at2-Val1", "at2-Val2"};
 
+    /** Still more attributes values. */
     @SuppressWarnings("null")
     @Nonnull public static final StringAttributeValue[] SECOND_ATTRIBUTE_VALUE_RESULTS = {
             new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),
@@ -75,29 +76,33 @@ public final class TestSources {
     /** A value from both providers. */
     @Nonnull public static final String COMMON_ATTRIBUTE_VALUE_STRING = "at1-Data";
 
+    /** A {@link StringAttributeValue} with value {@value #COMMON_ATTRIBUTE_VALUE_STRING}. */
     @Nonnull public static final StringAttributeValue COMMON_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
             COMMON_ATTRIBUTE_VALUE_STRING);
 
     /** A value from the connector. */
     @Nonnull public static final String CONNECTOR_ATTRIBUTE_VALUE_STRING = "at1-Connector";
 
+    /** A {@link StringAttributeValue} with value {@value #COMMON_ATTRIBUTE_VALUE_STRING}. */
     @Nonnull public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
             CONNECTOR_ATTRIBUTE_VALUE_STRING);
 
     /** A value from the attribute. */
     @Nonnull public static final String ATTRIBUTE_ATTRIBUTE_VALUE_STRING = "at1-Attribute";
 
+    /** A {@link StringAttributeValue} with value {@value #ATTRIBUTE_ATTRIBUTE_VALUE_STRING}. */
     @Nonnull public static final StringAttributeValue ATTRIBUTE_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(
             ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
 
     /** Regexp. for CONNECTOR_ATTRIBUTE_VALUE (for map and regexp testing). */
     @Nonnull public static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-(.+)or";
 
-    /** a {@Link Pattern} derived from {@link #CONNECTOR_ATTRIBUTE_VALUE_REGEXP}. */
+    /** a {@link Pattern} derived from {@link #CONNECTOR_ATTRIBUTE_VALUE_REGEXP}. */
     @SuppressWarnings("null")
     @Nonnull public static final Pattern CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN = Pattern
             .compile(CONNECTOR_ATTRIBUTE_VALUE_REGEXP);
 
+    /** A {@link StringAttributeValue} with value "Connect".  */
     @Nonnull public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = new StringAttributeValue(
             "Connect");
 
@@ -211,6 +216,11 @@ public final class TestSources {
         return definition;
     }
 
+    /** return a {@link SAML2NameIDAttributeDefinition} (which doesn't carry string atribure values)
+     * @param name the name
+     * @return the definition
+     * @throws ComponentInitializationException for completeness
+     */
     public static AttributeDefinition nonStringAttributeDefiniton(@Nonnull String name) throws ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(name);
