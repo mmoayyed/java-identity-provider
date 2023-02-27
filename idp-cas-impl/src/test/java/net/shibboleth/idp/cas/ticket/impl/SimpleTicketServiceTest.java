@@ -59,10 +59,13 @@ public class SimpleTicketServiceTest {
     @Test
     public void testCreateRemoveServiceTicket() throws Exception {
         final ServiceTicket st = createServiceTicket();
-        assertNotNull(st);
-        assertNotNull(st.getTicketState().getSessionId());
-        assertNotNull(st.getTicketState().getPrincipalName());
+        assert st != null;
+        final TicketState ts = st.getTicketState();
+        assert ts != null;
+        assertNotNull(ts.getSessionId());
+        assertNotNull(ts.getPrincipalName());
         final ServiceTicket st2 = ticketService.removeServiceTicket(st.getId());
+        assert st2 != null;
         assertEquals(st, st2);
         assertEquals(st.getExpirationInstant(), st2.getExpirationInstant());
         assertEquals(st.getService(), st2.getService());
@@ -73,10 +76,13 @@ public class SimpleTicketServiceTest {
     @Test
     public void testCreateFetchRemoveProxyGrantingTicket() throws Exception {
         final ProxyGrantingTicket pgt = createProxyGrantingTicket();
-        assertNotNull(pgt);
-        assertNotNull(pgt.getTicketState().getSessionId());
-        assertNotNull(pgt.getTicketState().getPrincipalName());
+        assert pgt != null;
+        final TicketState ts = pgt.getTicketState();
+        assert ts != null;
+        assertNotNull(ts.getSessionId());
+        assertNotNull(ts.getPrincipalName());
         final ProxyGrantingTicket pgt2 = ticketService.fetchProxyGrantingTicket(pgt.getId());
+        assert pgt2 != null;
         assertEquals(pgt, pgt2);
         assertEquals(pgt.getExpirationInstant(), pgt2.getExpirationInstant());
         assertEquals(pgt.getService(), pgt2.getService());
@@ -93,10 +99,13 @@ public class SimpleTicketServiceTest {
                 expiry(),
                 createProxyGrantingTicket(),
                 TEST_SERVICE);
-        assertNotNull(pt);
-        assertNotNull(pt.getTicketState().getSessionId());
-        assertNotNull(pt.getTicketState().getPrincipalName());
+        assert pt != null;
+        final TicketState ts = pt.getTicketState();
+        assert ts != null;
+        assertNotNull(ts.getSessionId());
+        assertNotNull(ts.getPrincipalName());
         final ProxyTicket pt2 = ticketService.removeProxyTicket(pt.getId());
+        assert null != pt2;
         assertEquals(pt, pt2);
         assertEquals(pt.getExpirationInstant(), pt2.getExpirationInstant());
         assertEquals(pt.getService(), pt2.getService());

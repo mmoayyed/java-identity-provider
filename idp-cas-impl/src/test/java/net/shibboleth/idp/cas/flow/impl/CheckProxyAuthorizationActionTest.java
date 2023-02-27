@@ -21,6 +21,7 @@ import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
 
@@ -50,6 +51,8 @@ public class CheckProxyAuthorizationActionTest extends AbstractFlowActionTest {
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addServiceContext(new Service("https://serviceB.example.org/", "no-proxy", false))
                 .build();
-        assertEquals(action.execute(context).getId(), ProtocolError.ProxyNotAuthorized.name());
+        final  Event event =  action.execute(context);
+        assert event != null;
+        assertEquals(event.getId(), ProtocolError.ProxyNotAuthorized.name());
     }
 }

@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -42,6 +44,7 @@ import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistry
 import net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder;
 import net.shibboleth.idp.cas.attribute.Attribute;
 import net.shibboleth.idp.cas.attribute.CASAttributeTranscoder;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockApplicationContext;
 
@@ -72,7 +75,7 @@ public class CASDateTimeAttributeTranscoderTest {
         ruleset1.put(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder);
         ruleset1.put(CASAttributeTranscoder.PROP_NAME, ATTR_NAME);
         
-        registry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(ruleset1)));
+        registry.setTranscoderRegistry(CollectionSupport.singletonList(new TranscodingRule(ruleset1)));
         registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
     }
@@ -88,10 +91,10 @@ public class CASDateTimeAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(inputAttribute, Attribute.class);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
-        
+        assert ruleset != null;
         final Attribute attr = TranscoderSupport.<Attribute>getTranscoder(ruleset).encode(
                 null, inputAttribute, Attribute.class, ruleset);
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getName(), ATTR_NAME);
         Assert.assertTrue(attr.getValues().isEmpty());
     }
@@ -103,10 +106,10 @@ public class CASDateTimeAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(casAttribute);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
+        assert ruleset != null;
         
         final IdPAttribute attr = TranscoderSupport.getTranscoder(ruleset).decode(null, casAttribute, ruleset);
-        
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getId(), ATTR_ID);
         Assert.assertTrue(attr.getValues().isEmpty());
     }
@@ -116,12 +119,14 @@ public class CASDateTimeAttributeTranscoderTest {
         final List<IdPAttributeValue> values =
                 List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
                     @Override
-                    public Object getNativeValue() {
+                    public @Nonnull Object getNativeValue() {
                         return intArray;
                     }
                     @Override
-                    public String getDisplayValue() {
-                        return intArray.toString();
+                    public @Nonnull String getDisplayValue() {
+                        final String result = intArray.toString();
+                        assert result != null;
+                        return result;
                     }
                 });
 
@@ -131,7 +136,8 @@ public class CASDateTimeAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(inputAttribute, Attribute.class);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
-        
+        assert ruleset != null;
+
         TranscoderSupport.getTranscoder(ruleset).encode(null, inputAttribute, Attribute.class, ruleset);
     }
     
@@ -145,11 +151,12 @@ public class CASDateTimeAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(inputAttribute, Attribute.class);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
+        assert ruleset != null;
         
         final Attribute attr = TranscoderSupport.<Attribute>getTranscoder(ruleset).encode(
                 null, inputAttribute, Attribute.class, ruleset);
 
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getName(), ATTR_NAME);
 
         final Collection<String> children = attr.getValues();
@@ -169,10 +176,11 @@ public class CASDateTimeAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(casAttribute);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
+        assert ruleset != null;
         
         final IdPAttribute attr = TranscoderSupport.getTranscoder(ruleset).decode(null, casAttribute, ruleset);
         
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getId(), ATTR_ID);
         Assert.assertEquals(attr.getValues().size(), 1);
         Assert.assertEquals(((DateTimeAttributeValue)attr.getValues().get(0)).getValue(),

@@ -25,6 +25,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.time.Instant;
 
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
 
@@ -54,7 +55,10 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, "AB-1234-012346abcdef"), null)
                 .addRelyingPartyContext(TEST_SERVICE, true, new ValidateConfiguration())
                 .build();
-        assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.InvalidTicketFormat.name());
+        final  Event event =  newAction(ticketService).execute(context);
+        assert event != null;
+
+        assertEquals(event.getId(), ProtocolError.InvalidTicketFormat.name());
     }
 
     @Test
@@ -64,7 +68,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new TicketValidationRequest("mismatch", ticket.getId()), null)
                 .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
-        assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.ServiceMismatch.name());
+        final  Event event =  newAction(ticketService).execute(context);
+        assert event != null;
+        assertEquals(event.getId(), ProtocolError.ServiceMismatch.name());
     }
 
     @Test
@@ -79,7 +85,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .build();
         // Wait briefly to let ticket expire
         Thread.sleep(ticketTTLMillis + 5);
-        assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.TicketExpired.name());
+        final  Event event =  newAction(ticketService).execute(context);
+        assert event != null;
+        assertEquals(event.getId(), ProtocolError.TicketExpired.name());
     }
 
     @Test
@@ -90,9 +98,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, "ST-12345"), null)
                 .addRelyingPartyContext(TEST_SERVICE, true, new ValidateConfiguration())
                 .build();
-        assertEquals(
-                newAction(throwingTicketService).execute(context).getId(),
-                ProtocolError.TicketRetrievalError.name());
+        final  Event event =  newAction(throwingTicketService).execute(context);
+        assert event != null;
+        assertEquals(event.getId(), ProtocolError.TicketRetrievalError.name());
     }
 
     @Test
@@ -103,7 +111,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
         final ValidateTicketAction action = newAction(ticketService);
-        assertEquals(action.execute(context).getId(), Events.ServiceTicketValidated.name());
+        final  Event event =  action.execute(context);
+        assert event != null;
+        assertEquals(event.getId(), Events.ServiceTicketValidated.name());
         assertNotNull(action.getCASResponse(getProfileContext(context)));
     }
 
@@ -115,7 +125,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
         final ValidateTicketAction action = newAction(ticketService);
-        assertEquals(action.execute(context).getId(), Events.ServiceTicketValidated.name());
+        final  Event event =  action.execute(context);
+        assert event != null;
+        assertEquals(event.getId(), Events.ServiceTicketValidated.name());
         assertNotNull(action.getCASResponse(getProfileContext(context)));
     }
 
@@ -129,7 +141,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addRelyingPartyContext(pt.getService(), true, new ValidateConfiguration())
                 .build();
         final ValidateTicketAction action = newAction(ticketService);
-        assertEquals(action.execute(context).getId(), Events.ProxyTicketValidated.name());
+        final  Event event =  action.execute(context);
+        assert event != null;
+        assertEquals(event.getId(), Events.ProxyTicketValidated.name());
         assertNotNull(action.getCASResponse(getProfileContext(context)));
     }
 

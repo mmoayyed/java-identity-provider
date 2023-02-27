@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -39,6 +41,7 @@ import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistry
 import net.shibboleth.idp.cas.attribute.AbstractCASAttributeTranscoder;
 import net.shibboleth.idp.cas.attribute.Attribute;
 import net.shibboleth.idp.cas.attribute.CASAttributeTranscoder;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockApplicationContext;
 
@@ -78,7 +81,7 @@ public class CASScopedStringAttributeTranscoderTest {
         ruleset1.put(CASAttributeTranscoder.PROP_NAME, ATTR_NAME);
         ruleset1.put(CASScopedStringAttributeTranscoder.PROP_SCOPE_DELIMITER, DELIMITER);
         
-        registry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(ruleset1)));
+        registry.setTranscoderRegistry(CollectionSupport.singletonList(new TranscodingRule(ruleset1)));
         registry.setApplicationContext(new MockApplicationContext());
         registry.initialize();
     }
@@ -94,10 +97,11 @@ public class CASScopedStringAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(inputAttribute, Attribute.class);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
-        
+        assert ruleset != null;
+
         final Attribute attr = TranscoderSupport.<Attribute>getTranscoder(ruleset).encode(
                 null, inputAttribute, Attribute.class, ruleset);
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getName(), ATTR_NAME);
         Assert.assertTrue(attr.getValues().isEmpty());
     }
@@ -109,10 +113,11 @@ public class CASScopedStringAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(casAttribute);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
+        assert ruleset != null;
         
         final IdPAttribute attr = TranscoderSupport.getTranscoder(ruleset).decode(null, casAttribute, ruleset);
         
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getId(), ATTR_ID);
         Assert.assertTrue(attr.getValues().isEmpty());
     }
@@ -122,12 +127,14 @@ public class CASScopedStringAttributeTranscoderTest {
         final List<IdPAttributeValue> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
                     @Override
-                    public Object getNativeValue() {
+                    public @Nonnull Object getNativeValue() {
                         return intArray;
                     }
                     @Override
-                    public String getDisplayValue() {
-                        return intArray.toString();
+                    public @Nonnull String getDisplayValue() {
+                        final String result = intArray.toString();
+                        assert result != null;
+                        return result;
                     }
                 });
 
@@ -154,11 +161,12 @@ public class CASScopedStringAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(inputAttribute, Attribute.class);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
+        assert ruleset != null;
         
         final Attribute attr = TranscoderSupport.<Attribute>getTranscoder(ruleset).encode(
                 null, inputAttribute, Attribute.class, ruleset);
 
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getName(), ATTR_NAME);
 
         final Collection<String> children = attr.getValues();
@@ -178,10 +186,11 @@ public class CASScopedStringAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(casAttribute);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
+        assert ruleset != null;
         
         final IdPAttribute attr = TranscoderSupport.getTranscoder(ruleset).decode(null, casAttribute, ruleset);
         
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getId(), ATTR_ID);
         Assert.assertEquals(attr.getValues().size(), 1);
         
@@ -202,11 +211,12 @@ public class CASScopedStringAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(inputAttribute, Attribute.class);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
+        assert ruleset != null;
         
         final Attribute attr = TranscoderSupport.<Attribute>getTranscoder(ruleset).encode(
                 null, inputAttribute, Attribute.class, ruleset);
 
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getName(), ATTR_NAME);
 
         final Collection<String> children = attr.getValues();
@@ -234,10 +244,11 @@ public class CASScopedStringAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(casAttribute);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
-        
+        assert ruleset != null;
+
         final IdPAttribute attr = TranscoderSupport.getTranscoder(ruleset).decode(null, casAttribute, ruleset);
         
-        Assert.assertNotNull(attr);
+        assert attr != null;
         Assert.assertEquals(attr.getId(), ATTR_ID);
         Assert.assertEquals(attr.getValues().size(), 2);
 

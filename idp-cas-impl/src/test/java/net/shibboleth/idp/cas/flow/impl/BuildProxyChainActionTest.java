@@ -17,6 +17,14 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
@@ -24,11 +32,6 @@ import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.webflow.execution.RequestContext;
-import org.testng.annotations.Test;
-
-import static org.testng.Assert.*;
 
 /**
  * Unit test for {@link BuildProxyChainAction}.
@@ -87,6 +90,8 @@ public class BuildProxyChainActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(request, response)
                 .addTicketContext(ptC)
                 .build();
-        assertEquals(action.execute(context).getId(), ProtocolError.BrokenProxyChain.name());
+        final  Event event =  action.execute(context);
+        assert event != null;
+        assertEquals(event.getId(), ProtocolError.BrokenProxyChain.name());
     }
 }

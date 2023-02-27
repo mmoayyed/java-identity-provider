@@ -51,10 +51,11 @@ public class GrantProxyTicketActionTest extends AbstractFlowActionTest {
                 .build();
         assertNull(action.execute(context));
         final ProxyTicketResponse response = action.getCASResponse(getProfileContext(context));
-        assertNotNull(response);
-        assertNotNull(response.getPt());
-        final ProxyTicket pt = ticketService.removeProxyTicket(response.getPt());
-        assertNotNull(pt);
+        assert response != null;
+        final String pts = response.getPt();
+        assert pts != null;
+        final ProxyTicket pt = ticketService.removeProxyTicket(pts);
+        assert pt!=null;
         assertEquals(pt.getId(), response.getPt());
         assertEquals(pt.getService(), service);
     }

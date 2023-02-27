@@ -24,6 +24,7 @@ import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
 
@@ -49,7 +50,9 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
                 .addTicketContext(ticket)
                 .build();
-        assertEquals(action.execute(context).getId(), ProtocolError.TicketNotFromRenew.name());
+        final  Event event =  action.execute(context);
+        assert event != null;
+        assertEquals(event.getId(), ProtocolError.TicketNotFromRenew.name());
     }
 
     @Test
@@ -63,7 +66,10 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(request, null)
                 .addTicketContext(pt)
                 .build();
-        assertEquals(action.execute(context).getId(), ProtocolError.RenewIncompatibleWithProxy.name());
+        final  Event event =  action.execute(context);
+        assert event != null;
+
+        assertEquals(event.getId(), ProtocolError.RenewIncompatibleWithProxy.name());
     }
 
     @Test

@@ -17,14 +17,15 @@
 
 package net.shibboleth.idp.cas.service.impl;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Timer;
 
-import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.resource.Resource;
-import net.shibboleth.shared.spring.resource.ResourceHelper;
+import javax.annotation.Nonnull;
 
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
@@ -40,7 +41,11 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.resource.Resource;
+import net.shibboleth.shared.spring.resource.ResourceHelper;
+import net.shibboleth.shared.xml.ParserPool;
 
 /**
  * Unit test for {@link MetadataServiceRegistry}.
@@ -83,7 +88,9 @@ public class MetadataServiceRegistryTest {
     public void setUp() throws Exception {
         final Resource metadata = ResourceHelper.of(new ClassPathResource("/metadata/cas-test-metadata.xml"));
         metadataResolver = new ResourceBackedMetadataResolver(new Timer(true), metadata);
-        metadataResolver.setParserPool(XMLObjectProviderRegistrySupport.getParserPool());
+        final ParserPool pool = XMLObjectProviderRegistrySupport.getParserPool();
+        assert pool != null;
+        metadataResolver.setParserPool(pool);
         metadataResolver.setMaxRefreshDelay(Duration.ofSeconds(500));
         metadataResolver.setId("cas");
         metadataResolver.setIndexes(Collections.<MetadataIndex>singleton(new EndpointMetadataIndex(
@@ -97,7 +104,8 @@ public class MetadataServiceRegistryTest {
     }
 
     @Test(dataProvider = "parameters")
-    public void testLookup(final String serviceURL, final Service expected) throws ComponentInitializationException {
+    public void testLookup(@Nonnull final String serviceURL, final Service expected) throws ComponentInitializationException {
+        assert metadataResolver!=null;
         final PredicateRoleDescriptorResolver wrapper = new PredicateRoleDescriptorResolver(metadataResolver);
         wrapper.initialize();
         final MetadataServiceRegistry registry = new MetadataServiceRegistry(wrapper);
@@ -105,7 +113,7 @@ public class MetadataServiceRegistryTest {
         if (expected == null) {
             assertNull(actual);
         } else {
-            assertNotNull(actual);
+            assert actual != null;
             assertEquals(actual.getName(), expected.getName());
             assertEquals(actual.getGroup(), expected.getGroup());
             assertEquals(actual.isAuthorizedToProxy(), expected.isAuthorizedToProxy());

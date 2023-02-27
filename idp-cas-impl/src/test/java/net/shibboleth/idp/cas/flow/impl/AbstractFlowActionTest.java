@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import javax.annotation.Nonnull;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -102,36 +103,36 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
         return mockSession;
     }
 
-    protected static Instant expiry() {
+    @Nonnull protected static Instant expiry() {
         return Instant.now().plusSeconds(30);
     }
 
-    protected String generateServiceTicketId() {
+    @Nonnull protected String generateServiceTicketId() {
         return serviceTicketGenerator.generateIdentifier();
     }
 
-    protected String generateProxyTicketId() {
+    @Nonnull protected String generateProxyTicketId() {
         return proxyTicketGenerator.generateIdentifier();
     }
 
-    protected String generateProxyGrantingTicketId() {
+    @Nonnull protected String generateProxyGrantingTicketId() {
         return proxyGrantingTicketGenerator.generateIdentifier();
     }
 
-    protected ServiceTicket createServiceTicket(final String service, final boolean renew) {
+    @Nonnull protected ServiceTicket createServiceTicket(@Nonnull final String service, final boolean renew) {
         final TicketState state = new TicketState(TEST_SESSION_ID, TEST_PRINCIPAL_NAME, Instant.now(), "Password");
         return ticketService.createServiceTicket(generateServiceTicketId(), expiry(), service, state, renew);
     }
 
-    protected ProxyTicket createProxyTicket(final ProxyGrantingTicket pgt, final String service) {
+    @Nonnull protected ProxyTicket createProxyTicket(@Nonnull final ProxyGrantingTicket pgt, @Nonnull final String service) {
         return ticketService.createProxyTicket(generateProxyTicketId(), expiry(), pgt, service);
-    }
+    } 
 
-    protected ProxyGrantingTicket createProxyGrantingTicket(final ServiceTicket st, final String pgtUrl) {
+    @Nonnull protected ProxyGrantingTicket createProxyGrantingTicket(@Nonnull final ServiceTicket st, @Nonnull final String pgtUrl) {
         return ticketService.createProxyGrantingTicket(generateProxyGrantingTicketId(), expiry(), st, pgtUrl);
     }
 
-    protected ProxyGrantingTicket createProxyGrantingTicket(final ProxyTicket pt, final String pgtUrl) {
+    @Nonnull protected ProxyGrantingTicket createProxyGrantingTicket(@Nonnull final ProxyTicket pt, @Nonnull final String pgtUrl) {
         return ticketService.createProxyGrantingTicket(generateProxyGrantingTicketId(), expiry(), pt, pgtUrl);
     }
 
@@ -162,12 +163,12 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
         }
 
         /** {@inheritDoc} */
-        public Pair<String, SecretKey> getDefaultKey() throws KeyException {
+        public @Nonnull Pair<String, SecretKey> getDefaultKey() throws KeyException {
             return new Pair<>("default", key);
         }
 
         /** {@inheritDoc} */
-        public SecretKey getKey(final String s) throws KeyException {
+        public @Nonnull SecretKey getKey(final @Nonnull String s) throws KeyException {
             return key;
         }
     }

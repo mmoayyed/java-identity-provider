@@ -23,6 +23,8 @@ import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
+import net.shibboleth.idp.cas.ticket.TicketState;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.DataProvider;
@@ -67,10 +69,12 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
         assertNotNull(response.getTicket());
         assertEquals(response.getService(), request.getService());
         final ServiceTicket ticket = ticketService.removeServiceTicket(response.getTicket());
-        assertNotNull(ticket);
+        assert ticket!=null;
         assertEquals(ticket.isRenew(), request.isRenew());
         assertEquals(ticket.getId(), response.getTicket());
         assertEquals(ticket.getService(), response.getService());
-        assertEquals(ticket.getTicketState().getPrincipalName(), TEST_PRINCIPAL_NAME);
+        final TicketState ts = ticket.getTicketState();
+        assert ts != null;
+        assertEquals(ts.getPrincipalName(), TEST_PRINCIPAL_NAME);
     }
 }

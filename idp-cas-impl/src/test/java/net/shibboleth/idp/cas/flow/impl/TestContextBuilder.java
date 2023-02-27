@@ -30,6 +30,8 @@ import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -46,34 +48,34 @@ import org.springframework.webflow.test.MockRequestContext;
 public class TestContextBuilder {
 
     /** Root of context tree for our tests. */
-    private ProfileRequestContext profileRequestContext = new ProfileRequestContext();
+    @Nonnull private ProfileRequestContext profileRequestContext = new ProfileRequestContext();
 
     public TestContextBuilder(final String profileId) {
         profileRequestContext.setProfileId(profileId);
     }
 
-    public TestContextBuilder addAuthenticationContext(final AuthenticationResult result) {
+    @Nonnull public TestContextBuilder addAuthenticationContext(final AuthenticationResult result) {
         final AuthenticationContext authnCtx = new AuthenticationContext();
         authnCtx.setAuthenticationResult(result);
         profileRequestContext.addSubcontext(authnCtx);
         return this;
     }
 
-    public TestContextBuilder addSessionContext(final IdPSession session) {
+    @Nonnull public TestContextBuilder addSessionContext(final IdPSession session) {
         final SessionContext sessionContext = new SessionContext();
         sessionContext.setIdPSession(session);
         profileRequestContext.addSubcontext(sessionContext);
         return this;
     }
 
-    public TestContextBuilder addSubjectContext(final String principal) {
+    @Nonnull public TestContextBuilder addSubjectContext(final String principal) {
         final SubjectContext subjectContext = new SubjectContext();
         subjectContext.setPrincipalName(principal);
         profileRequestContext.addSubcontext(subjectContext);
         return this;
     }
 
-    public TestContextBuilder addProtocolContext(final Object request, final Object response) {
+    @Nonnull public TestContextBuilder addProtocolContext(final Object request, final Object response) {
         final ProtocolContext<Object,Object> context = new ProtocolContext<>();
         context.setRequest(request);
         context.setResponse(response);
@@ -81,13 +83,13 @@ public class TestContextBuilder {
         return this;
     }
 
-    public TestContextBuilder addTicketContext(final Ticket ticket) {
-        final ProtocolContext<?,?> context = profileRequestContext.getSubcontext(ProtocolContext.class, true);
+    @Nonnull public TestContextBuilder addTicketContext(@Nonnull final Ticket ticket) {
+        final ProtocolContext<?,?> context = profileRequestContext.getOrCreateSubcontext(ProtocolContext.class);
         context.addSubcontext(new TicketContext(ticket));
         return this;
     }
 
-    public TestContextBuilder addRelyingPartyContext(
+    @Nonnull  public TestContextBuilder addRelyingPartyContext(
             final String serviceURL, final boolean verified, final ProfileConfiguration config) {
         final RelyingPartyContext rpc = new RelyingPartyContext();
         rpc.setVerified(verified);
@@ -97,13 +99,13 @@ public class TestContextBuilder {
         return this;
     }
 
-    public TestContextBuilder addServiceContext(final Service service) {
-        final ProtocolContext<?,?> context = profileRequestContext.getSubcontext(ProtocolContext.class, true);
+    @Nonnull public TestContextBuilder addServiceContext(@Nonnull final Service service) {
+        final ProtocolContext<?,?> context = profileRequestContext.getOrCreateSubcontext(ProtocolContext.class);
         context.addSubcontext(new ServiceContext(service));
         return this;
     }
 
-    public RequestContext build() {
+    @Nonnull public RequestContext build() {
         final MockRequestContext requestContext = new MockRequestContext();
         final MockExternalContext externalContext = new MockExternalContext();
         externalContext.setNativeRequest(new MockHttpServletRequest());

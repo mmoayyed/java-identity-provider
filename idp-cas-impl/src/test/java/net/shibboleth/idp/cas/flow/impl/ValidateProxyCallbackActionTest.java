@@ -21,6 +21,8 @@ import java.net.URI;
 import java.security.cert.CertificateException;
 import java.time.Instant;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
@@ -29,6 +31,7 @@ import net.shibboleth.idp.cas.proxy.ProxyValidator;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
 
@@ -43,10 +46,13 @@ import static org.testng.Assert.*;
 @SuppressWarnings("javadoc")
 public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
 
+    private Object nullObj;
+    
     @Test
     public void testValidateProxySuccess() throws Exception {
+        @SuppressWarnings("null")
         final ValidateProxyCallbackAction action = new ValidateProxyCallbackAction(
-                mockProxyAuthenticator(null), ticketService);
+                mockProxyAuthenticator((Exception) nullObj), ticketService);
         action.initialize();
         final RequestContext context = newRequestContext("https://test.example.org/");
         assertNull(action.execute(context));
@@ -60,21 +66,22 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
         final ValidateProxyCallbackAction action = new ValidateProxyCallbackAction(
                 mockProxyAuthenticator(new CertificateException()), ticketService);
         action.initialize();
-        assertEquals(
-                action.execute(newRequestContext("https://test.example.org/")).getId(),
-                ProtocolError.ProxyCallbackAuthenticationFailure.name());
+        final  Event event =  action.execute(newRequestContext("https://test.example.org/"));
+        assert event != null;
+        assertEquals(event.getId(),ProtocolError.ProxyCallbackAuthenticationFailure.name());
     }
 
-    private static ProxyValidator mockProxyAuthenticator(final Exception toBeThrown)
+    @Nonnull private static ProxyValidator mockProxyAuthenticator(@Nonnull final Exception toBeThrown)
             throws Exception {
         final ProxyValidator validator = mock(ProxyValidator.class);
+        assert validator!= null;
         if (toBeThrown != null) {
             doThrow(toBeThrown).when(validator).validate(any(ProfileRequestContext.class), any(URI.class));
         }
         return validator;
     }
 
-    private static RequestContext newRequestContext(final String pgtURL) {
+    @Nonnull private static RequestContext newRequestContext(final String pgtURL) {
         final String service = "https://test.example.com/";
         final String ticketId = "ST-123-ABCCEF";
         final ServiceTicket st = new ServiceTicket(ticketId, service, Instant.now(), false);

@@ -20,6 +20,8 @@ package net.shibboleth.idp.cas.ticket.impl;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
@@ -82,11 +84,12 @@ public class EncodingTicketServiceTest {
         final String service = "https://www.example.com/s1/";
         final Instant expiry = Instant.now().plusSeconds(5);
         final String id = String.valueOf(System.currentTimeMillis());
+        assert id != null && expiry != null;
         final ServiceTicket st1 = ticketService.createServiceTicket(id, expiry, service, state, true);
-        assertNotNull(st1);
+        assert st1 != null;
         assertTrue(st1.getId().startsWith("ST-"));
         final ServiceTicket st2 = ticketService.removeServiceTicket(st1.getId());
-        assertNotNull(st2);
+        assert st2 != null;
         assertEquals(st1.getId(), st2.getId());
         assertEquals(expiry.truncatedTo(ChronoUnit.MILLIS), st2.getExpirationInstant());
         assertEquals(service, st2.getService());
@@ -95,7 +98,7 @@ public class EncodingTicketServiceTest {
         assertEquals(state, st2.getTicketState());
         // Confirm removing multiple times is possible
         final ServiceTicket st3 = ticketService.removeServiceTicket(st1.getId());
-        assertNotNull(st3);
+        assert st3 != null;
         assertEquals(st1.getId(), st3.getId());
     }
 
@@ -131,11 +134,12 @@ public class EncodingTicketServiceTest {
         final String service = "https://www.example.com/s2/";
         final Instant expiry = Instant.now().plusSeconds(5);
         final String id = String.valueOf(System.currentTimeMillis());
+        assert id != null && expiry !=null;
         final ProxyTicket pt1 = ticketService.createProxyTicket(id, expiry, pgt, service);
-        assertNotNull(pt1);
+        assert pt1 != null;
         assertTrue(pt1.getId().startsWith("PT-"));
         final ProxyTicket pt2 = ticketService.removeProxyTicket(pt1.getId());
-        assertNotNull(pt2);
+        assert pt2 != null;
         assertEquals(pt1.getId(), pt2.getId());
         assertEquals(expiry.truncatedTo(ChronoUnit.MILLIS), pt2.getExpirationInstant());
         assertEquals(service, pt2.getService());
@@ -143,7 +147,7 @@ public class EncodingTicketServiceTest {
         assertEquals(pgt.getTicketState(), pt2.getTicketState());
         // Confirm removing multiple times is possible
         final ProxyTicket pt3 = ticketService.removeProxyTicket(pt1.getId());
-        assertNotNull(pt3);
+        assert pt3 != null;
         assertEquals(pt1.getId(), pt3.getId());
     }
 
@@ -153,8 +157,9 @@ public class EncodingTicketServiceTest {
         final String service = "https://www.example.com/s2/";
         final Instant expiry = Instant.now().plusSeconds(5);
         final String id = String.valueOf(System.currentTimeMillis());
+        assert id != null && expiry!=null;
         final ProxyTicket pt1 = ticketService.createProxyTicket(id, expiry, pgt, service);
-        assertNotNull(pt1);
+        assert pt1 != null;
         assertNull(ticketService.removeProxyTicket("PT-123"));
     }
 
@@ -170,18 +175,24 @@ public class EncodingTicketServiceTest {
             newState(principal),
             true);
         final Instant expiry = Instant.now().plusSeconds(3600);
+        assert expiry!=null;
         final ProxyGrantingTicket pgt = ticketService.createProxyGrantingTicket("notused", expiry, st, pgtUrl);
         assertTrue(pgt.getId().startsWith("PGT-E-"));
         final ProxyGrantingTicket pgt2 = ticketService.fetchProxyGrantingTicket(pgt.getId());
-        assertNotNull(pgt2);
+        assert pgt2 != null;
         assertEquals(pgt2.getService(), serviceUrl);
         assertEquals(pgt2.getProxyCallbackUrl(), pgtUrl);
-        assertEquals(pgt2.getTicketState().getPrincipalName(), principal);
+        final TicketState ts2 = pgt2.getTicketState();
+        assert ts2 != null;
+        assertEquals(ts2.getPrincipalName(), principal);
         final ProxyGrantingTicket pgt3 = ticketService.removeProxyGrantingTicket(pgt.getId());
+        assert pgt3 != null;
         assertNotNull(pgt3);
         assertEquals(pgt3.getService(), serviceUrl);
         assertEquals(pgt2.getProxyCallbackUrl(), pgtUrl);
-        assertEquals(pgt3.getTicketState().getPrincipalName(), principal);
+        final TicketState ts3 = pgt3.getTicketState();
+        assert ts3 != null;
+        assertEquals(ts3.getPrincipalName(), principal);
         // Removing encoded tickets is the same as fetching so they are still available (no backing storage)
         assertNotNull(ticketService.fetchProxyGrantingTicket(pgt.getId()));
     }
@@ -191,7 +202,7 @@ public class EncodingTicketServiceTest {
                 Instant.now().truncatedTo(ChronoUnit.MILLIS), "authn/Password");
     }
 
-    private ProxyGrantingTicket newPGT(final TicketState state, final String service) {
+    private ProxyGrantingTicket newPGT(@Nonnull final TicketState state, @Nonnull final String service) {
         final ProxyGrantingTicket pgt = new ProxyGrantingTicket(
             pgtIdGenerator.generateIdentifier(),
             service,
