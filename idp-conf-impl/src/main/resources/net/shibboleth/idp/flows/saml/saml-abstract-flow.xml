@@ -17,8 +17,6 @@
         <evaluate expression="SAML1ArtifactRequestIssuer" />
         <evaluate expression="SAMLProtocolAndRole" />
         <evaluate expression="SAMLMetadataLookup" />
-        <evaluate expression="SAMLPopulateAttributeConsumingService" />
-        <evaluate expression="MapRequestedAttributesInAttributeConsumingService" />
 
         <evaluate expression="InitializeRelyingPartyContextFromSAMLPeer" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
@@ -26,6 +24,9 @@
         <evaluate expression="PostLookupPopulateAuditContext" />
         
         <evaluate expression="SelectProfileConfiguration" />
+
+        <evaluate expression="SAMLPopulateAttributeConsumingService" />
+        <evaluate expression="MapRequestedAttributesInAttributeConsumingService" />
 
         <evaluate expression="PopulateSignatureValidationParameters" />
         <evaluate expression="PopulateClientTLSValidationParameters" />

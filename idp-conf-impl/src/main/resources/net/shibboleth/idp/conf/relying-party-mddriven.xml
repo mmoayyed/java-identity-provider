@@ -544,6 +544,10 @@
         <property name="attributeIndexLookupStrategy">
             <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="attributeIndex" />
         </property>
+        <property name="requestedAttributesLookupStrategy">
+            <bean parent="shibboleth.MDDrivenListProperty" p:propertyName="requestedAttributes"
+                p:propertyType="#{T(org.opensaml.saml.saml2.metadata.RequestedAttribute)}" />
+        </property>
     </bean>
 
     <bean id="SAML2.ECP.MDDriven" parent="SAML2.SSO.MDDriven" lazy-init="true"

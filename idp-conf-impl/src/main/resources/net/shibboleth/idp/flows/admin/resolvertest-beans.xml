@@ -80,7 +80,7 @@
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
-            <bean class="org.opensaml.saml.common.binding.impl.SAMLAddAttributeConsumingServiceHandler" scope="prototype" />
+            <bean class="net.shibboleth.idp.saml.messaging.impl.AddAttributeConsumingServiceHandler" scope="prototype" />
         </constructor-arg>
     </bean>
 
