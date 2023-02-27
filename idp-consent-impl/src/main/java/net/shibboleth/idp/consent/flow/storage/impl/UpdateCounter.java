@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -49,17 +50,19 @@ public class UpdateCounter extends AbstractConsentStorageAction {
 
             final String context = getStorageContext();
             final String key = getStorageKey();
+            final StorageService service = getStorageService();
+            assert context!=null && key!=null && service!=null;
 
-            final StorageRecord<?> storageRecord = getStorageService().read(context, key);
+            final StorageRecord<?> storageRecord = service.read(context, key);
             log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
                     context, key);
 
             if (storageRecord == null) {
                 log.debug("{} Creating counter with value '{}'", getLogPrefix(), value);
-                getStorageService().create(context, key, value, null);
+                service.create(context, key, value, null);
             } else {
                 log.debug("{} Updating counter with value '{}'", getLogPrefix(), value);
-                getStorageService().update(context, key, value, null);
+                service.update(context, key, value, null);
             }
 
         } catch (final IOException e) {

@@ -24,9 +24,12 @@ import javax.annotation.Nonnull;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
+import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.shared.primitive.LoggerFactory;
 /**
@@ -44,22 +47,26 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        final String context = getStorageContext();
+        final String storageContext = getStorageContext();
+        final ConsentContext consentContext = getConsentContext(); 
         final String key = getStorageKey();
+        final StorageService service = getStorageService();
+        final StorageSerializer<Map<String, Consent>> storageSerializer = getStorageSerializer();
+        assert consentContext != null && service != null && key != null && storageContext!= null && storageSerializer!=null;
 
         try {
-            final StorageRecord<Map<String,Consent>> storageRecord = getStorageService().read(context, key);
+            final StorageRecord<Map<String,Consent>> storageRecord = service.read(storageContext, key);
             log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
-                    context, key);
+                    storageContext, key);
 
             if (storageRecord == null) {
-                log.debug("{} No storage record for context '{}' and key '{}'", getLogPrefix(), context, key);
+                log.debug("{} No storage record for context '{}' and key '{}'", getLogPrefix(), storageContext, key);
                 return;
             }
 
-            final Map<String,Consent> consents = storageRecord.getValue(getStorageSerializer(), context, key);
+            final Map<String,Consent> consents = storageRecord.getValue(storageSerializer, storageContext, key);
 
-            getConsentContext().getPreviousConsents().putAll(consents);
+            consentContext.getPreviousConsents().putAll(consents);
 
         } catch (final IOException e) {
             log.error("{} Unable to read consent from storage", getLogPrefix(), e);

@@ -62,7 +62,7 @@ public class ExtractConsent extends AbstractConsentAction {
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         final ConsentContext consentContext = getConsentContext();
-
+        assert consentContext != null;
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
             log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
@@ -81,7 +81,7 @@ public class ExtractConsent extends AbstractConsentAction {
         log.debug("{} Extracted consent ids '{}' from request parameter '{}'", getLogPrefix(), consentIds,
                 CONSENT_IDS_REQUEST_PARAMETER);
 
-        final Map<String, Consent> currentConsents = getConsentContext().getCurrentConsents();
+        final Map<String, Consent> currentConsents = consentContext.getCurrentConsents();
         for (final Consent consent : currentConsents.values()) {
             if (consentIds.contains(consent.getId())) {
                 consent.setApproved(Boolean.TRUE);

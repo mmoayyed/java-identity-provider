@@ -66,8 +66,8 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
 
     /** Constructor. */
     public CounterStorageKeyFunction() {
-        setInterceptorContextLookupStrategy(new ChildContextLookup<>(ProfileInterceptorContext.class));
-        setStorageContextLookupStrategy(new FlowIdLookupFunction());
+        interceptorContextlookupStrategy = new ChildContextLookup<>(ProfileInterceptorContext.class);
+        storageContextLookupStrategy = new FlowIdLookupFunction();
     }
 
     /**
@@ -111,8 +111,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
         Constraint.isNotNull(interceptorContext,
                 "Profile interceptor context not available from profile request context");
 
-        final ProfileInterceptorFlowDescriptor flowDescriptor = interceptorContext.getAttemptedFlow();
-        Constraint.isNotNull(flowDescriptor,
+        final ProfileInterceptorFlowDescriptor flowDescriptor = Constraint.isNotNull(interceptorContext.getAttemptedFlow(),
                 "Profile interceptor flow descriptor not available from profile interceptor context");
 
         return Constraint.isNotNull(flowDescriptor.getStorageService(),
@@ -188,6 +187,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
 
         final Map<String, Long> map = new LinkedHashMap<>();
         for (final String storageKey : storageKeys) {
+            assert storageKey != null;
             try {
                 map.put(storageKey, getStorageKeyCounter(storageService, storageContext, storageKey));
             } catch (final NumberFormatException | IOException e) {
@@ -199,14 +199,16 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
 
     /** {@inheritDoc} */
     @Nullable public List<String> apply(@Nullable final Pair<ProfileRequestContext, List<String>> input) {
-        if (input == null || input.getFirst() == null || input.getSecond() == null) {
+        if (input == null) {
+            return null;
+        }
+        final ProfileRequestContext profileRequestContext = input.getFirst();
+        final List<String> storageKeys = input.getSecond();
+        if (storageKeys==null || profileRequestContext==null) {
             return null;
         }
 
         try {
-            final ProfileRequestContext profileRequestContext = input.getFirst();
-            final List<String> storageKeys = input.getSecond();
-
             final Map<String, Long> keyToCounterMap = getStorageKeyCounters(profileRequestContext, storageKeys);
             final Comparator<String> comparator = new CounterStorageKeyComparator(storageKeys, keyToCounterMap);
 

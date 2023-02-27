@@ -122,6 +122,7 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
 
             final MessageDigest digest = MessageDigest.getInstance("SHA-256");
             final byte[] digestedBytes = digest.digest(byteArrayOutputStream.toByteArray());
+            assert digestedBytes!=null;
             return Base64Support.encode(digestedBytes, false);
 
         } catch (final IOException | NoSuchAlgorithmException | EncodingException e) {

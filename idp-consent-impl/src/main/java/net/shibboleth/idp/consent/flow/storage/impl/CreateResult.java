@@ -28,6 +28,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.storage.impl.ConsentResult;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
@@ -54,8 +56,11 @@ public class CreateResult extends AbstractConsentIndexedStorageAction {
         if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
             return false;
         }
+        final ConsentContext context = getConsentContext();
+        assert context!= null;
 
-        if (getConsentContext().getCurrentConsents().isEmpty()) {
+
+        if (context.getCurrentConsents().isEmpty()) {
             log.debug("{} No result will be created because there are no current consents", getLogPrefix());
             return false;
         }
@@ -67,11 +72,16 @@ public class CreateResult extends AbstractConsentIndexedStorageAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
+        final ConsentContext consentContext = getConsentContext();
+        final ConsentFlowDescriptor flowDescriptor = getConsentFlowDescriptor();
+        final String storageContext = getStorageContext();
+        final String storageKey = getStorageKey();
+        assert consentContext!= null && flowDescriptor!=null && storageContext!=null && storageKey!=null;
         try {
-            final Map<String, Consent> currentConsents = getConsentContext().getCurrentConsents();
+            final Map<String, Consent> currentConsents = consentContext.getCurrentConsents();
             final String value = getStorageSerializer().serialize(currentConsents);
 
-            final Duration lifetime = getConsentFlowDescriptor().getLifetime();
+            final Duration lifetime = flowDescriptor.getLifetime();
             final Instant expiration;
             if (lifetime == null) {
                 expiration = null;
@@ -79,7 +89,7 @@ public class CreateResult extends AbstractConsentIndexedStorageAction {
                 expiration = Instant.now().plus(lifetime);
             }
             final ProfileInterceptorResult result =
-                    new ConsentResult(getStorageContext(), getStorageKey(), value, expiration);
+                    new ConsentResult(storageContext, storageKey, value, expiration);
 
             log.debug("{} Created consent result '{}'", getLogPrefix(), result);
 

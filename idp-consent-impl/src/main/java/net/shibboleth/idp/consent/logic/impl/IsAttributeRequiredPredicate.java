@@ -128,8 +128,9 @@ public class IsAttributeRequiredPredicate implements Predicate<IdPAttribute> {
 
     /** {@inheritDoc} */
     public boolean test(@Nullable final IdPAttribute input) {
-        if (input != null && requestedAttributesMap != null && !requestedAttributesMap.isEmpty()) {
-            final Collection<IdPAttribute> requestedAttrs = requestedAttributesMap.get(input.getId());
+        final Multimap<String,IdPAttribute> ram = requestedAttributesMap;
+        if (input != null && ram  != null && !ram .isEmpty()) {
+            final Collection<IdPAttribute> requestedAttrs = ram .get(input.getId());
             if (requestedAttrs != null) {
                 for (final IdPAttribute requestedAttr : requestedAttrs) {
                     if (requestedAttr instanceof IdPRequestedAttribute

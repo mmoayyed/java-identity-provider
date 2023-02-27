@@ -37,9 +37,6 @@ import net.shibboleth.shared.primitive.LoggerFactory;
  */
 public class GlobalAttributeConsentPredicate implements Predicate<ProfileRequestContext> {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(GlobalAttributeConsentPredicate.class);
-
     /** Strategy used to find the {@link ConsentContext} from the {@link ProfileRequestContext}. */
     @Nonnull private Function<ProfileRequestContext, ConsentContext> consentContextlookupStrategy;
 

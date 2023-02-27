@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
@@ -59,11 +60,13 @@ public class RevokeConsent extends AbstractConsentIndexedStorageAction {
 
         final String context = getStorageContext();
         final String key = getStorageKey();
+        final StorageService service = getStorageService();
+        assert context!=null && key!=null && service!=null;
 
         log.debug("{} Attempting to delete consent storage record with context '{}' and key '{}'", getLogPrefix(),
                 context, key);
         try {
-            final boolean success = getStorageService().delete(context, key);
+            final boolean success = service.delete(context, key);
             if (success) {
                 log.debug("{} Deleted consent storage record with context '{}' and key '{}'", getLogPrefix(), context,
                         key);

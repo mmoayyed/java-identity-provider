@@ -26,6 +26,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -64,7 +65,9 @@ public class PopulateConsentContext extends AbstractConsentAction {
         log.debug("{} Populating consents: {}", getLogPrefix(), consents.keySet());
         
         if (consents != null) {
-            getConsentContext().getCurrentConsents().putAll(consents);
+            final ConsentContext consentContext = getConsentContext();
+            assert consentContext != null;
+            consentContext.getCurrentConsents().putAll(consents);
         }
     }
     

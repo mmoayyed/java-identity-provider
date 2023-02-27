@@ -32,6 +32,7 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
+import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
@@ -165,8 +166,11 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      */
     @Nonnull @NonnullElements protected List<String> getStorageKeysFromIndex() throws IOException {
 
-        final StorageRecord<Collection<String>> storageRecord =
-            getStorageService().read(getStorageContext(), getStorageIndexKey());
+        final StorageService service = getStorageService();
+        final String context = getStorageContext();
+        final String indexKey = getStorageIndexKey();
+        assert service != null && indexKey != null && context!= null;
+        final StorageRecord<Collection<String>> storageRecord = service.read(context, indexKey);
 
         log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
                 getStorageContext(), getStorageIndexKey());
@@ -175,8 +179,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
             return CollectionSupport.emptyList();
         }
 
-        return new ArrayList<>(storageRecord.getValue(getStorageKeysSerializer(), getStorageContext(),
-                getStorageIndexKey()));
+        return new ArrayList<>(storageRecord.getValue(getStorageKeysSerializer(), context, indexKey));
     }
 
     /**
@@ -188,21 +191,23 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      */
     protected boolean addKeyToStorageIndex(@Nonnull final String keyToAdd) throws IOException {
 
-        final StorageRecord<?> storageRecord = getStorageService().read(getStorageContext(), getStorageIndexKey());
+        final StorageService service = getStorageService();
+        final String storageContext = getStorageContext();
+        final String indexKey = getStorageIndexKey();
+        assert service != null && indexKey != null && storageContext!= null;
+        final StorageRecord<?> storageRecord = service.read(storageContext, indexKey);
         log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
                 getStorageContext(), getStorageIndexKey());
 
         if (storageRecord == null) {
             log.debug("{} Creating storage index with key '{}'", getLogPrefix(), keyToAdd);
-            return getStorageService().create(getStorageContext(), getStorageIndexKey(),
-                    CollectionSupport.singletonList(keyToAdd), storageKeysSerializer, null);
+            return service.create(storageContext, indexKey, CollectionSupport.singletonList(keyToAdd), storageKeysSerializer, null);
         }
         
         final LinkedHashSet<String> keys = new LinkedHashSet<>(getStorageKeysFromIndex());
         if (keys.add(keyToAdd)) {
             log.debug("{} Updating storage index by adding key '{}'", getLogPrefix(), keyToAdd);
-            return getStorageService().update(getStorageContext(), getStorageIndexKey(), keys,
-                    storageKeysSerializer, null);
+            return service.update(storageContext, indexKey, keys, storageKeysSerializer, null);
         }
         
         log.debug("{} Storage key '{}' already indexed, nothing to do", getLogPrefix(), keyToAdd);
@@ -218,7 +223,12 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      */
     protected boolean removeKeyFromStorageIndex(@Nonnull final String keyToRemove) throws IOException {
 
-        final StorageRecord<?> storageRecord = getStorageService().read(getStorageContext(), getStorageIndexKey());
+        final StorageService service = getStorageService();
+        final String storageContext = getStorageContext();
+        final String indexKey = getStorageIndexKey();
+        assert service != null && indexKey != null && storageContext!= null;
+
+        final StorageRecord<?> storageRecord = service.read(storageContext, indexKey);
         log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
                 getStorageContext(), getStorageIndexKey());
 
@@ -231,7 +241,8 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         final LinkedHashSet<String> keys = new LinkedHashSet<>(getStorageKeysFromIndex());
         if (keys.remove(keyToRemove)) {
             log.debug("{} Updating storage index by removing key '{}'", getLogPrefix(), keyToRemove);
-            return getStorageService().update(getStorageContext(), storageIndexKey, keys, storageKeysSerializer,
+            assert storageIndexKey != null;
+            return service.update(storageContext, storageIndexKey, keys, storageKeysSerializer,
                     null);
         }
         
@@ -256,8 +267,11 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
     protected void pruneStorageRecords(@Nonnull final ProfileRequestContext profileRequestContext) throws IOException {
 
         final ConsentFlowDescriptor flowDescriptor = getConsentFlowDescriptor();
+        final StorageService service = getStorageService();
+        final String storageContext = getStorageContext();
+        assert service != null && flowDescriptor!=null &&storageContext!= null;
         int maxStoredRecords = flowDescriptor.getMaximumNumberOfStoredRecords();
-        if (getStorageService().getCapabilities().getValueSize() >= flowDescriptor.getExpandedStorageThreshold()) {
+        if (service.getCapabilities().getValueSize() >= flowDescriptor.getExpandedStorageThreshold()) {
             maxStoredRecords = flowDescriptor.getExpandedNumberOfStoredRecords();
         }
         
@@ -289,12 +303,13 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         while (keysIterator.hasNext() && numberOfKeys >= maxStoredRecords) {
 
             final String keyToDelete = keysIterator.next();
+            assert keyToDelete!=null;
             log.debug("{} Pruning storage record with key '{}'. There are '{}' records of max '{}' ", getLogPrefix(),
                     keyToDelete, numberOfKeys, maxStoredRecords);
 
             log.debug("{} Deleting storage record with context '{}' and key '{}'", getLogPrefix(), getStorageContext(),
                     keyToDelete);
-            final boolean success = getStorageService().delete(getStorageContext(), keyToDelete);
+            final boolean success = service.delete(storageContext, keyToDelete);
 
             if (success) {
                 numberOfKeys--;
@@ -324,11 +339,13 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         int attempts = 10;
         boolean success = false;
         do {
-            success = getStorageService().create(context, key, value,
+            final StorageService service = getStorageService();
+            assert service != null;
+            success = service.create(context, key, value,
                     expiration != null ? expiration.toEpochMilli() : null);
             if (!success) {
                 // The record already exists, so we need to overwrite via an update.
-                success = getStorageService().update(context, key, value,
+                success = service .update(context, key, value,
                         expiration != null ? expiration.toEpochMilli() : null);
             }
         } while (!success && attempts-- > 0);

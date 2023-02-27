@@ -29,7 +29,10 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -48,7 +51,7 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateAttributeReleaseContext.class);
 
     /** Predicate to determine whether consent should be obtained for an attribute. */
-    @Nonnull private Predicate<IdPAttribute> attributePredicate;
+    @NonnullAfterInit private Predicate<IdPAttribute> attributePredicate;
     
     /** Comparator used to sort attributes displayed to user. */
     @Nullable private Comparator<String> attributeIdComparator;
@@ -84,7 +87,9 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
+        final AttributeContext attributeContext = getAttributeContext();
+        assert attributeContext != null;
+        final Map<String, IdPAttribute> attributes = attributeContext.getIdPAttributes();
 
         final Map<String, IdPAttribute> consentableAttributes = new TreeMap<>(attributeIdComparator);
         for (final IdPAttribute attribute : attributes.values()) {
@@ -93,7 +98,9 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
             }
         }
 
-        getAttributeReleaseContext().getConsentableAttributes().putAll(consentableAttributes);
+        final AttributeReleaseContext releaseContext = getAttributeReleaseContext();
+        assert releaseContext != null;
+        releaseContext.getConsentableAttributes().putAll(consentableAttributes);
 
         log.debug("{} Consentable attribute IDs '{}'", getLogPrefix(), consentableAttributes.keySet());
 

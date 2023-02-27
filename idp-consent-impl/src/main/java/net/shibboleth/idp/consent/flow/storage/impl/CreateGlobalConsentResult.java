@@ -20,7 +20,6 @@ package net.shibboleth.idp.consent.flow.storage.impl;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
@@ -30,9 +29,11 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.storage.impl.ConsentResult;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -55,11 +56,15 @@ public class CreateGlobalConsentResult extends AbstractConsentIndexedStorageActi
             final Consent globalConsent = new Consent();
             globalConsent.setId(Consent.WILDCARD);
             globalConsent.setApproved(true);
-
+            final String id = globalConsent.getId();
+            assert id!= null;
             final String value =
-                    getStorageSerializer().serialize(Collections.singletonMap(globalConsent.getId(), globalConsent));
-
-            final Duration lifetime = getConsentFlowDescriptor().getLifetime();
+                    getStorageSerializer().serialize(CollectionSupport.singletonMap(id, globalConsent));
+            final ConsentFlowDescriptor flowDescriptor = getConsentFlowDescriptor();
+            final String storageContext = getStorageContext();
+            final String storageKey = getStorageKey();
+            assert flowDescriptor!=null && storageContext!= null &&storageKey!= null; 
+            final Duration lifetime = flowDescriptor.getLifetime();
             final Instant expiration;
             if (lifetime == null) {
                 expiration = null;
@@ -68,7 +73,7 @@ public class CreateGlobalConsentResult extends AbstractConsentIndexedStorageActi
             }
 
             final ProfileInterceptorResult result =
-                    new ConsentResult(getStorageContext(), getStorageKey(), value, expiration);
+                    new ConsentResult(storageContext, storageKey, value, expiration);
 
             log.debug("{} Created global consent result '{}'", getLogPrefix(), result);
 

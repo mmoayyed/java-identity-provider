@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Function which resolves the {@link Locale} from a {@link ProfileRequestContext}.
@@ -38,8 +39,9 @@ public class LocaleLookupFunction implements Function<ProfileRequestContext, Loc
         }
 
         final SpringRequestContext springSubcontext = input.getSubcontext(SpringRequestContext.class);
-        if (springSubcontext != null && springSubcontext.getRequestContext() != null) {
-            return springSubcontext.getRequestContext().getExternalContext().getLocale();
+        final RequestContext rc = springSubcontext != null ?  springSubcontext.getRequestContext() : null;
+        if (rc != null) {
+            return rc.getExternalContext().getLocale();
         }
 
         return null;

@@ -29,7 +29,10 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
+import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -57,19 +60,22 @@ public class ReleaseAttributes extends AbstractAttributeReleaseAction {
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
+        final AttributeContext attributeContext = getAttributeContext();
+        final AttributeReleaseContext releaseContext = getAttributeReleaseContext();
+        final ConsentContext consentContext = getConsentContext();
+        assert attributeContext != null && releaseContext != null && consentContext!=null;
 
-        final Map<String, Consent> consents =
-                getConsentContext().getCurrentConsents().isEmpty() ? getConsentContext().getPreviousConsents()
-                        : getConsentContext().getCurrentConsents();
+        final Map<String, Consent>consents =
+                consentContext.getCurrentConsents().isEmpty() ? consentContext.getPreviousConsents() : consentContext.getCurrentConsents();
         log.debug("{} Consents '{}'", getLogPrefix(), consents);
 
-        final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
+        final Map<String, IdPAttribute> attributes = attributeContext.getIdPAttributes();
         log.debug("{} Attributes before release: {}", getLogPrefix(), attributes.keySet());
 
         final Map<String, IdPAttribute> releasedAttributes = new HashMap<>(attributes.size());
 
         for (final IdPAttribute attribute : attributes.values()) {
-            if (!getAttributeReleaseContext().getConsentableAttributes().containsKey(attribute.getId())) {
+            if (!releaseContext.getConsentableAttributes().containsKey(attribute.getId())) {
                 log.debug("{} Attribute '{}' will be released because it is excluded from consent", getLogPrefix(),
                         attribute.getId());
                 releasedAttributes.put(attribute.getId(), attribute);
@@ -97,7 +103,7 @@ public class ReleaseAttributes extends AbstractAttributeReleaseAction {
             log.debug("{} Not releasing attributes: {}", getLogPrefix(), diff.entriesOnlyOnLeft().keySet());
         }
 
-        getAttributeContext().setIdPAttributes(releasedAttributes.values());
+        attributeContext.setIdPAttributes(releasedAttributes.values());
     }
 
 }

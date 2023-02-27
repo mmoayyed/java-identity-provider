@@ -117,6 +117,7 @@ public class MessageSourceConsentFunctionTest {
         setUpDescriptor(false);
 
         function.setConsentKeyLookupStrategy(FunctionSupport.constant("key"));
+        function.setLocaleLookupStrategy(e -> new Locale("en"));
         function.initialize();
 
         final Consent consent = new Consent();
@@ -133,6 +134,7 @@ public class MessageSourceConsentFunctionTest {
         setUpDescriptor(true);
 
         function.setConsentKeyLookupStrategy(FunctionSupport.constant("key"));
+        function.setLocaleLookupStrategy(e -> new Locale("en"));
         function.initialize();
 
         final Consent consent = new Consent();

@@ -18,9 +18,9 @@
 package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
@@ -30,9 +30,9 @@ import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.primitive.StringSupport;
-import java.util.function.Predicate;
 
 /**
  * Predicate to determine whether consent should be obtained for an attribute.
@@ -50,8 +50,8 @@ public class AttributePredicate extends AbstractInitializableComponent implement
 
     /** Constructor. */
     public AttributePredicate() {
-        promptedAttributeIds = Collections.emptySet();
-        ignoredAttributeIds = Collections.emptySet();
+        promptedAttributeIds = CollectionSupport.emptySet();
+        ignoredAttributeIds = CollectionSupport.emptySet();
     }
 
     /**
@@ -100,18 +100,19 @@ public class AttributePredicate extends AbstractInitializableComponent implement
         }
 
         final String attributeId = input.getId();
+        final Pattern expression = matchExpression;
 
         if (!promptedAttributeIds.isEmpty() && !promptedAttributeIds.contains(attributeId)) {
             // Not in prompted set. Only prompt if a regexp applies.
-            if (matchExpression == null) {
+            if (expression == null) {
                 return false;
             }
-            return matchExpression.matcher(attributeId).matches();
+            return expression.matcher(attributeId).matches();
         }
         
         // In prompted set (or none). Check unprompted set, and if necessary a regexp.
         return !ignoredAttributeIds.contains(attributeId)
-                && (matchExpression == null || matchExpression.matcher(attributeId).matches());
+                && (expression == null || expression.matcher(attributeId).matches());
     }
 
     /**

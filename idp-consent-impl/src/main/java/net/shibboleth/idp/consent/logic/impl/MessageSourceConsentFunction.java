@@ -69,7 +69,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
     @Nonnull private Function<ProfileRequestContext,Locale> localeLookupStrategy;
 
     /** MessageSource injected by Spring, typically the parent ApplicationContext itself. */
-    @Nonnull private MessageSource messageSource;
+    @NonnullAfterInit private MessageSource messageSource;
 
     /** Constructor. */
     public MessageSourceConsentFunction() {
@@ -82,7 +82,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
 
     /** {@inheritDoc} */
     @Override
-    public void setMessageSource(final MessageSource source) {
+    public void setMessageSource(final @Nonnull MessageSource source) {
         messageSource = source;
     }
 
@@ -162,6 +162,9 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
                 throw new ComponentInitializationException(e); 
             }
         }
+        if (messageSource == null) {
+            throw new ComponentInitializationException("Message source not set up by Spring");
+        }
     }
 
     /** {@inheritDoc} */
@@ -171,6 +174,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
         }
     
         final Locale locale = getLocale(input);
+        assert locale != null;
         final String id = getConsentId(input, locale);
         if (id != null) {
             final Consent consent = new Consent();
@@ -247,7 +251,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * 
      * @return locale
      */
-    @Nullable protected Locale getLocale(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nullable Locale getLocale(@Nonnull final ProfileRequestContext profileRequestContext) {
         return localeLookupStrategy.apply(profileRequestContext);
     }
 

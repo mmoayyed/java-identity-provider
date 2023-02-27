@@ -23,10 +23,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.slf4j.Logger;
-
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A {@link Comparator} used to order storage keys so that the least used and oldest storage keys are returned first.
@@ -35,9 +32,6 @@ import net.shibboleth.shared.primitive.LoggerFactory;
  * number of times the storage keys were used.
  */
 public class CounterStorageKeyComparator implements Comparator<String> {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(CounterStorageKeyComparator.class);
 
     /** Storage keys in FIFO order. */
     @Nonnull private final List<String> storageKeys;

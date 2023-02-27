@@ -49,7 +49,7 @@ public class AttributeDisplayDescriptionFunction extends AbstractAttributeDispla
     }
 
     /** {@inheritDoc} */
-    protected Map<Locale, String> getDisplayInfo( @Nonnull final AttributeTranscoderRegistry registry,
+    protected @Nonnull Map<Locale, String> getDisplayInfo( @Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final IdPAttribute attribute) {
         return registry.getDescriptions(attribute);
     }
