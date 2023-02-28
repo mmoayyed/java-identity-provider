@@ -219,4 +219,16 @@
         </constructor-arg>
     </bean>
 
+    <bean id="FunctionMessageHandler"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype">
+                <property name="functionLookupStrategy">
+                    <bean class="net.shibboleth.saml.profile.config.navigate.messaging.MessageHandlerLookupFunction" />
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+
 </beans>

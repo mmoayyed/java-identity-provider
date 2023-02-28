@@ -190,12 +190,14 @@
         </property>
         <property name="deadProperties">
             <list>
-                <value>idp.service.attribute.resolver.suppressDisplayInfo</value>
                 <value>idp.authn.flows.initial</value>
                 <value>idp.authn.resolveAttribute</value>
+                <value>idp.authn.SAML.inboundMessageHandlerFunction</value>
+                <value>idp.authn.SAML.outboundMessageHandlerFunction</value>
                 <value>idp.nameid.saml1.legacyGenerator</value>
                 <value>idp.nameid.saml2.legacyGenerator</value>
                 <value>idp.service.attribute.registry.namingRegistry</value>
+                <value>idp.service.attribute.resolver.suppressDisplayInfo</value>
             </list>
         </property>
     </bean>

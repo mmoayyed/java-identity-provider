@@ -179,9 +179,12 @@
         <property name="handlers">
             <list>
                 <bean class="org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler" scope="prototype"/>
+                <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype">
+                    <property name="functionLookupStrategy">
+                        <bean class="net.shibboleth.saml.profile.config.navigate.messaging.MessageHandlerLookupFunction" />
+                    </property>
+                </bean>
                 <bean class="org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler" scope="prototype"/>
-                <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype"
-                    p:function="#{getObject('%{idp.authn.SAML.outboundMessageHandlerFunction:}'.trim())}" />
                 <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler" scope="prototype"
                         p:signErrorResponses="%{idp.errors.signed:true}">
                     <property name="activationCondition">
@@ -305,6 +308,11 @@
                         <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype"
                               p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
                               p:copyContextStrategy-ref="OutboundSAMLMetadataContextLookup" />
+                        <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype">
+                            <property name="functionLookupStrategy">
+                                <bean class="net.shibboleth.saml.profile.config.navigate.messaging.MessageHandlerLookupFunction" />
+                            </property>
+                        </bean>
                         <bean class="org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler" scope="prototype"
                             p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
                         <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype"
@@ -323,8 +331,6 @@
                         <bean class="org.opensaml.messaging.handler.impl.CheckExpectedIssuer" scope="prototype"
                             p:issuerLookupStrategy-ref="InboundEntityIDLookup"
                             p:expectedIssuerLookupStrategy-ref="OutboundEntityIDLookup" />
-                        <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype"
-                            p:function="#{getObject('%{idp.authn.SAML.inboundMessageHandlerFunction:}'.trim())}" />
                     </list>
                 </property>
 		     </bean>

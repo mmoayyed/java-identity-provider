@@ -107,6 +107,11 @@
             <artifactId>opensaml-messaging-impl</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-profile-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>

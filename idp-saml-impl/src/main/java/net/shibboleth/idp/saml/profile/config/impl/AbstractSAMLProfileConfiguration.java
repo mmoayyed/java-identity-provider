@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config.impl;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -26,8 +27,10 @@ import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfigur
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.logic.PredicateSupport;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /** Base class for SAML profile configurations. */
@@ -40,6 +43,9 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractIntercept
     /** Predicate used to determine if the generated response should be signed. Default returns false. */
     @Nonnull private Predicate<ProfileRequestContext> signResponsesPredicate;
 
+    /** Lookup strategy for message decorator. */
+    @Nonnull private Function<MessageContext,Function<MessageContext,Exception>> messageHandlerLookupStrategy;
+
     /**
      * Constructor.
      * 
@@ -50,6 +56,8 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractIntercept
 
         signRequestsPredicate = PredicateSupport.alwaysFalse();
         signResponsesPredicate = PredicateSupport.alwaysFalse();
+        
+        messageHandlerLookupStrategy = FunctionSupport.constant(null);
     }
 
     /** {@inheritDoc} */
@@ -100,6 +108,35 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractIntercept
      */
     public void setSignResponsesPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         signResponsesPredicate = Constraint.isNotNull(predicate, "Condition cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    @Nullable
+    public Function<MessageContext,Exception> getMessageHandler(@Nullable final MessageContext messageContext) {
+        return messageHandlerLookupStrategy.apply(messageContext);
+    }
+    
+    /**
+     * Set a handler for the SAML message.
+     * 
+     * @param handler message handler
+     * 
+     * @since 5.0.0
+     */
+    public void setMessageDecorator(@Nullable final Function<MessageContext,Exception> handler) {
+        messageHandlerLookupStrategy = FunctionSupport.constant(handler);
+    }
+    
+    /**
+     * Set a lookup strategy for the handler for the SAML message.
+     * 
+     * @param strategy lookup strategy 
+     * 
+     * @since 5.0.0
+     */
+    public void setMessageHandlerLookupStrategy(
+            @Nonnull final Function<MessageContext,Function<MessageContext,Exception>> strategy) {
+        messageHandlerLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
     }
 
 }

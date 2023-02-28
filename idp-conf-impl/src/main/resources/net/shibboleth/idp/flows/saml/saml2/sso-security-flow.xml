@@ -6,6 +6,7 @@
     <!-- Default inbound security processing for SAML 2 SSO profile. -->
 
     <action-state id="SAML2SSOSecurityPolicy">
+        <evaluate expression="FunctionMessageHandler" />
         <evaluate expression="ReceivedEndpointSecurityHandler" />
         <evaluate expression="MessageReplaySecurityHandler" />
         <evaluate expression="MessageLifetimeSecurityHandler" />

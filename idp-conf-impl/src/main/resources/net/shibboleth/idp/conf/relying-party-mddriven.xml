@@ -149,6 +149,10 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
+        <property name="messageHandlerLookupStrategy">
+            <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="messageHandler"
+                p:propertyType="#{T(java.util.function.Function)}" />
+        </property>
     </bean>
     
     <bean id="AbstractMDDrivenSAML1AssertionProducingProfile" parent="AbstractMDDrivenSAMLProfile" abstract="true">
@@ -205,10 +209,6 @@
                 </constructor-arg>
                 <constructor-arg value="false" />
             </bean>
-        </property>
-        <property name="requestDecoratorLookupStrategy">
-            <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="requestDecorator"
-                p:propertyType="#{T(java.util.function.BiConsumer)}" />
         </property>
     </bean>
 

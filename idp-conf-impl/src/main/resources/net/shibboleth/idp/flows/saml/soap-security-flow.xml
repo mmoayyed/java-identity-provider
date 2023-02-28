@@ -6,6 +6,7 @@
     <!-- Default inbound security processing for SOAP-bound profiles. -->
 
     <action-state id="SOAPSecurityPolicy">
+        <evaluate expression="FunctionMessageHandler" />
         <evaluate expression="ReceivedEndpointSecurityHandler" />
         <evaluate expression="MessageReplaySecurityHandler" />
         <evaluate expression="MessageLifetimeSecurityHandler" />

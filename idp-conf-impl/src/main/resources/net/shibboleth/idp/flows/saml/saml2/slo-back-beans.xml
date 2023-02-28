@@ -100,6 +100,11 @@
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
             <util:list>
+                <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype">
+                    <property name="functionLookupStrategy">
+                        <bean class="net.shibboleth.saml.profile.config.navigate.messaging.MessageHandlerLookupFunction" />
+                    </property>
+                </bean>
                 <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler"
                     scope="prototype" p:signErrorResponses="%{idp.errors.signed:true}" />
             </util:list>

@@ -6,6 +6,7 @@
     <!-- Default inbound security processing for Shibboleth SSO profile. -->
 
     <action-state id="ShibbolethSSOSecurityPolicy">
+        <evaluate expression="FunctionMessageHandler" />
         <evaluate expression="OptionalMessageReplaySecurityHandler" />
         <evaluate expression="OptionalMessageLifetimeSecurityHandler" />
         <evaluate expression="CheckMandatoryIssuer" />
