@@ -22,6 +22,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.saml.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.logic.AbstractRelyingPartyPredicate;
@@ -75,7 +76,7 @@ public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPred
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
             
-            if (pc instanceof net.shibboleth.idp.saml.profile.config.BrowserSSOProfileConfiguration sso) {
+            if (pc instanceof BrowserSSOProfileConfiguration sso) {
                 return sso.isIncludeAttributeStatement(input);
             } else if (pc instanceof net.shibboleth.saml.saml1.profile.config.AttributeQueryProfileConfiguration) {
                 return true;

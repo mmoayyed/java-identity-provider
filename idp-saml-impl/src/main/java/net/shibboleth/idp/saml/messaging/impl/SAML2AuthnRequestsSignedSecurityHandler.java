@@ -60,9 +60,8 @@ public class SAML2AuthnRequestsSignedSecurityHandler
         if (messageContext.getParent() instanceof ProfileRequestContext) {
             final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(
                     (ProfileRequestContext) messageContext.getParent());
-            if (rpCtx != null && rpCtx.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
-                return ((BrowserSSOProfileConfiguration) rpCtx.getProfileConfig()).isRequireSignedRequests(
-                        (ProfileRequestContext) messageContext.getParent());
+            if (rpCtx.getProfileConfig() instanceof BrowserSSOProfileConfiguration sso) {
+                return sso.isRequireSignedRequests((ProfileRequestContext) messageContext.getParent());
             }
         }
         

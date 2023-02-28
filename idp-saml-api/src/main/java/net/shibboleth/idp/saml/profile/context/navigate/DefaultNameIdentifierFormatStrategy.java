@@ -24,6 +24,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.saml.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
@@ -122,16 +123,8 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
                 profileConfig = relyingPartyCtx.getProfileConfig();
             }
             
-            if (profileConfig
-                    instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
-                fromConfig.addAll(
-                        ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) profileConfig)
-                        .getNameIDFormatPrecedence(input));
-                log.debug("Configuration specifies the following formats: {}", fromConfig);
-            } else if (profileConfig instanceof
-                    net.shibboleth.idp.saml.profile.config.BrowserSSOProfileConfiguration sso) {
-                fromConfig.addAll(
-                        sso.getNameIDFormatPrecedence(input));
+            if (profileConfig instanceof BrowserSSOProfileConfiguration sso) {
+                fromConfig.addAll(sso.getNameIDFormatPrecedence(input));
                 log.debug("Configuration specifies the following formats: {}", fromConfig);
             } else {
                 log.debug("No ProfileConfiguraton available (or not a BrowserSSOProfileConfiguration)");
