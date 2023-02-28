@@ -21,14 +21,26 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.security.auth.login.FailedLoginException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.hc.client5.http.SystemDefaultDnsResolver;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -39,6 +51,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -61,6 +74,8 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
     @SuppressWarnings("unused")
     @Autowired
     private ApplicationContext context;
+    
+    private List<InetAddress> jettyListenAddrs;
 
     @DataProvider(name = "data")
     public Object[][] buildTestData() {
@@ -83,7 +98,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
                         404,
                         new FailedLoginException()
                 },
-/* TEMP disabled pending decision on how to fix failures under HC 5.x. -- Brent 2023-02-21
+
                 // Untrusted self-signed cert
                 new Object[] {
                         "https://localhost:8443",
@@ -99,8 +114,35 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
                         200,
                         new CertificateException(),
                 },
-*/
+
         };
+    }
+    
+    @BeforeClass
+    public void resolveListenAddresses() throws Exception {
+        // As of HttpClient 5.x, we need Jetty to listen on all localhost IPv4 and IPv6 addresses,
+        // b/c on connection failure (e.g. TLS handshake failure) HC will try them all,
+        // so they all have to respond similarly for the tests that expect failure via a specified exception type.
+        // This is an attempt to get them portably depending on whether IPv4 and/or IPv6 is enabled.
+
+        // Resolve the 'localhost' addrs that will be resolved and used by HttpClient
+        final List<InetAddress> localhostAddrs = Arrays.asList(SystemDefaultDnsResolver.INSTANCE.resolve("localhost"));
+
+        // Resolve available loopback and link-local interfaces
+        // Using ByteBuffer just to get hashcode() and equals() for byte[] for filtering using the Set.
+       final Set<ByteBuffer> interfaceAddrs = Collections.list(NetworkInterface.getNetworkInterfaces()).stream()
+               .map(NetworkInterface::getInterfaceAddresses)
+               .flatMap(Collection::stream)
+               .map(InterfaceAddress::getAddress)
+               .filter(addr -> addr.isLoopbackAddress() || addr.isLinkLocalAddress() )
+               .map(InetAddress::getAddress)
+               .map(ByteBuffer::wrap)
+               .collect(Collectors.toSet());
+       
+       // Retain for listening those 'localhost' addrs which correspond to enabled interfaces
+       jettyListenAddrs = localhostAddrs.stream()
+               .filter(addr -> interfaceAddrs.contains(ByteBuffer.wrap(addr.getAddress())))
+               .collect(Collectors.toList());
     }
 
     @Test(dataProvider = "data")
@@ -135,10 +177,16 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
         sslContextFactory.setKeyStoreType("PKCS12");
         sslContextFactory.setKeyStorePath(keyStorePath);
         sslContextFactory.setKeyStorePassword("changeit");
-        final ServerConnector connector = new ServerConnector(server, sslContextFactory);
-        connector.setHost("127.0.0.1");
-        connector.setPort(8443);
-        server.setConnectors(new Connector[] { connector });
+        
+        ArrayList<ServerConnector> connectors = new ArrayList<>();
+        jettyListenAddrs.forEach(addr ->  {
+            final ServerConnector connector = new ServerConnector(server, sslContextFactory);
+            connector.setHost(addr.getHostAddress());
+            connector.setPort(8443);
+            connectors.add(connector);
+        });
+        server.setConnectors(connectors.toArray(new Connector[] {}));
+
         server.setHandler(handler);
         try {
             server.start();
