@@ -27,6 +27,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** Unit tests for {@link CollectionSerializer}. */
@@ -34,14 +35,16 @@ import net.shibboleth.shared.logic.ConstraintViolationException;
 public class CollectionSerializerTest {
 
     protected CollectionSerializer serializer;
+    private Object nullObj;
 
     @BeforeMethod public void setUp() throws Exception {
         serializer = new CollectionSerializer();
         serializer.initialize();
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNull() throws Exception {
-        serializer.serialize(null);
+        serializer.serialize((Collection<String>) nullObj);
     }
 
     @Test public void testEmpty() throws Exception {
@@ -49,13 +52,14 @@ public class CollectionSerializerTest {
         Assert.assertEquals(serializer.deserialize(-1, "context", "key", "[]", null), Collections.emptyList());
     }
 
+    @SuppressWarnings("null")
     @Test public void testNullValue() throws Exception {
-        Assert.assertEquals(serializer.serialize(Collections.<String> singletonList(null)), "[]");
+        Assert.assertEquals(serializer.serialize(CollectionSupport.<String> singletonList((String)nullObj)), "[]");
         Assert.assertEquals(serializer.deserialize(-1, "context", "key", "[null]", null), Collections.emptyList());
     }
 
     @Test public void testSimple() throws IOException {
-        final Collection<String> collection = Arrays.asList("element1", "element2", "element3");
+        final Collection<String> collection = CollectionSupport.listOf("element1", "element2", "element3");
         final String serialized = serializer.serialize(collection);
         Assert.assertEquals(serialized, "[\"element1\",\"element2\",\"element3\"]");
         final Collection<String> deserialized = serializer.deserialize(-1, "context", "key", serialized, null);

@@ -55,7 +55,8 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
     protected Map<String, Consent> readConsentFromStorage(@Nonnull final String key) throws Exception {
         final StorageRecord<?> record = getMemoryStorageService().read("context", key);
-        Assert.assertNotNull(record);
+        assert record!=null;
+
         final ConsentSerializer serializer = new ConsentSerializer();
 
         return serializer.deserialize(0, "context", key, record.getValue(), record.getExpiration());
@@ -74,7 +75,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
-        Assert.assertNotNull(pic);
+        assert pic!=null;
         Assert.assertEquals(pic.getResults().size(), 0);
 
         final StorageRecord<?> record = getMemoryStorageService().read("context", "key");
@@ -86,6 +87,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         action.initialize();
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
+        assert consentCtx!=null;
         consentCtx.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
 
         final Event event = action.execute(src);
@@ -93,7 +95,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
-        Assert.assertNotNull(pic);
+        assert pic!=null;
         Assert.assertEquals(pic.getResults().size(), 0);
 
         final Map<String, Consent> consents = readConsentsFromStorage();
@@ -113,6 +115,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         testCreateResult();
 
         final StorageRecord<?> record = getMemoryStorageService().read("context", "key");
+        assert record!=null;
         Assert.assertEquals(record.getValue(),
                 "[{\"id\":101,\"v\":\"value1\",\"appr\":false},{\"id\":102,\"v\":\"value2\",\"appr\":false}]");
     }
@@ -121,13 +124,14 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         action.initialize();
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
+        assert consentCtx!=null;
         consentCtx.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
 
         ActionTestingSupport.assertProceedEvent(action.execute(src));
         ActionTestingSupport.assertProceedEvent(action.execute(src));
 
         final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
-        Assert.assertNotNull(pic);
+        assert pic!=null;
         Assert.assertEquals(pic.getResults().size(), 0);
 
         final Map<String, Consent> consents = readConsentsFromStorage();
@@ -147,6 +151,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         testUpdateResult();
 
         final StorageRecord<?> record = getMemoryStorageService().read("context", "key");
+        assert record!=null;
         Assert.assertEquals(record.getValue(),
                 "[{\"id\":101,\"v\":\"value1\",\"appr\":false},{\"id\":102,\"v\":\"value2\",\"appr\":false}]");
     }
@@ -156,6 +161,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         descriptor.setMaximumNumberOfStoredRecords(2);
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
+        assert consentCtx!=null;
         consentCtx.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
 
         // key1
@@ -200,6 +206,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         descriptor.setExpandedNumberOfStoredRecords(0);
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
+        assert consentCtx!=null;            
         consentCtx.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
 
         // can't test unlimited, so test 10

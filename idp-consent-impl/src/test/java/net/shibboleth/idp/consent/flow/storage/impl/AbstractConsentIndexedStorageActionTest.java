@@ -19,19 +19,25 @@ package net.shibboleth.idp.consent.flow.storage.impl;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
 
 import net.shibboleth.idp.consent.storage.impl.CollectionSerializer;
+import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link AbstractConsentIndexedStorageAction} unit test. */
 @SuppressWarnings("javadoc")
 public abstract class AbstractConsentIndexedStorageActionTest extends AbstractConsentStorageActionTest {
+
+    private Object nullObj;
 
     protected void populateAction() throws Exception {
         super.populateAction();
@@ -41,7 +47,7 @@ public abstract class AbstractConsentIndexedStorageActionTest extends AbstractCo
 
     protected Collection<String> readStorageKeysFromIndex() throws IOException {
         final StorageRecord<?> index = getMemoryStorageService().read("context", "_index");
-        Assert.assertNotNull(index);
+        assert index!=null;
 
         final CollectionSerializer collectionSerializer =
                 (CollectionSerializer) ((AbstractConsentIndexedStorageAction) action).getStorageKeysSerializer();
@@ -50,22 +56,25 @@ public abstract class AbstractConsentIndexedStorageActionTest extends AbstractCo
         return collectionSerializer.deserialize(0, "context", "_index", index.getValue(), index.getExpiration());
     }
     
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableStorageIndexKeyStrategy() throws Exception {
         action.initialize();
-        ((AbstractConsentIndexedStorageAction) action).setStorageIndexKeyLookupStrategy(null);
+        ((AbstractConsentIndexedStorageAction) action).setStorageIndexKeyLookupStrategy((Function<ProfileRequestContext, String>) nullObj);
     }
     
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableStorageKeysSerializerStrategy() throws Exception {
         action.initialize();
-        ((AbstractConsentIndexedStorageAction) action).setStorageKeysSerializer(null);
+        ((AbstractConsentIndexedStorageAction) action).setStorageKeysSerializer((StorageSerializer<Collection<String>>) nullObj);
     }
     
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableStorageKeysStrategy() throws Exception {
         action.initialize();
-        ((AbstractConsentIndexedStorageAction) action).setStorageKeysStrategy(null);
+        ((AbstractConsentIndexedStorageAction) action).setStorageKeysStrategy((Function<Pair<ProfileRequestContext, List<String>>, List<String>>) nullObj);
     }
 
 }

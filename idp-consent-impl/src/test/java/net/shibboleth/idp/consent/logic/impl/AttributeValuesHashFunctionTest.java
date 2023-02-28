@@ -22,6 +22,8 @@ import static org.testng.Assert.assertEquals;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -42,6 +44,7 @@ import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
 
     private AttributeValuesHashFunction function;
+    private Object nullObj;
 
     @BeforeMethod public void setUp() {
         function = new AttributeValuesHashFunction();
@@ -100,14 +103,14 @@ public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
         assertEquals(function.apply(Collections.singletonList(val)), "c+NqWOijlvFBpla4r1q3F0RkpYZK7phCNe2gKb0r57o=");
     }
 
-    private IdPAttributeValue testAV(Object type) {
+    private IdPAttributeValue testAV(@Nonnull Object type) {
         return new IdPAttributeValue() {
 
-            public Object getNativeValue() {
+            public @Nonnull Object getNativeValue() {
                 return type;
             }
 
-            public String getDisplayValue() {
+            public @Nonnull String getDisplayValue() {
                 return "Display";
             }};
     }
@@ -116,7 +119,8 @@ public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
         assertEquals(function.apply(Collections.singletonList(testAV("42"))), "Lt6BAjtq4qQJ6ADEZKf/s5XZxzBh6mShY/UCphriugY=");
     }
 
+    @SuppressWarnings("null")
     @Test public void unknownTypeNoValue() {
-        assertEquals(function.apply(Collections.singletonList(testAV(null))), "xPtMT+sJsVtAtjNLzPrBBlfbY/yUsAQ7Ncxxc7Q5k70=");
+        assertEquals(function.apply(Collections.singletonList(testAV(nullObj))), "xPtMT+sJsVtAtjNLzPrBBlfbY/yUsAQ7Ncxxc7Q5k70=");
     }
 }

@@ -37,7 +37,9 @@ public class CurrentConsentIdsAuditExtractorTest extends AbstractConsentAuditExt
     }
 
     @Test public void testNoCurrentConsents() {
-        prc.getSubcontext(ConsentContext.class).getCurrentConsents().clear();
+        final ConsentContext ctx = prc.getSubcontext(ConsentContext.class);
+        assert ctx != null;
+        ctx.getCurrentConsents().clear();
         Assert.assertEquals(extractor.apply(prc), Collections.emptyList());
     }
 

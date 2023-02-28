@@ -23,7 +23,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.annotation.Nonnull;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -33,18 +35,9 @@ import net.shibboleth.idp.consent.logic.impl.AttributeValuesHashFunction;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 /** Unit tests for {@link ConsentSerializer}. */
 @SuppressWarnings("javadoc")
 public class ConsentSerializerTest {
-
-    /** Class logger. */
-    @Nonnull protected final Logger log = LoggerFactory.getLogger(ConsentSerializerTest.class);
 
     private static final String CONTEXT = "_context";
 
@@ -70,6 +63,8 @@ public class ConsentSerializerTest {
 
     protected Function<Collection<IdPAttributeValue>, String> attributeValuesHashFunction;
 
+    private Object nullObj;
+
     @BeforeMethod public void setUp() {
         serializer = new ConsentSerializer();
 
@@ -92,9 +87,10 @@ public class ConsentSerializerTest {
         consents.put(consent2.getId(), consent2);
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNull() throws Exception {
         serializer.initialize();
-        serializer.serialize(null);
+        serializer.serialize((Map<String, Consent>) nullObj);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testEmpty() throws Exception {
@@ -102,8 +98,9 @@ public class ConsentSerializerTest {
         serializer.serialize(new HashMap<String, Consent>());
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullSymoblics() throws Exception {
-        serializer.setSymbolics(null);
+        serializer.setSymbolics((Map<String, Integer>) nullObj);
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class) public void testMutatingSymoblics()

@@ -26,11 +26,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceableComponent;
@@ -165,7 +168,7 @@ public class AttributeDisplayNameDescriptionFunctionTest {
         }
 
         /** {@inheritDoc} */
-        public ServiceableComponent<AttributeTranscoderRegistry> getServiceableComponent() {
+        public @Nonnull ServiceableComponent<AttributeTranscoderRegistry> getServiceableComponent() {
             return this;
         }
 
@@ -175,27 +178,27 @@ public class AttributeDisplayNameDescriptionFunctionTest {
         }
 
         /** {@inheritDoc} */
-        public Map<Locale, String> getDisplayNames(IdPAttribute attribute) {
+        public @Nonnull Map<Locale, String> getDisplayNames(@Nonnull IdPAttribute attribute) {
             return names;
         }
 
         /** {@inheritDoc} */
-        public Map<Locale, String> getDescriptions(IdPAttribute attribute) {
+        public @Nonnull Map<Locale, String> getDescriptions(@Nonnull IdPAttribute attribute) {
             return descriptions;
         }
 
         /** {@inheritDoc} */
-        public Collection<TranscodingRule> getTranscodingRules(IdPAttribute from, Class<?> to) {
-            return null;
+        public @Nonnull Collection<TranscodingRule> getTranscodingRules(@Nonnull IdPAttribute from, @Nonnull Class<?> to) {
+            return CollectionSupport.emptyList();
         }
 
         /** {@inheritDoc} */
-        public <T> Collection<TranscodingRule> getTranscodingRules(T from) {
-            return null;
+        public @Nonnull <T> Collection<TranscodingRule> getTranscodingRules(@Nonnull T from) {
+            return CollectionSupport.emptyList();
         }
 
         /** {@inheritDoc} */
-        public AttributeTranscoderRegistry getComponent() {
+        public @Nonnull AttributeTranscoderRegistry getComponent() {
             return this;
         }
 

@@ -17,14 +17,14 @@
 
 package net.shibboleth.idp.consent.flow.ar.impl;
 
+import org.testng.annotations.BeforeMethod;
+
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.flow.impl.AbstractConsentActionTest;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
-
-import org.testng.annotations.BeforeMethod;
 
 /** {@link AbstractAttributeReleaseAction} unit test. */
 public abstract class AbstractAttributeReleaseActionTest extends AbstractConsentActionTest {
@@ -43,6 +43,8 @@ public abstract class AbstractAttributeReleaseActionTest extends AbstractConsent
 
         descriptor = new AttributeReleaseFlowDescriptor();
         descriptor.setId("test");
-        prc.getSubcontext(ProfileInterceptorContext.class, false).setAttemptedFlow(descriptor);
+        final ProfileInterceptorContext ctx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert ctx != null;
+        ctx.setAttemptedFlow(descriptor);
     }
 }

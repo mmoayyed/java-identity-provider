@@ -17,12 +17,17 @@
 
 package net.shibboleth.idp.consent.flow.impl;
 
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
+import java.util.Map;
+import java.util.function.Function;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -31,9 +36,12 @@ import org.testng.annotations.Test;
 @SuppressWarnings("javadoc")
 public class PopulateConsentContextTest extends AbstractConsentActionTest {
 
+    private Object nullObj;
+    
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullCurrentConsentsFunction()
             throws Exception {
-        action = new PopulateConsentContext(null);
+        action = new PopulateConsentContext((Function<ProfileRequestContext, Map<String, Consent>>) nullObj);
         action.initialize();
     }
 
@@ -46,7 +54,7 @@ public class PopulateConsentContextTest extends AbstractConsentActionTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
-        Assert.assertNotNull(consentContext);
+        assert consentContext!= null;
         Assert.assertEquals(consentContext.getCurrentConsents(), ConsentTestingSupport.newConsentMap());
     }
 

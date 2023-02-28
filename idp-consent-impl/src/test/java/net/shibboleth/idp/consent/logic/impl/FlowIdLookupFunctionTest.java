@@ -55,8 +55,9 @@ public class FlowIdLookupFunctionTest {
 
     @Test public void testNullWebFlowRequestContext() {
         prc.getSubcontext(SpringRequestContext.class, true);
-        Assert.assertNotNull(prc.getSubcontext(SpringRequestContext.class));
-        Assert.assertNull(prc.getSubcontext(SpringRequestContext.class).getRequestContext());
+        final SpringRequestContext context = prc.getSubcontext(SpringRequestContext.class);
+        assert context != null;
+        Assert.assertNull(context.getRequestContext());
         Assert.assertNull(function.apply(prc));
     }
 
@@ -69,9 +70,12 @@ public class FlowIdLookupFunctionTest {
     }
 
     @Test public void testFlowId() {
-        prc.getSubcontext(SpringRequestContext.class, true).setRequestContext(src);
-        Assert.assertNotNull(prc.getSubcontext(SpringRequestContext.class));
-        Assert.assertNotNull(prc.getSubcontext(SpringRequestContext.class).getRequestContext());
+        final SpringRequestContext context = prc.getSubcontext(SpringRequestContext.class, true);
+        assert context != null;
+        context.setRequestContext(src);
+        final SpringRequestContext ctx2 = prc.getSubcontext(SpringRequestContext.class);
+        assert ctx2  != null;
+        Assert.assertNotNull(ctx2.getRequestContext());
         Assert.assertEquals(function.apply(prc), "mockFlow");
     }
 }

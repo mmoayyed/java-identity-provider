@@ -37,12 +37,16 @@ public class CurrentConsentIsApprovedAuditExtractorTest extends AbstractConsentA
     }
 
     @Test public void testNoCurrentConsents() {
-        prc.getSubcontext(ConsentContext.class).getCurrentConsents().clear();
+        final ConsentContext ctx = prc.getSubcontext(ConsentContext.class);
+        assert ctx != null;
+        ctx.getCurrentConsents().clear();
         Assert.assertEquals(extractor.apply(prc), Collections.emptyList());
     }
 
     @Test public void testExtraction() {
-        prc.getSubcontext(ConsentContext.class).getCurrentConsents().get("consent1").setApproved(true);
+        final ConsentContext ctx = prc.getSubcontext(ConsentContext.class);
+        assert ctx != null;
+        ctx.getCurrentConsents().get("consent1").setApproved(true);
         Assert.assertEquals(extractor.apply(prc), List.of(true, false));
     }
 }

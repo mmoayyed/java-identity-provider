@@ -36,6 +36,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
 
     @BeforeMethod public void setUpCurrentConsents() throws Exception {
         final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
+        assert consentContext!= null;
         consentContext.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
     }
 
@@ -48,10 +49,10 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
 
         final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
-        Assert.assertNotNull(consentContext);
+        assert consentContext!= null;
         final Consent consent1 = consentContext.getCurrentConsents().get("consent1");
         final Consent consent2 = consentContext.getCurrentConsents().get("consent2");
-        Assert.assertNotNull(consent1);
+        assert consent1!= null && consent2!= null;
         Assert.assertNotNull(consent2);
         Assert.assertFalse(consent1.isApproved());
         Assert.assertFalse(consent2.isApproved());
@@ -68,7 +69,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
-        Assert.assertNotNull(consentContext);
+        assert consentContext!= null;
         final Consent consent1 = consentContext.getCurrentConsents().get("consent1");
         final Consent consent2 = consentContext.getCurrentConsents().get("consent2");
         Assert.assertNotNull(consent1);
@@ -90,7 +91,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
-        Assert.assertNotNull(consentContext);
+        assert consentContext!= null;
         final Consent consent1 = consentContext.getCurrentConsents().get("consent1");
         final Consent consent2 = consentContext.getCurrentConsents().get("consent2");
         Assert.assertNotNull(consent1);
@@ -113,7 +114,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
-        Assert.assertNotNull(consentContext);
+        assert consentContext!= null;
         final Consent consent1 = consentContext.getCurrentConsents().get("consent1");
         final Consent consent2 = consentContext.getCurrentConsents().get("consent2");
         Assert.assertNotNull(consent1);

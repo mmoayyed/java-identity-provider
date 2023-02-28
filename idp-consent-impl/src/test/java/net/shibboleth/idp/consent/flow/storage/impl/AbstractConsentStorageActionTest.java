@@ -19,16 +19,19 @@ package net.shibboleth.idp.consent.flow.storage.impl;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.Function;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.AbstractConsentActionTest;
 import net.shibboleth.idp.consent.storage.impl.ConsentSerializer;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -37,6 +40,8 @@ import org.testng.annotations.Test;
 /** {@link AbstractConsentStorageAction} unit test. */
 @SuppressWarnings("javadoc")
 public abstract class AbstractConsentStorageActionTest extends AbstractConsentActionTest {
+
+    private Object nullObj;
 
     protected void populateAction() throws Exception {
         ((AbstractConsentStorageAction) action).setStorageContextLookupStrategy(FunctionSupport
@@ -52,23 +57,25 @@ public abstract class AbstractConsentStorageActionTest extends AbstractConsentAc
         storageService.initialize();
 
         final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class);
-        Assert.assertNotNull(pic);
-        Assert.assertNotNull(pic.getAttemptedFlow());
-        pic.getAttemptedFlow().setStorageService(storageService);
+        assert pic!=null;
+        final ProfileInterceptorFlowDescriptor flow = pic.getAttemptedFlow();
+        assert flow!=null;
+        flow.setStorageService(storageService);
     }
 
     protected MemoryStorageService getMemoryStorageService() {
         final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class);
-        Assert.assertNotNull(pic);
-        Assert.assertNotNull(pic.getAttemptedFlow());
-        Assert.assertNotNull(pic.getAttemptedFlow().getStorageService());
-        Assert.assertTrue(pic.getAttemptedFlow().getStorageService() instanceof MemoryStorageService);
-        return (MemoryStorageService) pic.getAttemptedFlow().getStorageService();
+        assert pic!=null;
+        final ProfileInterceptorFlowDescriptor flow = pic.getAttemptedFlow();
+        assert flow!=null;
+        Assert.assertNotNull(flow.getStorageService());
+        Assert.assertTrue(flow.getStorageService() instanceof MemoryStorageService);
+        return (MemoryStorageService) flow.getStorageService();
     }
 
     protected Map<String, Consent> readConsentsFromStorage() throws IOException {
         final StorageRecord<?> record = getMemoryStorageService().read("context", "key");
-        Assert.assertNotNull(record);
+        assert record!=null;
 
         final ConsentSerializer consentSerializer =
                 (ConsentSerializer) ((AbstractConsentStorageAction) action).getStorageSerializer();
@@ -77,22 +84,25 @@ public abstract class AbstractConsentStorageActionTest extends AbstractConsentAc
         return consentSerializer.deserialize(0, "context", "key", record.getValue(), record.getExpiration());
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableInterceptorContextStrategy() throws Exception {
         action.initialize();
-        ((AbstractConsentStorageAction) action).setStorageContextLookupStrategy(null);
+        ((AbstractConsentStorageAction) action).setStorageContextLookupStrategy((Function<ProfileRequestContext, String>) nullObj);
     }
     
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableStorageKeyStrategy() throws Exception {
         action.initialize();
-        ((AbstractConsentStorageAction) action).setStorageKeyLookupStrategy(null);
+        ((AbstractConsentStorageAction) action).setStorageKeyLookupStrategy((Function<ProfileRequestContext, String>) nullObj);
     }
     
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableStorageSerializerStrategy() throws Exception {
         action.initialize();
-        ((AbstractConsentStorageAction) action).setStorageSerializer(null);
+        ((AbstractConsentStorageAction) action).setStorageSerializer((StorageSerializer<Map<String, Consent>>) nullObj);
     }
 
 }

@@ -42,7 +42,7 @@ public class CounterStorageKeyComparatorTest {
         keys = Arrays.asList("key1", "key2", "key3", "key4");
 
         map = new LinkedHashMap<>();
-
+        assert keys != null;
         c = new CounterStorageKeyComparator(keys, map);
     }
 

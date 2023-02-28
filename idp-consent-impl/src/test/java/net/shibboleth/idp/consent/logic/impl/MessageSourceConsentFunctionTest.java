@@ -20,11 +20,16 @@ package net.shibboleth.idp.consent.logic.impl;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
 import net.shibboleth.shared.logic.ConstraintViolationException;
@@ -50,6 +55,8 @@ public class MessageSourceConsentFunctionTest {
     private MessageSource messageSource;
 
     private MessageSourceConsentFunction function;
+    
+    private Object nullObject;
 
     @BeforeMethod public void setUp() throws Exception {
         src = new RequestContextBuilder().buildRequestContext();
@@ -58,6 +65,7 @@ public class MessageSourceConsentFunctionTest {
         messageSource = new MockMessageSource();
 
         function = new MessageSourceConsentFunction();
+        assert messageSource!=null;
         function.setMessageSource(messageSource);
     }
 
@@ -74,27 +82,29 @@ public class MessageSourceConsentFunctionTest {
         final ProfileInterceptorContext pic = new ProfileInterceptorContext();
         pic.setAttemptedFlow(descriptor);
         prc.addSubcontext(pic);
+        final ProfileInterceptorContext pic2 =prc.getSubcontext(ProfileInterceptorContext.class);
+        assert pic2!=null;
+        final ProfileInterceptorFlowDescriptor flow = pic2.getAttemptedFlow();
+        assert flow != null;
+        Assert.assertTrue(flow  instanceof ConsentFlowDescriptor);
 
-        Assert.assertNotNull(prc.getSubcontext(ProfileInterceptorContext.class));
-        Assert.assertNotNull(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow());
-        Assert.assertTrue(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow() instanceof ConsentFlowDescriptor);
-
-        Assert.assertEquals(((ConsentFlowDescriptor) prc.getSubcontext(ProfileInterceptorContext.class)
-                .getAttemptedFlow()).compareValues(), compareValues);
+        Assert.assertEquals(((ConsentFlowDescriptor) flow).compareValues(), compareValues);
     }
 
     @Test public void testNullInput() {
         Assert.assertNull(function.apply(null));
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullIdMessageCode() throws Exception {
-        function.setConsentKeyLookupStrategy(null);
+        function.setConsentKeyLookupStrategy((Function<ProfileRequestContext, String>) nullObject);
         function.initialize();
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullValueMessageCode()
             throws Exception {
-        function.setConsentValueMessageCodeSuffix(null);
+        function.setConsentValueMessageCodeSuffix((String) nullObject);
         function.initialize();
     }
 
@@ -129,6 +139,7 @@ public class MessageSourceConsentFunctionTest {
         Assert.assertEquals(function.apply(prc), expected);
     }
 
+    @SuppressWarnings("null")
     @Test public void testMessageSourceConsentCompareValues() throws Exception {
 
         setUpDescriptor(true);
@@ -150,7 +161,7 @@ public class MessageSourceConsentFunctionTest {
     private class MockMessageSource implements MessageSource {
 
         /** {@inheritDoc} */
-        public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+        public String getMessage(@Nonnull String code, @Nullable Object[] args, @Nullable String defaultMessage, @Nonnull Locale locale) {
             if (code.equals("key")) {
                 return "id";
             } else if (code.equals("id.text")) {
@@ -161,7 +172,7 @@ public class MessageSourceConsentFunctionTest {
         }
 
         /** {@inheritDoc} */
-        public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
+        public @Nonnull String getMessage(@Nonnull String code, @Nullable Object[] args, @Nonnull Locale locale) throws NoSuchMessageException {
             if (code.equals("key")) {
                 return "id";
             } else if (code.equals("id.text")) {
@@ -171,10 +182,12 @@ public class MessageSourceConsentFunctionTest {
         }
 
         /** {@inheritDoc} */
-        public String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException {
-            if (resolvable.getCodes()[0].equals("key")) {
+        public @Nonnull String getMessage(@Nonnull MessageSourceResolvable resolvable, @Nonnull Locale locale) throws NoSuchMessageException {
+            final String[] codes = resolvable.getCodes();
+            assert codes != null;
+            if (codes[0].equals("key")) {
                 return "id";
-            } else if (resolvable.getCodes()[0].equals("id.text")) {
+            } else if (codes[0].equals("id.text")) {
                 return "value";
             }
             throw new NoSuchMessageException("No such message");

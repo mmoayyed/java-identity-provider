@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -36,7 +38,7 @@ import net.shibboleth.idp.consent.storage.impl.ConsentResult;
 @SuppressWarnings("javadoc")
 public class ConsentTestingSupport {
 
-    public static Map<String, Consent> newConsentMap() {
+    @Nonnull public static Map<String, Consent> newConsentMap() {
         final Consent consent1 = new Consent();
         consent1.setId("consent1");
         consent1.setValue("value1");
@@ -56,11 +58,11 @@ public class ConsentTestingSupport {
         ORDER1,
         ORDER2,
     }
-    public static final Map<String, IdPAttribute> newAttributeMap() {
+    @Nonnull public static final Map<String, IdPAttribute> newAttributeMap() {
         return newAttributeMap(MapType.SORTED);
     }
 
-    public static final Map<String, IdPAttribute> newAttributeMap(final MapType order) {
+    @Nonnull public static final Map<String, IdPAttribute> newAttributeMap(final MapType order) {
         final IdPAttributeValue value1a = new StringAttributeValue("Avalue1");
         final IdPAttributeValue value1b = new StringAttributeValue("Bvalue1");
         final IdPAttributeValue value1c = new StringAttributeValue("Cvalue1");
@@ -99,7 +101,7 @@ public class ConsentTestingSupport {
         return map;
     }
 
-    public static final List<ConsentResult> newConsentResults() {
+    @Nonnull public static final List<ConsentResult> newConsentResults() {
         final List<ConsentResult> consentResults = new ArrayList<>();
         consentResults.add(new ConsentResult("context1", "key1", "value1", null));
         consentResults.add(new ConsentResult("context2", "key1", "value1", null));
@@ -107,7 +109,7 @@ public class ConsentTestingSupport {
         return consentResults;
     }
 
-    public static Map<String, Integer> newSymbolicsMap() {
+    @Nonnull public static Map<String, Integer> newSymbolicsMap() {
         final Map<String, Integer> map = new HashMap<>();
         map.put("consent1", 101);
         map.put("consent2", 102);

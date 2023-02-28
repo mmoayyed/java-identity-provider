@@ -28,6 +28,12 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import org.springframework.webflow.execution.Event;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.Ordering;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -38,12 +44,6 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
-
-import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import com.google.common.collect.Ordering;
 
 /** {@link PopulateAttributeReleaseContext} unit test. */
 @SuppressWarnings("javadoc")
@@ -65,7 +65,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         ActionTestingSupport.assertProceedEvent(event);
 
         final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
-        Assert.assertNotNull(arc);
+        assert arc!= null;
         Assert.assertEquals(arc.getConsentableAttributes(), ConsentTestingSupport.newAttributeMap());
     }
 
@@ -79,7 +79,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         ActionTestingSupport.assertProceedEvent(event);
 
         final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
-        Assert.assertNotNull(arc);
+        assert arc!= null;
         Assert.assertNotEquals(arc.getConsentableAttributes(), ConsentTestingSupport.newAttributeMap());
         Assert.assertTrue(arc.getConsentableAttributes().containsKey("attribute1"));
         Assert.assertTrue(arc.getConsentableAttributes().containsKey("attribute2"));
@@ -100,7 +100,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         ActionTestingSupport.assertProceedEvent(event);
 
         final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
-        Assert.assertNotNull(arc);
+        assert arc!= null;
         Assert.assertEquals(arc.getConsentableAttributes(), orderedAttributes);
     }
 
@@ -122,7 +122,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         ActionTestingSupport.assertProceedEvent(event);
 
         final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
-        Assert.assertNotNull(arc);
+        assert arc!= null;
         Assert.assertEquals(arc.getConsentableAttributes(), orderedAttributes);
     }
 
@@ -142,7 +142,11 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         final List<IdPAttribute> attributes = new ArrayList<>();
         attributes.addAll(ConsentTestingSupport.newAttributeMap().values());
         attributes.add(attribute4);
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class).setIdPAttributes(attributes);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx != null;
+        final AttributeContext ac = rpCtx.getSubcontext(AttributeContext.class);
+        assert ac != null;
+        ac.setIdPAttributes(attributes);
 
         action = new PopulateAttributeReleaseContext();
         ((PopulateAttributeReleaseContext) action).setAttributePredicate(e->true);
@@ -155,12 +159,14 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         ActionTestingSupport.assertProceedEvent(event);
 
         final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class);
-        Assert.assertNotNull(arc);
+        assert arc!= null;
         Assert.assertEquals(arc.getConsentableAttributes(), orderedAttributes);
     }
 
     @Test public void testMissingAttributeContext() throws Exception {
-        prc.getSubcontext(RelyingPartyContext.class).removeSubcontext(AttributeContext.class);
+        final RelyingPartyContext ctx = prc.getSubcontext(RelyingPartyContext.class);
+        assert ctx != null;
+        ctx.removeSubcontext(AttributeContext.class);
 
         action = new PopulateAttributeReleaseContext();
         ((PopulateAttributeReleaseContext) action).setAttributePredicate(e -> true);
@@ -177,6 +183,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         /** {@inheritDoc} */
         public boolean test(@Nullable final IdPAttribute input) {
 
+            assert input != null;
             if (input.getId().equals("attribute1") || input.getId().equals("attribute2")) {
                 return true;
             }

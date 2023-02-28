@@ -49,7 +49,7 @@ public class ReadConsentFromStorageTest extends AbstractConsentStorageActionTest
         ActionTestingSupport.assertProceedEvent(event);
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
-        Assert.assertNotNull(consentCtx);
+        assert consentCtx!=null;
         Assert.assertEquals(consentCtx.getPreviousConsents(), ConsentTestingSupport.newConsentMap());
     }
 
@@ -61,7 +61,7 @@ public class ReadConsentFromStorageTest extends AbstractConsentStorageActionTest
         ActionTestingSupport.assertProceedEvent(event);
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
-        Assert.assertNotNull(consentCtx);
+        assert consentCtx!=null;
         Assert.assertTrue(consentCtx.getPreviousConsents().isEmpty());
     }
 }

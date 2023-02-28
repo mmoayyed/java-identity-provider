@@ -29,6 +29,8 @@ import org.testng.annotations.Test;
 public class ConsentTest {
 
     private Consent consent;
+    
+    private Object nullObj;
 
     @BeforeMethod public void setUp() {
         consent = new Consent();
@@ -45,8 +47,9 @@ public class ConsentTest {
         consent.setValue("");
     }
 
+    @SuppressWarnings("null")
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullValue() {
-        consent.setValue(null);
+        consent.setValue((String) nullObj);
     }
 
     @Test public void testValue() {

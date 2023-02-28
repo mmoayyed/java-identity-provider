@@ -32,6 +32,7 @@ import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport.MapType;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -72,13 +73,13 @@ public class AttributeReleaseConsentFunctionTest {
         final ProfileInterceptorContext pic = new ProfileInterceptorContext();
         pic.setAttemptedFlow(flowDescriptor);
         prc.addSubcontext(pic);
+        final ProfileInterceptorContext pic2 = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert pic2!= null;
+        final ProfileInterceptorFlowDescriptor flow = pic2.getAttemptedFlow();
+        assert flow != null;
+        Assert.assertTrue(flow  instanceof ConsentFlowDescriptor);
 
-        Assert.assertNotNull(prc.getSubcontext(ProfileInterceptorContext.class));
-        Assert.assertNotNull(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow());
-        Assert.assertTrue(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow() instanceof ConsentFlowDescriptor);
-
-        Assert.assertEquals(((ConsentFlowDescriptor) prc.getSubcontext(ProfileInterceptorContext.class)
-                .getAttemptedFlow()).compareValues(), compareValues);
+        Assert.assertEquals(((ConsentFlowDescriptor) flow).compareValues(), compareValues);
     }
 
     @Test public void testNullInput() {
@@ -95,7 +96,10 @@ public class AttributeReleaseConsentFunctionTest {
     @Test public void testNullConsentFlowDescriptor() {
         prc.addSubcontext(new ConsentContext());
         prc.addSubcontext(new ProfileInterceptorContext());
-        Assert.assertNull(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow());
+        final ProfileInterceptorContext pic2 = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert pic2!= null;
+        final ProfileInterceptorFlowDescriptor flow = pic2.getAttemptedFlow();
+        assert flow == null;
 
         Assert.assertNull(function.apply(prc));
     }
@@ -112,9 +116,12 @@ public class AttributeReleaseConsentFunctionTest {
         prc.addSubcontext(new ConsentContext());
         prc.addSubcontext(new AttributeReleaseContext(), true);
         setUpDescriptor(false);
-        Assert.assertTrue(prc.getSubcontext(AttributeReleaseContext.class).getConsentableAttributes().isEmpty());
-
-        Assert.assertTrue(function.apply(prc).isEmpty());
+        final AttributeReleaseContext arc =prc.getSubcontext(AttributeReleaseContext.class); 
+        assert arc != null;
+        Assert.assertTrue(arc.getConsentableAttributes().isEmpty());
+        final Map<String, Consent> res = function.apply(prc);
+        assert res != null;
+        Assert.assertTrue(res.isEmpty());
     }
 
     @Test public void testNoPreviousConsents() {
@@ -123,8 +130,12 @@ public class AttributeReleaseConsentFunctionTest {
         arc.getConsentableAttributes().putAll(ConsentTestingSupport.newAttributeMap());
         prc.addSubcontext(arc);
         setUpDescriptor(false);
-        Assert.assertFalse(prc.getSubcontext(AttributeReleaseContext.class).getConsentableAttributes().isEmpty());
-        Assert.assertTrue(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
+        final AttributeReleaseContext arc2 =prc.getSubcontext(AttributeReleaseContext.class); 
+        assert arc2 != null;
+        Assert.assertFalse(arc2.getConsentableAttributes().isEmpty());
+        ConsentContext consentContext = prc.getSubcontext(ConsentContext.class);
+        assert consentContext != null;
+        Assert.assertTrue(consentContext.getPreviousConsents().isEmpty());
 
         final Map<String, Consent> expected = new HashMap<>();
         for (final IdPAttribute attr : ConsentTestingSupport.newAttributeMap().values()) {
@@ -142,8 +153,12 @@ public class AttributeReleaseConsentFunctionTest {
         arc.getConsentableAttributes().putAll(ConsentTestingSupport.newAttributeMap());
         prc.addSubcontext(arc);
         setUpDescriptor(true);
-        Assert.assertFalse(prc.getSubcontext(AttributeReleaseContext.class).getConsentableAttributes().isEmpty());
-        Assert.assertTrue(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
+        final AttributeReleaseContext arc2 =prc.getSubcontext(AttributeReleaseContext.class); 
+        assert arc2 != null;
+        Assert.assertFalse(arc2.getConsentableAttributes().isEmpty());
+        ConsentContext consentContext = prc.getSubcontext(ConsentContext.class);
+        assert consentContext != null;
+        Assert.assertTrue(consentContext.getPreviousConsents().isEmpty());
 
         final Map<String, Consent> expected = new HashMap<>();
         for (final IdPAttribute attr : ConsentTestingSupport.newAttributeMap().values()) {
@@ -168,8 +183,12 @@ public class AttributeReleaseConsentFunctionTest {
         arc.getConsentableAttributes().putAll(ConsentTestingSupport.newAttributeMap());
         prc.addSubcontext(arc);
         setUpDescriptor(false);
-        Assert.assertFalse(prc.getSubcontext(AttributeReleaseContext.class).getConsentableAttributes().isEmpty());
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
+        final AttributeReleaseContext arc2 =prc.getSubcontext(AttributeReleaseContext.class); 
+        assert arc2 != null;
+        Assert.assertFalse(arc2.getConsentableAttributes().isEmpty());
+        ConsentContext consentContext = prc.getSubcontext(ConsentContext.class);
+        assert consentContext != null;
+        Assert.assertFalse(consentContext.getPreviousConsents().isEmpty());
 
         final Map<String, Consent> expected = new HashMap<>();
         for (final IdPAttribute attr : ConsentTestingSupport.newAttributeMap().values()) {
@@ -198,8 +217,12 @@ public class AttributeReleaseConsentFunctionTest {
         arc.getConsentableAttributes().putAll(ConsentTestingSupport.newAttributeMap());
         prc.addSubcontext(arc);
         setUpDescriptor(true);
-        Assert.assertFalse(prc.getSubcontext(AttributeReleaseContext.class).getConsentableAttributes().isEmpty());
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
+        final AttributeReleaseContext arc2 =prc.getSubcontext(AttributeReleaseContext.class); 
+        assert arc2 != null;
+        Assert.assertFalse(arc2.getConsentableAttributes().isEmpty());
+        ConsentContext consentContext = prc.getSubcontext(ConsentContext.class);
+        assert consentContext != null;
+        Assert.assertFalse(consentContext.getPreviousConsents().isEmpty());
 
         final Map<String, Consent> expected = new HashMap<>();
         for (final IdPAttribute attr : ConsentTestingSupport.newAttributeMap().values()) {
@@ -233,6 +256,7 @@ public class AttributeReleaseConsentFunctionTest {
         setUpDescriptor(true);
 
         final Map<String, Consent> firstResult = function.apply(prc);
+        assert firstResult != null;
         final Consent firstConsent = firstResult.get("attribute1");
         assertTrue(firstConsent.isApproved());
 
@@ -248,6 +272,7 @@ public class AttributeReleaseConsentFunctionTest {
         setUpDescriptor(true);
 
         final Map<String, Consent> secondResult = function.apply(prc);
+        assert secondResult != null;
         final Consent secondConsent = secondResult.get("attribute1");
         assertTrue(secondConsent.isApproved());
     }
@@ -266,8 +291,12 @@ public class AttributeReleaseConsentFunctionTest {
         arc.getConsentableAttributes().putAll(ConsentTestingSupport.newAttributeMap());
         prc.addSubcontext(arc);
         setUpDescriptor(true);
-        Assert.assertFalse(prc.getSubcontext(AttributeReleaseContext.class).getConsentableAttributes().isEmpty());
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
+        final AttributeReleaseContext arc2 =prc.getSubcontext(AttributeReleaseContext.class); 
+        assert arc2 != null;
+        Assert.assertFalse(arc2.getConsentableAttributes().isEmpty());
+        ConsentContext consentContext = prc.getSubcontext(ConsentContext.class);
+        assert consentContext != null;
+        Assert.assertFalse(consentContext.getPreviousConsents().isEmpty());
 
         final Map<String, Consent> expected = new HashMap<>();
         for (final IdPAttribute attr : ConsentTestingSupport.newAttributeMap().values()) {

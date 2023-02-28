@@ -20,6 +20,7 @@ package net.shibboleth.idp.consent.logic.impl;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -28,6 +29,7 @@ import net.shibboleth.idp.consent.flow.storage.impl.UpdateCounter;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
@@ -58,6 +60,8 @@ public class CounterStorageKeyFunctionTest {
     private Pair<ProfileRequestContext, List<String>> input;
 
     private CounterStorageKeyFunction f;
+    
+    private Object nullObj;
 
     /**
      * Create counter storage records.
@@ -67,6 +71,7 @@ public class CounterStorageKeyFunctionTest {
      * @throws IOException if a storage service error occurs
      * @throws InterruptedException if thread error occurs while sleeping
      */
+    @SuppressWarnings("null")
     protected void createCounter(@Nonnull final String key, final int iterations) throws IOException,
             InterruptedException {
 
@@ -87,16 +92,19 @@ public class CounterStorageKeyFunctionTest {
         springRequestContext.setRequestContext(src);
         prc.addSubcontext(springRequestContext);
 
-        storageService = new MemoryStorageService();
-        storageService.setId("test");
-        storageService.initialize();
+        final MemoryStorageService service = storageService = new MemoryStorageService();
+        service.setId("test");
+        service.initialize();
 
         descriptor = new ConsentFlowDescriptor();
         descriptor.setId("test");
 
         pic = new ProfileInterceptorContext();
         pic.setAttemptedFlow(descriptor);
-        pic.getAttemptedFlow().setStorageService(storageService);
+        final ProfileInterceptorFlowDescriptor flow = pic.getAttemptedFlow();
+        assert flow != null;
+        flow.setStorageService(service);
+        assert pic!=null;
         prc.addSubcontext(pic);
 
         keys = Arrays.asList("key1", "key2", "key3", "key4");
@@ -106,16 +114,18 @@ public class CounterStorageKeyFunctionTest {
         f = new CounterStorageKeyFunction();
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableInterceptorContextStrategy() throws Exception {
         f.initialize();
-        f.setInterceptorContextLookupStrategy(null);
+        f.setInterceptorContextLookupStrategy((Function<ProfileRequestContext, ProfileInterceptorContext>) nullObj);
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testUnmodifiableStorageContextStrategy() throws Exception {
         f.initialize();
-        f.setStorageContextLookupStrategy(null);
+        f.setStorageContextLookupStrategy((Function<ProfileRequestContext, String>) nullObj);
     }
 
     @Test public void testNullPairInput() throws Exception {
@@ -172,6 +182,7 @@ public class CounterStorageKeyFunctionTest {
     @Test public void testNoStorageService() throws Exception {
         pic = new ProfileInterceptorContext();
         pic.setAttemptedFlow(descriptor);
+        assert pic != null;
         prc.addSubcontext(pic, true);
 
         f.initialize();

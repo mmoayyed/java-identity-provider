@@ -26,6 +26,7 @@ import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -65,12 +66,13 @@ public class IsConsentRequiredPredicateTest {
         pic.setAttemptedFlow(descriptor);
         prc.addSubcontext(pic);
 
-        Assert.assertNotNull(prc.getSubcontext(ProfileInterceptorContext.class));
-        Assert.assertNotNull(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow());
-        Assert.assertTrue(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow() instanceof ConsentFlowDescriptor);
+        final ProfileInterceptorContext pic2 =prc.getSubcontext(ProfileInterceptorContext.class);
+        assert pic2 != null;
+        ProfileInterceptorFlowDescriptor flow = pic2.getAttemptedFlow();
+        assert flow != null;
+        Assert.assertTrue(flow instanceof ConsentFlowDescriptor);
 
-        Assert.assertEquals(((ConsentFlowDescriptor) prc.getSubcontext(ProfileInterceptorContext.class)
-                .getAttemptedFlow()).compareValues(), compareValues);
+        Assert.assertEquals(((ConsentFlowDescriptor) flow).compareValues(), compareValues);
     }
 
     /**
@@ -83,11 +85,11 @@ public class IsConsentRequiredPredicateTest {
         consentCtx.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
         prc.addSubcontext(consentCtx);
 
-        Assert.assertNotNull(prc.getSubcontext(ConsentContext.class));
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getCurrentConsents().isEmpty());
-        Assert.assertTrue(Objects.equals(prc.getSubcontext(ConsentContext.class).getPreviousConsents(), prc
-                .getSubcontext(ConsentContext.class).getCurrentConsents()));
+        final ConsentContext ctx2 = prc.getSubcontext(ConsentContext.class);
+        assert ctx2 != null;
+        Assert.assertFalse(ctx2.getPreviousConsents().isEmpty());
+        Assert.assertFalse(ctx2.getCurrentConsents().isEmpty());
+        Assert.assertTrue(Objects.equals(ctx2.getPreviousConsents(), ctx2.getCurrentConsents()));
     }
 
     /**
@@ -103,13 +105,12 @@ public class IsConsentRequiredPredicateTest {
         consentCtx.getCurrentConsents().putAll(consentSubset);
         prc.addSubcontext(consentCtx);
 
-        Assert.assertNotNull(prc.getSubcontext(ConsentContext.class));
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getCurrentConsents().isEmpty());
-        Assert.assertFalse(Objects.equals(prc.getSubcontext(ConsentContext.class).getPreviousConsents(), prc
-                .getSubcontext(ConsentContext.class).getCurrentConsents()));
-        Assert.assertFalse(Objects.equals(prc.getSubcontext(ConsentContext.class).getPreviousConsents().keySet(), prc
-                .getSubcontext(ConsentContext.class).getCurrentConsents().keySet()));
+        final ConsentContext ctx2 = prc.getSubcontext(ConsentContext.class);
+        assert ctx2 != null;
+        Assert.assertFalse(ctx2.getPreviousConsents().isEmpty());
+        Assert.assertFalse(ctx2.getCurrentConsents().isEmpty());
+        Assert.assertFalse(Objects.equals(ctx2.getPreviousConsents(), ctx2.getCurrentConsents()));
+        Assert.assertFalse(Objects.equals(ctx2.getPreviousConsents().keySet(), ctx2.getCurrentConsents().keySet()));
     }
 
     /**
@@ -125,11 +126,11 @@ public class IsConsentRequiredPredicateTest {
         consentCtx.getPreviousConsents().putAll(consentSubset);
         prc.addSubcontext(consentCtx);
 
-        Assert.assertNotNull(prc.getSubcontext(ConsentContext.class));
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getCurrentConsents().isEmpty());
-        Assert.assertFalse(Objects.equals(prc.getSubcontext(ConsentContext.class).getPreviousConsents(), prc
-                .getSubcontext(ConsentContext.class).getCurrentConsents()));
+        final ConsentContext ctx2 = prc.getSubcontext(ConsentContext.class);
+        assert ctx2 != null;
+        Assert.assertFalse(ctx2.getPreviousConsents().isEmpty());
+        Assert.assertFalse(ctx2.getCurrentConsents().isEmpty());
+        Assert.assertFalse(Objects.equals(ctx2.getPreviousConsents(), ctx2.getCurrentConsents()));
     }
 
     /**
@@ -145,13 +146,12 @@ public class IsConsentRequiredPredicateTest {
         consentCtx.getCurrentConsents().putAll(consentSubset);
         prc.addSubcontext(consentCtx);
 
-        Assert.assertNotNull(prc.getSubcontext(ConsentContext.class));
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getCurrentConsents().isEmpty());
-        Assert.assertFalse(Objects.equals(prc.getSubcontext(ConsentContext.class).getPreviousConsents(), prc
-                .getSubcontext(ConsentContext.class).getCurrentConsents()));
-        Assert.assertTrue(Objects.equals(prc.getSubcontext(ConsentContext.class).getPreviousConsents().keySet(), prc
-                .getSubcontext(ConsentContext.class).getCurrentConsents().keySet()));
+        final ConsentContext ctx2 = prc.getSubcontext(ConsentContext.class);
+        assert ctx2 != null;
+        Assert.assertFalse(ctx2.getPreviousConsents().isEmpty());
+        Assert.assertFalse(ctx2.getCurrentConsents().isEmpty());
+        Assert.assertFalse(Objects.equals(ctx2.getPreviousConsents(), ctx2.getCurrentConsents()));
+        Assert.assertTrue(Objects.equals(ctx2.getPreviousConsents().keySet(), ctx2.getCurrentConsents().keySet()));
     }
 
     @Test public void testNullInput() {
@@ -169,18 +169,20 @@ public class IsConsentRequiredPredicateTest {
         Assert.assertNotNull(prc.getSubcontext(ConsentContext.class));
 
         prc.addSubcontext(new ProfileInterceptorContext());
-        Assert.assertNotNull(prc.getSubcontext(ProfileInterceptorContext.class));
-        Assert.assertNull(prc.getSubcontext(ProfileInterceptorContext.class).getAttemptedFlow());
+        final ProfileInterceptorContext pic2 =prc.getSubcontext(ProfileInterceptorContext.class);
+        assert pic2 != null;
+        Assert.assertNull(pic2.getAttemptedFlow());
 
         Assert.assertFalse(p.test(prc));
     }
 
     @Test public void testNoPreviousConsents() {
         prc.addSubcontext(new ConsentContext());
-        Assert.assertNotNull(prc.getSubcontext(ConsentContext.class));
-        Assert.assertTrue(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
+        final ConsentContext ctx2 = prc.getSubcontext(ConsentContext.class);
+        assert ctx2 != null;
+        Assert.assertTrue(ctx2.getPreviousConsents().isEmpty());
 
-        prc.getSubcontext(ConsentContext.class).getCurrentConsents().put("test", new Consent());
+        ctx2.getCurrentConsents().put("test", new Consent());
         setUpDescriptor(false);
 
         Assert.assertTrue(p.test(prc));
@@ -191,9 +193,10 @@ public class IsConsentRequiredPredicateTest {
         consentCtx.getPreviousConsents().putAll(ConsentTestingSupport.newConsentMap());
         prc.addSubcontext(consentCtx);
 
-        Assert.assertNotNull(prc.getSubcontext(ConsentContext.class));
-        Assert.assertFalse(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
-        Assert.assertTrue(prc.getSubcontext(ConsentContext.class).getCurrentConsents().isEmpty());
+        final ConsentContext ctx2 = prc.getSubcontext(ConsentContext.class);
+        assert ctx2 != null;
+        Assert.assertFalse(ctx2.getPreviousConsents().isEmpty());
+        Assert.assertTrue(ctx2.getCurrentConsents().isEmpty());
 
         setUpDescriptor(false);
 

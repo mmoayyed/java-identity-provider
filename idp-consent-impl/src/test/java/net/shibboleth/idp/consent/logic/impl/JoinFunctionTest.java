@@ -52,12 +52,14 @@ public class JoinFunctionTest {
     }
 
     @Test public void testNullInput() {
+        assert functionA != null && functionB != null;
         function = new JoinFunction(functionA, functionB);
 
         Assert.assertNull(function.apply(null));
     }
 
     @Test public void testJoin() {
+        assert functionA != null && functionB != null;
         function = new JoinFunction(functionA, functionB);
 
         Assert.assertEquals(function.apply(prc), "a:b");
@@ -66,6 +68,7 @@ public class JoinFunctionTest {
     @Test public void testNullFirstFunctionJoin() {
         functionA = FunctionSupport.<ProfileRequestContext, String> constant(null);
 
+        assert functionA != null && functionB != null;
         function = new JoinFunction(functionA, functionB);
 
         Assert.assertEquals(function.apply(prc), "b");
@@ -73,6 +76,7 @@ public class JoinFunctionTest {
 
     @Test public void testNullSecondFunctionJoin() {
         functionB = FunctionSupport.<ProfileRequestContext, String> constant(null);
+        assert functionA != null && functionB != null;
 
         function = new JoinFunction(functionA, functionB);
 
@@ -81,7 +85,7 @@ public class JoinFunctionTest {
 
     @Test public void testEmptyFirstFunctionJoin() {
         functionA = FunctionSupport.<ProfileRequestContext, String> constant("");
-
+        assert functionA != null && functionB != null;
         function = new JoinFunction(functionA, functionB);
 
         Assert.assertEquals(function.apply(prc), ":b");
@@ -90,6 +94,7 @@ public class JoinFunctionTest {
     @Test public void testEmptySecondFunctionJoin() {
         functionB = FunctionSupport.<ProfileRequestContext, String> constant("");
 
+        assert functionA != null;
         function = new JoinFunction(functionA, functionB);
 
         Assert.assertEquals(function.apply(prc), "a:");

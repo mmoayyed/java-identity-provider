@@ -56,6 +56,7 @@ public class ReleaseAttributesTest extends AbstractAttributeReleaseActionTest {
         consent.put(consentToAttribute2.getId(), consentToAttribute2);
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
+        assert consentCtx!=null;
         consentCtx.getPreviousConsents().putAll(consent);
 
         arc = prc.getSubcontext(AttributeReleaseContext.class);
@@ -73,9 +74,10 @@ public class ReleaseAttributesTest extends AbstractAttributeReleaseActionTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final AttributeContext attrCtx =
-                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
-        Assert.assertNotNull(attrCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx != null;
+        final AttributeContext attrCtx = rpCtx.getSubcontext(AttributeContext.class);
+        assert attrCtx != null;
         Assert.assertEquals(attrCtx.getIdPAttributes().size(), 1);
         Assert.assertTrue(attrCtx.getIdPAttributes().containsKey("attribute1"));
         Assert.assertFalse(attrCtx.getIdPAttributes().containsKey("attribute2"));
@@ -94,10 +96,11 @@ public class ReleaseAttributesTest extends AbstractAttributeReleaseActionTest {
         final Event event = action.execute(src);
 
         ActionTestingSupport.assertProceedEvent(event);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx != null;
+        final AttributeContext attrCtx = rpCtx .getSubcontext(AttributeContext.class);
+        assert attrCtx != null;
 
-        final AttributeContext attrCtx =
-                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
-        Assert.assertNotNull(attrCtx);
         Assert.assertEquals(attrCtx.getIdPAttributes().size(), 2);
         Assert.assertTrue(attrCtx.getIdPAttributes().containsKey("attribute1"));
         Assert.assertTrue(attrCtx.getIdPAttributes().containsKey("attribute2"));

@@ -35,6 +35,8 @@ public class AttributeReleaseFlowDescriptorTest {
 
     private AttributeReleaseFlowDescriptor descriptor;
 
+    private Object nullObj;
+    
     @BeforeMethod public void setUp() {
         descriptor = new AttributeReleaseFlowDescriptor();
         descriptor.setId("test");
@@ -48,8 +50,9 @@ public class AttributeReleaseFlowDescriptorTest {
         Assert.assertNotNull(descriptor.getAttributeValuesHashFunction());
     }
 
+    @SuppressWarnings({ "null", "unchecked" })
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullAttributeValuesHashFunction() {
-        descriptor.setAttributeValuesHashFunction(null);
+        descriptor.setAttributeValuesHashFunction((Function<Collection<IdPAttributeValue>, String>) nullObj);
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class) public void

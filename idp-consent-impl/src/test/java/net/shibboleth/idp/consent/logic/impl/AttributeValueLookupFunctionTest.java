@@ -45,6 +45,8 @@ public class AttributeValueLookupFunctionTest {
     private RequestContext src;
 
     private ProfileRequestContext prc;
+    
+    private String nullObj;
 
     @BeforeMethod public void setUp() throws Exception {
         src = new RequestContextBuilder().buildRequestContext();
@@ -68,8 +70,9 @@ public class AttributeValueLookupFunctionTest {
         function = new AttributeValueLookupFunction("");
     }
 
+    @SuppressWarnings("null")
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullConstructor() {
-        function = new AttributeValueLookupFunction(null);
+        function = new AttributeValueLookupFunction(nullObj);
     }
 
     @Test public void testNullProfileRequestContext() {
@@ -92,6 +95,7 @@ public class AttributeValueLookupFunctionTest {
     @Test public void testAttributeWithNoValues() {
         final AttributeContext attributeCtx =
                 prc.getOrCreateSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+        assert attributeCtx!=null;
         attributeCtx.setIdPAttributes(Collections.singleton(new IdPAttribute("EmptyAttribute")));
 
         function = new AttributeValueLookupFunction("EmptyAttribute");
@@ -106,6 +110,7 @@ public class AttributeValueLookupFunctionTest {
 
         final AttributeContext attributeCtx =
                 prc.getOrCreateSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+        assert attributeCtx!=null;
         attributeCtx.setIdPAttributes(Collections.singleton(byteAttribute));
 
         function = new AttributeValueLookupFunction("ByteAttribute");
