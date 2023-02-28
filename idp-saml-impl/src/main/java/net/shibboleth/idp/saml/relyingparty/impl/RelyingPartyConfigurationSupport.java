@@ -22,24 +22,16 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
-import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 import net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.profile.context.logic.RelyingPartyIdPredicate;
 import net.shibboleth.saml.profile.context.logic.MappedEntityAttributesPredicate;
-import net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.logic.StrategyIndirectedPredicate;
 
 /**
- * Support functions for building {@link RelyingPartyConfiguration} objects with SAML functionality.
+ * Extension of shared helper class using IdP-specific configuration class.
  */
 public final class RelyingPartyConfigurationSupport {
     
@@ -57,23 +49,14 @@ public final class RelyingPartyConfigurationSupport {
      * @param relyingPartyIds the relying parties for which the configuration should be active
      * 
      * @return  a default-constructed configuration with the appropriate condition set
+     * 
+     * @throws Exception if the configuration class cannot be constructed via the default constructor 
      */
     @Nonnull public static RelyingPartyConfiguration byName(
-            @Nonnull @NonnullElements final Collection<String> relyingPartyIds) {
+            @Nonnull @NonnullElements final Collection<String> relyingPartyIds) throws Exception {
 
-        Constraint.isNotNull(relyingPartyIds, "Relying Party ID list cannot be null");
-
-        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
-        config.setActivationCondition(new RelyingPartyIdPredicate(relyingPartyIds));
-        
-        final StringBuffer name = new StringBuffer("EntityNames[");
-        for (final String rpId: relyingPartyIds) {
-            name.append(rpId).append(',');
-            
-        }
-        name.append(']');
-        config.setId(name.toString());
-        return config;
+        return net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport.byName(RelyingPartyConfiguration.class,
+                relyingPartyIds);
     }
 
     /**
@@ -85,31 +68,15 @@ public final class RelyingPartyConfigurationSupport {
      * @param resolver optional metadata source for affiliation lookup
      * 
      * @return  a default-constructed configuration with the appropriate condition set
+     * 
+     * @throws Exception if the configuration class cannot be constructed via the default constructor 
      */
     @Nonnull public static RelyingPartyConfiguration byGroup(
             @Nonnull @NonnullElements final Collection<String> groupNames,
-            @Nullable final MetadataResolver resolver) {
-        Constraint.isNotNull(groupNames, "Group name list cannot be null");
+            @Nullable final MetadataResolver resolver) throws Exception {
         
-        // We adapt an OpenSAML Predicate applying to an EntityDescriptor by indirecting the lookup of the
-        // EntityDescriptor to a lookup sequence of PRC -> RPC -> SAMLMetadataContext -> EntityDescriptor.
-        
-        final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
-                new StrategyIndirectedPredicate<>(
-                        new EntityDescriptorLookupFunction().compose(new SAMLMetadataContextLookupFunction()),
-                        new EntityGroupNamePredicate(groupNames, resolver));
-        
-        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
-        config.setActivationCondition(indirectPredicate);
-
-        final StringBuffer name = new StringBuffer("EntityGroups[");
-        for (final String group: groupNames) {
-            name.append(group).append(',');
-            
-        }
-        name.append(']');
-        config.setId(name.toString());
-        return config;
+        return net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport.byGroup(
+                RelyingPartyConfiguration.class, groupNames, resolver);
     }
 
     
@@ -122,24 +89,15 @@ public final class RelyingPartyConfigurationSupport {
      * @param matchAll true iff all the candidate rules are required to match
      * 
      * @return  a default-constructed configuration with the appropriate condition set
+     * 
+     * @throws Exception if the configuration class cannot be constructed via the default constructor 
      */
     @Nonnull public static RelyingPartyConfiguration byTag(
             @Nonnull @NonnullElements final Collection<Candidate> candidates, final boolean trim,
-            final boolean matchAll) {
-        Constraint.isNotNull(candidates, "Candidate list cannot be null");
+            final boolean matchAll) throws Exception {
         
-        // We adapt an OpenSAML Predicate applying to an EntityDescriptor by indirecting the lookup of the
-        // EntityDescriptor to a lookup sequence of PRC -> RPC -> SAMLMetadataContext -> EntityDescriptor.
-        
-        final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
-                new StrategyIndirectedPredicate<>(
-                        new EntityDescriptorLookupFunction().compose(new SAMLMetadataContextLookupFunction()),
-                        new EntityAttributesPredicate(candidates, trim, matchAll));
-        
-        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
-        config.setActivationCondition(indirectPredicate);
-
-        return config;
+        return net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport.byTag(RelyingPartyConfiguration.class,
+                candidates, trim, matchAll);
     }
 
     /**
@@ -151,24 +109,15 @@ public final class RelyingPartyConfigurationSupport {
      * @param matchAll true iff all the candidate rules are required to match
      * 
      * @return  a default-constructed configuration with the appropriate condition set
+     * 
+     * @throws Exception if the configuration class cannot be constructed via the default constructor 
      */
     @Nonnull public static RelyingPartyConfiguration byMappedTag(
             @Nonnull @NonnullElements final Collection<Candidate> candidates, final boolean trim,
-            final boolean matchAll) {
-        Constraint.isNotNull(candidates, "Candidate list cannot be null");
+            final boolean matchAll) throws Exception {
         
-        // We adapt an OpenSAML Predicate applying to an EntityDescriptor by indirecting the lookup of the
-        // EntityDescriptor to a lookup sequence of PRC -> RPC -> SAMLMetadataContext -> EntityDescriptor.
-        
-        final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
-                new StrategyIndirectedPredicate<>(
-                        new EntityDescriptorLookupFunction().compose(new SAMLMetadataContextLookupFunction()),
-                        new MappedEntityAttributesPredicate(candidates, trim, matchAll));
-        
-        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
-        config.setActivationCondition(indirectPredicate);
-
-        return config;
+        return net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport.byMappedTag(
+                RelyingPartyConfiguration.class, candidates, trim, matchAll);
     }
 
 }

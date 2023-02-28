@@ -65,7 +65,7 @@ public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase
     private DefaultRelyingPartyConfigurationResolver resolver;
         
     @BeforeMethod
-    public void setup() throws ComponentInitializationException {
+    public void setup() throws Exception {
         anonRP = new net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
         anonRP.setResponderId("anonRPResp");
