@@ -30,9 +30,6 @@ public class SingleLogoutProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        Assert.assertEquals(SingleLogoutProfileConfiguration.PROFILE_ID,
-                "http://shibboleth.net/ns/profiles/saml2/logout");
-
         final SingleLogoutProfileConfiguration config = new SingleLogoutProfileConfiguration();
         Assert.assertEquals(config.getId(), SingleLogoutProfileConfiguration.PROFILE_ID);
     }

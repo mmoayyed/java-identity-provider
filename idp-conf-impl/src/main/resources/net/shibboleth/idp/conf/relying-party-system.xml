@@ -105,10 +105,19 @@
     </bean>
 
     <util:constant id="SAML2.SSO.FEATURE_AUTHNCONTEXT"
-        static-field="net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT"/>
+        static-field="net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT"/>
 
     <util:constant id="SAML2.SSO.FEATURE_SCOPING"
-        static-field="net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration.FEATURE_SCOPING"/>
+        static-field="net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_SCOPING"/>
+
+    <util:constant id="SAML2.SSO.FEATURE_NAMEIDFORMAT"
+        static-field="net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_NAMEIDFORMAT"/>
+
+    <util:constant id="SAML2.SSO.FEATURE_SPNAMEQUALIFIER"
+        static-field="net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_SPNAMEQUALIFIER"/>
+
+    <util:constant id="SAML2.SSO.FEATURE_FORCEAUTHN"
+        static-field="net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_FORCEAUTHN"/>
 
     <bean id="SAML2.ECP" lazy-init="true"
         class="net.shibboleth.idp.saml.saml2.profile.config.impl.ECPProfileConfiguration"
