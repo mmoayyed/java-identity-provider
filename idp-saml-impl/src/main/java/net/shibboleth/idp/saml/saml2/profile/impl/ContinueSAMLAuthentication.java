@@ -88,25 +88,33 @@ public class ContinueSAMLAuthentication extends AbstractAuthenticationAction {
             log.info("{} SAML authentication attempt signaled an error: {}", getLogPrefix(),
                     authnError);
             ActionSupport.buildEvent(profileRequestContext, authnError);
-        } else if (imc == null) {
+            return;
+        } 
+        if (imc == null) {
             log.info("{} No inbound SAML Response found", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
-        } else if (!(imc.getMessage() instanceof Response)) {
+            return;
+        } 
+        final Response response = (Response) imc.getMessage();
+        if (response == null || !(response instanceof Response)) {
             log.info("{} Inbound message was not a SAML Response", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
+            return;
         }
         
-        final Response response = (Response) imc.getMessage();
         final Status status = response.getStatus() ;
         final StatusCode statusCode = status == null ? null : status.getStatusCode(); 
         if (status == null || statusCode == null || statusCode.getValue() == null) {
             log.info("{} SAML response did not contain a StatusCode", getLogPrefix());
             authenticationContext.removeSubcontext(SAMLAuthnContext.class);
             ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
-        } else if (!StatusCode.SUCCESS.equals(statusCode.getValue())) {
+            return;
+        }
+        if (!StatusCode.SUCCESS.equals(statusCode.getValue())) {
             log.info("{} SAML response contained error status: {}", getLogPrefix(), statusCode.getValue());
             authenticationContext.removeSubcontext(SAMLAuthnContext.class);
             ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
+            return;
         }
     }
     
