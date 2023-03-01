@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -38,6 +39,7 @@ import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.profile.context.EncryptionContext;
 import org.opensaml.xmlsec.EncryptionConfiguration;
 import org.opensaml.xmlsec.EncryptionParameters;
@@ -46,7 +48,6 @@ import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.criterion.EncryptionConfigurationCriterion;
 import org.opensaml.xmlsec.criterion.EncryptionOptionalCriterion;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -59,6 +60,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
@@ -247,9 +249,10 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
             return false;
         }
                 
+        final MessageContext imc = profileRequestContext.getInboundMessageContext();  
         Object msg = null;
-        if (profileRequestContext.getInboundMessageContext() != null) {
-            msg = profileRequestContext.getInboundMessageContext().getMessage();
+        if (imc != null) {
+            msg = imc.getMessage();
         }
         
         if (msg instanceof AuthnRequest) {
@@ -267,7 +270,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         }
         
         final SAML2ProfileConfiguration profileConfiguration = (SAML2ProfileConfiguration) rpContext.getProfileConfig();
-        
+        assert profileConfiguration!=null;
         if (!encryptIdentifiers) {
             encryptIdentifiers = profileConfiguration.isEncryptNameIDs(profileRequestContext);
             // Encryption can only be optional if the request didn't specify it above.
@@ -309,12 +312,13 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         }
         
         try {
-            if (encryptionConfigurations == null || encryptionConfigurations.isEmpty()) {
+            final List<EncryptionConfiguration> configs = encryptionConfigurations ;
+            if (configs == null || configs.isEmpty()) {
                 throw new ResolverException("No EncryptionConfigurations returned by lookup strategy");
             }
             
             final EncryptionParameters params =
-                    encParamsresolver.resolveSingle(buildCriteriaSet(profileRequestContext));
+                    encParamsresolver.resolveSingle(buildCriteriaSet(profileRequestContext, configs));
             log.debug("{} {} EncryptionParameters", getLogPrefix(),
                     params != null ? "Resolved" : "Failed to resolve");
             if (params != null) {
@@ -351,21 +355,23 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      * Build the criteria used as input to the {@link EncryptionParametersResolver}.
      * 
      * @param profileRequestContext current profile request context
+     * @param configurations the {@link EncryptionConfiguration}s
      * 
      * @return  the criteria set to use
      */
-    @Nonnull private CriteriaSet buildCriteriaSet(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nonnull private CriteriaSet buildCriteriaSet(@Nonnull final ProfileRequestContext profileRequestContext, @Nonnull List<EncryptionConfiguration> configurations) {
         
-        final CriteriaSet criteria = new CriteriaSet(new EncryptionConfigurationCriterion(encryptionConfigurations));
+        final CriteriaSet criteria = new CriteriaSet(new EncryptionConfigurationCriterion(configurations));
         
         criteria.add(new EncryptionOptionalCriterion(encryptionOptional));
 
         if (peerContextLookupStrategy != null) {
             final SAMLPeerEntityContext peerCtx = peerContextLookupStrategy.apply(profileRequestContext);
             if (peerCtx != null) {
-                if (peerCtx.getEntityId() != null) {
+                final String peerEntityId = peerCtx.getEntityId(); 
+                if (peerEntityId != null) {
                     log.debug("{} Adding entityID to resolution criteria", getLogPrefix());
-                    criteria.add(new EntityIdCriterion(peerCtx.getEntityId()));
+                    criteria.add(new EntityIdCriterion(peerEntityId));
                     if (samlProtocol != null) {
                         criteria.add(new ProtocolCriterion(samlProtocol));
                     }
@@ -374,9 +380,10 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
                     }
                 }
                 final SAMLMetadataContext metadataCtx = peerCtx.getSubcontext(SAMLMetadataContext.class);
-                if (metadataCtx != null && metadataCtx.getRoleDescriptor() != null) {
+                final RoleDescriptor roleDescriptor = metadataCtx == null ? null : metadataCtx.getRoleDescriptor();
+                if (roleDescriptor != null) {
                     log.debug("{} Adding role metadata to resolution criteria", getLogPrefix());
-                    criteria.add(new RoleDescriptorCriterion(metadataCtx.getRoleDescriptor()));
+                    criteria.add(new RoleDescriptorCriterion(roleDescriptor));
                 }
             }
         }

@@ -122,10 +122,11 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return;
         }
-        
-        log.debug("{} Attaching RelyingPartyContext based on SAML peer {}", getLogPrefix(),
-                peerEntityCtx.getEntityId());
-        rpContext.setRelyingPartyIdContextTree(peerEntityCtx);
+        SAMLPeerEntityContext pec = peerEntityCtx;
+        assert pec!=null;
+
+        log.debug("{} Attaching RelyingPartyContext based on SAML peer {}", getLogPrefix(), pec.getEntityId());
+        rpContext.setRelyingPartyIdContextTree(pec);
         rpContext.setRelyingPartyIdLookupStrategy(RPID_LOOKUP);
         rpContext.setVerificationLookupStrategy(VERIFY_LOOKUP);
     }

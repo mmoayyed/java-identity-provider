@@ -123,8 +123,9 @@ public class TransientIdParameters {
             gen.writeStartObject().write(ATTRIBUTE_RECIPIENT_FIELD, getAttributeRecipient())
                     .write(PRINCIPAL_FIELD, getPrincipal());
             gen.writeEnd().close();
-
-            return sink.toString();
+            final String result = sink.toString();
+            assert result != null;
+            return result;
         } catch (final JsonException e) {
             log.error("Exception while serializing TransientID: {}", e.getMessage());
             throw new IOException("Exception while serializing TransientID", e);

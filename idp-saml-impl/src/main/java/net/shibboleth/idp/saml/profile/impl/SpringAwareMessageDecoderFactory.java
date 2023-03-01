@@ -102,6 +102,7 @@ public class SpringAwareMessageDecoderFactory extends AbstractInitializableCompo
         log.debug("Looking up message decoder with bean ID: {}", beanID);
         
         try {
+            assert applicationContext!=null;
             return applicationContext.getBean(beanID, MessageDecoder.class);
         } catch (final BeansException e) {
             log.warn("Error instantiating message decoder from bean ID {}", beanID, e);

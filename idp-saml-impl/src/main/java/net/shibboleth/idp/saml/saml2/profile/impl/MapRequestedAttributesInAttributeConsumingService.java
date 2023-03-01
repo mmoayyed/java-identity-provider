@@ -90,7 +90,7 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
      * @param registry the registry service
      */
     public void setTranscoderRegistry(@Nonnull final ReloadableService<AttributeTranscoderRegistry> registry) {
-        transcoderRegistry = Constraint.isNotNull(registry, "AttributeResolver cannot be null");
+        transcoderRegistry = Constraint.isNotNull(registry, "Attribute Transcoding Registry cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -98,6 +98,11 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         acsContext = attributeConsumingServiceContextLookupStrategy.apply(profileRequestContext);
+        
+        if (transcoderRegistry == null) {
+            log.warn("{} No Transcoder Regsitry set", getLogPrefix());
+            return false;
+        }
         return true;
     }
 
@@ -124,6 +129,7 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
         }
         
         try {
+            assert transcoderRegistry!=null;
             final AttributeMappingNodeProcessor processor = new AttributeMappingNodeProcessor(transcoderRegistry);
             log.debug("{} Decoding RequestedAttributes for generated AttributeConsumingService", getLogPrefix());
             processor.process(acs);

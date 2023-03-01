@@ -120,7 +120,9 @@ public class ReloadMetadata extends AbstractProfileAction {
         if (id == null) {
             log.warn("{} No '{}' flow variable found", getLogPrefix(), RESOLVER_ID);
             try {
-                getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
+                final HttpServletResponse response = getHttpServletResponse();
+                assert response != null;
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
             } catch (final IOException e) {
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
@@ -155,6 +157,8 @@ public class ReloadMetadata extends AbstractProfileAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         log.debug("{} Reloading metadata from '{}'", getLogPrefix(), id);
 
+        final HttpServletResponse response = getHttpServletResponse();
+        assert response != null;
         try (final ServiceableComponent<MetadataResolver> component =
                 metadataResolverService.getServiceableComponent()) {
 
@@ -168,17 +172,17 @@ public class ReloadMetadata extends AbstractProfileAction {
                     ((ClearableMetadataResolver)toProcess).clear();
                     log.debug("{} Cleared metadata resolver: '{}'", getLogPrefix(), id);
                 }
-                getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
-                getHttpServletResponse().getWriter().println("Metadata reloaded for '" + id + "'");
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().println("Metadata reloaded for '" + id + "'");
             } else {
                 log.warn("{} Unable to locate refreshable or clearable metadata resolver: '{}'", getLogPrefix(), id);
-                getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
             }
             
         } catch (final ResolverException e) {
             log.error("{} Error refreshing/clearing metadata resolver: '{}'", getLogPrefix(), id, e);
             try {
-                getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (final IOException e2) {
                 log.error("{} I/O error responding to request", getLogPrefix(), e2);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
@@ -186,7 +190,7 @@ public class ReloadMetadata extends AbstractProfileAction {
         } catch (final ServiceException e) {
             log.error("{} Invalid metadata resolver configuration: '{}'", getLogPrefix(), id, e);
             try {
-                getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (final IOException e2) {
                 log.error("{} I/O error responding to request", getLogPrefix(), e2);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);

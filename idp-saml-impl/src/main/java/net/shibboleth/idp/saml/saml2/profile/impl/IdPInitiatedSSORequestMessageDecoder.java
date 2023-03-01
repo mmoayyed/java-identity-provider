@@ -114,16 +114,17 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
      */
     @Nonnull protected AuthnRequest buildAuthnRequest() throws MessageDecodingException {
         final AuthnRequest authnRequest = requestBuilder.buildObject();
-        
+        final IdPInitiatedSSORequest ssoReq= ssoRequest;
+        assert ssoReq !=null;
         final Issuer requestIssuer = issuerBuilder.buildObject();
-        requestIssuer.setValue(ssoRequest.getEntityId());
+        requestIssuer.setValue(ssoReq.getEntityId());
         authnRequest.setIssuer(requestIssuer);
         
         final NameIDPolicy nip = nipBuilder.buildObject();
         nip.setAllowCreate(true);
         authnRequest.setNameIDPolicy(nip);
-        authnRequest.setAssertionConsumerServiceURL(ssoRequest.getAssertionConsumerServiceURL());
-        authnRequest.setIssueInstant(ssoRequest.getTime());
+        authnRequest.setAssertionConsumerServiceURL(ssoReq.getAssertionConsumerServiceURL());
+        authnRequest.setIssueInstant(ssoReq.getTime());
         authnRequest.setVersion(SAMLVersion.VERSION_20);
         authnRequest.setID(getMessageID());
         
@@ -136,10 +137,11 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
      * @param messageContext the current message context
      */
     protected void populateBindingContext(@Nonnull final MessageContext messageContext) {
+        assert ssoRequest!=null;
         final String relayState = ssoRequest.getRelayState();
         log.debug("Decoded SAML RelayState of: {}", relayState);
         
-        final SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
+        final SAMLBindingContext bindingContext = messageContext.getOrCreateSubcontext(SAMLBindingContext.class);
         bindingContext.setRelayState(relayState);
         
         bindingContext.setBindingUri(getBindingURI());
@@ -158,7 +160,9 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         }
         
         final StringBuilder builder = new StringBuilder();
+        assert ssoRequest!=null;
         builder.append("SAML 2 IdP-initiated request was: " + ssoRequest.toString());
+
         builder.append("\nSynthetically constructed SAML 2 AuthnRequest was: \n");
         
         try {

@@ -26,6 +26,8 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
+
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
@@ -157,8 +159,7 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      * @return the result to encode
      */
     @Nonnull public AuthenticationResult getAuthenticationResult() {
-        Constraint.isNotNull(authenticationResult, "AuthenticationResult has not been initialized yet");
-        return authenticationResult;
+        return Constraint.isNotNull(authenticationResult, "AuthenticationResult has not been initialized yet");
     }
 
     /**
@@ -167,8 +168,7 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      * @return the ID generation strategy
      */
     @Nonnull public IdentifierGenerationStrategy getIdGenerator() {
-        Constraint.isNotNull(idGenerator, "IdentifierGenerationStrategy has not been initialized yet");
-        return idGenerator;
+        return Constraint.isNotNull(idGenerator, "IdentifierGenerationStrategy has not been initialized yet");
     }
 
     /**
@@ -177,8 +177,7 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      * @return the issuer name
      */
     @Nonnull public String getIssuerId() {
-        Constraint.isNotNull(issuerId, "Issuer name has not been initialized yet");
-        return issuerId;
+        return Constraint.isNotNull(issuerId, "Issuer name has not been initialized yet");
     }
     
     /** {@inheritDoc} */
@@ -235,8 +234,9 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
 
         /** {@inheritDoc} */
         @Nullable public String apply(@Nullable final ProfileRequestContext t) {
-            if (getHttpServletRequest() != null) {
-                return HttpServletSupport.getRemoteAddr(getHttpServletRequest());
+            final HttpServletRequest req = getHttpServletRequest();
+            if (req != null) {
+                return HttpServletSupport.getRemoteAddr(req);
             }
             
             return null;

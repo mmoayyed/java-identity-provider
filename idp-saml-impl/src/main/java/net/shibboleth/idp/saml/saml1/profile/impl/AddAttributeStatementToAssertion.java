@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -158,6 +159,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
         final AttributeStatement statement = statementBuilder.buildObject();
         
         for (final Attribute attribute : encodedAttributes) {
+            assert attribute != null;
             final Attribute existing = findExistingAttribute(statement, attribute);
             if (existing != null) {
                 final Iterator<XMLObject> newValues = attribute.getAttributeValues().iterator();
@@ -232,12 +234,15 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
 
         /** {@inheritDoc} */
         @Nullable public Assertion apply(@Nullable final ProfileRequestContext input) {
-            if (input != null && input.getOutboundMessageContext() != null) {
-                final Object outboundMessage = input.getOutboundMessageContext().getMessage();
+            final MessageContext omc = input == null ? null : input.getOutboundMessageContext(); 
+
+            if (input != null && omc != null) {
+                final Object outboundMessage = omc.getMessage();
                 if (outboundMessage == null) {
+
                     final Assertion ret = SAML1ActionSupport.buildAssertion(AddAttributeStatementToAssertion.this,
                             getIdGenerator(), getIssuerId());
-                    input.getOutboundMessageContext().setMessage(ret);
+                    omc.setMessage(ret);
                     return ret;
                 } else if (outboundMessage instanceof Assertion) {
                     return (Assertion) outboundMessage;

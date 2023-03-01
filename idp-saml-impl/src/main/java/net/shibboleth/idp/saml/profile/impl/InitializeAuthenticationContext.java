@@ -43,6 +43,7 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.logic.IgnoreScopingProfileConfigPredicate;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.saml.saml2.profile.config.navigate.ProxyCountLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
@@ -74,7 +75,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     @Nonnull private Predicate<ProfileRequestContext> ignoreScopingPredicate;
 
     /** Strategy used to determine proxy count from configuration. */
-    @Nullable private Function<ProfileRequestContext,Integer> proxyCountLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Integer> proxyCountLookupStrategy;
     
     /** Strategy used to locate the {@link AuthnRequest} to operate on, if any. */
     @Nonnull private Function<ProfileRequestContext,AuthnRequest> requestLookupStrategy;
@@ -170,16 +171,17 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
 
         final AuthenticationContext authnCtx = new AuthenticationContext();
 
-        if (authnRequest != null) {
+        final AuthnRequest ar = authnRequest;
+        if (ar != null) {
             if (!processScoping(profileRequestContext, authnCtx)) {
                 return;
             }
-            authnCtx.setForceAuthn(authnRequest.isForceAuthn());
-            authnCtx.setIsPassive(authnRequest.isPassive());
+            authnCtx.setForceAuthn(ar.isForceAuthn());
+            authnCtx.setIsPassive(ar.isPassive());
             
             // On an inbound Subject, migrate the populated SubjectContext into the required name
             // field in the new AuthenticationContext.
-            if (authnRequest.getSubject() != null && authnRequest.getSubject().getNameID() != null) {
+            if (ar.getSubject() != null && ar.getSubject().getNameID() != null) {
                 final SubjectContext subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class);
                 if (subjectCtx != null && subjectCtx.getPrincipalName() != null) {
                     authnCtx.setRequiredName(subjectCtx.getPrincipalName());
@@ -227,6 +229,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     private boolean processScoping(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        assert authnRequest!=null;
         final Scoping scoping = authnRequest.getScoping();
         if (scoping == null) {
             log.debug("{} AuthnRequest did not contain Scoping, nothing to do", getLogPrefix());
@@ -240,8 +243,9 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         
         // Check if permitted.
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpContext != null && rpContext.getProfileConfig() != null) {
-            if (rpContext.getProfileConfig().isFeatureDisallowed(
+        final ProfileConfiguration profileConfig = rpContext==null ? null : rpContext.getProfileConfig();
+        if (profileConfig != null) {
+            if (profileConfig.isFeatureDisallowed(
                     profileRequestContext, BrowserSSOProfileConfiguration.FEATURE_SCOPING)) {
                 log.warn("{} Incoming Scoping disallowed by profile configuration", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, EventIds.ACCESS_DENIED);

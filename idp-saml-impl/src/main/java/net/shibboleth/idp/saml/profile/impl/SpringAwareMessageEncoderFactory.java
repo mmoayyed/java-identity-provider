@@ -22,6 +22,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncoder;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
@@ -57,30 +58,33 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
     /** {@inheritDoc} */
     @Nullable public MessageEncoder apply(@Nullable final ProfileRequestContext profileRequestContext) {
         checkComponentActive();
+        assert profileRequestContext!=null;
+        final MessageContext obmc = profileRequestContext.getOutboundMessageContext();
         
         if (applicationContext == null) {
             log.warn("No Spring ApplicationContext set");
             return null;
-        } else if (profileRequestContext.getOutboundMessageContext() == null) {
+        } else if (obmc == null) {
             log.warn("No outbound message context, unable to lookup message encoder");
             return null;
         }
         
-        final SAMLBindingContext bindingContext =
-                profileRequestContext.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
-        if (bindingContext == null || bindingContext.getBindingDescriptor() == null
-                || !(bindingContext.getBindingDescriptor() instanceof BindingDescriptor)) {
+        final SAMLBindingContext bindingContext = obmc.getSubcontext(SAMLBindingContext.class);
+        Object desc = bindingContext == null ? null : bindingContext.getBindingDescriptor();
+        if (bindingContext == null || desc  == null || !(desc instanceof BindingDescriptor)) {
             log.warn("BindingDescriptor was not available, unable to lookup message encoder");
             return null;
         }
         
         log.debug("Looking up message encoder based on binding URI: {}", bindingContext.getBindingUri());
         
-        final BindingDescriptor descriptor = (BindingDescriptor) bindingContext.getBindingDescriptor();
-        if (descriptor.getEncoderBeanId() != null) {
+        final BindingDescriptor descriptor = (BindingDescriptor) desc;
+        final String beanId = descriptor.getEncoderBeanId(); 
+        if (beanId!= null) {
             
             try {
-                return applicationContext.getBean(descriptor.getEncoderBeanId(), MessageEncoder.class);
+                assert applicationContext!=null;
+                return applicationContext.getBean(beanId, MessageEncoder.class);
             } catch (final BeansException e) {
                 log.warn("Error instantiating message encoder from bean ID {}", descriptor.getEncoderBeanId(), e);
             }

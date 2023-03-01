@@ -36,6 +36,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -116,15 +117,17 @@ public class EnforceDisallowedSSOFeatures extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpContext == null || !(rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration)) {
+        final ProfileConfiguration pc = rpContext == null ? null : rpContext.getProfileConfig();
+        
+        if (rpContext == null || pc == null || !(pc instanceof BrowserSSOProfileConfiguration)) {
             log.debug("{} No BrowserSSOProfileConfiguration available, skipping feature enforcement", getLogPrefix());
             return;
         }
         
-        final BrowserSSOProfileConfiguration profileConfiguration =
-                (BrowserSSOProfileConfiguration) rpContext.getProfileConfig();
-        
-        final Boolean forceAuthn = authnRequest.isForceAuthn();
+        @Nonnull final BrowserSSOProfileConfiguration profileConfiguration = (BrowserSSOProfileConfiguration) pc;
+        final AuthnRequest localAuthnRequest = this.authnRequest;
+        assert localAuthnRequest!= null;
+        final Boolean forceAuthn = localAuthnRequest.isForceAuthn();
         if (forceAuthn != null && forceAuthn &&
                 profileConfiguration.isFeatureDisallowed(profileRequestContext,
                         BrowserSSOProfileConfiguration.FEATURE_FORCEAUTHN)) {
@@ -133,7 +136,7 @@ public class EnforceDisallowedSSOFeatures extends AbstractProfileAction {
             return;
         }
         
-        final NameIDPolicy nidPolicy = authnRequest.getNameIDPolicy();
+        final NameIDPolicy nidPolicy = localAuthnRequest.getNameIDPolicy();
         if (nidPolicy != null) {
             if (nidPolicy.getFormat() != null &&
                     profileConfiguration.isFeatureDisallowed(profileRequestContext,

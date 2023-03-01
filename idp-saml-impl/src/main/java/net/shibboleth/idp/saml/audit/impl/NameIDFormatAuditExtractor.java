@@ -64,6 +64,7 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
                 
                 for (final org.opensaml.saml.saml2.core.Assertion assertion
                         : ((org.opensaml.saml.saml2.core.Response) msg).getAssertions()) {
+                    assert assertion != null;
                     final String format = apply(assertion);
                     if (format != null) {
                         return format;
@@ -87,6 +88,7 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
 
                 for (final org.opensaml.saml.saml1.core.Assertion assertion
                         : ((org.opensaml.saml.saml1.core.Response) msg).getAssertions()) {
+                    assert assertion != null;
                     final String format = apply(assertion);
                     if (format != null) {
                         return format;

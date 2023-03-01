@@ -32,6 +32,7 @@ public class MetadataProtocolAuditExtractor implements Function<ProfileRequestCo
 
     /** {@inheritDoc} */
     @Nullable public Object apply(@Nullable final ProfileRequestContext input) {
+        assert input != null;
         final SpringRequestContext springCtx = input.getSubcontext(SpringRequestContext.class);
         if (springCtx == null) {
             return null;

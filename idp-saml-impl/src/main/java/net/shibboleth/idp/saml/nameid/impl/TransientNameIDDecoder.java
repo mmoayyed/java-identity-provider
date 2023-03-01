@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
@@ -34,10 +35,14 @@ public class TransientNameIDDecoder extends BaseTransientDecoder implements Name
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NotEmpty public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
+    @Nullable @NotEmpty public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
             @Nonnull final NameID nameID) throws NameDecoderException {
 
-        return super.decode(nameID.getValue(), c14nContext.getRequesterId());
+        final String value = nameID.getValue();
+        final String id = c14nContext.getRequesterId();
+        assert value != null && id != null;
+
+        return super.decode(value, id);
     }
 
 }

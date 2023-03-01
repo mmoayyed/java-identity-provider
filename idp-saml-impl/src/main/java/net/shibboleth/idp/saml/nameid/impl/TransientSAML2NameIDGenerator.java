@@ -108,13 +108,14 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
         }
 
         final SubjectContext subjectCtx = subjectContextLookupStrategy.apply(profileRequestContext);
-        if (subjectCtx == null || subjectCtx.getPrincipalName() == null) {
+        final String principalName = subjectCtx == null ? null : subjectCtx.getPrincipalName();
+        if (principalName == null) {
             log.debug("No principal name available, can't generate transient ID");
             return null;
         }
 
         try {
-            return transientIdGenerator.generate(relyingPartyId, subjectCtx.getPrincipalName());
+            return transientIdGenerator.generate(relyingPartyId, principalName);
         } catch (final SAMLException e) {
             log.debug("Exception generating transient ID", e);
             return null;

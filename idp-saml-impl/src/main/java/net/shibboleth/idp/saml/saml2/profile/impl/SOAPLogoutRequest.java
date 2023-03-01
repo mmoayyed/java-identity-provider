@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.messaging.MessageException;
 import org.opensaml.messaging.context.InOutOperationContext;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -40,6 +41,7 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
+import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.security.SecurityException;
 import org.opensaml.soap.client.SOAPClient;
 import org.opensaml.soap.client.http.PipelineFactoryHttpSOAPClient;
@@ -234,8 +236,9 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
             return false;
         }
 
-        epContext = endpointContextLookupStrategy.apply(profileRequestContext);
-        if (epContext == null || epContext.getEndpoint() == null || epContext.getEndpoint().getLocation() == null) {
+        final SAMLEndpointContext ctx = epContext = endpointContextLookupStrategy.apply(profileRequestContext);
+        final Endpoint ep = ctx == null ? null : ctx.getEndpoint(); 
+        if (ep == null|| ep.getLocation() == null) {
             log.warn("{} No destination endpoint found", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return false;
@@ -258,13 +261,20 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
                     .setPeerRoleDescriptor(mdContext != null ? mdContext.getRoleDescriptor() : null)
                     .build();
             
-            logoutRequest.setDestination(epContext.getEndpoint().getLocation());
+            final SAMLEndpointContext ctx = epContext;
+            assert ctx != null;
+            final Endpoint ep = ctx.getEndpoint();
+            final LogoutRequest lReq = logoutRequest;
+            assert ep != null && lReq != null && opContext != null;
+            lReq.setDestination(ep.getLocation());
         
             log.debug("{} Executing LogoutRequest over SOAP 1.1 binding to endpoint: {}", getLogPrefix(),
-                    logoutRequest.getDestination());
+                    lReq.getDestination());
             
-            soapClient.send(logoutRequest.getDestination(), opContext);
-            final Object response = opContext.getInboundMessageContext().getMessage();
+            soapClient.send(lReq.getDestination(), opContext);
+            final MessageContext opImc = opContext.getInboundMessageContext();
+            assert opImc != null;
+            final Object response = opImc.getMessage();
             
             if (response == null) {
                 throw new MessageException("No response message received");
@@ -274,15 +284,20 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
             
             // Store off message so audit extraction works.
             // Also mock/copy SAMLBindingContext for the same reason (it's SOAP in both directions).
-            profileRequestContext.getInboundMessageContext().setMessage(response);
-            final SAMLBindingContext bctx =
-                    profileRequestContext.getInboundMessageContext().getSubcontext(SAMLBindingContext.class, true);
-            bctx.setBindingDescriptor(
-                    profileRequestContext.getOutboundMessageContext().getSubcontext(
-                            SAMLBindingContext.class).getBindingDescriptor());
+            final MessageContext prcImc = profileRequestContext.getInboundMessageContext();
+            assert prcImc != null;
+            
+            prcImc.setMessage(response);
+            final SAMLBindingContext bctx = prcImc.getOrCreateSubcontext(SAMLBindingContext.class);
+            final MessageContext prcOmc = profileRequestContext.getOutboundMessageContext();
+            assert prcOmc != null;
+            final SAMLBindingContext omcBc = prcOmc.getSubcontext(SAMLBindingContext.class);
+            assert omcBc != null;
+            
+            bctx.setBindingDescriptor(omcBc.getBindingDescriptor());
             
             log.debug("{} Processing LogoutResponse received via SOAP 1.1 binding from endpoint: {}", getLogPrefix(),
-                    logoutRequest.getDestination());
+                    lReq.getDestination());
             handleResponse(profileRequestContext, (LogoutResponse) response);
         } catch (final ClassCastException e) {
             log.warn("{} SOAP message payload was not an instance of LogoutResponse", getLogPrefix());
@@ -309,6 +324,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
                     code = code.getStatusCode();
                     if (code == null || code.getValue() == null || !StatusCode.PARTIAL_LOGOUT.equals(code.getValue())) {
                         log.debug("{} Logout successful", getLogPrefix());
+                        assert propagationContext != null;
                         propagationContext.setResult(Result.Success);
                     } else {
                         log.debug("{} Logout partially successful", getLogPrefix());

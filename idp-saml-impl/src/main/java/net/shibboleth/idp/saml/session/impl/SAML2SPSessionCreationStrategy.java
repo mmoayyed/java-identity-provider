@@ -25,6 +25,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -36,6 +37,7 @@ import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -121,7 +123,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
             log.debug("No relying party ID, no SAML2SPSession created");
             return null;
         }
-        
+        assert input != null;
         final Pair<Assertion, AuthnStatement> result = getAssertionAndStatement(input);
         if (result == null) {
             log.info("Creating BasicSPSession in the absence of necessary information");
@@ -130,7 +132,10 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         }
         
         final Instant now = Instant.now();
-        final Instant sessionBound = result.getSecond().getSessionNotOnOrAfter();
+        final Assertion first = result.getFirst();
+        final AuthnStatement second = result.getSecond();
+        assert first!=null && second!=null;
+        final Instant sessionBound = second.getSessionNotOnOrAfter();
         final Instant expiration;
         if (sessionBound != null) {
             expiration = sessionBound;
@@ -139,7 +144,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         }
         
         String acsLocation = null;
-        final List<SubjectConfirmation> sc = result.getFirst().getSubject().getSubjectConfirmations();
+        final List<SubjectConfirmation> sc = first.getSubject().getSubjectConfirmations();
         if (sc != null && !sc.isEmpty()) {
             final SubjectConfirmationData scData = sc.get(0).getSubjectConfirmationData();
             if (scData != null) {
@@ -150,17 +155,19 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         // Do a basic check for outbound logout capability to the SP based on metadata.
         // This may optimize out subsequent need to process the session for propagation.
         boolean supportLogoutPropagation = false;
-        if (rpCtx.getRelyingPartyIdContextTree() instanceof SAMLPeerEntityContext) {
+        final BaseContext rpIdCtxTree = rpCtx.getRelyingPartyIdContextTree();
+        if (rpIdCtxTree  instanceof SAMLPeerEntityContext) {
             final SAMLMetadataContext mdCtx =
-                    rpCtx.getRelyingPartyIdContextTree().getSubcontext(SAMLMetadataContext.class);
-            if (mdCtx != null && mdCtx.getRoleDescriptor() instanceof SPSSODescriptor) {
+                    rpIdCtxTree.getSubcontext(SAMLMetadataContext.class);
+            final RoleDescriptor roleDescriptor = mdCtx != null ? mdCtx.getRoleDescriptor() : null;
+            if (roleDescriptor != null && roleDescriptor instanceof SPSSODescriptor) {
                 supportLogoutPropagation =
-                        !((SPSSODescriptor) mdCtx.getRoleDescriptor()).getSingleLogoutServices().isEmpty();
+                        !((SPSSODescriptor) roleDescriptor).getSingleLogoutServices().isEmpty();
             }
         }
         
-        return new SAML2SPSession(issuer, now, expiration, result.getFirst().getSubject().getNameID(),
-                result.getSecond().getSessionIndex(), acsLocation, supportLogoutPropagation);
+        return new SAML2SPSession(issuer, now, expiration, first.getSubject().getNameID(),
+                second.getSessionIndex(), acsLocation, supportLogoutPropagation);
     }
 // Checkstyle: CyclomaticComplexity ON
 

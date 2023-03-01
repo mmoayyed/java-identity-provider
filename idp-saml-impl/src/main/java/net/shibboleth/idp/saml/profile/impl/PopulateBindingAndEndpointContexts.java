@@ -459,7 +459,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         endpointContext.setEndpoint(resolvedEndpoint);
         
         final SAMLBindingContext bindingCtx = bindingContextLookupStrategy.apply(profileRequestContext);
-        bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(profileRequestContext.getInboundMessageContext()));
+        final MessageContext imc = profileRequestContext.getInboundMessageContext();
+        assert imc != null;
+        bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(imc));
         
         final Optional<BindingDescriptor> bindingDescriptor =
                 bds.stream().filter(b -> b.getId().equals(bindingURI)).findFirst();
@@ -503,9 +505,11 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      */
     private boolean handleSynchronousRequest(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (inboundMessage != null) {
-            final SAMLBindingContext bindingCtx =
-                    profileRequestContext.getInboundMessageContext().getSubcontext(SAMLBindingContext.class);
+            final MessageContext imc = profileRequestContext.getInboundMessageContext();
+            assert imc != null;
+            final SAMLBindingContext bindingCtx = imc.getSubcontext(SAMLBindingContext.class);
             if (bindingCtx != null && bindingCtx.getBindingUri() != null) {
+                assert bindingDescriptors!=null;
                 final Optional<BindingDescriptor> binding =
                         bindingDescriptors.stream().filter(
                                 b -> b.getId().equals(bindingCtx.getBindingUri())
@@ -515,8 +519,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                             getLogPrefix(), binding.orElseThrow().getId());
                     
                     final SAMLBindingContext outboundCtx = bindingContextLookupStrategy.apply(profileRequestContext);
-                    outboundCtx.setRelayState(SAMLBindingSupport.getRelayState(
-                            profileRequestContext.getInboundMessageContext()));
+                    outboundCtx.setRelayState(SAMLBindingSupport.getRelayState(imc));
                     outboundCtx.setBindingDescriptor(binding.orElseThrow());
                     return true;
                 }
@@ -535,19 +538,21 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * @return criterion to give to resolver
      */
     @Nonnull private EndpointCriterion<?> buildEndpointCriterion(@Nonnull @NotEmpty final String unverifiedBinding) {
+        assert endpointType!=null;
         final Endpoint endpoint = (Endpoint) endpointBuilder.buildObject(endpointType);
         
-        if (inboundMessage instanceof IdPInitiatedSSORequest) {
+        final Object inbound = inboundMessage;
+        if (inbound instanceof IdPInitiatedSSORequest) {
             log.debug("{} Populating template endpoint for resolution from IdP-initiated SSO request", getLogPrefix());
-            endpoint.setLocation(((IdPInitiatedSSORequest) inboundMessage).getAssertionConsumerServiceURL());
-        } else if (inboundMessage instanceof AuthnRequest) {
+            endpoint.setLocation(((IdPInitiatedSSORequest) inbound).getAssertionConsumerServiceURL());
+        } else if (inbound instanceof AuthnRequest) {
             log.debug("{} Populating template endpoint for resolution from SAML AuthnRequest", getLogPrefix());
             
-            endpoint.setLocation(((AuthnRequest) inboundMessage).getAssertionConsumerServiceURL());
-            endpoint.setBinding(((AuthnRequest) inboundMessage).getProtocolBinding());
+            endpoint.setLocation(((AuthnRequest) inbound).getAssertionConsumerServiceURL());
+            endpoint.setBinding(((AuthnRequest) inbound).getProtocolBinding());
             if (endpoint instanceof IndexedEndpoint) {
                 ((IndexedEndpoint) endpoint).setIndex(
-                        ((AuthnRequest) inboundMessage).getAssertionConsumerServiceIndex());
+                        ((AuthnRequest) inbound).getAssertionConsumerServiceIndex());
             }
         }
 

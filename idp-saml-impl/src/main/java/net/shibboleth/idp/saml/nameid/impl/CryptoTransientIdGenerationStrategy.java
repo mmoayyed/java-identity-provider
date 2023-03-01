@@ -23,14 +23,12 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 
 import org.opensaml.saml.common.SAMLException;
-import org.slf4j.Logger;
 
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.DataSealerException;
 
@@ -41,9 +39,6 @@ import net.shibboleth.shared.security.DataSealerException;
 public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableInitializableComponent
         implements TransientIdGenerationStrategy {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(CryptoTransientIdGenerationStrategy.class);
-
     /** Object used to protect and encrypt the data. */
     @NonnullAfterInit private DataSealer dataSealer;
 
@@ -52,7 +47,9 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
 
     /** Constructor. */
     public CryptoTransientIdGenerationStrategy() {
-        idLifetime = Duration.ofHours(4);
+        final Duration fourHours = Duration.ofHours(4);
+        assert fourHours!=null;
+        idLifetime = fourHours;
     }
 
     /**
@@ -105,7 +102,9 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
         principalTokenIdBuilder.append(relyingPartyId).append("!").append(principalName);
 
         try {
-            return dataSealer.wrap(principalTokenIdBuilder.toString(), Instant.now().plus(idLifetime));
+            final String result = principalTokenIdBuilder.toString();
+            assert result!=null;
+            return dataSealer.wrap(result, Instant.now().plus(idLifetime));
         } catch (final DataSealerException e) {
             throw new SAMLException("Exception wrapping principal identifier", e);
         }

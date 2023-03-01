@@ -50,7 +50,7 @@ public class PopulateInboundMessageContextWithSAMLSelf extends AbstractProfileAc
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateInboundMessageContextWithSAMLSelf.class);
 
     /** Strategy used to obtain the self identity value. */
-    @Nullable private Function<ProfileRequestContext, String> selfIdentityLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, String> selfIdentityLookupStrategy;
 
     /** Constructor. */
     public PopulateInboundMessageContextWithSAMLSelf() {
@@ -70,9 +70,9 @@ public class PopulateInboundMessageContextWithSAMLSelf extends AbstractProfileAc
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final MessageContext msgCtx = profileRequestContext.getInboundMessageContext();
+        final MessageContext msgCtx = Constraint.isNotNull(profileRequestContext.getInboundMessageContext(), "No Inbound Message Context");
 
-        final SAMLSelfEntityContext selfContext = msgCtx.getSubcontext(SAMLSelfEntityContext.class, true);
+        final SAMLSelfEntityContext selfContext = msgCtx.getOrCreateSubcontext(SAMLSelfEntityContext.class);
         selfContext.setEntityId(selfIdentityLookupStrategy.apply(profileRequestContext));
 
         log.debug("{} Populated inbound message context with SAML self entityID: {}", getLogPrefix(),

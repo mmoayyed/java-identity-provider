@@ -61,7 +61,9 @@ public abstract class AbstractSAML2ArtifactAwareProfileConfiguration extends Abs
         super(profileId);
         artifactConfigurationLookupStrategy = FunctionSupport.constant(null);
         signArtifactRequestsPredicate = new NoIntegrityMessageChannelPredicate();
-        clientTLSArtifactRequestsPredicate = new NoIntegrityMessageChannelPredicate().negate();
+        final Predicate<MessageContext> pred = new NoIntegrityMessageChannelPredicate().negate();
+        assert pred != null;
+        clientTLSArtifactRequestsPredicate = pred;
     }
     
     /** {@inheritDoc} */

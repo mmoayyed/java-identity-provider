@@ -28,6 +28,7 @@ import org.opensaml.saml.criterion.BestMatchLocationCriterion;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 
 import net.shibboleth.idp.saml.session.SAML2SPSession;
+import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -66,8 +67,9 @@ public class BestMatchLocationLookupStrategy implements Function<ProfileRequestC
     @Nullable public BestMatchLocationCriterion apply(@Nullable final ProfileRequestContext input) {
         
         final LogoutPropagationContext propCtx = logoutPropagationContextLookupStrategy.apply(input);
-        if (propCtx != null && propCtx.getSession() instanceof SAML2SPSession) {
-            final String acsLocation = ((SAML2SPSession) propCtx.getSession()).getACSLocation();
+        SPSession session = propCtx != null ? propCtx.getSession() : null;
+        if (session != null && session instanceof SAML2SPSession) {
+            final String acsLocation = ((SAML2SPSession) session).getACSLocation();
             if (acsLocation != null) {
                 return new BestMatchLocationCriterion(acsLocation);
             }

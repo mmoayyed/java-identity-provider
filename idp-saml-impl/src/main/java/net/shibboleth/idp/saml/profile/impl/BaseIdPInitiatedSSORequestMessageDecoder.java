@@ -104,6 +104,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
      */
     @Nonnull protected IdPInitiatedSSORequest buildIdPInitiatedSSORequest() throws MessageDecodingException {
         final HttpServletRequest request = getHttpServletRequest();
+        assert request!=null;
         
         return new IdPInitiatedSSORequest(getEntityId(request), getAcsUrl(request), getTarget(request),
                 getTime(request));
@@ -199,6 +200,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
      */
     @Nonnull protected String getMessageID() {
         final HttpServletRequest request = getHttpServletRequest();
+        assert request != null;
         final String timeString = StringSupport.trimOrNull(request.getParameter(TIME_PARAM));
         
         // If both a timestamp and session ID are available, construct a pseudo message ID 

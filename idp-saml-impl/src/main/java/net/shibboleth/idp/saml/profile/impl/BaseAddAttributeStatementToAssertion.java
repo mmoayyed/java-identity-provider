@@ -222,8 +222,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @return the context to encode
      */
     @Nonnull public AttributeContext getAttributeContext() {
-        Constraint.isNotNull(attributeCtx, "AttributeContext has not been initialized yet");
-        return attributeCtx;
+        return Constraint.isNotNull(attributeCtx, "AttributeContext has not been initialized yet");
     }
 
     /**
@@ -232,8 +231,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @return the ID generation strategy
      */
     @Nonnull public IdentifierGenerationStrategy getIdGenerator() {
-        Constraint.isNotNull(idGenerator, "IdentifierGenerationStrategy has not been initialized yet");
-        return idGenerator;
+        return Constraint.isNotNull(idGenerator, "IdentifierGenerationStrategy has not been initialized yet");
     }
 
     /**
@@ -242,8 +240,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @return the issuer name
      */
     @Nonnull @NotEmpty public String getIssuerId() {
-        Constraint.isNotNull(issuerId, "Issuer name has not been initialized yet");
-        return issuerId;
+        return Constraint.isNotNull(issuerId, "Issuer name has not been initialized yet");
     }
 
     /** {@inheritDoc} */
@@ -318,6 +315,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
         
         for (final TranscodingRule rules : transcodingRules) {
             try {
+                assert rules != null;
                 final AttributeTranscoder<T> transcoder = TranscoderSupport.<T>getTranscoder(rules);
                 final T encodedAttribute = transcoder.encode(profileRequestContext, attribute, to, rules);
                 if (encodedAttribute != null) {

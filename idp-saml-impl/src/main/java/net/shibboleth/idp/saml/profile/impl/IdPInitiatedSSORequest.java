@@ -137,15 +137,15 @@ public class IdPInitiatedSSORequest {
         int result = 1;
 
         result = prime * result + entityId.hashCode();
-
-        if (acsURL != null) {
-            result = prime * result + acsURL.hashCode();
+        final String url = acsURL;  
+        if (url != null) {
+            result = prime * result + url.hashCode();
         } else {
             result = prime * result + 0;
         }
-
-        if (relayState != null) {
-            result = prime * result + relayState.hashCode();
+        final String state = relayState;
+        if (state != null) {
+            result = prime * result + state.hashCode();
         } else {
             result = prime * result + 0;
         }

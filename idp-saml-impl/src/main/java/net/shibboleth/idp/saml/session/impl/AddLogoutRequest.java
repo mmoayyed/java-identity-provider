@@ -197,6 +197,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
         }
         
         saml2Session = (SAML2SPSession) logoutPropCtx.getSession();
+        assert saml2Session!=null;
         if (saml2Session.getId() == null) {
             log.debug("{} SAML2SPSession in logout propagation context did not contain a service ID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -219,16 +220,18 @@ public class AddLogoutRequest extends AbstractProfileAction {
 
         final LogoutRequest object = requestBuilder.buildObject();
         
+        assert idGenerator!=null;
         object.setID(idGenerator.generateIdentifier());
         object.setIssueInstant(Instant.now());
         object.setVersion(SAMLVersion.VERSION_20);
-
+        final SAML2SPSession s2Session = saml2Session;
+        assert s2Session!=null;
         try {
-            final NameID nameId = XMLObjectSupport.cloneXMLObject(saml2Session.getNameID());
+            final NameID nameId = XMLObjectSupport.cloneXMLObject(s2Session.getNameID());
             object.setNameID(nameId);
         } catch (final MarshallingException|UnmarshallingException e) {
             log.error("{} Error cloning NameID for use in LogoutRequest for {}", getLogPrefix(),
-                    saml2Session.getId(), e);
+                    s2Session.getId(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
             return;
         }
@@ -249,11 +252,13 @@ public class AddLogoutRequest extends AbstractProfileAction {
                     (SAMLObjectBuilder<SessionIndex>) bf.<SessionIndex>getBuilderOrThrow(
                             SessionIndex.DEFAULT_ELEMENT_NAME);
             final SessionIndex index = indexBuilder.buildObject();
-            index.setValue(saml2Session.getSessionIndex());
+            index.setValue(s2Session.getSessionIndex());
             object.getSessionIndexes().add(index);
         }
         
-        profileRequestContext.getOutboundMessageContext().setMessage(object);
+        final MessageContext outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
+        assert outboundMessageCtx!=null;
+        outboundMessageCtx.setMessage(object);
     }
 // Checkstyle: CyclomaticComplexity ON
     

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.saml.profile.impl.BaseIdPInitiatedSSORequestMessageDecoder;
 import net.shibboleth.idp.saml.profile.impl.IdPInitiatedSSORequest;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
@@ -58,9 +59,9 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(ssoRequest);
         
-        messageContext.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
+        messageContext.getOrCreateSubcontext(SAMLPeerEntityContext.class).setEntityId(ssoRequest.getEntityId());
         
-        final SAMLMessageInfoContext msgInfoContext = messageContext.getSubcontext(SAMLMessageInfoContext.class, true);
+        final SAMLMessageInfoContext msgInfoContext = messageContext.getOrCreateSubcontext(SAMLMessageInfoContext.class);
         msgInfoContext.setMessageIssueInstant(ssoRequest.getTime());
         msgInfoContext.setMessageId(getMessageID());
         
@@ -78,13 +79,14 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
      */
     protected void populateBindingContext(@Nonnull final MessageContext messageContext)
         throws MessageDecodingException {
-        final String relayState = ((IdPInitiatedSSORequest) messageContext.getMessage()).getRelayState();
+        final  IdPInitiatedSSORequest message = Constraint.isNotNull((IdPInitiatedSSORequest) messageContext.getMessage(), "No message");
+        final String relayState = message.getRelayState();
         if (relayState == null) {
             throw new MessageDecodingException("Legacy Shibboleth authentication requests require a target parameter");
         }
         log.debug("Decoded SAML relay state: {}", relayState);
         
-        final SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
+        final SAMLBindingContext bindingContext = messageContext.getOrCreateSubcontext(SAMLBindingContext.class);
         bindingContext.setRelayState(relayState);
         bindingContext.setBindingUri(getBindingURI());
         bindingContext.setBindingDescriptor(getBindingDescriptor());
@@ -95,7 +97,8 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
     /** {@inheritDoc} */
     @Override
     @Nullable protected String getMessageToLog() {
-        return "SAML 1 IdP-initiated request was: " + getMessageContext().getMessage().toString();
+        final  Object message = Constraint.isNotNull((IdPInitiatedSSORequest) getMessageContext().getMessage(), "No message");
+        return "SAML 1 IdP-initiated request was: " + message.toString();
     }
     
 }

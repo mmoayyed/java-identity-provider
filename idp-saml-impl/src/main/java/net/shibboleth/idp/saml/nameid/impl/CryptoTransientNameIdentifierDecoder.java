@@ -39,7 +39,11 @@ public class CryptoTransientNameIdentifierDecoder extends BaseCryptoTransientDec
     @Nullable @NotEmpty public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
             @Nonnull final NameIdentifier nameIdentifier) throws NameDecoderException {
 
-        return super.decode(nameIdentifier.getValue(), c14nContext.getRequesterId());
+        final String val = nameIdentifier.getValue();
+        final String id = c14nContext.getRequesterId();
+        assert val != null &&id != null;
+        
+        return super.decode(val, id);
     }
 
 }

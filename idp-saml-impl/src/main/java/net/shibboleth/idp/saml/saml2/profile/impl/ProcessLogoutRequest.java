@@ -34,6 +34,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.profile.SAMLEventIds;
+import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.SessionIndex;
@@ -133,9 +134,14 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         
         sessionResolverCriteriaStrategy = new Function<>() {
             public CriteriaSet apply(final ProfileRequestContext input) {
-                if (logoutRequest != null && logoutRequest.getIssuer() != null && logoutRequest.getNameID() != null) {
-                    return new CriteriaSet(new SPSessionCriterion(logoutRequest.getIssuer().getValue(),
-                            logoutRequest.getNameID().getValue()));
+                final LogoutRequest req = logoutRequest;
+                final NameID nameID = req==null ? null : req.getNameID();
+                final Issuer issuer = req==null ? null : req.getIssuer();
+                if (req != null && issuer != null && nameID != null) {
+                    final String nameIDString = nameID.getValue();
+                    final String issuerString = issuer.getValue();
+                    assert issuerString!=null && nameIDString!=null;
+                    return new CriteriaSet(new SPSessionCriterion(issuerString, nameIDString));
                 }
                 return new CriteriaSet();
             }
@@ -281,16 +287,16 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             return false;
         }
         
-        logoutRequest = logoutRequestLookupStrategy.apply(profileRequestContext);
-        if (logoutRequest == null) {
+        final LogoutRequest request = logoutRequest = logoutRequestLookupStrategy.apply(profileRequestContext);
+        if (request == null) {
             log.warn("{} No LogoutRequest found to process", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
-        } else if (logoutRequest.getNameID() == null) {
+        } else if (request.getNameID() == null) {
             log.warn("{} LogoutRequest did not contain NameID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
             return false;
-        } else if (logoutRequest.getNameID().getValue() == null) {
+        } else if (request.getNameID().getValue() == null) {
             log.warn("{} LogoutRequest contained an empty (therefore invalid) NameID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
             return false;
@@ -315,6 +321,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             
             while (sessionIterator.hasNext()) {
                 final IdPSession session = sessionIterator.next();
+                assert session!=null;
                 
                 if (!sessionMatches(profileRequestContext, session)) {
                     log.debug("{} IdP session {} does not contain a matching SP session", getLogPrefix(),
@@ -341,6 +348,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                 logoutCtx.getIdPSessions().add(session);
                 
                 for (final SPSession spSession : session.getSPSessions()) {
+                    assert spSession!=null;
                     if (!sessionMatches(profileRequestContext, spSession)) {
                         logoutCtx.getSessionMap().put(spSession.getId(), spSession);
                         logoutCtx.getKeyedSessionMap().put(Integer.toString(count++), spSession);
@@ -377,6 +385,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             @Nonnull final IdPSession session) {
         
         for (final SPSession spSession : session.getSPSessions()) {
+            assert spSession!=null;
             if (sessionMatches(profileRequestContext, spSession)) {
                 return true;
             }
@@ -398,9 +407,10 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             @Nonnull final SPSession session) {
         if (session instanceof SAML2SPSession) {
             final SAML2SPSession saml2Session = (SAML2SPSession) session;
-            
+            final LogoutRequest request = logoutRequest;
+            assert request != null;
             // Make sure the SP matches.
-            if (!saml2Session.getId().equals(logoutRequest.getIssuer().getValue())) {
+            if (!saml2Session.getId().equals(request.getIssuer().getValue())) {
                 return false;
             } 
             
@@ -415,28 +425,29 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                     || qualifiedNameIDFormats.contains(format)) {
                 
                 if (assertingParty == null) {
-                    assertingParty = assertingPartyLookupStrategy.apply(profileRequestContext);
+                    assertingParty = Constraint.isNotNull(assertingPartyLookupStrategy, "assertingPartyLookupStrategy not set").apply(profileRequestContext);
                 }
                 if (relyingParty == null) {
-                    relyingParty = relyingPartyLookupStrategy.apply(profileRequestContext);
+                    relyingParty = Constraint.isNotNull(relyingPartyLookupStrategy, "relyingPartyLookupStrategy not set").apply(profileRequestContext);
                 }
                 
-                if (!SAML2ObjectSupport.areNameIDsEquivalent(logoutRequest.getNameID(), saml2Session.getNameID(),
+                if (!SAML2ObjectSupport.areNameIDsEquivalent(request.getNameID(), saml2Session.getNameID(),
                         assertingParty, relyingParty)) {
                     return false;
                 }
-            } else if (!SAML2ObjectSupport.areNameIDsEquivalent(logoutRequest.getNameID(), saml2Session.getNameID())) {
+            } else if (!SAML2ObjectSupport.areNameIDsEquivalent(request.getNameID(), saml2Session.getNameID())) {
                 return false;
             }
             
             // Check SessionIndex match.
             
-            if (logoutRequest.getSessionIndexes().isEmpty()) {
+            if (request.getSessionIndexes().isEmpty()) {
                 return true;
             }
             
-            for (final SessionIndex index : logoutRequest.getSessionIndexes()) {
-                if (index.getValue() != null && index.getValue().equals(saml2Session.getSessionIndex())) {
+            for (final SessionIndex index : request.getSessionIndexes()) {
+                final String value = index.getValue();
+                if (value != null && value.equals(saml2Session.getSessionIndex())) {
                     return true;
                 }
             }

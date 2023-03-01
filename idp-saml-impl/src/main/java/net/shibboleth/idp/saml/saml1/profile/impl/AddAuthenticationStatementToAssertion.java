@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.saml1.profile.impl;
 
+import java.security.Principal;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -157,10 +159,10 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
         statement.setAuthenticationInstant(getAuthenticationResult().getAuthenticationInstant());
-        
-        if (requestedPrincipalContext != null && requestedPrincipalContext.getMatchingPrincipal() != null
-                && requestedPrincipalContext.getMatchingPrincipal() instanceof AuthenticationMethodPrincipal) {
-            statement.setAuthenticationMethod(requestedPrincipalContext.getMatchingPrincipal().getName());
+
+        final Principal matchingPrincipal = requestedPrincipalContext != null ? requestedPrincipalContext.getMatchingPrincipal() : null;
+        if (matchingPrincipal != null && matchingPrincipal instanceof AuthenticationMethodPrincipal) {
+            statement.setAuthenticationMethod(matchingPrincipal.getName());
         } else {
             statement.setAuthenticationMethod(methodLookupStrategy.apply(profileRequestContext).getName());
         }
@@ -190,12 +192,13 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
         /** {@inheritDoc} */
         @Override
         @Nullable public Assertion apply(@Nullable final ProfileRequestContext input) {
-            if (input != null && input.getOutboundMessageContext() != null) {
-                final Object outboundMessage = input.getOutboundMessageContext().getMessage();
+            final MessageContext omc = input == null ? null : input.getOutboundMessageContext(); 
+            if (input != null && omc != null) {
+                final Object outboundMessage = omc.getMessage();
                 if (outboundMessage == null) {
                     final Assertion ret = SAML1ActionSupport.buildAssertion(AddAuthenticationStatementToAssertion.this,
                             getIdGenerator(), getIssuerId());
-                    input.getOutboundMessageContext().setMessage(ret);
+                    omc.setMessage(ret);
                     return ret;
                 } else if (outboundMessage instanceof Assertion) {
                     return (Assertion) outboundMessage;

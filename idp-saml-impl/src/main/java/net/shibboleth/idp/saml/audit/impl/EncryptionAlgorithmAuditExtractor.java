@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.profile.context.EncryptionContext;
+import org.opensaml.xmlsec.EncryptionParameters;
 
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.logic.Constraint;
@@ -58,12 +59,17 @@ public class EncryptionAlgorithmAuditExtractor implements Function<ProfileReques
         
         final EncryptionContext encryptionCtx = encryptionContextLookupStrategy.apply(input);
         if (encryptionCtx != null) {
-            if (encryptionCtx.getAssertionEncryptionParameters() != null) {
-                return encryptionCtx.getAssertionEncryptionParameters().getDataEncryptionAlgorithm();
-            } else if (encryptionCtx.getAttributeEncryptionParameters() != null) {
-                return encryptionCtx.getAttributeEncryptionParameters().getDataEncryptionAlgorithm();
-            } else if (encryptionCtx.getIdentifierEncryptionParameters() != null) {
-                return encryptionCtx.getIdentifierEncryptionParameters().getDataEncryptionAlgorithm();
+            final EncryptionParameters assertionParams = encryptionCtx.getAssertionEncryptionParameters();
+            if (assertionParams != null) {
+                return assertionParams.getDataEncryptionAlgorithm();
+            }
+            final EncryptionParameters attributeParams = encryptionCtx.getAttributeEncryptionParameters();
+            if (attributeParams != null) {
+                return attributeParams.getDataEncryptionAlgorithm();
+            }
+            final EncryptionParameters idParams =encryptionCtx.getIdentifierEncryptionParameters();
+            if (idParams != null) {
+                return idParams.getDataEncryptionAlgorithm();
             }
         }
         return null;

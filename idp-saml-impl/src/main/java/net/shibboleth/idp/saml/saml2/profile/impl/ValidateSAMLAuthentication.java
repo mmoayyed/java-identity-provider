@@ -18,8 +18,10 @@
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
+import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.RecursiveTypedParentContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -39,6 +43,8 @@ import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.ProxyRestriction;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
@@ -59,6 +65,7 @@ import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscoderSupport;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.authn.AbstractValidationAction;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
@@ -262,40 +269,46 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         if (transcoderRegistry != null) {
             processAttributes(profileRequestContext);
         }
+        final Function<ProfileRequestContext,Collection<IdPAttribute>> aes = attributeExtractionStrategy;
+        AttributeContext ac = attributeContext;
         
-        if (attributeExtractionStrategy != null) {
+        if (aes != null) {
             log.debug("{} Applying custom extraction strategy function", getLogPrefix());
-            if (attributeContext == null) {
-                attributeContext = profileRequestContext
-                        .getSubcontext(RelyingPartyContext.class)
-                        .getSubcontext(AttributeContext.class, true);
+            if (ac == null) {
+                final RelyingPartyContext rpcCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class);
+                assert rpcCtx!= null;
+                ac = attributeContext = rpcCtx.getOrCreateSubcontext(AttributeContext.class);
             }
-            final Collection<IdPAttribute> attributes = new ArrayList<>(attributeContext.getIdPAttributes().values());
-            final Collection<IdPAttribute> newAttributes = attributeExtractionStrategy.apply(profileRequestContext);
+            final Collection<IdPAttribute> attributes = new ArrayList<>(ac.getIdPAttributes().values());
+            final Collection<IdPAttribute> newAttributes = aes.apply(profileRequestContext);
             if (newAttributes != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("{} Extracted attributes with custom strategy: {}", getLogPrefix(),
                             newAttributes.stream().map(IdPAttribute::getId).collect(Collectors.toUnmodifiableList()));
                 }
                 attributes.addAll(newAttributes);
-                attributeContext.setIdPAttributes(attributes);
+                ac.setIdPAttributes(attributes);
             }
         }
 
         logSuccess();
         
-        authnContextTranslator = profileConfiguration.getAuthnContextTranslationStrategy(profileRequestContext);
-        authnContextTranslatorEx = profileConfiguration.getAuthnContextTranslationStrategyEx(profileRequestContext);
+        final BrowserSSOProfileConfiguration prConfig = profileConfiguration;
+        assert prConfig!=null;
+        authnContextTranslator = prConfig.getAuthnContextTranslationStrategy(profileRequestContext);
+        authnContextTranslatorEx = prConfig.getAuthnContextTranslationStrategyEx(profileRequestContext);
         
         buildAuthenticationResult(profileRequestContext, authenticationContext);
-        
-        if (authenticationContext.getAuthenticationResult() != null
-                && profileConfiguration.isProxiedAuthnInstant(profileRequestContext)) {
-            log.debug("{} Resetting authentication time to proxied value: {}", getLogPrefix(),
-                    samlAuthnContext.getAuthnStatement().getAuthnInstant());
-            if (samlAuthnContext.getAuthnStatement().getAuthnInstant() != null) {
-                authenticationContext.getAuthenticationResult().setAuthenticationInstant(
-                        samlAuthnContext.getAuthnStatement().getAuthnInstant());
+        final AuthenticationResult ar = authenticationContext.getAuthenticationResult();
+        if (ar != null && prConfig.isProxiedAuthnInstant(profileRequestContext)) {
+            assert samlAuthnContext != null;
+            final AuthnStatement as = samlAuthnContext.getAuthnStatement();
+            assert as != null;
+            final Instant ai = as.getAuthnInstant();
+            assert ai != null;
+            log.debug("{} Resetting authentication time to proxied value: {}", getLogPrefix(),ai);
+            if (as.getAuthnInstant() != null) {
+                ar.setAuthenticationInstant(ai);
             }
         }
     }
@@ -311,10 +324,12 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                 nameToLog = attrToLog.getValues().get(0).getDisplayValue();
             }
         }
+
+        assert samlAuthnContext != null;
+        final org.opensaml.saml.saml2.core.Subject samlSubject = samlAuthnContext.getSubject();
         
-        if (nameToLog == null && samlAuthnContext.getSubject() != null
-                && samlAuthnContext.getSubject().getNameID() != null) {
-            nameToLog = samlAuthnContext.getSubject().getNameID().getValue();
+        if (nameToLog == null && samlSubject != null && samlSubject .getNameID() != null) {
+            nameToLog = samlSubject.getNameID().getValue();
         }
 
         log.info("{} SAML authentication succeeded for '{}'", getLogPrefix(), nameToLog);
@@ -325,18 +340,27 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         
-        if (samlAuthnContext.getSubject() != null && samlAuthnContext.getSubject().getNameID() != null) {
-            subject.getPrincipals().add(new NameIDPrincipal(samlAuthnContext.getSubject().getNameID()));
-        }
-
-        final AuthnContext authnContext = samlAuthnContext.getAuthnStatement().getAuthnContext();
+        final SAMLAuthnContext localSamlAuthnContext = samlAuthnContext;
+        final AttributeContext localAttributeContext = attributeContext;
+        assert localSamlAuthnContext != null && localAttributeContext!=null;;
+        final BaseContext localSamlAuthnContextParent = localSamlAuthnContext.getParent();
+        assert localSamlAuthnContextParent!=null;
         
+        final org.opensaml.saml.saml2.core.Subject samlSubject = localSamlAuthnContext.getSubject();
+        final NameID nameID = samlSubject==null ? null : samlSubject.getNameID(); 
+        if (nameID!= null) {
+            subject.getPrincipals().add(new NameIDPrincipal(nameID));
+        }
+        final AuthnStatement authnStatement = localSamlAuthnContext.getAuthnStatement();
+        assert authnStatement!=null;
+        final AuthnContext authnContext = Constraint.isNotNull(authnStatement.getAuthnContext(), "No Authn Context");
+
         boolean principalsAdded = false;
         
         if (authnContextTranslatorEx != null) {
             // PRC is up (AuthenticationContext) and then down (to nested PRC).
             final Collection<Principal> translated = authnContextTranslatorEx.apply(
-                    samlAuthnContext.getParent().getSubcontext(ProfileRequestContext.class));
+                    localSamlAuthnContextParent.getSubcontext(ProfileRequestContext.class));
             if (translated != null && !translated.isEmpty()) {
                 subject.getPrincipals().addAll(translated);
                 if (log.isDebugEnabled()) {
@@ -385,12 +409,12 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         subject.getPrincipals().add(buildProxyPrincipal(authnContext));
         
-        if (attributeContext != null && !attributeContext.getIdPAttributes().isEmpty()) {
+        if (localAttributeContext != null && !localAttributeContext.getIdPAttributes().isEmpty()) {
             log.debug("{} Adding filtered inbound attributes to Subject", getLogPrefix());
             subject.getPrincipals().addAll(
-                attributeContext.getIdPAttributes().values()
+                localAttributeContext.getIdPAttributes().values()
                     .stream()
-                    .map(a -> new IdPAttributePrincipal(a))
+                    .map(a -> {assert a != null; return new IdPAttributePrincipal(a);})
                     .collect(Collectors.toUnmodifiableList()));
         }
         
@@ -409,7 +433,11 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         final ProxyAuthenticationPrincipal proxied = new ProxyAuthenticationPrincipal();
         
-        final Assertion assertion = (Assertion) samlAuthnContext.getAuthnStatement().getParent();
+        assert samlAuthnContext != null;
+        AuthnStatement authnStatement = samlAuthnContext.getAuthnStatement();
+        assert authnStatement != null;
+        final Assertion assertion = (Assertion) authnStatement.getParent();
+        assert assertion != null;
         if (!authnContext.getAuthenticatingAuthorities().isEmpty()) {
             proxied.getAuthorities().addAll(
                     authnContext.getAuthenticatingAuthorities()
@@ -423,9 +451,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         final ProxyRestriction condition = assertion.getConditions().getProxyRestriction();
         if (condition != null) {
             proxied.setProxyCount(condition.getProxyCount());
-            if (condition.getAudiences() != null) {
-                proxied.getAudiences().addAll(
-                        condition.getAudiences()
+            final List<Audience> audiences = condition.getAudiences() ; 
+            if (audiences!= null) {
+                proxied.getAudiences().addAll(audiences
                             .stream()
                             .map(Audience::getURI)
                             .filter(a -> !Strings.isNullOrEmpty(a))
@@ -446,14 +474,19 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         log.debug("{} Decoding incoming SAML Attributes", getLogPrefix());
         
         final Multimap<String,IdPAttribute> mapped = HashMultimap.create();
+        assert mapped != null;
 
+        assert transcoderRegistry!= null;
         try (final ServiceableComponent<AttributeTranscoderRegistry> component =
                 transcoderRegistry.getServiceableComponent()) {
-
-            final Response response = (Response) profileRequestContext.getInboundMessageContext().getMessage();
+            final MessageContext imc = profileRequestContext.getInboundMessageContext();
+            assert imc != null;
+            final Response response = (Response) imc.getMessage();
+            assert response != null;
             for (final Assertion assertion : response.getAssertions()) {
                 for (final AttributeStatement statement : assertion.getAttributeStatements()) {
                     for (final Attribute designator : statement.getAttributes()) {
+                        assert designator!=null;
                         try {
                             decodeAttribute(component.getComponent(), profileRequestContext, designator, mapped);
                         } catch (final AttributeDecodingException e) {
@@ -470,11 +503,11 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         log.debug("{} Incoming SAML Attributes mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());
 
         if (!mapped.isEmpty()) {
-            attributeContext = profileRequestContext
-                    .getSubcontext(RelyingPartyContext.class)
-                    .getSubcontext(AttributeContext.class, true);
-            attributeContext.setUnfilteredIdPAttributes(mapped.values());
-            attributeContext.setIdPAttributes(null);
+            final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class);
+            assert rpCtx != null;
+            final AttributeContext ac = attributeContext = rpCtx.getOrCreateSubcontext(AttributeContext.class);
+            ac.setUnfilteredIdPAttributes(mapped.values());
+            ac.setIdPAttributes(null);
             filterAttributes(profileRequestContext);
         }
     }
@@ -502,6 +535,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         }
         
         for (final TranscodingRule rules : transcodingRules) {
+            assert rules != null;
             final AttributeTranscoder<Attribute> transcoder = TranscoderSupport.getTranscoder(rules);
             final IdPAttribute decodedAttribute = transcoder.decode(profileRequestContext, input, rules);
             if (decodedAttribute != null) {
@@ -516,20 +550,23 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      * @param profileRequestContext current profile request context
      */
     private void filterAttributes(@Nonnull final ProfileRequestContext profileRequestContext) {
-        if (attributeFilterService == null) {
+        final ReloadableService<AttributeFilter> service = attributeFilterService;
+        if (service == null) {
             log.warn("{} No AttributeFilter service provided", getLogPrefix());
             return;
         }
 
         final AttributeFilterContext filterContext =
-                profileRequestContext.getSubcontext(AttributeFilterContext.class, true);
+                profileRequestContext.getOrCreateSubcontext(AttributeFilterContext.class);
 
         populateFilterContext(profileRequestContext, filterContext);
-
-        try (final ServiceableComponent<AttributeFilter> component = attributeFilterService.getServiceableComponent()) {
+        try (final ServiceableComponent<AttributeFilter> component = service.getServiceableComponent()) {
             final AttributeFilter filter = component.getComponent();
             filter.filterAttributes(filterContext);
-            filterContext.getParent().removeSubcontext(filterContext);
+            final BaseContext parent = filterContext.getParent();
+            assert parent != null;
+            parent.removeSubcontext(filterContext);
+            assert attributeContext!=null;
             attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
         } catch (final AttributeFilterException e) {
             log.error("{} Error while filtering inbound attributes", getLogPrefix(), e);
@@ -546,17 +583,23 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
      */
     private void populateFilterContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeFilterContext filterContext) {
+        final AttributeContext ac = attributeContext;
+        assert ac != null;
         
         filterContext.setDirection(Direction.INBOUND)
-            .setPrefilteredIdPAttributes(attributeContext.getUnfilteredIdPAttributes().values())
+            .setPrefilteredIdPAttributes(ac.getUnfilteredIdPAttributes().values())
             .setMetadataResolver(metadataResolver)
             .setRequesterMetadataContextLookupStrategy(null)
             .setIssuerMetadataContextLookupStrategy(
                     new SAMLMetadataContextLookupFunction().compose(
                             new RecursiveTypedParentContextLookup<>(ProfileRequestContext.class)))
             .setProxiedRequesterContextLookupStrategy(null)
-            .setAttributeIssuerID(getResponderLookupStrategy().apply(profileRequestContext))
-            .setAttributeRecipientID(getRequesterLookupStrategy().apply(profileRequestContext));
+            .setAttributeIssuerID(
+                    Constraint.isNotNull(getResponderLookupStrategy(), "No responder Strategy").
+                    apply(profileRequestContext))
+            .setAttributeRecipientID(
+                    Constraint.isNotNull(getRequesterLookupStrategy(), "No requester strategy").
+                    apply(profileRequestContext));
     }
 
 }

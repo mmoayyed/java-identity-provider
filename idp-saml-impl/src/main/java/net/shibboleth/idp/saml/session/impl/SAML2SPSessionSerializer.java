@@ -122,7 +122,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
         final JsonString acsLocation = obj.getJsonString(ACS_LOC_FIELD);
         final boolean supportsLogoutProp = obj.getBoolean(LOGOUT_PROP_FIELD, true);
         
-        if (rawNameID == null && sessionIndex == null) {
+        if (rawNameID == null || sessionIndex == null) {
             throw new IOException("Serialized SAML2SPSession missing required fields");
         }
         

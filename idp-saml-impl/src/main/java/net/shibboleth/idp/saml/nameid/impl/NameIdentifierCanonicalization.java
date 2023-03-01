@@ -22,6 +22,7 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -114,8 +115,10 @@ public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizat
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
+        final Subject subject = c14nContext.getSubject();
+        assert subject != null;
         final Set<NameIdentifierPrincipal> nameIdentifiers =
-                c14nContext.getSubject().getPrincipals(NameIdentifierPrincipal.class);
+                subject.getPrincipals(NameIdentifierPrincipal.class);
         final NameIdentifier nameIdentifier = nameIdentifiers.iterator().next().getNameIdentifier();
 
         try {
@@ -206,8 +209,10 @@ public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizat
                 @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
 
             Set<NameIdentifierPrincipal> nameIdentifiers = null;
-            if (c14nContext.getSubject() != null) {
-                nameIdentifiers = c14nContext.getSubject().getPrincipals(NameIdentifierPrincipal.class);
+            final Subject subject = c14nContext.getSubject();
+
+            if (subject != null) {
+                nameIdentifiers = subject.getPrincipals(NameIdentifierPrincipal.class);
             }
 
             if (nameIdentifiers == null || nameIdentifiers.isEmpty()) {

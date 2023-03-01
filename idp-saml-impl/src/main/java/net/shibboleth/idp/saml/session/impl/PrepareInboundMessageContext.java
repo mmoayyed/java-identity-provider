@@ -33,6 +33,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
+import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -118,13 +119,15 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
             log.debug("{} No logout propagation context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
-        } else if (logoutPropCtx.getSession() == null || !(logoutPropCtx.getSession() instanceof SAML2SPSession)) {
+        }
+        final SPSession session = logoutPropCtx.getSession(); 
+        if (session == null || !(session instanceof SAML2SPSession)) {
             log.debug("{} Logout propagation context did not contain a SAML2SPSession", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
-        relyingPartyId = ((SAML2SPSession) logoutPropCtx.getSession()).getId();
+        relyingPartyId = ((SAML2SPSession) session).getId();
         return true;
     }
 
@@ -134,7 +137,7 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
         final MessageContext msgCtx = new MessageContext();
         profileRequestContext.setInboundMessageContext(msgCtx);
 
-        final SAMLPeerEntityContext peerContext = msgCtx.getSubcontext(SAMLPeerEntityContext.class, true);
+        final SAMLPeerEntityContext peerContext = msgCtx.getOrCreateSubcontext(SAMLPeerEntityContext.class);
         peerContext.setEntityId(relyingPartyId);
 
         log.debug("{} Initialized inbound context for message to {}", getLogPrefix(), relyingPartyId);

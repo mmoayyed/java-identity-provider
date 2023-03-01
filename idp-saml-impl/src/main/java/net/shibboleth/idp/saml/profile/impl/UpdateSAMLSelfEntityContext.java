@@ -23,14 +23,15 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Action that updates inbound and/or outbound instances of {@link SAMLSelfEntityContext}
@@ -49,7 +50,7 @@ public class UpdateSAMLSelfEntityContext extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(UpdateSAMLSelfEntityContext.class);
 
     /** Strategy used to obtain the self identity value. */
-    @Nullable private Function<ProfileRequestContext,String> selfIdentityLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,String> selfIdentityLookupStrategy;
 
     /** Result of strategy function. */
     @Nullable private String selfIdentity;
@@ -83,19 +84,19 @@ public class UpdateSAMLSelfEntityContext extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        if (profileRequestContext.getInboundMessageContext() != null) {
+        final MessageContext imc = profileRequestContext.getInboundMessageContext();
+        if (imc != null) {
             final SAMLSelfEntityContext context =
-                    profileRequestContext.getInboundMessageContext().getSubcontext(SAMLSelfEntityContext.class);
+                    imc.getSubcontext(SAMLSelfEntityContext.class);
             if (context != null && !Objects.equals(context.getEntityId(), selfIdentity)) {
                 log.debug("{} Updating inbound SAMLSelfEntityContext, '{}' to '{}'", getLogPrefix(),
                         context.getEntityId(), selfIdentity);
                 context.setEntityId(selfIdentity);
             }
         }
-
-        if (profileRequestContext.getOutboundMessageContext() != null) {
-            final SAMLSelfEntityContext context =
-                    profileRequestContext.getOutboundMessageContext().getSubcontext(SAMLSelfEntityContext.class);
+        final MessageContext omc = profileRequestContext.getOutboundMessageContext(); 
+        if (omc != null) {
+            final SAMLSelfEntityContext context = omc.getSubcontext(SAMLSelfEntityContext.class);
             if (context != null && !Objects.equals(context.getEntityId(), selfIdentity)) {
                 log.debug("{} Updating outbound SAMLSelfEntityContext, '{}' to '{}'", getLogPrefix(),
                         context.getEntityId(), selfIdentity);

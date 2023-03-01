@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.audit.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,7 +51,9 @@ public class ProxyAudienceAuditExtractor extends AbstractProxyRestrictionAuditEx
     @Override
     @Nullable protected Collection<String> doApply(@Nullable final ProxyRestriction condition) {
         if (condition != null) {
-            return condition.getAudiences().stream()
+            final List<Audience> audiences = condition.getAudiences();
+            assert audiences != null;
+            return audiences.stream()
                     .map(Audience::getURI)
                     .collect(Collectors.toUnmodifiableList());
         }

@@ -122,10 +122,11 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractMessageHa
             log.debug("{} Unable to locate or create RelyingPartyContext", getLogPrefix());
             throw new MessageHandlerException("Unable to locate or create RelyingPartyContext");
         }
-        
+        final SAMLPeerEntityContext pec = peerEntityCtx; 
+        assert pec != null;
         log.debug("{} Attaching RelyingPartyContext based on SAML peer {}", getLogPrefix(),
-                peerEntityCtx.getEntityId());
-        rpContext.setRelyingPartyIdContextTree(peerEntityCtx);
+                pec.getEntityId());
+        rpContext.setRelyingPartyIdContextTree(pec);
         rpContext.setRelyingPartyIdLookupStrategy(RPID_LOOKUP);
         rpContext.setVerificationLookupStrategy(VERIFY_LOOKUP);
     }

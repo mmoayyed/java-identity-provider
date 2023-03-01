@@ -21,6 +21,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -33,6 +34,7 @@ import org.opensaml.saml.ext.saml2aslo.Asynchronous;
 import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.slf4j.Logger;
@@ -123,12 +125,13 @@ public class PreProcessLogoutMessage extends AbstractProfileAction {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
+        final MessageContext imc = profileRequestContext.getInboundMessageContext();  
         
-        if (profileRequestContext.getInboundMessageContext() == null) {
+        if (imc == null) {
             log.warn("{} No inbound message context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return false;
-        } else if (!(profileRequestContext.getInboundMessageContext().getMessage() instanceof SAMLObject)) {
+        } else if (!(imc.getMessage() instanceof SAMLObject)) {
             log.warn("{} No inbound SAML message", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
             return false;
@@ -139,7 +142,9 @@ public class PreProcessLogoutMessage extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final SAMLObject msg = (SAMLObject) profileRequestContext.getInboundMessageContext().getMessage();
+        final MessageContext imc = profileRequestContext.getInboundMessageContext();
+        assert imc != null;
+        final SAMLObject msg = (SAMLObject) imc.getMessage();
         if (msg instanceof LogoutResponse) {
             ActionSupport.buildEvent(profileRequestContext, IS_LOGOUT_RESPONSE);
             return;
@@ -157,8 +162,9 @@ public class PreProcessLogoutMessage extends AbstractProfileAction {
         
         if (assumeAsync) {
             final SAMLMetadataContext mdCtx = metadataContextLookupStrategy.apply(profileRequestContext);
-            if (mdCtx == null || !(mdCtx.getRoleDescriptor() instanceof SSODescriptor) ||
-                    ((SSODescriptor) mdCtx.getRoleDescriptor()).getSingleLogoutServices().isEmpty()) {
+            final RoleDescriptor roleDescriptor = mdCtx == null ? null : mdCtx.getRoleDescriptor();
+            if (roleDescriptor  == null || !(roleDescriptor instanceof SSODescriptor) ||
+                    ((SSODescriptor) roleDescriptor).getSingleLogoutServices().isEmpty()) {
                 log.debug("{} LogoutRequest treated as Asynchronous due to lack of metadata", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, IS_LOGOUT_REQUEST_ASYNC);
             }

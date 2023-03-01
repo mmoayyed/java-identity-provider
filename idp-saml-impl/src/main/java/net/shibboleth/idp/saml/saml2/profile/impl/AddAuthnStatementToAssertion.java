@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -244,6 +245,10 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         return statement;
     }
     
+    /** Add Authenticating Authorities.
+     * @param profileRequestContext the prc
+     * @param authnContext the authnContext
+     */
     private void addAuthenticatingAuthorities(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthnContext authnContext) {
         
@@ -287,12 +292,14 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         /** {@inheritDoc} */
         @Override
         @Nullable public Assertion apply(@Nullable final ProfileRequestContext input) {
-            if (input != null && input.getOutboundMessageContext() != null) {
-                final Object outboundMessage = input.getOutboundMessageContext().getMessage();
+            final MessageContext omc = input != null ? input.getOutboundMessageContext() : null;  
+
+            if (omc != null) {
+                final Object outboundMessage = omc.getMessage();
                 if (outboundMessage == null) {
                     final Assertion ret = SAML2ActionSupport.buildAssertion(AddAuthnStatementToAssertion.this,
                             getIdGenerator(), getIssuerId());
-                    input.getOutboundMessageContext().setMessage(ret);
+                    omc.setMessage(ret);
                     return ret;
                 } else if (outboundMessage instanceof Assertion) {
                     return (Assertion) outboundMessage;

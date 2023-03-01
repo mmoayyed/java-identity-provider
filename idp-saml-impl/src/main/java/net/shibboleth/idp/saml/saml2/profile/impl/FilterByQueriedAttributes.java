@@ -143,9 +143,9 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
             return false;
         }
         
-        query = queryLookupStrategy.apply(profileRequestContext);
+        final AttributeQuery localQuery = query = queryLookupStrategy.apply(profileRequestContext);
         
-        if (query == null || query.getAttributes().isEmpty()) {
+        if (localQuery == null || localQuery.getAttributes().isEmpty()) {
             log.debug("No queried Attributes found, nothing to do ");
             return false;
         }
@@ -156,6 +156,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
             return false;
         }
 
+        assert attributeContext!=null;
         if (attributeContext.getIdPAttributes().isEmpty()) {
             log.debug("{} No attributes to filter", getLogPrefix());
             return false;
@@ -169,11 +170,13 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
                 
         final Multimap<String,IdPAttribute> mapped = HashMultimap.create();
-
+        final AttributeQuery localQuery = query;
+        AttributeContext localAttributeContext = attributeContext;
+        assert localQuery!=null && localAttributeContext!=null;
         try (final ServiceableComponent<AttributeTranscoderRegistry> component =
                 transcoderRegistry.getServiceableComponent()) {
 
-            for (final Attribute designator : query.getAttributes()) {
+            for (final Attribute designator : localQuery.getAttributes()) {
                 try {
                     decodeAttribute(component.getComponent(), profileRequestContext, designator, mapped);
                 } catch (final AttributeDecodingException e) {
@@ -188,9 +191,9 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
                 
         log.debug("{} Query content mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());
 
-        final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributes().size());
+        final Collection<IdPAttribute> keepers = new ArrayList<>(localQuery.getAttributes().size());
         
-        for (final IdPAttribute attribute : attributeContext.getIdPAttributes().values()) {
+        for (final IdPAttribute attribute : localAttributeContext.getIdPAttributes().values()) {
             
             final Collection<IdPAttribute> requested = mapped.get(attribute.getId());
             
@@ -212,7 +215,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
             }
         }
         
-        attributeContext.setIdPAttributes(keepers);
+        localAttributeContext.setIdPAttributes(keepers);
     }
     
     /**

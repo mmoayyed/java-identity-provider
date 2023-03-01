@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -32,8 +33,8 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
-import org.opensaml.saml.saml1.core.AttributeDesignator;
 import org.opensaml.saml.saml1.core.AttributeQuery;
+import org.opensaml.saml.saml1.core.AttributeDesignator;
 import org.opensaml.saml.saml1.core.Request;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -64,6 +65,9 @@ import net.shibboleth.shared.service.ServiceableComponent;
  */
 public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
 
+    /** Unused?. */
+    private static final String List = null;
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(FilterByQueriedAttributeDesignators.class);
 
@@ -84,10 +88,12 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
 
     /** Constructor. */
     public FilterByQueriedAttributeDesignators() {
-        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+        final Function<ProfileRequestContext,AttributeContext> acls = new ChildContextLookup<>(AttributeContext.class).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
-        
-        requestLookupStrategy = new MessageLookup<>(Request.class).compose(new InboundMessageContextLookup());
+        final Function<ProfileRequestContext,Request> rls = new MessageLookup<>(Request.class).compose(new InboundMessageContextLookup()); 
+        assert acls != null && rls != null;
+        attributeContextLookupStrategy = acls;
+        requestLookupStrategy = rls;
     }
 
     /**
@@ -145,8 +151,10 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
         if (request != null) {
             query = request.getAttributeQuery();
         }
+        final AttributeQuery ac = query;
         
-        if (query == null || query.getAttributeDesignators().isEmpty()) {
+        final List<AttributeDesignator> designators = ac == null ? null : ac.getAttributeDesignators();
+        if (ac == null || designators == null|| designators.isEmpty()) {
             log.debug("No AttributeDesignators found, nothing to do ");
             return false;
         }
@@ -156,7 +164,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
             log.debug("{} No attribute context, no attributes to filter", getLogPrefix());
             return false;
         }
-
+        assert attributeContext!=null;
         if (attributeContext.getIdPAttributes().isEmpty()) {
             log.debug("{} No attributes to filter", getLogPrefix());
             return false;
@@ -171,10 +179,13 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
 
         final Set<String> decodedAttributeIds = new HashSet<>();
 
+        final AttributeQuery ac = query;
+        final AttributeContext aCtx = attributeContext;
+        assert ac != null && aCtx != null;
         try (final ServiceableComponent<AttributeTranscoderRegistry> component =
                 transcoderRegistry.getServiceableComponent()) {
-
-            for (final AttributeDesignator designator : query.getAttributeDesignators()) {
+            for (final AttributeDesignator designator : ac.getAttributeDesignators()) {
+                assert designator!=null;
                 try {
                     decodeAttributeDesignator(component.getComponent(), profileRequestContext, designator,
                             decodedAttributeIds);
@@ -188,10 +199,10 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
             return;
         }
 
-        final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributeDesignators().size());
+        final Collection<IdPAttribute> keepers = new ArrayList<>(ac.getAttributeDesignators().size());
         log.debug("Query content mapped to attribute IDs: {}", decodedAttributeIds);
         
-        for (final IdPAttribute attribute : attributeContext.getIdPAttributes().values()) {
+        for (final IdPAttribute attribute : aCtx.getIdPAttributes().values()) {
             if (decodedAttributeIds.contains(attribute.getId())) {
                 log.debug("Retaining attribute '{}' requested by query", attribute.getId());
                 keepers.add(attribute);
@@ -200,7 +211,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
             }
         }
         
-        attributeContext.setIdPAttributes(keepers);
+        aCtx.setIdPAttributes(keepers);
     }
 
     /**
@@ -225,6 +236,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
         }
         
         for (final TranscodingRule rules : transcodingRules) {
+            assert rules != null;
             final AttributeTranscoder<AttributeDesignator> transcoder = TranscoderSupport.getTranscoder(rules);
             final IdPAttribute decodedAttribute = transcoder.decode(profileRequestContext, input, rules);
             if (decodedAttribute != null) {

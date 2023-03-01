@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -47,6 +48,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -59,16 +61,16 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     private final Logger log = LoggerFactory.getLogger(ProcessAssertionsForAuthentication.class);
     
     /** The resolver for the response to be processed. */
-    @NonnullAfterInit private Function<ProfileRequestContext, Response> responseResolver;
+    @Nonnull private Function<ProfileRequestContext, Response> responseResolver;
     
     /** Lookup strategy to locate the SAML context. */
-    @NonnullAfterInit private Function<ProfileRequestContext,SAMLAuthnContext> samlContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SAMLAuthnContext> samlContextLookupStrategy;
     
     /** Selection strategy for multiple valid authn Assertions. */
-    @NonnullAfterInit private Function<List<Assertion>,Assertion> authnAssertionSelectionStrategy;
+    @Nonnull private Function<List<Assertion>,Assertion> authnAssertionSelectionStrategy;
     
     /** Selection strategy for multiple AuthnStatements. */
-    @NonnullAfterInit private Function<Assertion,AuthnStatement> authnStatementSelectionStrategy;
+    @Nonnull private Function<Assertion,AuthnStatement> authnStatementSelectionStrategy;
     
     /** The Response to process. */
     private Response response;
@@ -263,8 +265,11 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     private class DefaultResponseResolver implements Function<ProfileRequestContext, Response> {
 
         /** {@inheritDoc} */
-        public Response apply(@Nonnull final ProfileRequestContext profileContext) {
-            final SAMLObject message = (SAMLObject) profileContext.getInboundMessageContext().getMessage();
+        public Response apply(final @Nullable ProfileRequestContext profileContext) {
+            assert profileContext!= null;
+            final MessageContext imc = Constraint.isNotNull(profileContext.getInboundMessageContext(), "No inbound Message Context");;
+
+            final SAMLObject message = (SAMLObject) imc.getMessage();
             if (message instanceof Response) {
                 return (Response) message;
             }

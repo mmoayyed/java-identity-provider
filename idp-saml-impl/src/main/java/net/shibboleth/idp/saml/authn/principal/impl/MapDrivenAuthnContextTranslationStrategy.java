@@ -30,11 +30,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
+import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -53,7 +56,7 @@ public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnC
     
     /** Constructor. */
     public MapDrivenAuthnContextTranslationStrategy() {
-        principalMappings = Collections.emptyMap();
+        principalMappings = CollectionSupport.emptyMap();
     }
     
     /**
@@ -65,7 +68,7 @@ public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnC
      */
     public void setMappings(@Nullable @NonnullElements final Map<Principal,Collection<Principal>> mappings) {
         if (mappings == null || mappings.isEmpty()) {
-            principalMappings = Collections.emptyMap();
+            principalMappings = CollectionSupport.emptyMap();
             return;
         }
         
@@ -78,11 +81,15 @@ public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnC
         
         if (input != null) {
             final Principal principal;
+            final AuthnContextClassRef classRef = input.getAuthnContextClassRef();
+            final String classRefURI = classRef == null ? null : classRef.getURI();
+            final AuthnContextDeclRef declRef = input.getAuthnContextDeclRef();
+            final String declRefURI = declRef == null ? null : declRef.getURI();
             
-            if (input.getAuthnContextClassRef() != null && input.getAuthnContextClassRef().getURI() != null) {
-                principal = new AuthnContextClassRefPrincipal(input.getAuthnContextClassRef().getURI());
-            } else if (input.getAuthnContextDeclRef() != null && input.getAuthnContextDeclRef().getURI() != null) {
-                principal = new AuthnContextDeclRefPrincipal(input.getAuthnContextDeclRef().getURI());
+            if (classRefURI != null) {
+                principal = new AuthnContextClassRefPrincipal(classRefURI);
+            } else if (declRefURI != null) {
+                principal = new AuthnContextDeclRefPrincipal(declRefURI);
             } else {
                 log.trace("Input AuthnContext did not contain a class or decl reference, returning nothing");
                 return null;

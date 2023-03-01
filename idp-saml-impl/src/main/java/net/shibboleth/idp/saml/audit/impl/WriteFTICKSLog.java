@@ -54,13 +54,13 @@ public class WriteFTICKSLog extends AbstractProfileAction {
     @Nonnull @NotEmpty public static final String FTICKS_LOG_CATEGORY = "Shibboleth-FTICKS";
     
     /** Strategy used to locate the {@link AuditContext} associated with a given {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext,AuditContext> auditContextLookupStrategy;
+    private Function<ProfileRequestContext,AuditContext> auditContextLookupStrategy;
 
     /** Federation ID for log. */
     @NonnullAfterInit @NotEmpty private String federationId;
     
     /** Digest algorithm for username hashing. */
-    @Nonnull @NotEmpty private String digestAlgorithm;
+    @NonnullAfterInit @NotEmpty private String digestAlgorithm;
 
     /** Salt for username hashing. */
     @Nullable private String salt;
@@ -186,8 +186,13 @@ public class WriteFTICKSLog extends AbstractProfileAction {
         if (federationId == null) {
             throw new ComponentInitializationException("Federation ID cannot be null or empty.");
         }
+        
+        if (digestAlgorithm == null) {
+            throw new ComponentInitializationException("Digest Algorithm cannot be null or empty.");
+        }
 
         try {
+            assert digestAlgorithm != null;
             digester = new StringDigester(digestAlgorithm, StringDigester.OutputFormat.HEX_LOWER);
             digester.setSalt(salt);
             digester.setRequireSalt(true);

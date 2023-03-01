@@ -130,6 +130,7 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
         if (null == prefix) {
             final StringBuilder builder = new StringBuilder("Transient Decoder '").append(getId()).append("':");
             prefix = builder.toString();
+            assert prefix !=null;
             if (null == logPrefix) {
                 logPrefix = prefix;
             }

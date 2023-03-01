@@ -262,12 +262,13 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
                         NameIDPolicy.DEFAULT_ELEMENT_NAME);
 
         final AuthnRequest object = requestBuilder.buildObject();
-        
+        assert idGenerator!=null;
         object.setID(idGenerator.generateIdentifier());
         object.setIssueInstant(Instant.now());
         object.setVersion(SAMLVersion.VERSION_20);
-        
-        final Integer index = profileConfiguration.getAttributeIndex(profileRequestContext);
+        final BrowserSSOProfileConfiguration profileConfig = profileConfiguration;
+        assert profileConfig!=null;
+        final Integer index = profileConfig.getAttributeIndex(profileRequestContext);
         if (index != null) {
             log.debug("{} Setting AttributeConsumingServiceIndex to '{}' for SAML AuthnRequest", getLogPrefix(),
                     index);
@@ -287,7 +288,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         // ForceAuthn comes from configuration, which by default will take into account the
         // AuthenticationContext parent's state (but may be overridden by deployer).
-        if (profileConfiguration.isForceAuthn(profileRequestContext)) {
+        if (profileConfig.isForceAuthn(profileRequestContext)) {
             log.debug("{} Setting ForceAuthn for SAML AuthnRequest", getLogPrefix());
             object.setForceAuthn(true);
         }
@@ -300,7 +301,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         final NameIDPolicy nip = nipBuilder.buildObject();
         nip.setAllowCreate(true);
-        final String qualifier = profileConfiguration.getSPNameQualifier(profileRequestContext);
+        final String qualifier = profileConfig.getSPNameQualifier(profileRequestContext);
         if (qualifier != null) {
             log.debug("{} Setting NameIDPolicy SPNameQualifier to '{}' for SAML AuthnRequest", getLogPrefix(),
                     qualifier);
@@ -308,7 +309,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         }
         
         // TODO: use metadata for NameID Formats too?
-        final List<String> formats = profileConfiguration.getNameIDFormatPrecedence(profileRequestContext);
+        final List<String> formats = profileConfig.getNameIDFormatPrecedence(profileRequestContext);
         if (!formats.isEmpty()) {
             log.debug("{} Setting NameIDPolicy Format to '{}' for SAML AuthnRequest", getLogPrefix(), formats.get(0));
             nip.setFormat(formats.get(0));
@@ -319,7 +320,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         final RequestedAuthnContext rac = getRequestedAuthnContext(profileRequestContext);
         if (rac != null) {
             final AuthnContextComparisonTypeEnumeration operator =
-                    profileConfiguration.getAuthnContextComparison(profileRequestContext);
+                    profileConfig.getAuthnContextComparison(profileRequestContext);
             if (operator != null) {
                 log.debug("{} Setting RequestedAuthnContext comparison to {}", getLogPrefix(), operator);
                 rac.setComparison(operator);
@@ -331,8 +332,9 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
                 authenticationContext.getProxiableAuthorities()));
 
         object.setExtensions(buildExtensions(profileRequestContext));
-        
-        profileRequestContext.getOutboundMessageContext().setMessage(object);
+        final MessageContext omc = profileRequestContext.getOutboundMessageContext();
+        assert omc != null;
+        omc.setMessage(object);
     }
 // Checkstyle: MethodLength ON
     
@@ -347,6 +349,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
             @Nullable final ProfileRequestContext profileRequestContext) {
         
         // RequestedAuthnContext also based on profile configuration.
+        assert profileConfiguration!=null;
         final List<Principal> principals = profileConfiguration.getDefaultAuthenticationMethods(profileRequestContext);
         if (principals.isEmpty()) {
             return null;
@@ -420,6 +423,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
 
         boolean include = false;
         
+        assert profileConfiguration!=null;
         if (profileConfiguration.isIgnoreScoping(profileRequestContext)) {
             log.warn("{} Skipping generation of Scoping element in violation of standard", getLogPrefix());
             return null;
@@ -487,6 +491,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     @Nullable private Extensions buildExtensions(
             @Nonnull final ProfileRequestContext profileRequestContext) {
         
+        assert profileConfiguration!=null;
         final Collection<RequestedAttribute> attrs = profileConfiguration.getRequestedAttributes(profileRequestContext);
         if (!attrs.isEmpty()) {
             final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();

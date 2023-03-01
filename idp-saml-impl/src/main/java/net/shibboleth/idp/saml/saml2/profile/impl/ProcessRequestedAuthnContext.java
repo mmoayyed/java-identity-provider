@@ -49,6 +49,7 @@ import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
@@ -157,6 +158,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        assert authnRequest!=null;
         final RequestedAuthnContext requestedCtx = authnRequest.getRequestedAuthnContext();
         if (requestedCtx == null) {
             log.debug("{} AuthnRequest did not contain a RequestedAuthnContext, nothing to do", getLogPrefix());
@@ -167,9 +169,10 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         
         if (!requestedCtx.getAuthnContextClassRefs().isEmpty()) {
             for (final AuthnContextClassRef ref : requestedCtx.getAuthnContextClassRefs()) {
-                if (ref.getURI() != null) {
-                    if (!ignoredContexts.contains(ref.getURI())) {
-                        principals.add(new AuthnContextClassRefPrincipal(ref.getURI()));
+                final String uri = ref.getURI();
+                if (uri!= null) {
+                    if (!ignoredContexts.contains(uri)) {
+                        principals.add(new AuthnContextClassRefPrincipal(uri));
                     } else {
                         log.info("{} Ignoring AuthnContextClassRef: {}", getLogPrefix(), ref.getURI());
                     }
@@ -177,9 +180,10 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
             }
         } else if (!requestedCtx.getAuthnContextDeclRefs().isEmpty()) {
             for (final AuthnContextDeclRef ref : requestedCtx.getAuthnContextDeclRefs()) {
-                if (ref.getURI() != null) {
-                    if (!ignoredContexts.contains(ref.getURI())) {
-                        principals.add(new AuthnContextDeclRefPrincipal(ref.getURI()));
+                final String uri = ref.getURI();
+                if (uri != null) {
+                    if (!ignoredContexts.contains(uri)) {
+                        principals.add(new AuthnContextDeclRefPrincipal(uri));
                     } else {
                         log.info("{} Ignoring AuthnContextDeclRef: {}", getLogPrefix(), ref.getURI());
                     }
@@ -194,8 +198,9 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
 
         // Check if permitted.
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpContext != null && rpContext.getProfileConfig() != null) {
-            if (rpContext.getProfileConfig().isFeatureDisallowed(
+        final ProfileConfiguration profileConfig = rpContext==null ? null : rpContext.getProfileConfig();
+        if (profileConfig != null) {            
+            if (profileConfig.isFeatureDisallowed(
                     profileRequestContext, BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT)) {
                 log.warn("{} Incoming RequestedAuthnContext disallowed by profile configuration", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, EventIds.ACCESS_DENIED);

@@ -57,7 +57,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     }
     
     /** {@inheritDoc} */
-    public boolean isIgnoreRequestSignatures(@Nonnull final ProfileRequestContext profileRequestContext) {
+    public boolean isIgnoreRequestSignatures(final @Nullable ProfileRequestContext profileRequestContext) {
         return ignoreRequestSignaturesPredicate.test(profileRequestContext);
     }
     

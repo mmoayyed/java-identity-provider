@@ -68,13 +68,17 @@ public class NameIdentifierGenerationServiceImpl extends AbstractIdentifiableIni
 
     /** {@inheritDoc} */
     @Override
-    public SAML1NameIdentifierGenerator getSAML1NameIdentifierGenerator() {
+    public @Nonnull SAML1NameIdentifierGenerator getSAML1NameIdentifierGenerator() {
+        checkComponentActive();
+        assert saml1Generator!=null;
         return saml1Generator;
     }
 
     /** {@inheritDoc} */
     @Override
-    public SAML2NameIDGenerator getSAML2NameIDGenerator() {
+    public @Nonnull SAML2NameIDGenerator getSAML2NameIDGenerator() {
+        checkComponentActive();
+        assert saml2Generator!=null;
         return saml2Generator;
     }
 }

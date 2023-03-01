@@ -64,6 +64,7 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
                 
                 for (final org.opensaml.saml.saml2.core.Assertion assertion
                         : ((org.opensaml.saml.saml2.core.Response) msg).getAssertions()) {
+                    assert assertion != null;
                     final String id = apply(assertion);
                     if (id != null) {
                         return id;
@@ -86,6 +87,7 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
 
                 for (final org.opensaml.saml.saml1.core.Assertion assertion
                         : ((org.opensaml.saml.saml1.core.Response) msg).getAssertions()) {
+                    assert assertion != null;
                     final String id = apply(assertion);
                     if (id != null) {
                         return id;

@@ -29,6 +29,7 @@ import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -62,7 +63,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
         // V4 deprecation, remove this class in V5.
         DeprecationSupport.warn(ObjectType.BEAN, "c14n/LegacyPrincipalConnector", "c14n/subject-c14n.xml", "<remove>");
         final NameIDCanonicalizationFlowDescriptor result = new NameIDCanonicalizationFlowDescriptor();
-        result.setActivationCondition(Predicates.alwaysFalse());
+        result.setActivationCondition(PredicateSupport.alwaysFalse());
         return result;
     }
     

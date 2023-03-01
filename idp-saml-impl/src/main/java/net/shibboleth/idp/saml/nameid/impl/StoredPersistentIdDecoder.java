@@ -79,12 +79,13 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
         super.doInitialize();
     
         if (null == pidStore) {
-            if (dataSource != null) {
+            final DataSource ds = dataSource;
+            if (ds != null) {
                 log.debug("Creating JDBCPairwiseIdStore instance around supplied DataSource");
                 final JDBCPairwiseIdStore newStore = new JDBCPairwiseIdStore();
                 // Don't validate the database because this side is just reading data.
                 newStore.setVerifyDatabase(false);
-                newStore.setDataSource(dataSource);
+                newStore.setDataSource(ds);
                 newStore.initialize();
                 pidStore = newStore;
             }
@@ -96,7 +97,7 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NotEmpty public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
+    @Nullable @NotEmpty public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
             @Nonnull final NameID nameID) throws NameDecoderException {
         checkComponentActive();
 

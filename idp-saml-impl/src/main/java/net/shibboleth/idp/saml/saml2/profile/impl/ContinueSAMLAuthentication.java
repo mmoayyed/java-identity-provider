@@ -25,10 +25,12 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -78,28 +80,31 @@ public class ContinueSAMLAuthentication extends AbstractAuthenticationAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-
-        if (extContext.getAuthnError() != null) {
+        final MessageContext imc = profileRequestContext != null ? profileRequestContext.getInboundMessageContext() : null;  
+        final ExternalAuthenticationContext extContext = this.extContext;
+        assert extContext!= null;
+        final String authnError = extContext.getAuthnError(); 
+        if (authnError != null) {
             log.info("{} SAML authentication attempt signaled an error: {}", getLogPrefix(),
-                    extContext.getAuthnError());
-            ActionSupport.buildEvent(profileRequestContext, extContext.getAuthnError());
-        } else if (profileRequestContext.getInboundMessageContext() == null) {
+                    authnError);
+            ActionSupport.buildEvent(profileRequestContext, authnError);
+        } else if (imc == null) {
             log.info("{} No inbound SAML Response found", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
-        } else if (!(profileRequestContext.getInboundMessageContext().getMessage() instanceof Response)) {
+        } else if (!(imc.getMessage() instanceof Response)) {
             log.info("{} Inbound message was not a SAML Response", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
         }
         
-        final Response response = (Response) profileRequestContext.getInboundMessageContext().getMessage();
-        if (response.getStatus() == null || response.getStatus().getStatusCode() == null ||
-                response.getStatus().getStatusCode().getValue() == null) {
+        final Response response = (Response) imc.getMessage();
+        final Status status = response.getStatus() ;
+        final StatusCode statusCode = status == null ? null : status.getStatusCode(); 
+        if (status == null || statusCode == null || statusCode.getValue() == null) {
             log.info("{} SAML response did not contain a StatusCode", getLogPrefix());
             authenticationContext.removeSubcontext(SAMLAuthnContext.class);
             ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
-        } else if (!StatusCode.SUCCESS.equals(response.getStatus().getStatusCode().getValue())) {
-            log.info("{} SAML response contained error status: {}", getLogPrefix(),
-                    response.getStatus().getStatusCode().getValue());
+        } else if (!StatusCode.SUCCESS.equals(statusCode.getValue())) {
+            log.info("{} SAML response contained error status: {}", getLogPrefix(), statusCode.getValue());
             authenticationContext.removeSubcontext(SAMLAuthnContext.class);
             ActionSupport.buildEvent(profileRequestContext, EventIds.MESSAGE_PROC_ERROR);
         }

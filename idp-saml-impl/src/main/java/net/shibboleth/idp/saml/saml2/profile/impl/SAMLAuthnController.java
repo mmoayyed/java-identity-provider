@@ -31,6 +31,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
+import org.opensaml.messaging.handler.MessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.EventContext;
@@ -53,6 +54,7 @@ import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -130,7 +132,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
             bindingMap = new HashMap<>(bindings.size());
             bindings.forEach(b -> bindingMap.put(b.getShortName(), b));
         } else {
-            bindingMap = Collections.emptyMap();
+            bindingMap = CollectionSupport.emptyMap();
         }
     }
 
@@ -170,15 +172,16 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
         }
         
         // Fill in the AuthnRequest's ACS URL and set RelayState to the EA key.
-        if (nestedPRC.getOutboundMessageContext() != null &&
-                nestedPRC.getOutboundMessageContext().getMessage() instanceof AuthnRequest) {
-            SAMLBindingSupport.setRelayState(nestedPRC.getOutboundMessageContext(), key);
+        final MessageContext nestedOmc = nestedPRC.getOutboundMessageContext();
+        if (nestedOmc != null && nestedOmc.getMessage() instanceof AuthnRequest) {
+            final AuthnRequest authnRequest = Constraint.isNotNull((AuthnRequest) nestedOmc.getMessage(), "Outbound messages was null");
+            SAMLBindingSupport.setRelayState(nestedOmc, key);
             final StringBuffer url = httpRequest.getRequestURL();
-            ((AuthnRequest) nestedPRC.getOutboundMessageContext().getMessage()).setAssertionConsumerServiceURL(
+            authnRequest.setAssertionConsumerServiceURL(
                     url.substring(0, url.lastIndexOf("/start")));
             final BindingDescriptor bd = bindingMap.get(binding);
             if (bd != null) {
-                ((AuthnRequest) nestedPRC.getOutboundMessageContext().getMessage()).setProtocolBinding(bd.getId());
+                authnRequest.setProtocolBinding(bd.getId());
             }
         } else {
             log.error("Outbound AuthnContext message not found");
@@ -188,17 +191,18 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
         }
         
         try {
-            if (samlContext.getOutboundMessageHandler() != null) {
-                samlContext.getOutboundMessageHandler().invoke(nestedPRC.getOutboundMessageContext());
+            final MessageHandler handler = samlContext.getOutboundMessageHandler();
+            if (handler!= null) {
+                handler.invoke(nestedOmc);
             }
             
             samlContext.getEncodeMessageAction().execute(nestedPRC);
             final EventContext eventCtx = nestedPRC.getSubcontext(EventContext.class);
-            if (eventCtx != null && eventCtx.getEvent() != null
-                    && !EventIds.PROCEED_EVENT_ID.equals(eventCtx.getEvent())) {
-                log.error("Message encoding action signaled non-proceed event {}", eventCtx.getEvent());
+            final Object event = eventCtx != null ? eventCtx.getEvent() : null;  
+            if (event != null && !EventIds.PROCEED_EVENT_ID.equals(event)) {
+                log.error("Message encoding action signaled non-proceed event {}", event);
                 httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATION_ERROR_KEY,
-                        eventCtx.getEvent().toString());
+                        event.toString());
                 ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                 return;
             }
