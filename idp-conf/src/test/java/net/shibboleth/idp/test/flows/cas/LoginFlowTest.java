@@ -63,6 +63,7 @@ import net.shibboleth.profile.relyingparty.VerifiedProfileCriterion;
 import net.shibboleth.shared.net.URISupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
  * Tests the flow behind the <code>/login</code> endpoint.
@@ -280,19 +281,21 @@ public class LoginFlowTest extends AbstractFlowTest {
     private void setPostAuthenticationFlows(final List<String> flowIdentifiers) throws Exception {
         final ProfileRequestContext prc = new ProfileRequestContext();
         prc.setProfileId(LoginConfiguration.PROFILE_ID);
-        final RelyingPartyConfiguration rpConfig =
-                relyingPartyConfigurationResolver.getServiceableComponent().getComponent().resolveSingle(
-                        new CriteriaSet(new ProfileRequestContextCriterion(prc),
+        try (final ServiceableComponent<RelyingPartyConfigurationResolver> service =
+                relyingPartyConfigurationResolver.getServiceableComponent()) {
+            final RelyingPartyConfiguration rpConfig = service.getComponent().resolveSingle(
+                    new CriteriaSet(new ProfileRequestContextCriterion(prc),
                                 new VerifiedProfileCriterion(true)));
-        if (rpConfig == null) {
-            throw new IllegalStateException("Relying party configuration not found");
+            if (rpConfig == null) {
+                throw new IllegalStateException("Relying party configuration not found");
+            }
+            final LoginConfiguration loginConfiguration =
+                    (LoginConfiguration) rpConfig.getProfileConfiguration(prc, LoginConfiguration.PROFILE_ID);
+            if (loginConfiguration == null) {
+                throw new IllegalStateException("CAS login profile configuration not found");
+            }
+            loginConfiguration.setPostAuthenticationFlows(flowIdentifiers);
         }
-        final LoginConfiguration loginConfiguration =
-                (LoginConfiguration) rpConfig.getProfileConfiguration(prc, LoginConfiguration.PROFILE_ID);
-        if (loginConfiguration == null) {
-            throw new IllegalStateException("CAS login profile configuration not found");
-        }
-        loginConfiguration.setPostAuthenticationFlows(flowIdentifiers);
     }
 
     private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {
