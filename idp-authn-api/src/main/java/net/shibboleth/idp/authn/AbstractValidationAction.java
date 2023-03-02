@@ -51,7 +51,7 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
@@ -113,7 +113,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         clearErrorContext = true;
         classifiedMessages = CollectionSupport.emptyMap();
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
-        responderLookupStrategy = new ResponderIdLookupFunction();
+        responderLookupStrategy = new IssuerLookupFunction();
     }
     
     /**

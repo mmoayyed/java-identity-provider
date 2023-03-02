@@ -29,7 +29,7 @@ import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -57,7 +57,7 @@ public class UpdateSAMLSelfEntityContext extends AbstractProfileAction {
     
     /** Constructor. */
     public UpdateSAMLSelfEntityContext() {
-        selfIdentityLookupStrategy = new ResponderIdLookupFunction();
+        selfIdentityLookupStrategy = new IssuerLookupFunction();
     }
 
     /**

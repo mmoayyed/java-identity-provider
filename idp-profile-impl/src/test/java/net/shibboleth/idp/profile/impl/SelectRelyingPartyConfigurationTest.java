@@ -161,7 +161,7 @@ public class SelectRelyingPartyConfigurationTest {
         final RelyingPartyConfiguration resolvedConfig = (RelyingPartyConfiguration) rpCtx.getConfiguration();
         assert resolvedConfig != null;
         Assert.assertEquals(resolvedConfig.getId(), config.getId());
-        Assert.assertEquals(resolvedConfig.getResponderId(prc), config.getResponderId(prc));
+        Assert.assertEquals(resolvedConfig.getIssuer(prc), config.getIssuer(prc));
         Assert.assertEquals(resolvedConfig.getProfileConfigurations(prc), config.getProfileConfigurations(prc));
     }
 

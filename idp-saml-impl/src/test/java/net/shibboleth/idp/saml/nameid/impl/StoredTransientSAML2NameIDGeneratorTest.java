@@ -97,7 +97,7 @@ public class StoredTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTes
         Assert.assertNotNull(name);
         Assert.assertEquals(name.getFormat(), generator.getFormat());
         Assert.assertEquals(name.getNameQualifier(),
-                ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) rpc.getConfiguration()).getResponderId(prc));
+                ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) rpc.getConfiguration()).getIssuer(prc));
         Assert.assertEquals(name.getSPNameQualifier(), rpc.getRelyingPartyId());
 
         String val = name.getValue();

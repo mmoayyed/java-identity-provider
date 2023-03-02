@@ -42,7 +42,7 @@
     <bean id="ResolveArtifacts"
         class="org.opensaml.saml.saml1.profile.impl.ResolveArtifacts" scope="prototype"
         p:artifactMap-ref="shibboleth.SAMLArtifactMap"
-        p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple" />
+        p:issuerLookupStrategy-ref="shibboleth.IssuerLookup.Simple" />
 
     <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">

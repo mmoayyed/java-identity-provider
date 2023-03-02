@@ -42,7 +42,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
@@ -103,7 +103,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
     public ResolveAttributes(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
         
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+        issuerLookupStrategy = new IssuerLookupFunction();
         recipientLookupStrategy = new RelyingPartyIdLookupFunction();
         
         principalNameLookupStrategy =

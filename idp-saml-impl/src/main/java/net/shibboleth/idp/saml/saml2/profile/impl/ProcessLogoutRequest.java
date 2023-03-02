@@ -54,7 +54,7 @@ import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.saml.saml2.profile.config.navigate.QualifiedNameIDFormatsLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -154,7 +154,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
 
         qualifiedNameIDFormats = Collections.emptySet();
         
-        setAssertingPartyLookupStrategy(new ResponderIdLookupFunction());
+        setAssertingPartyLookupStrategy(new IssuerLookupFunction());
         setRelyingPartyLookupStrategy(new RelyingPartyIdLookupFunction());
     }
     

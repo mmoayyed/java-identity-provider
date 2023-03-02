@@ -61,7 +61,7 @@
 
     <bean id="AddLogoutRequest" class="net.shibboleth.idp.saml.session.impl.AddLogoutRequest" scope="prototype"
             p:overwriteExisting="true"
-            p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
+            p:issuerLookupStrategy-ref="shibboleth.IssuerLookup.Simple">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService"

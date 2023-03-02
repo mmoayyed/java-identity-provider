@@ -121,7 +121,7 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
         scc.setSubject(sub);
         scc.setRequesterId(rpc.getRelyingPartyId());
         final RelyingPartyConfiguration rpConfig = (RelyingPartyConfiguration) rpc.getConfiguration();
-        scc.setResponderId(rpConfig.getResponderId(profileRequestContext));
+        scc.setResponderId(rpConfig.getIssuer(profileRequestContext));
     }
     
 }

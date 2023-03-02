@@ -115,7 +115,7 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
         assert rpConfig!=null;
         Constraint.isTrue(rpConfig instanceof net.shibboleth.profile.relyingparty.RelyingPartyConfiguration,
                 "RelyingPartyConfiguration was not of expected subclass");
-        final String entityID = ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) rpConfig).getResponderId(
+        final String entityID = ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) rpConfig).getIssuer(
                 input.getSecond());
 
         final StringBuilder builder = new StringBuilder(baseURL);

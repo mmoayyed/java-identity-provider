@@ -178,7 +178,7 @@
         <property name="nameIDPolicyPredicate">
             <bean class="org.opensaml.saml.common.profile.logic.AffiliationNameIDPolicyPredicate"
                     p:metadataResolver-ref="shibboleth.MetadataResolver"
-                    p:responderIdLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
+                    p:responderIdLookupStrategy-ref="shibboleth.IssuerLookup.Simple"
                     p:requesterIdLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">
                 <property name="objectLookupStrategy">
                     <bean class="net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest.SubjectNameLookupFunction" />

@@ -46,7 +46,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.service.ReloadableService;
@@ -154,7 +154,7 @@ public class FilterAttributes extends AbstractProfileAction {
     public FilterAttributes(@Nonnull final ReloadableService<AttributeFilter> filterService) {
         attributeFilterService = Constraint.isNotNull(filterService, "Service cannot be null");
         
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+        issuerLookupStrategy = new IssuerLookupFunction();
         recipientLookupStrategy = new RelyingPartyIdLookupFunction();
         
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(

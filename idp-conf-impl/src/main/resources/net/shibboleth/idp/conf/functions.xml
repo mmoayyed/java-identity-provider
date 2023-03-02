@@ -179,8 +179,9 @@
     </bean>
 
 
-    <bean id="shibboleth.ResponderIdLookup.Simple"
-        class="net.shibboleth.profile.context.navigate.ResponderIdLookupFunction" />
+    <bean id="shibboleth.IssuerLookup.Simple"
+        class="net.shibboleth.profile.context.navigate.IssuerLookupFunction" />
+    <alias alias="shibboleth.ResponderIdLookup.Simple" name="shibboleth.IssuerLookup.Simple" />
 
     <bean id="shibboleth.RelyingPartyIdLookup.Simple"
         class="net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction" />

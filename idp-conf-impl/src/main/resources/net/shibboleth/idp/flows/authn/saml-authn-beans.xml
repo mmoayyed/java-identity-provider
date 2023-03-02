@@ -154,7 +154,8 @@
             class="net.shibboleth.idp.saml.saml2.profile.impl.AddAuthnRequest" scope="prototype"
             p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
             p:overwriteExisting="true"
-            p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple">
+            p:issuerLookupStrategy-ref="shibboleth.IssuerLookup.Simple
+">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService"
@@ -179,12 +180,9 @@
         <property name="handlers">
             <list>
                 <bean class="org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler" scope="prototype"/>
-                <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype">
-                    <property name="functionLookupStrategy">
-                        <bean class="net.shibboleth.saml.profile.config.navigate.messaging.MessageHandlerLookupFunction" />
-                    </property>
-                </bean>
                 <bean class="org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler" scope="prototype"/>
+                <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype"
+                    p:function="#{getObject('%{idp.authn.SAML.outboundMessageHandlerFunction:}'.trim())}" />
                 <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler" scope="prototype"
                         p:signErrorResponses="%{idp.errors.signed:true}">
                     <property name="activationCondition">
@@ -308,11 +306,6 @@
                         <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype"
                               p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
                               p:copyContextStrategy-ref="OutboundSAMLMetadataContextLookup" />
-                        <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype">
-                            <property name="functionLookupStrategy">
-                                <bean class="net.shibboleth.saml.profile.config.navigate.messaging.MessageHandlerLookupFunction" />
-                            </property>
-                        </bean>
                         <bean class="org.opensaml.saml.common.binding.security.impl.ReceivedEndpointSecurityHandler" scope="prototype"
                             p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
                         <bean class="org.opensaml.saml.common.binding.security.impl.MessageReplaySecurityHandler" scope="prototype"
@@ -331,6 +324,8 @@
                         <bean class="org.opensaml.messaging.handler.impl.CheckExpectedIssuer" scope="prototype"
                             p:issuerLookupStrategy-ref="InboundEntityIDLookup"
                             p:expectedIssuerLookupStrategy-ref="OutboundEntityIDLookup" />
+                        <bean class="org.opensaml.messaging.handler.impl.FunctionMessageHandler" scope="prototype"
+                            p:function="#{getObject('%{idp.authn.SAML.inboundMessageHandlerFunction:}'.trim())}" />
                     </list>
                 </property>
 		     </bean>
@@ -454,7 +449,7 @@
         p:authenticationContextLookupStrategy-ref="ParentAuthenticiationContextLookup"
         p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
         p:responderLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple"
-        p:requesterLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
+        p:requesterLookupStrategy-ref="shibboleth.IssuerLookup.Simple"
         p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
         p:attributeFilter-ref="shibboleth.AttributeFilterService"
         p:metadataResolver-ref="shibboleth.MetadataResolver"

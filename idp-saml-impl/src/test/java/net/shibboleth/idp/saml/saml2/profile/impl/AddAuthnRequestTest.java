@@ -37,7 +37,7 @@ import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -105,7 +105,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
                         new ChildContextLookup<>(AuthenticationContext.class).compose(
                                 new WebflowRequestContextProfileRequestContextLookup())));
         action.setAuthenticationContextLookupStrategy(new ParentContextLookup<>(AuthenticationContext.class));
-        action.setIssuerLookupStrategy(new ResponderIdLookupFunction());
+        action.setIssuerLookupStrategy(new IssuerLookupFunction());
         action.initialize();
     }
     

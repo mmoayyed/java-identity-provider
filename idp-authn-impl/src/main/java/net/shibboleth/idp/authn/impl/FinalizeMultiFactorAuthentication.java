@@ -42,7 +42,7 @@ import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -93,7 +93,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
                         new ChildContextLookup<>(AuthenticationContext.class));
                 
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
-        responderLookupStrategy = new ResponderIdLookupFunction();
+        responderLookupStrategy = new IssuerLookupFunction();
     }
 
     /**
@@ -194,7 +194,8 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
         }
         
         authenticationContext.setAuthenticationResult(result);
-        final AuthenticationFlowDescriptor flow = Constraint.isNotNull(authenticationContext.getAttemptedFlow(), "Expected an attempted flow");
+        final AuthenticationFlowDescriptor flow =
+                Constraint.isNotNull(authenticationContext.getAttemptedFlow(), "Expected an attempted flow");
         
         final BiConsumer<ProfileRequestContext,Subject> decorator = flow.getSubjectDecorator();
         if (decorator != null) {

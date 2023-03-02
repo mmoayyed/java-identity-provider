@@ -24,7 +24,7 @@
     <!-- Parent beans for defining metadata-driven config lookup strategies. -->
 
     <bean id="RelyingParty.MDDriven" abstract="true" parent="RelyingParty">
-        <property name="responderIdLookupStrategy">
+        <property name="issuerLookupStrategy">
             <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="responderId" p:defaultValue="#{getObject('entityID')}" />
         </property>
         <property name="profileConfigurationsLookupStrategy">

@@ -42,7 +42,7 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -79,7 +79,7 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
                         new ChildContextLookup<>(RelyingPartyContext.class));
         delimiter = '@';
         attributeSourceIds = CollectionSupport.emptyList();
-        setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
+        setDefaultIdPNameQualifierLookupStrategy(new IssuerLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
         useUnfilteredAttributes = false;
     }

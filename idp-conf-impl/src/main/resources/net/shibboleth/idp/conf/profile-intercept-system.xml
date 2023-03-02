@@ -114,7 +114,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.IDENTITY_PROVIDER"/>
                     </key>
-                    <ref bean="shibboleth.ResponderIdLookup.Simple" />
+                    <ref bean="shibboleth.IssuerLookup.Simple" />
                 </entry>
             </map>
         </property>

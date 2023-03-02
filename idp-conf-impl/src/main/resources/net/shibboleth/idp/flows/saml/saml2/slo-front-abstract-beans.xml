@@ -119,7 +119,7 @@
     
     <bean id="AddLogoutResponse" class="org.opensaml.saml.saml2.profile.impl.AddStatusResponseShell" scope="prototype"
             p:overwriteExisting="true"
-            p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
+            p:issuerLookupStrategy-ref="shibboleth.IssuerLookup.Simple"
             p:messageType="#{T(org.opensaml.saml.saml2.core.LogoutResponse).DEFAULT_ELEMENT_NAME}">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"

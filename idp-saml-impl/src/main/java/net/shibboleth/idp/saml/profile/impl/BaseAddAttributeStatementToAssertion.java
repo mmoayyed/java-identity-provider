@@ -41,7 +41,7 @@ import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
@@ -110,7 +110,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
         idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+        issuerLookupStrategy = new IssuerLookupFunction();
     }
     
     /**

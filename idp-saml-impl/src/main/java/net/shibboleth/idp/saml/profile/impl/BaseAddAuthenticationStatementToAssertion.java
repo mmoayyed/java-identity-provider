@@ -35,7 +35,7 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -84,7 +84,7 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
         statementInOwnAssertion = false;
 
         idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+        issuerLookupStrategy = new IssuerLookupFunction();
     }
 
     /**

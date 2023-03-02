@@ -37,7 +37,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -71,7 +71,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
     /** Constructor. */
     public InitializeOutboundMessageContext() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-        selfIdentityLookupStrategy = new ResponderIdLookupFunction();
+        selfIdentityLookupStrategy = new IssuerLookupFunction();
     }
 
     /**

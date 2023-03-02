@@ -26,7 +26,7 @@ import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest.SubjectNameLookupFunction;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
@@ -60,7 +60,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
 
         final DefaultNameIDPolicyPredicate nameIDPolicyPredicate = new DefaultNameIDPolicyPredicate();
         nameIDPolicyPredicate.setRequesterIdLookupStrategy(new RelyingPartyIdLookupFunction());
-        nameIDPolicyPredicate.setResponderIdLookupStrategy(new ResponderIdLookupFunction());
+        nameIDPolicyPredicate.setResponderIdLookupStrategy(new IssuerLookupFunction());
         nameIDPolicyPredicate.setObjectLookupStrategy(new SubjectNameLookupFunction());
         nameIDPolicyPredicate.initialize();
         

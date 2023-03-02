@@ -34,7 +34,7 @@ import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFu
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.profile.context.AuditContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.StringDigester;
@@ -86,7 +86,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
     /** Constructor. */
     public WriteFTICKSLog() {
         relyingPartyLookupStrategy = new RelyingPartyIdLookupFunction();
-        responderLookupStrategy = new ResponderIdLookupFunction();
+        responderLookupStrategy = new IssuerLookupFunction();
         usernameLookupStrategy = new SubjectContextPrincipalLookupFunction().compose(
                 new ChildContextLookup<>(SubjectContext.class));
         authenticationMethodLookupStrategy = new AuthnContextAuditExtractor(

@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.saml.nameid.AbstractSAML2NameIDGenerator;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -57,7 +57,7 @@ public class TransientSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator 
     public TransientSAML2NameIDGenerator() {
         setFormat(NameID.TRANSIENT);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
-        setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
+        setDefaultIdPNameQualifierLookupStrategy(new IssuerLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
     }
 

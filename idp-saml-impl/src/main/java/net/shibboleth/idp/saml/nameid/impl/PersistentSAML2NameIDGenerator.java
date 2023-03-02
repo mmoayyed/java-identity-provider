@@ -44,7 +44,7 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.saml.nameid.AbstractSAML2NameIDGenerator;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
@@ -90,7 +90,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
                 new ChildContextLookup<>(AttributeContext.class).compose(
                         new ChildContextLookup<>(RelyingPartyContext.class));
         attributeSourceIds = CollectionSupport.emptyList();
-        setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
+        setDefaultIdPNameQualifierLookupStrategy(new IssuerLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
         useUnfilteredAttributes = true;
     }

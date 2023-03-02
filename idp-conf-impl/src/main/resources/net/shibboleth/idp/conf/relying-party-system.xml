@@ -39,7 +39,7 @@
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.profile.relyingparty.RelyingPartyConfiguration"
-        p:responderId="#{getObject('entityID')}"
+        p:issuer="#{getObject('entityID')}"
         p:detailedErrorsPredicate="%{idp.errors.detailed:false}" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by name(s). -->
