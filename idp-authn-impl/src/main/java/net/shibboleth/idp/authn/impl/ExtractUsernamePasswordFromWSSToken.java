@@ -120,7 +120,7 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
         Password password = null;
         while (passwordsItr.hasNext()) {
             password = (Password) passwordsItr.next();
-            if (password.getType() != null && !password.getType().equals(Password.TYPE_PASSWORD_TEXT)) {
+            if (!Password.TYPE_PASSWORD_TEXT.equals(password.getType())) {
                 log.debug("{} Skipping password with unsupported type {}", getLogPrefix(), password.getType());
                 password = null;
             }

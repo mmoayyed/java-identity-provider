@@ -65,7 +65,8 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final UsernamePasswordContext upCtx = authenticationContext.getOrCreateSubcontext(UsernamePasswordContext.class);
+        final UsernamePasswordContext upCtx =
+                authenticationContext.getOrCreateSubcontext(UsernamePasswordContext.class);
         upCtx.setUsername(null);
         upCtx.setPassword(null);
         
