@@ -69,7 +69,7 @@ public final class SAML2ActionTestingSupport extends org.opensaml.saml.saml2.tes
 
         final RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration();
         rpConfig.setId(id);
-        rpConfig.setResponderId(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        rpConfig.setIssuer(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         rpConfig.setDetailedErrors(true);
         rpConfig.setProfileConfigurations(buildProfileConfigurations());
         rpConfig.initialize();

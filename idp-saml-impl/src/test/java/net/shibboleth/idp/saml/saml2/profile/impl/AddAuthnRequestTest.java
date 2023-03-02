@@ -92,7 +92,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         rpc.setRelyingPartyId(ActionTestingSupport.INBOUND_MSG_ISSUER);
         final RelyingPartyConfiguration rp = new RelyingPartyConfiguration();
         rp.setId("mock");
-        rp.setResponderId(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        rp.setIssuer(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         rp.setDetailedErrors(true);
         rp.initialize();
         rpc.setConfiguration(rp);

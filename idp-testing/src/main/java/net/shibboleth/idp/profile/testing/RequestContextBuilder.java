@@ -452,7 +452,7 @@ public class RequestContextBuilder {
 
         RelyingPartyConfiguration rp = new RelyingPartyConfiguration();
         rp.setId("mock");
-        rp.setResponderId(responderId);
+        rp.setIssuer(responderId);
         rp.setDetailedErrors(true);
         rp.setProfileConfigurations(profileConfigs);
         rp.initialize();

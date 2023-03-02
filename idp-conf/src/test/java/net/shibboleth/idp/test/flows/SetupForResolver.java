@@ -29,6 +29,9 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
+/**
+ * Test action that sets up context tree for attribute resolution.
+ */
 public class SetupForResolver extends AbstractProfileAction {
     
     @Override
@@ -42,7 +45,7 @@ public class SetupForResolver extends AbstractProfileAction {
         
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId("test");
-        config.setResponderId(AbstractFlowTest.IDP_ENTITY_ID);
+        config.setIssuer(AbstractFlowTest.IDP_ENTITY_ID);
         try {
             config.initialize();
         } catch (final ComponentInitializationException e) {

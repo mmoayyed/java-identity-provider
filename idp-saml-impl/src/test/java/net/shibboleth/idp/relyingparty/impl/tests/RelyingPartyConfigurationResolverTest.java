@@ -68,38 +68,38 @@ public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase
     public void setup() throws Exception {
         anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
-        anonRP.setResponderId("anonRPResp");
+        anonRP.setIssuer("anonRPResp");
         anonRP.setDetailedErrors(true);
         anonRP.initialize();
         
         defaultRP = new RelyingPartyConfiguration();
         defaultRP.setId("defaultRPId");
-        defaultRP.setResponderId("defaultRPResp");
+        defaultRP.setIssuer("defaultRPResp");
         defaultRP.setDetailedErrors(true);
         defaultRP.initialize();
         
         oneByName = RelyingPartyConfigurationSupport.byName(CollectionSupport.singleton("rp1"));
-        oneByName.setResponderId("foo");
+        oneByName.setIssuer("foo");
         oneByName.setDetailedErrors(true);
         oneByName.initialize();
 
         twoByName = RelyingPartyConfigurationSupport.byName(CollectionSupport.singleton("rp2"));
-        twoByName.setResponderId("foo");
+        twoByName.setIssuer("foo");
         twoByName.setDetailedErrors(true);
         twoByName.initialize();
 
         threeByName = RelyingPartyConfigurationSupport.byName(CollectionSupport.singleton("rp3"));
-        threeByName.setResponderId("foo");
+        threeByName.setIssuer("foo");
         threeByName.setDetailedErrors(true);
         threeByName.initialize();
         
         oneByGroup = RelyingPartyConfigurationSupport.byGroup(CollectionSupport.singleton("group1"), null);
-        oneByGroup.setResponderId("foo");
+        oneByGroup.setIssuer("foo");
         oneByGroup.setDetailedErrors(true);
         oneByGroup.initialize();
         
         twoByGroup = RelyingPartyConfigurationSupport.byGroup(CollectionSupport.singleton("group2"), null);
-        twoByGroup.setResponderId("foo");
+        twoByGroup.setIssuer("foo");
         twoByGroup.setDetailedErrors(true);
         twoByGroup.initialize();
         
@@ -107,7 +107,7 @@ public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase
         candidate1.setValues(CollectionSupport.singleton("tag1"));
         oneByTag = RelyingPartyConfigurationSupport.byTag(CollectionSupport.singleton(candidate1), true, true);
         oneByTag.setId("byTag1");
-        oneByTag.setResponderId("foo");
+        oneByTag.setIssuer("foo");
         oneByTag.setDetailedErrors(true);
         oneByTag.initialize();
         
@@ -115,7 +115,7 @@ public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase
         candidate2.setValues(CollectionSupport.singleton("tag2"));
         twoByTag = RelyingPartyConfigurationSupport.byTag(CollectionSupport.singleton(candidate2), true, true);
         twoByTag.setId("byTag2");
-        twoByTag.setResponderId("foo");
+        twoByTag.setIssuer("foo");
         twoByTag.setDetailedErrors(true);
         twoByTag.initialize();
         

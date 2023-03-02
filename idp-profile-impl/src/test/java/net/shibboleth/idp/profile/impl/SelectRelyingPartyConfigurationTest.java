@@ -117,7 +117,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         final var config = new net.shibboleth.profile.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
-        config.setResponderId("http://idp.example.org");
+        config.setIssuer("http://idp.example.org");
         config.setDetailedErrors(true);
         config.initialize();
 
@@ -145,7 +145,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         final var config = new net.shibboleth.profile.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
-        config.setResponderId("http://idp.example.org");
+        config.setIssuer("http://idp.example.org");
         config.setDetailedErrors(true);
         config.initialize();
 
