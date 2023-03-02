@@ -115,7 +115,7 @@ public class SelectRelyingPartyConfigurationTest {
         assert rpCtx != null;
         rpCtx.setConfiguration(null);
 
-        final var config = new net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration();
+        final var config = new net.shibboleth.profile.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
         config.setDetailedErrors(true);
@@ -143,7 +143,7 @@ public class SelectRelyingPartyConfigurationTest {
         assert rpCtx != null;
         rpCtx.setConfiguration(null);
 
-        final var config = new net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration();
+        final var config = new net.shibboleth.profile.relyingparty.RelyingPartyConfiguration();
         config.setId("foo");
         config.setResponderId("http://idp.example.org");
         config.setDetailedErrors(true);
@@ -161,8 +161,7 @@ public class SelectRelyingPartyConfigurationTest {
         final RelyingPartyConfiguration resolvedConfig = (RelyingPartyConfiguration) rpCtx.getConfiguration();
         assert resolvedConfig != null;
         Assert.assertEquals(resolvedConfig.getId(), config.getId());
-        Assert.assertEquals(((net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration) resolvedConfig).getResponderId(prc),
-                config.getResponderId(prc));
+        Assert.assertEquals(resolvedConfig.getResponderId(prc), config.getResponderId(prc));
         Assert.assertEquals(resolvedConfig.getProfileConfigurations(prc), config.getProfileConfigurations(prc));
     }
 

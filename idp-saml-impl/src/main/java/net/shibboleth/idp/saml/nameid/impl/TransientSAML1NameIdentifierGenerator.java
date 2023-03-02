@@ -29,9 +29,9 @@ import org.opensaml.saml.saml1.profile.AbstractSAML1NameIdentifierGenerator;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.saml.xml.SAMLConstants;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;

@@ -38,33 +38,33 @@
     </bean>
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
-    <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration"
+    <bean id="RelyingParty" abstract="true" class="net.shibboleth.profile.relyingparty.RelyingPartyConfiguration"
         p:responderId="#{getObject('entityID')}"
         p:detailedErrorsPredicate="%{idp.errors.detailed:false}" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by name(s). -->
     <bean id="RelyingPartyByName" abstract="true" parent="RelyingParty"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byName" />
+        class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byName" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by group or SAML affiliation. -->
     <bean id="RelyingPartyByGroup" abstract="true" parent="RelyingParty"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
+        class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byGroup"
         c:resolver-ref="shibboleth.MetadataResolver" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by local containment only. -->
     <bean id="RelyingPartyByEntitiesDescriptor" abstract="true" parent="RelyingParty"
-            class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup">
+            class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byGroup">
         <constructor-arg name="resolver"><null /></constructor-arg>
     </bean>
 
     <!-- Parent bean for RelyingParty overrides based on activation by tag. -->
     <bean id="RelyingPartyByTag" abstract="true" parent="RelyingParty"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"
+        class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byTag"
         c:trim="false" c:matchAll="false" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by tag. -->
     <bean id="RelyingPartyByMappedTag" abstract="true" parent="RelyingParty"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byMappedTag"
+        class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byMappedTag"
         c:trim="false" c:matchAll="false" />
 
     <bean id="TagCandidate" abstract="true"

@@ -153,7 +153,7 @@
             class="org.opensaml.soap.soap11.profile.impl.AddSOAPFault" scope="prototype"
             p:faultString="An error occurred.">
         <property name="detailedErrorsCondition">
-            <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
+            <bean class="net.shibboleth.profile.config.logic.DetailedErrorsPredicate" />
         </property>
         <property name="faultCode">
             <util:list>

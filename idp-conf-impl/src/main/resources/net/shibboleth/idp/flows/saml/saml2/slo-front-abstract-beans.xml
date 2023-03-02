@@ -130,7 +130,7 @@
     <bean id="AddLogoutStatusToResponse"
             class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype">
         <property name="detailedErrorsCondition">
-            <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
+            <bean class="net.shibboleth.profile.config.logic.DetailedErrorsPredicate" />
         </property>
         <property name="statusCodes">
             <list>

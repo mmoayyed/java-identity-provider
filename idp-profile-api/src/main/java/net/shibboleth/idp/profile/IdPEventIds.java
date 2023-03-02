@@ -19,9 +19,9 @@ package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 // TODO: move attribute related events into that module?

@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.AttributeQueryProfileConfiguration;

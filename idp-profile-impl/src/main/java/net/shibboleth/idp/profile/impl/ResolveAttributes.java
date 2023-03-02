@@ -40,9 +40,9 @@ import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFu
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;

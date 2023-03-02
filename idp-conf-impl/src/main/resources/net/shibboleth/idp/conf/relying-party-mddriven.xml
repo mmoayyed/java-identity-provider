@@ -44,23 +44,23 @@
     <!-- Parent beans for metadata-driven RelyingParty helpers. -->
 
     <bean id="RelyingPartyByName.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byName" />
+        class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byName" />
 
     <bean id="RelyingPartyByGroup.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
+        class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byGroup"
         c:resolver-ref="shibboleth.MetadataResolver" />
 
     <bean id="RelyingPartyByEntitiesDescriptor.MDDriven" abstract="true" parent="RelyingParty.MDDriven"
-            class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup">
+            class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byGroup">
         <constructor-arg name="resolver"><null /></constructor-arg>
     </bean>
 
     <bean id="RelyingPartyByTag.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"
+        class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byTag"
         c:trim="false" c:matchAll="false" />
 
     <bean id="RelyingPartyByMappedTag.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byMappedTag"
+        class="net.shibboleth.saml.relyingparty.RelyingPartyConfigurationSupport" factory-method="byMappedTag"
         c:trim="false" c:matchAll="false" />
     
     <bean id="shibboleth.DefaultMDProfileAliases"

@@ -38,10 +38,10 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.nameid.impl.TransientSAML2NameIDGenerator;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**

@@ -38,10 +38,10 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 

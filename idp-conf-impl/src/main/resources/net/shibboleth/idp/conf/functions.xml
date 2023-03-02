@@ -180,7 +180,7 @@
 
 
     <bean id="shibboleth.ResponderIdLookup.Simple"
-        class="net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction" />
+        class="net.shibboleth.profile.context.navigate.ResponderIdLookupFunction" />
 
     <bean id="shibboleth.RelyingPartyIdLookup.Simple"
         class="net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction" />

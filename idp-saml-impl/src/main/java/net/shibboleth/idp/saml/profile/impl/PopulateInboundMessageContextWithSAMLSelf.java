@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
 
 /**

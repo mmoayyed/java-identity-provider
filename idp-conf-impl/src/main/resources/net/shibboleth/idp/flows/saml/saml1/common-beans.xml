@@ -66,7 +66,7 @@
             class="org.opensaml.saml.saml1.profile.impl.AddStatusToResponse" scope="prototype"
             p:statusMessage="An error occurred.">
         <property name="detailedErrorsCondition">
-            <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
+            <bean class="net.shibboleth.profile.config.logic.DetailedErrorsPredicate" />
         </property>
         <property name="statusCodes">
             <list>
