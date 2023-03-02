@@ -24,7 +24,7 @@ public class StatusArguments extends AbstractCommandLineArguments {
 
     /** {@inheritDoc} */
     @Override
-    protected StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
+    protected @Nonnull StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
         
         if (getPath() == null) {
             builder.append("/status");

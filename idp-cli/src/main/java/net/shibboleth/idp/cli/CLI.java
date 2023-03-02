@@ -85,6 +85,7 @@ public final class CLI {
         } catch (final InstantiationException | IllegalAccessException e) {
             errorAndExit(e.getMessage());
         }
+        assert argObject != null;
         
         try {
             argObject.validate();

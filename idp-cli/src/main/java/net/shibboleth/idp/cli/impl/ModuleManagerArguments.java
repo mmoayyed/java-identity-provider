@@ -34,6 +34,7 @@ import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -74,6 +75,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
         if (log == null) {
             log = LoggerFactory.getLogger(ModuleManagerArguments.class);
         }
+        assert log!=null;
         return log;
     }
 
@@ -91,8 +93,8 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * 
      * @return module ID(s) to report on
      */
-    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getInfoModuleIds() {
-        return List.copyOf(StringSupport.normalizeStringCollection(infoModuleIds));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getInfoModuleIds() {
+        return CollectionSupport.copyToList(StringSupport.normalizeStringCollection(infoModuleIds));
     }
 
     /**
@@ -100,8 +102,8 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * 
      * @return module ID(s) to test
      */
-    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getTestModuleIds() {
-        return List.copyOf(StringSupport.normalizeStringCollection(testModuleIds));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getTestModuleIds() {
+        return CollectionSupport.copyToList(StringSupport.normalizeStringCollection(testModuleIds));
     }
 
     /**
@@ -109,8 +111,8 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * 
      * @return module ID(s) to enable
      */
-    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getEnableModuleIds() {
-        return List.copyOf(StringSupport.normalizeStringCollection(enableModuleIds));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getEnableModuleIds() {
+        return CollectionSupport.copyToList(StringSupport.normalizeStringCollection(enableModuleIds));
     }
     
     /**
@@ -118,8 +120,8 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * 
      * @return module ID(s) to disable
      */
-    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> getDisableModuleIds() {
-        return List.copyOf(StringSupport.normalizeStringCollection(disableModuleIds));
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getDisableModuleIds() {
+        return CollectionSupport.copyToList(StringSupport.normalizeStringCollection(disableModuleIds));
     }
 
     /**

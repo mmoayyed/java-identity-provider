@@ -202,12 +202,13 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     @Nullable @NotEmpty public String getMethod() {
         return StringSupport.trimOrNull(method);
     }
-    
+
     /** {@inheritDoc} */
     @Nullable @NonnullElements @NotLive @Unmodifiable public Map<String,String> getHeaders() {
-        if (headers != null) {
+        final List<String> hdrs = headers;
+        if (hdrs != null) {
             final Map<String,String> map = new HashMap<>();
-            final Iterator<String> iter = headers.iterator();
+            final Iterator<String> iter = hdrs.iterator();
             while (iter.hasNext()) {
                 final String h = iter.next();
                 if (iter.hasNext()) {

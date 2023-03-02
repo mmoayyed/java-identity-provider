@@ -34,6 +34,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -50,6 +51,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -66,6 +68,7 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
         if (log == null) {
             log = LoggerFactory.getLogger(ModuleManagerCLI.class);
         }
+        assert log!=null;
         return log;
     }
 
@@ -77,8 +80,10 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
 
     /** {@inheritDoc} */
     @Override
-    protected String getVersion() {
-        return Version.getVersion();
+    protected @Nonnull String getVersion() {
+        final String result = Version.getVersion();
+        assert result!=null;
+        return result;
     }
     
     /** {@inheritDoc} */
@@ -96,8 +101,11 @@ public final class ModuleManagerCLI extends AbstractIdPHomeAwareCommandLine<Modu
         }
 
         try {
+            final ConfigurableEnvironment env = getApplicationContext().getEnvironment();
+            assert env != null;
+            final String idpHome = Constraint.isNotNull(env.getProperty("idp.home"), "Property 'idp.home' not set");
             final ModuleContext moduleContext =
-                    new ModuleContext(getApplicationContext().getEnvironment().getProperty("idp.home"));
+                    new ModuleContext(idpHome);
             moduleContext.setHttpClient(getHttpClient());
             moduleContext.setHttpClientSecurityParameters(getHttpClientSecurityParameters());
             moduleContext.setLanguageRanges(args.getLanguageRanges());

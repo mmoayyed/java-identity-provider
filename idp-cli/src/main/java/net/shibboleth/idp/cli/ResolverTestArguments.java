@@ -93,7 +93,7 @@ public class ResolverTestArguments extends AbstractCommandLineArguments {
 
     /** {@inheritDoc} */
     @Override
-    protected StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
+    protected @Nonnull StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
         
         if (getPath() == null) {
             builder.append("/profile/admin/resolvertest");
@@ -108,8 +108,9 @@ public class ResolverTestArguments extends AbstractCommandLineArguments {
         try {
             builder.append("requester=").append(URLEncoder.encode(requester, "UTF-8"));
             builder.append("&principal=").append(URLEncoder.encode(principal, "UTF-8"));
-            if (index != null) {
-                builder.append("&acsIndex").append(index.toString());
+            final Integer idx = index;
+            if (idx != null) {
+                builder.append("&acsIndex").append(idx.toString());
             }
             if (saml1) {
                 builder.append("&saml1");

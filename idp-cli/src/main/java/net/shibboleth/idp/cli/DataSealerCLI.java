@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.Version;
+import net.shibboleth.idp.cli.DataSealerArguments.OperationType;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.DataSealer;
@@ -43,6 +44,7 @@ public class DataSealerCLI extends AbstractIdPHomeAwareCommandLine<DataSealerArg
         if (log == null) {
             log = LoggerFactory.getLogger(DataSealerCLI.class);
         }
+        assert log!=null;
         return log;
     }
     
@@ -55,7 +57,9 @@ public class DataSealerCLI extends AbstractIdPHomeAwareCommandLine<DataSealerArg
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty protected String getVersion() {
-        return Version.getVersion();
+        final String result = Version.getVersion();
+        assert result!=null;
+        return result;
     }
     
     /** {@inheritDoc} */
@@ -68,18 +72,22 @@ public class DataSealerCLI extends AbstractIdPHomeAwareCommandLine<DataSealerArg
         
         try {
             final DataSealer sealer;
-            if (args.getDataSealerName() != null) {
-                sealer = getApplicationContext().getBean(args.getDataSealerName(), DataSealer.class);
+            final String sealerName =  args.getDataSealerName();
+            if (sealerName != null) {
+                sealer = getApplicationContext().getBean(sealerName, DataSealer.class);
             } else {
                 sealer = getApplicationContext().getBean(DataSealer.class);
             }
 
-            switch (args.getOperation()) {
+            final OperationType op = args.getOperation();
+            final String arg2 = args.getOtherArgs().get(2);
+            assert arg2 != null && op != null;
+            switch (op) {
                 case WRAP:
-                    System.out.println(sealer.wrap(args.getOtherArgs().get(2)));
+                    System.out.println(sealer.wrap(arg2));
                     break;
                 case UNWRAP:
-                    System.out.println(sealer.unwrap(args.getOtherArgs().get(2)));
+                    System.out.println(sealer.unwrap(arg2));
                     break;
                     
                 default:

@@ -148,8 +148,10 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     }
 
     /** {@inheritDoc} */
-    protected String getVersion() {
-        return Version.getVersion();
+    protected @Nonnull String getVersion() {
+        final String result = Version.getVersion();
+        assert result!=null;
+        return result;
     }
 
     /** {@inheritDoc} */

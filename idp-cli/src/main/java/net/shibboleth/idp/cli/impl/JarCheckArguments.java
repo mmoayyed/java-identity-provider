@@ -50,6 +50,7 @@ public class JarCheckArguments extends AbstractIdPHomeAwareCommandLineArguments 
         if (log == null) {
             log = LoggerFactory.getLogger(JarCheckArguments.class);
         }
+        assert log!=null;
         return log;
     }
     

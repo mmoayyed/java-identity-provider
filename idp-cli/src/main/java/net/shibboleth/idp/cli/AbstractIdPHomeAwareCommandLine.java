@@ -75,20 +75,21 @@ public abstract class AbstractIdPHomeAwareCommandLine<T extends AbstractIdPHomeA
             return rc;
         }
         
-        if (args.getHttpClientName() != null) {
+        final String clientName = args.getHttpClientName();
+        if (clientName != null) {
             try {
-                httpClient = getApplicationContext().getBean(args.getHttpClientName(), HttpClient.class);
+                httpClient = getApplicationContext().getBean(clientName, HttpClient.class);
             } catch (final NoSuchBeanDefinitionException e) {
                 getLogger().error("Could not locate HttpClient '{}'", args.getHttpClientName());
                 return RC_IO;
             }
         }
         
-        if (args.getHttpClientSecurityParameterstName() != null) {
+        final String securityParameterstName = args.getHttpClientSecurityParameterstName();
+        if (securityParameterstName != null) {
             try {
                 httpClientSecurityParameters =
-                        getApplicationContext().getBean(args.getHttpClientSecurityParameterstName(),
-                                HttpClientSecurityParameters.class);
+                        getApplicationContext().getBean(securityParameterstName, HttpClientSecurityParameters.class);
             } catch (final NoSuchBeanDefinitionException e) {
                 getLogger().error("Could not locate HttpClientSecurityParameters '{}'",
                         args.getHttpClientSecurityParameterstName());

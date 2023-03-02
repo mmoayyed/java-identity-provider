@@ -19,6 +19,7 @@ package net.shibboleth.idp.cli;
 
 import java.io.PrintStream;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -56,10 +57,11 @@ public class DataSealerArguments extends AbstractIdPHomeAwareCommandLineArgument
     @Nullable private OperationType operation;
 
     /** {@inheritDoc} */
-    public Logger getLog() {
+    public @Nonnull Logger getLog() {
         if (log == null) {
             log = LoggerFactory.getLogger(DataSealerArguments.class);
         }
+        assert log != null;
         return log;
     }
 
