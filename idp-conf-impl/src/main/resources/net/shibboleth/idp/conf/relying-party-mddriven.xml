@@ -25,7 +25,8 @@
 
     <bean id="RelyingParty.MDDriven" abstract="true" parent="RelyingParty">
         <property name="issuerLookupStrategy">
-            <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="responderId" p:defaultValue="#{getObject('entityID')}" />
+            <bean parent="shibboleth.MDDrivenStringProperty" p:propertyName="issuer" p:legacyPropertyName="responderId"
+                p:defaultValue="#{getObject('entityID')}" />
         </property>
         <property name="profileConfigurationsLookupStrategy">
             <bean parent="shibboleth.MDDrivenBeanProperty" p:propertyName="profileConfigurations"
