@@ -36,9 +36,9 @@ public class TestAfterFilter extends AbstractProfileAction {
             @Nonnull final ProfileRequestContext profileRequestContext) {
 
         final RelyingPartyContext rpc = profileRequestContext.getSubcontext(RelyingPartyContext.class);
-        
+        assert rpc!=null;
         final AttributeContext ac = rpc.getSubcontext(AttributeContext.class);
-        
+        assert ac!=null;
         Assert.assertNull(ac.getIdPAttributes().get("IdPNotOK"));
         Assert.assertNull(ac.getIdPAttributes().get("IdPEA1"));
         

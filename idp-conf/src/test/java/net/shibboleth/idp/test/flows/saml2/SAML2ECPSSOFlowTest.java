@@ -76,6 +76,7 @@ public class SAML2ECPSSOFlowTest extends AbstractSAML2SSOFlowTest {
         final MessageContext messageContext =
                 buildOutboundMessageContext(authnRequest, SAMLConstants.SAML2_SOAP11_BINDING_URI);
         final SAMLObject message = (SAMLObject) messageContext.getMessage();
+        assert message!=null;
         request.setContent(encodeMessage(message).getBytes("UTF-8"));
     }
 

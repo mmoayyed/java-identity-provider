@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
@@ -39,7 +40,7 @@ public class AbstractSAML2FlowTest extends AbstractFlowTest {
      * @param result the flow execution result
      * @param flowId the flow ID
      */
-    public void validateResult(@Nullable final FlowExecutionResult result, @Nonnull final String flowId) {
+    public void validateResult(@Nonnull final FlowExecutionResult result, @Nonnull final String flowId) {
         final SAML2TestResponseValidator validator = new SAML2TestResponseValidator();
         validator.spCredential = spCredential;
         validateResult(result, flowId, validator);
@@ -52,7 +53,7 @@ public class AbstractSAML2FlowTest extends AbstractFlowTest {
      * @param flowId the flow ID
      * @param validator the response validator
      */
-    public void validateResult(@Nullable final FlowExecutionResult result, @Nonnull final String flowId,
+    public void validateResult(@Nonnull final FlowExecutionResult result, @Nonnull final String flowId,
             @Nonnull final SAML2TestResponseValidator validator) {
         assertFlowExecutionResult(result, flowId);
         validator.validateResponse(getResponse(result));
@@ -64,14 +65,16 @@ public class AbstractSAML2FlowTest extends AbstractFlowTest {
      * @param result the flow result
      * @return the SAML response
      */
-    public Response getResponse(@Nullable final FlowExecutionResult result) {
+    public Response getResponse(@Nonnull final FlowExecutionResult result) {
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertFlowExecutionOutcome(outcome);
 
         final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
         assertProfileRequestContext(prc);
-        Assert.assertTrue(prc.getOutboundMessageContext().getMessage() instanceof Response);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        Assert.assertTrue(omc.getMessage() instanceof Response);
 
-        return (Response) prc.getOutboundMessageContext().getMessage();
+        return (Response) omc.getMessage();
     }
 }

@@ -25,8 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.saml.xml.SAMLConstants;
-
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -46,6 +44,8 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
 import org.testng.Assert;
+
+import net.shibboleth.idp.saml.xml.SAMLConstants;
 
 /**
  * Validate a test SAML 1 Response.
@@ -109,6 +109,7 @@ public class SAML1TestResponseValidator {
      * @param response the SAML response
      */
     public void validateResponse(@Nullable final Response response) {
+        assert response!=null;
 
         assertResponse(response);
 
@@ -147,10 +148,11 @@ public class SAML1TestResponseValidator {
      * @param assertion the assertion
      */
     public void validateConditions(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
+        assert assertion!=null;
 
         final Conditions conditions = assertion.getConditions();
         assertConditions(conditions);
+        assert conditions!=null;
 
         final List<AudienceRestrictionCondition> audienceRestrictionConditions =
                 conditions.getAudienceRestrictionConditions();
@@ -174,7 +176,7 @@ public class SAML1TestResponseValidator {
      * @param assertion the assertion
      */
     public void validateAuthenticationStatements(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
+        assert assertion!=null;
 
         final List<AuthenticationStatement> authenticationStatements = assertion.getAuthenticationStatements();
         assertAuthenticationStatements(authenticationStatements);
@@ -205,7 +207,7 @@ public class SAML1TestResponseValidator {
      * @param assertion the assertion
      */
     public void validateAttributeStatements(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
+        assert assertion!=null;
 
         final List<AttributeStatement> attributeStatements = assertion.getAttributeStatements();
         assertAttributeStatements(attributeStatements);
@@ -240,7 +242,7 @@ public class SAML1TestResponseValidator {
      * @param response the SAML 1 response
      */
     public void assertResponse(@Nullable final Response response) {
-        Assert.assertNotNull(response);
+        assert response!=null;
         Assert.assertNotNull(response.getID());
         Assert.assertFalse(response.getID().isEmpty());
         Assert.assertNotNull(response.getIssueInstant());
@@ -259,7 +261,7 @@ public class SAML1TestResponseValidator {
      * @param status the status
      */
     public void assertStatus(@Nullable final Status status) {
-        Assert.assertNotNull(status);
+        assert status!=null;
         Assert.assertNotNull(status.getStatusCode());
         Assert.assertEquals(status.getStatusCode().getValue(), statusCode);
         if (statusCode != StatusCode.SUCCESS) {
@@ -273,7 +275,7 @@ public class SAML1TestResponseValidator {
      * @param assertions the assertions
      */
     public void assertAssertions(@Nullable final List<Assertion> assertions) {
-        Assert.assertNotNull(assertions);
+        assert assertions!=null;
         Assert.assertFalse(assertions.isEmpty());
         Assert.assertEquals(assertions.size(), 1);
         Assert.assertNotNull(assertions.get(0));
@@ -291,9 +293,11 @@ public class SAML1TestResponseValidator {
      * @param assertion the assertion
      */
     public void assertAssertion(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
-        Assert.assertNotNull(assertion.getID());
-        Assert.assertFalse(assertion.getID().isEmpty());
+        assert assertion!=null;
+        final String id = assertion.getID();
+        assert id!=null;
+
+        Assert.assertFalse(id.isEmpty());
         Assert.assertNotNull(assertion.getIssueInstant());
         Assert.assertEquals(assertion.getMajorVersion(), SAMLVersion.VERSION_11.getMajorVersion());
         Assert.assertEquals(assertion.getMinorVersion(), SAMLVersion.VERSION_11.getMinorVersion());
@@ -306,7 +310,7 @@ public class SAML1TestResponseValidator {
      * @param authenticationStatements the authentication statements
      */
     public void assertAuthenticationStatements(@Nullable final List<AuthenticationStatement> authenticationStatements) {
-        Assert.assertNotNull(authenticationStatements);
+        assert authenticationStatements!=null;
         Assert.assertFalse(authenticationStatements.isEmpty());
         Assert.assertEquals(authenticationStatements.size(), 1);
         Assert.assertNotNull(authenticationStatements.get(0));
@@ -323,7 +327,7 @@ public class SAML1TestResponseValidator {
      * @param authenticationStatement the authentication statement
      */
     public void assertAuthenticationStatement(@Nullable final AuthenticationStatement authenticationStatement) {
-        Assert.assertNotNull(authenticationStatement);
+        assert authenticationStatement!=null;
         Assert.assertNotNull(authenticationStatement.getSubject());
         Assert.assertNotNull(authenticationStatement.getAuthenticationInstant());
         Assert.assertNotNull(authenticationStatement.getAuthenticationMethod());
@@ -336,7 +340,7 @@ public class SAML1TestResponseValidator {
      * @param method the authentication method
      */
     public void assertAuthenticationMethod(@Nullable final String method) {
-        Assert.assertNotNull(method);
+        assert method!=null;
         Assert.assertEquals(method, authenticationMethod);
     }
 
@@ -347,7 +351,7 @@ public class SAML1TestResponseValidator {
      */
     public void assertAudienceRestrictionConditions(
             @Nullable final List<AudienceRestrictionCondition> audienceRestrictionConditions) {
-        Assert.assertNotNull(audienceRestrictionConditions);
+        assert audienceRestrictionConditions!=null;
         Assert.assertEquals(audienceRestrictionConditions.size(), 1);
     }
 
@@ -357,7 +361,7 @@ public class SAML1TestResponseValidator {
      * @param audiences the audiences
      */
     public void assertAudiences(@Nullable final List<Audience> audiences) {
-        Assert.assertNotNull(audiences);
+        assert audiences!=null;
         Assert.assertEquals(audiences.size(), 1);
         Assert.assertEquals(audiences.get(0).getURI(), spEntityID);
     }
@@ -369,7 +373,7 @@ public class SAML1TestResponseValidator {
      * @param conditions the conditions
      */
     public void assertConditions(@Nullable final Conditions conditions) {
-        Assert.assertNotNull(conditions);
+        assert conditions!=null;
         Assert.assertNotNull(conditions.getNotBefore());
         Assert.assertNotNull(conditions.getNotOnOrAfter());
         // TODO check time via some range ?
@@ -383,7 +387,7 @@ public class SAML1TestResponseValidator {
      * @param attributeStatements the attribute statements
      */
     public void assertAttributeStatements(@Nullable final List<AttributeStatement> attributeStatements) {
-        Assert.assertNotNull(attributeStatements);
+        assert attributeStatements!=null;
         Assert.assertFalse(attributeStatements.isEmpty());
         Assert.assertEquals(attributeStatements.size(), 1);
         Assert.assertNotNull(attributeStatements.get(0));
@@ -395,7 +399,7 @@ public class SAML1TestResponseValidator {
      * @param attributeStatement the attribute statement
      */
     public void assertAttributeStatement(@Nullable final AttributeStatement attributeStatement) {
-        Assert.assertNotNull(attributeStatement);
+        assert attributeStatement!=null;
         Assert.assertNotNull(attributeStatement.getSubject());
         Assert.assertNotNull(attributeStatement.getAttributes());
     }
@@ -406,7 +410,7 @@ public class SAML1TestResponseValidator {
      * @param subject the subject
      */
     public void assertSubject(@Nullable final Subject subject) {
-        Assert.assertNotNull(subject);
+        assert subject!=null;
         Assert.assertNotNull(subject.getNameIdentifier());
         Assert.assertNotNull(subject.getSubjectConfirmation());
     }
@@ -425,7 +429,7 @@ public class SAML1TestResponseValidator {
      * @param identifier the name identifier
      */
     public void assertNameIdentifier(@Nullable final NameIdentifier identifier) {
-        Assert.assertNotNull(identifier);
+        assert identifier!=null;
         Assert.assertNotNull(identifier.getValue());
         if (nameIdentifier.getFormat() != null
                 && !nameIdentifier.getFormat().equals(SAMLConstants.SAML1_NAMEID_TRANSIENT)) {
@@ -441,7 +445,7 @@ public class SAML1TestResponseValidator {
      * @param subjectConfirmation the subject confirmation
      */
     public void assertSubjectConfirmation(@Nullable final SubjectConfirmation subjectConfirmation) {
-        Assert.assertNotNull(subjectConfirmation);
+        assert subjectConfirmation!=null;
         Assert.assertEquals(subjectConfirmation.getConfirmationMethods().size(), 1);
     }
 
@@ -453,7 +457,7 @@ public class SAML1TestResponseValidator {
      * @param confirmationMethods the confirmation methods
      */
     public void assertConfirmationMethods(@Nullable final List<ConfirmationMethod> confirmationMethods) {
-        Assert.assertNotNull(confirmationMethods);
+        assert confirmationMethods!=null;
         Assert.assertFalse(confirmationMethods.isEmpty());
         Assert.assertEquals(confirmationMethods.size(), 1);
         Assert.assertNotNull(confirmationMethods.get(0));
@@ -466,7 +470,7 @@ public class SAML1TestResponseValidator {
      * @param method the confirmation method
      */
     public void assertConfirmationMethod(@Nullable final ConfirmationMethod method) {
-        Assert.assertNotNull(method);
+        assert method!=null;
         Assert.assertEquals(method.getURI(), confirmationMethod);
     }
 
@@ -495,7 +499,7 @@ public class SAML1TestResponseValidator {
      * @param attributes the attributes
      */
     public void assertAttributes(@Nullable final List<Attribute> attributes) {
-        Assert.assertNotNull(attributes);
+        assert attributes!=null;
         Assert.assertFalse(attributes.isEmpty());
         Assert.assertEquals(attributes.size(), usedAttributeDesignators ? 2 : 4);
 
@@ -548,7 +552,7 @@ public class SAML1TestResponseValidator {
      */
     public void assertAttribute(@Nullable final Attribute attribute, @Nonnull final String attributeName,
             @Nonnull final String attributeValue) {
-        Assert.assertNotNull(attribute);
+        assert attribute!=null;
         Assert.assertEquals(attribute.getAttributeName(), attributeName);
         Assert.assertEquals(attribute.getAttributeNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
         Assert.assertEquals(attribute.getAttributeValues().size(), 1);

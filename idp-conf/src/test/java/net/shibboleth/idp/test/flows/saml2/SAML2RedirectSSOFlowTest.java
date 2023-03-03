@@ -79,6 +79,7 @@ public class SAML2RedirectSSOFlowTest extends AbstractSAML2SSOFlowTest {
         final MessageContext messageContext =
                 buildOutboundMessageContext(authnRequest, SAMLConstants.SAML2_REDIRECT_BINDING_URI);
         final SAMLObject message = (SAMLObject) messageContext.getMessage();
+        assert message!=null;
         final String encodedMessage = encodeMessage(message);
         request.addParameter("SAMLRequest", encodedMessage);
     }

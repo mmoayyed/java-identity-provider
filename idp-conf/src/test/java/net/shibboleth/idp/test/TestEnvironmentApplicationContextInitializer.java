@@ -20,12 +20,13 @@ package net.shibboleth.idp.test;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.mock.env.MockPropertySource;
+
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An {@link ApplicationContextInitializer} which prepends properties.

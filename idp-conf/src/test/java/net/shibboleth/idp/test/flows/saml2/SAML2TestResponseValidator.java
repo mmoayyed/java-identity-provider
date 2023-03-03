@@ -91,10 +91,10 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     @Nonnull public IPRange subjectConfirmationDataAddressRangeV6 = IPRange.parseCIDRBlock("::1/128");
 
     /** Whether authn statements should be validated. */
-    @Nonnull public boolean validateAuthnStatements = true;
+    public boolean validateAuthnStatements = true;
 
     /** Whether subject confirmation data should be validated. */
-    @Nonnull public boolean validateSubjectConfirmationData = true;
+    public boolean validateSubjectConfirmationData = true;
 
     /** Whether attributes were limited by designators. */
     public boolean usedAttributeDesignators = false;
@@ -131,6 +131,14 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         nameID.setSPNameQualifier(spEntityID);
 
         buildExpectedAttributes();
+        // fool code analyzer
+        uidAttribute = uidAttribute;
+        homeOrgAttribute = homeOrgAttribute;
+        eppnAttribute = eppnAttribute;
+        mailAttribute = mailAttribute;
+        eduPersonScopedAffiliationAttribute = eduPersonScopedAffiliationAttribute;
+        expectedDesignatedAttributes = expectedDesignatedAttributes;
+        expectedAttributes = expectedAttributes;
     }
 
     /** Build expected attributes. */
@@ -200,11 +208,12 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         expectedDesignatedAttributes.add(mailAttribute);
 }
 
-    private Assertion decryptAssertion(final EncryptedAssertion encrypted) throws DecryptionException {
+    private Assertion decryptAssertion(@Nonnull final EncryptedAssertion encrypted) throws DecryptionException {
         ArrayList<EncryptedKeyResolver> resolverChain = new ArrayList<>();
         resolverChain.add(new InlineEncryptedKeyResolver());
         resolverChain.add(new EncryptedElementTypeEncryptedKeyResolver());
         final ChainingEncryptedKeyResolver chain = new ChainingEncryptedKeyResolver(resolverChain);
+        assert spCredential!=null;
         final Decrypter decrypter = new Decrypter(null, new StaticKeyInfoCredentialResolver(spCredential), chain);
         return decrypter.decrypt(encrypted);
     }
@@ -229,7 +238,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * 
      * @param response the flow execution result
      */
-    public void validateResponse(@Nullable final Response response) {
+    public void validateResponse(@Nonnull final Response response) {
 
         super.validateResponse(response);
 
@@ -279,7 +288,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * 
      * @param subject the subject
      */
-    public void validateSubject(@Nullable final Subject subject) {
+    public void validateSubject(@Nonnull final Subject subject) {
         assertSubject(subject);
         assertNameID(subject.getNameID());
         assertSubjectConfirmations(subject.getSubjectConfirmations());
@@ -303,8 +312,8 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * 
      * @param assertion the assertion
      */
-    public void validateConditions(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
+    public void validateConditions(@Nullable Assertion assertion) {
+        assert assertion!=null;
 
         final Conditions conditions = assertion.getConditions();
         assertConditions(conditions);
@@ -328,7 +337,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param assertion the assertion
      */
     public void validateAuthnStatements(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
+        assert assertion!=null;
 
         final List<AuthnStatement> authnStatements = assertion.getAuthnStatements();
         assertAuthnStatements(authnStatements);
@@ -351,7 +360,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param assertion the assertion
      */
     public void validateAttributeStatements(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
+        assert assertion!=null;
 
         final List<AttributeStatement> attributeStatements = assertion.getAttributeStatements();
         assertAttributeStatements(attributeStatements);
@@ -369,7 +378,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param assertions the assertions
      */
     public void assertAssertions(@Nullable List<Assertion> assertions) {
-        Assert.assertNotNull(assertions);
+        assert assertions!=null;
         Assert.assertFalse(assertions.isEmpty());
         Assert.assertEquals(assertions.size(), 1);
         Assert.assertNotNull(assertions.get(0));
@@ -387,7 +396,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param assertion the assertion
      */
     public void assertAssertion(@Nullable final Assertion assertion) {
-        Assert.assertNotNull(assertion);
+        assert assertion!=null;
         Assert.assertNotNull(assertion.getID());
         Assert.assertFalse(assertion.getID().isEmpty());
         Assert.assertNotNull(assertion.getIssueInstant());
@@ -401,7 +410,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param subject the subject
      */
     public void assertSubject(@Nullable final Subject subject) {
-        Assert.assertNotNull(subject);
+        assert subject!=null;
         Assert.assertNotNull(subject.getNameID());
         Assert.assertNotNull(subject.getSubjectConfirmations());
     }
@@ -412,7 +421,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param subjectConfirmations the subject confirmations
      */
     public void assertSubjectConfirmations(@Nullable final List<SubjectConfirmation> subjectConfirmations) {
-        Assert.assertNotNull(subjectConfirmations);
+        assert subjectConfirmations!=null;
         Assert.assertEquals(subjectConfirmations.size(), 1);
     }
 
@@ -422,7 +431,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param subjectConfirmation the subject confirmation
      */
     public void assertSubjectConfirmation(@Nullable final SubjectConfirmation subjectConfirmation) {
-        Assert.assertNotNull(subjectConfirmation);
+        assert subjectConfirmation!=null;
         Assert.assertNotNull(subjectConfirmation.getMethod());
     }
 
@@ -432,6 +441,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param method the subject confirmation
      */
     public void assertSubjectConfirmationMethod(@Nullable final SubjectConfirmation method) {
+        assert method!=null;
         Assert.assertEquals(method.getMethod(), subjectConfirmationMethod);
     }
 
@@ -446,6 +456,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param subjectConfirmationData the subject confirmation data
      */
     public void assertSubjectConfirmationData(@Nullable final SubjectConfirmationData subjectConfirmationData) {
+        assert subjectConfirmationData!=null;
         final InetAddress address = InetAddresses.forString(subjectConfirmationData.getAddress());
         if (address instanceof Inet4Address) {
             boolean matches = false;
@@ -481,7 +492,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param id the NameID
      */
     public void assertNameID(@Nullable final NameID id) {
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertNotNull(id.getValue());
         if (nameID.getFormat() != null && !nameID.getFormat().equals(NameID.TRANSIENT)) {
             Assert.assertEquals(id.getValue(), nameID.getValue());
@@ -497,7 +508,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param conditions the conditions
      */
     public void assertConditions(@Nullable final Conditions conditions) {
-        Assert.assertNotNull(conditions);
+        assert conditions!=null;
         Assert.assertNotNull(conditions.getNotBefore());
         Assert.assertNotNull(conditions.getNotOnOrAfter());
         // TODO check time via some range ?
@@ -509,7 +520,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param audienceRestrictions the audience restrictions
      */
     public void assertAudienceRestrictions(@Nullable final List<AudienceRestriction> audienceRestrictions) {
-        Assert.assertNotNull(audienceRestrictions);
+        assert audienceRestrictions!=null;
         Assert.assertEquals(audienceRestrictions.size(), 1);
     }
 
@@ -519,7 +530,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param audienceRestriction the audience restriction
      */
     public void assertAudienceRestriction(@Nullable final AudienceRestriction audienceRestriction) {
-        Assert.assertNotNull(audienceRestriction);
+        assert audienceRestriction!=null;
 
         final List<Audience> audiences = audienceRestriction.getAudiences();
         Assert.assertEquals(audiences.size(), 1);
@@ -534,7 +545,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param authnStatements the authn statements
      */
     public void assertAuthnStatements(@Nullable final List<AuthnStatement> authnStatements) {
-        Assert.assertNotNull(authnStatements);
+        assert authnStatements!=null;
         Assert.assertEquals(authnStatements.size(), 1);
         Assert.assertNotNull(authnStatements.get(0));
     }
@@ -545,7 +556,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param authnStatement the authn statement
      */
     public void assertAuthnStatement(@Nonnull final AuthnStatement authnStatement) {
-        Assert.assertNotNull(authnStatement);
+        assert authnStatement!=null;
         Assert.assertNotNull(authnStatement.getAuthnInstant());
         // TODO check authn instant time ?
         Assert.assertNotNull(authnStatement.getAuthnContext());
@@ -557,7 +568,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * 
      * @param authnContext the authn context
      */
-    public void assertAuthnContextClassRef(@Nullable final AuthnContextClassRef authnContext) {
+    public void assertAuthnContextClassRef(@Nonnull final AuthnContextClassRef authnContext) {
         Assert.assertEquals(authnContext.getURI(), authnContextClassRef);
     }
 
@@ -567,7 +578,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param attributeStatements the attribute statements
      */
     public void assertAttributeStatements(@Nullable final List<AttributeStatement> attributeStatements) {
-        Assert.assertNotNull(attributeStatements);
+        assert attributeStatements!=null;
         Assert.assertFalse(attributeStatements.isEmpty());
         Assert.assertEquals(attributeStatements.size(), 1);
         Assert.assertNotNull(attributeStatements.get(0));
@@ -579,7 +590,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param attributeStatement the attribute statement
      */
     public void assertAttributeStatement(@Nullable final AttributeStatement attributeStatement) {
-        Assert.assertNotNull(attributeStatement);
+        assert attributeStatement!=null;
         Assert.assertNotNull(attributeStatement.getAttributes());
     }
 
@@ -595,7 +606,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param attributes the attributes
      */
     public void assertAttributes(@Nullable final List<Attribute> attributes) {
-        Assert.assertNotNull(attributes);
+        assert attributes!=null;
         Assert.assertFalse(attributes.isEmpty());
         Assert.assertEquals(attributes.size(), usedAttributeDesignators ? expectedDesignatedAttributes.size() : expectedAttributes.size());
 
@@ -611,7 +622,11 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
             Assert.assertNotNull(actualAttribute);
             assertAttributeName(actualAttribute, expectedAttribute.getName(), expectedAttribute.getNameFormat(),
                     expectedAttribute.getFriendlyName());
-            assertAttributeValue(actualAttribute, ((XSAny) expectedAttribute.getAttributeValues().get(0)).getTextContent());
+            final XSAny any = ((XSAny) expectedAttribute.getAttributeValues().get(0));
+            assert any!=null;
+            final String text = any.getTextContent();
+            assert text!=null;
+            assertAttributeValue(actualAttribute, text);
         }
     }
 
@@ -625,7 +640,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      */
     public void assertAttributeName(@Nullable final Attribute attribute, @Nonnull final String name,
             @Nonnull final String nameFormat, @Nonnull final String friendlyName) {
-        Assert.assertNotNull(attribute);
+        assert attribute!=null;
         Assert.assertEquals(attribute.getName(), name);
         Assert.assertEquals(attribute.getNameFormat(), nameFormat);
         Assert.assertEquals(attribute.getFriendlyName(), friendlyName);
@@ -637,7 +652,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param attribute the attribute
      * @param attributeValue the attribute value
      */
-    public void assertAttributeValue(@Nullable final Attribute attribute, @Nonnull final String attributeValue) {
+    public void assertAttributeValue(@Nonnull final Attribute attribute, @Nonnull final String attributeValue) {
         Assert.assertEquals(attribute.getAttributeValues().size(), 1);
         Assert.assertTrue(attribute.getAttributeValues().get(0) instanceof XSAny);
         Assert.assertEquals(((XSAny) attribute.getAttributeValues().get(0)).getTextContent(), attributeValue);

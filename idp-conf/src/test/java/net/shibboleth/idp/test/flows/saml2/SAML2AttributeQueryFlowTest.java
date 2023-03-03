@@ -23,12 +23,9 @@ import java.time.Instant;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.shared.security.IdentifierGenerationStrategy;
-import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
-import net.shibboleth.shared.xml.SerializeSupport;
-
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -45,6 +42,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
+import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
+import net.shibboleth.shared.xml.SerializeSupport;
 
 /**
  * SAML 2 attribute query flow test.
@@ -69,12 +70,12 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         nameID.setSPNameQualifier(null);
         nameID.setFormat(null);
 
-        validator = new SAML2TestResponseValidator();
-        validator.nameID = nameID;
-        validator.spCredential = spCredential;
-        validator.subjectConfirmationMethod = SubjectConfirmation.METHOD_SENDER_VOUCHES;
-        validator.validateAuthnStatements = false;
-        validator.validateSubjectConfirmationData = false;
+        final SAML2TestResponseValidator localValidator = this.validator = new SAML2TestResponseValidator();
+        localValidator.nameID = nameID;
+        localValidator.spCredential = spCredential;
+        localValidator.subjectConfirmationMethod = SubjectConfirmation.METHOD_SENDER_VOUCHES;
+        localValidator.validateAuthnStatements = false;
+        localValidator.validateSubjectConfirmationData = false;
     }
 
     /**
@@ -92,11 +93,13 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         overrideEndStateOutput(FLOW_ID);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        assert result != null;
+        final SAML2TestResponseValidator localValidator = validator;
+        assert localValidator!= null;
+        localValidator.statusCode = StatusCode.SUCCESS;
+        localValidator.usedAttributeDesignators = false;
 
-        validator.statusCode = StatusCode.SUCCESS;
-        validator.usedAttributeDesignators = false;
-
-        validateResult(result, FLOW_ID, validator);
+        validateResult(result, FLOW_ID, localValidator);
     }
 
     /**
@@ -114,11 +117,14 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         overrideEndStateOutput(FLOW_ID);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        assert result != null;
+        final SAML2TestResponseValidator localValidator = validator;
+        assert localValidator!= null;
 
-        validator.statusCode = StatusCode.SUCCESS;
-        validator.usedAttributeDesignators = true;
+        localValidator.statusCode = StatusCode.SUCCESS;
+        localValidator.usedAttributeDesignators = true;
         
-        validateResult(result, FLOW_ID, validator);
+        validateResult(result, FLOW_ID, localValidator);
     }
 
     /**
@@ -133,11 +139,14 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         overrideEndStateOutput(FLOW_ID);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        assert result != null;
+        final SAML2TestResponseValidator localValidator = validator;
+        assert localValidator!= null;
 
-        validator.statusCode = StatusCode.REQUESTER;
-        validator.usedAttributeDesignators = false;
+        localValidator.statusCode = StatusCode.REQUESTER;
+        localValidator.usedAttributeDesignators = false;
 
-        validateResult(result, FLOW_ID, validator);
+        validateResult(result, FLOW_ID, localValidator);
     }
 
     /**
@@ -181,10 +190,10 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         }
 
         final Envelope envelope = buildSOAP11Envelope(attributeQuery);
-
+        final Marshaller m = marshallerFactory.getMarshaller(envelope);
+        assert m != null;
         final String requestContent =
-                SerializeSupport.nodeToString(marshallerFactory.getMarshaller(envelope).marshall(envelope,
-                        parserPool.newDocument()));
+                SerializeSupport.nodeToString(m.marshall(envelope, parserPool.newDocument()));
 
         request.setMethod("POST");
         

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.test;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.test.context.web.GenericXmlWebContextLoader;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 import org.springframework.web.context.support.GenericWebApplicationContext;
@@ -37,8 +39,8 @@ public class PreferFileSystemContextLoader extends GenericXmlWebContextLoader {
      * Set the resource loader used by the application context to {@link PreferFileSystemResourceLoader}.
      * </p>
      */
-    @Override protected void customizeContext(GenericWebApplicationContext context,
-            WebMergedContextConfiguration webMergedConfig) {
+    @Override protected void customizeContext(@Nonnull GenericWebApplicationContext context,
+            @Nonnull WebMergedContextConfiguration webMergedConfig) {
         final PreferFileSystemResourceLoader loader = new PreferFileSystemResourceLoader();
         loader.addProtocolResolver(new ConditionalResourceResolver());
         context.setResourceLoader(loader);

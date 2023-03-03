@@ -62,6 +62,7 @@ public class SAML2TestStatusResponseTypeValidator {
      */
     public void validateResponse(@Nullable final StatusResponseType response) {
         assertResponse(response);
+        assert response!=null;
         assertStatus(response.getStatus());
     }
 
@@ -80,7 +81,7 @@ public class SAML2TestStatusResponseTypeValidator {
      * @param response the status response type
      */
     public void assertResponse(@Nullable final StatusResponseType response) {
-        Assert.assertNotNull(response);
+        assert response!=null;
         Assert.assertNotNull(response.getID());
         Assert.assertFalse(response.getID().isEmpty());
         Assert.assertNotNull(response.getIssueInstant());
@@ -104,7 +105,7 @@ public class SAML2TestStatusResponseTypeValidator {
      * @param status the status
      */
     public void assertStatus(@Nullable final Status status) {
-        Assert.assertNotNull(status);
+        assert status!=null;
         Assert.assertNotNull(status.getStatusCode());
         Assert.assertEquals(status.getStatusCode().getValue(), statusCode);
         if (statusCode != StatusCode.SUCCESS) {

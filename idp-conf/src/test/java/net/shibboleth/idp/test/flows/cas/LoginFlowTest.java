@@ -154,11 +154,13 @@ public class LoginFlowTest extends AbstractFlowTest {
         assertEquals(outcome.getId(), "RedirectToService");
         final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
         final Ticket st = ticketService.removeServiceTicket(ticketId);
-        assertNotNull(st);
+        assert st!=null;
+        final String sid = st.getSessionId();
+        assert sid!=null;
         final IdPSession session = sessionManager.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
-        assertNotNull(session);
-
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert session!=null;
+        
         final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
         assertNotNull(prc.getSubcontext(SubjectContext.class));
         assertPopulatedAttributeContext(prc);
@@ -183,11 +185,13 @@ public class LoginFlowTest extends AbstractFlowTest {
         assertEquals(1, matcher.groupCount());
         final String ticketId = matcher.group(1);
         final Ticket st = ticketService.removeServiceTicket(ticketId);
-        assertNotNull(st);
+        assert st!=null;
+        final String sid = st.getSessionId();
+        assert sid!=null;
         final IdPSession session = sessionManager.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
-        assertNotNull(session);
-
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert session!=null;
+        
         final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
         assertNotNull(prc.getSubcontext(SubjectContext.class));
         assertPopulatedAttributeContext(prc);
@@ -206,11 +210,13 @@ public class LoginFlowTest extends AbstractFlowTest {
         assertEquals(result.getOutcome().getId(), "RedirectToService");
         final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
         final Ticket st = ticketService.removeServiceTicket(ticketId);
-        assertNotNull(st);
+        assert st!=null;
+        final String sid = st.getSessionId();
+        assert sid!=null;
         final IdPSession session = sessionManager.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
-        assertNotNull(session);
-
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert session!=null;
+        
         // Ensure we passed through the consent intercept subflow
         final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
         assertNotNull(prc);
@@ -233,10 +239,12 @@ public class LoginFlowTest extends AbstractFlowTest {
         assertEquals(outcome.getId(), "RedirectToService");
         final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
         final Ticket st = ticketService.removeServiceTicket(ticketId);
-        assertNotNull(st);
+        assert st!=null;
+        final String sid = st.getSessionId();
+        assert sid!=null;
         final IdPSession session = sessionManager.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
-        assertNotNull(session);
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert session!=null;
         assertEquals(session.getId(), existing.getId());
 
         final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
@@ -258,10 +266,12 @@ public class LoginFlowTest extends AbstractFlowTest {
         assertEquals(outcome.getId(), "RedirectToService");
         final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
         final Ticket st = ticketService.removeServiceTicket(ticketId);
-        assertNotNull(st);
+        assert st!=null;
+        final String sid = st.getSessionId();
+        assert sid!=null;
         final IdPSession session = sessionManager.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
-        assertNotNull(session);
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert session!=null;
         // Expect a new session to be created since authentication was required
         assertNotEquals(session.getId(), existing.getId());
 
@@ -301,9 +311,9 @@ public class LoginFlowTest extends AbstractFlowTest {
     private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {
         assertNotNull(prc);
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, false);
-        assertNotNull(rpc);
+        assert rpc!=null;
         final AttributeContext ac= rpc.getSubcontext(AttributeContext.class, false);
-        assertNotNull(ac);
+        assert ac!=null;
         assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
     }
 

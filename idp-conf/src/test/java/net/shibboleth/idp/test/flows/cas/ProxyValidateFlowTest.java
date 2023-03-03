@@ -145,11 +145,13 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         final String principal = "john";
         final int pgtTTLMillis = 20;
         final IdPSession session = sessionManager.createSession(principal);
+        final String sid = session.getId();
+        assert sid!=null;
         final ServiceTicket st = ticketService.createServiceTicket(
             new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
             Instant.now().plusSeconds(5),
             "https://service.example.org/",
-            new TicketState(session.getId(), principal, Instant.now(), "Password"),
+            new TicketState(sid, principal, Instant.now(), "Password"),
             false);
         final ProxyGrantingTicket pgt1 = ticketService.createProxyGrantingTicket(
             new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),

@@ -22,6 +22,7 @@ import java.time.Instant;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -45,12 +46,12 @@ import org.opensaml.xmlsec.encryption.support.EncryptionException;
 import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
 import org.opensaml.xmlsec.keyinfo.impl.X509KeyInfoGeneratorFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import net.shibboleth.shared.net.SimpleURLCanonicalizer;
 import net.shibboleth.shared.net.URLBuilder;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Abstract SAML 2 SSO flow test.
@@ -61,7 +62,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
     /** Class logger. */
     @Nonnull protected final Logger log = LoggerFactory.getLogger(AbstractSAML2SSOFlowTest.class);
 
-    public String getDestinationRedirect(HttpServletRequest servletRequest) {
+    public String getDestinationRedirect(@Nonnull HttpServletRequest servletRequest) {
         // TODO servlet context
         String destinationPath = "/idp/profile/SAML2/Redirect/SSO";
         try {
@@ -75,7 +76,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         }
     }
 
-    public String getDestinationPost(HttpServletRequest servletRequest) {
+    public String getDestinationPost(@Nonnull HttpServletRequest servletRequest) {
         // TODO servlet context
         String destinationPath = "/idp/profile/SAML2/POST/SSO";
         String baseUrl = getBaseUrl(servletRequest);
@@ -89,7 +90,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         }
     }
 
-    public String getDestinationPostSimpleSign(HttpServletRequest servletRequest) {
+    public String getDestinationPostSimpleSign(@Nonnull HttpServletRequest servletRequest) {
         // TODO servlet context
         String destinationPath = "/idp/profile/SAML2/POST-SimpleSign/SSO";
         String baseUrl = getBaseUrl(servletRequest);
@@ -123,43 +124,45 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
     
     public AuthnRequest buildAuthnRequest(final HttpServletRequest servletRequest, final String acsURL, final String outboundBinding)
             throws EncryptionException {
-        final AuthnRequest authnRequest =
-                (AuthnRequest) builderFactory.getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME).buildObject(
-                        AuthnRequest.DEFAULT_ELEMENT_NAME);
+        final XMLObjectBuilder<?> authnRequestBuilder = builderFactory.getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
+        assert authnRequestBuilder!=null;
+        final AuthnRequest authnRequest = (AuthnRequest) authnRequestBuilder.buildObject(AuthnRequest.DEFAULT_ELEMENT_NAME);
 
         authnRequest.setID(idGenerator.generateIdentifier());
         authnRequest.setIssueInstant(Instant.now());
         authnRequest.setAssertionConsumerServiceURL(acsURL);
         authnRequest.setProtocolBinding(outboundBinding);
 
-        final Issuer issuer =
-                (Issuer) builderFactory.getBuilder(Issuer.DEFAULT_ELEMENT_NAME)
-                        .buildObject(Issuer.DEFAULT_ELEMENT_NAME);
+        final XMLObjectBuilder<?> issuerBuilder = builderFactory.getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
+        assert issuerBuilder!=null;
+        final Issuer issuer = (Issuer) issuerBuilder.buildObject(Issuer.DEFAULT_ELEMENT_NAME);
         issuer.setValue(AbstractFlowTest.SP_ENTITY_ID);
         authnRequest.setIssuer(issuer);
 
-        final NameIDPolicy nameIDPolicy =
-                (NameIDPolicy) builderFactory.getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME).buildObject(
+        final XMLObjectBuilder<?> nidPolicyBuilder = builderFactory.getBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
+        assert nidPolicyBuilder!=null;
+        final NameIDPolicy nameIDPolicy = (NameIDPolicy) nidPolicyBuilder.buildObject(
                         NameIDPolicy.DEFAULT_ELEMENT_NAME);
         nameIDPolicy.setAllowCreate(true);
         authnRequest.setNameIDPolicy(nameIDPolicy);
 
-        final NameID nameID =
-                (NameID) builderFactory.getBuilder(NameID.DEFAULT_ELEMENT_NAME)
-                        .buildObject(NameID.DEFAULT_ELEMENT_NAME);
+        final XMLObjectBuilder<?> nidBuilder = builderFactory.getBuilder(NameID.DEFAULT_ELEMENT_NAME);
+        assert nidBuilder!=null;
+        final NameID nameID = (NameID) nidBuilder.buildObject(NameID.DEFAULT_ELEMENT_NAME);
         nameID.setValue("jdoe");
 
-        final Subject subject =
-                (Subject) builderFactory.getBuilder(Subject.DEFAULT_ELEMENT_NAME).buildObject(
-                        Subject.DEFAULT_ELEMENT_NAME);
+        final XMLObjectBuilder<?> subjectBuilder = builderFactory.getBuilder(Subject.DEFAULT_ELEMENT_NAME);
+        assert subjectBuilder!=null;
+        final Subject subject = (Subject) subjectBuilder.buildObject(Subject.DEFAULT_ELEMENT_NAME);
         subject.setEncryptedID(getEncrypter().encrypt(nameID));
         authnRequest.setSubject(subject);
 
-        final RequestedAuthnContext reqAC =
-                (RequestedAuthnContext) builderFactory.getBuilder(RequestedAuthnContext.DEFAULT_ELEMENT_NAME).buildObject(
-                        RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
-        final AuthnContextClassRef ac =
-                (AuthnContextClassRef) builderFactory.getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME).buildObject(
+        final XMLObjectBuilder<?> racBuilder = builderFactory.getBuilder(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        assert racBuilder!=null;
+        final RequestedAuthnContext reqAC = (RequestedAuthnContext) racBuilder.buildObject(RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        final XMLObjectBuilder<?> accRefBuilder = builderFactory.getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        assert accRefBuilder!=null;
+        final AuthnContextClassRef ac = (AuthnContextClassRef) accRefBuilder.buildObject(
                         AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
         ac.setURI(AuthnContext.UNSPECIFIED_AUTHN_CTX);
         reqAC.getAuthnContextClassRefs().add(ac);
@@ -189,6 +192,7 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
     public String getAcsUrl(final HttpServletRequest servletRequest, final String acsURL) {
         // TODO servlet context
         String baseUrl = getBaseUrl(servletRequest);
+        assert baseUrl!=null;
         try {
             URLBuilder urlBuilder = new URLBuilder(SimpleURLCanonicalizer.canonicalize(baseUrl));
             urlBuilder.setPath(acsURL);
@@ -200,9 +204,9 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
     }
 
     public SingleSignOnService buildIdpSsoEndpoint(String binding, String destination) {
-        SingleSignOnService ssoEndpoint =
-                (SingleSignOnService) builderFactory.getBuilder(SingleSignOnService.DEFAULT_ELEMENT_NAME).buildObject(
-                        SingleSignOnService.DEFAULT_ELEMENT_NAME);
+        final XMLObjectBuilder<?> builder = builderFactory.getBuilder(SingleSignOnService.DEFAULT_ELEMENT_NAME);
+        assert builder!=null;
+        SingleSignOnService ssoEndpoint = (SingleSignOnService) builder.buildObject(SingleSignOnService.DEFAULT_ELEMENT_NAME);
         ssoEndpoint.setBinding(binding);
         ssoEndpoint.setLocation(destination);
         return ssoEndpoint;
@@ -230,16 +234,16 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
 
-        SAMLPeerEntityContext peerContext = messageContext.getSubcontext(SAMLPeerEntityContext.class, true);
+        SAMLPeerEntityContext peerContext = messageContext.getOrCreateSubcontext(SAMLPeerEntityContext.class);
         peerContext.setEntityId(AbstractFlowTest.IDP_ENTITY_ID);
 
-        SAMLEndpointContext endpointContext = peerContext.getSubcontext(SAMLEndpointContext.class, true);
+        SAMLEndpointContext endpointContext = peerContext.getOrCreateSubcontext(SAMLEndpointContext.class);
         endpointContext.setEndpoint(buildIdpSsoEndpoint(bindingUri, authnRequest.getDestination()));
 
         SignatureSigningParameters signingParameters = new SignatureSigningParameters();
         signingParameters.setSigningCredential(spCredential);
         SecurityParametersContext secParamsContext =
-                messageContext.getSubcontext(SecurityParametersContext.class, true);
+                messageContext.getOrCreateSubcontext(SecurityParametersContext.class);
         secParamsContext.setSignatureSigningParameters(signingParameters);
 
         return messageContext;

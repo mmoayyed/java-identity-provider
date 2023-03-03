@@ -69,11 +69,13 @@ public class ValidateFlowTest extends AbstractFlowTest {
     public void testSuccess() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
+        final String sid = session.getId();
+        assert sid!=null;
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
                 "https://test.example.org/",
-                new TicketState(session.getId(), principal, Instant.now(), "Password"),
+                new TicketState(sid, principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -89,8 +91,8 @@ public class ValidateFlowTest extends AbstractFlowTest {
         assertEquals("text/plain;charset=utf-8", response.getContentType());
 
         final IdPSession updatedSession = sessionResolver.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(session.getId())));
-        assertNotNull(updatedSession);
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert updatedSession!=null;
         assertEquals(updatedSession.getSPSessions().size(), 0);
     }
 

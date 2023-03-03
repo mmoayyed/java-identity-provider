@@ -24,6 +24,7 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Test action that throws exception.
@@ -46,8 +47,11 @@ public class ThrowException extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (commitResponse) {
             final SpringRequestContext springContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
+            assert springContext!=null;
+            final RequestContext requestContext = springContext.getRequestContext();
+            assert requestContext != null;
             final MockHttpServletResponse response =
-                    (MockHttpServletResponse) springContext.getRequestContext().getExternalContext().getNativeResponse();
+                    (MockHttpServletResponse) requestContext.getExternalContext().getNativeResponse();
             response.setOutputStreamAccessAllowed(false);
             response.setWriterAccessAllowed(false);
         }

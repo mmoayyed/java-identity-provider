@@ -76,6 +76,7 @@ public class SAML2POSTSSOFlowTest extends AbstractSAML2SSOFlowTest {
         final MessageContext messageContext =
                 buildOutboundMessageContext(authnRequest, SAMLConstants.SAML2_POST_BINDING_URI);
         final SAMLObject message = (SAMLObject) messageContext.getMessage();
+        assert message!=null;
         final String encodedMessage = encodeMessage(message);
         request.addParameter("SAMLRequest", encodedMessage);
     }

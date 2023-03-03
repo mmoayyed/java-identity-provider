@@ -20,11 +20,11 @@ package net.shibboleth.idp.test;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.spring.resource.ConditionalResourceResolver;
 import net.shibboleth.shared.spring.resource.PreferFileSystemResourceLoader;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;

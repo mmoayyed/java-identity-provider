@@ -76,11 +76,13 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
     public void testSuccess() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
+        final String sid = session.getId();
+        assert sid!=null;
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
                 "https://test.example.org/",
-                new TicketState(session.getId(), principal, Instant.now(), "Password"),
+                new TicketState(sid, principal, Instant.now(), "Password"),
                 false);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
         request.setMethod("POST");
@@ -107,7 +109,9 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWithConsent() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        final TicketState state = new TicketState(session.getId(), principal, Instant.now(), "Password");
+        final String sid = session.getId();
+        assert sid!=null;
+        final TicketState state = new TicketState(sid, principal, Instant.now(), "Password");
         state.setConsentedAttributeIds(CollectionSupport.setOf("uid", "eduPersonPrincipalName"));
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
@@ -156,11 +160,14 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWhenResolveAttributesFalse() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
+        final String sid = session.getId();
+        assert sid!=null;
+
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-2718281828-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
                 "https://no-attrs.example.org/",
-                new TicketState(session.getId(), principal, Instant.now(), "Password"),
+                new TicketState(sid, principal, Instant.now(), "Password"),
                 false);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
         request.setMethod("POST");
@@ -186,9 +193,9 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
     private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {
         assertNotNull(prc);
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, false);
-        assertNotNull(rpc);
+        assert rpc!=null;;
         final AttributeContext ac= rpc.getSubcontext(AttributeContext.class, false);
-        assertNotNull(ac);
+        assert ac!=null;
         assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
     }
 }

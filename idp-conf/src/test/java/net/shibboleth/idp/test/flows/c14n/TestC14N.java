@@ -17,24 +17,17 @@
 
 package net.shibboleth.idp.test.flows.c14n;
 
-import javax.annotation.Nonnull;
-
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 /**
  * Tests for C14N.
  */
 @ContextConfiguration({"classpath:/c14n/test-webflow-config.xml", "classpath:/c14n/locate-resolver.xml"})
 public class TestC14N extends AbstractFlowTest {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(TestC14N.class);
 
     @Test public void testTransientNameID() {
 

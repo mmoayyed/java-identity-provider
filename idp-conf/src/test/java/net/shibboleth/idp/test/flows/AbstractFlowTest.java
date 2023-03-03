@@ -23,16 +23,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.Expression;
@@ -77,6 +78,7 @@ import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.idp.test.TestEnvironmentApplicationContextInitializer;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
@@ -149,16 +151,16 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     @NonnullAfterInit private static InMemoryDirectory directoryServer;
 
     /** Mock external context. */
-    @Nonnull protected MockExternalContext externalContext;
+    protected MockExternalContext externalContext;
 
     /** The web flow executor. */
-    @Nonnull protected FlowExecutor flowExecutor;
+    protected FlowExecutor flowExecutor;
 
     /** Mock request. */
-    @Nonnull protected MockHttpServletRequest request;
+    protected MockHttpServletRequest request;
 
     /** Mock response. */
-    @Nonnull protected MockHttpServletResponse response;
+    protected MockHttpServletResponse response;
 
     /** Parser pool */
     @NonnullAfterInit protected static ParserPool parserPool;
@@ -173,7 +175,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     @NonnullAfterInit protected static UnmarshallerFactory unmarshallerFactory;
 
     /** UUID identifier generation strategy. */
-    @Nonnull protected IdentifierGenerationStrategy idGenerator;
+    protected IdentifierGenerationStrategy idGenerator;
 
     /** IdP credential wired via test/test-beans.xml. */
     @Qualifier("test.idp.Credential") @Autowired protected Credential idpCredential;
@@ -195,6 +197,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * Initialize the web flow executor.
      */
     @BeforeMethod public void initializeFlowExecutor() {
+        assert applicationContext!=null;
         flowExecutor = applicationContext.getBean("flowExecutor", FlowExecutor.class);
         Assert.assertNotNull(flowExecutor);
     }
@@ -216,6 +219,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * {@link HttpServletRequestResponseContext#loadCurrent(HttpServletRequest, HttpServletResponse)}
      */
     @BeforeMethod public void initializeThreadLocals() {
+        assert request!=null && response!=null;
         HttpServletRequestResponseContext.loadCurrent(request, response);
     }
 
@@ -262,7 +266,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * @param flowID the flow id
      */
     public void assertFlowExecutionResult(@Nullable final FlowExecutionResult result, @Nonnull String flowID) {
-        Assert.assertNotNull(result);
+        assert result!=null;
         Assert.assertEquals(result.getFlowId(), flowID);
         Assert.assertTrue(result.isEnded());
     }
@@ -289,6 +293,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     public void assertFlowExecutionOutcome(@Nullable final FlowExecutionOutcome outcome,
             @Nullable final String endStateId) {
         Assert.assertNotNull(outcome, "Flow ended with an error");
+        assert outcome != null;
         Assert.assertEquals(outcome.getId(), endStateId);
         Assert.assertTrue(outcome.getOutput().contains(END_STATE_OUTPUT_ATTR_NAME));
         Assert.assertTrue(outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME) instanceof ProfileRequestContext);
@@ -296,14 +301,13 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
 
     /**
      * Assert that the profile request context has an outbound message context and that the outbound message context has
-     * a message.
-     * 
+     * a message.C     * 
      * @param profileRequestContext the profile request context
      */
     public void assertProfileRequestContext(@Nullable final ProfileRequestContext profileRequestContext) {
-        Assert.assertNotNull(profileRequestContext);
-        Assert.assertNotNull(profileRequestContext.getOutboundMessageContext());
-        Assert.assertNotNull(profileRequestContext.getOutboundMessageContext().getMessage());
+        assert profileRequestContext!=null;
+        final MessageContext omc = profileRequestContext.getOutboundMessageContext();
+        assert omc != null && omc.getMessage() != null;
     }
 
     /**
@@ -313,11 +317,16 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * @return the SOAP11 envelop
      */
     @Nonnull public static Envelope buildSOAP11Envelope(@Nonnull final XMLObject payload) {
+        final XMLObjectBuilderFactory bf = builderFactory;
+        assert bf != null;
+        final XMLObjectBuilder<?> bfe = bf.getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
+        final XMLObjectBuilder<?> bfb = bf.getBuilder(Body.DEFAULT_ELEMENT_NAME);
+        assert bfe!=null && bfb!=null;
         final Envelope envelope =
-                (Envelope) builderFactory.getBuilder(Envelope.DEFAULT_ELEMENT_NAME).buildObject(
+                (Envelope) bfe.buildObject(
                         Envelope.DEFAULT_ELEMENT_NAME);
         final Body body =
-                (Body) builderFactory.getBuilder(Body.DEFAULT_ELEMENT_NAME).buildObject(Body.DEFAULT_ELEMENT_NAME);
+                (Body) bfb.buildObject(Body.DEFAULT_ELEMENT_NAME);
 
         body.getUnknownXMLObjects().add(payload);
         envelope.setBody(body);
@@ -344,7 +353,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
                 ((FlowExecutorImpl) flowExecutor).getDefinitionLocator().getFlowDefinition(flowID);
 
         Constraint.isTrue(flowDefinition instanceof Flow, "The flow definition must be an instance of " + Flow.class);
-
+        
         return (Flow) flowDefinition;
     }
 

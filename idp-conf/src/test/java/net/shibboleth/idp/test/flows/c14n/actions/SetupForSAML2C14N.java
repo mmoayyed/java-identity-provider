@@ -93,6 +93,7 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final RelyingPartyContext rpc = profileRequestContext.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
         final AttributeContext ac = rpc.getSubcontext(AttributeContext.class);
         
         NameID nid = null;
@@ -104,7 +105,10 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
                 
             }
         } else {
-            nid = encode(ac.getIdPAttributes().get(attributeName));            
+            assert ac != null;
+            final IdPAttribute attr = ac.getIdPAttributes().get(attributeName);
+            assert attr!=null;
+            nid = encode(attr);            
         }
         
         if (nid == null) {
@@ -117,10 +121,11 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
         sub.getPrincipals().add(nidp);
 
         final SubjectCanonicalizationContext scc =
-                profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, true);
+                profileRequestContext.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         scc.setSubject(sub);
         scc.setRequesterId(rpc.getRelyingPartyId());
         final RelyingPartyConfiguration rpConfig = (RelyingPartyConfiguration) rpc.getConfiguration();
+        assert rpConfig!=null;
         scc.setResponderId(rpConfig.getIssuer(profileRequestContext));
     }
     

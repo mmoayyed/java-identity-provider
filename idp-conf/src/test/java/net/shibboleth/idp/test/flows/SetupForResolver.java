@@ -37,7 +37,7 @@ public class SetupForResolver extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, true);
+        final SubjectContext sc = profileRequestContext.getOrCreateSubcontext(SubjectContext.class);
         sc.setPrincipalName("PETER_THE_PRINCIPAL");
         
         final RelyingPartyContext rpContext = profileRequestContext.getOrCreateSubcontext(RelyingPartyContext.class);

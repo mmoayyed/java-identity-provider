@@ -28,7 +28,7 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -100,9 +100,10 @@ public class InterceptFlowTest extends AbstractFlowTest {
         assertFlowExecutionOutcome(result.getOutcome());
 
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
-        Assert.assertNotNull(prc);
+        assert prc!=null;
 
         final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert interceptorCtx!=null;
         Assert.assertTrue(interceptorCtx.getAvailableFlows().isEmpty());
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), false);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), false);
@@ -120,9 +121,10 @@ public class InterceptFlowTest extends AbstractFlowTest {
         assertFlowExecutionOutcome(result.getOutcome());
 
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
-        Assert.assertNotNull(prc);
+        assert prc!=null;
 
         final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert interceptorCtx!=null;
         Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 0);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), true);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), false);
@@ -141,9 +143,10 @@ public class InterceptFlowTest extends AbstractFlowTest {
         assertFlowExecutionOutcome(result.getOutcome());
 
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
-        Assert.assertNotNull(prc);
+        assert prc!=null;
 
         final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert interceptorCtx!=null;
         Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 0);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), true);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), true);
@@ -161,9 +164,10 @@ public class InterceptFlowTest extends AbstractFlowTest {
         assertFlowExecutionOutcome(result.getOutcome(), EventIds.INVALID_PROFILE_CTX);
 
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
-        Assert.assertNotNull(prc);
+        assert prc!=null;
 
         final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert interceptorCtx!=null;
         Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 1);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), false);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), false);
@@ -182,9 +186,10 @@ public class InterceptFlowTest extends AbstractFlowTest {
         assertFlowExecutionOutcome(result.getOutcome(), EventIds.INVALID_PROFILE_CTX);
 
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
-        Assert.assertNotNull(prc);
+        assert prc!=null;
 
         final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        assert interceptorCtx!=null;
         Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 1);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), true);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), false);

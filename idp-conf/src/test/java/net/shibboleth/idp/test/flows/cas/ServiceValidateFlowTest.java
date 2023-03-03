@@ -107,7 +107,9 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccess() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        final TicketState state = new TicketState(session.getId(), principal, Instant.now(), "Password");
+        final String sid = session.getId();
+        assert sid!=null;
+        final TicketState state = new TicketState(sid, principal, Instant.now(), "Password");
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
@@ -135,8 +137,8 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
 
         final IdPSession updatedSession = sessionResolver.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(session.getId())));
-        assertNotNull(updatedSession);
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert updatedSession!=null;
         assertEquals(updatedSession.getSPSessions().size(), 0);
     }
 
@@ -144,7 +146,9 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWithConsent() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        final TicketState state = new TicketState(session.getId(), principal, Instant.now(), "Password");
+        final String sid = session.getId();
+        assert sid!=null;
+        final TicketState state = new TicketState(sid, principal, Instant.now(), "Password");
         state.setConsentedAttributeIds(CollectionSupport.setOf("uid", "eduPersonPrincipalName"));
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
@@ -173,8 +177,8 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
 
         final IdPSession updatedSession = sessionResolver.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(session.getId())));
-        assertNotNull(updatedSession);
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert updatedSession!=null;
         assertEquals(updatedSession.getSPSessions().size(), 0);
     }
 
@@ -182,11 +186,13 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWithSLOParticipant() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
+        final String sid = session.getId();
+        assert sid!=null;
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
                 "https://slo.example.org/",
-                new TicketState(session.getId(), principal, Instant.now(), "Password"),
+                new TicketState(sid, principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -205,8 +211,8 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
 
         final IdPSession updatedSession = sessionResolver.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(session.getId())));
-        assertNotNull(updatedSession);
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert updatedSession!=null;
         assertEquals(updatedSession.getSPSessions().size(), 1);
     }
 
@@ -227,11 +233,13 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWithProxy() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
+        final String sid = session.getId();
+        assert sid!=null;
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
                 "https://test.example.org/",
-                new TicketState(session.getId(), principal, Instant.now(), "Password"),
+                new TicketState(sid, principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -257,11 +265,13 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testProxyCallbackAuthnFailure() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
+        final String sid = session.getId();
+        assert sid!=null;
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
                 "https://test.example.org/",
-                new TicketState(session.getId(), principal, Instant.now(), "Password"),
+                new TicketState(sid, principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -283,11 +293,13 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWithAltUsername() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
+        final String sid = session.getId();
+        assert sid!=null;
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-pnqph79ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
                 "https://alt-username.example.org/",
-                new TicketState(session.getId(), principal, Instant.now(), "Password"),
+                new TicketState(sid, principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -306,8 +318,8 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
 
         final IdPSession updatedSession = sessionResolver.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(session.getId())));
-        assertNotNull(updatedSession);
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert updatedSession!=null;
         assertEquals(updatedSession.getSPSessions().size(), 0);
     }
 
@@ -315,11 +327,13 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccessNoAttributes() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
+        final String sid = session.getId();
+        assert sid!=null;
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-2718281828-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 Instant.now().plusSeconds(5),
                 "https://no-attrs.example.org/",
-                new TicketState(session.getId(), principal, Instant.now(), "Password"),
+                new TicketState(sid, principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -341,8 +355,8 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertFalse(responseBody.contains("<cas:proxies>"));
 
         final IdPSession updatedSession = sessionResolver.resolveSingle(
-                new CriteriaSet(new SessionIdCriterion(session.getId())));
-        assertNotNull(updatedSession);
+                new CriteriaSet(new SessionIdCriterion(sid)));
+        assert updatedSession!=null;
         assertEquals(updatedSession.getSPSessions().size(), 0);
     }
 
@@ -350,9 +364,9 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {
         assertNotNull(prc);
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, false);
-        assertNotNull(rpc);
+        assert rpc != null;
         final AttributeContext ac= rpc.getSubcontext(AttributeContext.class, false);
-        assertNotNull(ac);
+        assert ac!=null;
         assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
     }
 

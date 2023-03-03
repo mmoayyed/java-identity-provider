@@ -29,6 +29,7 @@ import net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType;
 import net.shibboleth.shared.xml.SerializeSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.AttributeDesignator;
 import org.opensaml.saml.saml1.core.ConfirmationMethod;
@@ -66,10 +67,10 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         nameIdentifier.setFormat(null);
         nameIdentifier.setNameQualifier(null);
 
-        validator = new SAML1TestResponseValidator();
-        validator.validateAuthenticationStatements = false;
-        validator.nameIdentifier = nameIdentifier;
-        validator.confirmationMethod = ConfirmationMethod.METHOD_SENDER_VOUCHES;
+        final SAML1TestResponseValidator val = validator = new SAML1TestResponseValidator();
+        val.validateAuthenticationStatements = false;
+        val.nameIdentifier = nameIdentifier;
+        val.confirmationMethod = ConfirmationMethod.METHOD_SENDER_VOUCHES;
     }
 
     /**
@@ -87,11 +88,12 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         overrideEndStateOutput(FLOW_ID);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        final SAML1TestResponseValidator val = validator;
+        assert val!=null;
+        val.statusCode = StatusCode.SUCCESS;
+        val.usedAttributeDesignators = false;
 
-        validator.statusCode = StatusCode.SUCCESS;
-        validator.usedAttributeDesignators = false;
-
-        validateResult(result, FLOW_ID, validator);
+        validateResult(result, FLOW_ID, val);
     }
 
     /**
@@ -109,11 +111,13 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         overrideEndStateOutput(FLOW_ID);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        final SAML1TestResponseValidator val = validator;
+        assert val!=null;
 
-        validator.statusCode = StatusCode.SUCCESS;
-        validator.usedAttributeDesignators = true;
+        val.statusCode = StatusCode.SUCCESS;
+        val.usedAttributeDesignators = true;
 
-        validateResult(result, FLOW_ID, validator);
+        validateResult(result, FLOW_ID, val);
     }
 
     /**
@@ -128,11 +132,13 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         overrideEndStateOutput(FLOW_ID);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        final SAML1TestResponseValidator val = validator;
+        assert val!=null;
 
-        validator.statusCode = StatusCode.REQUESTER;
-        validator.usedAttributeDesignators = false;
+        val.statusCode = StatusCode.REQUESTER;
+        val.usedAttributeDesignators = false;
 
-        validateResult(result, FLOW_ID, validator);
+        validateResult(result, FLOW_ID, val);
     }
 
     /**
@@ -172,9 +178,10 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         }
 
         final Envelope envelope = buildSOAP11Envelope(attributeQuery);
-
+        final Marshaller m = marshallerFactory.getMarshaller(envelope);
+        assert m!=null;
         final String requestContent =
-                SerializeSupport.nodeToString(marshallerFactory.getMarshaller(envelope).marshall(envelope,
+                SerializeSupport.nodeToString(m.marshall(envelope,
                         parserPool.newDocument()));
 
         request.setMethod("POST");

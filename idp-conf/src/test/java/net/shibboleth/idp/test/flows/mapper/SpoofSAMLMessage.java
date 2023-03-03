@@ -36,11 +36,10 @@ public class SpoofSAMLMessage extends AbstractProfileAction {
 
         final MessageContext mc = new MessageContext();
         profileRequestContext.setInboundMessageContext(mc);
-        SAMLPeerEntityContext spec = mc.getSubcontext(SAMLPeerEntityContext.class, true);
-        
+        SAMLPeerEntityContext spec = mc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
         spec.setEntityId("https://sp.example.org");
         spec.setRole(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-        mc.getSubcontext(SAMLProtocolContext.class, true).setProtocol(SAMLConstants.SAML20P_NS);
+        mc.getOrCreateSubcontext(SAMLProtocolContext.class).setProtocol(SAMLConstants.SAML20P_NS);
                 
     }
     

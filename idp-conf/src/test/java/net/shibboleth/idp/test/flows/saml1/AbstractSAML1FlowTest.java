@@ -18,15 +18,15 @@
 package net.shibboleth.idp.test.flows.saml1;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
-
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.Assert;
+
+import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 /**
  * Abstract SAML 1 flow test.
@@ -39,7 +39,7 @@ public abstract class AbstractSAML1FlowTest extends AbstractFlowTest {
      * @param result the flow execution result
      * @param flowId the flow ID
      */
-    public void validateResult(@Nullable final FlowExecutionResult result, @Nonnull final String flowId) {
+    public void validateResult(@Nonnull final FlowExecutionResult result, @Nonnull final String flowId) {
         validateResult(result, flowId, new SAML1TestResponseValidator());
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractSAML1FlowTest extends AbstractFlowTest {
      * @param flowId the flow ID
      * @param validator the response validator
      */
-    public void validateResult(@Nullable final FlowExecutionResult result, @Nonnull final String flowId,
+    public void validateResult(@Nonnull final FlowExecutionResult result, @Nonnull final String flowId,
             @Nonnull final SAML1TestResponseValidator validator) {
         assertFlowExecutionResult(result, flowId);
         validator.validateResponse(getResponse(result));
@@ -62,14 +62,16 @@ public abstract class AbstractSAML1FlowTest extends AbstractFlowTest {
      * @param result the flow result
      * @return the SAML response
      */
-    public Response getResponse(@Nullable final FlowExecutionResult result) {        
+    public Response getResponse(@Nonnull FlowExecutionResult result) {        
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertFlowExecutionOutcome(outcome);
 
         final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
         assertProfileRequestContext(prc);
-        Assert.assertTrue(prc.getOutboundMessageContext().getMessage() instanceof Response);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        Assert.assertTrue(omc.getMessage() instanceof Response);
 
-        return (Response) prc.getOutboundMessageContext().getMessage();
+        return (Response) omc.getMessage();
     }
 }
