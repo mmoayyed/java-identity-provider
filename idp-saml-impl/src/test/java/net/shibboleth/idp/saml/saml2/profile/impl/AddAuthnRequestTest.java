@@ -38,7 +38,7 @@ import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
-import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.relyingparty.BasicRelyingPartyConfiguration;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
@@ -90,7 +90,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         
         rpc = prc2.getOrCreateSubcontext(RelyingPartyContext.class);
         rpc.setRelyingPartyId(ActionTestingSupport.INBOUND_MSG_ISSUER);
-        final RelyingPartyConfiguration rp = new RelyingPartyConfiguration();
+        final BasicRelyingPartyConfiguration rp = new BasicRelyingPartyConfiguration();
         rp.setId("mock");
         rp.setIssuer(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         rp.setDetailedErrors(true);

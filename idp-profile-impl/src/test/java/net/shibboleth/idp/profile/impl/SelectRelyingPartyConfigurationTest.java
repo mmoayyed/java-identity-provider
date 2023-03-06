@@ -36,6 +36,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.BasicRelyingPartyConfiguration;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -115,7 +116,7 @@ public class SelectRelyingPartyConfigurationTest {
         assert rpCtx != null;
         rpCtx.setConfiguration(null);
 
-        final var config = new net.shibboleth.profile.relyingparty.RelyingPartyConfiguration();
+        final var config = new BasicRelyingPartyConfiguration();
         config.setId("foo");
         config.setIssuer("http://idp.example.org");
         config.setDetailedErrors(true);
@@ -143,7 +144,7 @@ public class SelectRelyingPartyConfigurationTest {
         assert rpCtx != null;
         rpCtx.setConfiguration(null);
 
-        final var config = new net.shibboleth.profile.relyingparty.RelyingPartyConfiguration();
+        final var config = new BasicRelyingPartyConfiguration();
         config.setId("foo");
         config.setIssuer("http://idp.example.org");
         config.setDetailedErrors(true);

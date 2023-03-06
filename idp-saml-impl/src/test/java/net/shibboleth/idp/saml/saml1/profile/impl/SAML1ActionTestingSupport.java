@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.BasicRelyingPartyConfiguration;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.saml.saml1.profile.config.impl.ArtifactResolutionProfileConfiguration;
@@ -67,7 +68,7 @@ public final class SAML1ActionTestingSupport extends org.opensaml.saml.saml1.tes
             id = ActionTestingSupport.INBOUND_MSG_ISSUER;
         }
 
-        final RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration();
+        final BasicRelyingPartyConfiguration rpConfig = new BasicRelyingPartyConfiguration();
         rpConfig.setId(id);
         rpConfig.setIssuer(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         rpConfig.setDetailedErrors(true);

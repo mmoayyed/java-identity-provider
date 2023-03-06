@@ -33,6 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.BasicRelyingPartyConfiguration;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
@@ -450,7 +451,7 @@ public class RequestContextBuilder {
             profileConfigs.add(new MockProfileConfiguration("mock"));
         }
 
-        RelyingPartyConfiguration rp = new RelyingPartyConfiguration();
+        BasicRelyingPartyConfiguration rp = new BasicRelyingPartyConfiguration();
         rp.setId("mock");
         rp.setIssuer(responderId);
         rp.setDetailedErrors(true);

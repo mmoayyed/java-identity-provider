@@ -42,6 +42,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.profile.relyingparty.BasicRelyingPartyConfiguration;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.profile.relyingparty.VerifiedProfileCriterion;
@@ -56,23 +57,23 @@ import net.shibboleth.shared.resolver.ResolverException;
 @SuppressWarnings("javadoc")
 public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase {
     
-    private RelyingPartyConfiguration anonRP, defaultRP; 
+    private BasicRelyingPartyConfiguration anonRP, defaultRP; 
     
-    private RelyingPartyConfiguration oneByName, twoByName, threeByName;
-    private RelyingPartyConfiguration oneByGroup, twoByGroup;
-    private RelyingPartyConfiguration oneByTag, twoByTag;
+    private BasicRelyingPartyConfiguration oneByName, twoByName, threeByName;
+    private BasicRelyingPartyConfiguration oneByGroup, twoByGroup;
+    private BasicRelyingPartyConfiguration oneByTag, twoByTag;
     
     private DefaultRelyingPartyConfigurationResolver resolver;
         
     @BeforeMethod
     public void setup() throws Exception {
-        anonRP = new RelyingPartyConfiguration();
+        anonRP = new BasicRelyingPartyConfiguration();
         anonRP.setId("anonRPId");
         anonRP.setIssuer("anonRPResp");
         anonRP.setDetailedErrors(true);
         anonRP.initialize();
         
-        defaultRP = new RelyingPartyConfiguration();
+        defaultRP = new BasicRelyingPartyConfiguration();
         defaultRP.setId("defaultRPId");
         defaultRP.setIssuer("defaultRPResp");
         defaultRP.setDetailedErrors(true);

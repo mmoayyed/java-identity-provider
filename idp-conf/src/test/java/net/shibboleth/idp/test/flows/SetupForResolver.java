@@ -23,7 +23,7 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.relyingparty.BasicRelyingPartyConfiguration;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -43,7 +43,7 @@ public class SetupForResolver extends AbstractProfileAction {
         final RelyingPartyContext rpContext = profileRequestContext.getOrCreateSubcontext(RelyingPartyContext.class);
         rpContext.setRelyingPartyId(AbstractFlowTest.SP_ENTITY_ID);
         
-        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        final BasicRelyingPartyConfiguration config = new BasicRelyingPartyConfiguration();
         config.setId("test");
         config.setIssuer(AbstractFlowTest.IDP_ENTITY_ID);
         try {
