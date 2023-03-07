@@ -88,7 +88,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     }
 
     private void setSubContext(@Nullable Subject subject, @Nullable String responder, @Nullable String requester) {
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         if (subject != null) {
             scc.setSubject(subject);
         }
@@ -129,7 +129,8 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         action.execute(prc);
 
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc!=null && scc.getException()!=null;
     }
 
     @Test public void testMultiPrincipals() {
@@ -142,7 +143,8 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         action.execute(prc);
 
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc!=null && scc.getException()!=null;
     }
 
     @Test public void testWrongFormat() {
@@ -154,7 +156,8 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         action.execute(prc);
 
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
-        Assert.assertNotNull(prc.getSubcontext(SubjectCanonicalizationContext.class, false).getException());
+        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        assert scc!=null && scc.getException()!=null;
     }
 
     @Test public void testWrongRequester() {
@@ -198,6 +201,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
         ActionTestingSupport.assertProceedEvent(prc);
         SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        assert sc!=null;
         Assert.assertEquals(sc.getPrincipalName(), VALUE_PREFIX+"works");
     }
 

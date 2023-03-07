@@ -24,6 +24,7 @@ import java.util.List;
 import javax.security.auth.Subject;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -94,7 +95,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     /** Test that the action errors out properly if there is no context. */
     @Test public void testNoContext() {
         prc.setOutboundMessageContext(null);
-        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthnContextClassRefPrincipal("Test")));
 
         final Event event = action.execute(rc);
@@ -132,19 +133,27 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         fd.setResultSerializer(serializer);
         fd.initialize();
         
-        prc.getSubcontext(AuthenticationContext.class, true).getAvailableFlows().put("Test", fd);
-        prc.getSubcontext(AuthenticationContext.class).setAuthenticationResult(
+        prc.getOrCreateSubcontext(AuthenticationContext.class).getAvailableFlows().put("Test", fd);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac !=null;
+        ac.setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthnContextClassRefPrincipal("Test")));
         
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("127.0.0.1");
+        final MockHttpServletRequest req = ((MockHttpServletRequest) action.getHttpServletRequest());
+        assert req!=null;
+        req.setRemoteAddr("127.0.0.1");
 
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
+        
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
 
-        Assert.assertNotNull(prc.getOutboundMessageContext().getMessage());
-        Assert.assertTrue(prc.getOutboundMessageContext().getMessage() instanceof Response);
+        Assert.assertNotNull(omc.getMessage());
+        Assert.assertTrue(omc.getMessage() instanceof Response);
 
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        final Response response = (Response) omc.getMessage();
+        assert response!=null;
         Assert.assertEquals(response.getAssertions().size(), 1);
         Assert.assertNotNull(response.getAssertions().get(0));
 
@@ -172,15 +181,21 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
         ssoConfig.setMaximumSPSessionLifetime(Duration.ofHours(1));
         ssoConfig.setSecurityConfiguration(new BasicXMLSecurityConfiguration());
-        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(ssoConfig);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.setProfileConfig(ssoConfig);
         
-        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthnContextClassRefPrincipal("Test")));
 
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
 
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+
+        final Response response = (Response) omc.getMessage();
+        assert response!=null;
         final Assertion assertion = response.getAssertions().get(0);
         final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
         Assert.assertNotNull(authenticationStatement.getSessionNotOnOrAfter());
@@ -191,19 +206,25 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthnContextClassRefPrincipal("Foo"));
         subject.getPrincipals().add(new AuthnContextClassRefPrincipal("Bar"));
-        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", subject));
         final RequestedPrincipalContext requested = new RequestedPrincipalContext();
         requested.setMatchingPrincipal(new AuthnContextClassRefPrincipal("Bar"));
-        prc.getSubcontext(AuthenticationContext.class, false).addSubcontext(requested);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac !=null;
+        ac.addSubcontext(requested);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
 
-        Assert.assertNotNull(prc.getOutboundMessageContext().getMessage());
-        Assert.assertTrue(prc.getOutboundMessageContext().getMessage() instanceof Response);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
 
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        Assert.assertNotNull(omc.getMessage());
+        Assert.assertTrue(omc.getMessage() instanceof Response);
+
+        final Response response = (Response) omc.getMessage();
+        assert response!=null;
         Assert.assertEquals(response.getAssertions().size(), 1);
         Assert.assertNotNull(response.getAssertions().get(0));
 
@@ -220,13 +241,16 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void testAuthenticatingAuthorities() {
-        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(List.of("foo", "bar", "baz"))));
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
 
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        final Response response = (Response) omc.getMessage();
+        assert response!=null;
         final Assertion assertion = response.getAssertions().get(0);
         final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();
@@ -241,15 +265,20 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         final BrowserSSOProfileConfiguration ssoConfig = new BrowserSSOProfileConfiguration();
         ssoConfig.setSuppressAuthenticatingAuthority(true);
         ssoConfig.setSecurityConfiguration(new BasicXMLSecurityConfiguration());
-        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(ssoConfig);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.setProfileConfig(ssoConfig);
 
-        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(List.of("foo", "bar", "baz"))));
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
 
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        final Response response = (Response) omc.getMessage();
+        assert response!=null;
         final Assertion assertion = response.getAssertions().get(0);
         final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();

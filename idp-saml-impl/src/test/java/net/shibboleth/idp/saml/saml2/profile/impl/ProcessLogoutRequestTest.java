@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import jakarta.servlet.http.Cookie;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
@@ -49,6 +51,7 @@ import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -77,6 +80,12 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
     private ProfileRequestContext prc;
     
     private ProcessLogoutRequest action;
+    
+    @Nonnull private MockHttpServletRequest getMockHttpServletRequest() {
+        final MockHttpServletRequest result = (MockHttpServletRequest) HttpServletRequestResponseContext.getRequest();
+        assert result  != null;
+        return result;
+    }
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         sessionIndexBuilder = (SAMLObjectBuilder<SessionIndex>)
@@ -117,7 +126,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
     }
 
     @Test public void testNoNameID() {
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_MESSAGE);
@@ -128,7 +139,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
 
     @Test public void testNoSession() {
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("jdoe");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.SESSION_NOT_FOUND);
@@ -141,10 +154,12 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Cookie cookie = createSession("joe");
 
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getMockHttpServletRequest().setCookies(cookie);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.SESSION_NOT_FOUND);
@@ -159,16 +174,18 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
         nameId.setSPNameQualifier("affiliation");
         final NameID nameIdForSession = SAML2ActionTestingSupport.buildNameID("joe");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
 
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getMockHttpServletRequest().setCookies(cookie);
         
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameIdForSession, "index", "foo", false));
                 
@@ -178,7 +195,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
         Assert.assertNull(prc.getSubcontext(LogoutContext.class));
         
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id!=null;
+        sessionManager.destroySession(id, false);
     }
 
     @Test public void testDefaultedRequestQualifiers() throws SessionException, ResolverException {
@@ -187,16 +206,18 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
         nameId.setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         nameId.setSPNameQualifier(ActionTestingSupport.INBOUND_MSG_ISSUER);
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getMockHttpServletRequest().setCookies(cookie);
         
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session!=null;
         final NameID nameIdForSession = SAML2ActionTestingSupport.buildNameID("joe");
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameIdForSession, "index", "foo", false));
@@ -204,36 +225,42 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!=null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         
         final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
-        Assert.assertNotNull(sessionCtx);
-        Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
+        assert sessionCtx!=null;
+        final IdPSession idpSession=sessionCtx.getIdPSession();
+        assert idpSession!=null;
+        Assert.assertEquals(session.getId(), idpSession.getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        Assert.assertNotNull(logoutCtx);
+        assert logoutCtx!=null;
         Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
         Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
 
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id!=null;
+        sessionManager.destroySession(id, false);
     }
 
     @Test public void testDefaultedSessionQualifiers() throws SessionException, ResolverException {
         final Cookie cookie = createSession("joe");
 
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
         
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getMockHttpServletRequest().setCookies(cookie);
         
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session!=null;
         final NameID nameIdForSession = SAML2ActionTestingSupport.buildNameID("joe");
         nameIdForSession.setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         nameIdForSession.setSPNameQualifier(ActionTestingSupport.INBOUND_MSG_ISSUER);
@@ -243,56 +270,66 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!=null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         
         final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
-        Assert.assertNotNull(sessionCtx);
-        Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
+        assert sessionCtx!=null;
+        final IdPSession idpSession=sessionCtx.getIdPSession();
+        assert idpSession!=null;
+        Assert.assertEquals(session.getId(), idpSession.getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        Assert.assertNotNull(logoutCtx);
+        assert logoutCtx!=null;
         Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
         Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
         
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id!=null;
+        sessionManager.destroySession(id, false);
     }
     
     @Test public void testSessionOneSPSession() throws SessionException, ResolverException {
         final Cookie cookie = createSession("joe");
 
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
 
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getMockHttpServletRequest().setCookies(cookie);
         
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session!=null;;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!=null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         
         final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
-        Assert.assertNotNull(sessionCtx);
-        Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
+        assert sessionCtx!=null;
+        final IdPSession idpSession=sessionCtx.getIdPSession();
+        assert idpSession!=null;
+        Assert.assertEquals(session.getId(), idpSession.getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        Assert.assertNotNull(logoutCtx);
+        assert logoutCtx!=null;
         Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
         Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
         
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id!=null;
+        sessionManager.destroySession(id, false);
     }
     
     @Test public void testSessionTwoSPSessions() throws SessionException, ResolverException {
@@ -300,16 +337,18 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
 
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
         final NameID nameId2 = SAML2ActionTestingSupport.buildNameID("joe2");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
 
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getMockHttpServletRequest().setCookies(cookie);
         
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", creation, expiration,
@@ -318,15 +357,16 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!=null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         
         final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
-        Assert.assertNotNull(sessionCtx);
-        Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
+        assert sessionCtx!=null;
+        final IdPSession idpSession=sessionCtx.getIdPSession();
+        assert idpSession!=null;
+        Assert.assertEquals(session.getId(), idpSession.getId());
         
-        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, true);
-        Assert.assertNotNull(logoutCtx);
+        final LogoutContext logoutCtx = prc.getOrCreateSubcontext(LogoutContext.class);
         Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
         Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 1);
@@ -338,7 +378,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId2, sp.getNameID()));
         Assert.assertEquals(sp.getSessionIndex(), "index2");
         
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id!=null;
+        sessionManager.destroySession(id, false);
     }
 
     @Test public void testTwoSPSessionsWrongRequester() throws SessionException, ResolverException {
@@ -346,16 +388,18 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
 
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
         final NameID nameId2 = SAML2ActionTestingSupport.buildNameID("joe2");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId2));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId2));
 
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getMockHttpServletRequest().setCookies(cookie);
         
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", creation, expiration,
@@ -367,7 +411,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
         Assert.assertNull(prc.getSubcontext(LogoutContext.class));
         
-        sessionManager.destroySession(session.getId(), false);
+        final String id = session.getId();
+        assert id!=null;
+        sessionManager.destroySession(id, false);
     }
 
     @Test public void testTwoSessionsOneMatch() throws SessionException, ResolverException {
@@ -377,46 +423,57 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
         final SessionIndex sessionIndex = sessionIndexBuilder.buildObject();
         sessionIndex.setValue("index");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
-        ((LogoutRequest) prc.getInboundMessageContext().getMessage()).getSessionIndexes().add(sessionIndex);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
+        final LogoutRequest lr = (LogoutRequest) imc.getMessage();
+        assert lr!= null;
+        lr.getSessionIndexes().add(sessionIndex);
 
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);
 
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getMockHttpServletRequest().setCookies(cookie);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         
         
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie2);
+        getMockHttpServletRequest().setCookies(cookie2);
         
         final IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session2);
+        assert session2!=null;
         session2.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index2", "foo", false));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!=null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         
         final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
-        Assert.assertNotNull(sessionCtx);
-        Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
+        assert sessionCtx!=null;
+        final IdPSession idpSession=sessionCtx.getIdPSession();
+        assert idpSession!=null;
+        Assert.assertEquals(session.getId(), idpSession.getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, false);
-        Assert.assertNotNull(logoutCtx);
+        assert logoutCtx!=null;
         Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
         Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
         
-        sessionManager.destroySession(session.getId(), false);
-        sessionManager.destroySession(session2.getId(), false);
+        final String id = session.getId();
+        assert id!=null;
+        sessionManager.destroySession(id, false);
+        final String id2 = session2.getId();
+        assert id2!=null;
+        sessionManager.destroySession(id, false);
+        sessionManager.destroySession(id2, false);
     }
 
     @Test public void testTwoSessions() throws SessionException, ResolverException {
@@ -424,43 +481,50 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Cookie cookie2 = createSession("joe");
 
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("joe");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
 
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);
 
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
+        getMockHttpServletRequest().setCookies(cookie);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session);
+        assert session!=null;;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         
         
-        ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie2);
+        getMockHttpServletRequest().setCookies(cookie2);
         
         final IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        Assert.assertNotNull(session2);
+        assert session2!=null;
         session2.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index2", "foo", false));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext subjectCtx = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(subjectCtx);
+        assert subjectCtx!=null;
         Assert.assertEquals(subjectCtx.getPrincipalName(), "joe");
         
         final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
         Assert.assertNull(sessionCtx);
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
-        Assert.assertNotNull(logoutCtx);
+        assert logoutCtx!=null;
         Assert.assertEquals(logoutCtx.getIdPSessions().size(), 2);
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
 
-        sessionManager.destroySession(session.getId(), false);
-        sessionManager.destroySession(session2.getId(), false);
+        final String id = session.getId();
+        assert id!=null;
+        sessionManager.destroySession(id, false);
+        final String id2 = session2.getId();
+        assert id2!=null;
+        sessionManager.destroySession(id, false);
+        sessionManager.destroySession(id2, false);
     }
     
 }

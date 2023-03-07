@@ -29,6 +29,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyRestrictionLookupFunction;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -54,9 +55,13 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         prc = new RequestContextBuilder()
                 .setRelyingPartyProfileConfigurations(Collections.singletonList(new BrowserSSOProfileConfiguration()))
                 .buildProfileRequestContext();
-        config = (BrowserSSOProfileConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getProfileConfiguration(
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        final RelyingPartyConfiguration rpCfg = rpc.getConfiguration();
+        assert rpCfg!=null;
+        config = (BrowserSSOProfileConfiguration)rpCfg.getProfileConfiguration(
                 prc, BrowserSSOProfileConfiguration.PROFILE_ID);
-        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(config);
+        rpc.setProfileConfig(config);
         sc = prc.getOrCreateSubcontext(SubjectContext.class);
         sc.getAuthenticationResults().put("test1", new AuthenticationResult("test1", new Subject()));
         sc.getAuthenticationResults().put("test2", new AuthenticationResult("test2", new Subject()));
@@ -67,7 +72,9 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
     public void testNoPrincipals() {
         result = fn.apply(prc);
         Assert.assertNull(result.getFirst());
-        Assert.assertTrue(result.getSecond().isEmpty());
+        final Set<String> second = result.getSecond();
+        assert second!=null;
+        Assert.assertTrue(second.isEmpty());
     }
 
     @Test
@@ -77,7 +84,9 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         
         result = fn.apply(prc);
         Assert.assertNull(result.getFirst());
-        Assert.assertTrue(result.getSecond().isEmpty());
+        final Set<String> second = result.getSecond();
+        assert second!=null;
+        Assert.assertTrue(second.isEmpty());
     }
 
     @Test
@@ -88,7 +97,9 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         
         result = fn.apply(prc);
         Assert.assertEquals(result.getFirst(), Integer.valueOf(9));
-        Assert.assertTrue(result.getSecond().isEmpty());
+        final Set<String> second = result.getSecond();
+        assert second!=null;
+        Assert.assertTrue(second.isEmpty());
         
         proxy.setProxyCount(1);
         result = fn.apply(prc);
@@ -111,7 +122,9 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         
         result = fn.apply(prc);
         Assert.assertEquals(result.getFirst(), Integer.valueOf(4));
-        Assert.assertTrue(result.getSecond().isEmpty());
+        final Set<String> second = result.getSecond();
+        assert second!=null;
+        Assert.assertTrue(second.isEmpty());
         
         proxy1.setProxyCount(1);
         proxy2.setProxyCount(1);
@@ -159,7 +172,9 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         proxy2.getAudiences().clear();
         proxy2.getAudiences().add("foo");
         result = fn.apply(prc);
-        Assert.assertTrue(result.getSecond().isEmpty());
+        final Set<String> second = result.getSecond();
+        assert second!=null;
+        Assert.assertTrue(second.isEmpty());
     }
 
     @Test
@@ -187,7 +202,9 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         
         result = fn.apply(prc);
         Assert.assertEquals(result.getFirst(), Integer.valueOf(4));
-        Assert.assertTrue(result.getSecond().isEmpty());
+        final Set<String> second = result.getSecond();
+        assert second!=null;
+        Assert.assertTrue(second.isEmpty());
         
         config.setProxyCount(1);
         proxy1.setProxyCount(1);
@@ -228,7 +245,10 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         proxy1.getAudiences().clear();
         proxy1.getAudiences().add("bar");
         result = fn.apply(prc);
-        Assert.assertTrue(result.getSecond().isEmpty());
+        final Set<String> second = result.getSecond();
+        assert second!=null;
+
+        Assert.assertTrue(second.isEmpty());
         Assert.assertEquals(result.getFirst(), Integer.valueOf(0));
     }
 

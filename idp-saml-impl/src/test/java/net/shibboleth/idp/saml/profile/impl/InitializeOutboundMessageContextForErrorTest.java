@@ -82,51 +82,65 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(prc.getOutboundMessageContext());
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class); 
-        Assert.assertNotNull(bindingCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class); 
+        assert bindingCtx!=null;
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML1_SOAP11_BINDING_URI);
-        Assert.assertNull(prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class));
+        Assert.assertNull(omc.getSubcontext(SAMLPeerEntityContext.class));
     }
 
     @Test public void testNoPeerEntityContext() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(prc.getOutboundMessageContext());
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class); 
-        Assert.assertNotNull(bindingCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class); 
+        assert bindingCtx!=null;
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML1_SOAP11_BINDING_URI);
-        Assert.assertNull(prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class));
+        Assert.assertNull(omc.getSubcontext(SAMLPeerEntityContext.class));
     }
 
     @Test public void testPeerEntityContextNoIssuer() {
-        SAMLPeerEntityContext ctx = prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
-        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(ctx);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        SAMLPeerEntityContext ctx = imc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.setRelyingPartyIdContextTree(ctx);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(prc.getOutboundMessageContext());
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class); 
-        Assert.assertNotNull(bindingCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class); 
+        assert bindingCtx!=null;
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML1_SOAP11_BINDING_URI);
-        ctx = prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class);
-        Assert.assertNotNull(ctx);
+        ctx = omc.getSubcontext(SAMLPeerEntityContext.class);
+        assert ctx!=null;
         Assert.assertNull(ctx.getEntityId());
     }
 
     @Test public void testPeerEntityContextIssuer() {
-        SAMLPeerEntityContext ctx = prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
-        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(ctx);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        SAMLPeerEntityContext ctx = imc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.setRelyingPartyIdContextTree(ctx);
         attributeQuery.getAttributeQuery().setResource("issuer");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(prc.getOutboundMessageContext());
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class); 
-        Assert.assertNotNull(bindingCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class); 
+        assert bindingCtx!=null;
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML1_SOAP11_BINDING_URI);
-        ctx = prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class);
-        Assert.assertNotNull(ctx);
+        ctx = omc.getSubcontext(SAMLPeerEntityContext.class);
+        assert ctx!=null;
         Assert.assertEquals(ctx.getEntityId(), "issuer");
     }
 

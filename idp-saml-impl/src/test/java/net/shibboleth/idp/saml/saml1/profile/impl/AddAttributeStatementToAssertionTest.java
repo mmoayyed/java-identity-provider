@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.impl.XSStringImpl;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Assertion;
@@ -57,6 +58,7 @@ import net.shibboleth.idp.saml.attribute.transcoding.AbstractSAML1AttributeTrans
 import net.shibboleth.idp.saml.attribute.transcoding.SAML1AttributeTranscoder;
 import net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockApplicationContext;
 import net.shibboleth.shared.testing.MockReloadableService;
@@ -167,7 +169,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         prc.setOutboundMessageContext(null);
 
         final AttributeContext attribCtx = buildAttributeContext();
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.addSubcontext(attribCtx);
 
         action.initialize();
         final Event result = action.execute(rc);
@@ -192,7 +196,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      */
     @Test public void testNoAttributes() throws Exception {
         final AttributeContext attribCtx = new AttributeContext();
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.addSubcontext(attribCtx);
 
         action.initialize();
         Event result = action.execute(rc);
@@ -221,7 +227,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         rule.put(SAML1AttributeTranscoder.PROP_NAME, MY_NAME_1);
         rule.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
         
-        localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
+        localregistry.setTranscoderRegistry(CollectionSupport.singletonList(new TranscodingRule(rule)));
         localregistry.setApplicationContext(new MockApplicationContext());
         localregistry.initialize();
         
@@ -232,7 +238,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.addSubcontext(attribCtx);
 
         action.setIgnoringUnencodableAttributes(true);
         action.initialize();
@@ -262,7 +270,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         rule.put(SAML1AttributeTranscoder.PROP_NAME, MY_NAME_1);
         rule.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
         
-        localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
+        localregistry.setTranscoderRegistry(CollectionSupport.singletonList(new TranscodingRule(rule)));
         localregistry.setApplicationContext(new MockApplicationContext());
         localregistry.initialize();
         
@@ -273,7 +281,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.addSubcontext(attribCtx);
 
         action.setIgnoringUnencodableAttributes(false);
         action.initialize();
@@ -288,19 +298,25 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      * @throws Exception if something goes wrong
      */
     @Test public void testAddedAttributeStatement() throws Exception {
-
-        ((Response) prc.getOutboundMessageContext().getMessage()).getAssertions().add(
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        Response response = (Response) omc.getMessage();
+        assert response != null;
+        response.getAssertions().add(
                 SAML1ActionTestingSupport.buildAssertion());
 
         final AttributeContext attribCtx = buildAttributeContext();
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.addSubcontext(attribCtx);
 
         action.setStatementInOwnAssertion(true);
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
+        response = (Response) omc.getMessage();
+        assert response != null;
 
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
         Assert.assertEquals(response.getAssertions().size(), 2);
 
         for (final Assertion assertion : response.getAssertions()) {
@@ -320,17 +336,24 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      * @throws Exception if something goes wrong
      */
     @Test public void testAssertionInResponse() throws Exception {
-        ((Response) prc.getOutboundMessageContext().getMessage()).getAssertions().add(
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        Response response = (Response) omc.getMessage();
+        assert response != null;
+        response.getAssertions().add(
                 SAML1ActionTestingSupport.buildAssertion());
 
         final AttributeContext attribCtx = buildAttributeContext();
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.addSubcontext(attribCtx);
 
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
 
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        response = (Response) omc.getMessage();
+        assert response != null;
         Assert.assertEquals(response.getAssertions().size(), 1);
 
         Assertion assertion = response.getAssertions().get(0);
@@ -350,13 +373,19 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      */
     @Test public void testNoAssertionInResponse() throws Exception {
         final AttributeContext attribCtx = buildAttributeContext();
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.addSubcontext(attribCtx);
 
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
-
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc != null;
+        
+        final Response response = (Response) omc.getMessage();
+        assert response!=null;
         Assert.assertEquals(response.getAssertions().size(), 1);
 
         Assertion assertion = response.getAssertions().get(0);
@@ -400,17 +429,20 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         boolean one = false, altone = false, two = false;
         
         for (final Attribute samlAttr : attributeStatement.getAttributes()) {
-            if (samlAttr.getAttributeName().equals(MY_NAME_1)) {
+            assert samlAttr!=null;
+            final String attrName = samlAttr.getAttributeName();
+            assert attrName!=null;
+            if (attrName.equals(MY_NAME_1)) {
                 Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
                 final XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_1);
                 one = true;
-            } else if (samlAttr.getAttributeName().equals(MY_NAME_2)) {
+            } else if (attrName.equals(MY_NAME_2)) {
                 Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
                 final XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_2);
                 altone = true;
-            } else if (samlAttr.getAttributeName().equals(MY_ALTNAME_1)) {
+            } else if (attrName.equals(MY_ALTNAME_1)) {
                 Assert.assertEquals(samlAttr.getAttributeValues().size(), 2);
                 final String val1 = ((XSStringImpl) samlAttr.getAttributeValues().get(0)).getValue();
                 final String val2 = ((XSStringImpl) samlAttr.getAttributeValues().get(1)).getValue();

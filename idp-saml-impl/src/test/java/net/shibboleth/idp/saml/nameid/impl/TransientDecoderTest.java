@@ -28,6 +28,7 @@ import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -140,12 +141,13 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
     
         ProfileRequestContext prc =
                 new RequestContextBuilder().setInboundMessageIssuer(TestSources.SP_ENTITY_ID).buildProfileRequestContext();
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName(TestSources.PRINCIPAL_ID);
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName(TestSources.PRINCIPAL_ID);
         
         final NameID nameid = generator.generate(prc, generator.getFormat());
+        assert nameid!=null;
 
         final NameIDCanonicalizationFlowDescriptor descriptor = new NameIDCanonicalizationFlowDescriptor();
-        descriptor.setFormats(Collections.singleton(generator.getFormat()));
+        descriptor.setFormats(CollectionSupport.singleton(generator.getFormat()));
         descriptor.setId("NameIdFlowDescriptor");
         descriptor.initialize();
         final NameIDCanonicalization canon = new NameIDCanonicalization();
@@ -158,7 +160,7 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         canon.initialize();
         
         prc = new ProfileRequestContext();
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameid));
         scc.setSubject(subject);

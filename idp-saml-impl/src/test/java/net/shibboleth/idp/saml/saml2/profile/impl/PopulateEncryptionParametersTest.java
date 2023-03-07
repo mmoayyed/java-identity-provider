@@ -19,12 +19,17 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -81,7 +86,9 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
         action.setEncryptionParametersResolver(new MockResolver(false));
         action.initialize();
         
-        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(null);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.setProfileConfig(null);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
@@ -91,7 +98,9 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
         action.setEncryptionParametersResolver(new MockResolver(false));
         action.initialize();
         
-        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.setProfileConfig(
                 new net.shibboleth.idp.saml.saml1.profile.config.impl.BrowserSSOProfileConfiguration());
         
         final Event event = action.execute(rc);
@@ -112,9 +121,10 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
-        
-        final EncryptionContext ctx = prc.getSubcontext(RelyingPartyContext.class).getSubcontext(EncryptionContext.class); 
-        Assert.assertNotNull(ctx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        final EncryptionContext ctx = rpCtx.getSubcontext(EncryptionContext.class); 
+        assert ctx!=null;
         Assert.assertNotNull(ctx.getAssertionEncryptionParameters());
         Assert.assertNull(ctx.getIdentifierEncryptionParameters());
         Assert.assertNull(ctx.getAttributeEncryptionParameters());
@@ -124,14 +134,17 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
         action.setEncryptionParametersResolver(new MockResolver(true));
         action.initialize();
         
-        ((BrowserSSOProfileConfiguration) prc.getSubcontext(
-                RelyingPartyContext.class).getProfileConfig()).setEncryptionOptional(true);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;        
+        final BrowserSSOProfileConfiguration rpConf = (BrowserSSOProfileConfiguration) rpCtx.getProfileConfig();
+        assert rpConf!=null;
+        rpConf.setEncryptionOptional(true);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         
-        final EncryptionContext ctx = prc.getSubcontext(RelyingPartyContext.class).getSubcontext(EncryptionContext.class); 
-        Assert.assertNotNull(ctx);
+        final EncryptionContext ctx = rpCtx.getSubcontext(EncryptionContext.class); 
+        assert ctx!=null;
         Assert.assertNull(ctx.getAssertionEncryptionParameters());
         Assert.assertNull(ctx.getIdentifierEncryptionParameters());
         Assert.assertNull(ctx.getAttributeEncryptionParameters());
@@ -147,17 +160,17 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
         
         /** {@inheritDoc} */
         @Override
-        public Iterable<EncryptionParameters> resolve(CriteriaSet criteria) throws ResolverException {
-            return Collections.singletonList(resolveSingle(criteria));
+        public @Nonnull Iterable<EncryptionParameters> resolve(@Nullable CriteriaSet criteria) throws ResolverException {
+            return CollectionSupport.singletonList(resolveSingle(criteria));
         }
 
         /** {@inheritDoc} */
         @Override
-        public EncryptionParameters resolveSingle(CriteriaSet criteria) throws ResolverException {
+        public EncryptionParameters resolveSingle(@Nullable CriteriaSet criteria) throws ResolverException {
             if (throwException) {
                 throw new ResolverException();
             }
-            
+            assert criteria!=null;
             Constraint.isNotNull(criteria.get(EncryptionConfigurationCriterion.class), "Criterion was null");
             return new EncryptionParameters();
         }

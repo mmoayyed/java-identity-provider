@@ -38,11 +38,13 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.testing.SAML2ActionTestingSupport;
+import org.springframework.validation.MessageCodeFormatter;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -112,8 +114,9 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         generator.setPersistentIdStore(new ComputedPairwiseIdStore());
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
-        
-        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyId(null);
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.setRelyingPartyId(null);
         
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
     }
@@ -133,10 +136,12 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
                 Collections.singleton(new IdPAttribute("SOURCE")));
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
     }
@@ -151,15 +156,16 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
-                Collections.singleton(source));
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(Collections.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertEquals(id.getValue(), RESULT);
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
@@ -195,6 +201,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         store.deactivate(pid);
         
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
+        assert id != null;
         Assert.assertNotEquals(id.getValue(), RESULT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
@@ -204,15 +211,17 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         NameID id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertNotNull(id.getValue());
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
@@ -220,7 +229,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         
         String storedvalue = id.getValue();
         id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertEquals(id.getValue(), storedvalue);
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
@@ -231,10 +240,12 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         final NameIDPolicy policy = (NameIDPolicy) XMLObjectSupport.buildXMLObject(NameIDPolicy.DEFAULT_ELEMENT_NAME);
         request.setNameIDPolicy(policy);
         policy.setSPNameQualifier("https://affiliation.org");
-        prc.getInboundMessageContext().setMessage(request);
+        MessageContext imc = prc.getInboundMessageContext();
+        assert imc != null;
+        imc.setMessage(request);
         
         id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertNotNull(id.getValue());
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
@@ -242,40 +253,49 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         
         storedvalue = id.getValue();
         id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertEquals(id.getValue(), storedvalue);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), "https://affiliation.org");
         
-        prc.getInboundMessageContext().setMessage(null);
-        ((BrowserSSOProfileConfiguration) prc.getSubcontext(RelyingPartyContext.class).getProfileConfig()).setSPNameQualifier("https://affiliation.org");
+        imc = prc.getInboundMessageContext();
+        assert imc != null;
+        imc.setMessage(null);
+        final RelyingPartyContext rpc2 = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc2!=null;
+
+        final BrowserSSOProfileConfiguration config =(BrowserSSOProfileConfiguration) rpc2.getProfileConfig();
+        assert config!= null;
+        config.setSPNameQualifier("https://affiliation.org");
         id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertEquals(id.getValue(), storedvalue);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), "https://affiliation.org");
     }
     
     private void testComputedAndStoredIdLogic() throws Exception {
-        generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
+        generator.setAttributeSourceIds(CollectionSupport.singletonList("SOURCE"));
         generator.initialize();
         
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         NameID id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertEquals(id.getValue(), RESULT);
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
         
         id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertEquals(id.getValue(), RESULT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);

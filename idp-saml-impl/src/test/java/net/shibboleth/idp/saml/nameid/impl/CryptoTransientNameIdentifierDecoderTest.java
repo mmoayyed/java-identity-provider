@@ -28,6 +28,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
 import net.shibboleth.shared.spring.resource.ResourceHelper;
@@ -101,21 +102,22 @@ public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTe
     
         ProfileRequestContext prc =
                 new RequestContextBuilder().setInboundMessageIssuer(TestSources.SP_ENTITY_ID).buildProfileRequestContext();
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName(TestSources.PRINCIPAL_ID);
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName(TestSources.PRINCIPAL_ID);
         
         final NameIdentifier nameID = generator.generate(prc, generator.getFormat());
-
+        assert nameID!=null;
         final NameIDCanonicalizationFlowDescriptor desc = new NameIDCanonicalizationFlowDescriptor();
         desc.setId("C14NDesc");
-        desc.setFormats(Collections.singleton(generator.getFormat()));
+        desc.setFormats(CollectionSupport.singleton(generator.getFormat()));
         desc.initialize();
         
         final NameIdentifierCanonicalization canon = new NameIdentifierCanonicalization();
+        assert decoder!=null;
         canon.setDecoder(decoder);
         canon.initialize();
 
         prc = new ProfileRequestContext();
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         final Subject subject = new Subject();
 
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameID));

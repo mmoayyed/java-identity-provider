@@ -28,6 +28,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
@@ -69,10 +70,14 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
         final EntityDescriptor entity = edBuilder.buildObject();
         role = roleBuilder.buildObject();
         entity.getRoleDescriptors().add(role);
-        prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).getSubcontext(
-                SAMLMetadataContext.class, true).setEntityDescriptor(entity);
-        prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class).getSubcontext(
-                SAMLMetadataContext.class).setRoleDescriptor(entity.getRoleDescriptors().get(0));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.getOrCreateSubcontext(SAMLPeerEntityContext.class).getOrCreateSubcontext(SAMLMetadataContext.class).setEntityDescriptor(entity);
+        final SAMLPeerEntityContext pec = imc.getSubcontext(SAMLPeerEntityContext.class);
+        assert pec!=null;
+        final SAMLMetadataContext mctx = pec.getSubcontext(SAMLMetadataContext.class);
+        assert mctx!=null;
+        mctx.setRoleDescriptor(entity.getRoleDescriptors().get(0));
         
         strategy = new DefaultNameIdentifierFormatStrategy();
     }

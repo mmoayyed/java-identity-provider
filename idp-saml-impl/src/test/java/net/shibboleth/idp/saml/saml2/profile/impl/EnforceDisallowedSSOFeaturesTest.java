@@ -28,6 +28,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
@@ -71,15 +72,21 @@ public class EnforceDisallowedSSOFeaturesTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testGeneric() {
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
     }
 
     @Test public void testForceAuthn() {
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setForceAuthn(true);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
+        AuthnRequest ar = (AuthnRequest)imc.getMessage();
+        assert ar!=null;
+        ar.setForceAuthn(true);
 
         Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -88,18 +95,24 @@ public class EnforceDisallowedSSOFeaturesTest extends OpenSAMLInitBaseTestCase {
         event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.ACCESS_DENIED);
         
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setForceAuthn(false);
+        ar = (AuthnRequest)imc.getMessage();
+        assert ar!=null;
+        ar.setForceAuthn(false);
         event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
     }
 
     @Test public void testFormat() {
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         
         final NameIDPolicy policy = nidBuilder.buildObject();
         policy.setFormat(NameIDType.EMAIL);
         
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setNameIDPolicy(policy);
+        final AuthnRequest ar = (AuthnRequest)imc.getMessage();
+        assert ar!=null;
+        ar.setNameIDPolicy(policy);
 
         Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -122,12 +135,16 @@ public class EnforceDisallowedSSOFeaturesTest extends OpenSAMLInitBaseTestCase {
 }
 
     @Test public void testSPNameQualifier() {
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         
         final NameIDPolicy policy = nidBuilder.buildObject();
         policy.setSPNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setNameIDPolicy(policy);
+        final AuthnRequest ar = (AuthnRequest)imc.getMessage();
+        assert ar!=null;
+        ar.setNameIDPolicy(policy);
 
         Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

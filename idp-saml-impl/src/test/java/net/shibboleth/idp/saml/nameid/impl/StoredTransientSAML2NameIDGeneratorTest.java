@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.nameid.impl;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -78,8 +79,10 @@ public class StoredTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTes
     @Test public void testNoRelyingParty() throws Exception {        
 
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
-        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyId(null);
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("jdoe");
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.setRelyingPartyId(null);
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("jdoe");
         
         final NameID name = generator.generate(prc, generator.getFormat());
         
@@ -90,21 +93,24 @@ public class StoredTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTes
 
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("jdoe");
+        assert rpc!=null;
+        final RelyingPartyConfiguration rpConfig = rpc.getConfiguration();
+        assert rpConfig!=null;
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("jdoe");
         
         final NameID name = generator.generate(prc, generator.getFormat());
         
-        Assert.assertNotNull(name);
+        assert name!=null;
         Assert.assertEquals(name.getFormat(), generator.getFormat());
-        Assert.assertEquals(name.getNameQualifier(),
-                ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) rpc.getConfiguration()).getIssuer(prc));
+        Assert.assertEquals(name.getNameQualifier(), rpConfig.getIssuer(prc));
         Assert.assertEquals(name.getSPNameQualifier(), rpc.getRelyingPartyId());
 
         String val = name.getValue();
+        assert val!=null;
 
         final StorageRecord<?> record = store.read(TransientIdParameters.CONTEXT, val);
         
-        Assert.assertNotNull(record);
+        assert record!=null && val!=null;
         Assert.assertTrue(val.length() >= transientGenerator.getIdSize());
  
         TransientIdParameters parms = new TransientIdParameters(record.getValue());

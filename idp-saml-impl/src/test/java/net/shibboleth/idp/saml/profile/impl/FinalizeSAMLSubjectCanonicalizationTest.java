@@ -63,13 +63,13 @@ public class FinalizeSAMLSubjectCanonicalizationTest {
     }
     
     @Test public void testMatch() {
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
+        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
         
         final Event event = action.execute(rc);
         
         ActionTestingSupport.assertProceedEvent(event);
         final SubjectContext sc = prc.getSubcontext(SubjectContext.class);
-        Assert.assertNotNull(sc);
+        assert sc!=null;
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
 

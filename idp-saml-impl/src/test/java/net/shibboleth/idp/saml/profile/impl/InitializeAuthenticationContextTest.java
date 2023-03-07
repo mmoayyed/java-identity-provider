@@ -28,6 +28,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -62,13 +63,14 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
     @Test public void testNoInboundMessageContext() throws ComponentInitializationException {
         final RequestContext requestCtx = new RequestContextBuilder().buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
+        assert prc!=null;
         prc.setInboundMessageContext(null);
 
         final Event event = action.execute(requestCtx);
         ActionTestingSupport.assertProceedEvent(event);
 
         final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(authnCtx);
+        assert authnCtx!=null;
         Assert.assertFalse(authnCtx.isForceAuthn());
         Assert.assertFalse(authnCtx.isPassive());
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
@@ -82,12 +84,13 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
     @Test public void testNoInboundMessage() throws ComponentInitializationException {
         final RequestContext requestCtx = new RequestContextBuilder().setInboundMessage(null).buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
+        assert prc!=null;
 
         final Event event = action.execute(requestCtx);
         ActionTestingSupport.assertProceedEvent(event);
 
         final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(authnCtx);
+        assert authnCtx!=null;
         Assert.assertFalse(authnCtx.isForceAuthn());
         Assert.assertFalse(authnCtx.isPassive());
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
@@ -104,12 +107,12 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
                         new IdPInitiatedSSORequest("https://sp.example.org/sp", null, null, null)
                         ).buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
-        
+        assert prc!=null;
         final Event event = action.execute(requestCtx);
         ActionTestingSupport.assertProceedEvent(event);
 
         AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(authnCtx);
+        assert authnCtx!=null;
         Assert.assertFalse(authnCtx.isForceAuthn());
         Assert.assertFalse(authnCtx.isPassive());
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
@@ -128,12 +131,12 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         final RequestContext requestCtx =
                 new RequestContextBuilder().setInboundMessage(authnRequest).buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
-
+        assert prc!=null;
         final Event event = action.execute(requestCtx);
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(authnCtx);
+        assert authnCtx!=null;
         Assert.assertTrue(authnCtx.isForceAuthn());
         Assert.assertTrue(authnCtx.isPassive());
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
@@ -147,9 +150,13 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         final RequestContext requestCtx =
                 new RequestContextBuilder().setInboundMessage(authnRequest).buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
-
+        assert prc!=null;
         final Scoping scoping = SAML2ActionTestingSupport.buildScoping(0, null);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setScoping(scoping);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        final AuthnRequest authnRequest2 = (AuthnRequest) imc.getMessage();
+        assert authnRequest2!=null;
+        authnRequest2.setScoping(scoping);
 
         action = new InitializeAuthenticationContext();
         action.setProxyCountLookupStrategy(FunctionSupport.constant(1));
@@ -160,7 +167,7 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         ActionTestingSupport.assertProceedEvent(event);
         
         final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
-        Assert.assertNotNull(authnCtx);
+        assert authnCtx!=null;
         Assert.assertTrue(authnCtx.isForceAuthn());
         Assert.assertTrue(authnCtx.isPassive());
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(1));
@@ -174,9 +181,14 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         final RequestContext requestCtx =
                 new RequestContextBuilder().setInboundMessage(authnRequest).buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
+        assert prc!=null;
 
         final Scoping scoping = SAML2ActionTestingSupport.buildScoping(0, null);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setScoping(scoping);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        final AuthnRequest authnRequest2 = (AuthnRequest) imc.getMessage();
+        assert authnRequest2!=null;
+        authnRequest2.setScoping(scoping);
         
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         config.setDisallowedFeatures(BrowserSSOProfileConfiguration.FEATURE_SCOPING);
@@ -197,13 +209,19 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         final RequestContext requestCtx =
                 new RequestContextBuilder().setInboundMessage(authnRequest).buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
+        assert prc!=null;
 
         final Scoping scoping = SAML2ActionTestingSupport.buildScoping(0, null);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setScoping(scoping);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        final AuthnRequest authnRequest2 = (AuthnRequest) imc.getMessage();
+        assert authnRequest2!=null;
+        authnRequest2.setScoping(scoping);
         
         final Event event = action.execute(requestCtx);
         ActionTestingSupport.assertProceedEvent(event);
         final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authnCtx!=null;
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(0));
     }
 
@@ -215,13 +233,19 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         final RequestContext requestCtx =
                 new RequestContextBuilder().setInboundMessage(authnRequest).buildRequestContext();
         final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
-
+        assert prc!=null;
+        
         final Scoping scoping = SAML2ActionTestingSupport.buildScoping(0, CollectionSupport.setOf("foo", "bar"));
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setScoping(scoping);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        final AuthnRequest authnRequest2 = (AuthnRequest) imc.getMessage();
+        assert authnRequest2!=null;
+        authnRequest2.setScoping(scoping);
         
         final Event event = action.execute(requestCtx);
         ActionTestingSupport.assertProceedEvent(event);
         final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
+        assert authnCtx!=null;
         Assert.assertEquals(authnCtx.getProxyCount(), Integer.valueOf(0));
         Assert.assertEquals(authnCtx.getProxiableAuthorities(), CollectionSupport.setOf("foo", "bar"));
     }

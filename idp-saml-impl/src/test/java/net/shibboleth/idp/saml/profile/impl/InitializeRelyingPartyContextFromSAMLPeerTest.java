@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -62,15 +63,17 @@ public class InitializeRelyingPartyContextFromSAMLPeerTest {
 
     @Test
     public void testPeerContext() {
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
         final SAMLPeerEntityContext peer =
-                prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
+                imc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
         peer.setEntityId("foo");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
         final RelyingPartyContext rp = prc.getSubcontext(RelyingPartyContext.class);
-        Assert.assertNotNull(rp);
+        assert rp!=null;
         Assert.assertSame(rp.getRelyingPartyIdContextTree(), peer);
         Assert.assertEquals(rp.getRelyingPartyId(), "foo");
     }

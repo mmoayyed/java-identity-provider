@@ -21,12 +21,15 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
+import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
+import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import java.time.Instant;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -54,7 +57,7 @@ public class PrepareInboundMessageContextTest extends OpenSAMLInitBaseTestCase {
                
         final SAML2SPSession session = new SAML2SPSession("https://sp.example.org", Instant.now(),
                 Instant.now().plusSeconds(1800), SAML2ActionTestingSupport.buildNameID("jdoe"), "foo", null, true);
-        prc.getSubcontext(LogoutPropagationContext.class, true).setSession(session);
+        prc.getOrCreateSubcontext(LogoutPropagationContext.class).setSession(session);
         
         action = new PrepareInboundMessageContext();
         action.initialize();
@@ -69,7 +72,10 @@ public class PrepareInboundMessageContextTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testNoSession() {
-        prc.getSubcontext(LogoutPropagationContext.class).setSession(null);
+        final LogoutPropagationContext lpc = prc.getSubcontext(LogoutPropagationContext.class);
+        assert lpc!=null;
+        
+        lpc.setSession(null);
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
         Assert.assertNull(prc.getInboundMessageContext());
@@ -79,10 +85,15 @@ public class PrepareInboundMessageContextTest extends OpenSAMLInitBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(prc.getInboundMessageContext());
-        final SAMLPeerEntityContext ctx = prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class);
-        Assert.assertNotNull(ctx);
-        Assert.assertEquals(ctx.getEntityId(), prc.getSubcontext(LogoutPropagationContext.class).getSession().getId());
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        final SAMLPeerEntityContext ctx = imc.getSubcontext(SAMLPeerEntityContext.class);
+        assert ctx!=null;
+        final LogoutPropagationContext lpc = prc.getSubcontext(LogoutPropagationContext.class);
+        assert lpc!=null;
+        final SPSession session = lpc.getSession();
+        assert session!=null;
+        Assert.assertEquals(ctx.getEntityId(), session.getId());
     }
 
 }

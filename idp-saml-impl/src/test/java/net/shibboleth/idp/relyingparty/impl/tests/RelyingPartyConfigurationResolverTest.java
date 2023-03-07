@@ -23,6 +23,7 @@ import java.util.List;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.schema.XSString;
@@ -123,6 +124,7 @@ public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase
         resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("resolver");
         resolver.setUnverifiedConfiguration(anonRP);
+        assert defaultRP!=null;
         resolver.setDefaultConfiguration(defaultRP);
     }
     
@@ -190,6 +192,7 @@ public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase
         Iterable<RelyingPartyConfiguration> results = null;
         RelyingPartyConfiguration result = null;
         
+        assert oneByGroup!=null & twoByGroup!=null;
         final List<RelyingPartyConfiguration> rpConfigs = CollectionSupport.listOf(oneByGroup, twoByGroup);
 
         resolver.setRelyingPartyConfigurations(rpConfigs);
@@ -232,6 +235,7 @@ public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase
         Iterable<RelyingPartyConfiguration> results = null;
         RelyingPartyConfiguration result = null;
         
+        assert oneByTag!=null & twoByTag!=null;
         final List<RelyingPartyConfiguration> rpConfigs = CollectionSupport.listOf(oneByTag, twoByTag);
 
         resolver.setRelyingPartyConfigurations(rpConfigs);
@@ -296,8 +300,9 @@ public class RelyingPartyConfigurationResolverTest extends XMLObjectBaseTestCase
             attr = attrs.get(0);
         }
         
-        XSString val = (XSString) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME)
-                .buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+        XMLObjectBuilder<?> builder = XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+        assert builder!=null;
+        XSString val = (XSString) builder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
         val.setValue(value);
         attr.getAttributeValues().add(val);
         

@@ -47,6 +47,12 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
     
     protected StorageBackedSessionManager sessionManager;
     
+    @Nonnull private MockHttpServletResponse getMockHttpServletResponse() {
+        final MockHttpServletResponse result = (MockHttpServletResponse) HttpServletRequestResponseContext.getResponse();
+        assert result  != null;
+        return result;
+    }
+    
     @BeforeClass public void setUp() throws ComponentInitializationException {
         
         storageService = new MemoryStorageService();
@@ -98,7 +104,7 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
     protected Cookie createSession(@Nonnull @NotEmpty final String principalName) throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         sessionManager.createSession(principalName);
-        Cookie cookie = ((MockHttpServletResponse) HttpServletRequestResponseContext.getResponse()).getCookies()[0];
+        Cookie cookie = getMockHttpServletResponse().getCookies()[0];
         HttpServletRequestResponseContext.clearCurrent();
         return cookie;
     }

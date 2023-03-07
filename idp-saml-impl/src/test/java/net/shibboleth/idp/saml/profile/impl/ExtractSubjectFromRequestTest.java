@@ -29,7 +29,10 @@ import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
+import javax.security.auth.Subject;
+
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.profile.logic.DefaultNameIDPolicyPredicate;
 import org.opensaml.saml.saml1.core.Request;
@@ -79,7 +82,9 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
    
     @Test
     public void testNoMessage() {
-        prc.getInboundMessageContext().setMessage(null);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(null);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, ExtractSubjectFromRequest.NO_SUBJECT);
@@ -87,7 +92,9 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
 
     @Test
     public void testNoSubject() {
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, ExtractSubjectFromRequest.NO_SUBJECT);
@@ -97,7 +104,9 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
     public void testSAML2Subject() {
         final AuthnRequest request = SAML2ActionTestingSupport.buildAuthnRequest();
         request.setSubject(SAML2ActionTestingSupport.buildSubject("foo"));
-        prc.getInboundMessageContext().setMessage(request);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(request);
         
         request.getSubject().getNameID().setFormat(NameID.TRANSIENT);
         request.getSubject().getNameID().setNameQualifier("foo");
@@ -114,10 +123,12 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
         ActionTestingSupport.assertProceedEvent(event);
         
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
-        Assert.assertNotNull(scc);
-        Assert.assertEquals(scc.getSubject().getPrincipals(NameIDPrincipal.class).size(), 1);
+        assert scc!=null;
+        final Subject subject = scc.getSubject();
+        assert subject!=null;
+        Assert.assertEquals(subject.getPrincipals(NameIDPrincipal.class).size(), 1);
         
-        final NameIDPrincipal princ = scc.getSubject().getPrincipals(NameIDPrincipal.class).iterator().next();
+        final NameIDPrincipal princ = subject.getPrincipals(NameIDPrincipal.class).iterator().next();
         Assert.assertEquals(princ.getNameID().getValue(), "foo");
     }
     
@@ -125,7 +136,9 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
     public void testSAML1Subject() {
         final Request request = SAML1ActionTestingSupport.buildAttributeQueryRequest(
                 SAML1ActionTestingSupport.buildSubject("foo"));
-        prc.getInboundMessageContext().setMessage(request);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(request);
         
         request.getAttributeQuery().getSubject().getNameIdentifier().setFormat(NameID.TRANSIENT);
         request.getAttributeQuery().getSubject().getNameIdentifier().setNameQualifier("foo");
@@ -137,11 +150,13 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
         ActionTestingSupport.assertProceedEvent(event);
         
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
-        Assert.assertNotNull(scc);
-        Assert.assertEquals(scc.getSubject().getPrincipals(NameIdentifierPrincipal.class).size(), 1);
+        assert scc!=null;
+        final Subject subject = scc.getSubject();
+        assert subject!=null;
+        Assert.assertEquals(subject.getPrincipals(NameIdentifierPrincipal.class).size(), 1);
         
         final NameIdentifierPrincipal princ =
-                scc.getSubject().getPrincipals(NameIdentifierPrincipal.class).iterator().next();
+                subject.getPrincipals(NameIdentifierPrincipal.class).iterator().next();
         Assert.assertEquals(princ.getNameIdentifier().getValue(), "foo");
     }
 

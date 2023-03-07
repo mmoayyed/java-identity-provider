@@ -25,6 +25,7 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml1.core.Request;
@@ -72,27 +73,39 @@ public class InitializeOutboundMessageContextTest extends OpenSAMLInitBaseTestCa
     }
 
     @Test public void testPeerEntityContextNoIssuer() {
-        SAMLPeerEntityContext ctx = prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
-        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(ctx);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        SAMLPeerEntityContext ctx = imc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.setRelyingPartyIdContextTree(ctx);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(prc.getOutboundMessageContext());
-        ctx = prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class);
-        Assert.assertNotNull(ctx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+
+        ctx = omc.getSubcontext(SAMLPeerEntityContext.class);
+        assert ctx!=null;
         Assert.assertNull(ctx.getEntityId());
     }
 
     @Test public void testPeerEntityContextIssuer() {
-        SAMLPeerEntityContext ctx = prc.getInboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true);
-        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(ctx);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        SAMLPeerEntityContext ctx = imc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.setRelyingPartyIdContextTree(ctx);
         attributeQuery.getAttributeQuery().setResource("issuer");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNotNull(prc.getOutboundMessageContext());
-        ctx = prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class);
-        Assert.assertNotNull(ctx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+
+        ctx = omc.getSubcontext(SAMLPeerEntityContext.class);
+        assert ctx!=null;
         Assert.assertEquals(ctx.getEntityId(), "issuer");
     }
     

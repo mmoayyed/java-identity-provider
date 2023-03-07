@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -92,7 +94,9 @@ public class FilterAttributesTest {
     @Test public void testNoAttributes() throws Exception {
         prc.getSubcontext(SubjectContext.class, true);
 
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!= null;
+        rpCtx.getOrCreateSubcontext(AttributeContext.class);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.emptyList());
         engine.initialize();
@@ -142,7 +146,9 @@ public class FilterAttributesTest {
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!= null;
+        rpCtx.addSubcontext(attributeCtx);
 
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
         action.initialize();
@@ -151,12 +157,11 @@ public class FilterAttributesTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         // The attribute filter context should be removed by the filter attributes action.
-        Assert.assertNull(prc.getSubcontext(RelyingPartyContext.class).getSubcontext(
+        Assert.assertNull(rpCtx.getSubcontext(
                 AttributeFilterContext.class));
 
-        final AttributeContext resultAttributeCtx =
-                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
-        Assert.assertNotNull(resultAttributeCtx);
+        final AttributeContext resultAttributeCtx = rpCtx.getSubcontext(AttributeContext.class);
+        assert resultAttributeCtx!=null;
 
         final Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
@@ -205,10 +210,12 @@ public class FilterAttributesTest {
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!= null;
+        rpCtx.addSubcontext(attributeCtx);
 
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
+        rpCtx.addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
         action.initialize();
@@ -217,12 +224,10 @@ public class FilterAttributesTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         // The attribute filter context should be removed by the filter attributes action.
-        Assert.assertNull(prc.getSubcontext(RelyingPartyContext.class).getSubcontext(
-                AttributeFilterContext.class));
+        Assert.assertNull(rpCtx.getSubcontext(AttributeFilterContext.class));
 
-        final AttributeContext resultAttributeCtx =
-                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
-        Assert.assertNotNull(resultAttributeCtx);
+        final AttributeContext resultAttributeCtx = rpCtx.getSubcontext(AttributeContext.class);
+        assert resultAttributeCtx!=null;
 
         final Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
@@ -268,10 +273,12 @@ public class FilterAttributesTest {
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!= null;
+        rpCtx.addSubcontext(attributeCtx);
 
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
+        rpCtx.addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
         action.initialize();
@@ -295,10 +302,12 @@ public class FilterAttributesTest {
         final AttributeContext attributeCtx = new AttributeContext();
         final List<IdPAttribute> attributes = Collections.singletonList(attribute1);
         attributeCtx.setIdPAttributes(attributes);
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!= null;
+        rpCtx.addSubcontext(attributeCtx);
 
         final AttributeFilterContext attributeFilterCtx = new AttributeFilterContext();
-        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
+        rpCtx.addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(null));
         action.setMaskFailures(false);
@@ -323,7 +332,7 @@ public class FilterAttributesTest {
 
         /** Always throws exception. */
         @Override
-        public IdPAttribute clone() throws CloneNotSupportedException {
+        public @Nonnull IdPAttribute clone() throws CloneNotSupportedException {
             throw new CloneNotSupportedException();
         }
     }

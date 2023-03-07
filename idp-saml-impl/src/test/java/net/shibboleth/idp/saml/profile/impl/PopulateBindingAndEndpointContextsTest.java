@@ -42,6 +42,7 @@ import net.shibboleth.shared.xml.XMLParserException;
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.io.Unmarshaller;
 import org.opensaml.core.xml.io.UnmarshallingException;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.binding.BindingDescriptor;
@@ -54,6 +55,7 @@ import org.opensaml.saml.common.profile.SAMLEventIds;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
+import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.testing.SAML2ActionTestingSupport;
 import org.springframework.webflow.execution.Event;
@@ -93,12 +95,17 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         rc = new RequestContextBuilder().setInboundMessage(request).setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singletonList(profileConfig)).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
-        prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class, true).setRelayState(RELAY_STATE);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc !=null;
+        imc.getOrCreateSubcontext(SAMLBindingContext.class).setRelayState(RELAY_STATE);
         
         // Set these up so the context will be seen as anonymous or not based on metadata in the outbound context.
-        prc.getSubcontext(RelyingPartyContext.class).setVerificationLookupStrategy(new SAMLVerificationLookupStrategy());
-        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(
-                prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true));
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.setVerificationLookupStrategy(new SAMLVerificationLookupStrategy());
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        rpc.setRelyingPartyIdContextTree(omc.getOrCreateSubcontext(SAMLPeerEntityContext.class));
         
         action = new PopulateBindingAndEndpointContexts();
         action.setEndpointResolver(new DefaultEndpointResolver<>());
@@ -152,19 +159,23 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     public void testNoMetadata() {
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
         
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
-        Assert.assertNotNull(bindingCtx);
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class);
+        assert bindingCtx!=null;
         Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
         
-        final SAMLEndpointContext epCtx = prc.getOutboundMessageContext().getSubcontext(
-                SAMLPeerEntityContext.class, false).getSubcontext(SAMLEndpointContext.class, false);
-        Assert.assertNotNull(epCtx);
-        Assert.assertNotNull(epCtx.getEndpoint());
-        Assert.assertEquals(epCtx.getEndpoint().getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
-        Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST);
+        final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
+        assert pec!=null;
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        assert epCtx!=null;
+        final Endpoint ep =epCtx.getEndpoint();
+        assert ep!=null;
+        Assert.assertEquals(ep.getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
+        Assert.assertEquals(ep.getLocation(), LOCATION_POST);
     }
 
     /**
@@ -178,7 +189,9 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
@@ -195,7 +208,9 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
@@ -207,17 +222,27 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         // Request is signed but we don't care.
         profileConfig.setSkipEndpointValidationWhenSigned(false);
-        prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class).setHasBindingSignature(true);
+        MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        SAMLBindingContext sbc = imc.getSubcontext(SAMLBindingContext.class);
+        assert sbc != null;
+        sbc.setHasBindingSignature(true);
         event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
 
         // Request is signed and we care.
         profileConfig.setSkipEndpointValidationWhenSigned(true);
-        prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class).setHasBindingSignature(true);
+        imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        sbc = imc.getSubcontext(SAMLBindingContext.class);
+        assert sbc != null;
+        sbc.setHasBindingSignature(true);
         event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
-        Assert.assertNotNull(bindingCtx);
+        omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class);
+        assert bindingCtx!=null;
         Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
@@ -234,9 +259,15 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceURL(LOCATION);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc != null;
+        final AuthnRequest authnRequest = (AuthnRequest) imc.getMessage();
+        assert authnRequest!=null;
+        authnRequest.setAssertionConsumerServiceURL(LOCATION);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
@@ -253,9 +284,15 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
 
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setProtocolBinding(SAMLConstants.SAML2_SOAP11_BINDING_URI);
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc != null;
+        final AuthnRequest authnRequest = (AuthnRequest) imc.getMessage();
+        assert authnRequest!=null;
+        authnRequest.setProtocolBinding(SAMLConstants.SAML2_SOAP11_BINDING_URI);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
@@ -272,10 +309,16 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceURL(LOCATION_ART);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setProtocolBinding(SAMLConstants.SAML2_ARTIFACT_BINDING_URI);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc != null;
+        final AuthnRequest authnRequest = (AuthnRequest) imc.getMessage();
+        assert authnRequest!=null;
+        authnRequest.setAssertionConsumerServiceURL(LOCATION_ART);
+        authnRequest.setProtocolBinding(SAMLConstants.SAML2_ARTIFACT_BINDING_URI);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
@@ -292,11 +335,17 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
 
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceIndex(10);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceURL(null);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setProtocolBinding(null);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc != null;
+        final AuthnRequest authnRequest = (AuthnRequest) imc.getMessage();
+        assert authnRequest!=null;
+        authnRequest.setAssertionConsumerServiceIndex(10);
+        authnRequest.setAssertionConsumerServiceURL(null);
+        authnRequest.setProtocolBinding(null);
 
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
@@ -309,7 +358,13 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
      */
     @Test
     public void testSynchronous() throws ComponentInitializationException {
-        prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class).setBindingUri(
+        
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        final SAMLBindingContext sbc = imc.getSubcontext(SAMLBindingContext.class);
+        assert sbc != null;
+
+        sbc.setBindingUri(
                 SAMLConstants.SAML2_SOAP11_BINDING_URI);
         
         final BindingDescriptor binding = new BindingDescriptor();
@@ -324,8 +379,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         final Event event = badaction.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
-        Assert.assertNotNull(bindingCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class);
+        assert bindingCtx!=null;
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_SOAP11_BINDING_URI);
         Assert.assertSame(binding, bindingCtx.getBindingDescriptor());
@@ -342,23 +399,28 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
-        Assert.assertNotNull(bindingCtx);
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class);
+        assert bindingCtx!=null;
         Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
         
-        final SAMLEndpointContext epCtx = prc.getOutboundMessageContext().getSubcontext(
-                SAMLPeerEntityContext.class, false).getSubcontext(SAMLEndpointContext.class, false);
-        Assert.assertNotNull(epCtx);
-        Assert.assertNotNull(epCtx.getEndpoint());
-        Assert.assertEquals(epCtx.getEndpoint().getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
-        Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST);
+        final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
+        assert pec!=null;
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        assert epCtx!=null;
+        final Endpoint ep =epCtx.getEndpoint();
+        assert ep!=null;
+
+        Assert.assertEquals(ep.getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
+        Assert.assertEquals(ep.getLocation(), LOCATION_POST);
     }
 
     /**
@@ -372,27 +434,36 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
 
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceIndex(2);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceURL(null);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setProtocolBinding(null);
+        
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc != null;
+        final AuthnRequest authnRequest = (AuthnRequest) imc.getMessage();
+        assert authnRequest!=null;
+        authnRequest.setAssertionConsumerServiceIndex(2);
+        authnRequest.setAssertionConsumerServiceURL(null);
+        authnRequest.setProtocolBinding(null);
 
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
 
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
-        Assert.assertNotNull(bindingCtx);
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class);
+        assert bindingCtx!=null;
         Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
         
-        final SAMLEndpointContext epCtx = prc.getOutboundMessageContext().getSubcontext(
-                SAMLPeerEntityContext.class, false).getSubcontext(SAMLEndpointContext.class, false);
-        Assert.assertNotNull(epCtx);
-        Assert.assertNotNull(epCtx.getEndpoint());
-        Assert.assertEquals(epCtx.getEndpoint().getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
-        Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST);
+        final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
+        assert pec!=null;
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        assert epCtx!=null;
+        final Endpoint ep =epCtx.getEndpoint();
+        assert ep!=null;
+        Assert.assertEquals(ep.getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
+        Assert.assertEquals(ep.getLocation(), LOCATION_POST);
     }
 
     /**
@@ -406,11 +477,17 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
 
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceIndex(3);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceURL(null);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setProtocolBinding(null);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc != null;
+        final AuthnRequest authnRequest = (AuthnRequest) imc.getMessage();
+        assert authnRequest!=null;
+        authnRequest.setAssertionConsumerServiceIndex(3);
+        authnRequest.setAssertionConsumerServiceURL(null);
+        authnRequest.setProtocolBinding(null);
 
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
@@ -427,26 +504,34 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
 
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceURL(null);
-        ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setProtocolBinding(null);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc != null;
+        final AuthnRequest authnRequest = (AuthnRequest) imc.getMessage();
+        assert authnRequest!=null;
+        authnRequest.setAssertionConsumerServiceURL(null);
+        authnRequest.setProtocolBinding(null);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
 
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
-        Assert.assertNotNull(bindingCtx);
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class);
+        assert bindingCtx!=null;
         Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
         
-        final SAMLEndpointContext epCtx = prc.getOutboundMessageContext().getSubcontext(
-                SAMLPeerEntityContext.class, false).getSubcontext(SAMLEndpointContext.class, false);
-        Assert.assertNotNull(epCtx);
-        Assert.assertNotNull(epCtx.getEndpoint());
-        Assert.assertEquals(epCtx.getEndpoint().getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
-        Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST.replace("POST2", "POST"));
+        final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
+        assert pec!=null;
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        assert epCtx!=null;
+        final Endpoint ep =epCtx.getEndpoint();
+        assert ep!=null;
+        Assert.assertEquals(ep.getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
+        Assert.assertEquals(ep.getLocation(), LOCATION_POST.replace("POST2", "POST"));
     }
     
     /**
@@ -460,26 +545,32 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(entity);
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
-        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
+        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         final IdPInitiatedSSORequest saml1Request = new IdPInitiatedSSORequest("foo", LOCATION_POST, null, null);
-        prc.getInboundMessageContext().setMessage(saml1Request);
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc != null;
+        imc.setMessage(saml1Request);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         
-        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
-        Assert.assertNotNull(bindingCtx);
+        final SAMLBindingContext bindingCtx = omc.getSubcontext(SAMLBindingContext.class);
+        assert bindingCtx!=null;
         Assert.assertNotNull(bindingCtx.getBindingDescriptor());
         Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
         Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
         
-        final SAMLEndpointContext epCtx = prc.getOutboundMessageContext().getSubcontext(
-                SAMLPeerEntityContext.class, false).getSubcontext(SAMLEndpointContext.class, false);
-        Assert.assertNotNull(epCtx);
-        Assert.assertNotNull(epCtx.getEndpoint());
-        Assert.assertEquals(epCtx.getEndpoint().getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
-        Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST);
+        final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
+        assert pec!=null;
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        assert epCtx!=null;
+        final Endpoint ep =epCtx.getEndpoint();
+        assert ep!=null;
+        Assert.assertEquals(ep.getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
+        Assert.assertEquals(ep.getLocation(), LOCATION_POST);
     }
     
     @Nonnull private EntityDescriptor loadMetadata(@Nonnull @NotEmpty final String path) throws UnmarshallingException {
@@ -488,6 +579,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
             final URL url = getClass().getResource(path);
             Document doc = parserPool.parse(new FileInputStream(new File(url.toURI())));
             final Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(doc.getDocumentElement());
+            assert unmarshaller!=null;
             return (EntityDescriptor) unmarshaller.unmarshall(doc.getDocumentElement());
         } catch (FileNotFoundException | XMLParserException | URISyntaxException e) {
             throw new UnmarshallingException(e);

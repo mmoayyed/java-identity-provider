@@ -81,24 +81,24 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
         decoder.decode();
         
         MessageContext messageContext = decoder.getMessageContext();
-        Assert.assertNotNull(messageContext);
+        assert messageContext!=null;
         IdPInitiatedSSORequest ssoRequest = (IdPInitiatedSSORequest) messageContext.getMessage();
-        Assert.assertNotNull(ssoRequest);
+        assert ssoRequest!=null;
         
         Assert.assertEquals(ssoRequest.getEntityId(), entityId, "Incorrect decoded entityId value");
         Assert.assertEquals(ssoRequest.getAssertionConsumerServiceURL(), acsUrl, "Incorrect decoded ACS URL value");
         Assert.assertEquals(ssoRequest.getRelayState(), relayState, "Incorrect decoded relay state value");
         Assert.assertEquals(ssoRequest.getTime(), time.truncatedTo(ChronoUnit.SECONDS), "Incorrect decoded time value");
         
-        Assert.assertEquals(messageContext.getSubcontext(SAMLPeerEntityContext.class, true).getEntityId(), entityId,
+        Assert.assertEquals(messageContext.getOrCreateSubcontext(SAMLPeerEntityContext.class).getEntityId(), entityId,
                 "Incorrect decoded entityId value in peer context");
         
-        SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
+        SAMLBindingContext bindingContext = messageContext.getOrCreateSubcontext(SAMLBindingContext.class);
         Assert.assertEquals(bindingContext.getRelayState(), relayState, "Incorrect decoded relay state value in binding context");
         Assert.assertEquals(bindingContext.getBindingUri(), "urn:mace:shibboleth:1.0:profiles:AuthnRequest",
                 "Incorrect binding URI in binding context");
         
-        SAMLMessageInfoContext msgInfoContext = messageContext.getSubcontext(SAMLMessageInfoContext.class, true);
+        SAMLMessageInfoContext msgInfoContext = messageContext.getOrCreateSubcontext(SAMLMessageInfoContext.class);
         Assert.assertEquals(msgInfoContext.getMessageIssueInstant(), time.truncatedTo(ChronoUnit.SECONDS),
                 "Incorrect decoded issue instant value in message info context");
         Assert.assertEquals(msgInfoContext.getMessageId(), messageID,

@@ -97,9 +97,11 @@ public class ResolveAttributesTest {
         // The attribute resolution context should be removed by the resolve attributes action.
         Assert.assertNull(prc.getSubcontext(AttributeResolutionContext.class));
 
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!= null;
         final AttributeContext resolvedAttributeCtx =
-                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
-        Assert.assertNotNull(resolvedAttributeCtx);
+                rpCtx.getSubcontext(AttributeContext.class);
+        assert resolvedAttributeCtx!=null;
 
         final Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getIdPAttributes();
         Assert.assertFalse(resolvedAttributes.isEmpty());
@@ -140,9 +142,10 @@ public class ResolveAttributesTest {
         // The attribute resolution context should be removed by the resolve attributes action.
         Assert.assertNull(prc.getSubcontext(AttributeResolutionContext.class));
 
-        AttributeContext resolvedAttributeCtx =
-                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
-        Assert.assertNotNull(resolvedAttributeCtx);
+        RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!= null;
+        AttributeContext resolvedAttributeCtx = rpCtx.getSubcontext(AttributeContext.class);
+        assert resolvedAttributeCtx != null;
 
         final Map<String, IdPAttribute> resolvedAttributes = resolvedAttributeCtx.getIdPAttributes();
         Assert.assertFalse(resolvedAttributes.isEmpty());
@@ -165,9 +168,10 @@ public class ResolveAttributesTest {
         // The attribute resolution context should be removed by the resolve attributes action.
         Assert.assertNull(prc.getSubcontext(AttributeResolutionContext.class));
 
-        resolvedAttributeCtx =
-                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
-        Assert.assertNotNull(resolvedAttributeCtx);
+        rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!= null;
+        resolvedAttributeCtx = rpCtx.getSubcontext(AttributeContext.class);
+        assert resolvedAttributeCtx != null;
         Assert.assertTrue(resolvedAttributeCtx.getIdPAttributes().isEmpty());
     }
 
@@ -195,8 +199,9 @@ public class ResolveAttributesTest {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        final AttributeContext resolvedAttributeCtx =
-                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!= null;
+        final AttributeContext resolvedAttributeCtx = rpCtx.getSubcontext(AttributeContext.class);
         Assert.assertNull(resolvedAttributeCtx);
     }
     

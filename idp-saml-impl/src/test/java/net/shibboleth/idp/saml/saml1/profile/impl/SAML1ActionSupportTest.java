@@ -19,7 +19,9 @@ package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.testing.ActionTestSupportAction;
+import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import java.util.function.Function;
@@ -31,6 +33,7 @@ import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Conditions;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.profile.SAML1ActionSupport;
+import org.opensaml.security.config.SecurityConfiguration;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -63,17 +66,27 @@ public class SAML1ActionSupportTest extends OpenSAMLInitBaseTestCase {
                         ProfileRequestContext.BINDING_KEY);
 
         ActionTestSupportAction action = new ActionTestSupportAction();
-        RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-
+        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        assert relyingPartyCtx!=null;
         Assert.assertEquals(response.getAssertions().size(), 0, "Expected zarro assertions before insert");
+        
+        final ProfileConfiguration pc = relyingPartyCtx.getProfileConfig();
+        assert pc!=null;
+        final SecurityConfiguration sc = pc.getSecurityConfiguration(profileRequestContext);
+        assert sc!=null;
+        final RelyingPartyConfiguration rpConfig = relyingPartyCtx.getConfiguration();
+        assert rpConfig != null;
+        final String issuer =rpConfig.getIssuer(profileRequestContext);
+        assert issuer != null;
+        
         final Assertion assertion = SAML1ActionSupport.addAssertionToResponse(action, response,
-                relyingPartyCtx.getProfileConfig().getSecurityConfiguration(profileRequestContext).getIdGenerator(),
-                ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) relyingPartyCtx.getConfiguration()).getIssuer(profileRequestContext));
+                sc.getIdGenerator(),
+                issuer);
         Assert.assertEquals(response.getAssertions().size(), 1, "Expected but one assertion after insert");
         Assert.assertTrue(response.getAssertions().contains(assertion), "Inserted assertion should be there");
         final Assertion second = SAML1ActionSupport.addAssertionToResponse(action, response,
-                relyingPartyCtx.getProfileConfig().getSecurityConfiguration(profileRequestContext).getIdGenerator(),
-                ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) relyingPartyCtx.getConfiguration()).getIssuer(profileRequestContext));
+                sc.getIdGenerator(),
+                issuer);
         Assert.assertEquals(response.getAssertions().size(), 2, "Expected two assertions after two inserts");
         Assert.assertTrue(response.getAssertions().contains(assertion), "Inserted assertion should be there");
         Assert.assertNotSame(second, assertion, "Two separate assertions should have been added");

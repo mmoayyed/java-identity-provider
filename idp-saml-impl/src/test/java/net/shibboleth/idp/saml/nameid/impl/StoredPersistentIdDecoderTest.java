@@ -90,7 +90,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     @Test
     public void testMissingID() throws Exception {
 
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         scc.setRequesterId(TestSources.SP_ENTITY_ID);
         scc.setResponderId(TestSources.IDP_ENTITY_ID);
         
@@ -101,7 +101,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     @Test(expectedExceptions={NameDecoderException.class})
     public void testNoQualifiers() throws Exception {
 
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         
         final Subject subject = SAML2ActionTestingSupport.buildSubject("foo");
         decoder.decode(scc, subject.getNameID());
@@ -111,22 +111,24 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     public void testBadQualifier() throws Exception {
         generator.initialize();
         
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertNotNull(id.getValue());
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
 
         id.setNameQualifier(null);
         id.setSPNameQualifier(null);
         
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         scc.setRequesterId("Bad");
         scc.setResponderId(TestSources.IDP_ENTITY_ID);
         
@@ -137,21 +139,23 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     public void testStoredIdDecode() throws Exception {
         generator.initialize();
         
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertNotNull(id.getValue());
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
 
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         scc.setRequesterId(TestSources.SP_ENTITY_ID);
         scc.setResponderId(TestSources.IDP_ENTITY_ID);
         
@@ -164,21 +168,23 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         generator.setSPNameQualifier("http://affiliation.org");
         generator.initialize();
         
-        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
+        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpc!=null;
+        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotNull(id);
+        assert id!=null;
         Assert.assertNotNull(id.getValue());
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), "http://affiliation.org");
 
-        final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
+        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
         scc.setRequesterId(TestSources.SP_ENTITY_ID);
         scc.setResponderId(TestSources.IDP_ENTITY_ID);
         

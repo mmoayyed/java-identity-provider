@@ -17,8 +17,9 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -39,6 +40,8 @@ import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** Unit test for {@link AttributeSourcedSAML2NameIDGenerator}. */
@@ -102,56 +105,71 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
     }
     
     @Test public void testNoSource() throws ComponentInitializationException, SAMLException {
-        generator.setAttributeSourceIds(Collections.singletonList("bar"));
+        generator.setAttributeSourceIds(CollectionSupport.singletonList("bar"));
         generator.initialize();
-        Assert.assertNull(generator.generate(prc, generator.getFormat()));
+        final String format = generator.getFormat();
+        assert format!=null && prc!=null;
+        Assert.assertNull(generator.generate(prc, format));
     }
 
     @Test public void testWrongType() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final var values = List.of(new IdPAttributeValue() {
-                            public Object getNativeValue() {
+                            public @Nonnull Object getNativeValue() {
                                 return intArray;
                             }
-                            public String getDisplayValue() {
-                                return intArray.toString();
+                            public @Nonnull String getDisplayValue() {
+                                final String result = intArray.toString();
+                                assert result != null;
+                                return result;
                             }
                         }, saml1NameIdFor(OTHERID));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
-        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
-                Collections.singleton(inputAttribute));
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+                CollectionSupport.singleton(inputAttribute));
 
-        generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
+        generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
         generator.initialize();
-        
-        Assert.assertNull(generator.generate(prc, generator.getFormat()));
+        final String format = generator.getFormat();
+        assert format!=null && prc!=null;
+        Assert.assertNull(generator.generate(prc, format));
     }
 
     @Test public void testWrongFormat() throws Exception {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(List.of(saml2NameIdFor(NAME_1)));
-        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
-                Collections.singleton(inputAttribute));
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+                CollectionSupport.singleton(inputAttribute));
 
         generator.setFormat(NameID.EMAIL);
-        generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
+        generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
         generator.initialize();
-        Assert.assertNull(generator.generate(prc, generator.getFormat()));
+        final String format = generator.getFormat();
+        assert format!=null && prc!=null;
+        Assert.assertNull(generator.generate(prc, format));
     }
     
     @Test public void testNameIDValued() throws Exception {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(List.of(saml2NameIdFor(NAME_1)));
-        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
-                Collections.singleton(inputAttribute));
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+                CollectionSupport.singleton(inputAttribute));
 
-        generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
+        generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
         generator.initialize();
-        final NameID outputNameId = generator.generate(prc, generator.getFormat());
+        final String format = generator.getFormat();
+        assert format!=null && prc!=null;
+        final NameID outputNameId = generator.generate(prc, format);
 
-        Assert.assertNotNull(outputNameId);
+        assert outputNameId != null;
         Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), QUALIFIER);
@@ -160,14 +178,18 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
     @Test public void testMultiNameIDValued() throws Exception {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(List.of(saml2NameIdFor(OTHERID), saml1NameIdFor(NAME_1)));
-        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
-                Collections.singleton(inputAttribute));
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+                CollectionSupport.singleton(inputAttribute));
 
-        generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
+        generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
         generator.initialize();
-        final NameID outputNameId = generator.generate(prc, generator.getFormat());
+        final String format = generator.getFormat();
+        assert format!=null && prc!=null;
+        final NameID outputNameId = generator.generate(prc, format);
 
-        Assert.assertNotNull(outputNameId);
+        assert outputNameId != null;
         Assert.assertEquals(outputNameId.getValue(), OTHERID);
         Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), QUALIFIER);
@@ -176,36 +198,45 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
     @Test public void testStringValued() throws Exception {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(List.of(new StringAttributeValue(NAME_1)));
-        prc.getSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
-                Collections.singleton(inputAttribute));
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+                CollectionSupport.singleton(inputAttribute));
 
-        generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
+        generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
         generator.initialize();
-        final NameID outputNameId = generator.generate(prc, generator.getFormat());
+        final String format = generator.getFormat();
+        assert format!=null && prc!=null;
+        final NameID outputNameId = generator.generate(prc, format);
 
-        Assert.assertNotNull(outputNameId);
+        assert outputNameId != null;
         Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
-        Assert.assertEquals(outputNameId.getNameQualifier(),
-                ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration()).getIssuer(prc));
+        final RelyingPartyConfiguration config = rpCtx.getConfiguration();
+        assert config != null;
+        Assert.assertEquals(outputNameId.getNameQualifier(), config.getIssuer(prc));
     }
 
     @Test public void testScopeValued() throws Exception {
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(List.of(new ScopedStringAttributeValue(NAME_1, QUALIFIER)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
-                Collections.singleton(inputAttribute));
+        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
+        assert rpCtx!=null;
+        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+                CollectionSupport.singleton(inputAttribute));
 
-        generator.setAttributeSourceIds(Collections.singletonList(ATTR_NAME));
+        generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
         generator.initialize();
-        final NameID outputNameId = generator.generate(prc, generator.getFormat());
+        final String format = generator.getFormat();
+        assert format!=null && prc!=null;
+        final NameID outputNameId = generator.generate(prc, format);
 
-        Assert.assertNotNull(outputNameId);
+        assert outputNameId != null;
         Assert.assertEquals(outputNameId.getValue(), NAME_1 + '@' + QUALIFIER);
         Assert.assertEquals(outputNameId.getFormat(), NameID.X509_SUBJECT);
-        Assert.assertEquals(outputNameId.getNameQualifier(),
-                ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) prc.getSubcontext(RelyingPartyContext.class).getConfiguration()).getIssuer(prc));
-        Assert.assertEquals(outputNameId.getSPNameQualifier(),
-                prc.getSubcontext(RelyingPartyContext.class).getRelyingPartyId());
+        final RelyingPartyConfiguration config = rpCtx.getConfiguration();
+        assert config != null;
+        Assert.assertEquals(outputNameId.getNameQualifier(), config.getIssuer(prc));
+        Assert.assertEquals(outputNameId.getSPNameQualifier(), rpCtx.getRelyingPartyId());
     }
 }

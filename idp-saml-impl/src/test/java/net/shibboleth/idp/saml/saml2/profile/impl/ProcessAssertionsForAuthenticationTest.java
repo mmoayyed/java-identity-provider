@@ -25,6 +25,7 @@ import java.util.function.Function;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.profile.action.ProfileAction;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -35,6 +36,7 @@ import org.opensaml.saml.common.assertion.ValidationProcessingData;
 import org.opensaml.saml.common.assertion.ValidationResult;
 import org.opensaml.saml.saml2.assertion.SAML2AssertionValidationParameters;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
@@ -50,6 +52,7 @@ import com.google.common.base.Predicates;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /**
@@ -69,6 +72,8 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     private MockHttpServletRequest httpRequest;
     private MockHttpServletResponse httpResponse;
     
+    private Object nullObj;
+    
     @BeforeMethod
     public void beforeMethod() {
         httpRequest = new MockHttpServletRequest();
@@ -85,7 +90,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         
         prc = new RequestContextBuilder().buildProfileRequestContext();
         
-        final AuthenticationContext authnContext = prc.getSubcontext(AuthenticationContext.class, true);
+        final AuthenticationContext authnContext = prc.getOrCreateSubcontext(AuthenticationContext.class);
         samlAuthnContext = new SAMLAuthnContext(new MockProfileAction(), new MockMessageDecoderFunction());
         authnContext.addSubcontext(samlAuthnContext);
         authnContext.addSubcontext(prcInner);
@@ -256,7 +261,9 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @Test
     public void testNoResponse() throws ComponentInitializationException {
-        prcInner.getInboundMessageContext().setMessage(null);
+        final MessageContext imc = prcInner.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(null);
         
         action.initialize();
         
@@ -283,7 +290,9 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
-        prc.getSubcontext(AuthenticationContext.class).removeSubcontext(SAMLAuthnContext.class);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac!=null;
+        ac.removeSubcontext(SAMLAuthnContext.class);
         
         action.initialize();
         
@@ -344,7 +353,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
-        action.setActivationCondition(Predicates.alwaysFalse());
+        action.setActivationCondition(PredicateSupport.alwaysFalse());
         
         action.initialize();
         
@@ -360,7 +369,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
-        action.setAuthnAssertionSelectionStrategy(null);
+        action.setAuthnAssertionSelectionStrategy((Function<List<Assertion>, Assertion>) nullObj);
         
         action.initialize();
     }
@@ -370,7 +379,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
-        action.setAuthnStatementSelectionStrategy(null);
+        action.setAuthnStatementSelectionStrategy((Function<Assertion, AuthnStatement>) nullObj);
         
         action.initialize();
     }
@@ -380,7 +389,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
-        action.setResponseResolver(null);
+        action.setResponseResolver((Function<ProfileRequestContext, Response>) nullObj);
         
         action.initialize();
     }
@@ -390,7 +399,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
         
-        action.setSAMLAuthnContextLookupStrategy(null);
+        action.setSAMLAuthnContextLookupStrategy((Function<ProfileRequestContext, SAMLAuthnContext>) nullObj);
         
         action.initialize();
     }

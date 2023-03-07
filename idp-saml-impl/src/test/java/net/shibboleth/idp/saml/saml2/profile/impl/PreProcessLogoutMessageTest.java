@@ -24,10 +24,12 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.ext.saml2aslo.Asynchronous;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.springframework.webflow.execution.Event;
@@ -60,19 +62,25 @@ public class PreProcessLogoutMessageTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void testLogoutResponse() {
         //final NameID nameId = SAML2ActionTestingSupport.buildNameID("jdoe");
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutResponse());
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutResponse());
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, PreProcessLogoutMessage.IS_LOGOUT_RESPONSE);
     }
     
     @Test public void testLogoutRequest() {
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
     }
 
     @Test public void testAssumeAsyncLogoutRequest() throws ComponentInitializationException {
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
         
         action = new PreProcessLogoutMessage();
         action.setAssumeAsynchronousLogout(true);
@@ -83,7 +91,9 @@ public class PreProcessLogoutMessageTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testAsyncLogoutRequest() {
-        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
+        final MessageContext imc = prc.getInboundMessageContext();
+        assert imc!=null;
+        imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
         
         final SAMLObjectBuilder<Extensions> extsBuilder = (SAMLObjectBuilder<Extensions>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<Extensions>getBuilderOrThrow(
@@ -91,9 +101,10 @@ public class PreProcessLogoutMessageTest extends OpenSAMLInitBaseTestCase {
         final SAMLObjectBuilder<Asynchronous> asyncBuilder = (SAMLObjectBuilder<Asynchronous>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<Asynchronous>getBuilderOrThrow(
                         Asynchronous.DEFAULT_ELEMENT_NAME);
-        
-        ((LogoutRequest) prc.getInboundMessageContext().getMessage()).setExtensions(extsBuilder.buildObject());
-        ((LogoutRequest) prc.getInboundMessageContext().getMessage()).getExtensions().getUnknownXMLObjects().add(
+        final LogoutRequest lr = (LogoutRequest)imc.getMessage();
+        assert lr!=null;
+        lr.setExtensions(extsBuilder.buildObject());
+        lr.getExtensions().getUnknownXMLObjects().add(
                 asyncBuilder.buildObject());
 
         final Event event = action.execute(src);

@@ -19,9 +19,11 @@ package net.shibboleth.idp.saml.saml1.profile.impl;
 
 import java.time.Instant;
 
+import javax.annotation.Nonnull;
 import javax.security.auth.Subject;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Assertion;
@@ -29,6 +31,7 @@ import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -47,6 +50,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link AddAuthenticationStatementToAssertion} unit test. */
@@ -57,6 +61,12 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
     private ProfileRequestContext prc;
 
     private AddAuthenticationStatementToAssertion action;
+    
+    @Nonnull private MockHttpServletRequest getMockHttpServletRequest() {
+        final MockHttpServletRequest result = (MockHttpServletRequest) action.getHttpServletRequest();
+        assert result  != null;
+        return result;
+    }
 
     /**
      * Test setup.
@@ -104,7 +114,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
      */
     @Test public void testNoContext() throws Exception {
         prc.setOutboundMessageContext(null);
-        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthenticationMethodPrincipal("Test")));
 
         final Event event = action.execute(rc);
@@ -141,19 +151,24 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         fd.setResultSerializer(serializer);
         fd.initialize();
         
-        prc.getSubcontext(AuthenticationContext.class, true).getAvailableFlows().put("Test", fd);
-        prc.getSubcontext(AuthenticationContext.class).setAuthenticationResult(
+        prc.getOrCreateSubcontext(AuthenticationContext.class).getAvailableFlows().put("Test", fd);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac!=null;
+        ac.setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthenticationMethodPrincipal("Test")));
 
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteAddr("127.0.0.1");
+        getMockHttpServletRequest().setRemoteAddr("127.0.0.1");
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
 
-        Assert.assertNotNull(prc.getOutboundMessageContext().getMessage());
-        Assert.assertTrue(prc.getOutboundMessageContext().getMessage() instanceof Response);
+        Assert.assertNotNull(omc.getMessage());
+        Assert.assertTrue(omc.getMessage() instanceof Response);
 
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        final Response response = (Response) omc.getMessage();
+        assert response !=null;
         Assert.assertEquals(response.getAssertions().size(), 1);
         Assert.assertNotNull(response.getAssertions().get(0));
 
@@ -178,19 +193,24 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("Foo"));
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("Bar"));
-        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
+        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", subject));
         final RequestedPrincipalContext requested = new RequestedPrincipalContext();
         requested.setMatchingPrincipal(new AuthenticationMethodPrincipal("Bar"));
-        prc.getSubcontext(AuthenticationContext.class, false).addSubcontext(requested);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        assert ac!=null;
+        ac.addSubcontext(requested);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
+        final MessageContext omc = prc.getOutboundMessageContext();
+        assert omc!=null;
 
-        Assert.assertNotNull(prc.getOutboundMessageContext().getMessage());
-        Assert.assertTrue(prc.getOutboundMessageContext().getMessage() instanceof Response);
+        Assert.assertNotNull(omc.getMessage());
+        Assert.assertTrue(omc.getMessage() instanceof Response);
 
-        final Response response = (Response) prc.getOutboundMessageContext().getMessage();
+        final Response response = (Response) omc.getMessage();
+        assert response  != null;
         Assert.assertEquals(response.getAssertions().size(), 1);
         Assert.assertNotNull(response.getAssertions().get(0));
 
