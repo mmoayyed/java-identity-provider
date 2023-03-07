@@ -313,7 +313,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         final QName et = endpointType;
         if (et != null) {
-            endpointBuilder = XMLObjectSupport.getBuilder(endpointType);
+            endpointBuilder = XMLObjectSupport.getBuilder(et);
             if (endpointBuilder == null) {
                 throw new ComponentInitializationException("Unable to obtain builder for endpoint type "
                         + et);
