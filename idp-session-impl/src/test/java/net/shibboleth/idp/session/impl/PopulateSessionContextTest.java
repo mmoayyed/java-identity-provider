@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session.impl;
 
+import static org.testng.Assert.assertEquals;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -127,18 +129,23 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
     }
     
     @Test public void testAddressLookup() throws ComponentInitializationException, SessionException {
+        final MockHttpServletRequest theRequest = new MockHttpServletRequest();
+        final MockHttpServletResponse theResponse = new MockHttpServletResponse();
+        HttpServletRequestResponseContext.loadCurrent(theRequest, theResponse);
         action = new PopulateSessionContext();
         action.setHttpServletRequestSupplier(new ThreadLocalHttpServletRequestSupplier());
         action.setHttpServletResponseSupplier(new ThreadLocalHttpServletResponseSupplier());
         action.setSessionResolver(sessionManager);
         final HttpServletRequest req = action.getHttpServletRequest();
         assert req != null;
+        assertEquals(req,  theRequest);
         action.setAddressLookupStrategy(input -> req.getHeader("User-Agent"));
         action.initialize();
         
         Cookie cookie = createSession("joe");
+        // CreateSession Cleared this
+        HttpServletRequestResponseContext.loadCurrent(theRequest, theResponse);
         
-        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         getRequest().setCookies(cookie);
         getRequest().addHeader("User-Agent", "UnitTest-Client");
         
