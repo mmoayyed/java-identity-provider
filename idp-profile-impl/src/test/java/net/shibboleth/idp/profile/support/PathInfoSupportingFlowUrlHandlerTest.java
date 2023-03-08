@@ -17,13 +17,12 @@
 
 package net.shibboleth.idp.profile.support;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /** {@link PathInfoSupportingFlowUrlHandler} unit test. */
 @SuppressWarnings("javadoc")
@@ -50,27 +49,27 @@ public class PathInfoSupportingFlowUrlHandlerTest {
     @Test public void testNoMatch() {
         request.setPathInfo("/admin/foo/bar/baz");
         
-        handler.setSupportedFlows(Collections.singletonList("admit/fop"));
+        handler.setSupportedFlows(CollectionSupport.singletonList("admit/fop"));
         Assert.assertEquals("admin/foo/bar/baz", handler.getFlowId(request));
     }
 
     @Test public void testSuported() {
         request.setPathInfo("/admin/foo/bar/baz");
         
-        handler.setSupportedFlows(Collections.singletonList("admin/foo/bar"));
+        handler.setSupportedFlows(CollectionSupport.singletonList("admin/foo/bar"));
         Assert.assertEquals("admin/foo/bar", handler.getFlowId(request));
         
-        handler.setSupportedFlows(Collections.singletonList("admin/foo"));
+        handler.setSupportedFlows(CollectionSupport.singletonList("admin/foo"));
         Assert.assertEquals("admin/foo", handler.getFlowId(request));
     }
 
     @Test public void testOverlapping() {
         request.setPathInfo("/admin/foo/bar/baz");
         
-        handler.setSupportedFlows(Arrays.asList("admin/foo/bar", "admin/foo", "admin"));
+        handler.setSupportedFlows(CollectionSupport.arrayAsList("admin/foo/bar", "admin/foo", "admin"));
         Assert.assertEquals("admin/foo/bar", handler.getFlowId(request));
 
-        handler.setSupportedFlows(Arrays.asList("admin", "admin/foo", "admin/foo/bar"));
+        handler.setSupportedFlows(CollectionSupport.arrayAsList("admin", "admin/foo", "admin/foo/bar"));
         Assert.assertEquals("admin", handler.getFlowId(request));
     }
     

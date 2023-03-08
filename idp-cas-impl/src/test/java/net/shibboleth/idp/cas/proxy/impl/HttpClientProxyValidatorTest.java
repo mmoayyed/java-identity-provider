@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
 import javax.security.auth.login.FailedLoginException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -147,7 +148,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
 
     @Test(dataProvider = "data")
     public void testAuthenticate(
-            final String serviceURL, final String keyStorePath, final int status, final Exception expected)
+            @Nonnull final String serviceURL, final String keyStorePath, final int status, final Exception expected)
             throws Exception {
         Server server = null;
         try {
@@ -170,7 +171,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
         }
     }
 
-    private Server startServer(final String keyStorePath, final Handler handler) {
+    @Nonnull private Server startServer(final String keyStorePath, final Handler handler) {
         final Server server = new Server();
 
         final var sslContextFactory = new SslContextFactory.Server();
@@ -230,7 +231,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
         }
     }
 
-    private ProfileRequestContext buildProfileRequestContext(final String serviceUrl) {
+    @Nonnull private ProfileRequestContext buildProfileRequestContext(@Nonnull final String serviceUrl) {
         final ProfileRequestContext prc = new ProfileRequestContext();
         final ProtocolContext<?,?> protoCtx = new ProtocolContext<>();
         prc.addSubcontext(protoCtx);

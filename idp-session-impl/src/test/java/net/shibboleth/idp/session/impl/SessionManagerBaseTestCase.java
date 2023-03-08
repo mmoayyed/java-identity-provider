@@ -43,7 +43,7 @@ public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
     
     protected MemoryStorageService storageService;
     
-    protected StorageBackedSessionManager sessionManager;
+    @Nonnull protected StorageBackedSessionManager sessionManager  = new StorageBackedSessionManager();
     
     @BeforeClass public void setUp() throws ComponentInitializationException {
         

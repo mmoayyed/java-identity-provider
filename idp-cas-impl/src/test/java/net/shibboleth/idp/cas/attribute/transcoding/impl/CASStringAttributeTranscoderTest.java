@@ -108,7 +108,7 @@ public class CASStringAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(casAttribute);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
-        
+        assert ruleset!=null;
         final IdPAttribute attr = TranscoderSupport.getTranscoder(ruleset).decode(null, casAttribute, ruleset);
         
         assert attr!= null;
@@ -201,7 +201,7 @@ public class CASStringAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(inputAttribute, Attribute.class);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
-        
+        assert ruleset!=null;
         final Attribute attr = TranscoderSupport.<Attribute>getTranscoder(ruleset).encode(
                 null, inputAttribute, Attribute.class, ruleset);
 

@@ -78,16 +78,9 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
     
     /** Constructor. */
     public StorageBackedAccountLockoutManager() {
-        setMaxAttempts(5);
-        // this paradigm proves to the null checkee that these fields are non null
-        assert maxAttemptsLookupStrategy != null;
-        maxAttemptsLookupStrategy = maxAttemptsLookupStrategy;
-        setCounterInterval(Duration.ofMinutes(5));
-        assert counterIntervalLookupStrategy != null;
-        counterIntervalLookupStrategy = counterIntervalLookupStrategy;
-        setLockoutDuration(Duration.ofMinutes(5));
-        assert lockoutDurationLookupStrategy != null;
-        lockoutDurationLookupStrategy = lockoutDurationLookupStrategy;
+        maxAttemptsLookupStrategy = FunctionSupport.constant(5);
+        counterIntervalLookupStrategy = FunctionSupport.constant(Duration.ofMinutes(5));
+        lockoutDurationLookupStrategy = FunctionSupport.constant(Duration.ofMinutes(5));
     }
 
     /**

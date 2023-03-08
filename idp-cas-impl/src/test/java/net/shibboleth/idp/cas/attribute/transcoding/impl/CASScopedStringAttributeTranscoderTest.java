@@ -144,7 +144,7 @@ public class CASScopedStringAttributeTranscoderTest {
         final Collection<TranscodingRule> rulesets = registry.getTranscodingRules(inputAttribute, Attribute.class);
         Assert.assertEquals(rulesets.size(), 1);
         final TranscodingRule ruleset = rulesets.iterator().next();
-        
+        assert ruleset!=null;
         TranscoderSupport.getTranscoder(ruleset).encode(null, inputAttribute, Attribute.class, ruleset);
     }
     

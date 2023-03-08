@@ -33,6 +33,7 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
@@ -81,7 +82,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         flowDescriptor.setId("test1");
         flowDescriptor.setResultSerializer(resultSerializer);
         flowDescriptor.initialize();
-        sessionManager.setAuthenticationFlowDescriptors(Arrays.asList(flowDescriptor));
+        sessionManager.setAuthenticationFlowDescriptors(CollectionSupport.arrayAsList(flowDescriptor));
     }
 
     @Test public void testNoResult() {
@@ -191,6 +192,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         
         // Limit granularity to milliseconds for storage roundtrip.
         final Instant ts = Instant.ofEpochMilli(System.currentTimeMillis()).plusSeconds(300);
+        assert ts!=null;
         ar.setLastActivityInstant(ts);
         
         final Event event = action.execute(src);

@@ -18,14 +18,14 @@
 package net.shibboleth.idp.authn;
 
 import java.time.Duration;
-import java.util.Arrays;
-
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** {@link AuthenticationFlowDescriptor} unit test. */
 public class AuthenticationFlowDescriptorTest {
@@ -60,11 +60,16 @@ public class AuthenticationFlowDescriptorTest {
 
     /** Tests mutating inactivity timeout. */
     @Test public void testInactivityTimeout() {
-        descriptor.setInactivityTimeout(Duration.ofMillis(10));
+        final Duration tenms = Duration.ofMillis(10);
+        assert tenms!=null;
+
+        descriptor.setInactivityTimeout(tenms);
         Assert.assertEquals(descriptor.getInactivityTimeout(), Duration.ofMillis(10));
 
         try {
-            descriptor.setInactivityTimeout(Duration.ofMillis(-10));
+            final Duration negTenms = Duration.ofMillis(-10);
+            assert negTenms!=null;
+            descriptor.setInactivityTimeout(negTenms);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             Assert.assertEquals(descriptor.getInactivityTimeout(), Duration.ofMillis(10));
@@ -98,11 +103,11 @@ public class AuthenticationFlowDescriptorTest {
         UsernamePrincipal bar = new UsernamePrincipal("bar");
         UsernamePrincipal baz = new UsernamePrincipal("baz");
         
-        descriptor.setSupportedPrincipals(Arrays.asList(foo));
+        descriptor.setSupportedPrincipals(CollectionSupport.arrayAsList(foo));
         Assert.assertEquals(descriptor.getSupportedPrincipals(UsernamePrincipal.class).size(), 1);
         Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(foo));
 
-        descriptor.setSupportedPrincipals(Arrays.asList(foo, bar));
+        descriptor.setSupportedPrincipals(CollectionSupport.arrayAsList(foo, bar));
         Assert.assertEquals(descriptor.getSupportedPrincipals(UsernamePrincipal.class).size(), 2);
         Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(foo));
         Assert.assertTrue(descriptor.getSupportedPrincipals(UsernamePrincipal.class).contains(bar));
@@ -131,8 +136,9 @@ public class AuthenticationFlowDescriptorTest {
         Assert.assertTrue(descriptor.isResultActive(result));
         
         Thread.sleep(20);
-        
-        descriptor.setInactivityTimeout(Duration.ofMillis(10));
+        final Duration tenms = Duration.ofMillis(10);
+        assert tenms!=null;
+        descriptor.setInactivityTimeout(tenms);
         Assert.assertFalse(descriptor.isResultActive(result));
         
         result.setLastActivityInstantToNow();
