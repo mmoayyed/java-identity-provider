@@ -27,7 +27,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -39,8 +38,8 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
+import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -203,9 +202,7 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
             }
             
             context.getMap().put(getClass(), records);
-            final BaseContext parent = resolutionContext.getParent();
-            assert parent != null;
-            parent.removeSubcontext(resolutionContext);
+            resolutionContext.removeFromParent();
         }
         
         return isRevoked(principal, input2, (Collection<Instant>) context.getMap().get(getClass()));

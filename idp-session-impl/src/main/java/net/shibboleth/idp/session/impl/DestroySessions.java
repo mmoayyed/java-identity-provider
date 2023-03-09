@@ -153,7 +153,7 @@ public class DestroySessions extends AbstractProfileAction {
         
         final LogoutContext lc = logoutContext;
         assert lc != null;
-        final SessionContext sc = sessionContext;
+        SessionContext sc = sessionContext;
         for (final IdPSession session : lc.getIdPSessions()) {
             assert session!= null;
             final IdPSession idpSession = sc != null ? sc.getIdPSession() : null;
@@ -162,10 +162,8 @@ public class DestroySessions extends AbstractProfileAction {
             final boolean unbind = idpSession != null ? idpSession.equals(session) : false;
             if (unbind) {
                 assert sc != null;
-                final BaseContext parent = sc.getParent();
-                assert parent != null;
-                parent.removeSubcontext(sc);
-                sessionContext = null;
+                sc.removeFromParent();
+                sc = sessionContext = null;
             }
             
             try {

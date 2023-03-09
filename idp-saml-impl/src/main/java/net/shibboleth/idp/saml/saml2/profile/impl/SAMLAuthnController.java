@@ -260,6 +260,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
                 decoder.initialize();
                 decoder.decode();
                 final MessageContext messageContext = decoder.getMessageContext();
+                assert messageContext != null;
                 messageContext.addSubcontext(new SAMLMessageReceivedEndpointContext(httpRequest));
                 nestedPRC.setInboundMessageContext(messageContext);
             } finally {

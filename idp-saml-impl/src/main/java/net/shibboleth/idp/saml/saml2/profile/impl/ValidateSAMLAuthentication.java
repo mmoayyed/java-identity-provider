@@ -563,9 +563,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         try (final ServiceableComponent<AttributeFilter> component = service.getServiceableComponent()) {
             final AttributeFilter filter = component.getComponent();
             filter.filterAttributes(filterContext);
-            final BaseContext parent = filterContext.getParent();
-            assert parent != null;
-            parent.removeSubcontext(filterContext);
+            filterContext.removeFromParent();
             assert attributeContext!=null;
             attributeContext.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
         } catch (final AttributeFilterException e) {

@@ -361,9 +361,7 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         try (final ServiceableComponent<AttributeFilter> component = attributeFilterService.getServiceableComponent()) {
             final AttributeFilter filter = component.getComponent();
             filter.filterAttributes(filterContext);
-            final BaseContext parent = filterContext.getParent();
-            assert parent != null;
-            parent.removeSubcontext(filterContext);
+            filterContext.removeFromParent();
             ac.setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
         } catch (final AttributeFilterException e) {
             log.error("{} Error while filtering inbound attributes", getLogPrefix(), e);
