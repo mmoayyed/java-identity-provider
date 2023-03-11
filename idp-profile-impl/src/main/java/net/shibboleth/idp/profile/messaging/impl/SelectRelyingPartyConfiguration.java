@@ -43,6 +43,7 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceException;
+import net.shibboleth.shared.service.ServiceableComponent;
 
 /**
  * This message handler attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the 
@@ -131,16 +132,16 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
     @Override
     public void doInvoke(@Nonnull final MessageContext messageContext) throws MessageHandlerException {
 
-        try {
-            final RelyingPartyContext ctx = relyingPartyCtx;
-            assert ctx!=null;
-            // Implicitly "verified", so we include the criterion for that.
-            final String rpId =  ctx.getRelyingPartyId();
-            assert rpId != null;
-            final CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(rpId),
-                    new VerifiedProfileCriterion(true));
-            final RelyingPartyConfiguration config =
-                    rpConfigResolver.getServiceableComponent().getComponent().resolveSingle(criteria);
+        final RelyingPartyContext ctx = relyingPartyCtx;
+        assert ctx!=null;
+        // Implicitly "verified", so we include the criterion for that.
+        final String rpId =  ctx.getRelyingPartyId();
+        assert rpId != null;
+        final CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(rpId),
+                new VerifiedProfileCriterion(true));
+
+        try (final ServiceableComponent<RelyingPartyConfigurationResolver> resolver = rpConfigResolver.getServiceableComponent()) {
+            final RelyingPartyConfiguration config = resolver.getComponent().resolveSingle(criteria);
             if (config == null) {
                 log.debug("{} No relying party configuration applies to this request", getLogPrefix());
                 throw new MessageHandlerException("No relying party configuration resolved for this request");
