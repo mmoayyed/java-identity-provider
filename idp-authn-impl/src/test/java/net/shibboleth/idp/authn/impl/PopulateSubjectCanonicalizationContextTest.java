@@ -68,7 +68,7 @@ public class PopulateSubjectCanonicalizationContextTest {
     @Test public void testAction() throws Exception {
         
         ActionTestingSupport.assertProceedEvent(prc);
-        final SubjectCanonicalizationContext c14nCtx = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        final SubjectCanonicalizationContext c14nCtx = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert c14nCtx!=null;
 
         Assert.assertEquals(c14nCtx.getPotentialFlows().size(), 3);

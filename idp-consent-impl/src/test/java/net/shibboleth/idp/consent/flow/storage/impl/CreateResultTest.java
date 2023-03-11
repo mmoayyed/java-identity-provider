@@ -74,7 +74,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class);
         assert pic!=null;
         Assert.assertEquals(pic.getResults().size(), 0);
 
@@ -94,7 +94,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class);
         assert pic!=null;
         Assert.assertEquals(pic.getResults().size(), 0);
 
@@ -130,7 +130,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         ActionTestingSupport.assertProceedEvent(action.execute(src));
         ActionTestingSupport.assertProceedEvent(action.execute(src));
 
-        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class);
         assert pic!=null;
         Assert.assertEquals(pic.getResults().size(), 0);
 

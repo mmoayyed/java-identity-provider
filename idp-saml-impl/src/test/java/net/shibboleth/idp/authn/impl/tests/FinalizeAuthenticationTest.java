@@ -198,7 +198,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(sc.getAuthenticationResults().size(), 1);
         
         prc.removeSubcontext(SubjectContext.class);
-        authCtx.getSubcontext(RequestedPrincipalContext.class, true);
+        authCtx.getOrCreateSubcontext(RequestedPrincipalContext.class);
         
         event = action.execute(src);
         

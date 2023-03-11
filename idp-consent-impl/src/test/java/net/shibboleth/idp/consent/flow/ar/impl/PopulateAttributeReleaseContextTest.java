@@ -64,7 +64,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
+        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class);
         assert arc!= null;
         Assert.assertEquals(arc.getConsentableAttributes(), ConsentTestingSupport.newAttributeMap());
     }
@@ -78,7 +78,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
+        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class);
         assert arc!= null;
         Assert.assertNotEquals(arc.getConsentableAttributes(), ConsentTestingSupport.newAttributeMap());
         Assert.assertTrue(arc.getConsentableAttributes().containsKey("attribute1"));
@@ -99,7 +99,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
+        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class);
         assert arc!= null;
         Assert.assertEquals(arc.getConsentableAttributes(), orderedAttributes);
     }
@@ -121,7 +121,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
+        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class);
         assert arc!= null;
         Assert.assertEquals(arc.getConsentableAttributes(), orderedAttributes);
     }

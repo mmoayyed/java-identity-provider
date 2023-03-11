@@ -32,6 +32,7 @@ import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -52,9 +53,9 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunctionTest extends Op
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
         prc1 = new RequestContextBuilder().buildProfileRequestContext();
-        ac = prc1.getSubcontext(AuthenticationContext.class, true);
-        prc2 = ac.getSubcontext(ProfileRequestContext.class, true);
-        rpc = ac.getSubcontext(RequestedPrincipalContext.class, true);
+        ac = prc1.getOrCreateSubcontext(AuthenticationContext.class);
+        prc2 = ac.getOrCreateSubcontext(ProfileRequestContext.class);
+        rpc = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
         fn = new ProxyAwareDefaultAuthenticationMethodsLookupFunction();
     }
     
@@ -66,7 +67,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunctionTest extends Op
     
     @Test
     public void testNonProxy() {
-        rpc.setRequestedPrincipals(List.of(
+        rpc.setRequestedPrincipals(CollectionSupport.listOf(
                 new AuthnContextClassRefPrincipal("foo"),
                 new AuthnContextClassRefPrincipal("bar")));
         
@@ -76,7 +77,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunctionTest extends Op
     
     @Test
     public void testPassthrough() {
-        rpc.setRequestedPrincipals(List.of(
+        rpc.setRequestedPrincipals(CollectionSupport.listOf(
                 new AuthnContextClassRefPrincipal("foo"),
                 new AuthnContextClassRefPrincipal("bar")));
         
@@ -86,7 +87,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunctionTest extends Op
 
     @Test
     public void testMapped() {
-        rpc.setRequestedPrincipals(List.of(
+        rpc.setRequestedPrincipals(CollectionSupport.listOf(
                 new AuthnContextClassRefPrincipal("foo"),
                 new AuthnContextClassRefPrincipal("bar"),
                 new AuthenticationMethodPrincipal("baz")));

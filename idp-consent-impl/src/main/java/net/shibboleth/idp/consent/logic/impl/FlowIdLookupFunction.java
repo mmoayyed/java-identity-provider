@@ -44,7 +44,7 @@ public class FlowIdLookupFunction implements ContextDataLookupFunction<ProfileRe
             return null;
         }
 
-        final SpringRequestContext springRequestContext = input.getSubcontext(SpringRequestContext.class, false);
+        final SpringRequestContext springRequestContext = input.getSubcontext(SpringRequestContext.class);
         if (springRequestContext == null) {
             return null;
         }

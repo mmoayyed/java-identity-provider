@@ -79,9 +79,9 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
+        final UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class);
         assert unCtx != null;
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
@@ -93,9 +93,9 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
+        final UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class);
         assert unCtx != null;
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
@@ -108,9 +108,9 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
+        UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class);
         assert unCtx != null;
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }
@@ -124,9 +124,9 @@ public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class, false);
+        final UsernameContext unCtx = authCtx.getSubcontext(UsernameContext.class);
         assert unCtx != null;
         Assert.assertEquals(unCtx.getUsername(), "foo");
     }

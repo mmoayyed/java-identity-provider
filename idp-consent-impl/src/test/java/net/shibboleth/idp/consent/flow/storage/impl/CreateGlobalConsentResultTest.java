@@ -46,7 +46,7 @@ public class CreateGlobalConsentResultTest extends AbstractConsentIndexedStorage
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class);
         assert pic!=null;
         Assert.assertEquals(pic.getResults().size(), 0);
 

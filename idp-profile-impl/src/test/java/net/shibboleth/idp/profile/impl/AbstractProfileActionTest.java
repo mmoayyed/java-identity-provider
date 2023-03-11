@@ -125,7 +125,7 @@ public class AbstractProfileActionTest {
 
             executed = true;
             
-            final PreviousEventContext<?> prevCtx = profileRequestContext.getSubcontext(PreviousEventContext.class, false);
+            final PreviousEventContext<?> prevCtx = profileRequestContext.getSubcontext(PreviousEventContext.class);
             if (prevEvent != null) {
                 if (prevCtx == null || !prevEvent.equals(prevCtx.getEvent())) {
                     org.opensaml.profile.action.ActionSupport.buildEvent(profileRequestContext, "InvalidPreviousEvent");

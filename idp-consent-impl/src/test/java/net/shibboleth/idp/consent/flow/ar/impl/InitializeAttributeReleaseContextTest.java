@@ -53,6 +53,6 @@ public class InitializeAttributeReleaseContextTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        Assert.assertNotNull(prc.getSubcontext(AttributeReleaseContext.class, false));
+        Assert.assertNotNull(prc.getSubcontext(AttributeReleaseContext.class));
     }
 }

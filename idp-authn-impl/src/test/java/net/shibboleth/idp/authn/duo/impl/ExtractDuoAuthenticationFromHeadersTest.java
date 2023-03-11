@@ -55,9 +55,9 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
         
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
+        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class);
         Assert.assertNull(duoCtx);
     }
 
@@ -71,9 +71,9 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
 
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
+        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class);
         Assert.assertNull(duoCtx);
     }
     
@@ -84,9 +84,9 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
+        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class);
         assert duoCtx != null;
         Assert.assertEquals(duoCtx.getFactor(), DuoAuthAPI.DUO_FACTOR_AUTO);
         Assert.assertEquals(duoCtx.getDeviceID(), DuoAuthAPI.DUO_DEVICE_AUTO);
@@ -102,9 +102,9 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
 
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
+        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class);
         assert duoCtx != null;
         Assert.assertEquals(duoCtx.getFactor(), DuoAuthAPI.DUO_FACTOR_PUSH);
         Assert.assertEquals(duoCtx.getDeviceID(), DuoAuthAPI.DUO_DEVICE_AUTO);
@@ -120,9 +120,9 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
 
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
+        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class);
         assert duoCtx != null;
         Assert.assertEquals(duoCtx.getFactor(), DuoAuthAPI.DUO_FACTOR_AUTO);
         Assert.assertEquals(duoCtx.getDeviceID(), "foo");
@@ -138,9 +138,9 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
 
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
+        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class);
         assert duoCtx == null;
     }
 
@@ -154,9 +154,9 @@ public class ExtractDuoAuthenticationFromHeadersTest extends BaseAuthenticationC
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
 
-        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class, false);
+        final DuoAuthenticationContext duoCtx = authCtx.getSubcontext(DuoAuthenticationContext.class);
         assert duoCtx != null;
         Assert.assertEquals(duoCtx.getFactor(), DuoAuthAPI.DUO_FACTOR_PASSCODE);
         Assert.assertNull(duoCtx.getDeviceID());

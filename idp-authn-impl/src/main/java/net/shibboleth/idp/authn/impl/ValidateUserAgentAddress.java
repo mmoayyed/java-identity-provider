@@ -107,7 +107,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
             return false;
         }
 
-        final UserAgentContext uaCtx = uaContext = authenticationContext.getSubcontext(UserAgentContext.class, false);
+        final UserAgentContext uaCtx = uaContext = authenticationContext.getSubcontext(UserAgentContext.class);
         if (uaCtx == null) {
             log.debug("{} No UserAgentContext available within authentication context", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,

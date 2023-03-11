@@ -76,10 +76,10 @@ public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticati
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
         Assert.assertTrue(authCtx.isResultCacheable());
-        UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
+        UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class);
         assert upCtx!= null;
         Assert.assertEquals(upCtx.getUsername(), "foo");
         Assert.assertEquals(upCtx.getPassword(), "bar");
@@ -92,10 +92,10 @@ public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticati
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
         Assert.assertFalse(authCtx.isResultCacheable());
-        UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class, false);
+        UsernamePasswordContext upCtx = authCtx.getSubcontext(UsernamePasswordContext.class);
         assert upCtx != null;
         Assert.assertEquals(upCtx.getUsername(), "foo");
         Assert.assertEquals(upCtx.getPassword(), "bar");

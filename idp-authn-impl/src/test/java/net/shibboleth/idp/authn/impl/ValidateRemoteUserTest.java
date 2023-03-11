@@ -67,7 +67,7 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     }
 
     @Test public void testMissingUser2() throws ComponentInitializationException {
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -80,7 +80,7 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     @Test public void testUnauthorized() throws ComponentInitializationException {
         getMockHttpServletRequest(action).setRemoteUser("bam");
 
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -93,7 +93,7 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     @Test public void testAuthorized() throws ComponentInitializationException {
         getMockHttpServletRequest(action).setRemoteUser("baz");
         
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -110,7 +110,7 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     @Test public void testDenyist() throws ComponentInitializationException {
         getMockHttpServletRequest(action).setRemoteUser("foo");
 
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -123,7 +123,7 @@ public class ValidateRemoteUserTest extends BaseAuthenticationContextTest {
     @Test public void testPattern() throws ComponentInitializationException {
         getMockHttpServletRequest(action).setRemoteUser("ban");
 
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         

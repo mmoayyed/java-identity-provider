@@ -87,7 +87,7 @@ public class SimpleSubjectCanonicalizationTest extends BaseAuthenticationContext
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert sc != null;
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
@@ -100,7 +100,7 @@ public class SimpleSubjectCanonicalizationTest extends BaseAuthenticationContext
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
-        SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert sc != null;
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }

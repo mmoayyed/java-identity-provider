@@ -53,6 +53,6 @@ public class InitializeConsentContextTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        Assert.assertNotNull(prc.getSubcontext(ConsentContext.class, false));
+        Assert.assertNotNull(prc.getSubcontext(ConsentContext.class));
     }
 }

@@ -185,7 +185,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        assert session!=null;
+        assert session!=null && expiration!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameIdForSession, "index", "foo", false));
                 
@@ -217,7 +217,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        assert session!=null;
+        assert session!=null && expiration!=null;
         final NameID nameIdForSession = SAML2ActionTestingSupport.buildNameID("joe");
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameIdForSession, "index", "foo", false));
@@ -260,7 +260,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        assert session!=null;
+        assert session!=null && expiration!=null;
         final NameID nameIdForSession = SAML2ActionTestingSupport.buildNameID("joe");
         nameIdForSession.setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         nameIdForSession.setSPNameQualifier(ActionTestingSupport.INBOUND_MSG_ISSUER);
@@ -305,7 +305,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        assert session!=null;;
+        assert session!=null && expiration!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         
@@ -348,7 +348,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        assert session!=null;
+        assert session!=null && expiration!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", creation, expiration,
@@ -399,7 +399,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Instant expiration = creation.plusSeconds(3600);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        assert session!=null;
+        assert session!=null && expiration!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", creation, expiration,
@@ -437,7 +437,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         getMockHttpServletRequest().setCookies(cookie);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        assert session!=null;
+        assert session!=null && expiration!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         
@@ -461,7 +461,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         assert idpSession!=null;
         Assert.assertEquals(session.getId(), idpSession.getId());
         
-        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, false);
+        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
         assert logoutCtx!=null;
         Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
         Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
@@ -492,7 +492,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         getMockHttpServletRequest().setCookies(cookie);
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
-        assert session!=null;;
+        assert session!=null && expiration!=null;
         session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index", "foo", false));
         

@@ -67,7 +67,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
+        Assert.assertNull(prc.getSubcontext(SessionContext.class));
     }
     
     @Test public void testSession() throws SessionException {
@@ -78,7 +78,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
+        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
         assert sessionCtx != null;
         final IdPSession session = sessionCtx.getIdPSession();
         assert session != null;
@@ -95,7 +95,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
+        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
         assert sessionCtx != null;
         final IdPSession session = sessionCtx.getIdPSession();
         assert session != null;
@@ -112,7 +112,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
+        Assert.assertNull(prc.getSubcontext(SessionContext.class));
     }
 
     @Test public void testTimeout() throws SessionException, InterruptedException {
@@ -125,7 +125,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
+        Assert.assertNull(prc.getSubcontext(SessionContext.class));
     }
     
     @Test public void testAddressLookup() throws ComponentInitializationException, SessionException {
@@ -151,7 +151,7 @@ public class PopulateSessionContextTest extends SessionManagerBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
+        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
         assert sessionCtx != null;
         
         final IdPSession idpSession =sessionCtx.getIdPSession();

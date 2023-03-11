@@ -78,7 +78,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
     @Test public void testMissingAddress2() throws ComponentInitializationException {
         getMockHttpServletRequest(action).setRemoteAddr((String) nullObj);
 
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -89,7 +89,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
     }
 
     @Test public void testUnauthorized() throws ComponentInitializationException {
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -102,7 +102,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
     @Test public void testIncompatible() throws ComponentInitializationException {
         getMockHttpServletRequest(action).setRemoteAddr("192.168.1.1");
 
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
@@ -122,7 +122,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
     @Test public void testCompatible() throws ComponentInitializationException {
         getMockHttpServletRequest(action).setRemoteAddr("192.168.1.1");
 
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         

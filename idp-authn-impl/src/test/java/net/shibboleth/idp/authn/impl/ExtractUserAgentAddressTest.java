@@ -61,9 +61,9 @@ public class ExtractUserAgentAddressTest extends BaseAuthenticationContextTest {
     @Test public void testValidAddress() {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx!=null;
-        UserAgentContext uaCtx = authCtx.getSubcontext(UserAgentContext.class, false);
+        UserAgentContext uaCtx = authCtx.getSubcontext(UserAgentContext.class);
         assert uaCtx!=null;
         InetAddress addr = uaCtx.getAddress();
         assert addr !=null;

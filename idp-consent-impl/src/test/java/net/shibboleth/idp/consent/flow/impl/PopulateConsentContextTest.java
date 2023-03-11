@@ -53,7 +53,7 @@ public class PopulateConsentContextTest extends AbstractConsentActionTest {
 
         ActionTestingSupport.assertProceedEvent(event);
 
-        final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
+        final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class);
         assert consentContext!= null;
         Assert.assertEquals(consentContext.getCurrentConsents(), ConsentTestingSupport.newConsentMap());
     }

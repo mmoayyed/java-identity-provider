@@ -77,7 +77,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         
         src = (MockRequestContext) new RequestContextBuilder().buildRequestContext();
         prc = (ProfileRequestContext) src.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
-        ac = prc.getSubcontext(AuthenticationContext.class, true);
+        ac = prc.getOrCreateSubcontext(AuthenticationContext.class);
         prc.getOrCreateSubcontext(RelyingPartyContext.class).setProfileConfig(new BrowserSSOProfileConfiguration());
         
         action = new ProcessRequestedAuthnContext();

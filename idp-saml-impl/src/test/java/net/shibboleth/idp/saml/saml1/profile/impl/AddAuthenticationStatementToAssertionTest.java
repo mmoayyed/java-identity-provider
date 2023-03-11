@@ -31,7 +31,6 @@ import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -50,7 +49,6 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link AddAuthenticationStatementToAssertion} unit test. */
@@ -100,7 +98,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
      * @throws Exception if something goes wrong
      */
     @Test public void testNoRelyingPartyContext() throws Exception {
-        prc.getSubcontext(AuthenticationContext.class, true);
+        prc.getOrCreateSubcontext(AuthenticationContext.class);
         prc.removeSubcontext(RelyingPartyContext.class);
 
         final Event event = action.execute(rc);
@@ -127,7 +125,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
      * @throws Exception if something goes wrong
      */
     @Test public void testNoAuthenticationStatement() throws Exception {
-        prc.getSubcontext(AuthenticationContext.class, true);
+        prc.getOrCreateSubcontext(AuthenticationContext.class);
 
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
@@ -197,7 +195,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
                 new AuthenticationResult("Test", subject));
         final RequestedPrincipalContext requested = new RequestedPrincipalContext();
         requested.setMatchingPrincipal(new AuthenticationMethodPrincipal("Bar"));
-        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac!=null;
         ac.addSubcontext(requested);
         

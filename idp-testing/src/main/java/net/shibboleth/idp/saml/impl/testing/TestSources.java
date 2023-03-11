@@ -247,7 +247,7 @@ public final class TestSources {
         retVal.setAttributeRecipientID(recipientId);
         retVal.setPrincipal(principal);
 
-        retVal.getSubcontext(AttributeResolverWorkContext.class, true);
+        retVal.getOrCreateSubcontext(AttributeResolverWorkContext.class);
         return retVal;
     }
 

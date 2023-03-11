@@ -91,7 +91,7 @@ public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizati
             
             if (input != null) {
                 final SubjectCanonicalizationContext c14nContext =
-                        input.getSubcontext(SubjectCanonicalizationContext.class, false);
+                        input.getSubcontext(SubjectCanonicalizationContext.class);
                 if (c14nContext != null) {
                     return apply(input, c14nContext, false);
                 }

@@ -28,17 +28,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.logic.FunctionSupport;
-import net.shibboleth.shared.xml.XMLParserException;
-
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.io.Unmarshaller;
 import org.opensaml.core.xml.io.UnmarshallingException;
@@ -65,7 +54,17 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 
-import com.google.common.base.Predicates;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
+import net.shibboleth.shared.xml.XMLParserException;
 
 /** Unit test for {@link PopulateBindingAndEndpointContexts}. */
 @SuppressWarnings("javadoc")
@@ -143,7 +142,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     public void testNoBindings() throws ComponentInitializationException {
         final BindingDescriptor binding = new BindingDescriptor();
         binding.setId(SAMLConstants.SAML2_POST_BINDING_URI);
-        binding.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
+        binding.setActivationCondition(PredicateSupport.<ProfileRequestContext>alwaysFalse());
         binding.initialize();
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
         badaction.setEndpointResolver(new DefaultEndpointResolver<>());
@@ -170,7 +169,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
         assert pec!=null;
-        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class);
         assert epCtx!=null;
         final Endpoint ep =epCtx.getEndpoint();
         assert ep!=null;
@@ -414,7 +413,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
         assert pec!=null;
-        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class);
         assert epCtx!=null;
         final Endpoint ep =epCtx.getEndpoint();
         assert ep!=null;
@@ -458,7 +457,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
         assert pec!=null;
-        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class);
         assert epCtx!=null;
         final Endpoint ep =epCtx.getEndpoint();
         assert ep!=null;
@@ -526,7 +525,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
         assert pec!=null;
-        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class);
         assert epCtx!=null;
         final Endpoint ep =epCtx.getEndpoint();
         assert ep!=null;
@@ -565,7 +564,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         final SAMLPeerEntityContext pec = omc.getSubcontext(SAMLPeerEntityContext.class);
         assert pec!=null;
-        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class, false);
+        final SAMLEndpointContext epCtx = pec.getSubcontext(SAMLEndpointContext.class);
         assert epCtx!=null;
         final Endpoint ep =epCtx.getEndpoint();
         assert ep!=null;

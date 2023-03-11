@@ -363,9 +363,9 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
     private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {
         assertNotNull(prc);
-        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, false);
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc != null;
-        final AttributeContext ac= rpc.getSubcontext(AttributeContext.class, false);
+        final AttributeContext ac= rpc.getSubcontext(AttributeContext.class);
         assert ac!=null;
         assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
     }

@@ -17,18 +17,11 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
-
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
-import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
-import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -40,6 +33,16 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
+import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
+import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
+
 
 /** {@link NameIdentifierCanonicalization} unit test. */
 @SuppressWarnings("javadoc")
@@ -53,13 +56,13 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
     private SAMLObjectBuilder<NameIdentifier> builder;
 
-    private static final String REQUESTER = "TestRequest";
+    @Nonnull private static final String REQUESTER = "TestRequest";
 
-    private static final String RESPONDER = "TestResp";
+    @Nonnull private static final String RESPONDER = "TestResp";
 
-    private static final String VALUE_PREFIX = "TestPrefix";
+    @Nonnull private static final String VALUE_PREFIX = "TestPrefix";
 
-    private static final List<String> formats = Arrays.asList(NameIdentifier.X509_SUBJECT, NameIdentifier.EMAIL, null);
+    @Nonnull @NotEmpty private static final List<String> formats = CollectionSupport.arrayAsList(NameIdentifier.X509_SUBJECT, NameIdentifier.EMAIL, null);
 
     @BeforeClass public void initialize() {
         builder = (SAMLObjectBuilder<NameIdentifier>)
@@ -77,7 +80,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         
         action = new NameIdentifierCanonicalization();
         action.setDecoder(new NameIdentifierDecoder() {
-            public String decode(SubjectCanonicalizationContext scc, NameIdentifier nameIdentifier) {
+            public String decode(@Nonnull SubjectCanonicalizationContext scc, @Nonnull NameIdentifier nameIdentifier) {
                 if (RESPONDER.equals(scc.getResponderId()) && REQUESTER.equals(scc.getRequesterId())) {
                     return VALUE_PREFIX + nameIdentifier.getValue();
                 }
@@ -101,7 +104,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         scc.setAttemptedFlow(flowDescriptor);
     }
 
-    private NameIdentifier nameId(String value, String format, String nameQualifier) {
+    @Nonnull private NameIdentifier nameId(String value, String format, String nameQualifier) {
 
         final NameIdentifier id = builder.buildObject();
 
@@ -111,14 +114,16 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         return id;
     }
     
-    private NameIdentifier nameId(String value, String format) {
+    @Nonnull private NameIdentifier nameId(String value, String format) {
 
         return nameId(value, format, RESPONDER);
     }
 
     @Test public void testNoContext() {
+        assert prc!=null;
         action.execute(prc);
 
+        assert prc!=null;
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
     }
 
@@ -126,8 +131,10 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         final Subject subject = new Subject();
         setSubContext(subject, null, null);
 
+        assert prc!=null;
         action.execute(prc);
 
+        assert prc!=null;
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert scc!=null && scc.getException()!=null;
@@ -140,8 +147,10 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
         setSubContext(subject, null, null);
 
+        assert prc!=null;
         action.execute(prc);
 
+        assert prc!=null;
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert scc!=null && scc.getException()!=null;
@@ -153,8 +162,10 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
         setSubContext(subject, RESPONDER, REQUESTER);
 
+        assert prc!=null;
         action.execute(prc);
 
+        assert prc!=null;
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
         final SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert scc!=null && scc.getException()!=null;
@@ -165,8 +176,10 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL)));
         setSubContext(subject, RESPONDER, RESPONDER);
 
+        assert prc!=null;
         action.execute(prc);
 
+        assert prc!=null;
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
     }
 
@@ -175,8 +188,10 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL)));
         setSubContext(subject, REQUESTER, REQUESTER);
 
+        assert prc!=null;
         action.execute(prc);
 
+        assert prc!=null;
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
     }
     
@@ -185,8 +200,10 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("value", NameIdentifier.EMAIL, REQUESTER)));
         setSubContext(subject, REQUESTER, REQUESTER);
 
+        assert prc!=null;
         action.execute(prc);
 
+        assert prc!=null;
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_SUBJECT);
     }
 
@@ -197,10 +214,12 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameId("works", NameIdentifier.EMAIL)));
         setSubContext(subject, RESPONDER, REQUESTER);
 
+        assert prc!=null;
         action.execute(prc);
 
+        assert prc!=null;
         ActionTestingSupport.assertProceedEvent(prc);
-        SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert sc!=null;
         Assert.assertEquals(sc.getPrincipalName(), VALUE_PREFIX+"works");
     }

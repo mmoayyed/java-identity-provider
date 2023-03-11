@@ -65,9 +65,9 @@ public class ExtractUserAgentIdentifierTest extends BaseAuthenticationContextTes
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        UserAgentContext uaCtx = authCtx.getSubcontext(UserAgentContext.class, false);
+        UserAgentContext uaCtx = authCtx.getSubcontext(UserAgentContext.class);
         assert uaCtx != null;
         Assert.assertEquals(uaCtx.getIdentifier(), "foo bar baz");
     }

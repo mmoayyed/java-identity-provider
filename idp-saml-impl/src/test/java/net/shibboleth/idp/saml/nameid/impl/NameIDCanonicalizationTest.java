@@ -205,7 +205,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
 
         action.execute(prc);
         ActionTestingSupport.assertProceedEvent(prc);
-        SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert sc!=null;
         Assert.assertEquals(sc.getPrincipalName(), VALUE_PREFIX + "works");
     }

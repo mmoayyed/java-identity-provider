@@ -181,7 +181,7 @@ public abstract class AbstractProfileAction
             @Nonnull final ProfileRequestContext profileRequestContext) {
         
         // Check for an EventContext on output.
-        final EventContext eventCtx = profileRequestContext.getSubcontext(EventContext.class, false);
+        final EventContext eventCtx = profileRequestContext.getSubcontext(EventContext.class);
         if (eventCtx != null) {
             final Object event = eventCtx.getEvent();
             

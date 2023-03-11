@@ -153,6 +153,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertEquals(outcome.getId(), "RedirectToService");
         final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
+        assert ticketId!=null;
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assert st!=null;
         final String sid = st.getSessionId();
@@ -184,6 +185,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         assertTrue(matcher.find());
         assertEquals(1, matcher.groupCount());
         final String ticketId = matcher.group(1);
+        assert ticketId!=null;
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assert st!=null;
         final String sid = st.getSessionId();
@@ -209,6 +211,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertEquals(result.getOutcome().getId(), "RedirectToService");
         final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
+        assert ticketId!=null;
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assert st!=null;
         final String sid = st.getSessionId();
@@ -221,7 +224,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
         assertNotNull(prc);
         assertNotNull(prc.getSubcontext(SubjectContext.class));
-        assertNotNull(prc.getSubcontext(ConsentContext.class, false));
+        assertNotNull(prc.getSubcontext(ConsentContext.class));
     }
 
     @Test
@@ -238,6 +241,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertEquals(outcome.getId(), "RedirectToService");
         final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
+        assert ticketId!=null;
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assert st!=null;
         final String sid = st.getSessionId();
@@ -265,6 +269,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertEquals(outcome.getId(), "RedirectToService");
         final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
+        assert ticketId!=null;
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assert st!=null;
         final String sid = st.getSessionId();
@@ -310,9 +315,9 @@ public class LoginFlowTest extends AbstractFlowTest {
 
     private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {
         assertNotNull(prc);
-        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, false);
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
-        final AttributeContext ac= rpc.getSubcontext(AttributeContext.class, false);
+        final AttributeContext ac= rpc.getSubcontext(AttributeContext.class);
         assert ac!=null;
         assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
     }

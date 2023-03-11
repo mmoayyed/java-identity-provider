@@ -74,7 +74,7 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
-        SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert scc != null && scc.getException()!=null;
     }
 
@@ -88,7 +88,7 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
-        SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class, false);
+        SubjectCanonicalizationContext scc = prc.getSubcontext(SubjectCanonicalizationContext.class);
         assert scc != null && scc.getException()!=null;
     }
 

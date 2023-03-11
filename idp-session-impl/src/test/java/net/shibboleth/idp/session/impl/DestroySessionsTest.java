@@ -18,9 +18,6 @@
 package net.shibboleth.idp.session.impl;
 
 import java.time.Duration;
-import java.util.Collections;
-
-import javax.annotation.Nonnull;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
@@ -32,7 +29,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import jakarta.servlet.http.Cookie;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -45,10 +41,13 @@ import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
+
+import jakarta.servlet.http.Cookie;
 
 /** {@link DestroySessions} unit test. */
 public class DestroySessionsTest extends SessionManagerBaseTestCase {
@@ -77,7 +76,7 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
         sessionManager.setSessionSlop(Duration.ofSeconds(900));
         final SPSessionSerializerRegistry registry = new SPSessionSerializerRegistry();
         registry.setMappings(
-                Collections.<Class<? extends SPSession>,StorageSerializer<? extends SPSession>>singletonMap(
+                CollectionSupport.<Class<? extends SPSession>,StorageSerializer<? extends SPSession>>singletonMap(
                         BasicSPSession.class, new BasicSPSessionSerializer(Duration.ofSeconds(900))));
         registry.initialize();
         sessionManager.setSPSessionSerializerRegistry(registry);
@@ -89,7 +88,7 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
     }
 
     @Test public void testNoSessions() {
-        prc.getSubcontext(LogoutContext.class, true);
+        prc.getOrCreateSubcontext(LogoutContext.class);
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
     }

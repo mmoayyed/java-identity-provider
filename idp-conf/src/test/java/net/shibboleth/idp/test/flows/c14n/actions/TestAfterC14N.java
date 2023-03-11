@@ -35,7 +35,7 @@ public class TestAfterC14N extends AbstractProfileAction {
     protected void doExecute(
             @Nonnull final ProfileRequestContext profileRequestContext) {
         
-        SubjectCanonicalizationContext scc = profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class, false);
+        SubjectCanonicalizationContext scc = profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class);
         assert scc != null;
         SubjectContext sc = profileRequestContext.getOrCreateSubcontext(SubjectContext.class);
         

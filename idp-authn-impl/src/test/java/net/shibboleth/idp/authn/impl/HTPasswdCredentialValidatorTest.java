@@ -100,7 +100,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getSubcontext(UsernamePasswordContext.class, true);
+        ac.getSubcontext(UsernamePasswordContext.class);
         
         validator.initialize();
         action.initialize();
@@ -141,7 +141,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getSubcontext(UsernamePasswordContext.class, true);
+        ac.getSubcontext(UsernamePasswordContext.class);
         
         validator.setMatchExpression(Pattern.compile("foo.+"));
         validator.initialize();

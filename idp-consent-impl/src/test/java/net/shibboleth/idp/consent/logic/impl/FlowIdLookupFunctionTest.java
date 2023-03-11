@@ -54,7 +54,7 @@ public class FlowIdLookupFunctionTest {
     }
 
     @Test public void testNullWebFlowRequestContext() {
-        prc.getSubcontext(SpringRequestContext.class, true);
+        prc.getOrCreateSubcontext(SpringRequestContext.class);
         final SpringRequestContext context = prc.getSubcontext(SpringRequestContext.class);
         assert context != null;
         Assert.assertNull(context.getRequestContext());
@@ -70,7 +70,7 @@ public class FlowIdLookupFunctionTest {
     }
 
     @Test public void testFlowId() {
-        final SpringRequestContext context = prc.getSubcontext(SpringRequestContext.class, true);
+        final SpringRequestContext context = prc.getOrCreateSubcontext(SpringRequestContext.class);
         assert context != null;
         context.setRequestContext(src);
         final SpringRequestContext ctx2 = prc.getSubcontext(SpringRequestContext.class);

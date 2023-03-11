@@ -85,7 +85,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
 
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() {
-        prc.getSubcontext(AuthenticationContext.class, true);
+        prc.getOrCreateSubcontext(AuthenticationContext.class);
         prc.removeSubcontext(RelyingPartyContext.class);
 
         final Event event = action.execute(rc);
@@ -108,7 +108,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
      * @throws Exception if something goes wrong
      */
     @Test public void testNoAuthenticationStatement() throws Exception {
-        prc.getSubcontext(AuthenticationContext.class, true);
+        prc.getOrCreateSubcontext(AuthenticationContext.class);
 
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -71,7 +73,7 @@ public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
 
     private List<GenericApplicationContext> contexts = new ArrayList<>();
 
-    protected <Type> Type getBean(String fileName, Class<Type> claz) {
+    protected <Type> Type getBean(@Nonnull String fileName, Class<Type> claz) {
 
         final GenericApplicationContext context = new GenericApplicationContext();
         contexts.add(context);
@@ -102,6 +104,7 @@ public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
     @BeforeMethod public void setUpMethod() throws ComponentInitializationException, XMLParserException, UnmarshallingException {
         query = unmarshallElement(PATH + "AttributeQuery.xml", true);        
         action = new FilterByQueriedAttributes();
+        assert registry!=null;
         action.setTranscoderRegistry(registry);
         action.initialize();
 
@@ -110,7 +113,7 @@ public class FilterByQueriedAttributesTest extends XMLObjectBaseTestCase {
     }
 
     @Test public void noAttributes() {
-        prc.getSubcontext(RelyingPartyContext.class,true);
+        prc.getOrCreateSubcontext(RelyingPartyContext.class);
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
     }

@@ -66,7 +66,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        ac = prc.getSubcontext(AuthenticationContext.class, true);
+        ac = prc.getOrCreateSubcontext(AuthenticationContext.class);
 
         action = new UpdateSessionWithAuthenticationResult();
         action.setSessionManager(sessionManager);
@@ -89,7 +89,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
+        Assert.assertNull(prc.getSubcontext(SessionContext.class));
     }
 
     @Test public void testNoFlow() throws SessionException {
@@ -100,7 +100,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.IO_ERROR);
-        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
+        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
         assert sessionCtx!=null;
         final IdPSession idpSession = sessionCtx.getIdPSession();
         assert idpSession!=null;
@@ -116,7 +116,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         ac.setResultCacheable(false);
         
-        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, true);
+        SessionContext sessionCtx = prc.getOrCreateSubcontext(SessionContext.class);
         assert sessionCtx!=null;
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
@@ -136,7 +136,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class, false);
+        SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
         Assert.assertNotNull(sessionCtx);
         assert sessionCtx!=null;
         final IdPSession idpSession = sessionCtx.getIdPSession();
