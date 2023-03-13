@@ -83,16 +83,21 @@ public class DoStorageOperationTest {
 
         storageService = new MemoryStorageService();
         storageService.setId("test");
-        storageService.setCleanupInterval(Duration.ZERO);
+        final Duration zeroDuration = Duration.ZERO;
+        assert zeroDuration!=null;
+        storageService.setCleanupInterval(zeroDuration);
         storageService.initialize();
         
         mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
         
         action = new DoStorageOperation();
+        assert request != null;
         action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
+        assert response != null;
         action.setHttpServletResponseSupplier(new ConstantSupplier<>(response));
         action.setStorageService(storageService);
+        assert mapper != null;
         action.setObjectMapper(mapper);
         action.initialize();
     }

@@ -69,6 +69,7 @@ public class InitializeAdministrativeProfileContextTreeTest extends OpenSAMLInit
         action = new InitializeAdministrativeProfileContextTree();
         action.setAdministrativeFlowDescriptor(descriptor);
         action.setHttpServletRequestSupplier(new NonnullSupplier<> () {
+            @SuppressWarnings("null")
             @Nonnull public HttpServletRequest get() {
                 return (HttpServletRequest) src.getExternalContext().getNativeRequest();
             }

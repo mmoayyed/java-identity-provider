@@ -107,7 +107,9 @@ public class OutputMetrics extends AbstractProfileAction {
     /** Constructor. */
     public OutputMetrics() {
         metricFilterMap = CollectionSupport.emptyMap();
-        dateTimeFormatter = DateTimeFormatter.ISO_INSTANT;
+        final DateTimeFormatter instant = DateTimeFormatter.ISO_INSTANT;
+        assert instant!=null;
+        dateTimeFormatter = instant;
     }
 
     /**
@@ -163,7 +165,9 @@ public class OutputMetrics extends AbstractProfileAction {
         checkSetterPreconditions();
         
         if (format != null) {
-            dateTimeFormatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
+            assert formatter!=null;
+            dateTimeFormatter = formatter;
         }
     }
     
@@ -207,11 +211,14 @@ public class OutputMetrics extends AbstractProfileAction {
             throw new ComponentInitializationException("MetricRegistry cannot be null");
         }
         
+        final DateTimeFormatter formatter;
         if (useDefaultTimeZone) {
-            dateTimeFormatter = dateTimeFormatter.withZone(ZoneId.systemDefault());
+            formatter = dateTimeFormatter.withZone(ZoneId.systemDefault());
         } else {
-            dateTimeFormatter = dateTimeFormatter.withZone(ZoneOffset.UTC);
+            formatter = dateTimeFormatter.withZone(ZoneOffset.UTC);
         }
+        assert formatter!= null;
+        dateTimeFormatter = formatter;
     }
 
     /** {@inheritDoc} */

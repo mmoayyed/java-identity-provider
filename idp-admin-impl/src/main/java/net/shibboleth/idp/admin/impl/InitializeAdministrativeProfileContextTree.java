@@ -77,6 +77,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
      * 
      * @param langs a semi-colon separated string.
      */
+    @SuppressWarnings("unused")
     public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
         checkSetterPreconditions();
         

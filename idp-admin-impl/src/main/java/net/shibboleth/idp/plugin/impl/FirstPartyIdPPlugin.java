@@ -30,6 +30,7 @@ import net.shibboleth.idp.plugin.PropertyDrivenIdPPlugin;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
  * Implementation class for plugins from the project itself to centralize
@@ -55,7 +56,7 @@ public class FirstPartyIdPPlugin extends PropertyDrivenIdPPlugin {
     @Nonnull @NonnullElements @Unmodifiable @NotLive public List<URL> getDefaultUpdateURLs() throws PluginException {
         try {
             // The second location is a backup CNAME pointing into AWS S3 at present.
-            return List.of(
+            return CollectionSupport.listOf(
                     new URL("https://shibboleth.net/downloads/identity-provider/plugins/plugins.properties"),
                     new URL("http://plugins.shibboleth.net/plugins.properties"));
         } catch (final MalformedURLException e) {
