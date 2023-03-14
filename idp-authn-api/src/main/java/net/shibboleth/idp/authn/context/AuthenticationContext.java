@@ -134,7 +134,9 @@ public final class AuthenticationContext extends BaseContext {
 
     /** Constructor. */
     public AuthenticationContext() {
-        initiationInstant = Instant.now();
+        final Instant now = Instant.now();
+        assert now!=null;
+        initiationInstant = now;
         
         availableFlows = new HashMap<>();
         potentialFlows = new LinkedHashMap<>();

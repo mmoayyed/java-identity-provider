@@ -84,8 +84,12 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
      * Constructor.
      */
     public GenericPrincipalSerializer() {
-        symbolics = ImmutableBiMap.of();
-        compatiblePrincipalTypes = Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
+        final BiMap<String,Integer> s = ImmutableBiMap.of();
+        assert s!=null;
+        symbolics = s;
+        final Set<Class<? extends Principal>> cpt = Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
+        assert cpt!=null;
+        compatiblePrincipalTypes = cpt;
     }
 
     /**
@@ -95,7 +99,9 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
      */
     public void setSymbolics(@Nonnull @NonnullElements final Map<String,Integer> mappings) {
         checkSetterPreconditions();
-        symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Mappings cannot be null"));
+        final BiMap<String,Integer> s = HashBiMap.create(Constraint.isNotNull(mappings, "Mappings cannot be null"));
+        assert s!=null;
+        symbolics = s;
     }
         
     /** {@inheritDoc} */

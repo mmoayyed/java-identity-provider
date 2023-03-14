@@ -79,7 +79,9 @@ public class PrincipalServiceManager {
      * @return all registered services
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<PrincipalService<?>> all() {
-        return CollectionSupport.copyToList(classIndexedMap.values());
+        final Collection<PrincipalService<?>> values = classIndexedMap.values();
+        assert values!=null;
+        return CollectionSupport.copyToList(values);
     }
 
     /**

@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.authn.context;
 
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

@@ -170,7 +170,9 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,Collection<String>> getClassifiedErrors() {
         // For now this is using the older wrapper approach to guarding a live map to maintain the map insertion order.
-        return Collections.unmodifiableMap(classifiedMessages);
+        final Map<String,Collection<String>> result = Collections.unmodifiableMap(classifiedMessages);
+        assert result != null;
+        return result;                
     }
     
     /**
@@ -284,7 +286,9 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     @Override
     @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
-        return getSubject().getPrincipals(c);
+        final Set<T> result = getSubject().getPrincipals(c);
+        assert result != null;
+        return result;
     }
     
     /**
@@ -522,11 +526,13 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             
             for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
                 if (Iterables.any(entry.getValue(), checker::test)) {
+                    final String key = entry.getKey();
+                    assert key!=null;
                     authenticationContext.getOrCreateSubcontext(
-                            AuthenticationErrorContext.class).getClassifiedErrors().add(entry.getKey());
+                            AuthenticationErrorContext.class).getClassifiedErrors().add(key);
                     if (!eventSet) {
                         eventSet = true;
-                        ActionSupport.buildEvent(profileRequestContext, entry.getKey());
+                        ActionSupport.buildEvent(profileRequestContext, key);
                     }
                 }
             }
@@ -566,11 +572,13 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             
             for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
                 if (Iterables.any(entry.getValue(), checker::test)) {
+                    final String key = entry.getKey();
+                    assert key!=null;
                     authenticationContext.getOrCreateSubcontext(
-                            AuthenticationWarningContext.class).getClassifiedWarnings().add(entry.getKey());
+                            AuthenticationWarningContext.class).getClassifiedWarnings().add(key);
                     if (!eventSet) {
                         eventSet = true;
-                        ActionSupport.buildEvent(profileRequestContext, entry.getKey());
+                        ActionSupport.buildEvent(profileRequestContext, key);
                     }
                 }
             }

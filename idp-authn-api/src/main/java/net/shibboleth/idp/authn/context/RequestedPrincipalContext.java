@@ -254,7 +254,9 @@ public final class RequestedPrincipalContext extends BaseContext {
         return isAcceptable(new PrincipalSupportingComponent() {
             @Nonnull public <TT extends Principal> Set<TT> getSupportedPrincipals(@Nonnull final Class<TT> c) {
                 if (c.isAssignableFrom(principal.getClass())) {
-                    return CollectionSupport.singleton(c.cast(principal));
+                    final TT cast = c.cast(principal);
+                    assert cast != null;
+                    return CollectionSupport.singleton(cast);
                 }
                 return CollectionSupport.emptySet();
             }

@@ -76,10 +76,14 @@ public class SimplePrincipalSerializer<T extends Principal> extends AbstractPrin
             @Nonnull @NotEmpty @ParameterName(name="name") final String name)
                     throws NoSuchMethodException, SecurityException {
         
-        principalType = Constraint.isNotNull(claz, "Principal type cannot be null");
-        ctor = principalType.getConstructor(String.class);
+        final Class<T> typeClaz = principalType = Constraint.isNotNull(claz, "Principal type cannot be null");
+        final Constructor<T> constructor = typeClaz.getConstructor(String.class);
+        assert constructor!=null;
+        ctor = constructor;
         fieldName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Field name cannot be empty or null");
-        jsonPattern = Pattern.compile("^\\{\"" + fieldName + "\":.*\\}$");
+        final Pattern pattern = Pattern.compile("^\\{\"" + fieldName + "\":.*\\}$");
+        assert pattern != null;
+        jsonPattern = pattern;
     }
     
     /** {@inheritDoc} */

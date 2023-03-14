@@ -142,7 +142,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         reuseCondition = new ProxyCountPredicate();
         supportedPrincipals = new Subject();
         activationCondition = PredicateSupport.alwaysTrue();
-        inactivityTimeout = Duration.ofMinutes(30);
+        final Duration thirtyMins = Duration.ofMinutes(30);
+        assert thirtyMins != null;
+        inactivityTimeout = thirtyMins;
         principalWeightMap = CollectionSupport.emptyMap();
         stringBasedPrincipals = CollectionSupport.emptySet();
     }
@@ -446,7 +448,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** {@inheritDoc} */
     @Override @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
-        return supportedPrincipals.getPrincipals(c);
+        final Set<T> result = supportedPrincipals.getPrincipals(c);
+        assert result != null;
+        return result;
     }
 
     /**
@@ -459,7 +463,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @return a live collection of supported principals
      */
     @Nonnull @NonnullElements public Collection<Principal> getSupportedPrincipals() {
-        return supportedPrincipals.getPrincipals();
+        final Collection<Principal> result = supportedPrincipals.getPrincipals();
+        assert result != null;
+        return result;
     }
 
     /**
@@ -578,7 +584,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @return the new result
      */
     @Nonnull public AuthenticationResult newAuthenticationResult(@Nonnull final Subject subject) {
-        final AuthenticationResult result = new AuthenticationResult(getId(), subject);
+        final String id = getId();
+        assert id != null;
+        final AuthenticationResult result = new AuthenticationResult(id, subject);
 
         if (proxyRestrictionsEnforced) {
             result.setReuseCondition(PredicateSupport.and(reuseCondition, result.new ProxyRestrictionReusePredicate()));

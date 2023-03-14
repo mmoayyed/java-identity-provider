@@ -130,12 +130,14 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
         checkComponentActive();
+        final String id = getId();
+        assert id!=null;
         
         if (!activationCondition.test(profileRequestContext)) {
             log.debug("{} Activation condition was false, ignoring request", getLogPrefix());
             return null;
         } else if (!isAcceptable(authenticationContext.getSubcontext(RequestedPrincipalContext.class),
-                customPrincipals, getId())) {
+                customPrincipals, id)) {
             return null;
         }
         
@@ -215,7 +217,9 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
                         final PrincipalSupportingComponent wrapper = new PrincipalSupportingComponent() {
                             @Nonnull
                             public <T extends Principal> Set<T> getSupportedPrincipals(@Nonnull final Class<T> c) {
-                                return subject.getPrincipals(c);
+                                Set<T> principals = subject.getPrincipals(c);
+                                assert principals!=null;
+                                return principals;
                             }
                         };
                         if (predicate.test(wrapper)) {

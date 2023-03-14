@@ -94,7 +94,9 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
         authenticationFlowId = Constraint.isNotNull(StringSupport.trimOrNull(flowId),
                 "Authentication flow ID cannot be null nor empty");
         subject = Constraint.isNotNull(newSubject, "Subject list cannot be null or empty");
-        authenticationInstant = Instant.now();
+        final Instant now = Instant.now();
+        assert now != null;
+        authenticationInstant = now;
         lastActivityInstant = authenticationInstant;
         additionalData = new HashMap<>();
         
@@ -172,7 +174,9 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
     @Override
     @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
-        return subject.getPrincipals(c);
+        final Set<T> result = subject.getPrincipals(c);
+        assert result != null;
+        return result;
     }
     
     /**
@@ -224,7 +228,9 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
      * Set the last activity instant for this result to the current time.
      */
     public void setLastActivityInstantToNow() {
-        lastActivityInstant = Instant.now();
+        final Instant now = Instant.now();
+        assert now != null;
+        lastActivityInstant = now;
     }
     
     /**
