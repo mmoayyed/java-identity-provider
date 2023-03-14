@@ -153,9 +153,9 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
 
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<AuthenticationStatement> statementBuilder = (SAMLObjectBuilder<AuthenticationStatement>)
-                bf.<AuthenticationStatement>getBuilderOrThrow(AuthenticationStatement.TYPE_NAME);
+                bf.<AuthenticationStatement>ensureBuilder(AuthenticationStatement.TYPE_NAME);
         final SAMLObjectBuilder<SubjectLocality> localityBuilder = (SAMLObjectBuilder<SubjectLocality>)
-                bf.<SubjectLocality>getBuilderOrThrow(SubjectLocality.TYPE_NAME);
+                bf.<SubjectLocality>ensureBuilder(SubjectLocality.TYPE_NAME);
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
         statement.setAuthenticationInstant(getAuthenticationResult().getAuthenticationInstant());

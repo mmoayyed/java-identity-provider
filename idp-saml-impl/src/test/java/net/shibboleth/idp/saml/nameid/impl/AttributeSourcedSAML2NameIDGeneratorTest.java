@@ -90,11 +90,11 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
         generator.setId("test");
         generator.setFormat(NameID.X509_SUBJECT);
         saml1Builder = (SAMLObjectBuilder<NameIdentifier>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>ensureBuilder(
                         NameIdentifier.DEFAULT_ELEMENT_NAME);
 
         saml2Builder = (SAMLObjectBuilder<NameID>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>ensureBuilder(
                         NameID.DEFAULT_ELEMENT_NAME);
         prc = new RequestContextBuilder().buildProfileRequestContext();
     }

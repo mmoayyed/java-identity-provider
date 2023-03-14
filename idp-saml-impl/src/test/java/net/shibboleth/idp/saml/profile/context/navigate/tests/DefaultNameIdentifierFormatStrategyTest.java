@@ -56,10 +56,10 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
         SAMLObjectBuilder<EntityDescriptor> edBuilder = (SAMLObjectBuilder<EntityDescriptor>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<EntityDescriptor>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<EntityDescriptor>ensureBuilder(
                         EntityDescriptor.DEFAULT_ELEMENT_NAME);
         SAMLObjectBuilder<SPSSODescriptor> roleBuilder = (SAMLObjectBuilder<SPSSODescriptor>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<SPSSODescriptor>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<SPSSODescriptor>ensureBuilder(
                         SPSSODescriptor.DEFAULT_ELEMENT_NAME);
         
         profileConfig = new BrowserSSOProfileConfiguration();
@@ -105,7 +105,7 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
     @Test
     public void testNoProfileConfig() {
         SAMLObjectBuilder<NameIDFormat> formatBuilder = (SAMLObjectBuilder<NameIDFormat>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>ensureBuilder(
                         NameIDFormat.DEFAULT_ELEMENT_NAME);
         NameIDFormat format = formatBuilder.buildObject();
         format.setURI(NameID.EMAIL);
@@ -123,7 +123,7 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
         profileConfig.setNameIDFormatPrecedence(Arrays.asList(NameID.EMAIL, NameID.TRANSIENT));
 
         SAMLObjectBuilder<NameIDFormat> formatBuilder = (SAMLObjectBuilder<NameIDFormat>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>ensureBuilder(
                         NameIDFormat.DEFAULT_ELEMENT_NAME);
         NameIDFormat format = formatBuilder.buildObject();
         format.setURI(NameID.PERSISTENT);
@@ -141,7 +141,7 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
         profileConfig.setNameIDFormatPrecedence(Arrays.asList(NameID.EMAIL, NameID.TRANSIENT));
 
         SAMLObjectBuilder<NameIDFormat> formatBuilder = (SAMLObjectBuilder<NameIDFormat>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>ensureBuilder(
                         NameIDFormat.DEFAULT_ELEMENT_NAME);
         NameIDFormat format = formatBuilder.buildObject();
         format.setURI(NameID.TRANSIENT);
@@ -159,7 +159,7 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
         profileConfig.setNameIDFormatPrecedence(Arrays.asList(NameID.EMAIL, NameID.TRANSIENT));
 
         SAMLObjectBuilder<NameIDFormat> formatBuilder = (SAMLObjectBuilder<NameIDFormat>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDFormat>ensureBuilder(
                         NameIDFormat.DEFAULT_ELEMENT_NAME);
         NameIDFormat format = formatBuilder.buildObject();
         format.setURI(NameID.TRANSIENT);

@@ -255,10 +255,10 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<AuthnRequest> requestBuilder =
-                (SAMLObjectBuilder<AuthnRequest>) bf.<AuthnRequest>getBuilderOrThrow(
+                (SAMLObjectBuilder<AuthnRequest>) bf.<AuthnRequest>ensureBuilder(
                         AuthnRequest.DEFAULT_ELEMENT_NAME);
         final SAMLObjectBuilder<NameIDPolicy> nipBuilder =
-                (SAMLObjectBuilder<NameIDPolicy>) bf.<NameIDPolicy>getBuilderOrThrow(
+                (SAMLObjectBuilder<NameIDPolicy>) bf.<NameIDPolicy>ensureBuilder(
                         NameIDPolicy.DEFAULT_ELEMENT_NAME);
 
         final AuthnRequest object = requestBuilder.buildObject();
@@ -278,7 +278,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         if (issuerId != null) {
             log.debug("{} Setting Issuer to {}", getLogPrefix(), issuerId);
             final SAMLObjectBuilder<Issuer> issuerBuilder =
-                    (SAMLObjectBuilder<Issuer>) bf.<Issuer>getBuilderOrThrow(Issuer.DEFAULT_ELEMENT_NAME);
+                    (SAMLObjectBuilder<Issuer>) bf.<Issuer>ensureBuilder(Issuer.DEFAULT_ELEMENT_NAME);
             final Issuer issuer = issuerBuilder.buildObject();
             issuer.setValue(issuerId);
             object.setIssuer(issuer);
@@ -357,7 +357,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<RequestedAuthnContext> builder =
-                (SAMLObjectBuilder<RequestedAuthnContext>) bf.<RequestedAuthnContext>getBuilderOrThrow(
+                (SAMLObjectBuilder<RequestedAuthnContext>) bf.<RequestedAuthnContext>ensureBuilder(
                         RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
         
         // Check for class refs.
@@ -432,7 +432,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         
         final SAMLObjectBuilder<Scoping> scopingBuilder =
-                (SAMLObjectBuilder<Scoping>) bf.<Scoping>getBuilderOrThrow(Scoping.DEFAULT_ELEMENT_NAME);
+                (SAMLObjectBuilder<Scoping>) bf.<Scoping>ensureBuilder(Scoping.DEFAULT_ELEMENT_NAME);
         final Scoping scoping = scopingBuilder.buildObject();
         
         if (count != null) {
@@ -442,9 +442,9 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         if (!idplist.isEmpty()) {
             final SAMLObjectBuilder<IDPList> idpListBuilder =
-                    (SAMLObjectBuilder<IDPList>) bf.<IDPList>getBuilderOrThrow(IDPList.DEFAULT_ELEMENT_NAME);
+                    (SAMLObjectBuilder<IDPList>) bf.<IDPList>ensureBuilder(IDPList.DEFAULT_ELEMENT_NAME);
             final SAMLObjectBuilder<IDPEntry> idpBuilder =
-                    (SAMLObjectBuilder<IDPEntry>) bf.<IDPEntry>getBuilderOrThrow(IDPEntry.DEFAULT_ELEMENT_NAME);
+                    (SAMLObjectBuilder<IDPEntry>) bf.<IDPEntry>ensureBuilder(IDPEntry.DEFAULT_ELEMENT_NAME);
                         
             final IDPList idps = idpListBuilder.buildObject();
             for (final String idp : idplist) {
@@ -457,7 +457,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         }
 
         final SAMLObjectBuilder<RequesterID> requesterIdBuilder =
-                (SAMLObjectBuilder<RequesterID>) bf.<RequesterID>getBuilderOrThrow(RequesterID.DEFAULT_ELEMENT_NAME);
+                (SAMLObjectBuilder<RequesterID>) bf.<RequesterID>ensureBuilder(RequesterID.DEFAULT_ELEMENT_NAME);
 
         final ProxiedRequesterContext proxiedReqCtx =
                 proxiedRequesterContextLookupStrategy.apply(profileRequestContext);
@@ -496,10 +496,10 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         if (!attrs.isEmpty()) {
             final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
             final SAMLObjectBuilder<Extensions> extBuilder =
-                    (SAMLObjectBuilder<Extensions>) bf.<Extensions>getBuilderOrThrow(
+                    (SAMLObjectBuilder<Extensions>) bf.<Extensions>ensureBuilder(
                             Extensions.DEFAULT_ELEMENT_NAME);
             final SAMLObjectBuilder<RequestedAttributes> reqExtBuilder =
-                    (SAMLObjectBuilder<RequestedAttributes>) bf.<RequestedAttributes>getBuilderOrThrow(
+                    (SAMLObjectBuilder<RequestedAttributes>) bf.<RequestedAttributes>ensureBuilder(
                             RequestedAttributes.DEFAULT_ELEMENT_NAME);
             final RequestedAttributes reqExt = reqExtBuilder.buildObject();
             attrs.forEach(attr -> {

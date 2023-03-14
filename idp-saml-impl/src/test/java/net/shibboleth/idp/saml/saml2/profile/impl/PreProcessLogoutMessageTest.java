@@ -96,10 +96,10 @@ public class PreProcessLogoutMessageTest extends OpenSAMLInitBaseTestCase {
         imc.setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
         
         final SAMLObjectBuilder<Extensions> extsBuilder = (SAMLObjectBuilder<Extensions>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<Extensions>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<Extensions>ensureBuilder(
                         Extensions.DEFAULT_ELEMENT_NAME);
         final SAMLObjectBuilder<Asynchronous> asyncBuilder = (SAMLObjectBuilder<Asynchronous>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<Asynchronous>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<Asynchronous>ensureBuilder(
                         Asynchronous.DEFAULT_ELEMENT_NAME);
         final LogoutRequest lr = (LogoutRequest)imc.getMessage();
         assert lr!=null;

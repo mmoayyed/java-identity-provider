@@ -267,7 +267,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
     @Test public void testRequestedAttributes() {
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<RequestedAttribute> reqAttrBuilder =
-                (SAMLObjectBuilder<RequestedAttribute>) bf.<RequestedAttribute>getBuilderOrThrow(
+                (SAMLObjectBuilder<RequestedAttribute>) bf.<RequestedAttribute>ensureBuilder(
                         RequestedAttribute.DEFAULT_ELEMENT_NAME);
         final RequestedAttribute attr1 = reqAttrBuilder.buildObject();
         attr1.setNameFormat(Attribute.URI_REFERENCE);

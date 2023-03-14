@@ -66,13 +66,13 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         racBuilder = (SAMLObjectBuilder<RequestedAuthnContext>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<RequestedAuthnContext>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<RequestedAuthnContext>ensureBuilder(
                         RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
         classBuilder = (SAMLObjectBuilder<AuthnContextClassRef>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<AuthnContextClassRef>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<AuthnContextClassRef>ensureBuilder(
                         AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
         declBuilder = (SAMLObjectBuilder<AuthnContextDeclRef>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<AuthnContextDeclRef>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<AuthnContextDeclRef>ensureBuilder(
                         AuthnContextDeclRef.DEFAULT_ELEMENT_NAME);
         
         src = (MockRequestContext) new RequestContextBuilder().buildRequestContext();

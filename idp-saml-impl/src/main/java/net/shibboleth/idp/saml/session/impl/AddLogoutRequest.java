@@ -215,7 +215,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
 
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<LogoutRequest> requestBuilder =
-                (SAMLObjectBuilder<LogoutRequest>) bf.<LogoutRequest>getBuilderOrThrow(
+                (SAMLObjectBuilder<LogoutRequest>) bf.<LogoutRequest>ensureBuilder(
                         LogoutRequest.DEFAULT_ELEMENT_NAME);
 
         final LogoutRequest object = requestBuilder.buildObject();
@@ -239,7 +239,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
         if (issuerId != null) {
             log.debug("{} Setting Issuer to {}", getLogPrefix(), issuerId);
             final SAMLObjectBuilder<Issuer> issuerBuilder =
-                    (SAMLObjectBuilder<Issuer>) bf.<Issuer>getBuilderOrThrow(Issuer.DEFAULT_ELEMENT_NAME);
+                    (SAMLObjectBuilder<Issuer>) bf.<Issuer>ensureBuilder(Issuer.DEFAULT_ELEMENT_NAME);
             final Issuer issuer = issuerBuilder.buildObject();
             issuer.setValue(issuerId);
             object.setIssuer(issuer);
@@ -249,7 +249,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
         
         if (includeSessionIndex) {
             final SAMLObjectBuilder<SessionIndex> indexBuilder =
-                    (SAMLObjectBuilder<SessionIndex>) bf.<SessionIndex>getBuilderOrThrow(
+                    (SAMLObjectBuilder<SessionIndex>) bf.<SessionIndex>ensureBuilder(
                             SessionIndex.DEFAULT_ELEMENT_NAME);
             final SessionIndex index = indexBuilder.buildObject();
             index.setValue(s2Session.getSessionIndex());

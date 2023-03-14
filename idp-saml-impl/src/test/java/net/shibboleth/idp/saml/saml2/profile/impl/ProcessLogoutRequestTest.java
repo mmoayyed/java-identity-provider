@@ -89,7 +89,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         sessionIndexBuilder = (SAMLObjectBuilder<SessionIndex>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<SessionIndex>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<SessionIndex>ensureBuilder(
                         SessionIndex.DEFAULT_ELEMENT_NAME);
 
         final SingleLogoutProfileConfiguration logoutConfig = new SingleLogoutProfileConfiguration();

@@ -98,7 +98,7 @@ public abstract class AbstractOutgoingSamlMessageAction extends
      */
     @Nonnull protected static <T extends SAMLObject> T newSAMLObject(final Class<T> type, @Nonnull final QName elementName) {
         final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory()
-                .<T> getBuilderOrThrow(elementName);
+                .<T> ensureBuilder(elementName);
         return builder.buildObject();
     }
 

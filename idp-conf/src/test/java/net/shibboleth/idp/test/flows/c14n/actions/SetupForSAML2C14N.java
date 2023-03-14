@@ -68,7 +68,7 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
             return null;
         }
         final SAMLObjectBuilder<NameID> identifierBuilder = (SAMLObjectBuilder<NameID>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>ensureBuilder(
                         NameID.DEFAULT_ELEMENT_NAME);
         final NameID nameId = identifierBuilder.buildObject();
         nameId.setFormat(NameIDType.UNSPECIFIED);

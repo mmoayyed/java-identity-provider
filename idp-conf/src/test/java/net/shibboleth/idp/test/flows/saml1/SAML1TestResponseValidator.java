@@ -82,7 +82,7 @@ public class SAML1TestResponseValidator {
     /** Constructor. */
     public SAML1TestResponseValidator() {
         final SAMLObjectBuilder<NameIdentifier> builder = (SAMLObjectBuilder<NameIdentifier>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>ensureBuilder(
                         NameIdentifier.DEFAULT_ELEMENT_NAME);
         nameIdentifier = builder.buildObject();
         nameIdentifier.setFormat(SAMLConstants.SAML1_NAMEID_TRANSIENT);

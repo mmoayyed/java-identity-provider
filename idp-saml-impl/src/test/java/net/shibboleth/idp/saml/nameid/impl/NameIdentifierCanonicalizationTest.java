@@ -66,7 +66,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
     @BeforeClass public void initialize() {
         builder = (SAMLObjectBuilder<NameIdentifier>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>ensureBuilder(
                         NameIdentifier.DEFAULT_ELEMENT_NAME);
     }
 

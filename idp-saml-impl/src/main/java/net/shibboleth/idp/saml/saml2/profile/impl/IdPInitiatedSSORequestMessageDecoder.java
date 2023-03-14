@@ -70,11 +70,11 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         final XMLObjectBuilderFactory factory = XMLObjectProviderRegistrySupport.getBuilderFactory(); 
         
         requestBuilder = (SAMLObjectBuilder<AuthnRequest>)
-                factory.<AuthnRequest>getBuilderOrThrow(AuthnRequest.DEFAULT_ELEMENT_NAME);
+                factory.<AuthnRequest>ensureBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
         issuerBuilder = (SAMLObjectBuilder<Issuer>)
-                factory.<Issuer>getBuilderOrThrow(Issuer.DEFAULT_ELEMENT_NAME);
+                factory.<Issuer>ensureBuilder(Issuer.DEFAULT_ELEMENT_NAME);
         nipBuilder = (SAMLObjectBuilder<NameIDPolicy>)
-                factory.<NameIDPolicy>getBuilderOrThrow(NameIDPolicy.DEFAULT_ELEMENT_NAME);
+                factory.<NameIDPolicy>ensureBuilder(NameIDPolicy.DEFAULT_ELEMENT_NAME);
     }
     
     /** {@inheritDoc} */

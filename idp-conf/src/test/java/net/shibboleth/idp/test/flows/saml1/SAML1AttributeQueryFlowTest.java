@@ -60,7 +60,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
     @BeforeClass void setupValidator() {
 
         final SAMLObjectBuilder<NameIdentifier> builder = (SAMLObjectBuilder<NameIdentifier>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>ensureBuilder(
                         NameIdentifier.DEFAULT_ELEMENT_NAME);
         final NameIdentifier nameIdentifier = builder.buildObject();
         nameIdentifier.setValue("jdoe");
@@ -158,7 +158,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         
         if (includeDesignators) {
             final SAMLObjectBuilder<AttributeDesignator> designatorBuilder = (SAMLObjectBuilder<AttributeDesignator>)
-                    XMLObjectProviderRegistrySupport.getBuilderFactory().<AttributeDesignator>getBuilderOrThrow(
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().<AttributeDesignator>ensureBuilder(
                             AttributeDesignator.DEFAULT_ELEMENT_NAME);
             
             AttributeDesignator designator = designatorBuilder.buildObject();

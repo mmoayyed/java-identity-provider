@@ -132,7 +132,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
         forceAuthnPredicate = PredicateSupport.alwaysFalse();
         
         builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
-        uiInfo = ((SAMLObjectBuilder<UIInfo>) builderFactory.<UIInfo>getBuilderOrThrow(
+        uiInfo = ((SAMLObjectBuilder<UIInfo>) builderFactory.<UIInfo>ensureBuilder(
                 UIInfo.DEFAULT_ELEMENT_NAME)).buildObject();
         
         defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(null);
@@ -227,7 +227,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
         uiInfo.getDisplayNames().clear();
         for (final LangBearingString s : displayNames) {
             final DisplayName displayName =
-                    ((SAMLObjectBuilder<DisplayName>) builderFactory.<DisplayName>getBuilderOrThrow(
+                    ((SAMLObjectBuilder<DisplayName>) builderFactory.<DisplayName>ensureBuilder(
                             DisplayName.DEFAULT_ELEMENT_NAME)).buildObject();
             displayName.setValue(s.getValue());
             displayName.setXMLLang(s.getLang());
@@ -244,7 +244,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
         uiInfo.getDescriptions().clear();
         for (final LangBearingString s : descriptions) {
             final Description desc =
-                    ((SAMLObjectBuilder<Description>) builderFactory.<Description>getBuilderOrThrow(
+                    ((SAMLObjectBuilder<Description>) builderFactory.<Description>ensureBuilder(
                             Description.DEFAULT_ELEMENT_NAME)).buildObject();
             desc.setValue(s.getValue());
             desc.setXMLLang(s.getLang());
@@ -263,7 +263,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
         for (final Logo src : logos) {
             final org.opensaml.saml.ext.saml2mdui.Logo logo =
                     ((SAMLObjectBuilder<org.opensaml.saml.ext.saml2mdui.Logo>) 
-                            builderFactory.<org.opensaml.saml.ext.saml2mdui.Logo>getBuilderOrThrow(
+                            builderFactory.<org.opensaml.saml.ext.saml2mdui.Logo>ensureBuilder(
                                     org.opensaml.saml.ext.saml2mdui.Logo.DEFAULT_ELEMENT_NAME)).buildObject();
             logo.setURI(src.getValue());
             logo.setXMLLang(src.getLang());
@@ -282,7 +282,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
         uiInfo.getInformationURLs().clear();
         for (final LangBearingString s : urls) {
             final InformationURL url =
-                    ((SAMLObjectBuilder<InformationURL>) builderFactory.<InformationURL>getBuilderOrThrow(
+                    ((SAMLObjectBuilder<InformationURL>) builderFactory.<InformationURL>ensureBuilder(
                             InformationURL.DEFAULT_ELEMENT_NAME)).buildObject();
             url.setURI(s.getValue());
             url.setXMLLang(s.getLang());
@@ -299,7 +299,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
         uiInfo.getPrivacyStatementURLs().clear();
         for (final LangBearingString s : urls) {
             final PrivacyStatementURL url =
-                    ((SAMLObjectBuilder<PrivacyStatementURL>) builderFactory.<PrivacyStatementURL>getBuilderOrThrow(
+                    ((SAMLObjectBuilder<PrivacyStatementURL>) builderFactory.<PrivacyStatementURL>ensureBuilder(
                             PrivacyStatementURL.DEFAULT_ELEMENT_NAME)).buildObject();
             url.setURI(s.getValue());
             url.setXMLLang(s.getLang());

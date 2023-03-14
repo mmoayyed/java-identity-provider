@@ -95,7 +95,7 @@ public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
     @Test public void testXML() {
         // NOTE Any change is an ODS drift
         final XMLObjectBuilder<XSString> builder =
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>ensureBuilder(
                         XSString.TYPE_NAME);
         final XSString xmlString = builder.buildObject(XSString.TYPE_NAME);
         xmlString.setValue("value");

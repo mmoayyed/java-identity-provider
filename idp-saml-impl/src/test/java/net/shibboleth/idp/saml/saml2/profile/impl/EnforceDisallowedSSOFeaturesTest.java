@@ -54,7 +54,7 @@ public class EnforceDisallowedSSOFeaturesTest extends OpenSAMLInitBaseTestCase {
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         nidBuilder = (SAMLObjectBuilder<NameIDPolicy>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDPolicy>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIDPolicy>ensureBuilder(
                         NameIDPolicy.DEFAULT_ELEMENT_NAME);
         
         src = (MockRequestContext) new RequestContextBuilder().buildRequestContext();

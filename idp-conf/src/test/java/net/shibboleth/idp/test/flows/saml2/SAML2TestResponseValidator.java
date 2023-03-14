@@ -123,7 +123,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     /** Constructor. */
     public SAML2TestResponseValidator() {
         final SAMLObjectBuilder<NameID> builder = (SAMLObjectBuilder<NameID>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>ensureBuilder(
                         NameID.DEFAULT_ELEMENT_NAME);
         nameID = builder.buildObject();
         nameID.setFormat(NameID.TRANSIENT);
@@ -145,11 +145,11 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     protected void buildExpectedAttributes() {
 
         final SAMLObjectBuilder<Attribute> builder = (SAMLObjectBuilder<Attribute>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<Attribute>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<Attribute>ensureBuilder(
                         Attribute.DEFAULT_ELEMENT_NAME);
 
         final XMLObjectBuilder<XSAny> anyBuilder =
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>ensureBuilder(
                         XSAny.TYPE_NAME);
         
         // the expected schacHomeOrganization attribute

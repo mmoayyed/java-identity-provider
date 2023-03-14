@@ -194,11 +194,11 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
 
         final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
         final SAMLObjectBuilder<AuthnStatement> statementBuilder = (SAMLObjectBuilder<AuthnStatement>)
-                bf.<AuthnStatement>getBuilderOrThrow(AuthnStatement.TYPE_NAME);
+                bf.<AuthnStatement>ensureBuilder(AuthnStatement.TYPE_NAME);
         final SAMLObjectBuilder<AuthnContext> authnContextBuilder = (SAMLObjectBuilder<AuthnContext>)
-                bf.<AuthnContext>getBuilderOrThrow(AuthnContext.TYPE_NAME);
+                bf.<AuthnContext>ensureBuilder(AuthnContext.TYPE_NAME);
         final SAMLObjectBuilder<SubjectLocality> localityBuilder = (SAMLObjectBuilder<SubjectLocality>)
-                bf.<SubjectLocality>getBuilderOrThrow(SubjectLocality.TYPE_NAME);
+                bf.<SubjectLocality>ensureBuilder(SubjectLocality.TYPE_NAME);
 
         final AuthnStatement statement = statementBuilder.buildObject();
         statement.setAuthnInstant(getAuthenticationResult().getAuthenticationInstant());
@@ -262,7 +262,7 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
                 if (!suppress) {
                     final SAMLObjectBuilder<AuthenticatingAuthority> authorityBuilder =
                             (SAMLObjectBuilder<AuthenticatingAuthority>) XMLObjectProviderRegistrySupport
-                                .getBuilderFactory().<AuthenticatingAuthority>getBuilderOrThrow(
+                                .getBuilderFactory().<AuthenticatingAuthority>ensureBuilder(
                                     AuthenticatingAuthority.DEFAULT_ELEMENT_NAME);
                     for (final String authority : proxyPrincipal.getAuthorities()) {
                         final AuthenticatingAuthority aa = authorityBuilder.buildObject();

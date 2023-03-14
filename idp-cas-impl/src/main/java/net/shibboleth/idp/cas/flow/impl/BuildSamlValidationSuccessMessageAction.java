@@ -91,7 +91,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         identifierGenerationStrategy = strategy;
         entityID = Constraint.isNotNull(StringSupport.trimOrNull(id), "EntityID cannot be null");
         
-        attrValueBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(
+        attrValueBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>ensureBuilder(
                 XSString.TYPE_NAME);
     }
 

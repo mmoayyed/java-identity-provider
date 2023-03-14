@@ -84,7 +84,7 @@ public class NameIDPrincipalSerializer extends AbstractPrincipalSerializer<Strin
     public NameIDPrincipalSerializer() {
         objectBuilderFactory = Json.createBuilderFactory(null);
         nameIDBuilder = (SAMLObjectBuilder<NameID>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>ensureBuilder(
                         NameID.DEFAULT_ELEMENT_NAME);
     }
     

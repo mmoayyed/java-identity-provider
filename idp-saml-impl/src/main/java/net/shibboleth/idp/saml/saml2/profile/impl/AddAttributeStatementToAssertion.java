@@ -156,7 +156,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
         }
 
         final SAMLObjectBuilder<AttributeStatement> statementBuilder = (SAMLObjectBuilder<AttributeStatement>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<AttributeStatement>getBuilderOrThrow(
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<AttributeStatement>ensureBuilder(
                         AttributeStatement.DEFAULT_ELEMENT_NAME);
 
         final AttributeStatement statement = statementBuilder.buildObject();
