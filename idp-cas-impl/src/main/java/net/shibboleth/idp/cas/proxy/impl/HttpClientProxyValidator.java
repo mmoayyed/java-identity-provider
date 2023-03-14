@@ -208,6 +208,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
         } else {
             entityID = service.getName();
         }
+        assert entityID!=null;
         final CriteriaSet criteria = new CriteriaSet(
                 new EntityIdCriterion(entityID),
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME),

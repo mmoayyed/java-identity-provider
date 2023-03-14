@@ -82,7 +82,9 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
      * @return immutable collection of user attributes
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<Attribute> getAttributes() {
-        return Collections.unmodifiableList(attributes);
+        final Collection<Attribute> result = Collections.unmodifiableList(attributes);
+        assert result!=null;
+        return result;
     }
 
     /**
@@ -118,7 +120,9 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
      * @return immutable list of proxies traversed in order of most recent to last recent
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getProxies() {
-        return Collections.unmodifiableList(proxies);
+        final List<String> result =  Collections.unmodifiableList(proxies);
+        assert result!=null;
+        return result;
     }
 
     /**

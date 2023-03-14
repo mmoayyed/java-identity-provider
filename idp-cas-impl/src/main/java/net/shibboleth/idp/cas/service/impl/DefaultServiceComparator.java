@@ -35,7 +35,11 @@ public class DefaultServiceComparator extends net.shibboleth.idp.cas.service.Def
 
     /** Creates a new instance that ignores <em>;jsessionid=value</em>. */
     public DefaultServiceComparator() {
-        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), "cas-protocol.xml",
+        final Class<? extends DefaultServiceComparator> claz = getClass();
+        assert claz!=null;
+        final String className = claz.getName();
+        assert className!=null;
+        DeprecationSupport.warn(ObjectType.CLASS, className, "cas-protocol.xml",
                 "net.shibboleth.idp.cas.service.DefaultServiceComparator");
     }
 
@@ -46,7 +50,11 @@ public class DefaultServiceComparator extends net.shibboleth.idp.cas.service.Def
      */
     public DefaultServiceComparator(@Nonnull final String ... parameterNames) {
         super(parameterNames);
-        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), "cas-protocol.xml",
+        final Class<? extends DefaultServiceComparator> claz = getClass();
+        assert claz!=null;
+        final String className = claz.getName();
+        assert className!=null;
+        DeprecationSupport.warn(ObjectType.CLASS, className, "cas-protocol.xml",
                 "net.shibboleth.idp.cas.service.DefaultServiceComparator");
     }
     

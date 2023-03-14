@@ -31,6 +31,8 @@ import static org.testng.Assert.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import javax.annotation.Nonnull;
+
 /**
  * Unit test for {@link SimpleTicketService} class.
  *
@@ -113,16 +115,16 @@ public class SimpleTicketServiceTest {
         assertNull(ticketService.removeProxyTicket(pt.getId()));
     }
 
-    private ServiceTicket createServiceTicket() {
+    @Nonnull private ServiceTicket createServiceTicket() {
         return ticketService.createServiceTicket(
                 new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
                 expiry(),
                 TEST_SERVICE,
-                new TicketState(TEST_SESSION_ID, "bob", Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password"),
+                new TicketState(TEST_SESSION_ID, "bob", expiry(), "Password"),
                 false);
     }
 
-    private ProxyGrantingTicket createProxyGrantingTicket() {
+    @Nonnull private ProxyGrantingTicket createProxyGrantingTicket() {
         return ticketService.createProxyGrantingTicket(
                 new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
                 expiry(),
@@ -130,7 +132,9 @@ public class SimpleTicketServiceTest {
                 TEST_PGTURL);
     }
 
-    private static Instant expiry() {
-        return Instant.now().plusSeconds(10).truncatedTo(ChronoUnit.MILLIS);
+    @Nonnull private static Instant expiry() {
+        final Instant result = Instant.now().plusSeconds(10).truncatedTo(ChronoUnit.MILLIS);
+        assert result != null;
+        return result;
     }
 }

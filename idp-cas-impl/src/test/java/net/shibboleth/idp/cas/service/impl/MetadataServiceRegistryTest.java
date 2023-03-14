@@ -18,7 +18,6 @@
 package net.shibboleth.idp.cas.service.impl;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
 import java.time.Duration;
@@ -91,7 +90,9 @@ public class MetadataServiceRegistryTest {
         final ParserPool pool = XMLObjectProviderRegistrySupport.getParserPool();
         assert pool != null;
         metadataResolver.setParserPool(pool);
-        metadataResolver.setMaxRefreshDelay(Duration.ofSeconds(500));
+        final Duration fiveHundredSeconds =Duration.ofSeconds(500);
+        assert fiveHundredSeconds!=null;
+        metadataResolver.setMaxRefreshDelay(fiveHundredSeconds);
         metadataResolver.setId("cas");
         metadataResolver.setIndexes(Collections.<MetadataIndex>singleton(new EndpointMetadataIndex(
                 new MetadataServiceRegistry.LoginEndpointPredicate())));

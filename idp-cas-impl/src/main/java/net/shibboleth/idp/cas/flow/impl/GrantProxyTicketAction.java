@@ -191,9 +191,11 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
         assert ptr != null && pCfg != null && sCfg != null;
         try {
             log.debug("{} Granting proxy ticket for {}", getLogPrefix(), ptr.getTargetService());
+            final Instant then =Instant.now().plus(pCfg.getTicketValidityPeriod(profileRequestContext));
+            assert then != null;
             pt = casTicketService.createProxyTicket(
                     sCfg.getIdGenerator().generateIdentifier(),
-                    Instant.now().plus(pCfg.getTicketValidityPeriod(profileRequestContext)),
+                    then,
                     pgt,
                     ptr.getTargetService());
         } catch (final RuntimeException e) {

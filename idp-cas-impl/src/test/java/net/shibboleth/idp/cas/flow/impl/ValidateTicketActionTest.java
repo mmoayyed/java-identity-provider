@@ -76,9 +76,13 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
     @Test
     public void testTicketExpired() throws Exception {
         final int ticketTTLMillis = 10;
-        final TicketState state = new TicketState(TEST_SESSION_ID, TEST_PRINCIPAL_NAME, Instant.now(), "Password");
+        final Instant now = Instant.now();
+        assert now!=null;
+        final Instant then = now.plusMillis(ticketTTLMillis);
+        assert then != null;
+        final TicketState state = new TicketState(TEST_SESSION_ID, TEST_PRINCIPAL_NAME, now, "Password");
         final ServiceTicket ticket = ticketService.createServiceTicket(
-            generateServiceTicketId(), Instant.now().plusMillis(ticketTTLMillis), TEST_SERVICE, state, false);
+            generateServiceTicketId(), then, TEST_SERVICE, state, false);
         final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
                 .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
@@ -90,6 +94,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
         assertEquals(event.getId(), ProtocolError.TicketExpired.name());
     }
 
+    @SuppressWarnings("null")
     @Test
     public void testTicketRetrievalError() throws Exception {
         final TicketService throwingTicketService = mock(TicketService.class);
@@ -148,6 +153,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
     }
 
     private static ValidateTicketAction newAction(final TicketService service) {
+        assert service!=null;
         final ValidateTicketAction action = new ValidateTicketAction(service);
         try {
             action.initialize();

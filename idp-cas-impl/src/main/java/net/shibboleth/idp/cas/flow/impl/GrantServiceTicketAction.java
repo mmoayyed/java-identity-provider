@@ -223,10 +223,11 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
                 state.setConsentedAttributeIds(attributeCtx.getIdPAttributes().keySet());
             }
             
-            assert securityConfig != null;
+            final Instant then = Instant.now().plus(lCfg.getTicketValidityPeriod(profileRequestContext)); 
+            assert securityConfig != null && then != null;
             ticket = casTicketService.createServiceTicket(
                     securityConfig.getIdGenerator().generateIdentifier(),
-                    Instant.now().plus(lCfg.getTicketValidityPeriod(profileRequestContext)),
+                    then,
                     stReq.getService(),
                     state,
                     stReq.isRenew());

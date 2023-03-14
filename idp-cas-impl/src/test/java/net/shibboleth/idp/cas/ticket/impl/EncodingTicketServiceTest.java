@@ -104,9 +104,12 @@ public class EncodingTicketServiceTest {
 
     @Test
     public void testCreateRemoveServiceTicketInvalid() throws Exception {
+        final Instant expiry = Instant.now().plusSeconds(5);
+        final String nowString = String.valueOf(System.currentTimeMillis());
+        assert expiry!=null && nowString!=null;
         final ServiceTicket st1 = ticketService.createServiceTicket(
-                String.valueOf(System.currentTimeMillis()),
-                Instant.now().plusSeconds(5),
+                nowString,
+                expiry,
                 "https://www.example.com/s2/",
                 newState("bartholomew"),
                 true);
@@ -122,6 +125,7 @@ public class EncodingTicketServiceTest {
                 + "8m2!3d37.3554696!4d-80.537265";
         final Instant expiry = Instant.now().plusSeconds(5);
         final String id = String.valueOf(System.currentTimeMillis());
+        assert expiry!=null && id!=null;
         final ServiceTicket st1 = ticketService.createServiceTicket(id, expiry, service, state, true);
         assertNotNull(st1);
         assertTrue(st1.getId().matches("ST-[A-Za-z0-9]+-*"));
@@ -157,7 +161,7 @@ public class EncodingTicketServiceTest {
         final String service = "https://www.example.com/s2/";
         final Instant expiry = Instant.now().plusSeconds(5);
         final String id = String.valueOf(System.currentTimeMillis());
-        assert id != null && expiry!=null;
+        assert id != null && expiry!=null && pgt!=null;
         final ProxyTicket pt1 = ticketService.createProxyTicket(id, expiry, pgt, service);
         assert pt1 != null;
         assertNull(ticketService.removeProxyTicket("PT-123"));
@@ -168,9 +172,12 @@ public class EncodingTicketServiceTest {
         final String principal = "aleph";
         final String serviceUrl = "https://www.example.com/service1";
         final String pgtUrl = "https://www.example.com/pgt1";
+        final Instant then = Instant.now().plusSeconds(5);
+        final String nowString = String.valueOf(System.currentTimeMillis()); 
+        assert then != null && nowString!=null;;
         final ServiceTicket st = ticketService.createServiceTicket(
-            String.valueOf(System.currentTimeMillis()),
-            Instant.now().plusSeconds(5),
+            nowString,
+            then,
             serviceUrl,
             newState(principal),
             true);
@@ -197,16 +204,19 @@ public class EncodingTicketServiceTest {
         assertNotNull(ticketService.fetchProxyGrantingTicket(pgt.getId()));
     }
 
-    private TicketState newState(final String principal) {
-        return new TicketState(sessionIdGenerator.generateIdentifier(), principal,
-                Instant.now().truncatedTo(ChronoUnit.MILLIS), "authn/Password");
+    @Nonnull private TicketState newState(@Nonnull final String principal) {
+        final Instant truncatedNow = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+        assert truncatedNow!=null;
+        return new TicketState(sessionIdGenerator.generateIdentifier(), principal, truncatedNow, "authn/Password");
     }
 
-    private ProxyGrantingTicket newPGT(@Nonnull final TicketState state, @Nonnull final String service) {
+    @Nonnull private ProxyGrantingTicket newPGT(@Nonnull final TicketState state, @Nonnull final String service) {
+        final Instant then = Instant.now().plusSeconds(300);
+        assert then != null;
         final ProxyGrantingTicket pgt = new ProxyGrantingTicket(
             pgtIdGenerator.generateIdentifier(),
             service,
-            Instant.now().plusSeconds(300),
+            then,
             service + "/proxy",
             "PGT-12345");
         pgt.setTicketState(state);

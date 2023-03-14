@@ -54,10 +54,10 @@ public class CASDateTimeAttributeTranscoderTest {
 
     private AttributeTranscoderRegistryImpl registry;
     
-    private final static String ATTR_ID = "foo";
-    private final static String ATTR_NAME = "bar";
-    private final static String STRING_SECS = "1659979872";
-    private final static String STRING_ISO = "2022-08-08T17:31:12.969Z";
+    @Nonnull private final static String ATTR_ID = "foo";
+    @Nonnull private final static String ATTR_NAME = "bar";
+    @Nonnull private final static String STRING_SECS = "1659979872";
+    @Nonnull private final static String STRING_ISO = "2022-08-08T17:31:12.969Z";
 
     @BeforeClass public void setUp() throws ComponentInitializationException {
         
@@ -142,8 +142,10 @@ public class CASDateTimeAttributeTranscoderTest {
     }
     
     @Test public void single() throws Exception {
+        final Instant instant =Instant.parse(STRING_ISO);
+        assert instant!=null;
         final List<IdPAttributeValue> values =
-                List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), new DateTimeAttributeValue(Instant.parse(STRING_ISO)));
+                List.of(new ByteAttributeValue(new byte[] {1, 2, 3,}), new DateTimeAttributeValue(instant));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_ID);
         inputAttribute.setValues(values);

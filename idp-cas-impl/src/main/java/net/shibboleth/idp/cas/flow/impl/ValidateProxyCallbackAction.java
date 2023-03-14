@@ -150,7 +150,8 @@ public class ValidateProxyCallbackAction
         
         @Nonnull final IdentifierGenerationStrategy pgtGenerator = sCfg.getIdGenerator();
         @Nonnull final IdentifierGenerationStrategy pgtIOUGenerator = vCfg.getPGTIOUGenerator(profileRequestContext);
-        @Nonnull final Instant expiration = Instant.now().plus(vCfg.getTicketValidityPeriod(profileRequestContext));
+        final Instant expiration = Instant.now().plus(vCfg.getTicketValidityPeriod(profileRequestContext));
+        assert expiration!=null;
         @Nonnull final String pgtId = pgtGenerator.generateIdentifier();
         final String pgtUrl = request.getPgtUrl();
         assert pgtUrl != null;

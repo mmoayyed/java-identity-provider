@@ -27,14 +27,21 @@ import java.time.Instant;
 @SuppressWarnings("javadoc")
 public class CASSPSessionSerializerTest {
 
-    private CASSPSessionSerializer serializer = new CASSPSessionSerializer(Duration.ZERO);
+    private final CASSPSessionSerializer serializer;
 
+    CASSPSessionSerializerTest() {
+        final Duration zero = Duration.ZERO;
+        assert zero!=null;
+        serializer = new CASSPSessionSerializer(zero);
+    }
     @Test
     public void testSerializeDeserialize() throws Exception{
-        final Instant exp = Instant.ofEpochMilli(1410539474000000000L);
+        final Instant exp   = Instant.ofEpochMilli(1410539474000000000L);
+        final Instant other = Instant.ofEpochMilli(1410532279838046000L);
+        assert exp!=null&&other!=null;
         final CASSPSession original = new CASSPSession(
                 "https://foo.example.com/shibboleth",
-                Instant.ofEpochMilli(1410532279838046000L),
+                other,
                 exp,
                 "ST-1234126-ABC1346DEADBEEF");
         final String serialized = serializer.serialize(original);

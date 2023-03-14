@@ -104,7 +104,9 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
     }
 
     @Nonnull protected static Instant expiry() {
-        return Instant.now().plusSeconds(30);
+        final Instant result = Instant.now().plusSeconds(30);
+        assert result!=null;
+        return result;
     }
 
     @Nonnull protected String generateServiceTicketId() {
@@ -120,7 +122,9 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
     }
 
     @Nonnull protected ServiceTicket createServiceTicket(@Nonnull final String service, final boolean renew) {
-        final TicketState state = new TicketState(TEST_SESSION_ID, TEST_PRINCIPAL_NAME, Instant.now(), "Password");
+        final Instant now=Instant.now();
+        assert now!=null;
+        final TicketState state = new TicketState(TEST_SESSION_ID, TEST_PRINCIPAL_NAME, now, "Password");
         return ticketService.createServiceTicket(generateServiceTicketId(), expiry(), service, state, renew);
     }
 
@@ -151,7 +155,7 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
      */
     public static class MockDataSealerKeyStrategy implements DataSealerKeyStrategy {
         /** Static key. */
-        private final SecretKey key;
+        @Nonnull private final SecretKey key;
 
         /**
          * Constructor.

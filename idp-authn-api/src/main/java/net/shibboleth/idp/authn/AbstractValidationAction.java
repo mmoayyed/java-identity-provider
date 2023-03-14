@@ -172,7 +172,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         // For now this is using the older wrapper approach to guarding a live map to maintain the map insertion order.
         final Map<String,Collection<String>> result = Collections.unmodifiableMap(classifiedMessages);
         assert result != null;
-        return result;                
+        return result;
     }
     
     /**

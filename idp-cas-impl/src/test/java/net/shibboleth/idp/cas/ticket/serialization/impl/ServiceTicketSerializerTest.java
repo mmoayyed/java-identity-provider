@@ -28,6 +28,8 @@ import static org.testng.Assert.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import javax.annotation.Nonnull;
+
 /**
  * Unit test for {@link ServiceTicketSerializer}.
  */
@@ -41,7 +43,7 @@ public class ServiceTicketSerializerTest {
         final ServiceTicket st1 = new ServiceTicket(
                 "ST-0123456789-616ea1550eef862761e5931bdccaaba0",
                 "https://nobody.example.org",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS),
+                expiry(),
                 true);
         final String serialized = serializer.serialize(st1);
         final ServiceTicket st2 = serializer.deserialize(1, "notused", st1.getId(), serialized, null);
@@ -57,10 +59,10 @@ public class ServiceTicketSerializerTest {
         final ServiceTicket st1 = new ServiceTicket(
                 "ST-0123456789-e6342d467a4414e599aa3c323528e96f",
                 "https://nobody.example.org",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS),
+                expiry(),
                 true);
         st1.setTicketState(new TicketState("idpsess-d2db22058dc178d3b917363859e", "bob",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password"));
+                expiry(), "Password"));
         final String serialized = serializer.serialize(st1);
         final ServiceTicket st2 = serializer.deserialize(1, "notused", st1.getId(), serialized, null);
         assertEquals(st2.getId(), st1.getId());
@@ -75,10 +77,10 @@ public class ServiceTicketSerializerTest {
         final ServiceTicket st1 = new ServiceTicket(
                 "ST-0123456789-e6342d467a4414e599aa3c323528e96f",
                 "https://nobody.example.org",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS),
+                expiry(),
                 true);
         final TicketState state = new TicketState("idpsess-d2db22058dc178d3b917363859e", "bob",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password");
+                expiry(), "Password");
         state.setConsentedAttributeIds(CollectionSupport.setOf("foo", "bar"));
         st1.setTicketState(state);
         final String serialized = serializer.serialize(st1);
@@ -95,10 +97,10 @@ public class ServiceTicketSerializerTest {
         final ServiceTicket st1 = new ServiceTicket(
                 "ST-0123456789-e6342d467a4414e599aa3c323528e96f",
                 "https://nobody.example.org",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS),
+                expiry(),
                 true);
         final TicketState state = new TicketState("idpsess-d2db22058dc178d3b917363859e", "bob",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password");
+                expiry(), "Password");
         state.setConsentedAttributeIds(CollectionSupport.emptySet());
         st1.setTicketState(state);
         final String serialized = serializer.serialize(st1);
@@ -108,6 +110,11 @@ public class ServiceTicketSerializerTest {
         assertEquals(st2.getExpirationInstant(), st1.getExpirationInstant());
         assertEquals(st2.isRenew(), st1.isRenew());
         assertEquals(st2.getTicketState(), st1.getTicketState());
+    }
+    @Nonnull private static Instant expiry() {
+        final Instant result = Instant.now().plusSeconds(10).truncatedTo(ChronoUnit.MILLIS);
+        assert result != null;
+        return result;
     }
 
 }

@@ -26,6 +26,8 @@ import static org.testng.Assert.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import javax.annotation.Nonnull;
+
 /**
  * Unit test for {@link ProxyTicketSerializer}.
  */
@@ -39,7 +41,7 @@ public class ProxyTicketSerializerTest {
         final ProxyTicket pt1 = new ProxyTicket(
                 "ST-0123456789-6027f6e93c11b1f587857ee0e7689c27",
                 "https://nobody.example.org",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS),
+                expiry(),
                 "PGT-0123456789-87182857dcbc70f8aa2e0ec87ec3e707");
         final String serialized = serializer.serialize(pt1);
         final ProxyTicket pt2 = serializer.deserialize(1, "notused", pt1.getId(), serialized, null);
@@ -55,10 +57,10 @@ public class ProxyTicketSerializerTest {
         final ProxyTicket pt1 = new ProxyTicket(
                 "ST-0123456789-e1e212143527d57053e7a72d75b3ccd6",
                 "https://nobody.example.org",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS),
+                expiry(),
                 "PGT-0123456789-c0dddd0f73b9494f7fe0b549e8c28002");
         pt1.setTicketState(new TicketState("idpsess-6ebae421b142adb35a3a6303116c3f", "bob",
-                Instant.now().truncatedTo(ChronoUnit.MILLIS), "Password"));
+                expiry(), "Password"));
         final String serialized = serializer.serialize(pt1);
         final ProxyTicket pt2 = serializer.deserialize(1, "notused", pt1.getId(), serialized, null);
         assertEquals(pt2.getId(), pt1.getId());
@@ -66,5 +68,10 @@ public class ProxyTicketSerializerTest {
         assertEquals(pt2.getExpirationInstant(), pt1.getExpirationInstant());
         assertEquals(pt2.getPgtId(), pt1.getPgtId());
         assertEquals(pt2.getTicketState(), pt1.getTicketState());
+    }
+    @Nonnull private static Instant expiry() {
+        final Instant result = Instant.now().plusSeconds(10).truncatedTo(ChronoUnit.MILLIS);
+        assert result != null;
+        return result;
     }
 }
