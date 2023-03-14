@@ -150,6 +150,7 @@ public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
         Assert.assertNull(request.getAttribute("jakarta.servlet.request.X509Certificate"));
     }
 
+    @SuppressWarnings("deprecation")
     @Test public void testEntityCertificate() throws IOException, ServletException {
         
         request.addHeader("SSL_CLIENT_CERT", entityCertBase64);
@@ -164,6 +165,7 @@ public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
                 ((X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate"))[0].getSubjectDN().toString());
     }
 
+    @SuppressWarnings("deprecation")
     @Test public void testCertificateChain() throws IOException, ServletException {
         
         request.addHeader("SSL_CLIENT_CERT", entityCertBase64);

@@ -18,8 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 
-import static org.testng.Assert.assertTrue;
-
 import java.util.Arrays;
 import java.util.Map;
 

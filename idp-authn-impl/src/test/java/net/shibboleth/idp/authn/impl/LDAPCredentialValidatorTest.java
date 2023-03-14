@@ -412,9 +412,9 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
                 AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
 
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        Assert.assertNull(aec);
         AuthenticationWarningContext awc = ac.getSubcontext(AuthenticationWarningContext.class);
         assert awc != null && result != null;
-
 
         ActionTestingSupport.assertEvent(event, "ExpiredPassword");
         Assert.assertEquals(awc.getClassifiedWarnings().size(), 1);
@@ -674,8 +674,9 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertProceedEvent(event);
         
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        Assert.assertNull(aec);
         AuthenticationResult result = ac.getAuthenticationResult();
-        assert result != null;
+        assert result != null ;
         LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
         assert lrc != null;
         final AuthenticationResponse lar = lrc.getAuthenticationResponse();
