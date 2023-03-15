@@ -17,11 +17,13 @@
 
 package net.shibboleth.idp.authn.context;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -197,5 +199,36 @@ public final class MultiFactorAuthenticationContext extends BaseContext {
         
         return false;
     }
-
+    
+    /**
+     * Get whether any active result in this context contains the input {@link Principal}.
+     * 
+     * <p>This is a "crude" means of testing for the existence of a particular {@link Principal}
+     * inside an active result. Usually this is used to test for the existence of a particular custom
+     * value used to represent a particular login quality or type.</p>
+     * 
+     * @param principal input to check for
+     * 
+     * @return true iff an active and presumably usable result contains the input
+     * 
+     * @since 5.0.0
+     */
+    public boolean isActive(@Nonnull final Principal principal) {
+        final AuthenticationContext authnContext = (AuthenticationContext) getParent();
+        if (authnContext != null) {
+            for (final AuthenticationResult result : activeResults.values()) {
+                assert result != null;
+                // Only include Principals from fresh results or when forced authn is off.
+                if (!(authnContext.isForceAuthn() && result.isPreviousResult())) {
+                    final Subject subject = result.getSubject();
+                    if (subject.getPrincipals().contains(principal)) {
+                        return true;
+                    }
+                }
+            }   
+        }
+        
+        return false;
+    }
+    
 }
