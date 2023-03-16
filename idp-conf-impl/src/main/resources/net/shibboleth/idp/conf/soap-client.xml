@@ -18,14 +18,11 @@
     <!-- Security Configuration lookup -->
 
     <bean id="shibboleth.MessageContext.SignatureValidationConfigurationLookup"
-        class="net.shibboleth.profile.config.navigate.messaging.SignatureValidationConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
+        class="net.shibboleth.profile.config.navigate.messaging.SignatureValidationConfigurationLookupFunction" />
     <bean id="shibboleth.MessageContext.SignatureSigningConfigurationLookup"
-        class="net.shibboleth.profile.config.navigate.messaging.SignatureSigningConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
+        class="net.shibboleth.profile.config.navigate.messaging.SignatureSigningConfigurationLookupFunction" />
     <bean id="shibboleth.MessageContext.HttpClientSecurityConfigurationLookup"
-        class="net.shibboleth.profile.config.navigate.messaging.HttpClientSecurityConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
+        class="net.shibboleth.profile.config.navigate.messaging.HttpClientSecurityConfigurationLookupFunction" />
 
     <!-- SOAP client and pipeline factory definitions. -->
          

@@ -65,20 +65,15 @@
     <!-- Lookup functions to locate security configurations on profile beans. -->
 
     <bean id="shibboleth.SignatureValidationConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.profile.config.navigate.SignatureValidationConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
+        class="net.shibboleth.profile.config.navigate.SignatureValidationConfigurationLookupFunction" />
     <bean id="shibboleth.SignatureSigningConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.profile.config.navigate.SignatureSigningConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
+        class="net.shibboleth.profile.config.navigate.SignatureSigningConfigurationLookupFunction" />
     <bean id="shibboleth.DecryptionConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.profile.config.navigate.DecryptionConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
+        class="net.shibboleth.profile.config.navigate.DecryptionConfigurationLookupFunction" />
     <bean id="shibboleth.EncryptionConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.profile.config.navigate.EncryptionConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
+        class="net.shibboleth.profile.config.navigate.EncryptionConfigurationLookupFunction" />
     <bean id="shibboleth.ClientTLSValidationConfigurationLookup" lazy-init="true"
-        class="net.shibboleth.profile.config.navigate.ClientTLSValidationConfigurationLookupFunction"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
+        class="net.shibboleth.profile.config.navigate.ClientTLSValidationConfigurationLookupFunction" />
 
     <!-- Beans that implement the mashing of security configurations into final parameter sets. -->
     

@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.security.config.SecurityConfiguration;
 import org.opensaml.security.credential.Credential;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -211,11 +210,6 @@ public class SelectRelyingPartyConfigurationTest {
                 throw exception;
             }
             return configuration;
-        }
-
-        /** {@inheritDoc} */
-        @Override public SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull String profileId) {
-            return null;
         }
 
         /** {@inheritDoc} */
