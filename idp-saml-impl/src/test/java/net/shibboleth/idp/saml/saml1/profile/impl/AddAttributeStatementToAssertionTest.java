@@ -446,6 +446,8 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
                 Assert.assertEquals(samlAttr.getAttributeValues().size(), 2);
                 final String val1 = ((XSStringImpl) samlAttr.getAttributeValues().get(0)).getValue();
                 final String val2 = ((XSStringImpl) samlAttr.getAttributeValues().get(1)).getValue();
+                assert val1 != null;
+                assert val2 != null;
                 if (val1.equals(MY_VALUE_1)) {
                     Assert.assertEquals(val2, MY_VALUE_2);
                     two = true;
