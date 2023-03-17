@@ -66,7 +66,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        ac = prc.getOrCreateSubcontext(AuthenticationContext.class);
+        ac = prc.ensureSubcontext(AuthenticationContext.class);
 
         action = new UpdateSessionWithAuthenticationResult();
         action.setSessionManager(sessionManager);
@@ -94,7 +94,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
 
     @Test public void testNoFlow() throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("joe");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("joe");
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test2", new UsernamePrincipal("joe")));
         
@@ -116,7 +116,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         ac.setResultCacheable(false);
         
-        SessionContext sessionCtx = prc.getOrCreateSubcontext(SessionContext.class);
+        SessionContext sessionCtx = prc.ensureSubcontext(SessionContext.class);
         assert sessionCtx!=null;
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
@@ -130,7 +130,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
     
     @Test public void testNewSession() throws SessionException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("joe");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("joe");
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
@@ -152,7 +152,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         ac.setAttemptedFlow(flowDescriptor);
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
-        SessionContext sessionCtx = prc.getOrCreateSubcontext(SessionContext.class);
+        SessionContext sessionCtx = prc.ensureSubcontext(SessionContext.class);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
         final Event event = action.execute(src);
@@ -167,7 +167,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
-        SessionContext sessionCtx = prc.getOrCreateSubcontext(SessionContext.class);
+        SessionContext sessionCtx = prc.ensureSubcontext(SessionContext.class);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         
         final Event event = action.execute(src);
@@ -182,7 +182,7 @@ public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBas
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         ac.setAuthenticationResult(new AuthenticationResult("test1", new UsernamePrincipal("joe")));
         
-        final SessionContext sessionCtx = prc.getOrCreateSubcontext(SessionContext.class);
+        final SessionContext sessionCtx = prc.ensureSubcontext(SessionContext.class);
         sessionCtx.setIdPSession(sessionManager.createSession("joe"));
         final IdPSession idpSession = sessionCtx.getIdPSession();
         assert idpSession!=null;

@@ -511,7 +511,7 @@ public class DefaultAuthenticationResultSerializerTest {
     
     @Nonnull private ProfileRequestContext getProfileRequestContext(@Nonnull final List<AuthenticationFlowDescriptor> flows) {
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
-        final AuthenticationContext ac = prc.getOrCreateSubcontext(AuthenticationContext.class);
+        final AuthenticationContext ac = prc.ensureSubcontext(AuthenticationContext.class);
         for (final AuthenticationFlowDescriptor flow : flows) {
             ac.getAvailableFlows().put(flow.getId(), flow);
         }

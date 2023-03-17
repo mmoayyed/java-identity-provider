@@ -79,11 +79,11 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
         messageContext.addSubcontext(peerCtx, true);
         
         if (message.getProtocol() != null) {
-            messageContext.getOrCreateSubcontext(SAMLProtocolContext.class).setProtocol(message.getProtocol());
+            messageContext.ensureSubcontext(SAMLProtocolContext.class).setProtocol(message.getProtocol());
         }
         
         if (message.getDetectDuplicateEntityIDs() != null) {
-           messageContext.getOrCreateSubcontext(SAMLMetadataLookupParametersContext.class)
+           messageContext.ensureSubcontext(SAMLMetadataLookupParametersContext.class)
                .setDetectDuplicateEntityIDs(message.getDetectDuplicateEntityIDs());
         }
     }

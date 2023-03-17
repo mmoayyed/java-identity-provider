@@ -98,7 +98,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
      * @throws Exception if something goes wrong
      */
     @Test public void testNoRelyingPartyContext() throws Exception {
-        prc.getOrCreateSubcontext(AuthenticationContext.class);
+        prc.ensureSubcontext(AuthenticationContext.class);
         prc.removeSubcontext(RelyingPartyContext.class);
 
         final Event event = action.execute(rc);
@@ -112,7 +112,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
      */
     @Test public void testNoContext() throws Exception {
         prc.setOutboundMessageContext(null);
-        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
+        prc.ensureSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthenticationMethodPrincipal("Test")));
 
         final Event event = action.execute(rc);
@@ -125,7 +125,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
      * @throws Exception if something goes wrong
      */
     @Test public void testNoAuthenticationStatement() throws Exception {
-        prc.getOrCreateSubcontext(AuthenticationContext.class);
+        prc.ensureSubcontext(AuthenticationContext.class);
 
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
@@ -149,7 +149,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         fd.setResultSerializer(serializer);
         fd.initialize();
         
-        prc.getOrCreateSubcontext(AuthenticationContext.class).getAvailableFlows().put("Test", fd);
+        prc.ensureSubcontext(AuthenticationContext.class).getAvailableFlows().put("Test", fd);
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac!=null;
         ac.setAuthenticationResult(
@@ -191,7 +191,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("Foo"));
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("Bar"));
-        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
+        prc.ensureSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", subject));
         final RequestedPrincipalContext requested = new RequestedPrincipalContext();
         requested.setMatchingPrincipal(new AuthenticationMethodPrincipal("Bar"));

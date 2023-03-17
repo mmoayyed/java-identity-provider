@@ -165,7 +165,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getOrCreateSubcontext(UsernamePasswordContext.class);
+        ac.ensureSubcontext(UsernamePasswordContext.class);
         
         validator.setAuthenticator(authenticator);
         validator.initialize();
@@ -188,7 +188,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getOrCreateSubcontext(UsernamePasswordContext.class);
+        ac.ensureSubcontext(UsernamePasswordContext.class);
         
         validator.setAuthenticator(authenticator);
         validator.setMatchExpression(Pattern.compile("foo.+"));

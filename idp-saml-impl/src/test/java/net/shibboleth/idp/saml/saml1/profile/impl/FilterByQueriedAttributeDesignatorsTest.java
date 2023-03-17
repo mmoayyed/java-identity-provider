@@ -111,14 +111,14 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
     }
 
     @Test public void noAttributes() {
-        prc.getOrCreateSubcontext(RelyingPartyContext.class);
+        prc.ensureSubcontext(RelyingPartyContext.class);
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
     }
 
     @Test public void noValues() {
-        final RelyingPartyContext rpc = prc.getOrCreateSubcontext(RelyingPartyContext.class);
-        final AttributeContext ac = rpc.getOrCreateSubcontext(AttributeContext.class);
+        final RelyingPartyContext rpc = prc.ensureSubcontext(RelyingPartyContext.class);
+        final AttributeContext ac = rpc.ensureSubcontext(AttributeContext.class);
         final List<IdPAttribute> attributes = List.of(
                 new IdPAttribute("eduPersonAssurance"),
                 new IdPAttribute("flooby"),
@@ -132,8 +132,8 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
 
     /** This is a non-issue for SAML 1, but just for completeness. */
     @Test public void values() {
-        final RelyingPartyContext rpc = prc.getOrCreateSubcontext(RelyingPartyContext.class);
-        final AttributeContext ac = rpc.getOrCreateSubcontext(AttributeContext.class);
+        final RelyingPartyContext rpc = prc.ensureSubcontext(RelyingPartyContext.class);
+        final AttributeContext ac = rpc.ensureSubcontext(AttributeContext.class);
         final IdPAttribute eduPersonAssurance = new IdPAttribute("eduPersonAssurance");
         eduPersonAssurance.setValues(List.of(new StringAttributeValue("green-blue"))); // not turquoise
         final IdPAttribute flooby = new IdPAttribute("flooby");

@@ -57,7 +57,7 @@ public class WebFlowCurrentEventLookupFunction implements Function<ProfileReques
 
         final Object current = eventCtx != null ? eventCtx.getEvent() : null;
         if (current == null || !Objects.equals(current.toString(), springRequest.getCurrentEvent().getId())) {
-            eventCtx = input.getOrCreateSubcontext(EventContext.class);
+            eventCtx = input.ensureSubcontext(EventContext.class);
             eventCtx.setEvent(springRequest.getCurrentEvent());
         }
         

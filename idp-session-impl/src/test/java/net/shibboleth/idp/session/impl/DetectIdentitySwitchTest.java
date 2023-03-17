@@ -59,9 +59,9 @@ public class DetectIdentitySwitchTest extends SessionManagerBaseTestCase {
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        ac = prc.getOrCreateSubcontext(AuthenticationContext.class);
-        sc = prc.getOrCreateSubcontext(SessionContext.class);
-        c14n = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        ac = prc.ensureSubcontext(AuthenticationContext.class);
+        sc = prc.ensureSubcontext(SessionContext.class);
+        c14n = prc.ensureSubcontext(SubjectCanonicalizationContext.class);
 
         action = new DetectIdentitySwitch();
         action.setSessionManager(sessionManager);

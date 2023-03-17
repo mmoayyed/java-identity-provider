@@ -166,7 +166,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
     
         ProfileRequestContext prc =
                 new RequestContextBuilder().setInboundMessageIssuer(TestSources.SP_ENTITY_ID).buildProfileRequestContext();
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName(TestSources.PRINCIPAL_ID);
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName(TestSources.PRINCIPAL_ID);
         
         final NameID nameID = generator.generate(prc, generator.getFormat());
         assert nameID!=null;
@@ -180,7 +180,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         canon.initialize();
 
         prc = new ProfileRequestContext();
-        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        final SubjectCanonicalizationContext scc = prc.ensureSubcontext(SubjectCanonicalizationContext.class);
         final Subject subject = new Subject();
 
         subject.getPrincipals().add(new NameIDPrincipal(nameID));

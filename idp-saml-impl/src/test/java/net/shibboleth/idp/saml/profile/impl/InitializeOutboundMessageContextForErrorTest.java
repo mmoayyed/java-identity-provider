@@ -105,7 +105,7 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
     @Test public void testPeerEntityContextNoIssuer() {
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc!=null;
-        SAMLPeerEntityContext ctx = imc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+        SAMLPeerEntityContext ctx = imc.ensureSubcontext(SAMLPeerEntityContext.class);
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
         rpCtx.setRelyingPartyIdContextTree(ctx);
@@ -125,7 +125,7 @@ public class InitializeOutboundMessageContextForErrorTest extends OpenSAMLInitBa
     @Test public void testPeerEntityContextIssuer() {
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc!=null;
-        SAMLPeerEntityContext ctx = imc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+        SAMLPeerEntityContext ctx = imc.ensureSubcontext(SAMLPeerEntityContext.class);
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
         rpCtx.setRelyingPartyIdContextTree(ctx);

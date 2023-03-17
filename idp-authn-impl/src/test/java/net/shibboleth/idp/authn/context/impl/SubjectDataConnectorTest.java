@@ -72,7 +72,7 @@ public class SubjectDataConnectorTest {
                         TestSources.SP_ENTITY_ID);
         final BaseContext parent = ctx.getParent();
         assert parent != null;
-        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
+        final SubjectContext sc = parent.ensureSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr));
@@ -113,7 +113,7 @@ public class SubjectDataConnectorTest {
                         TestSources.SP_ENTITY_ID);
         final BaseContext parent = ctx.getParent();
         assert parent != null;
-        final SubjectCanonicalizationContext sc = parent.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        final SubjectCanonicalizationContext sc = parent.ensureSubcontext(SubjectCanonicalizationContext.class);
         final Subject subject = new Subject();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr));
         subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));
@@ -149,7 +149,7 @@ public class SubjectDataConnectorTest {
                         TestSources.SP_ENTITY_ID);
         final BaseContext parent = ctx.getParent();
         assert parent != null;
-        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
+        final SubjectContext sc = parent.ensureSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));
@@ -178,7 +178,7 @@ public class SubjectDataConnectorTest {
                         TestSources.SP_ENTITY_ID);
         final BaseContext parent = ctx.getParent();
         assert parent != null;
-        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
+        final SubjectContext sc = parent.ensureSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));

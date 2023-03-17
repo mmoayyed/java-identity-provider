@@ -137,7 +137,7 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
         final MessageContext msgCtx = new MessageContext();
         profileRequestContext.setInboundMessageContext(msgCtx);
 
-        final SAMLPeerEntityContext peerContext = msgCtx.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+        final SAMLPeerEntityContext peerContext = msgCtx.ensureSubcontext(SAMLPeerEntityContext.class);
         peerContext.setEntityId(relyingPartyId);
 
         log.debug("{} Initialized inbound context for message to {}", getLogPrefix(), relyingPartyId);

@@ -86,11 +86,11 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().buildRequestContext();
         prc1 = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
-        ac = prc1.getOrCreateSubcontext(AuthenticationContext.class);
-        prc2 = ac.getOrCreateSubcontext(ProfileRequestContext.class);
+        ac = prc1.ensureSubcontext(AuthenticationContext.class);
+        prc2 = ac.ensureSubcontext(ProfileRequestContext.class);
         prc2.setOutboundMessageContext(new MessageContext());
         
-        rpc = prc2.getOrCreateSubcontext(RelyingPartyContext.class);
+        rpc = prc2.ensureSubcontext(RelyingPartyContext.class);
         rpc.setRelyingPartyId(ActionTestingSupport.INBOUND_MSG_ISSUER);
         final BasicRelyingPartyConfiguration rp = new BasicRelyingPartyConfiguration();
         rp.setId("mock");
@@ -392,7 +392,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
 
     /** Test that the action works for RequestedAuthnContext. */
     @Test public void testAuthnContext() {
-        final RequestedPrincipalContext reqctx = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
+        final RequestedPrincipalContext reqctx = ac.ensureSubcontext(RequestedPrincipalContext.class);
         reqctx.setOperator("exact");
         reqctx.setRequestedPrincipals(
                 Arrays.asList(new AuthnContextClassRefPrincipal(AuthnContext.KERBEROS_AUTHN_CTX),

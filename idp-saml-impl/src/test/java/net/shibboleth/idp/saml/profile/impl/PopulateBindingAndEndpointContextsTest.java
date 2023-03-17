@@ -96,7 +96,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc !=null;
-        imc.getOrCreateSubcontext(SAMLBindingContext.class).setRelayState(RELAY_STATE);
+        imc.ensureSubcontext(SAMLBindingContext.class).setRelayState(RELAY_STATE);
         
         // Set these up so the context will be seen as anonymous or not based on metadata in the outbound context.
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
@@ -104,7 +104,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         rpc.setVerificationLookupStrategy(new SAMLVerificationLookupStrategy());
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        rpc.setRelyingPartyIdContextTree(omc.getOrCreateSubcontext(SAMLPeerEntityContext.class));
+        rpc.setRelyingPartyIdContextTree(omc.ensureSubcontext(SAMLPeerEntityContext.class));
         
         action = new PopulateBindingAndEndpointContexts();
         action.setEndpointResolver(new DefaultEndpointResolver<>());
@@ -190,7 +190,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
@@ -209,7 +209,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
@@ -260,7 +260,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc != null;
@@ -286,7 +286,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
 
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc != null;
         final AuthnRequest authnRequest = (AuthnRequest) imc.getMessage();
@@ -310,7 +310,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc != null;
@@ -336,7 +336,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
 
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc != null;
@@ -400,7 +400,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
@@ -435,7 +435,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
 
         
         final MessageContext imc = prc.getInboundMessageContext();
@@ -478,7 +478,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
 
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc != null;
@@ -505,7 +505,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
 
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc != null;
@@ -546,7 +546,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         final MessageContext omc = prc.getOutboundMessageContext();
         assert omc!=null;
-        omc.getOrCreateSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
+        omc.ensureSubcontext(SAMLPeerEntityContext.class).addSubcontext(mdCtx);
         
         final IdPInitiatedSSORequest saml1Request = new IdPInitiatedSSORequest("foo", LOCATION_POST, null, null);
         final MessageContext imc = prc.getInboundMessageContext();

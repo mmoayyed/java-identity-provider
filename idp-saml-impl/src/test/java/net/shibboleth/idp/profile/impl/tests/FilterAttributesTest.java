@@ -74,7 +74,7 @@ public class FilterAttributesTest {
      * @throws Exception if something goes wrong
      */
     @Test public void testNoAttributeContext() throws Exception {
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.emptyList());
         engine.initialize();
@@ -92,11 +92,11 @@ public class FilterAttributesTest {
      * @throws Exception if something goes wrong
      */
     @Test public void testNoAttributes() throws Exception {
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!= null;
-        rpCtx.getOrCreateSubcontext(AttributeContext.class);
+        rpCtx.ensureSubcontext(AttributeContext.class);
 
         final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.emptyList());
         engine.initialize();
@@ -142,7 +142,7 @@ public class FilterAttributesTest {
         attribute1Matcher.initialize();
         engine.initialize();
 
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
@@ -206,7 +206,7 @@ public class FilterAttributesTest {
         attribute1Matcher.initialize();
         engine.initialize();
 
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
@@ -269,7 +269,7 @@ public class FilterAttributesTest {
         attribute1Matcher.initialize();
         engine.initialize();
 
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(attributes);
@@ -297,7 +297,7 @@ public class FilterAttributesTest {
         final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
         attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final AttributeContext attributeCtx = new AttributeContext();
         final List<IdPAttribute> attributes = Collections.singletonList(attribute1);

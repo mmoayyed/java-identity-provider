@@ -166,7 +166,7 @@ public class X509AuthServlet extends HttpServlet {
             final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, httpRequest);
             final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
             if (authnCtx != null) {
-                final CertificateContext cc = authnCtx.getOrCreateSubcontext(CertificateContext.class);
+                final CertificateContext cc = authnCtx.ensureSubcontext(CertificateContext.class);
                 cc.setCertificate(cert);
                 if (certs.length > 1) {
                     for (int i = 1; i < certs.length; i++) {

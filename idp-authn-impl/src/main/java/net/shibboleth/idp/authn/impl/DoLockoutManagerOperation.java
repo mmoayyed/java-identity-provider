@@ -168,7 +168,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        profileRequestContext.getOrCreateSubcontext(LockoutManagerContext.class).setKey(key);
+        profileRequestContext.ensureSubcontext(LockoutManagerContext.class).setKey(key);
         
         try {
             final HttpServletRequest request = getHttpServletRequest();

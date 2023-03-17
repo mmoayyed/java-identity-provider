@@ -59,9 +59,9 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(ssoRequest);
         
-        messageContext.getOrCreateSubcontext(SAMLPeerEntityContext.class).setEntityId(ssoRequest.getEntityId());
+        messageContext.ensureSubcontext(SAMLPeerEntityContext.class).setEntityId(ssoRequest.getEntityId());
         
-        final SAMLMessageInfoContext msgInfoContext = messageContext.getOrCreateSubcontext(SAMLMessageInfoContext.class);
+        final SAMLMessageInfoContext msgInfoContext = messageContext.ensureSubcontext(SAMLMessageInfoContext.class);
         msgInfoContext.setMessageIssueInstant(ssoRequest.getTime());
         msgInfoContext.setMessageId(getMessageID());
         
@@ -86,7 +86,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         }
         log.debug("Decoded SAML relay state: {}", relayState);
         
-        final SAMLBindingContext bindingContext = messageContext.getOrCreateSubcontext(SAMLBindingContext.class);
+        final SAMLBindingContext bindingContext = messageContext.ensureSubcontext(SAMLBindingContext.class);
         bindingContext.setRelayState(relayState);
         bindingContext.setBindingUri(getBindingURI());
         bindingContext.setBindingDescriptor(getBindingDescriptor());

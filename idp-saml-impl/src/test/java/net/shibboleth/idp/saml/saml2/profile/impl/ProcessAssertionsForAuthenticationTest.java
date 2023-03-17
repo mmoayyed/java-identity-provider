@@ -88,7 +88,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         
         prc = new RequestContextBuilder().buildProfileRequestContext();
         
-        final AuthenticationContext authnContext = prc.getOrCreateSubcontext(AuthenticationContext.class);
+        final AuthenticationContext authnContext = prc.ensureSubcontext(AuthenticationContext.class);
         samlAuthnContext = new SAMLAuthnContext(new MockProfileAction(), new MockMessageDecoderFunction());
         authnContext.addSubcontext(samlAuthnContext);
         authnContext.addSubcontext(prcInner);

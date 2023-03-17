@@ -72,7 +72,7 @@ public class PopulateInboundMessageContextWithSAMLSelf extends AbstractProfileAc
 
         final MessageContext msgCtx = Constraint.isNotNull(profileRequestContext.getInboundMessageContext(), "No Inbound Message Context");
 
-        final SAMLSelfEntityContext selfContext = msgCtx.getOrCreateSubcontext(SAMLSelfEntityContext.class);
+        final SAMLSelfEntityContext selfContext = msgCtx.ensureSubcontext(SAMLSelfEntityContext.class);
         selfContext.setEntityId(selfIdentityLookupStrategy.apply(profileRequestContext));
 
         log.debug("{} Populated inbound message context with SAML self entityID: {}", getLogPrefix(),

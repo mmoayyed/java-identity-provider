@@ -234,16 +234,16 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(authnRequest);
 
-        SAMLPeerEntityContext peerContext = messageContext.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+        SAMLPeerEntityContext peerContext = messageContext.ensureSubcontext(SAMLPeerEntityContext.class);
         peerContext.setEntityId(AbstractFlowTest.IDP_ENTITY_ID);
 
-        SAMLEndpointContext endpointContext = peerContext.getOrCreateSubcontext(SAMLEndpointContext.class);
+        SAMLEndpointContext endpointContext = peerContext.ensureSubcontext(SAMLEndpointContext.class);
         endpointContext.setEndpoint(buildIdpSsoEndpoint(bindingUri, authnRequest.getDestination()));
 
         SignatureSigningParameters signingParameters = new SignatureSigningParameters();
         signingParameters.setSigningCredential(spCredential);
         SecurityParametersContext secParamsContext =
-                messageContext.getOrCreateSubcontext(SecurityParametersContext.class);
+                messageContext.ensureSubcontext(SecurityParametersContext.class);
         secParamsContext.setSignatureSigningParameters(signingParameters);
 
         return messageContext;

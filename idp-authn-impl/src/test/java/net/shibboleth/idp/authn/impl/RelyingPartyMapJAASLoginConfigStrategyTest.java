@@ -53,7 +53,7 @@ public class RelyingPartyMapJAASLoginConfigStrategyTest {
     public void setUp() {
         profileRequestContext = new ProfileRequestContext();
 
-        relyingPartyContext = profileRequestContext.getOrCreateSubcontext(RelyingPartyContext.class);
+        relyingPartyContext = profileRequestContext.ensureSubcontext(RelyingPartyContext.class);
         relyingPartyContext.setRelyingPartyId(entityID);
 
         rpMap = new HashMap<>();

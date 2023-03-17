@@ -133,7 +133,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
         rpCtx.setRelyingPartyId(descriptor.getId());
         rpCtx.setProfileConfig(descriptor);
         
-        final RelyingPartyUIContext uiCtx = rpCtx.getOrCreateSubcontext(RelyingPartyUIContext.class);
+        final RelyingPartyUIContext uiCtx = rpCtx.ensureSubcontext(RelyingPartyUIContext.class);
         uiCtx.setRPUInfo(descriptor.getUIInfo());
         final NonnullSupplier<HttpServletRequest> supplier = getHttpServletRequestSupplier();
         assert supplier != null;

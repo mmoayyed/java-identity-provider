@@ -63,7 +63,7 @@ public class AttributeValueLookupFunctionTest {
         unfilteredAttributes.put(attribute4.getId(), attribute4);
         attributeCtx.setUnfilteredIdPAttributes(unfilteredAttributes.values());
         
-        prc.getOrCreateSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        prc.ensureSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testEmptyConstructor() {
@@ -94,7 +94,7 @@ public class AttributeValueLookupFunctionTest {
 
     @Test public void testAttributeWithNoValues() {
         final AttributeContext attributeCtx =
-                prc.getOrCreateSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+                prc.ensureSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         assert attributeCtx!=null;
         attributeCtx.setIdPAttributes(Collections.singleton(new IdPAttribute("EmptyAttribute")));
 
@@ -109,7 +109,7 @@ public class AttributeValueLookupFunctionTest {
         byteAttribute.setValues(Collections.singletonList(new ByteAttributeValue(data)));
 
         final AttributeContext attributeCtx =
-                prc.getOrCreateSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+                prc.ensureSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         assert attributeCtx!=null;
         attributeCtx.setIdPAttributes(Collections.singleton(byteAttribute));
 

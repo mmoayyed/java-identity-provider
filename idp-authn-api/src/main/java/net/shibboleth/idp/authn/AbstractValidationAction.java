@@ -494,7 +494,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
             @Nonnull final AuthenticationContext authenticationContext, @Nonnull final Exception e,
             @Nonnull @NotEmpty final String eventId) {
 
-        authenticationContext.getOrCreateSubcontext(AuthenticationErrorContext.class).getExceptions().add(e);
+        authenticationContext.ensureSubcontext(AuthenticationErrorContext.class).getExceptions().add(e);
 
         handleError(profileRequestContext, authenticationContext, e.getMessage(), eventId);
     }
@@ -528,7 +528,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
                 if (Iterables.any(entry.getValue(), checker::test)) {
                     final String key = entry.getKey();
                     assert key!=null;
-                    authenticationContext.getOrCreateSubcontext(
+                    authenticationContext.ensureSubcontext(
                             AuthenticationErrorContext.class).getClassifiedErrors().add(key);
                     if (!eventSet) {
                         eventSet = true;
@@ -539,7 +539,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         }
         
         if (!eventSet) {
-            authenticationContext.getOrCreateSubcontext(
+            authenticationContext.ensureSubcontext(
                     AuthenticationErrorContext.class).getClassifiedErrors().add(eventId);
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }
@@ -574,7 +574,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
                 if (Iterables.any(entry.getValue(), checker::test)) {
                     final String key = entry.getKey();
                     assert key!=null;
-                    authenticationContext.getOrCreateSubcontext(
+                    authenticationContext.ensureSubcontext(
                             AuthenticationWarningContext.class).getClassifiedWarnings().add(key);
                     if (!eventSet) {
                         eventSet = true;
@@ -585,7 +585,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         }
         
         if (!eventSet) {
-            authenticationContext.getOrCreateSubcontext(
+            authenticationContext.ensureSubcontext(
                     AuthenticationWarningContext.class).getClassifiedWarnings().add(eventId);
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }

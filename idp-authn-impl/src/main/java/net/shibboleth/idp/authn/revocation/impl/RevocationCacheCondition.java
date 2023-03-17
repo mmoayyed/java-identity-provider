@@ -134,7 +134,7 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
         log.debug("Checking revocation for principal name {} for {} result", principal,
                 input2.getAuthenticationFlowId());
         
-        final ScratchContext context = input.getOrCreateSubcontext(ScratchContext.class);
+        final ScratchContext context = input.ensureSubcontext(ScratchContext.class);
         if (!context.getMap().containsKey(getClass())) {
             try {
                 final String principalRecord = revocationCache.getRevocationRecord(REVOCATION_CONTEXT,

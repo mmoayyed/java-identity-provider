@@ -66,7 +66,7 @@ public class InitializeRelyingPartyContextFromSAMLPeerTest {
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc!=null;
         final SAMLPeerEntityContext peer =
-                imc.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+                imc.ensureSubcontext(SAMLPeerEntityContext.class);
         peer.setEntityId("foo");
         
         final Event event = action.execute(src);

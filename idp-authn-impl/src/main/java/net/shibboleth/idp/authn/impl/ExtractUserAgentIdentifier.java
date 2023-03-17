@@ -68,7 +68,7 @@ public class ExtractUserAgentIdentifier extends AbstractExtractionAction {
             return;
         }
 
-        authenticationContext.getOrCreateSubcontext(UserAgentContext.class).setIdentifier(applyTransforms(agent));
+        authenticationContext.ensureSubcontext(UserAgentContext.class).setIdentifier(applyTransforms(agent));
     }
     // CheckStyle: ReturnCount ON
 }

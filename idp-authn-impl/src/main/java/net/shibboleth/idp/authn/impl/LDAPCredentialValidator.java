@@ -172,7 +172,7 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
         }
 
         log.debug("{} Authentication response {}", getLogPrefix(), response);
-        authenticationContext.getOrCreateSubcontext(LDAPResponseContext.class).setAuthenticationResponse(response);
+        authenticationContext.ensureSubcontext(LDAPResponseContext.class).setAuthenticationResponse(response);
         if (response.isSuccess()) {
             log.info("{} Login by '{}' succeeded", getLogPrefix(), username);
             if (response.getAccountState() != null) {

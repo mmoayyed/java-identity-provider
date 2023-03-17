@@ -193,7 +193,7 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         config.setDisallowedFeatures(BrowserSSOProfileConfiguration.FEATURE_SCOPING);
         
-        prc.getOrCreateSubcontext(RelyingPartyContext.class).setProfileConfig(config);
+        prc.ensureSubcontext(RelyingPartyContext.class).setProfileConfig(config);
         
         final Event event = action.execute(requestCtx);
         ActionTestingSupport.assertEvent(event, EventIds.ACCESS_DENIED);

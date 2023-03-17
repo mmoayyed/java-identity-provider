@@ -452,7 +452,7 @@ public class SPNEGOAuthnControllerTest {
                 (ProfileRequestContext) rc.getConversationScope().get(ProfileRequestContext.BINDING_KEY); 
         ((MockServletContext) rc.getExternalContext().getNativeContext()).setAttribute(ExternalAuthentication.SWF_KEY, prc);
         
-        final AuthenticationContext ac = prc.getOrCreateSubcontext(AuthenticationContext.class);
+        final AuthenticationContext ac = prc.ensureSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(new AuthenticationFlowDescriptor());
         

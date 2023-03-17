@@ -60,7 +60,7 @@ public class EnforceDisallowedSSOFeaturesTest extends OpenSAMLInitBaseTestCase {
         src = (MockRequestContext) new RequestContextBuilder().buildRequestContext();
         prc = (ProfileRequestContext) src.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
         profileConfig = new BrowserSSOProfileConfiguration();
-        prc.getOrCreateSubcontext(RelyingPartyContext.class).setProfileConfig(profileConfig);
+        prc.ensureSubcontext(RelyingPartyContext.class).setProfileConfig(profileConfig);
         
         action = new EnforceDisallowedSSOFeatures();
         action.initialize();

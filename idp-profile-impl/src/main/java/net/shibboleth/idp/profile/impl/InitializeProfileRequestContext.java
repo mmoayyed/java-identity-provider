@@ -144,7 +144,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         if (captureQueryParameters) {
             final HttpServletRequest request = getHttpServletRequest();
             if (request != null) {
-                ((Map<Object,Object>) prc.getOrCreateSubcontext(ScratchContext.class).getMap()).putAll(
+                ((Map<Object,Object>) prc.ensureSubcontext(ScratchContext.class).getMap()).putAll(
                         request.getParameterMap());
             }
         }

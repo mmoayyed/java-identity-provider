@@ -145,7 +145,7 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         
         attr = request.getAttribute(ATTRIBUTES_KEY);
         if (attr != null && attr instanceof Collection<?>) {
-            final AttributeContext ac = extContext.getOrCreateSubcontext(AttributeContext.class);
+            final AttributeContext ac = extContext.ensureSubcontext(AttributeContext.class);
             ac.setUnfilteredIdPAttributes(
                     (Collection<IdPAttribute>) attr);
             ac.setIdPAttributes(
@@ -175,7 +175,7 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         attr = request.getAttribute(REVOKECONSENT_KEY);
         if (attr != null && attr instanceof Boolean && ((Boolean) attr).booleanValue()) {
             final ConsentManagementContext consentCtx =
-                    profileRequestContext.getOrCreateSubcontext(ConsentManagementContext.class);
+                    profileRequestContext.ensureSubcontext(ConsentManagementContext.class);
             consentCtx.setRevokeConsent(true);
         }
         

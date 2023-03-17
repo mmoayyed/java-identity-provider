@@ -37,10 +37,10 @@ public class SetupForResolver extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final SubjectContext sc = profileRequestContext.getOrCreateSubcontext(SubjectContext.class);
+        final SubjectContext sc = profileRequestContext.ensureSubcontext(SubjectContext.class);
         sc.setPrincipalName("PETER_THE_PRINCIPAL");
         
-        final RelyingPartyContext rpContext = profileRequestContext.getOrCreateSubcontext(RelyingPartyContext.class);
+        final RelyingPartyContext rpContext = profileRequestContext.ensureSubcontext(RelyingPartyContext.class);
         rpContext.setRelyingPartyId(AbstractFlowTest.SP_ENTITY_ID);
         
         final BasicRelyingPartyConfiguration config = new BasicRelyingPartyConfiguration();

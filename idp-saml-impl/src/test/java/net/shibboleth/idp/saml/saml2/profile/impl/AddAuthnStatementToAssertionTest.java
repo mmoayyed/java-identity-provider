@@ -85,7 +85,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
 
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() {
-        prc.getOrCreateSubcontext(AuthenticationContext.class);
+        prc.ensureSubcontext(AuthenticationContext.class);
         prc.removeSubcontext(RelyingPartyContext.class);
 
         final Event event = action.execute(rc);
@@ -95,7 +95,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     /** Test that the action errors out properly if there is no context. */
     @Test public void testNoContext() {
         prc.setOutboundMessageContext(null);
-        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
+        prc.ensureSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthnContextClassRefPrincipal("Test")));
 
         final Event event = action.execute(rc);
@@ -108,7 +108,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
      * @throws Exception if something goes wrong
      */
     @Test public void testNoAuthenticationStatement() throws Exception {
-        prc.getOrCreateSubcontext(AuthenticationContext.class);
+        prc.ensureSubcontext(AuthenticationContext.class);
 
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
@@ -133,7 +133,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         fd.setResultSerializer(serializer);
         fd.initialize();
         
-        prc.getOrCreateSubcontext(AuthenticationContext.class).getAvailableFlows().put("Test", fd);
+        prc.ensureSubcontext(AuthenticationContext.class).getAvailableFlows().put("Test", fd);
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac !=null;
         ac.setAuthenticationResult(
@@ -185,7 +185,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         assert rpCtx!=null;
         rpCtx.setProfileConfig(ssoConfig);
         
-        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
+        prc.ensureSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthnContextClassRefPrincipal("Test")));
 
         final Event event = action.execute(rc);
@@ -206,7 +206,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new AuthnContextClassRefPrincipal("Foo"));
         subject.getPrincipals().add(new AuthnContextClassRefPrincipal("Bar"));
-        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
+        prc.ensureSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", subject));
         final RequestedPrincipalContext requested = new RequestedPrincipalContext();
         requested.setMatchingPrincipal(new AuthnContextClassRefPrincipal("Bar"));
@@ -241,7 +241,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void testAuthenticatingAuthorities() {
-        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
+        prc.ensureSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(CollectionSupport.listOf("foo", "bar", "baz"))));
         
         final Event event = action.execute(rc);
@@ -269,7 +269,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         assert rpCtx!=null;
         rpCtx.setProfileConfig(ssoConfig);
 
-        prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
+        prc.ensureSubcontext(AuthenticationContext.class).setAuthenticationResult(
                 new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(CollectionSupport.listOf("foo", "bar", "baz"))));
         
         final Event event = action.execute(rc);

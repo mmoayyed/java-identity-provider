@@ -75,7 +75,7 @@ public class ResolveAttributesTest {
      * @throws Exception if something goes wrong
      */
     @Test public void testResolveAttributes() throws Exception {
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("value1")));
@@ -116,7 +116,7 @@ public class ResolveAttributesTest {
      * @throws Exception if something goes wrong
      */
     @Test public void testResolveSpecificAttributes() throws Exception {
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("value1")));
@@ -156,7 +156,7 @@ public class ResolveAttributesTest {
         // now test requesting an attribute that does not exist
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         attributeResolutionCtx = new AttributeResolutionContext();
         attributeResolutionCtx.setRequestedIdPAttributeNames(CollectionSupport.singleton("dne"));
@@ -181,7 +181,7 @@ public class ResolveAttributesTest {
      * @throws Exception if something goes wrong
      */
     @Test public void testUnableToResolveAttributes() throws Exception {
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("value1")));
@@ -211,7 +211,7 @@ public class ResolveAttributesTest {
      * @throws Exception if something goes wrong
      */
     @Test public void testUnableToFindResolver() throws Exception {
-        prc.getOrCreateSubcontext(SubjectContext.class);
+        prc.ensureSubcontext(SubjectContext.class);
 
         final IdPAttribute attribute = new IdPAttribute("ad1");
         attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("value1")));

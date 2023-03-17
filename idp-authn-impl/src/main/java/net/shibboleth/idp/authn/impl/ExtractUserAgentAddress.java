@@ -69,7 +69,7 @@ public class ExtractUserAgentAddress extends AbstractExtractionAction {
             return;
         }
 
-        authenticationContext.getOrCreateSubcontext(UserAgentContext.class).setAddress(
+        authenticationContext.ensureSubcontext(UserAgentContext.class).setAddress(
                 InetAddresses.forString(addressString));
     }
     

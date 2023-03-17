@@ -128,7 +128,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
-        prc.getOrCreateSubcontext(RelyingPartyContext.class).getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+        prc.ensureSubcontext(RelyingPartyContext.class).ensureSubcontext(AttributeContext.class).setIdPAttributes(
                 CollectionSupport.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
@@ -144,7 +144,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         inputAttribute.setValues(List.of(saml1NameIdFor(NAME_1)));
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
-        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+        rpCtx.ensureSubcontext(AttributeContext.class).setIdPAttributes(
                 CollectionSupport.singleton(inputAttribute));
 
         generator.setFormat(NameIdentifier.EMAIL);
@@ -160,7 +160,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         inputAttribute.setValues(List.of(saml1NameIdFor(NAME_1)));
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
-        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+        rpCtx.ensureSubcontext(AttributeContext.class).setIdPAttributes(
                 CollectionSupport.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
@@ -180,7 +180,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         inputAttribute.setValues(List.of(saml2NameIdFor(OTHERID), saml1NameIdFor(NAME_1)));
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
-        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+        rpCtx.ensureSubcontext(AttributeContext.class).setIdPAttributes(
                 CollectionSupport.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
@@ -200,7 +200,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         inputAttribute.setValues(List.of(new StringAttributeValue(NAME_1)));
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
-        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+        rpCtx.ensureSubcontext(AttributeContext.class).setIdPAttributes(
                 CollectionSupport.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));
@@ -225,7 +225,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         inputAttribute.setValues(List.of(new ScopedStringAttributeValue(NAME_1, QUALIFIER)));
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
-        rpCtx.getOrCreateSubcontext(AttributeContext.class).setIdPAttributes(
+        rpCtx.ensureSubcontext(AttributeContext.class).setIdPAttributes(
                 CollectionSupport.singleton(inputAttribute));
 
         generator.setAttributeSourceIds(CollectionSupport.singletonList(ATTR_NAME));

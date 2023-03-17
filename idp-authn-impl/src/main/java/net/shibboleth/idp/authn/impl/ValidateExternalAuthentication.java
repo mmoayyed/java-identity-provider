@@ -353,7 +353,7 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
             ac.setIdPAttributes(null);
             return;
         }
-        final AttributeFilterContext filterContext = localExtContext.getOrCreateSubcontext(AttributeFilterContext.class);
+        final AttributeFilterContext filterContext = localExtContext.ensureSubcontext(AttributeFilterContext.class);
         
         populateFilterContext(filterContext);
         

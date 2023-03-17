@@ -53,9 +53,9 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunctionTest extends Op
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
         prc1 = new RequestContextBuilder().buildProfileRequestContext();
-        ac = prc1.getOrCreateSubcontext(AuthenticationContext.class);
-        prc2 = ac.getOrCreateSubcontext(ProfileRequestContext.class);
-        rpc = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
+        ac = prc1.ensureSubcontext(AuthenticationContext.class);
+        prc2 = ac.ensureSubcontext(ProfileRequestContext.class);
+        rpc = ac.ensureSubcontext(RequestedPrincipalContext.class);
         fn = new ProxyAwareDefaultAuthenticationMethodsLookupFunction();
     }
     

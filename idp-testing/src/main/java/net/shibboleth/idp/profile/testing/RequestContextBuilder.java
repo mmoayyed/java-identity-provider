@@ -399,7 +399,7 @@ public class RequestContextBuilder {
      */
     @Nonnull protected RelyingPartyContext buildRelyingPartyContext(
             @Nonnull final ProfileRequestContext profileRequestContext) throws ComponentInitializationException {
-        final RelyingPartyContext rpCtx = profileRequestContext.getOrCreateSubcontext(RelyingPartyContext.class);
+        final RelyingPartyContext rpCtx = profileRequestContext.ensureSubcontext(RelyingPartyContext.class);
         if (Objects.equals(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
             rpCtx.setRelyingPartyId(ActionTestingSupport.INBOUND_MSG_ISSUER);
         } else {

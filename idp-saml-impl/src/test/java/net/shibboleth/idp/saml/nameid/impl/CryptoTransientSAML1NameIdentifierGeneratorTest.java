@@ -106,7 +106,7 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
         rpc.setRelyingPartyId(null);
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("jdoe");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("jdoe");
         
         final NameIdentifier name = generator.generate(prc, generator.getFormat());
         
@@ -118,7 +118,7 @@ public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLIni
         final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("jdoe");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("jdoe");
         
         final NameIdentifier name = generator.generate(prc, generator.getFormat());
         

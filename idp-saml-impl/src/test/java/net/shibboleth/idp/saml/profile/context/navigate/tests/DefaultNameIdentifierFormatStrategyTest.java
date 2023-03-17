@@ -72,7 +72,7 @@ public class DefaultNameIdentifierFormatStrategyTest extends OpenSAMLInitBaseTes
         entity.getRoleDescriptors().add(role);
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc!=null;
-        imc.getOrCreateSubcontext(SAMLPeerEntityContext.class).getOrCreateSubcontext(SAMLMetadataContext.class).setEntityDescriptor(entity);
+        imc.ensureSubcontext(SAMLPeerEntityContext.class).ensureSubcontext(SAMLMetadataContext.class).setEntityDescriptor(entity);
         final SAMLPeerEntityContext pec = imc.getSubcontext(SAMLPeerEntityContext.class);
         assert pec!=null;
         final SAMLMetadataContext mctx = pec.getSubcontext(SAMLMetadataContext.class);

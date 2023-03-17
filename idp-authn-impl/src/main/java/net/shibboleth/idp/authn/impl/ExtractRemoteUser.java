@@ -128,7 +128,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
             username = request.getRemoteUser();
             if (username != null && !username.isEmpty()) {
                 log.debug("{} User identity extracted from REMOTE_USER: {}", getLogPrefix(), username);
-                authenticationContext.getOrCreateSubcontext(UsernameContext.class).setUsername(
+                authenticationContext.ensureSubcontext(UsernameContext.class).setUsername(
                         applyTransforms(username));
                 return;
             }
@@ -138,7 +138,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
             final Object attr = request.getAttribute(s);
             if (attr != null && !attr.toString().isEmpty()) {
                 log.debug("{} User identity extracted from attribute {}: {}", getLogPrefix(), s, attr);
-                authenticationContext.getOrCreateSubcontext(UsernameContext.class).setUsername(
+                authenticationContext.ensureSubcontext(UsernameContext.class).setUsername(
                         applyTransforms(attr.toString()));
                 return;
             }
@@ -148,7 +148,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
             username = request.getHeader(s);
             if (username != null && !username.isEmpty()) {
                 log.debug("{} User identity extracted from header {}: {}", getLogPrefix(), s, username);
-                authenticationContext.getOrCreateSubcontext(UsernameContext.class).setUsername(
+                authenticationContext.ensureSubcontext(UsernameContext.class).setUsername(
                         applyTransforms(username));
                 return;
             }

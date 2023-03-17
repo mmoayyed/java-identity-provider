@@ -241,13 +241,13 @@ public final class TestSources {
     public static AttributeResolutionContext createResolutionContext(@Nonnull String principal, @Nonnull String issuerID,
             @Nonnull String recipientId) {
         ProfileRequestContext parent = new ProfileRequestContext();
-        AttributeResolutionContext retVal = parent.getOrCreateSubcontext(AttributeResolutionContext.class);
+        AttributeResolutionContext retVal = parent.ensureSubcontext(AttributeResolutionContext.class);
 
         retVal.setAttributeIssuerID(issuerID);
         retVal.setAttributeRecipientID(recipientId);
         retVal.setPrincipal(principal);
 
-        retVal.getOrCreateSubcontext(AttributeResolverWorkContext.class);
+        retVal.ensureSubcontext(AttributeResolverWorkContext.class);
         return retVal;
     }
 

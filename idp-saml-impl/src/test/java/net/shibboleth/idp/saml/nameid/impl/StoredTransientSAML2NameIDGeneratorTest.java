@@ -82,7 +82,7 @@ public class StoredTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTes
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
         rpc.setRelyingPartyId(null);
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("jdoe");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("jdoe");
         
         final NameID name = generator.generate(prc, generator.getFormat());
         
@@ -96,7 +96,7 @@ public class StoredTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTes
         assert rpc!=null;
         final RelyingPartyConfiguration rpConfig = rpc.getConfiguration();
         assert rpConfig!=null;
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("jdoe");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("jdoe");
         
         final NameID name = generator.generate(prc, generator.getFormat());
         

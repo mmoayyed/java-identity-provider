@@ -335,7 +335,7 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
         super.buildAuthenticationResult(profileRequestContext, authenticationContext);
 
         // Bypass c14n. We already operate on a canonical name, so just re-confirm it.
-        profileRequestContext.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName(username);
+        profileRequestContext.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName(username);
     }
 
     /** {@inheritDoc} */

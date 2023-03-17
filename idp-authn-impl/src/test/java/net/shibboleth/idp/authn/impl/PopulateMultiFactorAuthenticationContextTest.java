@@ -55,7 +55,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
-        final AuthenticationContext authCtx = ac = prc.getOrCreateSubcontext(AuthenticationContext.class);
+        final AuthenticationContext authCtx = ac = prc.ensureSubcontext(AuthenticationContext.class);
         final AuthenticationFlowDescriptor flow =new AuthenticationFlowDescriptor();
         authCtx.setAttemptedFlow(flow);
         flow.setId("authn/MFA");

@@ -55,7 +55,7 @@ public class FinalizeSAMLSubjectCanonicalizationTest {
     }
 
     @Test public void testNoPrincipal() {
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class);
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
@@ -63,7 +63,7 @@ public class FinalizeSAMLSubjectCanonicalizationTest {
     }
     
     @Test public void testMatch() {
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
         
         final Event event = action.execute(rc);
         

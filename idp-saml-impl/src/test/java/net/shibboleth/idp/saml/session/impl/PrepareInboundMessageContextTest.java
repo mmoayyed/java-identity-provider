@@ -57,7 +57,7 @@ public class PrepareInboundMessageContextTest extends OpenSAMLInitBaseTestCase {
                
         final SAML2SPSession session = new SAML2SPSession("https://sp.example.org", Instant.now(),
                 Instant.now().plusSeconds(1800), SAML2ActionTestingSupport.buildNameID("jdoe"), "foo", null, true);
-        prc.getOrCreateSubcontext(LogoutPropagationContext.class).setSession(session);
+        prc.ensureSubcontext(LogoutPropagationContext.class).setSession(session);
         
         action = new PrepareInboundMessageContext();
         action.initialize();

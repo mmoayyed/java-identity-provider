@@ -172,7 +172,7 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
                 
         // Copy SAML peer context and metadata if it exists.
         if (peerEntityCtx != null) {
-            final SAMLPeerEntityContext peerContext = msgCtx.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+            final SAMLPeerEntityContext peerContext = msgCtx.ensureSubcontext(SAMLPeerEntityContext.class);
             SAMLPeerEntityContext pec = peerEntityCtx;
             assert pec!=null;
             peerContext.setEntityId(pec.getEntityId());
@@ -180,7 +180,7 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
             final SAMLMetadataContext inboundMetadataCtx = pec.getSubcontext(SAMLMetadataContext.class);
             if (inboundMetadataCtx != null) {
                 final SAMLMetadataContext outboundMetadataCtx =
-                        peerContext.getOrCreateSubcontext(SAMLMetadataContext.class);
+                        peerContext.ensureSubcontext(SAMLMetadataContext.class);
                 outboundMetadataCtx.setEntityDescriptor(inboundMetadataCtx.getEntityDescriptor());
                 outboundMetadataCtx.setRoleDescriptor(inboundMetadataCtx.getRoleDescriptor());
             }

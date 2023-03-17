@@ -73,9 +73,9 @@ public class ContextDerivedAttributeDefinitionParserTest extends BaseAttributeDe
         final BaseContext parent = ctx.getParent();
         assert parent != null;
         if (c14n) {
-            parent.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+            parent.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         } else {
-            final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
+            final SubjectContext sc = parent.ensureSubcontext(SubjectContext.class);
             final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
             authnResults.put("one", new AuthenticationResult("1", subject));
         }

@@ -198,7 +198,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                 return;
             }
             
-            final SubjectContext sc = profileRequestContext.getOrCreateSubcontext(SubjectContext.class);
+            final SubjectContext sc = profileRequestContext.ensureSubcontext(SubjectContext.class);
             sc.setPrincipalName(canonicalPrincipalName);
             
             log.info("{} Principal {} authenticated", getLogPrefix(), canonicalPrincipalName);

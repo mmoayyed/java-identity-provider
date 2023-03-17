@@ -88,7 +88,7 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
     }
 
     @Test public void testNoSessions() {
-        prc.getOrCreateSubcontext(LogoutContext.class);
+        prc.ensureSubcontext(LogoutContext.class);
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
     }
@@ -104,7 +104,7 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
         final String sessionId = session.getId();
         assert sessionId != null;
         
-        prc.getOrCreateSubcontext(LogoutContext.class).getIdPSessions().add(session);
+        prc.ensureSubcontext(LogoutContext.class).getIdPSessions().add(session);
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -128,8 +128,8 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
         final String sessionId = session.getId();
         assert sessionId != null;
 
-        prc.getOrCreateSubcontext(LogoutContext.class).getIdPSessions().add(session);
-        prc.getOrCreateSubcontext(SessionContext.class).setIdPSession(session);
+        prc.ensureSubcontext(LogoutContext.class).getIdPSessions().add(session);
+        prc.ensureSubcontext(SessionContext.class).setIdPSession(session);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -154,7 +154,7 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
         IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         assert session!= null;
 
-        prc.getOrCreateSubcontext(LogoutContext.class).getIdPSessions().add(session);
+        prc.ensureSubcontext(LogoutContext.class).getIdPSessions().add(session);
 
         cookie = createSession("joe");
 
@@ -164,7 +164,7 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
         session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         assert session!= null;
                 
-        prc.getOrCreateSubcontext(SessionContext.class).setIdPSession(session);
+        prc.ensureSubcontext(SessionContext.class).setIdPSession(session);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -187,7 +187,7 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
         IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         assert session!= null;
 
-        prc.getOrCreateSubcontext(LogoutContext.class).getIdPSessions().add(session);
+        prc.ensureSubcontext(LogoutContext.class).getIdPSessions().add(session);
 
         cookie = createSession("joe");
 
@@ -197,8 +197,8 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
         session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
                 
-        prc.getOrCreateSubcontext(LogoutContext.class).getIdPSessions().add(session);
-        prc.getOrCreateSubcontext(SessionContext.class).setIdPSession(session);
+        prc.ensureSubcontext(LogoutContext.class).getIdPSessions().add(session);
+        prc.ensureSubcontext(SessionContext.class).setIdPSession(session);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

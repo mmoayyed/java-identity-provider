@@ -117,7 +117,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        final RequestedPrincipalContext rpc = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
+        final RequestedPrincipalContext rpc = ac.ensureSubcontext(RequestedPrincipalContext.class);
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
@@ -324,7 +324,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        final RequestedPrincipalContext rpc = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
+        final RequestedPrincipalContext rpc = ac.ensureSubcontext(RequestedPrincipalContext.class);
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");

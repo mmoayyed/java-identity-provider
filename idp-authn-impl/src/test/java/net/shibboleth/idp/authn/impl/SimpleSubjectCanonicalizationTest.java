@@ -55,7 +55,7 @@ public class SimpleSubjectCanonicalizationTest extends BaseAuthenticationContext
 
     @Test public void testNoPrincipal() {
         Subject subject = new Subject();
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -69,7 +69,7 @@ public class SimpleSubjectCanonicalizationTest extends BaseAuthenticationContext
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
         subject.getPrincipals().add(new UsernamePrincipal("bar"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -82,7 +82,7 @@ public class SimpleSubjectCanonicalizationTest extends BaseAuthenticationContext
     @Test public void testSuccess() {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -95,7 +95,7 @@ public class SimpleSubjectCanonicalizationTest extends BaseAuthenticationContext
     @Test public void testTransform() {
         Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo@osu.edu"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         

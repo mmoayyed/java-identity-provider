@@ -56,7 +56,7 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
 
     @Test public void testNoPrincipal() {
         final Subject subject = new Subject();
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -70,7 +70,7 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("CN=foo"));
         subject.getPrincipals().add(new X500Principal("CN=bar"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -83,7 +83,7 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
     @Test public void testNone() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("CN=foo@example.edu"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -95,7 +95,7 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
     @Test public void testSuccess() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -108,7 +108,7 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
     @Test public void testComplex() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu\\, EMAILADDRESS=bar@example.edu"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -121,7 +121,7 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
     @Test public void testTransform() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@osu.edu"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -134,7 +134,7 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
     @Test public void testMultipleTypes() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu, 0.9.2342.19200300.100.1.1=bar@example.edu"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -147,7 +147,7 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
     @Test public void testMultipleValues() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu, EMAILADDRESS=bar@example.edu"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         
@@ -160,7 +160,7 @@ public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTe
     @Test public void testSecondary() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("0.9.2342.19200300.100.1.1=bar@example.edu"));
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setSubject(subject);
         
         final Event event = action.execute(src);
         

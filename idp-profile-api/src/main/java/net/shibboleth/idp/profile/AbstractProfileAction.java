@@ -152,7 +152,7 @@ public abstract class AbstractProfileAction
         
         // Attach the Spring context to the context tree.
         final SpringRequestContext springSubcontext =
-                profileRequestContext.getOrCreateSubcontext(SpringRequestContext.class);
+                profileRequestContext.ensureSubcontext(SpringRequestContext.class);
         assert springSubcontext != null;
         springSubcontext.setRequestContext(springRequestContext);
 

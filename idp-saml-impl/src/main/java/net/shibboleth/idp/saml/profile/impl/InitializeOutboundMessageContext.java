@@ -128,23 +128,23 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
         final MessageContext msgCtx = new MessageContext();
         profileRequestContext.setOutboundMessageContext(msgCtx);
 
-        final SAMLSelfEntityContext selfContext = msgCtx.getOrCreateSubcontext(SAMLSelfEntityContext.class);
+        final SAMLSelfEntityContext selfContext = msgCtx.ensureSubcontext(SAMLSelfEntityContext.class);
         selfContext.setEntityId(selfIdentityLookupStrategy.apply(profileRequestContext));
 
-        final SAMLPeerEntityContext peerContext = msgCtx.getOrCreateSubcontext(SAMLPeerEntityContext.class);
+        final SAMLPeerEntityContext peerContext = msgCtx.ensureSubcontext(SAMLPeerEntityContext.class);
         SAMLPeerEntityContext pec = peerEntityCtx;
         assert pec!=null;
         peerContext.setEntityId(pec.getEntityId());
 
         final SAMLMetadataContext inboundMetadataCtx = pec.getSubcontext(SAMLMetadataContext.class);
         if (inboundMetadataCtx != null) {
-            final SAMLMetadataContext outboundMetadataCtx = peerContext.getOrCreateSubcontext(SAMLMetadataContext.class);
+            final SAMLMetadataContext outboundMetadataCtx = peerContext.ensureSubcontext(SAMLMetadataContext.class);
             outboundMetadataCtx.setEntityDescriptor(inboundMetadataCtx.getEntityDescriptor());
             outboundMetadataCtx.setRoleDescriptor(inboundMetadataCtx.getRoleDescriptor());
             final AttributeConsumingServiceContext acsCtx =
                     inboundMetadataCtx.getSubcontext(AttributeConsumingServiceContext.class);
             if (null != acsCtx) {
-                outboundMetadataCtx.getOrCreateSubcontext(AttributeConsumingServiceContext.class)
+                outboundMetadataCtx.ensureSubcontext(AttributeConsumingServiceContext.class)
                         .setAttributeConsumingService(acsCtx.getAttributeConsumingService());
             }
         }

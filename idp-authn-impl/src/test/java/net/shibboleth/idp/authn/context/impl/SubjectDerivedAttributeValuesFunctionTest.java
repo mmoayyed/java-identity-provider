@@ -109,7 +109,7 @@ public class SubjectDerivedAttributeValuesFunctionTest {
                         TestSources.SP_ENTITY_ID);
         final BaseContext parent = ctx.getParent();
         assert parent != null;
-        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
+        final SubjectContext sc = parent.ensureSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr));
@@ -192,7 +192,7 @@ public class SubjectDerivedAttributeValuesFunctionTest {
                         TestSources.SP_ENTITY_ID);
         final BaseContext parent = ctx.getParent();
         assert parent != null;
-        final SubjectCanonicalizationContext sc = parent.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        final SubjectCanonicalizationContext sc = parent.ensureSubcontext(SubjectCanonicalizationContext.class);
         sc.setSubject(subject);
         
         final List<IdPAttributeValue> foo =  doResolve(defn, ctx);
@@ -226,7 +226,7 @@ public class SubjectDerivedAttributeValuesFunctionTest {
                         TestSources.SP_ENTITY_ID);
         final BaseContext parent = ctx.getParent();
         assert parent != null;
-        final SubjectContext sc = parent.getOrCreateSubcontext(SubjectContext.class);
+        final SubjectContext sc = parent.ensureSubcontext(SubjectContext.class);
         final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
         final Subject subject = new Subject();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr));

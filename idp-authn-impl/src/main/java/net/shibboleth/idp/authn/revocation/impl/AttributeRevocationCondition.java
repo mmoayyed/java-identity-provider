@@ -171,7 +171,7 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
         log.debug("Checking revocation for principal name {} for {} result via attribute resolver", principal,
                 input2.getAuthenticationFlowId());
         
-        final ScratchContext context = input.getOrCreateSubcontext(ScratchContext.class);
+        final ScratchContext context = input.ensureSubcontext(ScratchContext.class);
         
         if (!context.getMap().containsKey(getClass())) {
             final AttributeResolutionContext resolutionContext = buildResolutionContext(input, principal);

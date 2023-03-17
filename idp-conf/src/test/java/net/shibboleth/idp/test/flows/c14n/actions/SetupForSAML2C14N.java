@@ -121,7 +121,7 @@ public class SetupForSAML2C14N extends AbstractProfileAction {
         sub.getPrincipals().add(nidp);
 
         final SubjectCanonicalizationContext scc =
-                profileRequestContext.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+                profileRequestContext.ensureSubcontext(SubjectCanonicalizationContext.class);
         scc.setSubject(sub);
         scc.setRequesterId(rpc.getRelyingPartyId());
         final RelyingPartyConfiguration rpConfig = (RelyingPartyConfiguration) rpc.getConfiguration();

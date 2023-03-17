@@ -49,7 +49,7 @@ public class SpringStatusMessageLookupFunctionTest {
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         springRequestContext = (MockRequestContext) new RequestContextBuilder().buildRequestContext();
         prc = (ProfileRequestContext) springRequestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
-        prc.getOrCreateSubcontext(SpringRequestContext.class).setRequestContext(springRequestContext);
+        prc.ensureSubcontext(SpringRequestContext.class).setRequestContext(springRequestContext);
     }
 
     @Test public void testMappedMessage() {

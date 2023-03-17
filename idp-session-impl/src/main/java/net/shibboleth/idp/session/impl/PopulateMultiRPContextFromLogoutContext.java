@@ -187,7 +187,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
                     continue;
                 }
 
-                final SAMLMetadataContext metadataCtx = rpCtx.getOrCreateSubcontext(SAMLMetadataContext.class);
+                final SAMLMetadataContext metadataCtx = rpCtx.ensureSubcontext(SAMLMetadataContext.class);
                 metadataCtx.setEntityDescriptor((EntityDescriptor) roleMetadata.getParent());
                 metadataCtx.setRoleDescriptor(roleMetadata);
 

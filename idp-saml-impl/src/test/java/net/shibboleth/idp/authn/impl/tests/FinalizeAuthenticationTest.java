@@ -111,14 +111,14 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         
         authCtx.setAuthenticationResult(active);
 
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("bar");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("bar");
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
     }
 
     @Test public void testRequestUnsupported() {
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
         
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("bar2"));
@@ -141,7 +141,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testSwitchesPrincipal() {
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
         
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("bar2"));
@@ -171,7 +171,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testNothingActive() {
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
         
         final Event event = action.execute(src);
         
@@ -187,7 +187,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         assert authCtx!=null;
         authCtx.setActiveResults(CollectionSupport.arrayAsList(active));
         authCtx.setAuthenticationResult(active);
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
         
         Event event = action.execute(src);
         
@@ -198,7 +198,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(sc.getAuthenticationResults().size(), 1);
         
         prc.removeSubcontext(SubjectContext.class);
-        authCtx.getOrCreateSubcontext(RequestedPrincipalContext.class);
+        authCtx.ensureSubcontext(RequestedPrincipalContext.class);
         
         event = action.execute(src);
         
@@ -216,7 +216,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         assert authCtx!=null;
         authCtx.setActiveResults(CollectionSupport.arrayAsList(active1));
         authCtx.setAuthenticationResult(active2);
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
         
         final Event event = action.execute(src);
         
@@ -237,7 +237,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         assert authCtx!=null;
         authCtx.setActiveResults(CollectionSupport.arrayAsList(active));
         authCtx.setAuthenticationResult(active);
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
@@ -254,7 +254,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         assert authCtx!=null;
         authCtx.setActiveResults(CollectionSupport.arrayAsList(active));
         authCtx.setAuthenticationResult(active);
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
 
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!= null;
@@ -279,7 +279,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         assert authCtx!=null;
         authCtx.setActiveResults(CollectionSupport.arrayAsList(active));
         authCtx.setAuthenticationResult(active);
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
 
         prc.removeSubcontext(RelyingPartyContext.class);
 
@@ -303,7 +303,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         assert authCtx!=null;
         authCtx.setActiveResults(CollectionSupport.arrayAsList(active));
         authCtx.setAuthenticationResult(active);
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
 
         final Event event = action.execute(src);
         
@@ -325,7 +325,7 @@ public class FinalizeAuthenticationTest extends OpenSAMLInitBaseTestCase {
         assert authCtx!=null;
         authCtx.setActiveResults(CollectionSupport.arrayAsList(active));
         authCtx.setAuthenticationResult(active);
-        prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectCanonicalizationContext.class).setPrincipalName("foo");
 
         final Event event = action.execute(src);
         

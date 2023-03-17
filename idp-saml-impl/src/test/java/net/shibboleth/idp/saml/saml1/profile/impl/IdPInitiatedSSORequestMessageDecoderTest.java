@@ -90,15 +90,15 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
         Assert.assertEquals(ssoRequest.getRelayState(), relayState, "Incorrect decoded relay state value");
         Assert.assertEquals(ssoRequest.getTime(), time.truncatedTo(ChronoUnit.SECONDS), "Incorrect decoded time value");
         
-        Assert.assertEquals(messageContext.getOrCreateSubcontext(SAMLPeerEntityContext.class).getEntityId(), entityId,
+        Assert.assertEquals(messageContext.ensureSubcontext(SAMLPeerEntityContext.class).getEntityId(), entityId,
                 "Incorrect decoded entityId value in peer context");
         
-        SAMLBindingContext bindingContext = messageContext.getOrCreateSubcontext(SAMLBindingContext.class);
+        SAMLBindingContext bindingContext = messageContext.ensureSubcontext(SAMLBindingContext.class);
         Assert.assertEquals(bindingContext.getRelayState(), relayState, "Incorrect decoded relay state value in binding context");
         Assert.assertEquals(bindingContext.getBindingUri(), "urn:mace:shibboleth:1.0:profiles:AuthnRequest",
                 "Incorrect binding URI in binding context");
         
-        SAMLMessageInfoContext msgInfoContext = messageContext.getOrCreateSubcontext(SAMLMessageInfoContext.class);
+        SAMLMessageInfoContext msgInfoContext = messageContext.ensureSubcontext(SAMLMessageInfoContext.class);
         Assert.assertEquals(msgInfoContext.getMessageIssueInstant(), time.truncatedTo(ChronoUnit.SECONDS),
                 "Incorrect decoded issue instant value in message info context");
         Assert.assertEquals(msgInfoContext.getMessageId(), messageID,

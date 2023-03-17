@@ -91,7 +91,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     }
 
     private void setSubContext(@Nullable Subject subject, @Nullable String responder, @Nullable String requester) {
-        final SubjectCanonicalizationContext scc = prc.getOrCreateSubcontext(SubjectCanonicalizationContext.class);
+        final SubjectCanonicalizationContext scc = prc.ensureSubcontext(SubjectCanonicalizationContext.class);
         if (subject != null) {
             scc.setSubject(subject);
         }

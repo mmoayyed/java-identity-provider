@@ -277,7 +277,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             if (ac == null) {
                 final RelyingPartyContext rpcCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class);
                 assert rpcCtx!= null;
-                ac = attributeContext = rpcCtx.getOrCreateSubcontext(AttributeContext.class);
+                ac = attributeContext = rpcCtx.ensureSubcontext(AttributeContext.class);
             }
             final Collection<IdPAttribute> attributes = new ArrayList<>(ac.getIdPAttributes().values());
             final Collection<IdPAttribute> newAttributes = aes.apply(profileRequestContext);
@@ -505,7 +505,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         if (!mapped.isEmpty()) {
             final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class);
             assert rpCtx != null;
-            final AttributeContext ac = attributeContext = rpCtx.getOrCreateSubcontext(AttributeContext.class);
+            final AttributeContext ac = attributeContext = rpCtx.ensureSubcontext(AttributeContext.class);
             ac.setUnfilteredIdPAttributes(mapped.values());
             ac.setIdPAttributes(null);
             filterAttributes(profileRequestContext);
@@ -557,7 +557,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         }
 
         final AttributeFilterContext filterContext =
-                profileRequestContext.getOrCreateSubcontext(AttributeFilterContext.class);
+                profileRequestContext.ensureSubcontext(AttributeFilterContext.class);
 
         populateFilterContext(profileRequestContext, filterContext);
         try (final ServiceableComponent<AttributeFilter> component = service.getServiceableComponent()) {

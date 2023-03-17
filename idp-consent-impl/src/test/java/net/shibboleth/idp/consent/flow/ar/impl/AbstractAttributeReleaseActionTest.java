@@ -37,7 +37,7 @@ public abstract class AbstractAttributeReleaseActionTest extends AbstractConsent
     @BeforeMethod public void setUpAttributeReleaseAction() throws Exception {
         final AttributeContext attributeCtx = new AttributeContext();
         attributeCtx.setIdPAttributes(ConsentTestingSupport.newAttributeMap().values());
-        prc.getOrCreateSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
+        prc.ensureSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 
         prc.addSubcontext(new AttributeReleaseContext(), true);
 

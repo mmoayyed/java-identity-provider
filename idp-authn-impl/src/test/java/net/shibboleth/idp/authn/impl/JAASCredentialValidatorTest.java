@@ -137,7 +137,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getOrCreateSubcontext(UsernamePasswordContext.class);
+        ac.ensureSubcontext(UsernamePasswordContext.class);
         
         validator.initialize();
         action.initialize();
@@ -200,7 +200,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        final RequestedPrincipalContext rpc = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
+        final RequestedPrincipalContext rpc = ac.ensureSubcontext(RequestedPrincipalContext.class);
         assert rpc!= null;
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
@@ -229,7 +229,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getOrCreateSubcontext(UsernamePasswordContext.class);
+        ac.ensureSubcontext(UsernamePasswordContext.class);
         
         validator.setMatchExpression(Pattern.compile("foo.+"));
         validator.initialize();
@@ -349,7 +349,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         
-        final RequestedPrincipalContext rpc = ac.getOrCreateSubcontext(RequestedPrincipalContext.class);
+        final RequestedPrincipalContext rpc = ac.ensureSubcontext(RequestedPrincipalContext.class);
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");

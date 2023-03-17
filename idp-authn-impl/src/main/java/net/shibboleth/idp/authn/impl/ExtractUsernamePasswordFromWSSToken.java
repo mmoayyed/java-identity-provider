@@ -87,7 +87,7 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
             return;
         }
 
-        authenticationContext.getOrCreateSubcontext(UsernamePasswordContext.class)
+        authenticationContext.ensureSubcontext(UsernamePasswordContext.class)
                 .setUsername(usernamePassword.getFirst()).setPassword(usernamePassword.getSecond());
     }
 

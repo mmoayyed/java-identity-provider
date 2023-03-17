@@ -134,7 +134,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
             return false;
         }
 
-        nameIdentifier = msgCtx.getOrCreateSubcontext(SAMLSubjectNameIdentifierContext.class).getSubjectNameIdentifier();
+        nameIdentifier = msgCtx.ensureSubcontext(SAMLSubjectNameIdentifierContext.class).getSubjectNameIdentifier();
         if (nameIdentifier == null) {
             log.debug("{} No Subject NameID/NameIdentifier in message needs inbound processing", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, NO_SUBJECT);
@@ -207,7 +207,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
             if (profileRequestContext != null) {
                 final MessageContext msgCtx = profileRequestContext.getInboundMessageContext();
                 if (msgCtx != null) {
-                    return msgCtx.getOrCreateSubcontext(SAMLSubjectNameIdentifierContext.class)
+                    return msgCtx.ensureSubcontext(SAMLSubjectNameIdentifierContext.class)
                             .getSubjectNameIdentifier();
                 }
             }

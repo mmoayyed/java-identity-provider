@@ -258,7 +258,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
 
         final AttributeResolutionContext resolutionContext;
         if (createResolutionContext) {
-            resolutionContext = profileRequestContext.getOrCreateSubcontext(AttributeResolutionContext.class);
+            resolutionContext = profileRequestContext.ensureSubcontext(AttributeResolutionContext.class);
             populateResolutionContext(profileRequestContext, resolutionContext);
         } else {
             resolutionContext = profileRequestContext.getSubcontext(AttributeResolutionContext.class);

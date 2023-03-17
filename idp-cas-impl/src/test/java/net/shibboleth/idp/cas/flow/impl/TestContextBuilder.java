@@ -84,7 +84,7 @@ public class TestContextBuilder {
     }
 
     @Nonnull public TestContextBuilder addTicketContext(@Nonnull final Ticket ticket) {
-        final ProtocolContext<?,?> context = profileRequestContext.getOrCreateSubcontext(ProtocolContext.class);
+        final ProtocolContext<?,?> context = profileRequestContext.ensureSubcontext(ProtocolContext.class);
         context.addSubcontext(new TicketContext(ticket));
         return this;
     }
@@ -100,7 +100,7 @@ public class TestContextBuilder {
     }
 
     @Nonnull public TestContextBuilder addServiceContext(@Nonnull final Service service) {
-        final ProtocolContext<?,?> context = profileRequestContext.getOrCreateSubcontext(ProtocolContext.class);
+        final ProtocolContext<?,?> context = profileRequestContext.ensureSubcontext(ProtocolContext.class);
         context.addSubcontext(new ServiceContext(service));
         return this;
     }

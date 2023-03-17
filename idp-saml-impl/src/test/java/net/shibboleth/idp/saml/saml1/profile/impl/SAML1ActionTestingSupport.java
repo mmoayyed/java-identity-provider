@@ -75,7 +75,7 @@ public final class SAML1ActionTestingSupport extends org.opensaml.saml.saml1.tes
         rpConfig.setProfileConfigurations(buildProfileConfigurations());
         rpConfig.initialize();
 
-        final RelyingPartyContext subcontext = parent.getOrCreateSubcontext(RelyingPartyContext.class);
+        final RelyingPartyContext subcontext = parent.ensureSubcontext(RelyingPartyContext.class);
         subcontext.setRelyingPartyId(id);
         subcontext.setProfileConfig(rpConfig.getProfileConfiguration(null, BrowserSSOProfileConfiguration.PROFILE_ID));
         subcontext.setConfiguration(rpConfig);

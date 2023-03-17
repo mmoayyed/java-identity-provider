@@ -75,7 +75,7 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
         messageContext.addSubcontext(peerCtx, true);
         
         if (message.getProtocol() != null) {
-            messageContext.getOrCreateSubcontext(SAMLProtocolContext.class).setProtocol(message.getProtocol());
+            messageContext.ensureSubcontext(SAMLProtocolContext.class).setProtocol(message.getProtocol());
         }
     }
 

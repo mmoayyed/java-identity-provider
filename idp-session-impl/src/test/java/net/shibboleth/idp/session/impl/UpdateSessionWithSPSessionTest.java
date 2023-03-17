@@ -89,7 +89,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         final IdPSession session = sessionManager.createSession("joe");
-        prc.getOrCreateSubcontext(SessionContext.class).setIdPSession(session);
+        prc.ensureSubcontext(SessionContext.class).setIdPSession(session);
         
         action.setSPSessionCreationStrategy(FunctionSupport.constant(null));
         action.initialize();
@@ -102,7 +102,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         final IdPSession session = sessionManager.createSession("joe");
-        prc.getOrCreateSubcontext(SessionContext.class).setIdPSession(session);
+        prc.ensureSubcontext(SessionContext.class).setIdPSession(session);
         
         final Instant creation = Instant.now();
         final Instant expiration = creation.plusSeconds(3600);

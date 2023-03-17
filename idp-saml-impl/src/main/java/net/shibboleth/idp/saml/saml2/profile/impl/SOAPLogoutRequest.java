@@ -288,7 +288,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
             assert prcImc != null;
             
             prcImc.setMessage(response);
-            final SAMLBindingContext bctx = prcImc.getOrCreateSubcontext(SAMLBindingContext.class);
+            final SAMLBindingContext bctx = prcImc.ensureSubcontext(SAMLBindingContext.class);
             final MessageContext prcOmc = profileRequestContext.getOutboundMessageContext();
             assert prcOmc != null;
             final SAMLBindingContext omcBc = prcOmc.getSubcontext(SAMLBindingContext.class);

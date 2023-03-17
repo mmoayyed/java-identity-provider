@@ -366,7 +366,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         assert idpSession!=null;
         Assert.assertEquals(session.getId(), idpSession.getId());
         
-        final LogoutContext logoutCtx = prc.getOrCreateSubcontext(LogoutContext.class);
+        final LogoutContext logoutCtx = prc.ensureSubcontext(LogoutContext.class);
         Assert.assertEquals(logoutCtx.getIdPSessions().size(), 1);
         Assert.assertSame(logoutCtx.getIdPSessions().iterator().next(), sessionCtx.getIdPSession());
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 1);

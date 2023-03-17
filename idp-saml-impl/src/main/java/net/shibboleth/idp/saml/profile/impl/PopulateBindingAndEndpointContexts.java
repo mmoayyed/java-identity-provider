@@ -488,7 +488,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                 log.debug("{} Use of artifact binding implies the channel will be secure, "
                         + "overriding MessageChannelSecurityContext flags", getLogPrefix());
                 final MessageChannelSecurityContext channelCtx =
-                        profileRequestContext.getOrCreateSubcontext(MessageChannelSecurityContext.class);
+                        profileRequestContext.ensureSubcontext(MessageChannelSecurityContext.class);
                 channelCtx.setIntegrityActive(true);
                 channelCtx.setConfidentialityActive(true);
             }            

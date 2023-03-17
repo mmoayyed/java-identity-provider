@@ -136,12 +136,12 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
-        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
+        rpc.ensureSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
                 Collections.singleton(new IdPAttribute("SOURCE")));
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
     }
@@ -156,14 +156,14 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
-        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(Collections.singleton(source));
+        rpc.ensureSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(Collections.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
         assert id!=null;
         Assert.assertEquals(id.getValue(), RESULT);
@@ -211,14 +211,14 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
-        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
+        rpc.ensureSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         NameID id = generator.generate(prc, NameID.PERSISTENT);
         assert id!=null;
@@ -278,14 +278,14 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         generator.setAttributeSourceIds(CollectionSupport.singletonList("SOURCE"));
         generator.initialize();
         
-        prc.getOrCreateSubcontext(SubjectContext.class).setPrincipalName("foo");
+        prc.ensureSubcontext(SubjectContext.class).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
-        rpc.getOrCreateSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
+        rpc.ensureSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         NameID id = generator.generate(prc, NameID.PERSISTENT);
         assert id!=null;

@@ -62,7 +62,7 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         config = (BrowserSSOProfileConfiguration)rpCfg.getProfileConfiguration(
                 prc, BrowserSSOProfileConfiguration.PROFILE_ID);
         rpc.setProfileConfig(config);
-        sc = prc.getOrCreateSubcontext(SubjectContext.class);
+        sc = prc.ensureSubcontext(SubjectContext.class);
         sc.getAuthenticationResults().put("test1", new AuthenticationResult("test1", new Subject()));
         sc.getAuthenticationResults().put("test2", new AuthenticationResult("test2", new Subject()));
         fn = new ProxyRestrictionLookupFunction();
