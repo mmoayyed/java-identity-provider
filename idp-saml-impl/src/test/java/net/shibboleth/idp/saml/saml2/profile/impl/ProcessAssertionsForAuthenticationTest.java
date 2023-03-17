@@ -47,8 +47,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -76,7 +74,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @BeforeMethod
     public void beforeMethod() {
-        httpRequest = new MockHttpServletRequest();
+        final MockHttpServletRequest req = httpRequest = new MockHttpServletRequest();
         httpResponse = new MockHttpServletResponse();
         
         action = new ProcessAssertionsForAuthentication();

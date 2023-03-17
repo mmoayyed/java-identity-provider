@@ -17,24 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
-import java.util.Collections;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
-import net.shibboleth.profile.config.ProfileConfiguration;
-import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.shared.collection.CollectionSupport;
-import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.resolver.CriteriaSet;
-import net.shibboleth.shared.resolver.ResolverException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.action.EventIds;
@@ -48,6 +32,18 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
 
 /** Unit test for {@link PopulateEncryptionParameters}. */
 @SuppressWarnings("javadoc")
@@ -166,7 +162,7 @@ public class PopulateEncryptionParametersTest extends OpenSAMLInitBaseTestCase {
 
         /** {@inheritDoc} */
         @Override
-        public EncryptionParameters resolveSingle(@Nullable CriteriaSet criteria) throws ResolverException {
+        @Nonnull public EncryptionParameters resolveSingle(@Nullable CriteriaSet criteria) throws ResolverException {
             if (throwException) {
                 throw new ResolverException();
             }

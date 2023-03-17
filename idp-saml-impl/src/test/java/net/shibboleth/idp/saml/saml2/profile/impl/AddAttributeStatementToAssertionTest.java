@@ -143,7 +143,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         rule3_1.put(SAML2AttributeTranscoder.PROP_NAME, MY_NAME_3);
         rule3_1.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, MY_NAMESPACE);
 
-        registry.setTranscoderRegistry(Arrays.asList(
+        registry.setTranscoderRegistry(CollectionSupport.listOf(
                 new TranscodingRule(rule1_1),
                 new TranscodingRule(rule1_2),
                 new TranscodingRule(rule2_1),
@@ -235,7 +235,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         rule.put(SAML2AttributeTranscoder.PROP_NAME, MY_NAME_1);
         rule.put(SAML2AttributeTranscoder.PROP_NAME_FORMAT, MY_NAMESPACE);
         
-        localregistry.setTranscoderRegistry(Collections.singletonList(new TranscodingRule(rule)));
+        localregistry.setTranscoderRegistry(CollectionSupport.singletonList(new TranscodingRule(rule)));
         localregistry.setApplicationContext(new MockApplicationContext());
         localregistry.initialize();
         
@@ -381,7 +381,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     @Test public void testNoAssertionInResponse() throws Exception {
         final AttributeContext attribCtx = buildAttributeContext();
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
-        assert rpCtx!=null;
+        assert rpCtx!=null ;
         rpCtx.addSubcontext(attribCtx);
 
         action.initialize();
@@ -407,7 +407,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      * @return the attribute context to be used as an input to the action
      * @throws ComponentInitializationException thrown if the attribute encoders can not be initialized
      */
-    private AttributeContext buildAttributeContext() throws ComponentInitializationException {
+    @Nonnull private AttributeContext buildAttributeContext() throws ComponentInitializationException {
 
         final IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
         attribute1.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));

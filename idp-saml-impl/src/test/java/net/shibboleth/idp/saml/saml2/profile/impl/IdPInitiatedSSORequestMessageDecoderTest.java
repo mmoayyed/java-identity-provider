@@ -68,6 +68,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
         request.setRequestedSessionId(sessionID);
         
         decoder = new IdPInitiatedSSORequestMessageDecoder();
+        assert request!=null;
         decoder.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         decoder.initialize();
     }

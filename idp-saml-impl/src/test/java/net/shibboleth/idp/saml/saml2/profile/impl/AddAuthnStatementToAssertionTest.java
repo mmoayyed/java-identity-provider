@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 
 import javax.security.auth.Subject;
 
@@ -53,6 +52,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
@@ -242,7 +242,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
     
     @Test public void testAuthenticatingAuthorities() {
         prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
-                new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(List.of("foo", "bar", "baz"))));
+                new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(CollectionSupport.listOf("foo", "bar", "baz"))));
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
@@ -270,7 +270,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         rpCtx.setProfileConfig(ssoConfig);
 
         prc.getOrCreateSubcontext(AuthenticationContext.class).setAuthenticationResult(
-                new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(List.of("foo", "bar", "baz"))));
+                new AuthenticationResult("Test", new ProxyAuthenticationPrincipal(CollectionSupport.listOf("foo", "bar", "baz"))));
         
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);

@@ -17,30 +17,15 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
-import net.shibboleth.idp.profile.IdPEventIds;
-
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
-import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
-import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
-import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
-import net.shibboleth.profile.relyingparty.BasicRelyingPartyConfiguration;
-import net.shibboleth.shared.collection.CollectionSupport;
-import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
@@ -48,6 +33,8 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.ext.reqattr.RequestedAttributes;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -59,7 +46,6 @@ import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
-import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Scoping;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.opensaml.xmlsec.config.BasicXMLSecurityConfiguration;
@@ -67,6 +53,21 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
+import net.shibboleth.profile.relyingparty.BasicRelyingPartyConfiguration;
+import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link AddAuthnRequest} unit test. */
 public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {

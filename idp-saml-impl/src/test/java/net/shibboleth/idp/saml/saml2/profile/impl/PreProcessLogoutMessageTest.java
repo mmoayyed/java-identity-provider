@@ -17,11 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.shared.component.ComponentInitializationException;
-
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.MessageContext;
@@ -29,13 +24,17 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.ext.saml2aslo.Asynchronous;
-import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link PreProcessLogoutMessage} unit test. */
 @SuppressWarnings("javadoc")
