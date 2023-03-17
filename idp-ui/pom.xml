@@ -40,6 +40,11 @@
 
         <dependency>
             <groupId>net.shibboleth</groupId>
+            <artifactId>shib-saml-profile-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-api</artifactId>
         </dependency>
 

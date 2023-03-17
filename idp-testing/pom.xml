@@ -32,10 +32,10 @@
             <artifactId>idp-profile-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-saml-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>net.shibboleth</groupId>
+            <artifactId>shib-profile-api</artifactId>
         </dependency>
 
         <dependency>
@@ -59,23 +59,19 @@
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
         </dependency>
-
-        <!-- Normally test scope. -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-testing</artifactId>
-            <scope>compile</scope>
+            <artifactId>opensaml-security-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-xmlsec-api</artifactId>
         </dependency>
 
         <!-- Normally test scope. -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
             <scope>compile</scope>
         </dependency>
 

@@ -40,6 +40,11 @@
     
         <dependency>
             <groupId>net.shibboleth</groupId>
+            <artifactId>shib-profile-api</artifactId>
+        </dependency>
+    
+        <dependency>
+            <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-api</artifactId>
         </dependency>
     
@@ -55,14 +60,14 @@
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-security-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-service</artifactId>
         </dependency>
 
         <dependency>

@@ -69,10 +69,6 @@
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-security-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-api</artifactId>
         </dependency>
 
@@ -125,12 +121,12 @@
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-storage-impl</artifactId>
+            <artifactId>opensaml-security-api</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-testing</artifactId>
+            <artifactId>opensaml-storage-impl</artifactId>
             <scope>test</scope>
         </dependency>
 

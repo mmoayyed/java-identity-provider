@@ -40,12 +40,11 @@
 
         <dependency>
             <groupId>net.shibboleth</groupId>
-            <artifactId>shib-saml-profile-api</artifactId>
+            <artifactId>shib-profile-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>net.shibboleth</groupId>
-            <artifactId>shib-attribute-api</artifactId>
+            <artifactId>shib-saml-profile-api</artifactId>
         </dependency>
 
         <dependency>
@@ -64,33 +63,12 @@
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-soap-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-spring</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
 
         <!-- Provided Dependencies -->
 

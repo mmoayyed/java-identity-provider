@@ -55,6 +55,11 @@
 
         <dependency>
             <groupId>net.shibboleth</groupId>
+            <artifactId>shib-profile-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-api</artifactId>
         </dependency>
         <dependency>
@@ -210,12 +215,6 @@
         </dependency>
 
         <!-- Test Dependencies -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-admin-api</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-saml-api</artifactId>

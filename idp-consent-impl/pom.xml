@@ -35,6 +35,11 @@
 
         <dependency>
             <groupId>net.shibboleth</groupId>
+            <artifactId>shib-profile-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-api</artifactId>
         </dependency>
 

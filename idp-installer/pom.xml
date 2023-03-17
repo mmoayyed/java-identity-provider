@@ -27,12 +27,18 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>idp-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>idp-cli</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
-	<dependency>
+	    <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-cli</artifactId>
            <scope>provided</scope>
@@ -53,7 +59,22 @@
         
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-security-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-xmlsec-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -98,16 +119,10 @@
             <scope>provided</scope>
         </dependency>
 
-       <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-compress</artifactId>
-          <scope>provided</scope>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>

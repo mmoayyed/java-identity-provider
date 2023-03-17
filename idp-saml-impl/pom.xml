@@ -56,10 +56,7 @@
             <groupId>net.shibboleth</groupId>
             <artifactId>shib-saml-profile-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-profile-impl</artifactId>
-        </dependency>
+        
         <dependency>
             <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-api</artifactId>
@@ -71,10 +68,6 @@
         <dependency>
             <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-filter-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth</groupId>
-            <artifactId>shib-saml-attribute-api</artifactId>
         </dependency>
         <dependency>
             <groupId>net.shibboleth</groupId>
@@ -204,6 +197,12 @@
 
         <dependency>
             <groupId>net.shibboleth</groupId>
+            <artifactId>shib-profile-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-testing</artifactId>
             <scope>test</scope>
         </dependency>
@@ -214,7 +213,17 @@
         </dependency>
         <dependency>
             <groupId>net.shibboleth</groupId>
+            <artifactId>shib-attribute-resolver-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth</groupId>
             <artifactId>shib-attribute-resolver-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth</groupId>
+            <artifactId>shib-saml-attribute-api</artifactId>
             <scope>test</scope>
         </dependency>
 
