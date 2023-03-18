@@ -75,7 +75,7 @@
     </action-state>
     
     <decision-state id="NextRelyingPartyContext">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext), true).getRelyingPartyContextIterator().hasNext()"
+        <if test="opensamlProfileRequestContext.ensureSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext)).getRelyingPartyContextIterator().hasNext()"
             then="SetRPUIInformation" else="LogoutView" />
     </decision-state>
     

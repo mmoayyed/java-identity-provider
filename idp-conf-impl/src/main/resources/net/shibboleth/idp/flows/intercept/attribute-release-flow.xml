@@ -28,7 +28,7 @@
     <!-- If consent revocation was requested, skip reading from storage. -->
 
     <decision-state id="TestForRevokeConsent">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentManagementContext), true).getRevokeConsent()"
+        <if test="opensamlProfileRequestContext.ensureSubcontext(T(net.shibboleth.idp.consent.context.ConsentManagementContext)).getRevokeConsent()"
             then="RevokeConsent" else="ReadConsentFromStorage" />
     </decision-state>
 
@@ -131,7 +131,7 @@
                                                                                                result="viewScope.attributeDisplayDescriptionFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext))" result="viewScope.consentContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.AttributeReleaseContext))" result="viewScope.attributeReleaseContext" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext), true).getSubcontext(T(net.shibboleth.idp.ui.context.RelyingPartyUIContext))" result="viewScope.rpUIContext" />
+            <evaluate expression="opensamlProfileRequestContext.ensureSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getSubcontext(T(net.shibboleth.idp.ui.context.RelyingPartyUIContext))" result="viewScope.rpUIContext" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="viewScope.custom" />
         </on-render>
         <transition on="AttributeReleaseRejected" to="WriteAttributeReleaseConsentAuditLog" />

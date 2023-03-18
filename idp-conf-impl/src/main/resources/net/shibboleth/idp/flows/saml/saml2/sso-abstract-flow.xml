@@ -160,7 +160,7 @@
 
     <decision-state id="HandleError">
         <on-entry>
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext), true).setRequestContext(flowRequestContext)" />
+            <evaluate expression="opensamlProfileRequestContext.ensureSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).setRequestContext(flowRequestContext)" />
             <evaluate expression="LogEvent" />
         </on-entry>
         <if test="LocalErrorPredicate.test(opensamlProfileRequestContext)"

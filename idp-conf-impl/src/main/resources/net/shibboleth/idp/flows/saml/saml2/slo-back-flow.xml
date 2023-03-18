@@ -31,7 +31,7 @@
     </action-state>
 
     <decision-state id="CheckForSessions">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext), true).getSessionMap().isEmpty()"
+        <if test="opensamlProfileRequestContext.ensureSubcontext(T(net.shibboleth.idp.session.context.LogoutContext)).getSessionMap().isEmpty()"
             then="CheckAsync"
             else="SaveProfileRequestContextTree" />
     </decision-state>

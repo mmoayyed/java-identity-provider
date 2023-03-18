@@ -58,7 +58,7 @@
     <action-state id="DoAttributes">
         <on-entry>
             <!-- Turn off result cache. -->
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext), true).setAllowCachedResults(false)" />
+            <evaluate expression="opensamlProfileRequestContext.ensureSubcontext(T(net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext)).setAllowCachedResults(false)" />
         </on-entry>
     
         <evaluate expression="ResolveAttributes" />
