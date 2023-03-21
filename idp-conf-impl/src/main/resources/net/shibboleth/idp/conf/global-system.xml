@@ -275,7 +275,7 @@
         p:secure="%{idp.cookie.secure:true}"
         p:httpOnly="%{idp.cookie.httpOnly:true}"
         p:cookieDomain="%{idp.cookie.domain:}"
-        p:cookiePath="%{idp.cookie.path:}"
+        p:cookiePath="%{idp.cookie.path:/}"
         p:maxAge="-1" />
 
     <bean id="shibboleth.PersistentCookieManager" class="net.shibboleth.shared.net.CookieManager"
@@ -284,7 +284,7 @@
         p:secure="%{idp.cookie.secure:true}"
         p:httpOnly="%{idp.cookie.httpOnly:true}"
         p:cookieDomain="%{idp.cookie.domain:}"
-        p:cookiePath="%{idp.cookie.path:}"
+        p:cookiePath="%{idp.cookie.path:/}"
         p:maxAge="%{idp.cookie.maxAge:31536000}" />
 
     <bean id="shibboleth.UserPrefsCookieManager" class="net.shibboleth.shared.net.CookieManager"
@@ -293,7 +293,7 @@
         p:secure="%{idp.cookie.secure:true}"
         p:httpOnly="false"
         p:cookieDomain="%{idp.cookie.domain:}"
-        p:cookiePath="%{idp.cookie.path:}"
+        p:cookiePath="%{idp.cookie.path:/}"
         p:maxAge="%{idp.cookie.maxAge:31536000}" />
 
     <bean id="shibboleth.StorageService" lazy-init="true"
