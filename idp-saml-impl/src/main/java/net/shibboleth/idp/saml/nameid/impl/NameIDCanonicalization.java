@@ -27,6 +27,7 @@ import javax.security.auth.Subject;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 import org.slf4j.Logger;
 
@@ -228,7 +229,13 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                 }
                 return false;
-            } else if (!formatMatches(nameIDs.iterator().next().getNameID().getFormat(), c14nContext)) {
+            }
+            
+            String format = nameIDs.iterator().next().getNameID().getFormat();
+            if (format == null) {
+                format = NameIDType.UNSPECIFIED;
+            }
+            if (!formatMatches(format, c14nContext)) {
                 c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
                 if (duringAction) {
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);

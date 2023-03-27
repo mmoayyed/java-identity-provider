@@ -28,6 +28,7 @@ import net.shibboleth.idp.saml.profile.impl.ExtractSubjectFromRequest.SubjectNam
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 
 import javax.security.auth.Subject;
 
@@ -35,6 +36,7 @@ import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.profile.logic.DefaultNameIDPolicyPredicate;
+import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.Request;
 import org.opensaml.saml.saml1.testing.SAML1ActionTestingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -108,17 +110,19 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
         assert imc!=null;
         imc.setMessage(request);
         
-        request.getSubject().getNameID().setFormat(NameID.TRANSIENT);
-        request.getSubject().getNameID().setNameQualifier("foo");
+        final NameID nameID = Constraint.isNotNull(request.getSubject(), "Subject null").getNameID();
+        assert nameID != null;
+        nameID.setFormat(NameID.TRANSIENT);
+        nameID.setNameQualifier("foo");
         Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
         
-        request.getSubject().getNameID().setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
-        request.getSubject().getNameID().setSPNameQualifier("foo");
+        nameID.setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        nameID.setSPNameQualifier("foo");
         event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
         
-        request.getSubject().getNameID().setSPNameQualifier(ActionTestingSupport.INBOUND_MSG_ISSUER);
+        nameID.setSPNameQualifier(ActionTestingSupport.INBOUND_MSG_ISSUER);
         event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         
@@ -140,12 +144,16 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
         assert imc!=null;
         imc.setMessage(request);
         
-        request.getAttributeQuery().getSubject().getNameIdentifier().setFormat(NameID.TRANSIENT);
-        request.getAttributeQuery().getSubject().getNameIdentifier().setNameQualifier("foo");
+        final org.opensaml.saml.saml1.core.Subject s = Constraint.isNotNull(request.getAttributeQuery(), "Query was null").getSubject();
+        assert s != null;
+        final NameIdentifier nameID = s.getNameIdentifier();
+                
+        nameID.setFormat(NameID.TRANSIENT);
+        nameID.setNameQualifier("foo");
         Event event = action.execute(rc);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_SUBJECT);
         
-        request.getAttributeQuery().getSubject().getNameIdentifier().setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        nameID.setNameQualifier(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
         

@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -52,6 +51,7 @@ import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfigurati
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -89,7 +89,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     public ProcessRequestedAuthnContext() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         authnRequestLookupStrategy = new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
-        ignoredContexts = Collections.singleton(AuthnContext.UNSPECIFIED_AUTHN_CTX);
+        ignoredContexts = CollectionSupport.singleton(AuthnContext.UNSPECIFIED_AUTHN_CTX);
     }
 
     /**
@@ -128,9 +128,9 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         final Collection<String> trimmed = StringSupport.normalizeStringCollection(contexts);
         
         if (trimmed.isEmpty()) {
-            ignoredContexts = Collections.emptySet();
+            ignoredContexts = CollectionSupport.emptySet();
         } else {
-            ignoredContexts = Set.copyOf(trimmed);
+            ignoredContexts = CollectionSupport.copyToSet(trimmed);
         }
     }
     
@@ -209,8 +209,9 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         }
         
         final RequestedPrincipalContext rpCtx = new RequestedPrincipalContext();
-        if (requestedCtx.getComparison() != null) {
-            rpCtx.setOperator(requestedCtx.getComparison().toString());
+        final var operator = requestedCtx.getComparison();
+        if (operator != null) {
+            rpCtx.setOperator(operator.toString());
         } else {
             rpCtx.setOperator(AuthnContextComparisonTypeEnumeration.EXACT.toString());
         }

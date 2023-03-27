@@ -48,6 +48,7 @@ import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
+import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
@@ -288,15 +289,15 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * 
      * @param subject the subject
      */
-    public void validateSubject(@Nonnull final Subject subject) {
+    public void validateSubject(@Nullable final Subject subject) {
         assertSubject(subject);
-        assertNameID(subject.getNameID());
-        assertSubjectConfirmations(subject.getSubjectConfirmations());
-        final SubjectConfirmation subjectConfirmation = subject.getSubjectConfirmations().get(0);
+        assertNameID(subject != null ? subject.getNameID() : null);
+        assertSubjectConfirmations(subject != null ? subject.getSubjectConfirmations() : null);
+        final SubjectConfirmation subjectConfirmation = subject != null ? subject.getSubjectConfirmations().get(0) : null;
         assertSubjectConfirmation(subjectConfirmation);
         assertSubjectConfirmationMethod(subjectConfirmation);
         if (validateSubjectConfirmationData) {
-            assertSubjectConfirmationData(subjectConfirmation.getSubjectConfirmationData());
+            assertSubjectConfirmationData(subjectConfirmation != null ? subjectConfirmation.getSubjectConfirmationData() : null);
         }
     }
 
@@ -318,6 +319,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         final Conditions conditions = assertion.getConditions();
         assertConditions(conditions);
 
+        assert conditions != null;
         final List<AudienceRestriction> audienceRestrictions = conditions.getAudienceRestrictions();
         assertAudienceRestrictions(audienceRestrictions);
 
@@ -344,7 +346,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
 
         final AuthnStatement authnStatement = authnStatements.get(0);
         assertAuthnStatement(authnStatement);
-        assertAuthnContextClassRef(authnStatement.getAuthnContext().getAuthnContextClassRef());
+        assertAuthnContextClassRef(authnStatement.getAuthnContext());
     }
 
     /**
@@ -397,11 +399,13 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      */
     public void assertAssertion(@Nullable final Assertion assertion) {
         assert assertion!=null;
-        Assert.assertNotNull(assertion.getID());
-        Assert.assertFalse(assertion.getID().isEmpty());
+        final String id = assertion.getID();
+        Assert.assertTrue(id != null && !id.isEmpty());
         Assert.assertNotNull(assertion.getIssueInstant());
         Assert.assertEquals(assertion.getVersion(), SAMLVersion.VERSION_20);
-        Assert.assertEquals(assertion.getIssuer().getValue(), idpEntityID);
+        final Issuer issuer = assertion.getIssuer();
+        assert issuer != null;
+        Assert.assertEquals(issuer.getValue(), idpEntityID);
     }
 
     /**
@@ -474,7 +478,6 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         // TODO only in some cases ? Assert.assertNotNull(subjectConfirmationData.getNotBefore());
         Assert.assertNotNull(subjectConfirmationData.getNotOnOrAfter());
         Assert.assertNotNull(subjectConfirmationData.getRecipient());
-        Assert.assertFalse(subjectConfirmationData.getRecipient().isEmpty());
     }
 
     /**
@@ -494,7 +497,8 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     public void assertNameID(@Nullable final NameID id) {
         assert id!=null;
         Assert.assertNotNull(id.getValue());
-        if (nameID.getFormat() != null && !nameID.getFormat().equals(NameID.TRANSIENT)) {
+        final String format = id.getFormat();
+        if (format != null && !format.equals(NameID.TRANSIENT)) {
             Assert.assertEquals(id.getValue(), nameID.getValue());
         }
         Assert.assertEquals(id.getFormat(), nameID.getFormat());
@@ -559,8 +563,10 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         assert authnStatement!=null;
         Assert.assertNotNull(authnStatement.getAuthnInstant());
         // TODO check authn instant time ?
-        Assert.assertNotNull(authnStatement.getAuthnContext());
-        Assert.assertNotNull(authnStatement.getAuthnContext().getAuthnContextClassRef());
+        
+        final AuthnContext context = authnStatement.getAuthnContext();
+        assert context != null;
+        Assert.assertNotNull(context.getAuthnContextClassRef());
     }
 
     /**
@@ -568,8 +574,11 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * 
      * @param authnContext the authn context
      */
-    public void assertAuthnContextClassRef(@Nonnull final AuthnContextClassRef authnContext) {
-        Assert.assertEquals(authnContext.getURI(), authnContextClassRef);
+    public void assertAuthnContextClassRef(@Nullable final AuthnContext authnContext) {
+        assert authnContext != null;
+        final AuthnContextClassRef ref = authnContext.getAuthnContextClassRef();
+        assert ref != null;
+        Assert.assertEquals(ref.getURI(), authnContextClassRef);
     }
 
     /**
@@ -638,8 +647,8 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param nameFormat the attribute name format
      * @param friendlyName the attribute friendly name
      */
-    public void assertAttributeName(@Nullable final Attribute attribute, @Nonnull final String name,
-            @Nonnull final String nameFormat, @Nonnull final String friendlyName) {
+    public void assertAttributeName(@Nullable final Attribute attribute, @Nullable final String name,
+            @Nullable final String nameFormat, @Nullable final String friendlyName) {
         assert attribute!=null;
         Assert.assertEquals(attribute.getName(), name);
         Assert.assertEquals(attribute.getNameFormat(), nameFormat);

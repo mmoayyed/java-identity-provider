@@ -431,8 +431,8 @@ public class SAML1TestResponseValidator {
     public void assertNameIdentifier(@Nullable final NameIdentifier identifier) {
         assert identifier!=null;
         Assert.assertNotNull(identifier.getValue());
-        if (nameIdentifier.getFormat() != null
-                && !nameIdentifier.getFormat().equals(SAMLConstants.SAML1_NAMEID_TRANSIENT)) {
+        final String format = nameIdentifier.getFormat();
+        if (format != null && !format.equals(SAMLConstants.SAML1_NAMEID_TRANSIENT)) {
             Assert.assertEquals(identifier.getValue(), nameIdentifier.getValue());
         }
         Assert.assertEquals(identifier.getFormat(), nameIdentifier.getFormat());

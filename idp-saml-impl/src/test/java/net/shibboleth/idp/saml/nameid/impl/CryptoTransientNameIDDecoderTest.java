@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.nameid.impl;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
 
 import javax.security.auth.Subject;
 

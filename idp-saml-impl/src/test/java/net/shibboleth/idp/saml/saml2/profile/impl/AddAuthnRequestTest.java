@@ -42,7 +42,10 @@ import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.IDPEntry;
+import org.opensaml.saml.saml2.core.IDPList;
+import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
@@ -151,21 +154,27 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
 
         final AuthnRequest request = (AuthnRequest) omc.getMessage();
         assert request!=null;
-        assertEquals(request.getIssuer().getValue(), ActionTestingSupport.OUTBOUND_MSG_ISSUER);
-        assertFalse(request.isForceAuthn());
-        assertFalse(request.isPassive());
+        final Issuer issuer = request.getIssuer();
+        assert issuer != null;
+        assertEquals(issuer.getValue(), ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        final Boolean force = request.isForceAuthn();
+        assertFalse(force == null || force);
+        final Boolean passive = request.isPassive();
+        assertFalse(passive == null || passive);
         assertNull(request.getAttributeConsumingServiceIndex());
         assertNull(request.getExtensions());
         
         final NameIDPolicy nid = request.getNameIDPolicy();
-        assertNotNull(nid);
+        assert nid != null;
         assertNull(nid.getFormat());
         assertNull(nid.getSPNameQualifier());
-        assertTrue(nid.getAllowCreate());
+        final Boolean allowCreate = nid.getAllowCreate();
+        assertTrue(allowCreate != null && allowCreate);
         
         assertNull(request.getRequestedAuthnContext());
         
         final Scoping scoping = request.getScoping();
+        assert scoping != null;
         assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
     }
 
@@ -184,9 +193,14 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
 
         final AuthnRequest request = (AuthnRequest) omc.getMessage();
         assert request!=null;
-        assertEquals(request.getIssuer().getValue(), ActionTestingSupport.OUTBOUND_MSG_ISSUER);
-        assertTrue(request.isForceAuthn());
-        assertTrue(request.isPassive());
+        
+        final Issuer issuer = request.getIssuer();
+        assert issuer != null;
+        assertEquals(issuer.getValue(), ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+        final Boolean force = request.isForceAuthn();
+        assertTrue(force != null && force);
+        final Boolean passive = request.isPassive();
+        assertTrue(passive != null && passive);
         
         omc.setMessage(null);
         BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
@@ -197,7 +211,8 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         ActionTestingSupport.assertProceedEvent(event);
         final AuthnRequest ar =(AuthnRequest) omc.getMessage();
         assert ar!=null;
-        assertFalse(ar.isForceAuthn());
+        final Boolean force2 = ar.isForceAuthn();
+        assertFalse(force2 == null || force2);
     }
 
     /** Test that the action works with a NameID format set. */
@@ -218,9 +233,10 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         final AuthnRequest request = (AuthnRequest) omc.getMessage();
         assert request!=null;
         final NameIDPolicy nid = request.getNameIDPolicy();
-        assertNotNull(nid);
+        assert nid != null;
         assertEquals(nid.getFormat(), NameIDType.EMAIL);
-        assertTrue(nid.getAllowCreate());
+        final Boolean allowCreate = nid.getAllowCreate();
+        assertTrue(allowCreate != null && allowCreate);
     }
 
     /** Test that the action works with SPNameQualifier set. */
@@ -240,7 +256,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         final AuthnRequest request = (AuthnRequest) omc.getMessage();
         assert request!=null;
         final NameIDPolicy nid = request.getNameIDPolicy();
-        assertNotNull(nid);
+        assert nid != null;
         assertEquals(nid.getSPNameQualifier(), ActionTestingSupport.INBOUND_MSG_ISSUER);
     }
 
@@ -291,10 +307,11 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
 
         final AuthnRequest request = (AuthnRequest) omc.getMessage();
         assert request!=null;
-        assertNotNull(request.getExtensions());
-        assertEquals(request.getExtensions().getUnknownXMLObjects(RequestedAttributes.DEFAULT_ELEMENT_NAME).size(), 1);
+        final Extensions exts = request.getExtensions();
+        assert exts != null;
+        assertEquals(exts.getUnknownXMLObjects(RequestedAttributes.DEFAULT_ELEMENT_NAME).size(), 1);
         final RequestedAttributes extension =
-                (RequestedAttributes) request.getExtensions().getUnknownXMLObjects(RequestedAttributes.DEFAULT_ELEMENT_NAME).get(0);
+                (RequestedAttributes) exts.getUnknownXMLObjects(RequestedAttributes.DEFAULT_ELEMENT_NAME).get(0);
         assertEquals(extension.getRequestedAttributes().size(), 2);
     }
 
@@ -314,12 +331,14 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         final AuthnRequest request = (AuthnRequest) omc.getMessage();
         assert request!=null;
         final Scoping scoping = request.getScoping();
-        assertNotNull(scoping);
+        assert scoping != null;
         assertNull(scoping.getProxyCount());
         assertNotNull(scoping.getIDPList());
         assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
         
-        final Set<String> requestedAuthorities = scoping.getIDPList().getIDPEntrys()
+        final IDPList idpList = scoping.getIDPList();
+        assert idpList != null;
+        final Set<String> requestedAuthorities = idpList.getIDPEntrys()
                 .stream()
                 .map(IDPEntry::getProviderID)
                 .filter(id -> id != null)
@@ -343,7 +362,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         final AuthnRequest request = (AuthnRequest) omc.getMessage();
         assert request!=null;
         final Scoping scoping = request.getScoping();
-        assertNotNull(scoping);
+        assert scoping != null;
         assertNull(scoping.getIDPList());
         assertEquals(scoping.getProxyCount(), Integer.valueOf(0));
         assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
@@ -364,7 +383,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         final AuthnRequest request = (AuthnRequest) omc.getMessage();
         assert request!=null;
         final Scoping scoping = request.getScoping();
-        assertNotNull(scoping);
+        assert scoping != null;
         assertNull(scoping.getIDPList());
         assertEquals(scoping.getProxyCount(), Integer.valueOf(4));
         assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
@@ -384,7 +403,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         final AuthnRequest request = (AuthnRequest) omc.getMessage();
         assert request!=null;
         final Scoping scoping = request.getScoping();
-        assertNotNull(scoping);
+        assert scoping != null;
         assertNull(scoping.getIDPList());
         assertEquals(scoping.getProxyCount(), Integer.valueOf(0));
         assertEquals(scoping.getRequesterIDs().get(0).getURI(), ActionTestingSupport.INBOUND_MSG_ISSUER);
@@ -415,7 +434,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertEquals(rac.getAuthnContextClassRefs().size(), 2);
         assertEquals(rac.getAuthnContextClassRefs().get(0).getURI(), AuthnContext.KERBEROS_AUTHN_CTX);
         assertEquals(rac.getAuthnContextClassRefs().get(1).getURI(), AuthnContext.X509_AUTHN_CTX);
-        BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
+        final BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
         assert bspc!=null;
         bspc.setAuthnContextComparison(AuthnContextComparisonTypeEnumeration.EXACT);
         bspc.setDefaultAuthenticationMethods(

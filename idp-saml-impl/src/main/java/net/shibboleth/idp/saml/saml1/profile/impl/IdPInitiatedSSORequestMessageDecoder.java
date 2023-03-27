@@ -79,7 +79,8 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
      */
     protected void populateBindingContext(@Nonnull final MessageContext messageContext)
         throws MessageDecodingException {
-        final  IdPInitiatedSSORequest message = Constraint.isNotNull((IdPInitiatedSSORequest) messageContext.getMessage(), "No message");
+        final  IdPInitiatedSSORequest message =
+                Constraint.isNotNull((IdPInitiatedSSORequest) messageContext.getMessage(), "No message");
         final String relayState = message.getRelayState();
         if (relayState == null) {
             throw new MessageDecodingException("Legacy Shibboleth authentication requests require a target parameter");

@@ -173,7 +173,7 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
         // Copy SAML peer context and metadata if it exists.
         if (peerEntityCtx != null) {
             final SAMLPeerEntityContext peerContext = msgCtx.ensureSubcontext(SAMLPeerEntityContext.class);
-            SAMLPeerEntityContext pec = peerEntityCtx;
+            final SAMLPeerEntityContext pec = peerEntityCtx;
             assert pec!=null;
             peerContext.setEntityId(pec.getEntityId());
             

@@ -48,17 +48,15 @@ public class StatusCodeAuditExtractor implements Function<ProfileRequestContext,
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         final SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
-            if (response instanceof Response) {
-                final org.opensaml.saml.saml1.core.StatusCode sc =
-                        ((Response) response).getStatus() != null
-                                ? ((Response) response).getStatus().getStatusCode() : null;
+            if (response instanceof Response r) {
+                final org.opensaml.saml.saml1.core.Status status = r.getStatus();
+                final org.opensaml.saml.saml1.core.StatusCode sc = status != null ? status.getStatusCode() : null;
                 if (sc != null && sc.getValue() != null) {
                     return sc.getValue().getLocalPart();
                 }
-            } else if (response instanceof StatusResponseType) {
-                final org.opensaml.saml.saml2.core.StatusCode sc =
-                        ((StatusResponseType) response).getStatus() != null
-                                ? ((StatusResponseType) response).getStatus().getStatusCode() : null;
+            } else if (response instanceof StatusResponseType srt) {
+                final org.opensaml.saml.saml2.core.Status status = srt.getStatus();
+                final org.opensaml.saml.saml2.core.StatusCode sc = status != null ? status.getStatusCode() : null;
                 if (sc != null) {
                     return sc.getValue();
                 }

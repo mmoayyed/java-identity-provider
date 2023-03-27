@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.util.Collections;
-
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;

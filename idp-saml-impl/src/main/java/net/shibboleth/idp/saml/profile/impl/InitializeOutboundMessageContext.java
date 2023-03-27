@@ -132,7 +132,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
         selfContext.setEntityId(selfIdentityLookupStrategy.apply(profileRequestContext));
 
         final SAMLPeerEntityContext peerContext = msgCtx.ensureSubcontext(SAMLPeerEntityContext.class);
-        SAMLPeerEntityContext pec = peerEntityCtx;
+        final SAMLPeerEntityContext pec = peerEntityCtx;
         assert pec!=null;
         peerContext.setEntityId(pec.getEntityId());
 

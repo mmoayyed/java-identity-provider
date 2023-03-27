@@ -26,9 +26,8 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-
-import java.util.Collections;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -267,7 +266,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         rac.getAuthnContextClassRefs().add(ref);
 
         action = new ProcessRequestedAuthnContext();
-        action.setIgnoredContexts(Collections.singletonList(AuthnContext.PPT_AUTHN_CTX));
+        action.setIgnoredContexts(CollectionSupport.singletonList(AuthnContext.PPT_AUTHN_CTX));
         action.initialize();
         
         final Event event = action.execute(src);

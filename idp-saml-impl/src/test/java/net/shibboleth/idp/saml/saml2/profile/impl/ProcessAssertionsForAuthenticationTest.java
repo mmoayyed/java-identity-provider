@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -49,7 +48,9 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
@@ -105,7 +106,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertSame(samlAuthnContext.getSubject(), assertion1.getSubject());
         Assert.assertSame(samlAuthnContext.getAuthnStatement(), assertion1.getAuthnStatements().get(0));
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.singletonList(assertion1));
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.singletonList(assertion1));
     }
     
     @Test
@@ -119,7 +120,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         Assert.assertNull(samlAuthnContext.getSubject());
         Assert.assertNull(samlAuthnContext.getAuthnStatement());
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.emptyList());
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.emptyList());
     }
     
     @Test
@@ -133,7 +134,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         Assert.assertNull(samlAuthnContext.getSubject());
         Assert.assertNull(samlAuthnContext.getAuthnStatement());
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.emptyList());
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.emptyList());
     }
     
     @Test
@@ -221,7 +222,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertSame(samlAuthnContext.getSubject(), assertion1.getSubject());
         Assert.assertSame(samlAuthnContext.getAuthnStatement(), assertion1.getAuthnStatements().get(0));
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.singletonList(assertion1));
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.singletonList(assertion1));
     }
     
     @Test
@@ -237,7 +238,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertSame(samlAuthnContext.getSubject(), assertion1.getSubject());
         Assert.assertSame(samlAuthnContext.getAuthnStatement(), assertion1.getAuthnStatements().get(1));
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.singletonList(assertion1));
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.singletonList(assertion1));
     }
     
     @Test
@@ -254,7 +255,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertSame(samlAuthnContext.getSubject(), assertion1.getSubject());
         Assert.assertSame(samlAuthnContext.getAuthnStatement(), assertion1.getAuthnStatements().get(0));
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.singletonList(assertion1));
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.singletonList(assertion1));
     }
     
     @Test
@@ -269,7 +270,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         Assert.assertNull(samlAuthnContext.getSubject());
         Assert.assertNull(samlAuthnContext.getAuthnStatement());
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.emptyList());
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.emptyList());
     }
     
     @Test
@@ -280,7 +281,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         Assert.assertNull(samlAuthnContext.getSubject());
         Assert.assertNull(samlAuthnContext.getAuthnStatement());
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.emptyList());
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.emptyList());
     }
     
     @Test
@@ -298,7 +299,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         Assert.assertNull(samlAuthnContext.getSubject());
         Assert.assertNull(samlAuthnContext.getAuthnStatement());
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.singletonList(assertion1));
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.singletonList(assertion1));
     }
     
     @Test
@@ -312,7 +313,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         Assert.assertNull(samlAuthnContext.getSubject());
         Assert.assertNull(samlAuthnContext.getAuthnStatement());
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.emptyList());
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.emptyList());
     }
     
     @Test
@@ -327,7 +328,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         Assert.assertNull(samlAuthnContext.getSubject());
         Assert.assertNull(samlAuthnContext.getAuthnStatement());
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.singletonList(assertion1));
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.singletonList(assertion1));
     }
     
     @Test
@@ -343,7 +344,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertEvent(prc, AuthnEventIds.INVALID_CREDENTIALS);
         Assert.assertNull(samlAuthnContext.getSubject());
         Assert.assertNull(samlAuthnContext.getAuthnStatement());
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.singletonList(assertion1));
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.singletonList(assertion1));
     }
     
     @Test
@@ -359,10 +360,10 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         ActionTestingSupport.assertProceedEvent(prc);
         Assert.assertNull(samlAuthnContext.getSubject());
         Assert.assertNull(samlAuthnContext.getAuthnStatement());
-        Assert.assertEquals(samlResponse.getAssertions(), Collections.singletonList(assertion1));
+        Assert.assertEquals(samlResponse.getAssertions(), CollectionSupport.singletonList(assertion1));
     }
     
-    @Test(expectedExceptions = ComponentInitializationException.class)
+    @Test(expectedExceptions = ConstraintViolationException.class)
     public void testNullAuthnAssertionStrategy() throws ComponentInitializationException {
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
@@ -372,7 +373,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         action.initialize();
     }
     
-    @Test(expectedExceptions = ComponentInitializationException.class)
+    @Test(expectedExceptions = ConstraintViolationException.class)
     public void testNullAuthnStatementStrategy() throws ComponentInitializationException {
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
@@ -382,7 +383,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         action.initialize();
     }
     
-    @Test(expectedExceptions = ComponentInitializationException.class)
+    @Test(expectedExceptions = ConstraintViolationException.class)
     public void testNullResponseResolver() throws ComponentInitializationException {
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);
@@ -392,7 +393,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
         action.initialize();
     }
     
-    @Test(expectedExceptions = ComponentInitializationException.class)
+    @Test(expectedExceptions = ConstraintViolationException.class)
     public void testNullSAMLAuthnContextStrategy() throws ComponentInitializationException {
         final Assertion assertion1 = buildAssertion(ValidationResult.VALID);
         samlResponse.getAssertions().add(assertion1);

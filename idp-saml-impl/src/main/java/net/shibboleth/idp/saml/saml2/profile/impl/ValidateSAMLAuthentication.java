@@ -43,7 +43,11 @@ import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
+import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.ProxyRestriction;
 import org.opensaml.saml.saml2.core.Response;
@@ -328,8 +332,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         assert samlAuthnContext != null;
         final org.opensaml.saml.saml2.core.Subject samlSubject = samlAuthnContext.getSubject();
         
-        if (nameToLog == null && samlSubject != null && samlSubject .getNameID() != null) {
-            nameToLog = samlSubject.getNameID().getValue();
+        if (nameToLog == null && samlSubject != null) {
+            final NameID id = samlSubject.getNameID();
+            nameToLog = id != null ? id.getValue() : null;
         }
 
         log.info("{} SAML authentication succeeded for '{}'", getLogPrefix(), nameToLog);
@@ -342,7 +347,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         
         final SAMLAuthnContext localSamlAuthnContext = samlAuthnContext;
         final AttributeContext localAttributeContext = attributeContext;
-        assert localSamlAuthnContext != null && localAttributeContext!=null;;
+        assert localSamlAuthnContext != null && localAttributeContext!=null;
         final BaseContext localSamlAuthnContextParent = localSamlAuthnContext.getParent();
         assert localSamlAuthnContextParent!=null;
         
@@ -384,8 +389,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         }
         
         if (!principalsAdded) {
-            if (authnContext.getAuthnContextClassRef() != null) {
-                final String classRef = authnContext.getAuthnContextClassRef().getURI();
+            final AuthnContextClassRef acClass = authnContext.getAuthnContextClassRef();
+            if (acClass != null) {
+                final String classRef = acClass.getURI();
                 if (classRef != null) {
                     subject.getPrincipals().add(new AuthnContextClassRefPrincipal(classRef));
                     log.debug("{} Added AuthnContextClassRef from assertion: {}", getLogPrefix(), classRef);
@@ -393,8 +399,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                 principalsAdded = true;
             }
             
-            if (authnContext.getAuthnContextDeclRef() != null) {
-                final String declRef = authnContext.getAuthnContextDeclRef().getURI();
+            final AuthnContextDeclRef acDecl = authnContext.getAuthnContextDeclRef();
+            if (acDecl != null) {
+                final String declRef = acDecl.getURI();
                 if (declRef != null) {
                     subject.getPrincipals().add(new AuthnContextDeclRefPrincipal(declRef));
                     log.debug("{} Added AuthnContextDeclRef from assertion: {}", getLogPrefix(), declRef);
@@ -414,7 +421,9 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
             subject.getPrincipals().addAll(
                 localAttributeContext.getIdPAttributes().values()
                     .stream()
-                    .map(a -> {assert a != null; return new IdPAttributePrincipal(a);})
+                    .map(a -> {
+                        assert a != null; return new IdPAttributePrincipal(a);
+                        })
                     .collect(Collectors.toUnmodifiableList()));
         }
         
@@ -434,7 +443,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         final ProxyAuthenticationPrincipal proxied = new ProxyAuthenticationPrincipal();
         
         assert samlAuthnContext != null;
-        AuthnStatement authnStatement = samlAuthnContext.getAuthnStatement();
+        final AuthnStatement authnStatement = samlAuthnContext.getAuthnStatement();
         assert authnStatement != null;
         final Assertion assertion = (Assertion) authnStatement.getParent();
         assert assertion != null;
@@ -446,9 +455,14 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
                         .filter(aa -> !Strings.isNullOrEmpty(aa))
                         .collect(Collectors.toUnmodifiableList()));
         }
-        proxied.getAuthorities().add(assertion.getIssuer().getValue());
-                
-        final ProxyRestriction condition = assertion.getConditions().getProxyRestriction();
+        
+        final Issuer issuer = assertion.getIssuer();
+        if (issuer != null) {
+            proxied.getAuthorities().add(issuer.getValue());
+        }
+
+        final Conditions conditions = assertion.getConditions();
+        final ProxyRestriction condition = conditions != null ? conditions.getProxyRestriction() : null;
         if (condition != null) {
             proxied.setProxyCount(condition.getProxyCount());
             final List<Audience> audiences = condition.getAudiences() ; 

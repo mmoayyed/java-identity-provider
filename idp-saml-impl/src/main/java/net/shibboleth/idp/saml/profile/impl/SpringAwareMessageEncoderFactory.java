@@ -70,7 +70,7 @@ public class SpringAwareMessageEncoderFactory extends AbstractInitializableCompo
         }
         
         final SAMLBindingContext bindingContext = obmc.getSubcontext(SAMLBindingContext.class);
-        Object desc = bindingContext == null ? null : bindingContext.getBindingDescriptor();
+        final Object desc = bindingContext == null ? null : bindingContext.getBindingDescriptor();
         if (bindingContext == null || desc  == null || !(desc instanceof BindingDescriptor)) {
             log.warn("BindingDescriptor was not available, unable to lookup message encoder");
             return null;

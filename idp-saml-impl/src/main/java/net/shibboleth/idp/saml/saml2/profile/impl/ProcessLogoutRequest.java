@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -57,6 +56,7 @@ import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.saml.saml2.profile.config.navigate.QualifiedNameIDFormatsLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -152,7 +152,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         
         qualifiedNameIDFormatsLookupStrategy = new QualifiedNameIDFormatsLookupFunction();
 
-        qualifiedNameIDFormats = Collections.emptySet();
+        qualifiedNameIDFormats = CollectionSupport.emptySet();
         
         setAssertingPartyLookupStrategy(new IssuerLookupFunction());
         setRelyingPartyLookupStrategy(new RelyingPartyIdLookupFunction());
@@ -287,16 +287,20 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             return false;
         }
         
-        final LogoutRequest request = logoutRequest = logoutRequestLookupStrategy.apply(profileRequestContext);
+        logoutRequest = logoutRequestLookupStrategy.apply(profileRequestContext);
+        final LogoutRequest request = logoutRequest;
         if (request == null) {
             log.warn("{} No LogoutRequest found to process", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
-        } else if (request.getNameID() == null) {
+        }
+        
+        final NameID nid = request.getNameID();
+        if (nid == null) {
             log.warn("{} LogoutRequest did not contain NameID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
             return false;
-        } else if (request.getNameID().getValue() == null) {
+        } else if (nid.getValue() == null) {
             log.warn("{} LogoutRequest contained an empty (therefore invalid) NameID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
             return false;
@@ -405,12 +409,16 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      */
     private boolean sessionMatches(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SPSession session) {
+        
         if (session instanceof SAML2SPSession) {
             final SAML2SPSession saml2Session = (SAML2SPSession) session;
             final LogoutRequest request = logoutRequest;
             assert request != null;
+            
+            final Issuer issuer = request.getIssuer();
+            
             // Make sure the SP matches.
-            if (!saml2Session.getId().equals(request.getIssuer().getValue())) {
+            if (issuer == null || !saml2Session.getId().equals(issuer.getValue())) {
                 return false;
             } 
             
@@ -421,21 +429,24 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             if (format == null) {
                 format = NameID.UNSPECIFIED;
             }
+            
+            final NameID requestedNameID = request.getNameID();
+            assert requestedNameID != null;
             if (NameID.PERSISTENT.equals(format) || NameID.TRANSIENT.equals(format)
                     || qualifiedNameIDFormats.contains(format)) {
                 
-                if (assertingParty == null) {
-                    assertingParty = Constraint.isNotNull(assertingPartyLookupStrategy, "assertingPartyLookupStrategy not set").apply(profileRequestContext);
+                if (assertingParty == null && assertingPartyLookupStrategy != null) {
+                    assertingParty = assertingPartyLookupStrategy.apply(profileRequestContext);
                 }
-                if (relyingParty == null) {
-                    relyingParty = Constraint.isNotNull(relyingPartyLookupStrategy, "relyingPartyLookupStrategy not set").apply(profileRequestContext);
+                if (relyingParty == null && relyingPartyLookupStrategy != null) {
+                    relyingParty = relyingPartyLookupStrategy.apply(profileRequestContext);
                 }
                 
-                if (!SAML2ObjectSupport.areNameIDsEquivalent(request.getNameID(), saml2Session.getNameID(),
+                if (!SAML2ObjectSupport.areNameIDsEquivalent(requestedNameID, saml2Session.getNameID(),
                         assertingParty, relyingParty)) {
                     return false;
                 }
-            } else if (!SAML2ObjectSupport.areNameIDsEquivalent(request.getNameID(), saml2Session.getNameID())) {
+            } else if (!SAML2ObjectSupport.areNameIDsEquivalent(requestedNameID, saml2Session.getNameID())) {
                 return false;
             }
             

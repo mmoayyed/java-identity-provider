@@ -229,8 +229,14 @@ public class NameIdentifierCanonicalization extends AbstractSubjectCanonicalizat
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                 }
                 return false;
-            } else if (!formatMatches(nameIdentifiers.iterator().next().getNameIdentifier().getFormat(),
-                    c14nContext)) {
+            }
+
+            String format = nameIdentifiers.iterator().next().getNameIdentifier().getFormat();
+            if (format == null) {
+                format = NameIdentifier.UNSPECIFIED;
+            }
+            
+            if (!formatMatches(format, c14nContext)) {
                 c14nContext.setException(new SubjectCanonicalizationException("Format not supported"));
                 if (duringAction) {
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);

@@ -26,6 +26,7 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
@@ -39,8 +40,6 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Predicates;
 
 /** {@link InitializeAuthenticationContext} unit test. */
 @SuppressWarnings("javadoc")
@@ -160,7 +159,7 @@ public class InitializeAuthenticationContextTest extends OpenSAMLInitBaseTestCas
 
         action = new InitializeAuthenticationContext();
         action.setProxyCountLookupStrategy(FunctionSupport.constant(1));
-        action.setIgnoreScopingPredicate(Predicates.alwaysTrue());
+        action.setIgnoreScopingPredicate(PredicateSupport.alwaysTrue());
         action.initialize();
         
         final Event event = action.execute(requestCtx);

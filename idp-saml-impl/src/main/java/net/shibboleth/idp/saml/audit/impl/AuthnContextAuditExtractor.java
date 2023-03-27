@@ -27,6 +27,8 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
+import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 
 import net.shibboleth.shared.logic.Constraint;
@@ -65,12 +67,16 @@ public class AuthnContextAuditExtractor implements Function<ProfileRequestContex
                 for (final org.opensaml.saml.saml2.core.Assertion assertion
                         : ((org.opensaml.saml.saml2.core.Response) response).getAssertions()) {
                     for (final AuthnStatement statement : assertion.getAuthnStatements()) {
-                        if (statement.getAuthnContext() != null) {
-                            final AuthnContext ac = statement.getAuthnContext();
-                            if (ac.getAuthnContextClassRef() != null) {
-                                return ac.getAuthnContextClassRef().getURI();
-                            } else if (ac.getAuthnContextDeclRef() != null) {
-                                return ac.getAuthnContextDeclRef().getURI();
+                        final AuthnContext ac = statement.getAuthnContext();
+                        if (ac != null) {
+                            final AuthnContextClassRef acClass = ac.getAuthnContextClassRef();
+                            if (acClass != null && acClass.getURI() != null) {
+                                return acClass.getURI();
+                            }
+                            
+                            final AuthnContextDeclRef acDecl = ac.getAuthnContextDeclRef();
+                            if (acDecl != null && acDecl.getURI() != null) {
+                                return acDecl.getURI();
                             }
                         }
                     }

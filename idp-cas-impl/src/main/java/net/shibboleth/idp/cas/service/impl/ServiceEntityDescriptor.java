@@ -20,7 +20,6 @@ package net.shibboleth.idp.cas.service.impl;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -28,6 +27,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -53,14 +53,15 @@ import org.opensaml.xmlsec.signature.Signature;
 
 /**
  * Adapts CAS protocol service metadata onto SAML metadata.
- *
- * @author Marvin S. Addison
+ * 
+ * <p>Note that this is not a "usable" object in the sense that it raises exceptions on
+ * many operations and returns immutable collections that will throw if modified.</p>
  */
 public class ServiceEntityDescriptor extends AbstractXMLObject implements EntityDescriptor {
 
     /** Underlying CAS service. */
     @Nonnull private final Service svc;
-
+    
     /**
      * Creates a new instance that wraps the given CAS service.
      *
@@ -87,7 +88,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
      * 
      * {@inheritDoc}
      */
-    public void setEntityID(final String id) {
+    public void setEntityID(@Nullable final String id) {
         throw new UnsupportedOperationException();
     }
 
@@ -101,7 +102,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
      * 
      * {@inheritDoc}
      */
-    public void setID(final String newID) {
+    public void setID(@Nullable final String newID) {
         throw new UnsupportedOperationException();
     }
 
@@ -115,47 +116,49 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
      * 
      * {@inheritDoc}
      */
-    public void setExtensions(final Extensions extensions) {
+    public void setExtensions(@Nullable final Extensions extensions) {
         throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
-    public List<RoleDescriptor> getRoleDescriptors() {
-        return Collections.emptyList();
+    @Nonnull @Live public List<RoleDescriptor> getRoleDescriptors() {
+        return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
-    public List<RoleDescriptor> getRoleDescriptors(final QName typeOrName) {
-        return Collections.emptyList();
+    @Nonnull @Live public List<RoleDescriptor> getRoleDescriptors(@Nonnull final QName typeOrName) {
+        return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
-    public List<RoleDescriptor> getRoleDescriptors(final QName typeOrName, final String supportedProtocol) {
-        return Collections.emptyList();
+    @Nonnull @Live public List<RoleDescriptor> getRoleDescriptors(@Nonnull final QName typeOrName,
+            @Nonnull final String supportedProtocol) {
+        return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
-    public IDPSSODescriptor getIDPSSODescriptor(final String supportedProtocol) {
+    @Nullable public IDPSSODescriptor getIDPSSODescriptor(@Nonnull final String supportedProtocol) {
         return null;
     }
 
     /** {@inheritDoc} */
-    public SPSSODescriptor getSPSSODescriptor(final String supportedProtocol) {
+    @Nullable public SPSSODescriptor getSPSSODescriptor(@Nonnull final String supportedProtocol) {
         return null;
     }
 
     /** {@inheritDoc} */
-    public AuthnAuthorityDescriptor getAuthnAuthorityDescriptor(final String supportedProtocol) {
+    @Nullable public AuthnAuthorityDescriptor getAuthnAuthorityDescriptor(@Nonnull final String supportedProtocol) {
         return null;
     }
 
     /** {@inheritDoc} */
-    public AttributeAuthorityDescriptor getAttributeAuthorityDescriptor(final String supportedProtocol) {
+    @Nullable public AttributeAuthorityDescriptor getAttributeAuthorityDescriptor(
+            @Nonnull final String supportedProtocol) {
         return null;
     }
 
     /** {@inheritDoc} */
-    public PDPDescriptor getPDPDescriptor(final String supportedProtocol) {
+    @Nullable public PDPDescriptor getPDPDescriptor(@Nonnull final String supportedProtocol) {
         return null;
     }
 
@@ -165,12 +168,12 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    public void setAffiliationDescriptor(final AffiliationDescriptor descriptor) {
+    public void setAffiliationDescriptor(@Nullable final AffiliationDescriptor descriptor) {
         throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
-    public Organization getOrganization() {
+    @Nullable public Organization getOrganization() {
         return null;
     }
 
@@ -179,17 +182,17 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
      * 
      * {@inheritDoc}
      */
-    public void setOrganization(final Organization organization) {
+    public void setOrganization(@Nullable final Organization organization) {
         throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
-    public List<ContactPerson> getContactPersons() {
+    @Nonnull @Live public List<ContactPerson> getContactPersons() {
         return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
-    public List<AdditionalMetadataLocation> getAdditionalMetadataLocations() {
+    @Nonnull @Live public List<AdditionalMetadataLocation> getAdditionalMetadataLocations() {
         return CollectionSupport.emptyList();
     }
 
@@ -199,7 +202,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    public Duration getCacheDuration() {
+    @Nullable public Duration getCacheDuration() {
         return null;
     }
 
@@ -208,7 +211,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
      * 
      * {@inheritDoc}
      */
-    public void setCacheDuration(final @Nullable Duration duration) {
+    public void setCacheDuration(@Nullable final Duration duration) {
         throw new UnsupportedOperationException();
     }
 
@@ -242,19 +245,19 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    public Instant getValidUntil() {
+    @Nullable public Instant getValidUntil() {
         return Instant.now().plus(1, ChronoUnit.DAYS);
     }
 
     /** {@inheritDoc} */
-    public void setValidUntil(final @Nullable Instant validUntil) {
+    public void setValidUntil(@Nullable final Instant validUntil) {
         throw new UnsupportedOperationException();        
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<XMLObject> getOrderedChildren() {
-        return CollectionSupport.emptyList();
+    @Nullable public List<XMLObject> getOrderedChildren() {
+        return null;
     }
 
 }

@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -53,35 +52,23 @@ public class ContinueSAMLAuthentication extends AbstractAuthenticationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ContinueSAMLAuthentication.class);
-
-    /** Context containing the result to examine. */
-    @Nullable private ExternalAuthenticationContext extContext;
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        
-        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        extContext = authenticationContext.getSubcontext(ExternalAuthenticationContext.class);
-        if (extContext == null) {
-            log.debug("{} No ExternalAuthenticationContext available within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
-            return false;
-        }
-        
-        return true;
-    }
     
+// Checkstyle: CyclomaticComplexity OFF    
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-        final MessageContext imc = profileRequestContext != null ? profileRequestContext.getInboundMessageContext() : null;  
-        final ExternalAuthenticationContext extContext = this.extContext;
+
+        final ExternalAuthenticationContext extContext =
+                authenticationContext.getSubcontext(ExternalAuthenticationContext.class);
+        if (extContext == null) {
+            log.debug("{} No ExternalAuthenticationContext available within authentication context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            return;
+        }
+
+        final MessageContext imc =
+                profileRequestContext != null ? profileRequestContext.getInboundMessageContext() : null;  
         assert extContext!= null;
         final String authnError = extContext.getAuthnError(); 
         if (authnError != null) {
@@ -117,5 +104,5 @@ public class ContinueSAMLAuthentication extends AbstractAuthenticationAction {
             return;
         }
     }
-    
+// Checkstyle: CyclomaticComplexity ON
 }

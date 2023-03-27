@@ -161,9 +161,9 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         final Subject subject = SAML2ActionTestingSupport.buildSubject("jdoe");
 
         final AttributeQuery attributeQuery = SAML2ActionTestingSupport.buildAttributeQueryRequest(subject);
-        attributeQuery.setIssueInstant(Instant.now());
-        attributeQuery.getIssuer().setValue(SP_ENTITY_ID);
         attributeQuery.setID(IdentifierGenerationStrategy.getInstance(ProviderType.SECURE).generateIdentifier());
+        attributeQuery.setIssueInstant(Instant.now());
+        attributeQuery.setIssuer(SAML2ActionTestingSupport.buildIssuer(SP_ENTITY_ID));
 
         if (includeDesignators) {
             final SAMLObjectBuilder<Attribute> designatorBuilder = (SAMLObjectBuilder<Attribute>)

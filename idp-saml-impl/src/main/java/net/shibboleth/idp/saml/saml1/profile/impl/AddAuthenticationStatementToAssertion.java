@@ -46,7 +46,6 @@ import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAsse
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 
 /**
  * Action that builds an {@link AuthenticationStatement} and adds it to an {@link Assertion} returned by a lookup
@@ -80,9 +79,6 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
     
     /** Strategy used to determine the AuthenticationMethod attribute. */
     @NonnullAfterInit private Function<ProfileRequestContext,AuthenticationMethodPrincipal> methodLookupStrategy;
-    
-    /** The generator to use. */
-    @Nullable private IdentifierGenerationStrategy idGenerator;
         
     /**
      * Set the strategy used to locate the {@link Assertion} to operate on.
@@ -160,7 +156,8 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
         final AuthenticationStatement statement = statementBuilder.buildObject();
         statement.setAuthenticationInstant(getAuthenticationResult().getAuthenticationInstant());
 
-        final Principal matchingPrincipal = requestedPrincipalContext != null ? requestedPrincipalContext.getMatchingPrincipal() : null;
+        final Principal matchingPrincipal =
+                requestedPrincipalContext != null ? requestedPrincipalContext.getMatchingPrincipal() : null;
         if (matchingPrincipal != null && matchingPrincipal instanceof AuthenticationMethodPrincipal) {
             statement.setAuthenticationMethod(matchingPrincipal.getName());
         } else {

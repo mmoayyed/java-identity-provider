@@ -23,6 +23,7 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.MessageContext;
@@ -97,7 +98,7 @@ public class InitializeOutboundMessageContextTest extends OpenSAMLInitBaseTestCa
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
         rpCtx.setRelyingPartyIdContextTree(ctx);
-        attributeQuery.getAttributeQuery().setResource("issuer");
+        Constraint.isNotNull(attributeQuery.getAttributeQuery(), "Query was null").setResource("issuer");
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

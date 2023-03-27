@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -43,6 +42,7 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.xml.ParserPool;
 import net.shibboleth.shared.xml.SerializeSupport;
@@ -140,7 +140,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
     }
 
     static {
-        NO_XML_DECL_PARAMS = Collections.<String,Object>singletonMap("xml-declaration", Boolean.FALSE);
+        NO_XML_DECL_PARAMS = CollectionSupport.<String,Object>singletonMap("xml-declaration", Boolean.FALSE);
     }
     
 }

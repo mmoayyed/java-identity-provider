@@ -102,9 +102,9 @@ public class PreProcessLogoutMessageTest extends OpenSAMLInitBaseTestCase {
                         Asynchronous.DEFAULT_ELEMENT_NAME);
         final LogoutRequest lr = (LogoutRequest)imc.getMessage();
         assert lr!=null;
-        lr.setExtensions(extsBuilder.buildObject());
-        lr.getExtensions().getUnknownXMLObjects().add(
-                asyncBuilder.buildObject());
+        final Extensions exts = extsBuilder.buildObject();
+        exts.getUnknownXMLObjects().add(asyncBuilder.buildObject());
+        lr.setExtensions(exts);
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, PreProcessLogoutMessage.IS_LOGOUT_REQUEST_ASYNC);

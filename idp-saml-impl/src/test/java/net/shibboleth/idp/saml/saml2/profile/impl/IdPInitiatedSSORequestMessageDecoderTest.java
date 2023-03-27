@@ -27,6 +27,7 @@ import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Issuer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -84,10 +85,12 @@ public class IdPInitiatedSSORequestMessageDecoderTest extends XMLObjectBaseTestC
         
         final MessageContext messageContext = decoder.getMessageContext();
         assert messageContext!=null;
-        AuthnRequest authnRequest = (AuthnRequest) messageContext.getMessage();
+        final AuthnRequest authnRequest = (AuthnRequest) messageContext.getMessage();
         assert authnRequest!=null;
         
-        Assert.assertEquals(authnRequest.getIssuer().getValue(), entityId, "Incorrect decoded message entityId value");
+        final Issuer issuer = authnRequest.getIssuer();
+        assert issuer != null;
+        Assert.assertEquals(issuer.getValue(), entityId, "Incorrect decoded message entityId value");
         Assert.assertEquals(authnRequest.getAssertionConsumerServiceURL(), acsUrl, "Incorrect decoded message ACS URL value");
         Assert.assertEquals(authnRequest.getIssueInstant(), time.truncatedTo(ChronoUnit.SECONDS),
                 "Incorrect decoded message issue instant value");

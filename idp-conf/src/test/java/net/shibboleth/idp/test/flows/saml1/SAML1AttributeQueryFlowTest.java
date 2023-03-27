@@ -32,6 +32,7 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.AttributeDesignator;
+import org.opensaml.saml.saml1.core.AttributeQuery;
 import org.opensaml.saml.saml1.core.ConfirmationMethod;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.Request;
@@ -152,8 +153,10 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         final Subject subject = SAML1ActionTestingSupport.buildSubject("jdoe");
 
         final Request attributeQuery = SAML1ActionTestingSupport.buildAttributeQueryRequest(subject);
+        final AttributeQuery query = attributeQuery.getAttributeQuery();
+        assert query != null;
         attributeQuery.setIssueInstant(Instant.now());
-        attributeQuery.getAttributeQuery().setResource(SP_ENTITY_ID);
+        query.setResource(SP_ENTITY_ID);
         attributeQuery.setID(IdentifierGenerationStrategy.getInstance(ProviderType.SECURE).generateIdentifier());
         
         if (includeDesignators) {
@@ -164,17 +167,17 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
             AttributeDesignator designator = designatorBuilder.buildObject();
             designator.setAttributeNamespace(SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
             designator.setAttributeName("urn:mace:dir:attribute-def:eduPersonScopedAffiliation");
-            attributeQuery.getAttributeQuery().getAttributeDesignators().add(designator);
+            query.getAttributeDesignators().add(designator);
     
             designator = designatorBuilder.buildObject();
             designator.setAttributeNamespace(SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
             designator.setAttributeName("urn:mace:dir:attribute-def:mail");
-            attributeQuery.getAttributeQuery().getAttributeDesignators().add(designator);
+            query.getAttributeDesignators().add(designator);
 
             designator = designatorBuilder.buildObject();
             designator.setAttributeNamespace(SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
             designator.setAttributeName("urn:mace:dir:attribute-def:foo");
-            attributeQuery.getAttributeQuery().getAttributeDesignators().add(designator);
+            query.getAttributeDesignators().add(designator);
         }
 
         final Envelope envelope = buildSOAP11Envelope(attributeQuery);

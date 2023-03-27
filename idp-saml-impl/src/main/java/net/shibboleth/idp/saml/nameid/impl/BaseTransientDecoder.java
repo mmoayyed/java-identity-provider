@@ -26,8 +26,6 @@ import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 
-import com.google.common.base.Strings;
-
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -81,11 +79,6 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
     @Nullable public String decode(@Nonnull final String transientId, @Nonnull @NotEmpty final String requesterId)
             throws NameDecoderException {
         checkComponentActive();
-        if (null == transientId) {
-            throw new NameDecoderException(getLogPrefix() + " Transient identifier was null");
-        } else if (Strings.isNullOrEmpty(requesterId)) {
-            throw new NameDecoderException(getLogPrefix() + " Requester ID was null");
-        }
 
         try {
             final StorageRecord<?> record = idStore.read(TransientIdParameters.CONTEXT, transientId);

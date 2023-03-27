@@ -143,7 +143,8 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
             return false;
         }
         
-        final AttributeQuery localQuery = query = queryLookupStrategy.apply(profileRequestContext);
+        query = queryLookupStrategy.apply(profileRequestContext);
+        final AttributeQuery localQuery = query;
         
         if (localQuery == null || localQuery.getAttributes().isEmpty()) {
             log.debug("No queried Attributes found, nothing to do ");
@@ -170,13 +171,15 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
                 
         final Multimap<String,IdPAttribute> mapped = HashMultimap.create();
+        assert mapped != null;
         final AttributeQuery localQuery = query;
-        AttributeContext localAttributeContext = attributeContext;
+        final AttributeContext localAttributeContext = attributeContext;
         assert localQuery!=null && localAttributeContext!=null;
         try (final ServiceableComponent<AttributeTranscoderRegistry> component =
                 transcoderRegistry.getServiceableComponent()) {
 
             for (final Attribute designator : localQuery.getAttributes()) {
+                assert designator != null;
                 try {
                     decodeAttribute(component.getComponent(), profileRequestContext, designator, mapped);
                 } catch (final AttributeDecodingException e) {
@@ -239,6 +242,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
         }
         
         for (final TranscodingRule rules : transcodingRules) {
+            assert rules != null;
             final AttributeTranscoder<Attribute> transcoder = TranscoderSupport.getTranscoder(rules);
             final IdPAttribute decodedAttribute = transcoder.decode(profileRequestContext, input, rules);
             if (decodedAttribute != null) {

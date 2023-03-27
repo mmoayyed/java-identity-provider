@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.time.Duration;
-import java.util.Collections;
 
 import javax.security.auth.Subject;
 

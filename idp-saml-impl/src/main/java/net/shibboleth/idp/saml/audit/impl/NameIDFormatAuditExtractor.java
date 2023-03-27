@@ -27,10 +27,12 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.AttributeStatement;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.AuthorizationDecisionStatement;
+import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.SubjectStatement;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.opensaml.saml.saml2.core.NameID;
 
 import net.shibboleth.shared.logic.Constraint;
 
@@ -49,15 +51,15 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
         messageLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
     }
 
-// Checkstyle: CyclomaticComplexity|ReturnCount OFF
+// Checkstyle: CyclomaticComplexity|ReturnCount|MethodLength OFF
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         SAMLObject msg = messageLookupStrategy.apply(input);
         if (msg != null) {
             
             // Step down into ArtifactResponses.
-            if (msg instanceof ArtifactResponse) {
-                msg = ((ArtifactResponse) msg).getMessage();
+            if (msg instanceof ArtifactResponse ar) {
+                msg = ar.getMessage();
             }
             
             if (msg instanceof org.opensaml.saml.saml2.core.Response) {
@@ -71,53 +73,60 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
                     }
                 }
                 
-            } else if (msg instanceof LogoutRequest) {
-                
-                if (((LogoutRequest) msg).getNameID() != null) {
-                    return ((LogoutRequest) msg).getNameID().getFormat();
+            } else if (msg instanceof LogoutRequest logout) {
+                final NameID nameID = logout.getNameID();
+                if (nameID != null) {
+                    return nameID.getFormat();
                 }
 
-            } else if (msg instanceof AuthnRequest) {
-                
-                if (((AuthnRequest) msg).getSubject() != null &&
-                        ((AuthnRequest) msg).getSubject().getNameID() != null) {
-                    return ((AuthnRequest) msg).getSubject().getNameID().getFormat();
+            } else if (msg instanceof AuthnRequest ar) {
+                final org.opensaml.saml.saml2.core.Subject subject = ar.getSubject();
+                if (subject != null) {
+                    final NameID nameID = subject.getNameID();
+                    if (nameID != null) {
+                        return nameID.getFormat();
+                    }
                 }
                 
-            } else if (msg instanceof org.opensaml.saml.saml1.core.Response) {
+            } else if (msg instanceof org.opensaml.saml.saml1.core.Response resp) {
 
-                for (final org.opensaml.saml.saml1.core.Assertion assertion
-                        : ((org.opensaml.saml.saml1.core.Response) msg).getAssertions()) {
+                for (final org.opensaml.saml.saml1.core.Assertion assertion : resp.getAssertions()) {
                     assert assertion != null;
                     final String format = apply(assertion);
                     if (format != null) {
                         return format;
                     }
                 }
-            } else if (msg instanceof org.opensaml.saml.saml2.core.SubjectQuery) {
+            } else if (msg instanceof org.opensaml.saml.saml2.core.SubjectQuery q) {
 
-                if (((org.opensaml.saml.saml2.core.SubjectQuery) msg).getSubject() != null &&
-                        ((org.opensaml.saml.saml2.core.SubjectQuery) msg).getSubject().getNameID() != null) {
-                    return ((org.opensaml.saml.saml2.core.SubjectQuery) msg).getSubject().getNameID().getFormat();
-                }
-            } else if (msg instanceof org.opensaml.saml.saml1.core.SubjectQuery) {
-
-                if (((org.opensaml.saml.saml1.core.SubjectQuery) msg).getSubject() != null &&
-                        ((org.opensaml.saml.saml1.core.SubjectQuery) msg).getSubject().getNameIdentifier() != null) {
-                    return ((org.opensaml.saml.saml1.core.SubjectQuery)
-                            msg).getSubject().getNameIdentifier().getFormat();
+                final org.opensaml.saml.saml2.core.Subject subject = q.getSubject();
+                if (subject != null) {
+                    final NameID nameID = subject.getNameID();
+                    if (nameID != null) {
+                        return nameID.getFormat();
+                    }
                 }
                 
-            } else if (msg instanceof org.opensaml.saml.saml2.core.Assertion) {
-                return apply((org.opensaml.saml.saml2.core.Assertion) msg);
-            } else if (msg instanceof org.opensaml.saml.saml1.core.Assertion) {
-                return apply((org.opensaml.saml.saml1.core.Assertion) msg);
+            } else if (msg instanceof org.opensaml.saml.saml1.core.SubjectQuery q) {
+
+                final org.opensaml.saml.saml1.core.Subject subject = q.getSubject();
+                if (subject != null) {
+                    final NameIdentifier nameID = subject.getNameIdentifier();
+                    if (nameID != null) {
+                        return nameID.getFormat();
+                    }
+                }
+                
+            } else if (msg instanceof org.opensaml.saml.saml2.core.Assertion a) {
+                return apply(a);
+            } else if (msg instanceof org.opensaml.saml.saml1.core.Assertion a) {
+                return apply(a);
             }
         }
         
         return null;
     }
-// Checkstyle: CyclomaticComplexity|ReturnCount ON
+// Checkstyle: CyclomaticComplexity|ReturnCount|MethodLength ON
 
     /**
      * Apply function to an assertion.
@@ -127,9 +136,14 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
      * @return the format, or null
      */
     @Nullable private String apply(@Nonnull final org.opensaml.saml.saml2.core.Assertion assertion) {
-        if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
-            return assertion.getSubject().getNameID().getFormat();
+        final org.opensaml.saml.saml2.core.Subject subject = assertion.getSubject();
+        if (subject != null) {
+            final NameID nameID = subject.getNameID();
+            if (nameID != null) {
+                return nameID.getFormat();
+            }
         }
+        
         return null;
     }
 

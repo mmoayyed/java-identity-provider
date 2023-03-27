@@ -28,8 +28,10 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.opensaml.storage.StorageSerializer;
 import org.opensaml.xmlsec.config.BasicXMLSecurityConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -162,17 +164,21 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(assertion.getAuthnStatements().get(0));
 
         final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
-        Assert.assertTrue(authenticationStatement.getAuthnInstant().isAfter(now));
+        assert authenticationStatement != null;
+        final Instant authnInstant = authenticationStatement.getAuthnInstant();
+        Assert.assertTrue(authnInstant != null && authnInstant.isAfter(now));
         Assert.assertNotNull(authenticationStatement.getSessionIndex());
         Assert.assertNull(authenticationStatement.getSessionNotOnOrAfter());
 
-        Assert.assertNotNull(authenticationStatement.getSubjectLocality());
-        Assert.assertEquals(authenticationStatement.getSubjectLocality().getAddress(), "127.0.0.1");
+        final SubjectLocality locality = authenticationStatement.getSubjectLocality();
+        assert locality != null;
+        Assert.assertEquals(locality.getAddress(), "127.0.0.1");
         
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();
-        Assert.assertNotNull(authnContext);
-        Assert.assertNotNull(authnContext.getAuthnContextClassRef());
-        Assert.assertEquals(authnContext.getAuthnContextClassRef().getURI(), "Test");
+        assert authnContext != null;
+        final AuthnContextClassRef acClass = authnContext.getAuthnContextClassRef();
+        assert acClass != null;
+        Assert.assertEquals(acClass.getURI(), "Test");
         Assert.assertTrue(authnContext.getAuthenticatingAuthorities().isEmpty());
     }
 
@@ -234,9 +240,10 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
 
         final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();
-        Assert.assertNotNull(authnContext);
-        Assert.assertNotNull(authnContext.getAuthnContextClassRef());
-        Assert.assertEquals(authnContext.getAuthnContextClassRef().getURI(), "Bar");
+        assert authnContext != null;
+        final AuthnContextClassRef acClass = authnContext.getAuthnContextClassRef();
+        assert acClass != null;
+        Assert.assertEquals(acClass.getURI(), "Bar");
         Assert.assertTrue(authnContext.getAuthenticatingAuthorities().isEmpty());
     }
     
@@ -254,7 +261,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         final Assertion assertion = response.getAssertions().get(0);
         final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();
-        Assert.assertNotNull(authnContext);
+        assert authnContext != null;
         Assert.assertEquals(authnContext.getAuthenticatingAuthorities().size(), 3);
         Assert.assertEquals(authnContext.getAuthenticatingAuthorities().get(0).getURI(), "foo");
         Assert.assertEquals(authnContext.getAuthenticatingAuthorities().get(1).getURI(), "bar");
@@ -282,7 +289,7 @@ public class AddAuthnStatementToAssertionTest extends OpenSAMLInitBaseTestCase {
         final Assertion assertion = response.getAssertions().get(0);
         final AuthnStatement authenticationStatement = assertion.getAuthnStatements().get(0);
         final AuthnContext authnContext = authenticationStatement.getAuthnContext();
-        Assert.assertNotNull(authnContext);
+        assert authnContext != null;
         Assert.assertTrue(authnContext.getAuthenticatingAuthorities().isEmpty());
     }
 

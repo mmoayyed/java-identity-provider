@@ -358,7 +358,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                             inboundMessage instanceof AuthnRequest
                             && ssoConfig.isSkipEndpointValidationWhenSigned(profileRequestContext)
                             && !ssoConfig.isIgnoreRequestSignatures(profileRequestContext)
-                            && SAMLBindingSupport.isMessageSigned(Constraint.isNotNull(imc, "No Inboud Message Context")); 
+                            && SAMLBindingSupport.isMessageSigned(
+                                    Constraint.isNotNull(imc, "No Inboud Message Context")); 
                 }
             }
         }

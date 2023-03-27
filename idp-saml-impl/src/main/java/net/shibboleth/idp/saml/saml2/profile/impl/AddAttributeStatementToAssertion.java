@@ -162,6 +162,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
         final AttributeStatement statement = statementBuilder.buildObject();
         
         for (final Attribute attribute : encodedAttributes) {
+            assert attribute != null;
             final Attribute existing = findExistingAttribute(statement, attribute);
             if (existing != null) {
                 final Iterator<XMLObject> newValues = attribute.getAttributeValues().iterator();

@@ -27,6 +27,7 @@ import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.NameIDPolicy;
 
 import com.google.common.base.Strings;
 
@@ -88,10 +89,13 @@ public class AbstractSAML2NameIDGenerator extends org.opensaml.saml.saml2.profil
         // Override the default behavior if the SP specifies a qualifier in its request,
         // matching the original base class behavior. SP request trumps local configuration.
         final AuthnRequest request = requestLookupStrategy.apply(profileRequestContext);
-        if (request != null && request.getNameIDPolicy() != null) {
-            final String qual = request.getNameIDPolicy().getSPNameQualifier();
-            if (!Strings.isNullOrEmpty(qual)) {
-                return qual;
+        if (request != null) {
+            final NameIDPolicy policy = request.getNameIDPolicy();
+            if (policy != null) {
+                final String qual = policy.getSPNameQualifier();
+                if (!Strings.isNullOrEmpty(qual)) {
+                    return qual;
+                }
             }
         }
         

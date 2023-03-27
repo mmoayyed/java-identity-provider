@@ -28,7 +28,9 @@ import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectQuery;
 
 import net.shibboleth.shared.logic.Constraint;
@@ -55,34 +57,42 @@ public class SPNameQualifierAuditExtractor implements Function<ProfileRequestCon
         if (msg != null) {
             
             // Step down into ArtifactResponses.
-            if (msg instanceof ArtifactResponse) {
-                msg = ((ArtifactResponse) msg).getMessage();
+            if (msg instanceof ArtifactResponse ar) {
+                msg = ar.getMessage();
             }
             
-            if (msg instanceof Response) {
-                for (final Assertion assertion : ((Response) msg).getAssertions()) {
+            if (msg instanceof Response resp) {
+                for (final Assertion assertion : resp.getAssertions()) {
+                    assert assertion != null;
                     final String qualifier = apply(assertion);
                     if (qualifier != null) {
                         return qualifier;
                     }
                 }
-            } else if (msg instanceof LogoutRequest) {
-                if (((LogoutRequest) msg).getNameID() != null) {
-                    return ((LogoutRequest) msg).getNameID().getSPNameQualifier();
+            } else if (msg instanceof LogoutRequest logout) {
+                final NameID nameID = logout.getNameID();
+                if (nameID != null) {
+                    return nameID.getSPNameQualifier();
                 }
 
-            } else if (msg instanceof AuthnRequest) {
-                if (((AuthnRequest) msg).getSubject() != null &&
-                        ((AuthnRequest) msg).getSubject().getNameID() != null) {
-                    return ((AuthnRequest) msg).getSubject().getNameID().getSPNameQualifier();
+            } else if (msg instanceof AuthnRequest ar) {
+                final Subject subject = ar.getSubject();
+                if (subject != null) {
+                    final NameID nameID = subject.getNameID();
+                    if (nameID != null) {
+                        return nameID.getSPNameQualifier();
+                    }
                 }
-            } else if (msg instanceof SubjectQuery) {
-                if (((SubjectQuery) msg).getSubject() != null &&
-                        ((SubjectQuery) msg).getSubject().getNameID() != null) {
-                    return ((SubjectQuery) msg).getSubject().getNameID().getSPNameQualifier();
+            } else if (msg instanceof SubjectQuery q) {
+                final Subject subject = q.getSubject();
+                if (subject != null) {
+                    final NameID nameID = subject.getNameID();
+                    if (nameID != null) {
+                        return nameID.getSPNameQualifier();
+                    }
                 }
-            } else if (msg instanceof Assertion) {
-                return apply((Assertion) msg);
+            } else if (msg instanceof Assertion a) {
+                return apply(a);
             }
         }
         
@@ -98,8 +108,12 @@ public class SPNameQualifierAuditExtractor implements Function<ProfileRequestCon
      * @return the format, or null
      */
     @Nullable private String apply(@Nonnull final Assertion assertion) {
-        if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
-            return assertion.getSubject().getNameID().getSPNameQualifier();
+        final Subject subject = assertion.getSubject();
+        if (subject != null) {
+            final NameID nameID = subject.getNameID();
+            if (nameID != null) {
+                return nameID.getFormat();
+            }
         }
         return null;
     }

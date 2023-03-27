@@ -21,8 +21,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
+import org.opensaml.saml.saml2.core.StatusMessage;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.testng.Assert;
 
@@ -82,11 +84,13 @@ public class SAML2TestStatusResponseTypeValidator {
      */
     public void assertResponse(@Nullable final StatusResponseType response) {
         assert response!=null;
-        Assert.assertNotNull(response.getID());
-        Assert.assertFalse(response.getID().isEmpty());
+        final String id = response.getID();
+        Assert.assertTrue(id != null && !id.isEmpty());
         Assert.assertNotNull(response.getIssueInstant());
         Assert.assertEquals(response.getVersion(), (SAMLVersion.VERSION_20));
-        Assert.assertEquals(response.getIssuer().getValue(), idpEntityID);
+        final Issuer issuer = response.getIssuer();
+        assert issuer != null;
+        Assert.assertEquals(issuer.getValue(), idpEntityID);
         if (destination != null) {
             Assert.assertEquals(response.getDestination(), destination);
         }
@@ -106,13 +110,18 @@ public class SAML2TestStatusResponseTypeValidator {
      */
     public void assertStatus(@Nullable final Status status) {
         assert status!=null;
-        Assert.assertNotNull(status.getStatusCode());
-        Assert.assertEquals(status.getStatusCode().getValue(), statusCode);
+        final StatusCode code = status.getStatusCode();
+        assert code != null;
+        Assert.assertEquals(code.getValue(), statusCode);
         if (statusCode != StatusCode.SUCCESS) {
-            Assert.assertEquals(status.getStatusMessage().getValue(), statusMessage);
-            if (status.getStatusCode().getStatusCode() != null) {
-                Assert.assertEquals(status.getStatusCode().getStatusCode().getValue(), statusCodeNested);
+            final StatusMessage msg = status.getStatusMessage();
+            assert msg != null;
+            Assert.assertEquals(msg.getValue(), statusMessage);
+            final StatusCode nested = code.getStatusCode();
+            if (nested != null) {
+                Assert.assertEquals(nested.getValue(), statusCodeNested);
             }
         }
     }
+
 }

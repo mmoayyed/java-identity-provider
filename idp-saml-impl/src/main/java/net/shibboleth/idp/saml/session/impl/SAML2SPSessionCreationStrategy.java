@@ -34,7 +34,9 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
@@ -144,7 +146,9 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         }
         
         String acsLocation = null;
-        final List<SubjectConfirmation> sc = first.getSubject().getSubjectConfirmations();
+        final Subject subject = first.getSubject();
+        assert subject != null;
+        final List<SubjectConfirmation> sc = subject.getSubjectConfirmations();
         if (sc != null && !sc.isEmpty()) {
             final SubjectConfirmationData scData = sc.get(0).getSubjectConfirmationData();
             if (scData != null) {
@@ -166,8 +170,12 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
             }
         }
         
-        return new SAML2SPSession(issuer, now, expiration, first.getSubject().getNameID(),
-                second.getSessionIndex(), acsLocation, supportLogoutPropagation);
+        // Thse guarantees come from the getAssertionAndStatement method.
+        final NameID nameID = subject.getNameID();
+        final String index = second.getSessionIndex();
+        assert nameID != null;
+        assert index != null;
+        return new SAML2SPSession(issuer, now, expiration, nameID, index, acsLocation, supportLogoutPropagation);
     }
 // Checkstyle: CyclomaticComplexity ON
 
@@ -189,7 +197,8 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         }
         
         for (final Assertion assertion : response.getAssertions()) {
-            if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
+            final Subject subject = assertion.getSubject();
+            if (subject != null && subject.getNameID() != null) {
                 for (final AuthnStatement statement : assertion.getAuthnStatements()) {
                     if (statement.getSessionIndex() != null) {
                         return new Pair<>(assertion, statement);

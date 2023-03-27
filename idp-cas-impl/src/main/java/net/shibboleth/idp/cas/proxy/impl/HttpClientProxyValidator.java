@@ -67,7 +67,7 @@ import org.opensaml.security.x509.TrustedNamesCriterion;
 import org.slf4j.Logger;
 
 /**
- * Authenticates a CAS proxy callback endpoint using an {@link org.apache.hc.client5.http.classic.HttpClient} instance to establish
+ * Authenticates a CAS proxy callback endpoint using an {@HttpClient} instance to establish
  * the connection and a {@link TrustEngine} to verify the TLS certificate presented by the remote peer. The endpoint
  * is validated if and only if the following requirements are met:
  *

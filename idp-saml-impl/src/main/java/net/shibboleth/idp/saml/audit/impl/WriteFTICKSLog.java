@@ -32,7 +32,6 @@ import org.opensaml.saml.common.SAMLObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.profile.context.AuditContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
@@ -52,9 +51,6 @@ public class WriteFTICKSLog extends AbstractProfileAction {
 
     /** Logging category to use. */
     @Nonnull @NotEmpty public static final String FTICKS_LOG_CATEGORY = "Shibboleth-FTICKS";
-    
-    /** Strategy used to locate the {@link AuditContext} associated with a given {@link ProfileRequestContext}. */
-    private Function<ProfileRequestContext,AuditContext> auditContextLookupStrategy;
 
     /** Federation ID for log. */
     @NonnullAfterInit @NotEmpty private String federationId;

@@ -67,7 +67,7 @@ public class BestMatchLocationLookupStrategy implements Function<ProfileRequestC
     @Nullable public BestMatchLocationCriterion apply(@Nullable final ProfileRequestContext input) {
         
         final LogoutPropagationContext propCtx = logoutPropagationContextLookupStrategy.apply(input);
-        SPSession session = propCtx != null ? propCtx.getSession() : null;
+        final SPSession session = propCtx != null ? propCtx.getSession() : null;
         if (session != null && session instanceof SAML2SPSession) {
             final String acsLocation = ((SAML2SPSession) session).getACSLocation();
             if (acsLocation != null) {

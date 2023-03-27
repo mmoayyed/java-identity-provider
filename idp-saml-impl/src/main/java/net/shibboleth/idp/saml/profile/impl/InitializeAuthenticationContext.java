@@ -35,6 +35,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Scoping;
+import org.opensaml.saml.saml2.core.Subject;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.idp.authn.config.navigate.ForceAuthnProfileConfigPredicate;
@@ -176,12 +177,20 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
             if (!processScoping(profileRequestContext, authnCtx)) {
                 return;
             }
-            authnCtx.setForceAuthn(ar.isForceAuthn());
-            authnCtx.setIsPassive(ar.isPassive());
+            
+            Boolean flag = ar.isForceAuthn();
+            if (flag != null) {
+                authnCtx.setForceAuthn(flag);
+            }
+            flag = ar.isPassive();
+            if (flag != null) {
+                authnCtx.setIsPassive(flag);
+            }
             
             // On an inbound Subject, migrate the populated SubjectContext into the required name
             // field in the new AuthenticationContext.
-            if (ar.getSubject() != null && ar.getSubject().getNameID() != null) {
+            final Subject requestedSubject = ar.getSubject();
+            if (requestedSubject != null && requestedSubject.getNameID() != null) {
                 final SubjectContext subjectCtx = profileRequestContext.getSubcontext(SubjectContext.class);
                 if (subjectCtx != null && subjectCtx.getPrincipalName() != null) {
                     authnCtx.setRequiredName(subjectCtx.getPrincipalName());
@@ -265,8 +274,9 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
             authenticationContext.getProxiableAuthorities().addAll(requestedAuthorities);
         }
         
-        if (scoping.getProxyCount() != null) {
-            authenticationContext.setProxyCount(Integer.max(0, scoping.getProxyCount()));
+        final Integer proxyCount = scoping.getProxyCount();
+        if (proxyCount != null) {
+            authenticationContext.setProxyCount(Integer.max(0, proxyCount));
         }
         return true;
     }

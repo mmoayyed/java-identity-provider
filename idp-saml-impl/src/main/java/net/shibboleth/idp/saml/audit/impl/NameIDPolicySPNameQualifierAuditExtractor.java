@@ -26,6 +26,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.NameIDPolicy;
 
 import net.shibboleth.shared.logic.Constraint;
 
@@ -51,14 +52,14 @@ public class NameIDPolicySPNameQualifierAuditExtractor implements Function<Profi
         if (msg != null) {
             
             // Step down into ArtifactResponses.
-            if (msg instanceof ArtifactResponse) {
-                msg = ((ArtifactResponse) msg).getMessage();
+            if (msg instanceof ArtifactResponse ar) {
+                msg = ar.getMessage();
             }
             
-            if (msg instanceof AuthnRequest) {
-                if (((AuthnRequest) msg).getNameIDPolicy() != null &&
-                        ((AuthnRequest) msg).getNameIDPolicy().getSPNameQualifier() != null) {
-                    return ((AuthnRequest) msg).getNameIDPolicy().getSPNameQualifier();
+            if (msg instanceof AuthnRequest ar) {
+                final NameIDPolicy policy = ar.getNameIDPolicy();
+                if (policy != null) {
+                    return policy.getSPNameQualifier();
                 }
             }
         }

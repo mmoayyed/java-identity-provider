@@ -65,9 +65,6 @@ import net.shibboleth.shared.service.ServiceableComponent;
  */
 public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
 
-    /** Unused?. */
-    private static final String List = null;
-
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(FilterByQueriedAttributeDesignators.class);
 
@@ -88,9 +85,11 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
 
     /** Constructor. */
     public FilterByQueriedAttributeDesignators() {
-        final Function<ProfileRequestContext,AttributeContext> acls = new ChildContextLookup<>(AttributeContext.class).compose(
-                new ChildContextLookup<>(RelyingPartyContext.class));
-        final Function<ProfileRequestContext,Request> rls = new MessageLookup<>(Request.class).compose(new InboundMessageContextLookup()); 
+        final Function<ProfileRequestContext,AttributeContext> acls =
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
+        final Function<ProfileRequestContext,Request> rls =
+                new MessageLookup<>(Request.class).compose(new InboundMessageContextLookup()); 
         assert acls != null && rls != null;
         attributeContextLookupStrategy = acls;
         requestLookupStrategy = rls;

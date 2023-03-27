@@ -18,8 +18,8 @@
 package net.shibboleth.idp.saml.nameid.impl;
 
 import java.util.Arrays;
-import java.util.Collections;
 
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.UninitializedComponentException;
 
@@ -51,7 +51,7 @@ public class TransformingDecoderTest {
     @Test public void testStrip() throws Exception {
         final MockTransformingDecoder decode = new MockTransformingDecoder();
         decode.setId("Decoder");
-        decode.setTransforms(Collections.singletonList(new Pair<>("(.+)@foo.edu", "$1")));
+        decode.setTransforms(CollectionSupport.singletonList(new Pair<>("(.+)@foo.edu", "$1")));
         decode.initialize();
         
         Assert.assertEquals(decode.decode(PRINCIPAL), "ThePrincipalName");

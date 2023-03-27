@@ -52,10 +52,9 @@ public class SubStatusCodeAuditExtractor implements Function<ProfileRequestConte
     @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         final SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
-            if (response instanceof Response) {
-                org.opensaml.saml.saml1.core.StatusCode sc =
-                        ((Response) response).getStatus() != null
-                                ? ((Response) response).getStatus().getStatusCode() : null;
+            if (response instanceof Response r) {
+                final org.opensaml.saml.saml1.core.Status status = r.getStatus();
+                org.opensaml.saml.saml1.core.StatusCode sc = status != null ? status.getStatusCode() : null;
                 if (sc != null && sc.getStatusCode() != null) {
                     final Collection<String> values = new ArrayList<>(1);
                     do {
@@ -66,18 +65,17 @@ public class SubStatusCodeAuditExtractor implements Function<ProfileRequestConte
                     } while (sc.getStatusCode() != null);
                     return values;
                 }
-            } else if (response instanceof StatusResponseType) {
-                org.opensaml.saml.saml2.core.StatusCode sc =
-                        ((StatusResponseType) response).getStatus() != null
-                                ? ((StatusResponseType) response).getStatus().getStatusCode() : null;
+            } else if (response instanceof StatusResponseType srt) {
+                final org.opensaml.saml.saml2.core.Status status = srt.getStatus();
+                org.opensaml.saml.saml2.core.StatusCode sc = status != null ? status.getStatusCode() : null;
                 if (sc != null && sc.getStatusCode() != null) {
                     final Collection<String> values = new ArrayList<>(1);
                     do {
                         sc = sc.getStatusCode();
-                        if (sc.getValue() != null) {
+                        if (sc != null && sc.getValue() != null) {
                             values.add(sc.getValue());
                         }
-                    } while (sc.getStatusCode() != null);
+                    } while (sc != null && sc.getStatusCode() != null);
                     return values;
                 }
             }

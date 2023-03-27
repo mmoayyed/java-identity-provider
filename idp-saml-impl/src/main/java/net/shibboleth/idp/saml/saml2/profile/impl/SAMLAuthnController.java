@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -95,7 +94,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
         samlContextLookupStrategy = new ChildContextLookup<>(SAMLAuthnContext.class).compose(
                 new ChildContextLookup<>(AuthenticationContext.class));
         
-        bindingMap = Collections.emptyMap();
+        bindingMap = CollectionSupport.emptyMap();
     }
     
     /**
@@ -173,8 +172,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
         
         // Fill in the AuthnRequest's ACS URL and set RelayState to the EA key.
         final MessageContext nestedOmc = nestedPRC.getOutboundMessageContext();
-        if (nestedOmc != null && nestedOmc.getMessage() instanceof AuthnRequest) {
-            final AuthnRequest authnRequest = Constraint.isNotNull((AuthnRequest) nestedOmc.getMessage(), "Outbound messages was null");
+        if (nestedOmc != null && nestedOmc.getMessage() instanceof AuthnRequest authnRequest) {
             SAMLBindingSupport.setRelayState(nestedOmc, key);
             final StringBuffer url = httpRequest.getRequestURL();
             authnRequest.setAssertionConsumerServiceURL(

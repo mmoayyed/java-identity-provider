@@ -26,6 +26,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.ProxyRestriction;
 import org.opensaml.saml.saml2.core.Response;
 
@@ -65,8 +66,9 @@ public abstract class AbstractProxyRestrictionAuditExtractor<T> implements Funct
             
             if (response instanceof Response) {
                 for (final Assertion assertion : ((Response) response).getAssertions()) {
-                    if (assertion.getConditions() != null) {
-                        final ProxyRestriction condition = assertion.getConditions().getProxyRestriction();
+                    final Conditions conditions = assertion.getConditions();
+                    if (conditions != null) {
+                        final ProxyRestriction condition = conditions.getProxyRestriction();
                         if (condition != null) {
                             return doApply(condition);
                         }

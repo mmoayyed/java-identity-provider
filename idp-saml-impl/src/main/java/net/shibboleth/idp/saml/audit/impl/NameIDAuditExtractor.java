@@ -27,10 +27,12 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.AttributeStatement;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.AuthorizationDecisionStatement;
+import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.SubjectStatement;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.opensaml.saml.saml2.core.NameID;
 
 import net.shibboleth.shared.logic.Constraint;
 
@@ -38,7 +40,7 @@ import net.shibboleth.shared.logic.Constraint;
 public class NameIDAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for message to read from. */
-    @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
+    @Nonnull private final Function<ProfileRequestContext,SAMLObject> messageLookupStrategy;
     
     /**
      * Constructor.
@@ -46,18 +48,18 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
      * @param strategy lookup strategy for message
      */
     public NameIDAuditExtractor(@Nonnull final Function<ProfileRequestContext,SAMLObject> strategy) {
-        responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
+        messageLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|ReturnCount|MethodLength OFF
     /** {@inheritDoc} */
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
-        SAMLObject msg = responseLookupStrategy.apply(input);
+        SAMLObject msg = messageLookupStrategy.apply(input);
         if (msg != null) {
             
             // Step down into ArtifactResponses.
-            if (msg instanceof ArtifactResponse) {
-                msg = ((ArtifactResponse) msg).getMessage();
+            if (msg instanceof ArtifactResponse ar) {
+                msg = ar.getMessage();
             }
             
             if (msg instanceof org.opensaml.saml.saml2.core.Response) {
@@ -71,22 +73,24 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
                     }
                 }
                 
-            } else if (msg instanceof LogoutRequest) {
-                
-                if (((LogoutRequest) msg).getNameID() != null) {
-                    return ((LogoutRequest) msg).getNameID().getValue();
+            } else if (msg instanceof LogoutRequest logout) {
+                final NameID nameID = logout.getNameID();
+                if (nameID != null) {
+                    return nameID.getValue();
                 }
                 
-            } else if (msg instanceof AuthnRequest) {
-                if (((AuthnRequest) msg).getSubject() != null &&
-                        ((AuthnRequest) msg).getSubject().getNameID() != null) {
-                    return ((AuthnRequest) msg).getSubject().getNameID().getValue();
+            } else if (msg instanceof AuthnRequest ar) {
+                final org.opensaml.saml.saml2.core.Subject subject = ar.getSubject();
+                if (subject != null) {
+                    final NameID nameID = subject.getNameID();
+                    if (nameID != null) {
+                        return nameID.getValue();
+                    }
                 }
                 
-            } else if (msg instanceof org.opensaml.saml.saml1.core.Response) {
+            } else if (msg instanceof org.opensaml.saml.saml1.core.Response resp) {
 
-                for (final org.opensaml.saml.saml1.core.Assertion assertion
-                        : ((org.opensaml.saml.saml1.core.Response) msg).getAssertions()) {
+                for (final org.opensaml.saml.saml1.core.Assertion assertion : resp.getAssertions()) {
                     assert assertion != null;
                     final String id = apply(assertion);
                     if (id != null) {
@@ -94,17 +98,37 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
                     }
                 }
                 
-            } else if (msg instanceof org.opensaml.saml.saml2.core.Assertion) {
-                return apply((org.opensaml.saml.saml2.core.Assertion) msg);
-            } else if (msg instanceof org.opensaml.saml.saml1.core.Assertion) {
-                return apply((org.opensaml.saml.saml1.core.Assertion) msg);
+            } else if (msg instanceof org.opensaml.saml.saml2.core.SubjectQuery q) {
+
+                final org.opensaml.saml.saml2.core.Subject subject = q.getSubject();
+                if (subject != null) {
+                    final NameID nameID = subject.getNameID();
+                    if (nameID != null) {
+                        return nameID.getValue();
+                    }
+                }
+                
+            } else if (msg instanceof org.opensaml.saml.saml1.core.SubjectQuery q) {
+
+                final org.opensaml.saml.saml1.core.Subject subject = q.getSubject();
+                if (subject != null) {
+                    final NameIdentifier nameID = subject.getNameIdentifier();
+                    if (nameID != null) {
+                        return nameID.getValue();
+                    }
+                }
+                
+            } else if (msg instanceof org.opensaml.saml.saml2.core.Assertion a) {
+                return apply(a);
+            } else if (msg instanceof org.opensaml.saml.saml1.core.Assertion a) {
+                return apply(a);
             }
         }
         
         return null;
     }
-// Checkstyle: CyclomaticComplexity ON
-
+// Checkstyle: CyclomaticComplexity|ReturnCount|MethodLength ON
+    
     /**
      * Apply function to an assertion.
      * 
@@ -113,9 +137,14 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
      * @return the identifier, or null
      */
     @Nullable private String apply(@Nonnull final org.opensaml.saml.saml2.core.Assertion assertion) {
-        if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
-            return assertion.getSubject().getNameID().getValue();
+        final org.opensaml.saml.saml2.core.Subject subject = assertion.getSubject();
+        if (subject != null) {
+            final NameID nameID = subject.getNameID();
+            if (nameID != null) {
+                return nameID.getValue();
+            }
         }
+        
         return null;
     }
 

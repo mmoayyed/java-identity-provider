@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -33,6 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -57,7 +57,7 @@ public class SpringAwareMessageDecoderFactory extends AbstractInitializableCompo
     
     /** Constructor. */
     public SpringAwareMessageDecoderFactory() {
-        beanMappings = Collections.emptyMap();
+        beanMappings = CollectionSupport.emptyMap();
     }
     
     /**

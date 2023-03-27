@@ -81,11 +81,6 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
     @Nullable @NotEmpty protected String decode(@Nonnull final String transientId,
             @Nonnull @NotEmpty final String requesterId) throws NameDecoderException {
         checkComponentActive();
-        if (null == transientId) {
-            throw new NameDecoderException(getLogPrefix() + " Transient identifier was null");
-        } else if (Strings.isNullOrEmpty(requesterId)) {
-            throw new NameDecoderException(getLogPrefix() + " Requester ID was null");
-        }
 
         final String decodedId;
         try {

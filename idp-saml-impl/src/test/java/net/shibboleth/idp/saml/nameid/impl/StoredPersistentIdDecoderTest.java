@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collections;
 
 import javax.sql.DataSource;
 
@@ -44,6 +43,7 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.DatabaseTestingSupport;
 
@@ -76,7 +76,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         generator = new PersistentSAML2NameIDGenerator();
         generator.setId("test");
         generator.setPersistentIdStore(store);
-        generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
+        generator.setAttributeSourceIds(CollectionSupport.singletonList("SOURCE"));
         
         decoder = new StoredPersistentIdDecoder();
         decoder.setId("test");
@@ -95,7 +95,9 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         scc.setResponderId(TestSources.IDP_ENTITY_ID);
         
         final Subject subject = SAML2ActionTestingSupport.buildSubject("foo");
-        Assert.assertNull(decoder.decode(scc, subject.getNameID()));
+        final NameID n = subject.getNameID();
+        assert n != null;
+        Assert.assertNull(decoder.decode(scc, n));
     }
 
     @Test(expectedExceptions={NameDecoderException.class})
@@ -104,7 +106,9 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         final SubjectCanonicalizationContext scc = prc.ensureSubcontext(SubjectCanonicalizationContext.class);
         
         final Subject subject = SAML2ActionTestingSupport.buildSubject("foo");
-        decoder.decode(scc, subject.getNameID());
+        final NameID n = subject.getNameID();
+        assert n != null;
+        decoder.decode(scc, n);
     }
     
     @Test
@@ -115,11 +119,11 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
+        source.setValues(CollectionSupport.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
         rpc.ensureSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
-                Collections.singleton(source));
+                CollectionSupport.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
         assert id!=null;
         Assert.assertNotNull(id.getValue());
@@ -143,13 +147,13 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
+        source.setValues(CollectionSupport.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
         rpc.ensureSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
-                Collections.singleton(source));
+                CollectionSupport.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
-        assert id!=null;
+        assert id != null;
         Assert.assertNotNull(id.getValue());
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
@@ -172,11 +176,11 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
-        source.setValues(Collections.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
+        source.setValues(CollectionSupport.singletonList(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;
         rpc.ensureSubcontext(AttributeContext.class).setUnfilteredIdPAttributes(
-                Collections.singleton(source));
+                CollectionSupport.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
         assert id!=null;
         Assert.assertNotNull(id.getValue());

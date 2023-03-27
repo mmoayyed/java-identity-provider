@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.action.ActionSupport;
@@ -70,9 +69,8 @@ public class PopulateInboundMessageContextWithSAMLSelf extends AbstractProfileAc
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final MessageContext msgCtx = Constraint.isNotNull(profileRequestContext.getInboundMessageContext(), "No Inbound Message Context");
-
-        final SAMLSelfEntityContext selfContext = msgCtx.ensureSubcontext(SAMLSelfEntityContext.class);
+        final SAMLSelfEntityContext selfContext =
+                profileRequestContext.ensureInboundMessageContext().ensureSubcontext(SAMLSelfEntityContext.class);
         selfContext.setEntityId(selfIdentityLookupStrategy.apply(profileRequestContext));
 
         log.debug("{} Populated inbound message context with SAML self entityID: {}", getLogPrefix(),
@@ -83,4 +81,5 @@ public class PopulateInboundMessageContextWithSAMLSelf extends AbstractProfileAc
         }
         
     }
+
 }

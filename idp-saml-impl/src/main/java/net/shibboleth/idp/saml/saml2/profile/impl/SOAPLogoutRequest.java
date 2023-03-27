@@ -266,12 +266,14 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
             final Endpoint ep = ctx.getEndpoint();
             final LogoutRequest lReq = logoutRequest;
             assert ep != null && lReq != null && opContext != null;
-            lReq.setDestination(ep.getLocation());
-        
-            log.debug("{} Executing LogoutRequest over SOAP 1.1 binding to endpoint: {}", getLogPrefix(),
-                    lReq.getDestination());
             
-            soapClient.send(lReq.getDestination(), opContext);
+            final String dest = ep.getLocation();
+            assert dest != null;
+            lReq.setDestination(dest);
+        
+            log.debug("{} Executing LogoutRequest over SOAP 1.1 binding to endpoint: {}", getLogPrefix(), dest);
+            
+            soapClient.send(dest, opContext);
             final MessageContext opImc = opContext.getInboundMessageContext();
             assert opImc != null;
             final Object response = opImc.getMessage();

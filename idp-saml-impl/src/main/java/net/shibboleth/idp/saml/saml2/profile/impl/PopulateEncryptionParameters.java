@@ -39,6 +39,7 @@ import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.profile.context.EncryptionContext;
 import org.opensaml.xmlsec.EncryptionConfiguration;
@@ -255,15 +256,15 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
             msg = imc.getMessage();
         }
         
-        if (msg instanceof AuthnRequest) {
-            final AuthnRequest request = (AuthnRequest) msg;
-            if (request.getNameIDPolicy() != null) {
-                final String requestedFormat = request.getNameIDPolicy().getFormat();
+        if (msg instanceof AuthnRequest req) {
+            final NameIDPolicy policy = req.getNameIDPolicy();
+            if (policy != null) {
+                final String requestedFormat = policy.getFormat();
                 if (requestedFormat != null && NameID.ENCRYPTED.equals(requestedFormat)) {
                     log.debug("{} Request asked for encrypted identifier, disregarding installed predicate");
                     encryptIdentifiers = true;
                 }
-            }            
+            }
         } else if (msg != null && rpContext.getProfileConfig() instanceof SingleLogoutProfileConfiguration) {
             log.debug("{} Inbound logout message, nothing to do", getLogPrefix());
             return false;
@@ -359,7 +360,8 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
      * 
      * @return  the criteria set to use
      */
-    @Nonnull private CriteriaSet buildCriteriaSet(@Nonnull final ProfileRequestContext profileRequestContext, @Nonnull List<EncryptionConfiguration> configurations) {
+    @Nonnull private CriteriaSet buildCriteriaSet(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final List<EncryptionConfiguration> configurations) {
         
         final CriteriaSet criteria = new CriteriaSet(new EncryptionConfigurationCriterion(configurations));
         

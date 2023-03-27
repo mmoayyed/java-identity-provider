@@ -46,8 +46,6 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -58,7 +56,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAction {
     
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(ProcessAssertionsForAuthentication.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessAssertionsForAuthentication.class);
     
     /** The resolver for the response to be processed. */
     @Nonnull private Function<ProfileRequestContext, Response> responseResolver;
@@ -73,17 +71,15 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     @Nonnull private Function<Assertion,AuthnStatement> authnStatementSelectionStrategy;
     
     /** The Response to process. */
-    private Response response;
+    @Nullable private Response response;
     
     /** The SAML authentication context. */
-    private SAMLAuthnContext samlAuthnContext;
+    @Nullable private SAMLAuthnContext samlAuthnContext;
     
     /**
      * Constructor.
      */
     public ProcessAssertionsForAuthentication() {
-        super();
-        
         responseResolver = new DefaultResponseResolver().compose(
                 new ChildContextLookup<>(ProfileRequestContext.class).compose(
                         new ChildContextLookup<>(AuthenticationContext.class)));
@@ -121,7 +117,8 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      */
     public void setAuthnAssertionSelectionStrategy(@Nonnull final Function<List<Assertion>, Assertion> strategy) {
         checkSetterPreconditions();
-        authnAssertionSelectionStrategy = strategy;
+        authnAssertionSelectionStrategy =
+                Constraint.isNotNull(strategy, "Authentication assertion selection strategy cannot be null");
     }
     
     /**
@@ -131,7 +128,8 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      */
     public void setAuthnStatementSelectionStrategy(@Nonnull final Function<Assertion, AuthnStatement> strategy) {
         checkSetterPreconditions();
-        authnStatementSelectionStrategy = strategy;
+        authnStatementSelectionStrategy =
+                Constraint.isNotNull(strategy, "Authentication statement selection strategy cannot be null");
     }
     
     /**
@@ -141,7 +139,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      */
     public void setResponseResolver(@Nonnull final Function<ProfileRequestContext, Response> strategy) {
         checkSetterPreconditions();
-        responseResolver = strategy;
+        responseResolver = Constraint.isNotNull(strategy, "Response resolver strategy cannot be null");
     }
     
     /**
@@ -152,25 +150,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     public void setSAMLAuthnContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLAuthnContext> strategy) {
         checkSetterPreconditions();
-        samlContextLookupStrategy = strategy;
-    }
-
-    /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (authnAssertionSelectionStrategy == null) {
-            throw new ComponentInitializationException("Authentication Assertion selection strategy cannot be null");
-        }
-        if (authnStatementSelectionStrategy == null) {
-            throw new ComponentInitializationException("AuthnStatement selection strategy cannot be null");
-        }
-        if (responseResolver == null) {
-            throw new ComponentInitializationException("Response resolver cannot be null");
-        }
-        if (samlContextLookupStrategy == null) {
-            throw new ComponentInitializationException("SAMLAuthnContext lookup strategy cannot be null");
-        }
+        samlContextLookupStrategy = Constraint.isNotNull(strategy, "SAMLAuthnContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -182,7 +162,8 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
         }
 
         response = responseResolver.apply(profileRequestContext);
-        if (response == null || response.getAssertions() == null || response.getAssertions().isEmpty()) {
+        final Response localResponse = response;
+        if (localResponse == null || localResponse.getAssertions() == null || localResponse.getAssertions().isEmpty()) {
             log.info("{} Profile context contained no candidate Assertions to process. Skipping further processing",
                     getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
@@ -203,18 +184,21 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        final Response localResponse = response;
+        assert localResponse != null;
+        
         // Completely remove any non-valid Assertions from the Response
-        final List<Assertion> nonValid = response.getAssertions().stream()
+        final List<Assertion> nonValid = localResponse.getAssertions().stream()
                 .filter(new AssertionIsValid().negate())
                 .collect(Collectors.toList());
         log.debug("{} Removing {} non-valid Assertions from Response", getLogPrefix(), nonValid.size());
-        response.getAssertions().removeAll(nonValid);
+        localResponse.getAssertions().removeAll(nonValid);
 
         // For authn purposes, select only Assertions which contain at least 1 AuthnStatement and a confirmed Subject
         final Predicate<Assertion> selector = new AssertionContainsAuthenticationStatement()
                 .and(new AssertionContainsConfirmedSubject());
         
-        final List<Assertion> assertions = response.getAssertions().stream()
+        final List<Assertion> assertions = localResponse.getAssertions().stream()
                 .filter(selector)
                 .collect(Collectors.toList());
         if (assertions.isEmpty()) {
@@ -254,8 +238,8 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
             }
         }
         
-        samlAuthnContext.setAuthnStatement(authnStatement);
-        samlAuthnContext.setSubject(authnAssertion.getSubject());
+        assert samlAuthnContext != null;
+        samlAuthnContext.setAuthnStatement(authnStatement).setSubject(authnAssertion.getSubject());
     }
 
     /**

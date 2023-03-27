@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.IDPEntry;
+import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Scoping;
 
 /**
@@ -48,11 +49,14 @@ public class ScopingIdPListAuditExtractor extends AbstractScopingAuditExtractor<
     /** {@inheritDoc} */
     @Override
     @Nullable protected Collection<String> doApply(@Nullable final Scoping scoping) {
-        if (scoping != null && scoping.getIDPList() != null) {
-            return scoping.getIDPList().getIDPEntrys().stream()
-                    .map(IDPEntry::getProviderID)
-                    .filter(s -> s != null)
-                    .collect(Collectors.toUnmodifiableList());
+        if (scoping != null) {
+            final IDPList idpList = scoping.getIDPList();
+            if (idpList != null) {
+                return idpList.getIDPEntrys().stream()
+                        .map(IDPEntry::getProviderID)
+                        .filter(s -> s != null)
+                        .collect(Collectors.toUnmodifiableList());
+            }
         }
         
         return null;

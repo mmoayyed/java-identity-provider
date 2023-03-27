@@ -65,7 +65,8 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
     @Nonnull private final Logger protocolMessageLog = LoggerFactory.getLogger("PROTOCOL_MESSAGE");
     
     /** ID generator. */
-    @Nonnull private final IdentifierGenerationStrategy idGenerator = IdentifierGenerationStrategy.getInstance(ProviderType.UUID);
+    @Nonnull private final IdentifierGenerationStrategy idGenerator =
+            IdentifierGenerationStrategy.getInstance(ProviderType.UUID);
     
     /**
      * Get an optional {@link BindingDescriptor} to inject into

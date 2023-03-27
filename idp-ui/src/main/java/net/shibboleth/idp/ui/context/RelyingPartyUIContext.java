@@ -38,8 +38,10 @@ import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
 import org.opensaml.saml.saml2.metadata.ContactPersonTypeEnumeration;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.GivenName;
 import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.SurName;
 import org.slf4j.Logger;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -699,10 +701,8 @@ public final class RelyingPartyUIContext extends BaseContext {
     @Nullable public String getContactSurName(@Nullable final String contactType) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
-        if (null == contact || null == contact.getSurName()) {
-            return null;
-        }
-        return contact.getSurName().getValue();
+        final SurName surname = contact != null ? contact.getSurName() : null;
+        return surname != null ? surname.getValue() : null;
     }
 
     /**
@@ -714,10 +714,8 @@ public final class RelyingPartyUIContext extends BaseContext {
     @Nullable public String getContactGivenName(@Nullable final String contactType) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
-        if (null == contact || null == contact.getGivenName()) {
-            return null;
-        }
-        return contact.getGivenName().getValue();
+        final GivenName givenName = contact != null ? contact.getGivenName() : null;
+        return givenName != null ? givenName.getValue() : null;
     }
 
     /**

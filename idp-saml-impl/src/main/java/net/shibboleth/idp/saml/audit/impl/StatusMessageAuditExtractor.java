@@ -48,17 +48,17 @@ public class StatusMessageAuditExtractor implements Function<ProfileRequestConte
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         final SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
-            if (response instanceof Response) {
+            if (response instanceof Response r) {
+                final org.opensaml.saml.saml1.core.Status status = r.getStatus();
                 final org.opensaml.saml.saml1.core.StatusMessage msg =
-                        ((Response) response).getStatus() != null
-                                ? ((Response) response).getStatus().getStatusMessage() : null;
+                        status != null ? status.getStatusMessage() : null;
                 if (msg != null) {
                     return msg.getValue();
                 }
-            } else if (response instanceof StatusResponseType) {
+            } else if (response instanceof StatusResponseType srt) {
+                final org.opensaml.saml.saml2.core.Status status = srt.getStatus();
                 final org.opensaml.saml.saml2.core.StatusMessage msg =
-                        ((StatusResponseType) response).getStatus() != null
-                                ? ((StatusResponseType) response).getStatus().getStatusMessage() : null;
+                        status != null ? status.getStatusMessage() : null;
                 if (msg != null) {
                     return msg.getValue();
                 }

@@ -436,17 +436,19 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         boolean one = false, altone = false, two = false;
         
         for (final Attribute samlAttr : attributeStatement.getAttributes()) {
-            if (samlAttr.getName().equals(MY_NAME_1)) {
+            final String attrName = samlAttr.getName();
+            assert attrName != null;
+            if (attrName.equals(MY_NAME_1)) {
                 Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
                 final XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_1);
                 one = true;
-            } else if (samlAttr.getName().equals(MY_NAME_2)) {
+            } else if (attrName.equals(MY_NAME_2)) {
                 Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
                 final XMLObject xmlObject = samlAttr.getAttributeValues().get(0);
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_2);
                 altone = true;
-            } else if (samlAttr.getName().equals(MY_ALTNAME_1)) {
+            } else if (attrName.equals(MY_ALTNAME_1)) {
                 Assert.assertEquals(samlAttr.getAttributeValues().size(), 2);
                 final String val1 = ((XSStringImpl) samlAttr.getAttributeValues().get(0)).getValue();
                 final String val2 = ((XSStringImpl) samlAttr.getAttributeValues().get(1)).getValue();
