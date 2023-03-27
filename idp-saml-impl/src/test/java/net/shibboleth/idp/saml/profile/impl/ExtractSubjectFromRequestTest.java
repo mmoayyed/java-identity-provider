@@ -147,7 +147,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
         final org.opensaml.saml.saml1.core.Subject s = Constraint.isNotNull(request.getAttributeQuery(), "Query was null").getSubject();
         assert s != null;
         final NameIdentifier nameID = s.getNameIdentifier();
-                
+        assert nameID != null;
         nameID.setFormat(NameID.TRANSIENT);
         nameID.setNameQualifier("foo");
         Event event = action.execute(rc);

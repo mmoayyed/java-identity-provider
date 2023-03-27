@@ -24,6 +24,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -59,10 +60,12 @@ public class SubStatusCodeAuditExtractor implements Function<ProfileRequestConte
                     final Collection<String> values = new ArrayList<>(1);
                     do {
                         sc = sc.getStatusCode();
-                        if (sc.getValue() != null) {
-                            values.add(sc.getValue().getLocalPart());
+                        if (sc != null && sc.getValue() != null) {
+                            final QName q = sc.getValue();
+                            assert q != null;
+                            values.add(q.getLocalPart());
                         }
-                    } while (sc.getStatusCode() != null);
+                    } while (sc != null && sc.getStatusCode() != null);
                     return values;
                 }
             } else if (response instanceof StatusResponseType srt) {

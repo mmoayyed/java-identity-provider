@@ -29,6 +29,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.saml.saml1.core.SubjectLocality;
 import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
@@ -175,11 +176,15 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         Assert.assertNotNull(assertion.getAuthenticationStatements().get(0));
 
         final AuthenticationStatement authenticationStatement = assertion.getAuthenticationStatements().get(0);
-        Assert.assertTrue(authenticationStatement.getAuthenticationInstant().isAfter(now));
+        assert authenticationStatement != null;
+        final Instant authnInstant = authenticationStatement.getAuthenticationInstant();
+        assert authnInstant != null;
+        Assert.assertTrue(authnInstant.isAfter(now));
         Assert.assertEquals(authenticationStatement.getAuthenticationMethod(), "Test");
         
-        Assert.assertNotNull(authenticationStatement.getSubjectLocality());
-        Assert.assertEquals(authenticationStatement.getSubjectLocality().getIPAddress(), "127.0.0.1");
+        final SubjectLocality locality = authenticationStatement.getSubjectLocality();
+        assert locality != null;
+        Assert.assertEquals(locality.getIPAddress(), "127.0.0.1");
     }
     
     /**

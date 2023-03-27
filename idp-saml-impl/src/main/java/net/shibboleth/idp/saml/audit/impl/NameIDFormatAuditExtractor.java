@@ -158,24 +158,39 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
     @Nullable private String apply(@Nonnull final org.opensaml.saml.saml1.core.Assertion assertion) {
 
         for (final AuthenticationStatement statement : assertion.getAuthenticationStatements()) {
-            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                return statement.getSubject().getNameIdentifier().getFormat();
+            final org.opensaml.saml.saml1.core.Subject subject = statement.getSubject();
+            if (subject != null) {
+                final NameIdentifier nameID = subject.getNameIdentifier();
+                if (nameID != null) {
+                    return nameID.getFormat();
+                }
             }
         }
         for (final AttributeStatement statement : assertion.getAttributeStatements()) {
-            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                return statement.getSubject().getNameIdentifier().getFormat();
+            final org.opensaml.saml.saml1.core.Subject subject = statement.getSubject();
+            if (subject != null) {
+                final NameIdentifier nameID = subject.getNameIdentifier();
+                if (nameID != null) {
+                    return nameID.getFormat();
+                }
             }
         }
-        for (final AuthorizationDecisionStatement statement
-                : assertion.getAuthorizationDecisionStatements()) {
-            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                return statement.getSubject().getNameIdentifier().getFormat();
+        for (final AuthorizationDecisionStatement statement : assertion.getAuthorizationDecisionStatements()) {
+            final org.opensaml.saml.saml1.core.Subject subject = statement.getSubject();
+            if (subject != null) {
+                final NameIdentifier nameID = subject.getNameIdentifier();
+                if (nameID != null) {
+                    return nameID.getFormat();
+                }
             }
         }
         for (final SubjectStatement statement : assertion.getSubjectStatements()) {
-            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                return statement.getSubject().getNameIdentifier().getFormat();
+            final org.opensaml.saml.saml1.core.Subject subject = statement.getSubject();
+            if (subject != null) {
+                final NameIdentifier nameID = subject.getNameIdentifier();
+                if (nameID != null) {
+                    return nameID.getFormat();
+                }
             }
         }
         

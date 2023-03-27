@@ -21,6 +21,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -52,7 +53,9 @@ public class StatusCodeAuditExtractor implements Function<ProfileRequestContext,
                 final org.opensaml.saml.saml1.core.Status status = r.getStatus();
                 final org.opensaml.saml.saml1.core.StatusCode sc = status != null ? status.getStatusCode() : null;
                 if (sc != null && sc.getValue() != null) {
-                    return sc.getValue().getLocalPart();
+                    final QName q = sc.getValue();
+                    assert q != null;
+                    return q.getLocalPart();
                 }
             } else if (response instanceof StatusResponseType srt) {
                 final org.opensaml.saml.saml2.core.Status status = srt.getStatus();
