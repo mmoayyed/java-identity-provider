@@ -151,9 +151,10 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
-        if (certificate != null && !subjectAltNameTypes.isEmpty()) {
+        final X509Certificate localCopy = certificate;
+        if (localCopy != null && !subjectAltNameTypes.isEmpty()) {
             log.debug("{} Searching for subjectAltName types ({})", getLogPrefix(), subjectAltNameTypes);
-            final List<?> altnames = X509Support.getAltNames(certificate, subjectAltNameTypes.toArray(new Integer[0]));
+            final List<?> altnames = X509Support.getAltNames(localCopy, subjectAltNameTypes.toArray(new Integer[0]));
             assert altnames != null;
             for (final Object altname : altnames) {
                 if (altname instanceof String) {
