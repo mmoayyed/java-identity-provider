@@ -328,13 +328,6 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
 
     /**
      * Validate the assertion authentication statements.
-     * <p>
-     * Calls assert methods :
-     * <ul>
-     * <li>{@link #assertAuthnStatements(List)}</li>
-     * <li>{@link #assertAuthnStatement(AuthnStatement)}</li>
-     * <li>{@link #assertAuthnContextClassRef(AuthnContextClassRef)}</li>
-     * </ul>
      * 
      * @param assertion the assertion
      */
