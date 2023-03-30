@@ -187,8 +187,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
             }
         }
 
-        //param = config.getInitParameter(CHECK_HEADERS_PARAM);
-        param = "ShibbolethUser";
+        param = config.getInitParameter(CHECK_HEADERS_PARAM);
         if (param != null) {
             final String[] headers = param.split(" ");
             if (headers != null) {
