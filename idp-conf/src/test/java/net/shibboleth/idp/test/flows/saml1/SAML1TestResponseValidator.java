@@ -41,6 +41,7 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.Status;
 import org.opensaml.saml.saml1.core.StatusCode;
+import org.opensaml.saml.saml1.core.StatusMessage;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
 import org.testng.Assert;
@@ -217,12 +218,14 @@ public class SAML1TestResponseValidator {
 
         final Subject attributeStatementSubject = attributeStatement.getSubject();
         assertSubject(attributeStatementSubject);
+        assert attributeStatementSubject != null;
 
         final NameIdentifier nameId = attributeStatementSubject.getNameIdentifier();
         assertNameIdentifier(nameId);
 
         final SubjectConfirmation subjectConfirmation = attributeStatementSubject.getSubjectConfirmation();
         assertSubjectConfirmation(subjectConfirmation);
+        assert subjectConfirmation != null;
 
         final List<ConfirmationMethod> confirmationMethods = subjectConfirmation.getConfirmationMethods();
         assertConfirmationMethods(confirmationMethods);
@@ -243,8 +246,9 @@ public class SAML1TestResponseValidator {
      */
     public void assertResponse(@Nullable final Response response) {
         assert response!=null;
-        Assert.assertNotNull(response.getID());
-        Assert.assertFalse(response.getID().isEmpty());
+        final String id = response.getID();
+        assert id != null;
+        Assert.assertFalse(id.isEmpty());
         Assert.assertNotNull(response.getIssueInstant());
         Assert.assertEquals(response.getVersion(), SAMLVersion.VERSION_11);
     }
@@ -262,10 +266,13 @@ public class SAML1TestResponseValidator {
      */
     public void assertStatus(@Nullable final Status status) {
         assert status!=null;
-        Assert.assertNotNull(status.getStatusCode());
-        Assert.assertEquals(status.getStatusCode().getValue(), statusCode);
+        final StatusCode codeObject = status.getStatusCode();
+        assert codeObject != null;
+        Assert.assertEquals(codeObject.getValue(), statusCode);
         if (statusCode != StatusCode.SUCCESS) {
-            Assert.assertEquals(status.getStatusMessage().getValue(), statusMessage);
+            final StatusMessage message = status.getStatusMessage();
+            assert message != null;
+            Assert.assertEquals(message.getValue(), statusMessage);
         }
     }
 
@@ -330,8 +337,9 @@ public class SAML1TestResponseValidator {
         assert authenticationStatement!=null;
         Assert.assertNotNull(authenticationStatement.getSubject());
         Assert.assertNotNull(authenticationStatement.getAuthenticationInstant());
-        Assert.assertNotNull(authenticationStatement.getAuthenticationMethod());
-        Assert.assertFalse(authenticationStatement.getAuthenticationMethod().isEmpty());
+        final String method = authenticationStatement.getAuthenticationMethod();
+        assert method != null;
+        Assert.assertFalse(method.isEmpty());
     }
 
     /**
