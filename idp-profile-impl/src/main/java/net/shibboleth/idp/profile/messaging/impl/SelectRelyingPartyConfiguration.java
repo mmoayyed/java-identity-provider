@@ -70,6 +70,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
     @Nullable private RelyingPartyContext relyingPartyCtx;
     
     /** Constructor. */
+    @SuppressWarnings("null")
     public SelectRelyingPartyConfiguration() {
         relyingPartyContextLookupStrategy =
                 new ChildContextLookup<>(RelyingPartyContext.class).compose(

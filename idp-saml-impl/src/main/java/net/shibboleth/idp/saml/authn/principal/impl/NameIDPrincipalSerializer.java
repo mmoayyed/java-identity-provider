@@ -74,15 +74,11 @@ public class NameIDPrincipalSerializer extends AbstractPrincipalSerializer<Strin
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(NameIDPrincipalSerializer.class);
     
-    /** JSON object bulder factory. */
-    @Nonnull private final JsonBuilderFactory objectBuilderFactory;
-    
     /** NameID builder. */
     @Nonnull private final SAMLObjectBuilder<NameID> nameIDBuilder;
 
     /** Constructor. */
     public NameIDPrincipalSerializer() {
-        objectBuilderFactory = Json.createBuilderFactory(null);
         nameIDBuilder = (SAMLObjectBuilder<NameID>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>ensureBuilder(
                         NameID.DEFAULT_ELEMENT_NAME);
@@ -121,7 +117,9 @@ public class NameIDPrincipalSerializer extends AbstractPrincipalSerializer<Strin
 
             gen.writeEnd();
         }
-        return sink.toString();
+        final String result = sink.toString();
+        assert result != null;
+        return result;
     }
         
     /** {@inheritDoc} */

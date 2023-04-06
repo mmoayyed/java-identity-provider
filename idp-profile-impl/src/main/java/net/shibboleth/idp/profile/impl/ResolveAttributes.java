@@ -100,6 +100,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * 
      * @param resolverService resolver used to fetch attributes
      */
+    @SuppressWarnings("null")
     public ResolveAttributes(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
         

@@ -163,7 +163,7 @@ public class SelectProfileConfiguration extends AbstractMessageHandler {
     @Override
     protected void doInvoke(@Nonnull final MessageContext messageContext) throws MessageHandlerException {
 
-        final RelyingPartyContext ctx =  rpCtx = relyingPartyContextLookupStrategy.apply(messageContext);
+        final RelyingPartyContext ctx = rpCtx;
         assert ctx != null;
         final RelyingPartyConfiguration rpConfig = ctx.getConfiguration();
         assert rpConfig != null;

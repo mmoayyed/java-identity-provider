@@ -92,6 +92,7 @@ public class PrincipalServiceManager {
      * 
      * @return service for the type, or null
      */
+    @SuppressWarnings("unchecked")
     @Nullable public <T extends Principal> PrincipalService<T> byClass(@Nonnull final Class<T> claz) {
         final PrincipalService<?> service = classIndexedMap.get(claz);
         if (service != null) {

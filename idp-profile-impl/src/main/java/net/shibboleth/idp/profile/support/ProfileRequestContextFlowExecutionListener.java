@@ -44,9 +44,9 @@ public class ProfileRequestContextFlowExecutionListener implements FlowExecution
 
 
     @Override
-    public void stateEntered(
-            final RequestContext context, final StateDefinition previousState, final StateDefinition newState) {
+    public void stateEntered(final RequestContext context, final StateDefinition previousState, final StateDefinition newState) {
         if (previousState != null && previousState.getId().startsWith("Initialize")) {
+            assert context != null;
             final ProfileRequestContext prc = getProfileRequestContext(context);
             final ServletRequest request = getRequest(context);
             if (prc != null && request != null) {
@@ -58,6 +58,7 @@ public class ProfileRequestContextFlowExecutionListener implements FlowExecution
 
     @Override
     public void resuming(final RequestContext context) {
+        assert context != null;
         final ProfileRequestContext prc = getProfileRequestContext(context);
         final ServletRequest request = getRequest(context);
         if (prc != null && request != null) {

@@ -51,8 +51,11 @@ public abstract class AbstractPrincipalSerializer<Type> extends AbstractInitiali
     public AbstractPrincipalSerializer() {
         final JsonProvider provider = JsonProvider.provider();
         assert provider != null;
-        generatorFactory = provider.createGeneratorFactory(null);
-        readerFactory = provider.createReaderFactory(null);
+        final JsonGeneratorFactory gFactory = provider.createGeneratorFactory(null);
+        final JsonReaderFactory rFactory = provider.createReaderFactory(null);
+        assert gFactory != null && rFactory != null;
+        generatorFactory = gFactory;
+        readerFactory = rFactory;
     }
 
     /**
@@ -63,7 +66,9 @@ public abstract class AbstractPrincipalSerializer<Type> extends AbstractInitiali
      * @return a generator
      */
     @Nonnull protected synchronized JsonGenerator getJsonGenerator(@Nonnull final Writer writer) {
-        return generatorFactory.createGenerator(writer);
+        final JsonGenerator jsonGenerator = generatorFactory.createGenerator(writer);
+        assert jsonGenerator!=null;
+        return jsonGenerator;
     }
 
     /**
@@ -74,7 +79,9 @@ public abstract class AbstractPrincipalSerializer<Type> extends AbstractInitiali
      * @return a reader
      */
     @Nonnull protected synchronized JsonReader getJsonReader(@Nonnull final Reader reader) {
-        return readerFactory.createReader(reader);
+        final JsonReader jr = readerFactory.createReader(reader);
+        assert jr!=null;
+        return jr;
     }
 
 }

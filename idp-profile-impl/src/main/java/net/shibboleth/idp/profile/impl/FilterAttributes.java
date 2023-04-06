@@ -23,7 +23,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.RootContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -45,8 +44,8 @@ import net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFu
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
+import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.service.ReloadableService;
@@ -151,6 +150,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * 
      * @param filterService engine used to filter attributes
      */
+    @SuppressWarnings("null")
     public FilterAttributes(@Nonnull final ReloadableService<AttributeFilter> filterService) {
         attributeFilterService = Constraint.isNotNull(filterService, "Service cannot be null");
         
