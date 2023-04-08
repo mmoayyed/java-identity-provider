@@ -58,6 +58,7 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
+import net.shibboleth.shared.spring.httpclient.resource.ConnectionClosingInputStream;
 
 /**
  * {@link IdPModule} base class implementing basic file management.
@@ -388,9 +389,8 @@ public abstract class AbstractIdPModule implements IdPModule {
                 }
                 
                 // The response socket should be closed after the stream is closed.
-                final InputStream ret = response.getEntity().getContent();
+                final InputStream ret = new ConnectionClosingInputStream(response);
                 response = null;
-                assert ret != null;
                 return ret;
             } finally {
                 if (response != null && CloseableHttpResponse.class.isInstance(response)) {

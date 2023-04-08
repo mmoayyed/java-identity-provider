@@ -66,6 +66,11 @@
         </dependency>
 
         <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-networking-spring</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
