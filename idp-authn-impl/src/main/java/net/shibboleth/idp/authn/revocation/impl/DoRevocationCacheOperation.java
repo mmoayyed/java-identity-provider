@@ -194,6 +194,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
                 return false;
             }
 
+            assert cId != null;
             revocationCache = getBean(requestContext, cId, RevocationCache.class);
             if (revocationCache == null) {
                 sendError(HttpServletResponse.SC_NOT_FOUND,
