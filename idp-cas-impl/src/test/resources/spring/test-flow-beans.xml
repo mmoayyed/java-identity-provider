@@ -115,7 +115,7 @@
     <bean id="shibboleth.MetadataResolver"
           class="org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver"
           p:parserPool-ref="shibboleth.ParserPool">
-        <constructor-arg name="metadata">
+        <constructor-arg>
             <bean destroy-method="" class="java.io.File"
                 c:pathname="src/test/resources/metadata/cas-test-metadata.xml" />
         </constructor-arg>
