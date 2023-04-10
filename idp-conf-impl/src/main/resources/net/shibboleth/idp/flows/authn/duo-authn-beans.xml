@@ -64,7 +64,7 @@
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.Duo.addDefaultPrincipals') ?: %{idp.authn.Duo.addDefaultPrincipals:true}}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.Duo.resultCachingPredicate')}"
         p:populateAuditContextAction="#{%{idp.authn.Duo.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.Duo.PopulateAuditContext') : null}"
-        p:writeAuditLogAction="#{%{idp.authn.Duo.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuditLog') : null}" />
+        p:writeAuditLogAction="#{%{idp.authn.Duo.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuthnAuditLog') : null}" />
 
     <bean id="ExtractDuoAuthenticationFromHeaders" scope="prototype"
         class="net.shibboleth.idp.authn.duo.impl.ExtractDuoAuthenticationFromHeaders"
