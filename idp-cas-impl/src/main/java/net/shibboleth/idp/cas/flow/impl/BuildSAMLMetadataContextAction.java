@@ -18,7 +18,6 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -31,6 +30,7 @@ import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.impl.ServiceEntityDescriptor;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 
 /**
  * Builds a {@link SAMLMetadataContext} child of {@link RelyingPartyContext} to facilitate relying party selection
@@ -52,10 +52,10 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
     private boolean relyingPartyIdFromMetadata;
     
     /** CAS service. */
-    @Nullable private Service service;
+    @NonnullBeforeExec private Service service;
     
     /** RelyingPartyContext. */
-    @Nullable private RelyingPartyContext rpCtx;
+    @NonnullBeforeExec private RelyingPartyContext rpCtx;
     
     /**
      * Sets whether the {@link RelyingPartyContext#getRelyingPartyId()} method should return an entityID
@@ -70,6 +70,15 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
         relyingPartyIdFromMetadata = flag;
     }
     
+    /** null safe getter
+     * @return Returns the service.
+     */
+    @SuppressWarnings("null")
+    @Nonnull public Service getService() {
+        assert isPreExecuteCalled();
+        return service;
+    }
+
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -96,20 +105,17 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
     protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        final Service svc = service;
-        assert svc != null;
-        final EntityDescriptor entity = svc.getEntityDescriptor() != null
-                ? svc.getEntityDescriptor()
-                : new ServiceEntityDescriptor(svc);
+        EntityDescriptor entity = getService().getEntityDescriptor();
+        if (entity == null) {
+            entity = new ServiceEntityDescriptor(getService());
+        }
         mdCtx.setEntityDescriptor(entity);
-        mdCtx.setRoleDescriptor(svc.getRoleDescriptor());
+        mdCtx.setRoleDescriptor(getService().getRoleDescriptor());
         
         if (relyingPartyIdFromMetadata) {
-            assert rpCtx != null;
             rpCtx.setRelyingPartyId(entity.getEntityID());
         }
-        
-        assert rpCtx != null;
+
         rpCtx.setRelyingPartyIdContextTree(mdCtx);
     }
 

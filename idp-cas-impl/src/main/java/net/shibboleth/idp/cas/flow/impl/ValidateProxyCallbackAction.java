@@ -22,10 +22,8 @@ import java.net.URISyntaxException;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.hc.core5.net.URIBuilder;
-
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.action.EventIds;
@@ -47,6 +45,7 @@ import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
@@ -80,19 +79,19 @@ public class ValidateProxyCallbackAction
     @Nonnull private final TicketService casTicketService;
 
     /** Profile config. */
-    @Nullable private ValidateConfiguration validateConfig;
+    @NonnullBeforeExec private ValidateConfiguration validateConfig;
     
     /** Security config. */
-    @Nullable private SecurityConfiguration securityConfig;
+    @NonnullBeforeExec private SecurityConfiguration securityConfig;
     
     /** CAS ticket. */
-    @Nullable private Ticket ticket;
+    @NonnullBeforeExec private Ticket ticket;
 
     /** CAS request. */
-    @Nullable private TicketValidationRequest request;
+    @NonnullBeforeExec private TicketValidationRequest request;
 
     /** CAS response. */
-    @Nullable private TicketValidationResponse response;
+    @NonnullBeforeExec private TicketValidationResponse response;
     
     /**
      * Constructor.
@@ -108,6 +107,15 @@ public class ValidateProxyCallbackAction
         configLookupFunction = new ConfigLookupFunction<>(ValidateConfiguration.class);
     }
     
+    /** Null Safe getter.
+     * @return Returns the ticket.
+     */
+    @SuppressWarnings("null")
+    @Nonnull private Ticket getTicket() {
+        assert isPreExecuteCalled();
+        return ticket;
+    }
+
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -120,7 +128,6 @@ public class ValidateProxyCallbackAction
             return false;
         }
         
-        assert validateConfig != null;
         securityConfig = validateConfig.getSecurityConfiguration(profileRequestContext);
         if (securityConfig == null) {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
@@ -141,27 +148,21 @@ public class ValidateProxyCallbackAction
 
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final ValidateConfiguration vCfg = validateConfig;
-        final SecurityConfiguration sCfg = securityConfig;
-        final Ticket tkt = ticket;
-        final TicketValidationRequest request = this.request;
-        final TicketValidationResponse response = this.response;
-        assert vCfg != null && sCfg != null && tkt != null && request != null && response != null;
         
-        @Nonnull final IdentifierGenerationStrategy pgtGenerator = sCfg.getIdGenerator();
-        @Nonnull final IdentifierGenerationStrategy pgtIOUGenerator = vCfg.getPGTIOUGenerator(profileRequestContext);
-        final Instant expiration = Instant.now().plus(vCfg.getTicketValidityPeriod(profileRequestContext));
+        @Nonnull final IdentifierGenerationStrategy pgtGenerator = securityConfig.getIdGenerator();
+        @Nonnull final IdentifierGenerationStrategy pgtIOUGenerator = validateConfig.getPGTIOUGenerator(profileRequestContext);
+        final Instant expiration = Instant.now().plus(validateConfig.getTicketValidityPeriod(profileRequestContext));
         assert expiration!=null;
         @Nonnull final String pgtId = pgtGenerator.generateIdentifier();
         final String pgtUrl = request.getPgtUrl();
         assert pgtUrl != null;
         final ProxyGrantingTicket pgt;
-        if (ticket instanceof ServiceTicket) {
+        if (getTicket() instanceof ServiceTicket) {
             pgt = casTicketService.createProxyGrantingTicket(
-                pgtId, expiration, (ServiceTicket) tkt, pgtUrl);
+                pgtId, expiration, (ServiceTicket) getTicket(), pgtUrl);
         } else {
             pgt = casTicketService.createProxyGrantingTicket(
-                pgtId, expiration, (ProxyTicket) tkt, pgtUrl);
+                pgtId, expiration, (ProxyTicket) getTicket(), pgtUrl);
         }
         // The ID of the proxy-granting ticket MAY be different from the generated value above.
         // ALWAYS use the value from the ticket object.

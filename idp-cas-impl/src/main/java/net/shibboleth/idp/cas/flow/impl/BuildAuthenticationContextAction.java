@@ -25,6 +25,7 @@ import net.shibboleth.idp.cas.config.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -42,7 +43,7 @@ public class BuildAuthenticationContextAction
     @Nonnull private final ConfigLookupFunction<LoginConfiguration> configLookupFunction;
 
     /** Stores off CAS request. */
-    @Nullable private ServiceTicketRequest request;
+    @NonnullBeforeExec private ServiceTicketRequest request;
     
     /** Constructor. */
     public BuildAuthenticationContextAction() {
@@ -69,10 +70,8 @@ public class BuildAuthenticationContextAction
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final AuthenticationContext ac = new AuthenticationContext();
-        final ServiceTicketRequest req = request;
-        assert req != null;
         
-        ac.setForceAuthn(req.isRenew());
+        ac.setForceAuthn(request.isRenew());
 
         final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
 
@@ -83,7 +82,7 @@ public class BuildAuthenticationContextAction
         }
         
         if (!ac.isForceAuthn()) {
-            ac.setIsPassive(req.isGateway());
+            ac.setIsPassive(request.isGateway());
         }
         
         if (config != null) {

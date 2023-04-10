@@ -18,7 +18,6 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -30,6 +29,7 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Ensures that a service ticket validation request that specifies renew=true matches the renew flag on the ticket
@@ -48,10 +48,10 @@ public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidat
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateRenewAction.class);
 
     /** CAS ticket. */
-    @Nullable private Ticket ticket;
+    @NonnullBeforeExec private Ticket ticket;
 
     /** CAS request. */
-    @Nullable private TicketValidationRequest request;
+    @NonnullBeforeExec private TicketValidationRequest request;
 
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -73,11 +73,8 @@ public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidat
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final Ticket localTicket = ticket;
-        final TicketValidationRequest localRequest = request; 
-        assert localTicket != null && localRequest != null;
         if (ticket instanceof ServiceTicket) {
-            if (localRequest.isRenew() != ((ServiceTicket) localTicket).isRenew()) {
+            if (request.isRenew() != ((ServiceTicket) ticket).isRenew()) {
                 log.debug("{} Renew=true requested at validation time but ticket not issued with renew=true",
                         getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketNotFromRenew.event(this));
@@ -85,7 +82,7 @@ public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidat
             }
         } else {
             // Proxy ticket validation
-            if (localRequest.isRenew()) {
+            if (request.isRenew()) {
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.RenewIncompatibleWithProxy.event(this));
                 return;
             }

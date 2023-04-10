@@ -34,6 +34,7 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -63,7 +64,7 @@ public class BuildRelyingPartyContextAction<RequestType,ResponseType>
     @Nonnull @NonnullElements @NotEmpty private final List<ServiceRegistry> serviceRegistries;
     
     /** Request. */
-    @Nullable private Object request;
+    @NonnullBeforeExec private Object request;
 
     /**
      * Creates a new instance.

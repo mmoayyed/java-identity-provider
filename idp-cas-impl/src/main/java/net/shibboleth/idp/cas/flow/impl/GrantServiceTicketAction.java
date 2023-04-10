@@ -49,6 +49,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -85,16 +86,16 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     @Nonnull private final TicketService casTicketService;
 
     /** Profile config. */
-    @Nullable private LoginConfiguration loginConfig;
+    @NonnullBeforeExec private LoginConfiguration loginConfig;
     
     /** Security config. */
-    @Nullable private SecurityConfiguration securityConfig;
+    @NonnullBeforeExec private SecurityConfiguration securityConfig;
     
     /** IdP's session. */
-    @Nullable private IdPSession session;
+    @NonnullBeforeExec private IdPSession session;
     
     /** Authentication result. */
-    @Nullable private AuthenticationResult authnResult;
+    @NonnullBeforeExec private AuthenticationResult authnResult;
 
     /** Whether consent needs to be stored in ticket. */
     private boolean storeConsent;
@@ -103,7 +104,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     @Nullable private AttributeContext attributeCtx;
 
     /** CAS request. */
-    @Nullable private ServiceTicketRequest request;
+    @NonnullBeforeExec private ServiceTicketRequest request;
 
     /**
      * Constructor.
@@ -116,10 +117,13 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         configLookupFunction = new ConfigLookupFunction<>(LoginConfiguration.class);
         sessionContextFunction = new ChildContextLookup<>(SessionContext.class);
         authnCtxLookupFunction = new ChildContextLookup<>(AuthenticationContext.class);
-        principalLookupFunction = new SubjectContextPrincipalLookupFunction().compose(
+        final Function<ProfileRequestContext, String> plf = new SubjectContextPrincipalLookupFunction().compose(
                 new ChildContextLookup<>(SubjectContext.class));
-        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+        final Function<ProfileRequestContext,AttributeContext> aclf = new ChildContextLookup<>(AttributeContext.class).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
+        assert plf != null && aclf != null;
+        principalLookupFunction = plf;
+        attributeContextLookupStrategy = aclf;
     }
     
     /**
@@ -204,41 +208,36 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
                 
         final ServiceTicket ticket;
-        final ServiceTicketRequest stReq = request;
-        final AuthenticationResult aRes = authnResult;
-        final LoginConfiguration lCfg = loginConfig;
-        assert stReq != null && aRes != null && lCfg != null;
 
         try {
-            log.debug("{} Granting service ticket for {}", getLogPrefix(), stReq.getService());
-            assert session != null;
+            log.debug("{} Granting service ticket for {}", getLogPrefix(), request.getService());
             final TicketState state = new TicketState(
                     Constraint.isNotNull(session.getId(), "Session ID was non null"),
                     getPrincipalName(profileRequestContext),
-                    aRes.getAuthenticationInstant(),
-                    aRes.getAuthenticationFlowId());
+                    authnResult.getAuthenticationInstant(),
+                    authnResult.getAuthenticationFlowId());
             
             if (storeConsent) {
                 assert attributeCtx != null;
                 state.setConsentedAttributeIds(attributeCtx.getIdPAttributes().keySet());
             }
             
-            final Instant then = Instant.now().plus(lCfg.getTicketValidityPeriod(profileRequestContext)); 
-            assert securityConfig != null && then != null;
+            final Instant then = Instant.now().plus(loginConfig.getTicketValidityPeriod(profileRequestContext)); 
+            assert then != null;
             ticket = casTicketService.createServiceTicket(
                     securityConfig.getIdGenerator().generateIdentifier(),
                     then,
-                    stReq.getService(),
+                    request.getService(),
                     state,
-                    stReq.isRenew());
+                    request.isRenew());
         } catch (final RuntimeException e) {
             log.error("{} Failed granting service ticket due to error.", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketCreationError.event(this));
             return;
         }
         
-        final ServiceTicketResponse response = new ServiceTicketResponse(stReq.getService(), ticket.getId());
-        if (stReq.isSAML()) {
+        final ServiceTicketResponse response = new ServiceTicketResponse(request.getService(), ticket.getId());
+        if (request.isSAML()) {
             response.setSaml(true);
         }
         
@@ -249,7 +248,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             return;
         }
 
-        log.info("{} Granted service ticket for {}", getLogPrefix(), stReq.getService());
+        log.info("{} Granted service ticket for {}", getLogPrefix(), request.getService());
     }
 
     /**
@@ -288,7 +287,6 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     @Nullable private AuthenticationResult getLatestAuthenticationResult() {
         AuthenticationResult latest = null;
 
-        assert session != null;
         for (final AuthenticationResult result : session.getAuthenticationResults()) {
             if (latest == null || result.getAuthenticationInstant().isAfter(latest.getAuthenticationInstant())) {
                 latest = result;

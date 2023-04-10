@@ -20,7 +20,6 @@ package net.shibboleth.idp.cas.flow.impl;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -34,6 +33,7 @@ import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 /**
@@ -57,10 +57,10 @@ public class BuildProxyChainAction
     @Nonnull private final TicketService casTicketService;
     
     /** Response. */
-    @Nullable private TicketValidationResponse response;
+    @NonnullBeforeExec private TicketValidationResponse response;
     
     /** Ticket. */
-    @Nullable private Ticket ticket;
+    @NonnullBeforeExec private Ticket ticket;
 
     /**
      * Constructor.
@@ -95,10 +95,8 @@ public class BuildProxyChainAction
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.InvalidTicketType.event(this));
             return;
         }
-        final ProxyTicket pt = (ProxyTicket) ticket;
-        assert pt != null;
         ProxyGrantingTicket pgt;
-        String pgtId = pt.getPgtId();
+        String pgtId = ((ProxyTicket) ticket).getPgtId();
         do {
             pgt = casTicketService.fetchProxyGrantingTicket(pgtId);
             if (pgt == null || Instant.now().isAfter(pgt.getExpirationInstant())) {
@@ -106,7 +104,6 @@ public class BuildProxyChainAction
                 ActionSupport.buildEvent(profileRequestContext, ProtocolError.BrokenProxyChain.event(this));
                 return;
             }
-            assert response != null;
             response.addProxy(pgt.getProxyCallbackUrl());
             pgtId = pgt.getParentId();
         } while (pgtId != null);

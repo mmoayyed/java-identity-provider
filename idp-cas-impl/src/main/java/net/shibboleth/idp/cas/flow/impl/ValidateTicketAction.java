@@ -20,7 +20,6 @@ package net.shibboleth.idp.cas.flow.impl;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -38,6 +37,7 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -67,10 +67,10 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
     @Nonnull private final TicketService casTicketService;
 
     /** Profile config. */
-    @Nullable private ValidateConfiguration validateConfig;
+    @NonnullBeforeExec private ValidateConfiguration validateConfig;
 
     /** CAS request. */
-    @Nullable private TicketValidationRequest request;
+    @NonnullBeforeExec private TicketValidationRequest request;
     
     /**
      * Constructor.
@@ -107,15 +107,12 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final TicketValidationRequest localRequest = request;
-        final ValidateConfiguration localValidateConfig = validateConfig;
-        assert localValidateConfig != null && localRequest != null;
         final Ticket ticket;
         try {
-            final String ticketId = localRequest.getTicket();
+            final String ticketId = request.getTicket();
             log.debug("Attempting to validate {}", ticketId);
             if (ticketId.startsWith(LoginConfiguration.DEFAULT_TICKET_PREFIX)) {
-                ticket = casTicketService.removeServiceTicket(localRequest.getTicket());
+                ticket = casTicketService.removeServiceTicket(request.getTicket());
             } else if (ticketId.startsWith(ProxyConfiguration.DEFAULT_TICKET_PREFIX)) {
                 ticket = casTicketService.removeProxyTicket(ticketId);
             } else {
@@ -137,10 +134,10 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             return;
         }
 
-        if (localValidateConfig.getServiceComparator(profileRequestContext).compare(
-                ticket.getService(), localRequest.getService()) != 0) {
+        if (validateConfig.getServiceComparator(profileRequestContext).compare(
+                ticket.getService(), request.getService()) != 0) {
             log.debug("{} Service issued for {} does not match {}", getLogPrefix(), ticket.getService(),
-                    localRequest.getService());
+                    request.getService());
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.ServiceMismatch.event(this));
             return;
         }
@@ -153,7 +150,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             return;
         }
 
-        log.info("{} Successfully validated {} for {}", getLogPrefix(), localRequest.getTicket(), localRequest.getService());
+        log.info("{} Successfully validated {} for {}", getLogPrefix(), request.getTicket(), request.getService());
         
         if (ticket instanceof ProxyTicket) {
             ActionSupport.buildEvent(profileRequestContext, Events.ProxyTicketValidated.event(this));

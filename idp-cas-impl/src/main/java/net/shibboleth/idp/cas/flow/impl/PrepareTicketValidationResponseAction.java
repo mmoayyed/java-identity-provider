@@ -55,6 +55,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -95,22 +96,23 @@ public class PrepareTicketValidationResponseAction extends
     @NonnullAfterInit private TranscodingRule defaultTranscodingRule;
     
     /** Stored off context from request. */
-    @Nullable private AttributeContext attributeContext;
+    @NonnullBeforeExec private AttributeContext attributeContext;
     
     /** Stored consented attributes from ticket. */
     @Nullable private Set<String> consentedAttributeIds;
     
     /** Profile configuration. */
-    @Nullable private ValidateConfiguration validateConfiguration;
+    @NonnullBeforeExec private ValidateConfiguration validateConfiguration;
     
     /** CAS response. */
-    @Nullable private TicketValidationResponse ticketValidationResponse;
+    @NonnullBeforeExec private TicketValidationResponse ticketValidationResponse;
 
     /** Constructor. */
     public PrepareTicketValidationResponseAction() {
-        attributeContextFunction =
-                new ChildContextLookup<>(AttributeContext.class, true).compose(
-                        new ChildContextLookup<>(RelyingPartyContext.class));
+        final Function<ProfileRequestContext,AttributeContext> acf = new ChildContextLookup<>(AttributeContext.class, true).compose(
+                new ChildContextLookup<>(RelyingPartyContext.class));
+        assert acf != null;
+        attributeContextFunction = acf;
         principalLookupFunction = new TicketPrincipalLookupFunction();
         configLookupFunction = new ConfigLookupFunction<>(ValidateConfiguration.class);
     }
@@ -179,14 +181,10 @@ public class PrepareTicketValidationResponseAction extends
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final String principal;
-        final AttributeContext aCtx = attributeContext;
-        TicketValidationResponse response = ticketValidationResponse;
-        assert aCtx != null && response != null;
-        assert validateConfiguration != null;
         final String userAttributeName = validateConfiguration.getUserAttribute(profileRequestContext);
         if (userAttributeName != null) {
             log.debug("{} Using {} for CAS username", getLogPrefix(), userAttributeName);
-            final IdPAttribute attribute = aCtx.getIdPAttributes().get(userAttributeName);
+            final IdPAttribute attribute = attributeContext.getIdPAttributes().get(userAttributeName);
             if (attribute != null && !attribute.getValues().isEmpty()) {
                 final IdPAttributeValue value = attribute.getValues().get(0);
                 if (value instanceof ScopedStringAttributeValue) {
@@ -213,9 +211,9 @@ public class PrepareTicketValidationResponseAction extends
             throw new IllegalStateException("Principal cannot be null");
         }
 
-        response.setUserName(principal);
+        ticketValidationResponse.setUserName(principal);
         
-        final Collection<IdPAttribute> inputAttributes = aCtx.getIdPAttributes().values();
+        final Collection<IdPAttribute> inputAttributes = attributeContext.getIdPAttributes().values();
         final ArrayList<Attribute> encodedAttributes = new ArrayList<>(inputAttributes.size());
 
         try (final ServiceableComponent<AttributeTranscoderRegistry> component =
@@ -236,7 +234,7 @@ public class PrepareTicketValidationResponseAction extends
             return;
         }
         
-        encodedAttributes.forEach(a -> {assert a!=null; response.addAttribute(a);});
+        encodedAttributes.forEach(a -> {assert a!=null; ticketValidationResponse.addAttribute(a);});
     }
     // Checkstyle: CyclomaticComplexity ON
 

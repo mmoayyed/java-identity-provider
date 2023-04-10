@@ -31,6 +31,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.NonnullSupplier;
@@ -56,7 +57,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeAdministrativeProfileContextTree.class);
     
     /** Descriptor of the administrative flow being run. */
-    @Nullable private AdministrativeFlowDescriptor flowDescriptor;
+    @NonnullBeforeExec private AdministrativeFlowDescriptor flowDescriptor;
 
     /** The system wide languages to inspect if there is no match between metadata and browser. */
     @Nullable private List<String> fallbackLanguages;
@@ -87,7 +88,16 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
             fallbackLanguages = null;
         }
     }
-    
+
+    /**
+     * @return Returns the flowDescriptor.
+     */
+    @SuppressWarnings("null")
+    @Nonnull private AdministrativeFlowDescriptor getFlowDescriptor() {
+        assert isPreExecuteCalled();
+        return flowDescriptor;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -123,18 +133,16 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
-        final AdministrativeFlowDescriptor descriptor = flowDescriptor;
-        assert descriptor != null;
-        profileRequestContext.setLoggingId(descriptor.getLoggingId());
-        profileRequestContext.setBrowserProfile(!descriptor.isNonBrowserSupported(profileRequestContext));
+        profileRequestContext.setLoggingId(getFlowDescriptor().getLoggingId());
+        profileRequestContext.setBrowserProfile(!getFlowDescriptor().isNonBrowserSupported(profileRequestContext));
         
         final RelyingPartyContext rpCtx = new RelyingPartyContext();
         profileRequestContext.addSubcontext(rpCtx, true);
-        rpCtx.setRelyingPartyId(descriptor.getId());
-        rpCtx.setProfileConfig(descriptor);
+        rpCtx.setRelyingPartyId(getFlowDescriptor().getId());
+        rpCtx.setProfileConfig(getFlowDescriptor());
         
         final RelyingPartyUIContext uiCtx = rpCtx.ensureSubcontext(RelyingPartyUIContext.class);
-        uiCtx.setRPUInfo(descriptor.getUIInfo());
+        uiCtx.setRPUInfo(getFlowDescriptor().getUIInfo());
         final NonnullSupplier<HttpServletRequest> supplier = getHttpServletRequestSupplier();
         assert supplier != null;
         uiCtx.setBrowserLanguageRanges(SpringSupport.getLanguageRange(supplier.get()));

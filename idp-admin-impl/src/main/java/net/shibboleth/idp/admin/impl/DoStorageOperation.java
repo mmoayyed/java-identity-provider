@@ -44,6 +44,7 @@ import com.google.common.base.Strings;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -79,13 +80,13 @@ public class DoStorageOperation extends AbstractProfileAction {
     @NonnullAfterInit private ObjectMapper objectMapper;
     
     /** {@link StorageService} to operate on. */
-    @Nullable private StorageService storageService;
+    @NonnullBeforeExec private StorageService storageService;
     
     /** Storage context to operate on. */
-    @Nullable @NotEmpty private String context;
+    @NonnullBeforeExec @NotEmpty private String context;
 
     /** Storage key to operate on. */
-    @Nullable @NotEmpty private String key;
+    @NonnullBeforeExec @NotEmpty private String key;
 
     /**
      * Set the JSON {@link ObjectMapper} to use for serialization.
@@ -123,15 +124,19 @@ public class DoStorageOperation extends AbstractProfileAction {
     /** Null safe key getter.
      * @return Returns the key.
      */
-    @Nonnull private String getKeyInExecute() {
-        return Constraint.isNotNull(key, "null key not detected in preExecute");
+    @SuppressWarnings("null")
+    @Nonnull private String getKey() {
+        assert isPreExecuteCalled();
+        return key;
     }
 
     /** Null safe context getter.
      * @return Returns the context.
      */
-    @Nonnull private String getContextInExecute() {
-        return Constraint.isNotNull(context, "null context not detected in preExecute");
+    @SuppressWarnings("null")
+    @Nonnull private String getContext() {
+        assert isPreExecuteCalled();
+        return context;
     }
 
 // Checkstyle: CyclomaticComplexity OFF
@@ -249,7 +254,7 @@ public class DoStorageOperation extends AbstractProfileAction {
         try {
             @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
             @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
-            record = storageServ.read(getContextInExecute(), getKeyInExecute());
+            record = storageServ.read(getContext(), getKey());
             if (record != null) {
                 response.setStatus(HttpServletResponse.SC_OK);
                 final JsonFactory jsonFactory = new JsonFactory();
@@ -312,7 +317,7 @@ public class DoStorageOperation extends AbstractProfileAction {
             throw new IOException("Input missing 'val' field");
         }
         
-        if (storageServ.create(getContextInExecute(), getKeyInExecute(), value, exp)) {
+        if (storageServ.create(getContext(), getKey(), value, exp)) {
             response.setStatus(HttpServletResponse.SC_CREATED);
         } else {
             sendError(HttpServletResponse.SC_CONFLICT, "Duplicate Record",
@@ -360,7 +365,7 @@ public class DoStorageOperation extends AbstractProfileAction {
         
         if (version != null) {
             try {
-                version = storageServ.updateWithVersion(version, getContextInExecute(), getKeyInExecute(), value, exp);
+                version = storageServ.updateWithVersion(version, getContext(), getKey(), value, exp);
                 if (version != null) {
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
@@ -370,9 +375,9 @@ public class DoStorageOperation extends AbstractProfileAction {
                 sendError(HttpServletResponse.SC_CONFLICT, "Version Mismatch", "Record version did not match.");
             }
         } else {
-            if (storageServ.update(getContextInExecute(), getKeyInExecute(), value, exp)) {
+            if (storageServ.update(getContext(), getKey(), value, exp)) {
                 response.setStatus(HttpServletResponse.SC_OK);
-            } else if (storageServ.create(getContextInExecute(), getKeyInExecute(), value, exp)) {
+            } else if (storageServ.create(getContext(), getKey(), value, exp)) {
                 response.setStatus(HttpServletResponse.SC_CREATED);
             } else {
                 sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
@@ -392,7 +397,7 @@ public class DoStorageOperation extends AbstractProfileAction {
             @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
             @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
 
-            if (storageServ.delete(getContextInExecute(), getKeyInExecute())) {
+            if (storageServ.delete(getContext(), getKey())) {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } else {
                 sendError(HttpServletResponse.SC_NOT_FOUND,

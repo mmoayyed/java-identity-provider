@@ -50,6 +50,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -93,7 +94,7 @@ public class OutputMetrics extends AbstractProfileAction {
     @Nullable private String jsonpCallbackName;
 
     /** Formatter for date/time fields. */
-    @Nonnull private DateTimeFormatter dateTimeFormatter;
+    @NonnullAfterInit private DateTimeFormatter dateTimeFormatter;
 
     /** Convert date/time fields to default time zone. */
     private boolean useDefaultTimeZone;
@@ -102,7 +103,7 @@ public class OutputMetrics extends AbstractProfileAction {
     @Nonnull @NonnullElements private Map<String,MetricFilter> metricFilterMap;
     
     /** Metric ID to operate on. */
-    @Nullable private String metricId;
+    @NonnullBeforeExec private String metricId;
     
     /** Constructor. */
     public OutputMetrics() {

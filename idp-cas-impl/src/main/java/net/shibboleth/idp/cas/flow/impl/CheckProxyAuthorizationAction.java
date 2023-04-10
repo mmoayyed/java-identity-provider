@@ -18,7 +18,6 @@
 package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -28,6 +27,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.primitive.LoggerFactory;   
 
 /**
@@ -50,7 +50,7 @@ public class CheckProxyAuthorizationAction<RequestType,ResponseType>
     @Nonnull private final Logger log = LoggerFactory.getLogger(CheckProxyAuthorizationAction.class);
 
     /** CAS service. */
-    @Nullable private Service service;
+    @NonnullBeforeExec private Service service;
     
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -71,10 +71,8 @@ public class CheckProxyAuthorizationAction<RequestType,ResponseType>
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final Service svc = service;
-        assert svc != null;
-        if (!svc.isAuthorizedToProxy()) {
-            log.info("{} Service '{}' is not authorized to proxy", getLogPrefix(), svc.getName());
+        if (!service.isAuthorizedToProxy()) {
+            log.info("{} Service '{}' is not authorized to proxy", getLogPrefix(), service.getName());
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.ProxyNotAuthorized.event(this));
         }
     }

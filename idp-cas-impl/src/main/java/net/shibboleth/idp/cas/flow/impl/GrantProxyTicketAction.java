@@ -21,7 +21,6 @@ import java.time.Instant;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -45,6 +44,7 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -78,16 +78,16 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
     @Nonnull private Predicate<ProfileRequestContext> validateIdPSessionPredicate;
 
     /** Profile config. */
-    @Nullable private ProxyConfiguration proxyConfig;
+    @NonnullBeforeExec private ProxyConfiguration proxyConfig;
     
     /** Security config. */
-    @Nullable private SecurityConfiguration securityConfig;
+    @NonnullBeforeExec private SecurityConfiguration securityConfig;
     
     /** CAS ticket. */
-    @Nullable private ProxyGrantingTicket proxyGrantingTicket;
+    @NonnullBeforeExec private ProxyGrantingTicket proxyGrantingTicket;
     
     /** CAS request. */
-    @Nullable private ProxyTicketRequest request;
+    @NonnullBeforeExec private ProxyTicketRequest request;
 
     /**
      * Constructor.
@@ -146,14 +146,21 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
         }
         
         return true;
-    }    
+    }
+
+    /** Null-safe getter
+     * @return Returns the proxyGrantingTicket.
+     */
+    @SuppressWarnings("null")
+    @Nonnull private ProxyGrantingTicket getProxyGrantingTicket() {
+        assert isPreExecuteCalled();
+        return proxyGrantingTicket;
+    }
     
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        ProxyGrantingTicket pgt = proxyGrantingTicket;
-        assert pgt != null;
-        if (pgt.getExpirationInstant().isBefore(Instant.now())) {
+        if (proxyGrantingTicket.getExpirationInstant().isBefore(Instant.now())) {
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketExpired.event(this));
             return;
         }
@@ -161,19 +168,19 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
         if (validateIdPSessionPredicate.test(profileRequestContext)) {
             IdPSession session = null;
             try {
-                log.debug("{} Attempting to retrieve session {}", getLogPrefix(), pgt.getSessionId());
+                log.debug("{} Attempting to retrieve session {}", getLogPrefix(), proxyGrantingTicket.getSessionId());
                 session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(
-                        Constraint.isNotNull(pgt.getSessionId(), "ProxyGrantingTicket session id was null"))));
+                        Constraint.isNotNull(proxyGrantingTicket.getSessionId(), "ProxyGrantingTicket session id was null"))));
             } catch (final ResolverException e) {
                 log.warn("{} IdPSession resolution error: {}", getLogPrefix(), e);
             }
             boolean expired = true;
             if (session == null) {
-                log.info("{} IdPSession {} not found", getLogPrefix(), pgt.getSessionId());
+                log.info("{} IdPSession {} not found", getLogPrefix(), proxyGrantingTicket.getSessionId());
             } else {
                 try {
                     expired = !session.checkTimeout();
-                    log.debug("{} Session {} expired={}", getLogPrefix(), pgt.getSessionId(), expired);
+                    log.debug("{} Session {} expired={}", getLogPrefix(), proxyGrantingTicket.getSessionId(), expired);
                 } catch (final SessionException e) {
                     log.warn("{} Error performing session timeout check: {}. Assuming session has expired.",
                             getLogPrefix(), e);
@@ -185,19 +192,15 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
             }
         }
         final ProxyTicket pt;
-        final ProxyTicketRequest ptr = request;
-        final ProxyConfiguration pCfg = proxyConfig;
-        final SecurityConfiguration sCfg = securityConfig;
-        assert ptr != null && pCfg != null && sCfg != null;
         try {
-            log.debug("{} Granting proxy ticket for {}", getLogPrefix(), ptr.getTargetService());
-            final Instant then =Instant.now().plus(pCfg.getTicketValidityPeriod(profileRequestContext));
+            log.debug("{} Granting proxy ticket for {}", getLogPrefix(), request.getTargetService());
+            final Instant then = Instant.now().plus(proxyConfig.getTicketValidityPeriod(profileRequestContext));
             assert then != null;
             pt = casTicketService.createProxyTicket(
-                    sCfg.getIdGenerator().generateIdentifier(),
+                    securityConfig.getIdGenerator().generateIdentifier(),
                     then,
-                    pgt,
-                    ptr.getTargetService());
+                    getProxyGrantingTicket(),
+                    request.getTargetService());
         } catch (final RuntimeException e) {
             log.error("Failed granting proxy ticket due to error.", e);
             ActionSupport.buildEvent(profileRequestContext, ProtocolError.TicketCreationError.event(this));
@@ -211,7 +214,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
             return;
         }
         
-        log.info("{} Granted proxy ticket for {}", getLogPrefix(), ptr.getTargetService());
+        log.info("{} Granted proxy ticket for {}", getLogPrefix(), request.getTargetService());
     }
     
 }

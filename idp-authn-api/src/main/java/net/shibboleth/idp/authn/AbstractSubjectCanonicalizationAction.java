@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -66,8 +67,8 @@ public abstract class AbstractSubjectCanonicalizationAction
     @Nonnull private Function<ProfileRequestContext,SubjectCanonicalizationContext> scCtxLookupStrategy;
     
     /** {@link SubjectCanonicalizationContext} to operate on. */
-    @Nullable private SubjectCanonicalizationContext scContext;
-    
+    @NonnullBeforeExec private SubjectCanonicalizationContext scContext;
+
     /** Match patterns and replacement strings to apply. */
     @Nonnull @NonnullElements private List<Pair<Pattern,String>> transforms;
 
@@ -88,6 +89,15 @@ public abstract class AbstractSubjectCanonicalizationAction
         uppercase = false;
         lowercase = false;
         trim = false;
+    }
+
+    /** Null safe getter.
+     * @return Returns the scContext.
+     */
+    @SuppressWarnings("null")
+    @Nonnull private SubjectCanonicalizationContext getSubjectCanonicalizationContext() {
+        assert isPreExecuteCalled();
+        return scContext;
     }
 
     /**
@@ -155,14 +165,14 @@ public abstract class AbstractSubjectCanonicalizationAction
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (super.doPreExecute(profileRequestContext)) {
-            scContext = scCtxLookupStrategy.apply(profileRequestContext);
-            if (scContext == null) {
+            final SubjectCanonicalizationContext sc = scContext = scCtxLookupStrategy.apply(profileRequestContext);
+            if (sc == null) {
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
                 return false;
             }
             
-            assert scContext != null;
-            return doPreExecute(profileRequestContext, scContext);
+            assert sc != null;
+            return doPreExecute(profileRequestContext, sc);
         }
         
         return false;
@@ -192,13 +202,7 @@ public abstract class AbstractSubjectCanonicalizationAction
     /** {@inheritDoc} */
     @Override
     protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        if (scContext == null) {
-            log.error("{} SubjectCanonicalizationContext not populated", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
-            return;
-        }
-        assert scContext != null;
-        doExecute(profileRequestContext, scContext);
+        doExecute(profileRequestContext, getSubjectCanonicalizationContext());
     }
 
     /**
@@ -209,7 +213,6 @@ public abstract class AbstractSubjectCanonicalizationAction
      */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
-        
     }
     
     /**

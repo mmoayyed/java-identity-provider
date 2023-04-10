@@ -20,17 +20,15 @@ package net.shibboleth.idp.authn;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * A base class for authentication related actions.
@@ -46,9 +44,6 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 public abstract class AbstractAuthenticationAction
         extends AbstractProfileAction {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractCredentialValidator.class);
-    
     /**
      * Strategy used to extract, and create if necessary, the {@link AuthenticationContext} from the
      * {@link ProfileRequestContext}.
@@ -56,7 +51,7 @@ public abstract class AbstractAuthenticationAction
     @Nonnull private Function<ProfileRequestContext,AuthenticationContext> authnCtxLookupStrategy;
     
     /** AuthenticationContext to operate on. */
-    @Nullable private AuthenticationContext authnContext;
+    @NonnullBeforeExec private AuthenticationContext authnContext;
 
     /** Constructor. */
     public AbstractAuthenticationAction() {
@@ -74,20 +69,28 @@ public abstract class AbstractAuthenticationAction
         
         authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }
-    
+
+    /** null safe getter.
+     * @return Returns the authnContext.
+     */
+    @SuppressWarnings("null")
+    @Nonnull private AuthenticationContext getAuthenticationContext() {
+        assert isPreExecuteCalled();
+        return authnContext;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected final boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         if (super.doPreExecute(profileRequestContext)) {
-            authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
-            if (authnContext == null) {
+            final AuthenticationContext ac = authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
+            if (ac  == null) {
                 ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
                 return false;
             }
     
-            assert authnContext != null;
-            return doPreExecute(profileRequestContext, authnContext);
+            return doPreExecute(profileRequestContext, ac);
         }
         return false;
     }
@@ -95,13 +98,7 @@ public abstract class AbstractAuthenticationAction
     /** {@inheritDoc} */
     @Override
     protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        if (authnContext == null) {
-            log.error("{} AuthenticationContext not populated", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
-            return;
-        }
-        assert authnContext != null;
-        doExecute(profileRequestContext, authnContext);
+        doExecute(profileRequestContext, getAuthenticationContext());
     }
 
     /**

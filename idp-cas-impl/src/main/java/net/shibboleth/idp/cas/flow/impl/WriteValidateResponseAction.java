@@ -20,10 +20,10 @@ package net.shibboleth.idp.cas.flow.impl;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -48,7 +48,7 @@ public class WriteValidateResponseAction extends
     private final boolean success;
 
     /** CAS response. */
-    @Nullable private TicketValidationResponse response;
+    @NonnullBeforeExec private TicketValidationResponse response;
     
     /**
      * Constructor.
@@ -78,15 +78,14 @@ public class WriteValidateResponseAction extends
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final TicketValidationResponse localResponse = response;
         final HttpServletResponse servletResponse = getHttpServletResponse();
-        assert localResponse!=null && servletResponse!=null;
+        assert servletResponse!=null;
         try {
             servletResponse.setContentType(CONTENT_TYPE);
             final PrintWriter output = servletResponse.getWriter();
             if (success) {
                 output.print("yes\n");
-                output.print(localResponse.getUserName() + '\n');
+                output.print(response.getUserName() + '\n');
             } else {
                 output.print("no\n\n");
             }

@@ -45,6 +45,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 
@@ -83,10 +84,10 @@ public class AddLogoutRequest extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext,LogoutPropagationContext> logoutPropContextLookupStrategy;
     
     /** The generator to use. */
-    @Nullable private IdentifierGenerationStrategy idGenerator;
+    @NonnullBeforeExec private IdentifierGenerationStrategy idGenerator;
 
     /** The {@link SAML2SPSession} to base the inbound context on. */
-    @Nullable private SAML2SPSession saml2Session;
+    @NonnullBeforeExec private SAML2SPSession saml2Session;
 
     /** EntityID to populate into Issuer element. */
     @Nullable private String issuerId;
@@ -215,7 +216,6 @@ public class AddLogoutRequest extends AbstractProfileAction {
 
         final LogoutRequest object = requestBuilder.buildObject();
         
-        assert idGenerator!=null;
         object.setID(idGenerator.generateIdentifier());
         object.setIssueInstant(Instant.now());
         object.setVersion(SAMLVersion.VERSION_20);

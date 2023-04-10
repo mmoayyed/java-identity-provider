@@ -21,7 +21,6 @@ import java.time.Duration;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventException;
@@ -36,6 +35,7 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -65,10 +65,10 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
     @Nonnull private final Duration sessionLifetime;
 
     /** Ticket. */
-    @Nullable private Ticket ticket;
+    @NonnullBeforeExec private Ticket ticket;
     
     /** CAS service. */
-    @Nullable private Service service;
+    @NonnullBeforeExec private Service service;
 
     /**
      * Constructor.
@@ -107,12 +107,10 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         IdPSession session = null;
-        final Ticket tckt = ticket;
-        assert tckt != null;
         try {
-            log.debug("{} Attempting to retrieve session {}", getLogPrefix(), tckt.getSessionId());
+            log.debug("{} Attempting to retrieve session {}", getLogPrefix(), ticket.getSessionId());
             session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(
-                    Constraint.isNotNull(tckt.getSessionId(), "Null Session Id"))));
+                    Constraint.isNotNull(ticket.getSessionId(), "Null Session Id"))));
         } catch (final ResolverException e) {
             log.warn("{} Possible sign of misconfiguration, IdPSession resolution error: {}", getLogPrefix(), e);
         }
@@ -122,10 +120,10 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
             final Instant expiration = now.plus(sessionLifetime); 
             assert expiration != null;
             final SPSession sps = new CASSPSession(
-                    tckt.getService(),
+                    ticket.getService(),
                     now,
                     expiration,
-                    tckt.getId());
+                    ticket.getId());
             log.debug("{} Created SP session {}", getLogPrefix(), sps);
             try {
                 session.addSPSession(sps);

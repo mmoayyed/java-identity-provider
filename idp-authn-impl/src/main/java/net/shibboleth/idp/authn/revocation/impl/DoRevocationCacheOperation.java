@@ -22,7 +22,6 @@ import java.time.Duration;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -41,11 +40,13 @@ import com.google.common.base.Strings;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.xml.DOMTypeSupport;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -87,16 +88,15 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
     @NonnullAfterInit private ObjectMapper objectMapper;
 
     /** Revocation Cache ID. */
-    @Nullable @NotEmpty private String cacheId;
-    
+    @NonnullBeforeExec @NotEmpty private String cacheId;
+
     /** Revocation context to operate on. */
-    @Nullable @NotEmpty private String context;
-    
+    @NonnullBeforeExec @NotEmpty private String context;
     /** Revocation key to operate on. */
-    @Nullable @NotEmpty private String key;
+    @NonnullBeforeExec @NotEmpty private String key;
 
     /** {@link RevocationCache} to operate on. */
-    @Nullable private RevocationCache revocationCache;
+    @NonnullBeforeExec private RevocationCache revocationCache;
 
     /**
      * Set the JSON {@link ObjectMapper} to use for serialization.
@@ -107,6 +107,38 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
         checkSetterPreconditions();
         
         objectMapper = Constraint.isNotNull(mapper, "ObjectMapper cannot be null");
+    }
+
+    /** Null safe getter.
+     * @return Returns the revocationCache.
+     */
+    @Nonnull private RevocationCache getRevocationCache() {
+        assert isPreExecuteCalled();
+        return revocationCache;
+    }
+
+    /** Null safe getter.
+     * @return Returns the cacheId.
+     */
+    @Nonnull private String getCacheId() {
+        assert isPreExecuteCalled();
+        return cacheId;
+    }
+
+    /** Null safe getter.
+     * @return Returns the key.
+     */
+    @Nonnull private String getKey() {
+        assert isPreExecuteCalled();
+        return key;
+    }
+
+    /** Null safe getter.
+     * @return Returns the context.
+     */
+    @Nonnull private String getContext() {
+        assert isPreExecuteCalled();
+        return context;
     }
 
     /** {@inheritDoc} */
@@ -151,19 +183,18 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
             }
             
             
-            cacheId = getParameter(requestContext, CACHE_ID);
+            final String cId = cacheId = getParameter(requestContext, CACHE_ID);
             context = getParameter(requestContext, CONTEXT);
             key = getParameter(requestContext, KEY);
             
-            if (Strings.isNullOrEmpty(cacheId) || Strings.isNullOrEmpty(context) || Strings.isNullOrEmpty(key)) {
+            if (Strings.isNullOrEmpty(cId) || Strings.isNullOrEmpty(context) || Strings.isNullOrEmpty(key)) {
                 sendError(HttpServletResponse.SC_NOT_FOUND,
                         "Missing revocation cache ID, context, or key",
                         "No revocation cache ID, context, key specified.");
                 return false;
             }
 
-            assert cacheId != null;
-            revocationCache = getBean(requestContext, cacheId, RevocationCache.class);
+            revocationCache = getBean(requestContext, cId, RevocationCache.class);
             if (revocationCache == null) {
                 sendError(HttpServletResponse.SC_NOT_FOUND,
                         "Invalid Revocation Cache", "Invalid revocation cache identifier in path.");
@@ -232,7 +263,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
                     g.writeStartObject();
                     g.writeObjectFieldStart("data");
                     g.writeStringField("type", "revocation-records");
-                    g.writeStringField("id", cacheId + '/' + context + '/' + key);
+                    g.writeStringField("id", getCacheId()  + '/' + context + '/' + key);
                     g.writeObjectFieldStart("attributes");
                     g.writeStringField("revocation", revocation);
                 }
@@ -281,11 +312,9 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
         
         final boolean result;
         if (durationSeconds != null) {
-            assert revocationCache!=null && context!=null && key!=null;
-            result = revocationCache.revoke(context, key, value, durationSeconds);
+            result = getRevocationCache().revoke(getContext(), getKey(), value, durationSeconds);
         } else {
-            assert revocationCache!=null && context!=null && key!=null;
-            result = revocationCache.revoke(context, key, value);
+            result = getRevocationCache().revoke(getContext(), getKey(), value);
         }
         
         if (result) {
@@ -304,8 +333,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
     private void doDelete() throws IOException {
         final HttpServletResponse response = getHttpServletResponse();
         assert response != null;
-        assert revocationCache!=null && context!=null && key!=null;
-        if (revocationCache.unrevoke(context, key)) {
+        if (getRevocationCache().unrevoke(getContext(), getKey())) {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
