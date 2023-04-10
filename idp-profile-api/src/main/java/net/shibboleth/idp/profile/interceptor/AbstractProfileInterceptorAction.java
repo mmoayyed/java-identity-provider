@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -52,7 +53,7 @@ public abstract class AbstractProfileInterceptorAction extends
     @Nonnull private Function<ProfileRequestContext, ProfileInterceptorContext> interceptorContextlookupStrategy;
 
     /** The {@link ProfileInterceptorContext} to operate on. */
-    @Nullable private ProfileInterceptorContext profileInterceptorContext;
+    @NonnullBeforeExec private ProfileInterceptorContext profileInterceptorContext;
 
     /** Constructor. */
     public AbstractProfileInterceptorAction() {
@@ -68,18 +69,26 @@ public abstract class AbstractProfileInterceptorAction extends
         checkSetterPreconditions();
         interceptorContextlookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
     }
+    
+    /** null safe getter.
+     * @return Returns the profileInterceptorContext.
+     */
+    @SuppressWarnings("null")
+    @Nonnull private ProfileInterceptorContext getProfileInterceptorContext() {
+        assert isPreExecuteCalled();
+        return profileInterceptorContext;
+    }
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        profileInterceptorContext = interceptorContextlookupStrategy.apply(profileRequestContext);
-        if (profileInterceptorContext == null) {
+        final ProfileInterceptorContext pic = profileInterceptorContext = interceptorContextlookupStrategy.apply(profileRequestContext);
+        if (pic  == null) {
             log.error("{} Unable to create or locate profile interceptor context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
 
-        assert profileInterceptorContext != null;
-        return doPreExecute(profileRequestContext, profileInterceptorContext)
+        return doPreExecute(profileRequestContext, pic )
                 && super.doPreExecute(profileRequestContext);
     }
 
@@ -99,8 +108,7 @@ public abstract class AbstractProfileInterceptorAction extends
 
     /** {@inheritDoc} */
     @Override protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        assert profileInterceptorContext != null;
-        doExecute(profileRequestContext, profileInterceptorContext);
+        doExecute(profileRequestContext, getProfileInterceptorContext());
     }
 
     /**

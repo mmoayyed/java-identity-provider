@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -36,6 +35,7 @@ import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.profile.relyingparty.VerifiedProfileCriterion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -72,7 +72,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
 
     /** The {@link RelyingPartyContext} to manipulate. */
-    @Nullable private RelyingPartyContext relyingPartyCtx;
+    @NonnullBeforeExec private RelyingPartyContext relyingPartyCtx;
     
     /** Constructor. */
     public SelectRelyingPartyConfiguration() {
@@ -104,6 +104,15 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
         
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
+    }
+    
+    /** Null safe getter.
+     * @return Returns the relyingPartyCtx.
+     */
+    @SuppressWarnings("null")
+    @Nonnull private RelyingPartyContext getRelyingPartyCtx() {
+        assert isPreExecuteCalled();
+        return relyingPartyCtx;
     }
 
     /** {@inheritDoc} */
@@ -137,17 +146,15 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
     @Override
     public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final RelyingPartyContext rpCtx = relyingPartyCtx;
-        assert rpCtx != null;
         try (final ServiceableComponent<RelyingPartyConfigurationResolver> resolver =
                 rpConfigResolver.getServiceableComponent()) {
             
             final RelyingPartyConfiguration config;
             final CriteriaSet criteria = new CriteriaSet();
-            if (rpCtx.isVerified()) {
+            if (getRelyingPartyCtx().isVerified()) {
                 criteria.add(new VerifiedProfileCriterion(true));
             }
-            if (rpCtx.getParent() == profileRequestContext) {
+            if (getRelyingPartyCtx().getParent() == profileRequestContext) {
                 // Works as is.
                 criteria.add(new ProfileRequestContextCriterion(profileRequestContext));
                 config = resolver.getComponent().resolveSingle(criteria);
@@ -156,12 +163,12 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
                 // TODO: I think this *may* be moot now with the addition of the
                 // explicit VerifiedProfileCriterion.
                 final ProfileRequestContext newPRC = new ProfileRequestContext();
-                final BaseContext originalParent = rpCtx.getParent();
-                newPRC.addSubcontext(rpCtx);
+                final BaseContext originalParent = getRelyingPartyCtx().getParent();
+                newPRC.addSubcontext(getRelyingPartyCtx());
                 criteria.add(new ProfileRequestContextCriterion(newPRC));
                 config = resolver.getComponent().resolveSingle(criteria);
                 if (originalParent != null) {
-                    originalParent.addSubcontext(rpCtx);
+                    originalParent.addSubcontext(getRelyingPartyCtx());
                 }
             }
             
@@ -172,7 +179,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
             }
 
             log.debug("{} Found relying party configuration {} for request", getLogPrefix(), config.getId());
-            rpCtx.setConfiguration(config);
+            getRelyingPartyCtx().setConfiguration(config);
         } catch (final ResolverException e) {
             log.error("{} Error trying to resolve relying party configuration", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);

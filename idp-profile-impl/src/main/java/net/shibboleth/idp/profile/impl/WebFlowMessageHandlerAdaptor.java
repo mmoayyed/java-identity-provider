@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.ParameterName;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -79,7 +80,7 @@ public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
     @Nullable private Function<ProfileRequestContext,MessageHandler> handlerLookupStrategy;
     
     /** The message handler being adapted. */
-    @Nullable private MessageHandler handler;
+    @NonnullBeforeExec private MessageHandler handler;
     
     /** The direction of execution for this action instance. */
     private final Direction direction;
@@ -170,19 +171,17 @@ public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
 //CheckStyle: ReturnCount OFF
     @Override public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
-        final MessageHandler msgHandler = handler;
-        assert msgHandler != null;
-        MessageContext target = null;
+        final MessageContext target;
         switch (direction) {
             case INBOUND:
                 target = profileRequestContext.getInboundMessageContext();
                 log.debug("{} Invoking message handler of type '{}' on INBOUND message context", getLogPrefix(), 
-                        msgHandler.getClass().getName());
+                        handler.getClass().getName());
                 break;
             case OUTBOUND:
                 target = profileRequestContext.getOutboundMessageContext();
                 log.debug("{} Invoking message handler of type '{}' on OUTBOUND message context", getLogPrefix(), 
-                        msgHandler.getClass().getName());
+                        handler.getClass().getName());
                 break;
             default:
                 log.warn("{} Specified direction '{}' was unknown, skipping handler invocation", getLogPrefix(),
@@ -203,7 +202,7 @@ public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
         }
         
         try {
-            msgHandler.invoke(target);
+            handler.invoke(target);
         } catch (final MessageHandlerException e) {
             log.warn("{} Exception handling message", getLogPrefix(), e);
             if (errorEvent != null) {

@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -30,6 +29,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -53,7 +53,7 @@ public class PopulateSubjectContext extends AbstractProfileAction {
     @NonnullAfterInit private Function<ProfileRequestContext,String> principalNameLookupStrategy;
     
     /** The principal name extracted from the context tree. */
-    @Nullable private String principalName;
+    @NonnullBeforeExec private String principalName;
     
     /**
      * Set lookup strategy for the principal name to use.

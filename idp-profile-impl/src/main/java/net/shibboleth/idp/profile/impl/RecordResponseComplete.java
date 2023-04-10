@@ -18,7 +18,6 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -29,6 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -53,7 +53,7 @@ public class RecordResponseComplete extends AbstractProfileAction {
     @Nonnull private Logger log = LoggerFactory.getLogger(RecordResponseComplete.class);
 
     /** ExternalContext to operate on. */
-    @Nullable private ExternalContext externalContext;
+    @NonnullBeforeExec private ExternalContext externalContext;
     
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -85,11 +85,9 @@ public class RecordResponseComplete extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final ExternalContext ec = externalContext;
-        assert ec != null;
-        if (!ec.isResponseComplete()) {
+        if (!externalContext.isResponseComplete()) {
             log.debug("{} Record response complete", getLogPrefix());
-            ec.recordResponseComplete();
+            externalContext.recordResponseComplete();
         }
     }
     

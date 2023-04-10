@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.profile.context.AuditContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
@@ -90,7 +91,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
     private boolean clearAuditContext;
     
     /** {@link AuditContext} to populate. */
-    @Nullable private AuditContext auditCtx;
+    @NonnullBeforeExec  private AuditContext auditCtx;
     
     /** Constructor. */
     @SuppressWarnings("null")
@@ -238,7 +239,6 @@ public class PopulateAuditContext extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (clearAuditContext) {
-            assert auditCtx != null;
             auditCtx.getFields().clear();
         }
         
@@ -277,18 +277,17 @@ public class PopulateAuditContext extends AbstractProfileAction {
      */
     private void addField(@Nonnull @NotEmpty final String key, @Nullable final Object value) {
         
-        final AuditContext ctx = auditCtx;
-        assert ctx != null;
+        assert isPreExecuteCalled();
         if (value != null) {
             if (value instanceof TemporalAccessor) {
-                ctx.getFieldValues(key).add(dateTimeFormatter.format((TemporalAccessor) value));
+                auditCtx.getFieldValues(key).add(dateTimeFormatter.format((TemporalAccessor) value));
             } else {
                 String s = value.toString();
                 if (fieldReplacements.containsKey(s)) {
                     s = fieldReplacements.get(s);
                 }
                 if (s != null) {
-                    ctx.getFieldValues(key).add(s);
+                    auditCtx.getFieldValues(key).add(s);
                 }
             }
         }

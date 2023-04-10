@@ -32,6 +32,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.IdentifiedComponent;
 import net.shibboleth.shared.logic.Constraint;
@@ -67,7 +68,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext,ReloadableService<?>> serviceLookupStrategy;
     
     /** The service to reload. */
-    @Nullable private ReloadableService<?> service;
+    @NonnullBeforeExec private ReloadableService<?> service;
     
     /** Constructor. */
     public ReloadServiceConfiguration() {
@@ -126,7 +127,6 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
         assert response != null;
 
         try {
-            assert service != null;
             service.reload();
             log.debug("{} Reloaded configuration for '{}'", getLogPrefix(), id);
             response.setStatus(HttpServletResponse.SC_OK);
