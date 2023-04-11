@@ -18,16 +18,16 @@
 package net.shibboleth.idp.saml.profile.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -49,7 +49,7 @@ public class FinalizeSAMLSubjectCanonicalization extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(FinalizeSAMLSubjectCanonicalization.class);
     
     /** The principal name extracted from the context tree. */
-    @Nullable private String canonicalPrincipalName;
+    @NonnullBeforeExec private String canonicalPrincipalName;
     
     /** {@inheritDoc} */
     @Override

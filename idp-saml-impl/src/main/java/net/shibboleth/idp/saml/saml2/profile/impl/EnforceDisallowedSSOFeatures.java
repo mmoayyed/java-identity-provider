@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
@@ -32,13 +31,14 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that processes a SAML 2 {@link AuthnRequest} and blocks the use of any "simple"
@@ -60,12 +60,14 @@ public class EnforceDisallowedSSOFeatures extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext,AuthnRequest> authnRequestLookupStrategy;
     
     /** The request message to read from. */
-    @Nullable private AuthnRequest authnRequest;
+    @NonnullBeforeExec private AuthnRequest authnRequest;
     
     /** Constructor. */
     public EnforceDisallowedSSOFeatures() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-        authnRequestLookupStrategy = new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
+        final Function<ProfileRequestContext,AuthnRequest> arls = new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
+        assert arls!=null;
+        authnRequestLookupStrategy = arls;
     }
 
     /**
@@ -125,9 +127,7 @@ public class EnforceDisallowedSSOFeatures extends AbstractProfileAction {
         }
         
         @Nonnull final BrowserSSOProfileConfiguration profileConfiguration = (BrowserSSOProfileConfiguration) pc;
-        final AuthnRequest localAuthnRequest = this.authnRequest;
-        assert localAuthnRequest!= null;
-        final Boolean forceAuthn = localAuthnRequest.isForceAuthn();
+        final Boolean forceAuthn = authnRequest.isForceAuthn();
         if (forceAuthn != null && forceAuthn &&
                 profileConfiguration.isFeatureDisallowed(profileRequestContext,
                         BrowserSSOProfileConfiguration.FEATURE_FORCEAUTHN)) {
@@ -136,7 +136,7 @@ public class EnforceDisallowedSSOFeatures extends AbstractProfileAction {
             return;
         }
         
-        final NameIDPolicy nidPolicy = localAuthnRequest.getNameIDPolicy();
+        final NameIDPolicy nidPolicy = authnRequest.getNameIDPolicy();
         if (nidPolicy != null) {
             if (nidPolicy.getFormat() != null &&
                     profileConfiguration.isFeatureDisallowed(profileRequestContext,

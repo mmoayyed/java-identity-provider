@@ -48,7 +48,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.DatabaseTestingSupport;
 
 /** Test for {@link StoredPersistentIdDecoder}. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
 
     private DataSource testSource;

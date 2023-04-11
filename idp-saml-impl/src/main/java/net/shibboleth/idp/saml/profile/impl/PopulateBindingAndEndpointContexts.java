@@ -61,6 +61,7 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -126,7 +127,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     @Nullable private Function<ProfileRequestContext,BestMatchLocationCriterion> bestMatchCriterionLookupStrategy;
     
     /** List of possible bindings, in preference order. */
-    @Nullable @NonnullElements private List<BindingDescriptor> bindingDescriptors;
+    @NonnullBeforeExec @NonnullElements private List<BindingDescriptor> bindingDescriptors;
     
     /** Whether an artifact-based binding implies the use of a secure channel. */
     private boolean artifactImpliesSecureChannel;
@@ -159,25 +160,32 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
-        metadataContextLookupStrategy =
+        final Function<ProfileRequestContext,SAMLMetadataContext> mcls =
                 new ChildContextLookup<>(SAMLMetadataContext.class).compose(
                         new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
                                 new OutboundMessageContextLookup()));
-        
+        assert mcls != null;
+        metadataContextLookupStrategy = mcls;
+
         // Default: outbound msg context -> SAMLBindingContext
-        bindingContextLookupStrategy =
+        final Function<ProfileRequestContext,SAMLBindingContext> bcs =
                 new ChildContextLookup<>(SAMLBindingContext.class, true).compose(new OutboundMessageContextLookup());
+        assert bcs != null;
+        bindingContextLookupStrategy = bcs;
 
         // Default: outbound msg context -> SAMLArtifactContext
-        artifactContextLookupStrategy =
+        final Function<ProfileRequestContext,SAMLArtifactContext> acs =
                 new ChildContextLookup<>(SAMLArtifactContext.class, true).compose(new OutboundMessageContextLookup());
+        assert acs != null;
+        artifactContextLookupStrategy = acs;
         
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLEndpointContext
-        endpointContextLookupStrategy =
+        final Function<ProfileRequestContext,SAMLEndpointContext> ecls = 
                 new ChildContextLookup<>(SAMLEndpointContext.class, true).compose(
                         new ChildContextLookup<>(SAMLPeerEntityContext.class, true).compose(
                                 new OutboundMessageContextLookup()));
-        
+        assert ecls != null;
+        endpointContextLookupStrategy = ecls;
         artifactImpliesSecureChannel = true;
     }
     
@@ -394,11 +402,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         log.debug("{} Attempting to resolve endpoint of type {} for outbound message", getLogPrefix(), endpointType);
 
-        // Compile binding list.  binding descriptors were checked for being non null in pre
-        final List<BindingDescriptor> bds = bindingDescriptors;
-        assert bds != null; 
-        @Nonnull final List<String> bindings = new ArrayList<>(bds.size());
-        for (final BindingDescriptor bindingDescriptor : bds) {
+        @Nonnull final List<String> bindings = new ArrayList<>(bindingDescriptors.size());
+        for (final BindingDescriptor bindingDescriptor : bindingDescriptors) {
             if (bindingDescriptor.test(profileRequestContext)) {
                 bindings.add(bindingDescriptor.getId());
             }
@@ -412,8 +417,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         log.trace("{} Candidate outbound bindings: {}", getLogPrefix(), bindings);
         
         // Build criteria for the resolver.
+        final String firstBinding = bindings.get(0);
+        assert firstBinding!=null;
         final CriteriaSet criteria = new CriteriaSet(new BindingCriterion(bindings),
-                buildEndpointCriterion(bindings.get(0)));
+                buildEndpointCriterion(firstBinding));
         
         if (bestMatchCriterionLookupStrategy != null) {
             final BestMatchLocationCriterion bestMatch = bestMatchCriterionLookupStrategy.apply(profileRequestContext);
@@ -465,7 +472,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(imc));
         
         final Optional<BindingDescriptor> bindingDescriptor =
-                bds.stream().filter(b -> b.getId().equals(bindingURI)).findFirst();
+                bindingDescriptors.stream().filter(b -> b.getId().equals(bindingURI)).findFirst();
 
         if (bindingDescriptor.isPresent()) {
             bindingCtx.setBindingDescriptor(bindingDescriptor.orElseThrow());

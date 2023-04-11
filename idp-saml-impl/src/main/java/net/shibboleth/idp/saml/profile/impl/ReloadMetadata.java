@@ -38,6 +38,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -71,7 +72,7 @@ public class ReloadMetadata extends AbstractProfileAction {
     @NonnullAfterInit private ReloadableService<MetadataResolver> metadataResolverService;
     
     /** Identifies bean to refresh. */
-    @Nullable private String id;
+    @NonnullBeforeExec private String id;
 
     /**
      * Set the service that describes the metadata.

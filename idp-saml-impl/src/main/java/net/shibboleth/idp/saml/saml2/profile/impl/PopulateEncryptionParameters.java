@@ -130,13 +130,17 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         
         // Create context by default.
-        encryptionContextLookupStrategy =
+        final Function<ProfileRequestContext,EncryptionContext> ecls =
                 new ChildContextLookup<>(EncryptionContext.class, true).compose(
                         new ChildContextLookup<>(RelyingPartyContext.class));
+        assert ecls != null;
+        encryptionContextLookupStrategy = ecls;
 
         // Default: outbound msg context -> SAMLPeerEntityContext
-        peerContextLookupStrategy =
+        final Function<ProfileRequestContext,SAMLPeerEntityContext> pcls =
                 new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(new OutboundMessageContextLookup());
+        assert pcls != null;
+        peerContextLookupStrategy = pcls;
     }
     
     /**

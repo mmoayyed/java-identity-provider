@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
@@ -32,13 +31,14 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Action that adds an outbound {@link MessageContext} and related SAML contexts to the {@link ProfileRequestContext}
@@ -66,7 +66,7 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext, String> selfIdentityLookupStrategy;
 
     /** The {@link SAMLPeerEntityContext} to base the outbound context on. */
-    @Nullable private SAMLPeerEntityContext peerEntityCtx;
+    @NonnullBeforeExec private SAMLPeerEntityContext peerEntityCtx;
 
     /** Constructor. */
     public InitializeOutboundMessageContext() {
@@ -132,11 +132,9 @@ public class InitializeOutboundMessageContext extends AbstractProfileAction {
         selfContext.setEntityId(selfIdentityLookupStrategy.apply(profileRequestContext));
 
         final SAMLPeerEntityContext peerContext = msgCtx.ensureSubcontext(SAMLPeerEntityContext.class);
-        final SAMLPeerEntityContext pec = peerEntityCtx;
-        assert pec!=null;
-        peerContext.setEntityId(pec.getEntityId());
+        peerContext.setEntityId(peerEntityCtx.getEntityId());
 
-        final SAMLMetadataContext inboundMetadataCtx = pec.getSubcontext(SAMLMetadataContext.class);
+        final SAMLMetadataContext inboundMetadataCtx = peerEntityCtx.getSubcontext(SAMLMetadataContext.class);
         if (inboundMetadataCtx != null) {
             final SAMLMetadataContext outboundMetadataCtx = peerContext.ensureSubcontext(SAMLMetadataContext.class);
             outboundMetadataCtx.setEntityDescriptor(inboundMetadataCtx.getEntityDescriptor());

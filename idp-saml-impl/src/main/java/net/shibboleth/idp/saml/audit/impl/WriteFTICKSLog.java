@@ -83,12 +83,17 @@ public class WriteFTICKSLog extends AbstractProfileAction {
     public WriteFTICKSLog() {
         relyingPartyLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new IssuerLookupFunction();
-        usernameLookupStrategy = new SubjectContextPrincipalLookupFunction().compose(
+        final Function<ProfileRequestContext,String>  unls = new SubjectContextPrincipalLookupFunction().compose(
                 new ChildContextLookup<>(SubjectContext.class));
-        authenticationMethodLookupStrategy = new AuthnContextAuditExtractor(
-                new MessageLookup<>(SAMLObject.class).compose(new OutboundMessageContextLookup()));
-        statusCodeLookupStrategy = new StatusCodeAuditExtractor(
-                new MessageLookup<>(SAMLObject.class).compose(new OutboundMessageContextLookup()));
+        assert unls != null;
+        usernameLookupStrategy = unls;
+        
+        Function<ProfileRequestContext, SAMLObject> para = new MessageLookup<>(SAMLObject.class).compose(new OutboundMessageContextLookup());
+        assert para != null;
+        authenticationMethodLookupStrategy = new AuthnContextAuditExtractor(para);
+        para = new MessageLookup<>(SAMLObject.class).compose(new OutboundMessageContextLookup());
+        assert para != null;
+        statusCodeLookupStrategy = new StatusCodeAuditExtractor(para);
     }
     
     /**

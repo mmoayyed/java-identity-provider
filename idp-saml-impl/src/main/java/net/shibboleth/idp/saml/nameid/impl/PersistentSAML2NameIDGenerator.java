@@ -86,9 +86,11 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
     public PersistentSAML2NameIDGenerator() {
         setFormat(NameID.PERSISTENT);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
-        attributeContextLookupStrategy =
+        final Function<ProfileRequestContext, AttributeContext> acls =
                 new ChildContextLookup<>(AttributeContext.class).compose(
                         new ChildContextLookup<>(RelyingPartyContext.class));
+        assert acls != null;
+        attributeContextLookupStrategy = acls;
         attributeSourceIds = CollectionSupport.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new IssuerLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());

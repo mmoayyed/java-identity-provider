@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -29,7 +28,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -44,10 +42,12 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.service.ReloadableService;
 
@@ -94,21 +94,22 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
     @NonnullAfterInit private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
     
     /** AttributeContext to use. */
-    @Nullable private AttributeContext attributeCtx;
+    @NonnullBeforeExec private AttributeContext attributeCtx;
 
     /** The generator to use. */
-    @Nullable private IdentifierGenerationStrategy idGenerator;
+    @NonnullBeforeExec private IdentifierGenerationStrategy idGenerator;
 
     /** EntityID to populate as assertion issuer. */
-    @Nullable private String issuerId;
+    @NonnullBeforeExec @NotEmpty private String issuerId;
     
     /** Constructor. */
     public BaseAddAttributeStatementToAssertion() {
         statementInOwnAssertion = false;
         ignoringUnencodableAttributes = true;
-
-        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+        final Function<ProfileRequestContext,AttributeContext> acls = new ChildContextLookup<>(AttributeContext.class).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
+        assert acls !=null;
+        attributeContextLookupStrategy = acls; 
         idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
         issuerLookupStrategy = new IssuerLookupFunction();
     }
@@ -222,6 +223,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @return the context to encode
      */
     @Nonnull public AttributeContext getAttributeContext() {
+        assert isPreExecuteCalled();
         return Constraint.isNotNull(attributeCtx, "AttributeContext has not been initialized yet");
     }
 
@@ -231,6 +233,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      * @return the ID generation strategy
      */
     @Nonnull public IdentifierGenerationStrategy getIdGenerator() {
+        assert isPreExecuteCalled();
         return Constraint.isNotNull(idGenerator, "IdentifierGenerationStrategy has not been initialized yet");
     }
 
@@ -239,8 +242,10 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      *
      * @return the issuer name
      */
+    @SuppressWarnings("null")
     @Nonnull @NotEmpty public String getIssuerId() {
-        return Constraint.isNotNull(issuerId, "Issuer name has not been initialized yet");
+        assert isPreExecuteCalled();
+        return issuerId;
     }
 
     /** {@inheritDoc} */
@@ -270,7 +275,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
         }
         
         issuerId = issuerLookupStrategy.apply(profileRequestContext);
-        if (issuerId == null) {
+        if (issuerId == null || issuerId.isEmpty()) {
             log.debug("{} No assertion issuer value", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;

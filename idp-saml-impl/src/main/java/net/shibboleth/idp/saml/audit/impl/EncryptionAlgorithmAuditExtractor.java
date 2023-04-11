@@ -38,9 +38,11 @@ public class EncryptionAlgorithmAuditExtractor implements Function<ProfileReques
     
     /** Constructor. */
     public EncryptionAlgorithmAuditExtractor() {
-        encryptionContextLookupStrategy =
+        final Function<ProfileRequestContext,EncryptionContext> ecls = 
                 new ChildContextLookup<>(EncryptionContext.class).compose(
                         new ChildContextLookup<>(RelyingPartyContext.class));
+        assert ecls != null;
+        encryptionContextLookupStrategy = ecls;
     }
 
     /**

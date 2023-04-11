@@ -87,12 +87,18 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
     /** Constructor. */
     public SAMLAuthnController() {
         // PRC -> AC -> nested PRC
-        profileRequestContextLookupStrategy = new ChildContextLookup<>(ProfileRequestContext.class).compose(
-                new ChildContextLookup<>(AuthenticationContext.class));
+        final Function<ProfileRequestContext,ProfileRequestContext> prcls =
+                new ChildContextLookup<>(ProfileRequestContext.class).compose(
+                        new ChildContextLookup<>(AuthenticationContext.class));
+        assert prcls!= null;
+        profileRequestContextLookupStrategy = prcls;
         
         // PRC -> AC -> SAMLAuthnContext
-        samlContextLookupStrategy = new ChildContextLookup<>(SAMLAuthnContext.class).compose(
-                new ChildContextLookup<>(AuthenticationContext.class));
+        final Function<ProfileRequestContext,SAMLAuthnContext>  scls =
+                new ChildContextLookup<>(SAMLAuthnContext.class).compose(
+                        new ChildContextLookup<>(AuthenticationContext.class));
+        assert scls!=null;
+        samlContextLookupStrategy = scls;
         
         bindingMap = CollectionSupport.emptyMap();
     }

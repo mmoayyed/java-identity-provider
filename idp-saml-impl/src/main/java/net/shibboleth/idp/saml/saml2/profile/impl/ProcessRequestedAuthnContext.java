@@ -88,7 +88,10 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     /** Constructor. */
     public ProcessRequestedAuthnContext() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-        authnRequestLookupStrategy = new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
+        final Function<ProfileRequestContext,AuthnRequest> arls =
+                new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
+        assert arls != null;
+        authnRequestLookupStrategy = arls;
         ignoredContexts = CollectionSupport.singleton(AuthnContext.UNSPECIFIED_AUTHN_CTX);
     }
 

@@ -68,12 +68,17 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractMessageHa
     
     /** Constructor. */
     public InitializeRelyingPartyContextFromSAMLPeer() {
-        relyingPartyContextCreationStrategy =
+        final Function<MessageContext,RelyingPartyContext> rpccs =
                 new ChildContextLookup<>(RelyingPartyContext.class, true).compose(
                         new RecursiveTypedParentContextLookup<>(InOutOperationContext.class));
-        peerEntityContextLookupStrategy =
+        assert rpccs != null;
+        relyingPartyContextCreationStrategy = rpccs;
+        final Function<MessageContext,SAMLPeerEntityContext> pecls = 
                 new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
                         new RecursiveTypedParentContextLookup<>(InOutOperationContext.class));
+        assert pecls != null;
+        peerEntityContextLookupStrategy = pecls;
+                
     }
 
     /**

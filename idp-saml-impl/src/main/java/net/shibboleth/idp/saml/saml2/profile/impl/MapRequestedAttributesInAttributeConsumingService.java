@@ -20,14 +20,6 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.shibboleth.idp.attribute.AttributesMapContainer;
-import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.saml.attribute.impl.AttributeMappingNodeProcessor;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.service.ReloadableService;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -40,7 +32,15 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.slf4j.Logger;
+
+import net.shibboleth.idp.attribute.AttributesMapContainer;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.saml.attribute.impl.AttributeMappingNodeProcessor;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.service.ReloadableService;
 
 /**
  * Action that ensures that the attributes in the ACS (if any) are mapped.
@@ -56,7 +56,7 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
         attributeConsumingServiceContextLookupStrategy;
 
     /** The registry of decoding rules. */
-    @Nullable private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
+    @NonnullBeforeExec private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
 
     /** The context we use to get and put the {@link AttributeConsumingService}.*/
     private AttributeConsumingServiceContext acsContext;
@@ -66,11 +66,13 @@ public class MapRequestedAttributesInAttributeConsumingService extends AbstractP
      */
     public MapRequestedAttributesInAttributeConsumingService() {
         // At this point, by default  the SAMLMetadataContext hangs off the SAMLPeerContext
-        attributeConsumingServiceContextLookupStrategy =
+        final Function<ProfileRequestContext, AttributeConsumingServiceContext> acscls = 
                 new ChildContextLookup<>(AttributeConsumingServiceContext.class).compose(
                         new ChildContextLookup<>(SAMLMetadataContext.class).compose(
                                 new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
                                         new InboundMessageContextLookup())));
+        assert acscls != null;
+        attributeConsumingServiceContextLookupStrategy = acscls;
     }
 
     /**

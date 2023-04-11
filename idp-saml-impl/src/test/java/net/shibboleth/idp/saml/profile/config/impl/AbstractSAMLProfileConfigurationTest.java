@@ -20,8 +20,6 @@ package net.shibboleth.idp.saml.profile.config.impl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.saml.profile.config.impl.AbstractSAMLProfileConfiguration;
-
 /** Unit test for {@link AbstractSAMLProfileConfiguration}. */
 @SuppressWarnings("javadoc")
 public class AbstractSAMLProfileConfigurationTest {

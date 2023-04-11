@@ -40,7 +40,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link TransientSAML1NameIdentifierGenerator} using crypto-based generator. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class CryptoTransientSAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     private static final Duration TIMEOUT = Duration.ofMillis(500);

@@ -88,9 +88,12 @@ public class PreProcessLogoutMessage extends AbstractProfileAction {
     
     /** Constructor. */
     public PreProcessLogoutMessage() {
-        metadataContextLookupStrategy = new InboundMessageContextLookup().andThen(
-                new ChildContextLookup<>(SAMLPeerEntityContext.class).andThen(
-                        new ChildContextLookup<>(SAMLMetadataContext.class)));
+        final Function<ProfileRequestContext,SAMLMetadataContext> mcls =
+                new InboundMessageContextLookup().andThen(
+                        new ChildContextLookup<>(SAMLPeerEntityContext.class).andThen(
+                                new ChildContextLookup<>(SAMLMetadataContext.class)));
+        assert mcls != null;
+        metadataContextLookupStrategy = mcls;
     }
 
     /**

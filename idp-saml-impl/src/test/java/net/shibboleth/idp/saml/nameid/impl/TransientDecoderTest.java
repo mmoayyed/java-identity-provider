@@ -39,7 +39,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link BaseTransientDecoder} unit test. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
 
     private static final String RECIPIENT="TheRecipient";

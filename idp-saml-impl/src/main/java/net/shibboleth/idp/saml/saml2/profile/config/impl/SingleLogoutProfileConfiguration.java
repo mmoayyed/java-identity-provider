@@ -69,7 +69,9 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
         setEncryptNameIDsPredicate(new NoConfidentialityMessageChannelPredicate());
 
         signSOAPRequestsPredicate = new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate();
-        clientTLSSOAPRequestsPredicate = new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate().negate();
+        final Predicate<MessageContext> cltsrp = new org.opensaml.messaging.logic.NoIntegrityMessageChannelPredicate().negate();
+        assert cltsrp!=null;
+        clientTLSSOAPRequestsPredicate = cltsrp;
         
         qualifiedNameIDFormatsLookupStrategy = FunctionSupport.constant(null);
     }

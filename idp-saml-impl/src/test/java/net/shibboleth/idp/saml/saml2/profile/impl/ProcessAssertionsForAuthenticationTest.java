@@ -57,7 +57,7 @@ import net.shibboleth.shared.testing.ConstantSupplier;
 /**
  * Unit test for {@link ProcessAssertionsForAuthentication} action.
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null", "unchecked"})
 public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTestCase {
     
     private ProcessAssertionsForAuthentication action;
@@ -75,7 +75,7 @@ public class ProcessAssertionsForAuthenticationTest extends OpenSAMLInitBaseTest
     
     @BeforeMethod
     public void beforeMethod() {
-        final MockHttpServletRequest req = httpRequest = new MockHttpServletRequest();
+        httpRequest = new MockHttpServletRequest();
         httpResponse = new MockHttpServletResponse();
         
         action = new ProcessAssertionsForAuthentication();

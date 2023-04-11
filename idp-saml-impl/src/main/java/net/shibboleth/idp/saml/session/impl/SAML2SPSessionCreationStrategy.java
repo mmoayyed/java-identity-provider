@@ -87,7 +87,10 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
     public SAML2SPSessionCreationStrategy(@Nonnull final Duration lifetime) {
         sessionLifetime = Constraint.isNotNull(lifetime, "Lifetime cannot be null");
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-        responseLookupStrategy = new MessageLookup<>(Response.class).compose(new OutboundMessageContextLookup());
+        final Function<ProfileRequestContext, Response> rls =
+                new MessageLookup<>(Response.class).compose(new OutboundMessageContextLookup());
+        assert rls!=null;
+        responseLookupStrategy = rls;
     }
 
     /**
@@ -130,7 +133,9 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         if (result == null) {
             log.info("Creating BasicSPSession in the absence of necessary information");
             final Instant now = Instant.now();
-            return new BasicSPSession(issuer, now, now.plus(sessionLifetime));
+            final Instant then = now.plus(sessionLifetime);
+            assert then != null;
+            return new BasicSPSession(issuer, now, then);
         }
         
         final Instant now = Instant.now();
@@ -173,8 +178,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         // Thse guarantees come from the getAssertionAndStatement method.
         final NameID nameID = subject.getNameID();
         final String index = second.getSessionIndex();
-        assert nameID != null;
-        assert index != null;
+        assert nameID != null && index != null && now != null && expiration != null;
         return new SAML2SPSession(issuer, now, expiration, nameID, index, acsLocation, supportLogoutPropagation);
     }
 // Checkstyle: CyclomaticComplexity ON

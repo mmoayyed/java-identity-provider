@@ -126,14 +126,18 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         setAuthenticationContextLookupStrategy(new ParentContextLookup<>(AuthenticationContext.class));
 
         // Root PRC -> RelyingPartyContext -> ID
-        requesterLookupStrategy = new RelyingPartyIdLookupFunction().compose(
+        final Function<ProfileRequestContext,String> rls = new RelyingPartyIdLookupFunction().compose(
                 new RootContextLookup<>(ProfileRequestContext.class));
+        assert rls!= null;
+        requesterLookupStrategy = rls;
         
         // Root PRC -> inbound context -> ProxiedRequesterContext
-        proxiedRequesterContextLookupStrategy =
+        final Function<ProfileRequestContext,ProxiedRequesterContext> prcls =
                 new ChildContextLookup<>(ProxiedRequesterContext.class).compose(
                         new InboundMessageContextLookup().compose(
                                 new RootContextLookup<>(ProfileRequestContext.class)));
+        assert prcls != null;
+        proxiedRequesterContextLookupStrategy = prcls;
     }
     
     /**
@@ -504,6 +508,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
             final RequestedAttributes reqExt = reqExtBuilder.buildObject();
             attrs.forEach(attr -> {
                 try {
+                    assert attr != null;
                     reqExt.getRequestedAttributes().add(XMLObjectSupport.cloneXMLObject(attr));
                 } catch (final MarshallingException|UnmarshallingException e) {
                     log.error("{} Error cloning RequestedAttribute from profile configuration", getLogPrefix(), e);

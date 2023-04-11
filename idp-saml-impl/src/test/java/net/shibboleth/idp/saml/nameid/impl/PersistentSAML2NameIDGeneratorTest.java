@@ -21,6 +21,19 @@ import java.util.Collections;
 
 import javax.sql.DataSource;
 
+import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDPolicy;
+import org.opensaml.saml.saml2.testing.SAML2ActionTestingSupport;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.PairwiseId;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -32,28 +45,14 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.testing.TestSources;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.shared.testing.DatabaseTestingSupport;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
-
-import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
-import org.opensaml.core.xml.util.XMLObjectSupport;
-import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.NameIDPolicy;
-import org.opensaml.saml.saml2.testing.SAML2ActionTestingSupport;
-import org.springframework.validation.MessageCodeFormatter;
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import net.shibboleth.shared.testing.DatabaseTestingSupport;
 
 /**
  * Test for {@link PersistentSAML2NameIDGenerator}.
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     /** Value calculated using V2 version. DO NOT CHANGE WITHOUT TESTING AGAINST 2.0 */

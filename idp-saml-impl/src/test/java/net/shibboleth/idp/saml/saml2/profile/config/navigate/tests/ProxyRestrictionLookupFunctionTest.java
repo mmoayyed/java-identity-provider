@@ -177,6 +177,7 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
         Assert.assertTrue(second.isEmpty());
     }
 
+    @SuppressWarnings("null")
     @Test
     public void testConfigOnly() {
         config.setProxyCount(5);

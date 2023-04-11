@@ -35,6 +35,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -64,7 +65,7 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
     @Nullable private Function<ProfileRequestContext,String> relyingPartyLookupStrategy;
     
     /** The relying party name to base the inbound context on. */
-    @Nullable private String relyingPartyId;
+    @NonnullBeforeExec private String relyingPartyId;
 
     /** Constructor. */
     public PrepareInboundMessageContext() {

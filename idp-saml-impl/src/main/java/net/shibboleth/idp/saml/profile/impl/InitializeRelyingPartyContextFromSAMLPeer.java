@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -29,11 +28,13 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
+
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Action that adds a {@link RelyingPartyContext} to the current {@link ProfileRequestContext} tree
@@ -65,13 +66,15 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
     @Nonnull private Function<ProfileRequestContext,SAMLPeerEntityContext> peerEntityContextLookupStrategy;
 
     /** SAML peer entity context to populate from. */
-    @Nullable private SAMLPeerEntityContext peerEntityCtx;
+    @NonnullBeforeExec private SAMLPeerEntityContext peerEntityCtx;
     
     /** Constructor. */
     public InitializeRelyingPartyContextFromSAMLPeer() {
         relyingPartyContextCreationStrategy = new ChildContextLookup<>(RelyingPartyContext.class, true);
-        peerEntityContextLookupStrategy =
+        final Function<ProfileRequestContext,SAMLPeerEntityContext> pecs =  
                 new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(new InboundMessageContextLookup());
+        assert pecs != null; 
+        peerEntityContextLookupStrategy = pecs;
     }
 
     /**
@@ -122,11 +125,9 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return;
         }
-        SAMLPeerEntityContext pec = peerEntityCtx;
-        assert pec!=null;
 
-        log.debug("{} Attaching RelyingPartyContext based on SAML peer {}", getLogPrefix(), pec.getEntityId());
-        rpContext.setRelyingPartyIdContextTree(pec);
+        log.debug("{} Attaching RelyingPartyContext based on SAML peer {}", getLogPrefix(), peerEntityCtx.getEntityId());
+        rpContext.setRelyingPartyIdContextTree(peerEntityCtx);
         rpContext.setRelyingPartyIdLookupStrategy(RPID_LOOKUP);
         rpContext.setVerificationLookupStrategy(VERIFY_LOOKUP);
     }

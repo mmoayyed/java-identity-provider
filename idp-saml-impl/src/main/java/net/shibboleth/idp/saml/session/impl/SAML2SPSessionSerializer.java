@@ -130,7 +130,9 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
             final XMLObject nameID =
                     XMLObjectSupport.unmarshallFromReader(parserPool, new StringReader(rawNameID.getString()));
             if (nameID instanceof NameID) {
-                return new SAML2SPSession(id, creation, expiration, (NameID) nameID, sessionIndex.getString(),
+                final String sessionIndexString = sessionIndex.getString();
+                assert sessionIndexString!= null;
+                return new SAML2SPSession(id, creation, expiration, (NameID) nameID, sessionIndexString,
                         acsLocation != null ? acsLocation.getString() : null, supportsLogoutProp);
             }
             throw new IOException("XMLObject stored in NameID field was not a NameID");

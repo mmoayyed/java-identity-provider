@@ -80,8 +80,10 @@ public class InitializeOutboundMessageContextForError extends AbstractProfileAct
     public InitializeOutboundMessageContextForError() {
         
         // Default: outbound msg context -> SAMLBindingContext
-        bindingContextLookupStrategy =
+        final Function<ProfileRequestContext,SAMLBindingContext> bcs = 
                 new ChildContextLookup<>(SAMLBindingContext.class, true).compose(new OutboundMessageContextLookup());
+        assert bcs != null;
+        bindingContextLookupStrategy = bcs;
         
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }

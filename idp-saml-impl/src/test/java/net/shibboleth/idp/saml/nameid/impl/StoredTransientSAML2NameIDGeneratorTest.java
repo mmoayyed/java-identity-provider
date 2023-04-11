@@ -35,7 +35,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link TransientSAML2NameIDGenerator} using storage-based generator. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class StoredTransientSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     private MemoryStorageService store;

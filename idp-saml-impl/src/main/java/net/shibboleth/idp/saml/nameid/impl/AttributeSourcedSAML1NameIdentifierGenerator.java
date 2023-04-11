@@ -74,9 +74,11 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
 
     /** Constructor. */
     public AttributeSourcedSAML1NameIdentifierGenerator() {
-        attributeContextLookupStrategy =
+        final Function<ProfileRequestContext,AttributeContext> acls = 
                 new ChildContextLookup<>(AttributeContext.class).compose(
                         new ChildContextLookup<>(RelyingPartyContext.class));
+        assert acls != null;
+        attributeContextLookupStrategy = acls;
         delimiter = '@';
         attributeSourceIds = CollectionSupport.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new IssuerLookupFunction());

@@ -52,6 +52,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.idp.session.context.LogoutPropagationContext.Result;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -105,36 +106,42 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
     @Nullable @NotEmpty private String soapPipelineName;
     
     /** LogoutRequest to process. */
-    @Nullable private LogoutRequest logoutRequest;
+    @NonnullBeforeExec private LogoutRequest logoutRequest;
     
     /** LogoutPropagationContext. */
-    @Nullable private LogoutPropagationContext propagationContext;
+    @NonnullBeforeExec private LogoutPropagationContext propagationContext;
     
     /** Optional metadata for use in SOAP client. */
     @Nullable private SAMLMetadataContext mdContext;
     
     /** Endpoint context to determine destination address. */
-    @Nullable private SAMLEndpointContext epContext;
+    @NonnullBeforeExec private SAMLEndpointContext epContext;
     
     /** Constructor. */
     public SOAPLogoutRequest() {
         
-        logoutRequestLookupStrategy =
+        final Function<ProfileRequestContext,LogoutRequest> lrls = 
                 new MessageLookup<>(LogoutRequest.class).compose(new OutboundMessageContextLookup());
+        assert lrls != null;
+        logoutRequestLookupStrategy = lrls;
 
         propagationContextLookupStrategy = new ChildContextLookup<>(LogoutPropagationContext.class);
         
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
-        metadataContextLookupStrategy =
+        final Function<ProfileRequestContext,SAMLMetadataContext>  mcls =
                 new ChildContextLookup<>(SAMLMetadataContext.class).compose(
                         new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
                                 new OutboundMessageContextLookup()));
+        assert mcls!= null;
+        metadataContextLookupStrategy = mcls;
 
         // Default: outbound msg context -> SAMLPeerEntityContext -> SAMLEndpointContext
-        endpointContextLookupStrategy =
+        final Function<ProfileRequestContext,SAMLEndpointContext> ecls =
                 new ChildContextLookup<>(SAMLEndpointContext.class, true).compose(
                         new ChildContextLookup<>(SAMLPeerEntityContext.class, true).compose(
                                 new OutboundMessageContextLookup()));
+        assert ecls != null;
+        endpointContextLookupStrategy = ecls;
     }
     
     /**
@@ -236,8 +243,8 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
             return false;
         }
 
-        final SAMLEndpointContext ctx = epContext = endpointContextLookupStrategy.apply(profileRequestContext);
-        final Endpoint ep = ctx == null ? null : ctx.getEndpoint(); 
+        epContext = endpointContextLookupStrategy.apply(profileRequestContext);
+        final Endpoint ep = epContext == null ? null : epContext.getEndpoint(); 
         if (ep == null|| ep.getLocation() == null) {
             log.warn("{} No destination endpoint found", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
@@ -261,15 +268,12 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
                     .setPeerRoleDescriptor(mdContext != null ? mdContext.getRoleDescriptor() : null)
                     .build();
             
-            final SAMLEndpointContext ctx = epContext;
-            assert ctx != null;
-            final Endpoint ep = ctx.getEndpoint();
-            final LogoutRequest lReq = logoutRequest;
-            assert ep != null && lReq != null && opContext != null;
+            final Endpoint ep = epContext.getEndpoint();
+            assert ep != null && opContext != null;
             
             final String dest = ep.getLocation();
             assert dest != null;
-            lReq.setDestination(dest);
+            logoutRequest.setDestination(dest);
         
             log.debug("{} Executing LogoutRequest over SOAP 1.1 binding to endpoint: {}", getLogPrefix(), dest);
             
@@ -299,7 +303,7 @@ public class SOAPLogoutRequest extends AbstractProfileAction {
             bctx.setBindingDescriptor(omcBc.getBindingDescriptor());
             
             log.debug("{} Processing LogoutResponse received via SOAP 1.1 binding from endpoint: {}", getLogPrefix(),
-                    lReq.getDestination());
+                    logoutRequest.getDestination());
             handleResponse(profileRequestContext, (LogoutResponse) response);
         } catch (final ClassCastException e) {
             log.warn("{} SOAP message payload was not an instance of LogoutResponse", getLogPrefix());

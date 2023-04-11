@@ -17,14 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config.impl;
 
-import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
-import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
-import net.shibboleth.saml.profile.config.BasicSAMLArtifactConfiguration;
-import net.shibboleth.saml.profile.config.SAMLArtifactConfiguration;
-import net.shibboleth.shared.logic.ConstraintViolationException;
-import net.shibboleth.shared.logic.FunctionSupport;
-import net.shibboleth.shared.logic.PredicateSupport;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +26,13 @@ import java.util.Set;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.saml.profile.config.BasicSAMLArtifactConfiguration;
+import net.shibboleth.saml.profile.config.SAMLArtifactConfiguration;
+import net.shibboleth.shared.logic.ConstraintViolationException;
+import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 
 /** Unit test for {@link BrowserSSOProfileConfiguration}. */
@@ -53,6 +52,7 @@ public class BrowserSSOProfileConfigurationTest {
         Assert.assertFalse(config.isSignAssertions(null));
     }
 
+    @SuppressWarnings("null")
     @Test public void testAssertionLifetime() {
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         Assert.assertTrue(config.getAssertionLifetime(null).toMillis() > 0);

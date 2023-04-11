@@ -57,6 +57,7 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
     
     private Instant time;
     
+    @SuppressWarnings("null")
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
         time = Instant.now();

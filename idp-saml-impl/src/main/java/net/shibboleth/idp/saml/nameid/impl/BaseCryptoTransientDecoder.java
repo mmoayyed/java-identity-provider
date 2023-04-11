@@ -132,6 +132,7 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
         if (null == prefix) {
             final StringBuilder builder = new StringBuilder("Crypto Transient Decoder '").append(getId()).append("':");
             prefix = builder.toString();
+            assert prefix != null;
             if (null == logPrefix) {
                 logPrefix = prefix;
             }

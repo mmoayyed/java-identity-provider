@@ -572,6 +572,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         Assert.assertEquals(ep.getLocation(), LOCATION_POST);
     }
     
+    @SuppressWarnings("null")
     @Nonnull private EntityDescriptor loadMetadata(@Nonnull @NotEmpty final String path) throws UnmarshallingException {
         
         try {

@@ -86,6 +86,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
      * 
      * @throws ComponentInitializationException on error
      */
+    @SuppressWarnings("null")
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().buildRequestContext();
         prc1 = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
@@ -410,6 +411,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
     }
 
     /** Test that the action works for RequestedAuthnContext. */
+    @SuppressWarnings("null")
     @Test public void testAuthnContext() {
         final RequestedPrincipalContext reqctx = ac.ensureSubcontext(RequestedPrincipalContext.class);
         reqctx.setOperator("exact");

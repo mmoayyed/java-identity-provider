@@ -97,6 +97,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      * 
      * @throws ComponentInitializationException on error
      */
+    @SuppressWarnings("null")
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         rc = new RequestContextBuilder().setOutboundMessage(
                 SAML1ActionTestingSupport.buildResponse()).buildRequestContext();
@@ -170,7 +171,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         final AttributeContext attribCtx = buildAttributeContext();
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
-        assert rpCtx!=null;
+        assert rpCtx!=null && attribCtx!=null;
         rpCtx.addSubcontext(attribCtx);
 
         action.initialize();
@@ -307,7 +308,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         final AttributeContext attribCtx = buildAttributeContext();
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
-        assert rpCtx!=null;
+        assert rpCtx!=null && attribCtx!=null;
         rpCtx.addSubcontext(attribCtx);
 
         action.setStatementInOwnAssertion(true);
@@ -345,7 +346,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         final AttributeContext attribCtx = buildAttributeContext();
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
-        assert rpCtx!=null;
+        assert rpCtx!=null && attribCtx!=null;
         rpCtx.addSubcontext(attribCtx);
 
         action.initialize();
@@ -402,7 +403,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      * @return the attribute context to be used as an input to the action
      * @throws ComponentInitializationException thrown if the attribute encoders can not be initialized
      */
-    private AttributeContext buildAttributeContext() throws ComponentInitializationException {
+    @Nonnull private AttributeContext buildAttributeContext() throws ComponentInitializationException {
 
         final IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
         attribute1.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));

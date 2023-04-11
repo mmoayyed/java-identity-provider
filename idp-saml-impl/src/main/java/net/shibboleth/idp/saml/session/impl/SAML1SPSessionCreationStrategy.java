@@ -92,7 +92,9 @@ public class SAML1SPSessionCreationStrategy implements Function<ProfileRequestCo
         }
         
         final Instant now = Instant.now();
-        return new SAML1SPSession(issuer, now, now.plus(sessionLifetime));
+        final Instant then = now.plus(sessionLifetime);
+        assert then != null;
+        return new SAML1SPSession(issuer, now, then);
     }
 
 }

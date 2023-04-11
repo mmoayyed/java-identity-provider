@@ -21,10 +21,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link SSOSProfileConfiguration}. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "removal", "null", "deprecation"})
 public class SSOSProfileConfigurationTest {
 
-    @SuppressWarnings("removal")
     @Test
     public void testProfileId() {
         final SSOSProfileConfiguration config = new SSOSProfileConfiguration();
@@ -32,7 +31,6 @@ public class SSOSProfileConfigurationTest {
     }
     
     @Test
-    @SuppressWarnings("removal")
     public void testDelegationPredicate() {
         final SSOSProfileConfiguration config = new SSOSProfileConfiguration();
         Assert.assertFalse(config.isDelegation(null));

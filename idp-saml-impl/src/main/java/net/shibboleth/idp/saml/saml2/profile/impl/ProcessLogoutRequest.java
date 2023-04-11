@@ -56,6 +56,7 @@ import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.saml.saml2.profile.config.navigate.QualifiedNameIDFormatsLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -115,7 +116,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
     @Nullable private Function<ProfileRequestContext,String> relyingPartyLookupStrategy;
     
     /** LogoutRequest to process. */
-    @Nullable private LogoutRequest logoutRequest;
+    @NonnullBeforeExec private LogoutRequest logoutRequest;
     
     /** {@link NameID} Formats allowing defaulted qualifiers. */
     @Nonnull private Set<String> qualifiedNameIDFormats;
@@ -147,8 +148,11 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             }
         };
     
-        logoutRequestLookupStrategy = new MessageLookup<>(LogoutRequest.class).compose(
-                new InboundMessageContextLookup());
+        final Function<ProfileRequestContext,LogoutRequest> lrls =
+                new MessageLookup<>(LogoutRequest.class).compose(
+                        new InboundMessageContextLookup());
+        assert lrls!=null;
+        logoutRequestLookupStrategy = lrls;
         
         qualifiedNameIDFormatsLookupStrategy = new QualifiedNameIDFormatsLookupFunction();
 
@@ -287,15 +291,15 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             return false;
         }
         
+
         logoutRequest = logoutRequestLookupStrategy.apply(profileRequestContext);
-        final LogoutRequest request = logoutRequest;
-        if (request == null) {
+        if (logoutRequest == null) {
             log.warn("{} No LogoutRequest found to process", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
-        final NameID nid = request.getNameID();
+        final NameID nid = logoutRequest.getNameID();
         if (nid == null) {
             log.warn("{} LogoutRequest did not contain NameID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
@@ -410,12 +414,11 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
     private boolean sessionMatches(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SPSession session) {
         
+        assert isPreExecuteCalled();
+        
         if (session instanceof SAML2SPSession) {
             final SAML2SPSession saml2Session = (SAML2SPSession) session;
-            final LogoutRequest request = logoutRequest;
-            assert request != null;
-            
-            final Issuer issuer = request.getIssuer();
+            final Issuer issuer = logoutRequest.getIssuer();
             
             // Make sure the SP matches.
             if (issuer == null || !saml2Session.getId().equals(issuer.getValue())) {
@@ -430,7 +433,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                 format = NameID.UNSPECIFIED;
             }
             
-            final NameID requestedNameID = request.getNameID();
+            final NameID requestedNameID = logoutRequest.getNameID();
             assert requestedNameID != null;
             if (NameID.PERSISTENT.equals(format) || NameID.TRANSIENT.equals(format)
                     || qualifiedNameIDFormats.contains(format)) {
@@ -452,11 +455,11 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             
             // Check SessionIndex match.
             
-            if (request.getSessionIndexes().isEmpty()) {
+            if (logoutRequest.getSessionIndexes().isEmpty()) {
                 return true;
             }
             
-            for (final SessionIndex index : request.getSessionIndexes()) {
+            for (final SessionIndex index : logoutRequest.getSessionIndexes()) {
                 final String value = index.getValue();
                 if (value != null && value.equals(saml2Session.getSessionIndex())) {
                     return true;

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
@@ -34,7 +33,6 @@ import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -51,9 +49,11 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
@@ -79,17 +79,21 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
 
     /** Query to filter against. */
-    @Nullable private AttributeQuery query;
+    @NonnullBeforeExec private AttributeQuery query;
     
     /** AttributeContext to filter. */
-    @Nullable private AttributeContext attributeContext;
+    @NonnullBeforeExec private AttributeContext attributeContext;
 
     /** Constructor. */
     public FilterByQueriedAttributes() {
-        attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class).compose(
+        final Function<ProfileRequestContext,AttributeContext> acls = new ChildContextLookup<>(AttributeContext.class).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
+        assert acls != null;
+        attributeContextLookupStrategy = acls;
         
-        queryLookupStrategy = new MessageLookup<>(AttributeQuery.class).compose(new InboundMessageContextLookup());
+        final Function<ProfileRequestContext,AttributeQuery> qls =  new MessageLookup<>(AttributeQuery.class).compose(new InboundMessageContextLookup());
+        assert qls != null;
+        queryLookupStrategy = qls;
     }
 
     /**
@@ -144,9 +148,8 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
         }
         
         query = queryLookupStrategy.apply(profileRequestContext);
-        final AttributeQuery localQuery = query;
         
-        if (localQuery == null || localQuery.getAttributes().isEmpty()) {
+        if (query == null || query.getAttributes().isEmpty()) {
             log.debug("No queried Attributes found, nothing to do ");
             return false;
         }
@@ -157,7 +160,6 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
             return false;
         }
 
-        assert attributeContext!=null;
         if (attributeContext.getIdPAttributes().isEmpty()) {
             log.debug("{} No attributes to filter", getLogPrefix());
             return false;
@@ -172,13 +174,10 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
                 
         final Multimap<String,IdPAttribute> mapped = HashMultimap.create();
         assert mapped != null;
-        final AttributeQuery localQuery = query;
-        final AttributeContext localAttributeContext = attributeContext;
-        assert localQuery!=null && localAttributeContext!=null;
         try (final ServiceableComponent<AttributeTranscoderRegistry> component =
                 transcoderRegistry.getServiceableComponent()) {
 
-            for (final Attribute designator : localQuery.getAttributes()) {
+            for (final Attribute designator : query.getAttributes()) {
                 assert designator != null;
                 try {
                     decodeAttribute(component.getComponent(), profileRequestContext, designator, mapped);
@@ -194,9 +193,9 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
                 
         log.debug("{} Query content mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());
 
-        final Collection<IdPAttribute> keepers = new ArrayList<>(localQuery.getAttributes().size());
+        final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributes().size());
         
-        for (final IdPAttribute attribute : localAttributeContext.getIdPAttributes().values()) {
+        for (final IdPAttribute attribute : attributeContext.getIdPAttributes().values()) {
             
             final Collection<IdPAttribute> requested = mapped.get(attribute.getId());
             
@@ -218,7 +217,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
             }
         }
         
-        localAttributeContext.setIdPAttributes(keepers);
+        attributeContext.setIdPAttributes(keepers);
     }
     
     /**

@@ -70,7 +70,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ProcessLogoutRequest} unit test. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
 
     private SAMLObjectBuilder<SessionIndex> sessionIndexBuilder;

@@ -67,7 +67,9 @@ public class StoredTransientIdGenerationStrategy extends AbstractIdentifiableIni
     /** Constructor. */
     public StoredTransientIdGenerationStrategy() {
         idSize = 16;
-        idLifetime = Duration.ofHours(4);
+        final Duration fourHours = Duration.ofHours(4);
+        assert fourHours!=null;
+        idLifetime = fourHours;
     }
 
     /**

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -47,6 +49,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -61,7 +64,7 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
     
     private Request query;
     
-    private ReloadableService<AttributeTranscoderRegistry> registry;
+    @NonnullBeforeExec private ReloadableService<AttributeTranscoderRegistry> registry;
     
     private FilterByQueriedAttributeDesignators action;
     
@@ -71,7 +74,7 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
 
     private List<GenericApplicationContext> contexts = new ArrayList<>();
 
-    protected <Type> Type getBean(String fileName, Class<Type> claz) {
+    protected <Type> Type getBean(@Nonnull String fileName, Class<Type> claz) {
 
         final GenericApplicationContext context = new GenericApplicationContext();
         contexts.add(context);
@@ -99,6 +102,7 @@ public class FilterByQueriedAttributeDesignatorsTest extends XMLObjectBaseTestCa
         registry = new MockReloadableService<>(getBean(PATH + "saml1Mapper.xml", AttributeTranscoderRegistryImpl.class));
     }
     
+    @SuppressWarnings("null")
     @BeforeMethod public void setUpMethod() throws ComponentInitializationException, XMLParserException, UnmarshallingException {
         query = unmarshallElement(PATH + "AttributeQuerySaml1.xml", true);
 

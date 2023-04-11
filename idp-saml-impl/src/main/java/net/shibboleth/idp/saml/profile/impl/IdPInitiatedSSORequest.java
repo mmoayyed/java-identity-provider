@@ -79,7 +79,9 @@ public class IdPInitiatedSSORequest {
         if (newTime != null) {
             time = newTime;
         } else {
-            time = Instant.now();
+            final Instant now = Instant.now();
+            assert now != null;
+            time = now;
         }
     }
 

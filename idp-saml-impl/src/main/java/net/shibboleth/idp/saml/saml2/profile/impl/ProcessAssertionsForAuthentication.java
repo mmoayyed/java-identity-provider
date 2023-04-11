@@ -80,13 +80,19 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
      * Constructor.
      */
     public ProcessAssertionsForAuthentication() {
-        responseResolver = new DefaultResponseResolver().compose(
-                new ChildContextLookup<>(ProfileRequestContext.class).compose(
-                        new ChildContextLookup<>(AuthenticationContext.class)));
+        final Function<ProfileRequestContext, Response> rr =
+                new DefaultResponseResolver().compose(
+                        new ChildContextLookup<>(ProfileRequestContext.class).compose(
+                                new ChildContextLookup<>(AuthenticationContext.class)));
+        assert rr != null;
+        responseResolver = rr;
         
         // PRC -> AC -> SAMLAuthnContext
-        samlContextLookupStrategy = new ChildContextLookup<>(SAMLAuthnContext.class).compose(
-                new ChildContextLookup<>(AuthenticationContext.class));
+        final Function<ProfileRequestContext,SAMLAuthnContext> scls =
+                new ChildContextLookup<>(SAMLAuthnContext.class).compose(
+                        new ChildContextLookup<>(AuthenticationContext.class));
+        assert scls!= null;
+        samlContextLookupStrategy = scls;
         
         // Get the Assertion containing the earliest child AuthnStatement#SessionNotOnOrAfter,
         // with null values converted to Instant.MAX and therefore having the lowest precedence.
@@ -307,6 +313,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     private class AssertionContainsConfirmedSubject implements Predicate<Assertion> {
 
         /** {@inheritDoc} */
+        @SuppressWarnings("unused")
         public boolean test(@Nullable final Assertion assertion) {
             if (assertion == null) {
                 return false;

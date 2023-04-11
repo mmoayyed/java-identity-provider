@@ -32,7 +32,7 @@ import java.time.Duration;
 import java.util.*;
 
 /** Unit test for {@link BrowserSSOProfileConfiguration}. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class BrowserSSOProfileConfigurationTest {
 
     @Test

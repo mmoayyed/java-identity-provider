@@ -42,6 +42,7 @@ import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
@@ -83,7 +84,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     @Nullable private Function<ProfileRequestContext,String> responderLookupStrategy;
     
     /** SAML 1 or 2 identifier object to wrap for c14n. */
-    @Nullable private SAMLObject nameIdentifier;
+    @NonnullBeforeExec private SAMLObject nameIdentifier;
     
     /** Constructor.
      * 
@@ -177,8 +178,6 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, NO_SUBJECT);
             return;
         }
-        
-        
         
         final SubjectCanonicalizationContext c14n = new SubjectCanonicalizationContext();
         c14n.setSubject(subject);

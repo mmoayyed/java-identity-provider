@@ -17,15 +17,6 @@
 
 package net.shibboleth.idp.saml.session.impl;
 
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.saml.session.SAML2SPSession;
-import net.shibboleth.idp.session.SPSession;
-import net.shibboleth.idp.session.context.LogoutPropagationContext;
-import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.shared.component.ComponentInitializationException;
-
 import java.time.Instant;
 
 import org.opensaml.core.testing.OpenSAMLInitBaseTestCase;
@@ -40,8 +31,16 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.saml.session.SAML2SPSession;
+import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.idp.session.context.LogoutPropagationContext;
+import net.shibboleth.shared.component.ComponentInitializationException;
+
 /** {@link PrepareInboundMessageContext} unit test. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class PrepareInboundMessageContextTest extends OpenSAMLInitBaseTestCase {
 
     private RequestContext src;

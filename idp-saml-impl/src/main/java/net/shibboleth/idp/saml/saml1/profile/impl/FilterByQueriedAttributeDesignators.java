@@ -20,12 +20,11 @@ package net.shibboleth.idp.saml.saml1.profile.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
@@ -33,11 +32,10 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
-import org.opensaml.saml.saml1.core.AttributeQuery;
 import org.opensaml.saml.saml1.core.AttributeDesignator;
+import org.opensaml.saml.saml1.core.AttributeQuery;
 import org.opensaml.saml.saml1.core.Request;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.attribute.AttributeDecodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -50,9 +48,11 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.shared.service.ServiceException;
 import net.shibboleth.shared.service.ServiceableComponent;
@@ -78,10 +78,10 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
 
     /** Query to filter against. */
-    @Nullable private AttributeQuery query;
+    @NonnullBeforeExec private AttributeQuery query;
     
     /** AttributeContext to filter. */
-    @Nullable private AttributeContext attributeContext;
+    @NonnullBeforeExec private AttributeContext attributeContext;
 
     /** Constructor. */
     public FilterByQueriedAttributeDesignators() {
@@ -178,12 +178,9 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
 
         final Set<String> decodedAttributeIds = new HashSet<>();
 
-        final AttributeQuery ac = query;
-        final AttributeContext aCtx = attributeContext;
-        assert ac != null && aCtx != null;
         try (final ServiceableComponent<AttributeTranscoderRegistry> component =
                 transcoderRegistry.getServiceableComponent()) {
-            for (final AttributeDesignator designator : ac.getAttributeDesignators()) {
+            for (final AttributeDesignator designator : query.getAttributeDesignators()) {
                 assert designator!=null;
                 try {
                     decodeAttributeDesignator(component.getComponent(), profileRequestContext, designator,
@@ -198,10 +195,10 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
             return;
         }
 
-        final Collection<IdPAttribute> keepers = new ArrayList<>(ac.getAttributeDesignators().size());
+        final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributeDesignators().size());
         log.debug("Query content mapped to attribute IDs: {}", decodedAttributeIds);
         
-        for (final IdPAttribute attribute : aCtx.getIdPAttributes().values()) {
+        for (final IdPAttribute attribute : attributeContext.getIdPAttributes().values()) {
             if (decodedAttributeIds.contains(attribute.getId())) {
                 log.debug("Retaining attribute '{}' requested by query", attribute.getId());
                 keepers.add(attribute);
@@ -210,7 +207,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
             }
         }
         
-        aCtx.setIdPAttributes(keepers);
+        attributeContext.setIdPAttributes(keepers);
     }
 
     /**
