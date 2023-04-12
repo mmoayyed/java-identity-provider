@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -71,10 +72,10 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     @Nonnull private Function<Assertion,AuthnStatement> authnStatementSelectionStrategy;
     
     /** The Response to process. */
-    @Nullable private Response response;
+    @NonnullBeforeExec private Response response;
     
     /** The SAML authentication context. */
-    @Nullable private SAMLAuthnContext samlAuthnContext;
+    @NonnullBeforeExec private SAMLAuthnContext samlAuthnContext;
     
     /**
      * Constructor.
@@ -168,8 +169,7 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
         }
 
         response = responseResolver.apply(profileRequestContext);
-        final Response localResponse = response;
-        if (localResponse == null || localResponse.getAssertions() == null || localResponse.getAssertions().isEmpty()) {
+        if (response == null || response.getAssertions() == null || response.getAssertions().isEmpty()) {
             log.info("{} Profile context contained no candidate Assertions to process. Skipping further processing",
                     getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
@@ -189,22 +189,19 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-        
-        final Response localResponse = response;
-        assert localResponse != null;
-        
+
         // Completely remove any non-valid Assertions from the Response
-        final List<Assertion> nonValid = localResponse.getAssertions().stream()
+        final List<Assertion> nonValid = response.getAssertions().stream()
                 .filter(new AssertionIsValid().negate())
                 .collect(Collectors.toList());
         log.debug("{} Removing {} non-valid Assertions from Response", getLogPrefix(), nonValid.size());
-        localResponse.getAssertions().removeAll(nonValid);
+        response.getAssertions().removeAll(nonValid);
 
         // For authn purposes, select only Assertions which contain at least 1 AuthnStatement and a confirmed Subject
         final Predicate<Assertion> selector = new AssertionContainsAuthenticationStatement()
                 .and(new AssertionContainsConfirmedSubject());
         
-        final List<Assertion> assertions = localResponse.getAssertions().stream()
+        final List<Assertion> assertions = response.getAssertions().stream()
                 .filter(selector)
                 .collect(Collectors.toList());
         if (assertions.isEmpty()) {
@@ -244,7 +241,6 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
             }
         }
         
-        assert samlAuthnContext != null;
         samlAuthnContext.setAuthnStatement(authnStatement).setSubject(authnAssertion.getSubject());
     }
 

@@ -82,6 +82,7 @@ import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfigurati
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.shared.annotation.constraint.Live;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
@@ -134,7 +135,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     @Nullable @NotEmpty private String loggedAttributeId;
 
     /** Context containing the result to validate. */
-    @Nullable private SAMLAuthnContext samlAuthnContext;
+    @NonnullBeforeExec private SAMLAuthnContext samlAuthnContext;
     
     /** Store off profile config. */
     @Nullable private BrowserSSOProfileConfiguration profileConfiguration;
@@ -305,7 +306,6 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         final AuthenticationResult ar = authenticationContext.getAuthenticationResult();
         if (ar != null && prConfig.isProxiedAuthnInstant(profileRequestContext)) {
-            assert samlAuthnContext != null;
             final AuthnStatement as = samlAuthnContext.getAuthnStatement();
             assert as != null;
             final Instant ai = as.getAuthnInstant();

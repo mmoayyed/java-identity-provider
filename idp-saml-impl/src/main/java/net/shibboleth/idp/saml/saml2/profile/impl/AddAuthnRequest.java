@@ -37,6 +37,7 @@ import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfigurati
 import net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
@@ -109,7 +110,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     @Nonnull private Function<ProfileRequestContext,ProxiedRequesterContext> proxiedRequesterContextLookupStrategy;
     
     /** The generator to use. */
-    @Nullable private IdentifierGenerationStrategy idGenerator;
+    @NonnullBeforeExec private IdentifierGenerationStrategy idGenerator;
     
     /** Applicable profile configuration. */
     @Nullable private BrowserSSOProfileConfiguration profileConfiguration;
@@ -266,7 +267,6 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
                         NameIDPolicy.DEFAULT_ELEMENT_NAME);
 
         final AuthnRequest object = requestBuilder.buildObject();
-        assert idGenerator!=null;
         object.setID(idGenerator.generateIdentifier());
         object.setIssueInstant(Instant.now());
         object.setVersion(SAMLVersion.VERSION_20);

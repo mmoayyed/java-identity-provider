@@ -22,7 +22,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -38,6 +37,7 @@ import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -74,7 +74,7 @@ public class DestroySessions extends AbstractProfileAction {
     @Nullable private SessionContext sessionContext;
 
     /** LogoutContext to access. */
-    @Nullable private LogoutContext logoutContext;
+    @NonnullBeforeExec private LogoutContext logoutContext;
     
     /** Constructor. */
     public DestroySessions() {
@@ -136,8 +136,8 @@ public class DestroySessions extends AbstractProfileAction {
             return false;
         }
         
-        final LogoutContext lc = logoutContext = logoutContextLookupStrategy.apply(profileRequestContext);
-        if (lc == null || lc.getIdPSessions().isEmpty()) {
+        logoutContext = logoutContextLookupStrategy.apply(profileRequestContext);
+        if (logoutContext == null || logoutContext.getIdPSessions().isEmpty()) {
             log.debug("{} No LogoutContext or IdPSessions found, nothing to do", getLogPrefix());
             return false;
         }
@@ -151,10 +151,8 @@ public class DestroySessions extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
-        final LogoutContext lc = logoutContext;
-        assert lc != null;
         SessionContext sc = sessionContext;
-        for (final IdPSession session : lc.getIdPSessions()) {
+        for (final IdPSession session : logoutContext.getIdPSessions()) {
             assert session!= null;
             final IdPSession idpSession = sc != null ? sc.getIdPSession() : null;
             log.debug("{} Attempting destruction of session {}", getLogPrefix(), session.getId());
@@ -176,7 +174,7 @@ public class DestroySessions extends AbstractProfileAction {
             }
         }
         
-        lc.getIdPSessions().clear();
+        logoutContext.getIdPSessions().clear();
     }
     
 }

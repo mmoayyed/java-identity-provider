@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
@@ -40,7 +39,6 @@ import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -50,9 +48,11 @@ import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -83,7 +83,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     @Nonnull @NonnullElements private Set<String> ignoredContexts;
     
     /** The request message to read from. */
-    @Nullable private AuthnRequest authnRequest;
+    @NonnullBeforeExec private AuthnRequest authnRequest;
     
     /** Constructor. */
     public ProcessRequestedAuthnContext() {
@@ -161,7 +161,6 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        assert authnRequest!=null;
         final RequestedAuthnContext requestedCtx = authnRequest.getRequestedAuthnContext();
         if (requestedCtx == null) {
             log.debug("{} AuthnRequest did not contain a RequestedAuthnContext, nothing to do", getLogPrefix());

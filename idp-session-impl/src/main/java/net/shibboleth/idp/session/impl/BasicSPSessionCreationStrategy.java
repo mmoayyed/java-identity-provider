@@ -91,7 +91,9 @@ public class BasicSPSessionCreationStrategy implements Function<ProfileRequestCo
         }
         
         final Instant now = Instant.now();
-        return new BasicSPSession(issuer, now, now.plus(sessionLifetime));
+        final Instant then = now.plus(sessionLifetime);
+        assert then!= null;
+        return new BasicSPSession(issuer, now, then);
     }
 
 }

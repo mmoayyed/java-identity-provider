@@ -42,6 +42,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link DetectIdentitySwitch} unit test. */
+@SuppressWarnings("null")
 public class DetectIdentitySwitchTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;

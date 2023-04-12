@@ -33,6 +33,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link BasicSPSessionSerializer} unit test. */
+@SuppressWarnings("null")
 public class BasicSPSessionSerializerTest {
 
     private static final String DATAPATH = "/net/shibboleth/idp/session/impl/";

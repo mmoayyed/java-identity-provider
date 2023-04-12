@@ -20,7 +20,6 @@ package net.shibboleth.idp.session.impl;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,13 +34,10 @@ import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.StorageService;
 import org.opensaml.storage.VersionMismatchException;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -60,12 +56,16 @@ import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponen
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.net.CookieManager;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import net.shibboleth.shared.servlet.HttpServletSupport;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Implementation of {@link SessionManager} and {@link SessionResolver} interfaces that relies on a
@@ -170,8 +170,11 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      */
     public StorageBackedSessionManager() {
-        sessionTimeout = Duration.ofHours(1);
-        sessionSlop = Duration.ZERO;
+        final Duration oneHour = Duration.ofHours(1);
+        final Duration zeroDuration = Duration.ZERO;
+        assert oneHour!=null && zeroDuration!= null;
+        sessionTimeout = oneHour;
+        sessionSlop = zeroDuration;
         serializer = new StorageBackedIdPSessionSerializer(this, null);
         flowDescriptorMap = new HashMap<>();
         consistentAddressCondition =
@@ -516,8 +519,10 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             throw new SessionException("Session IDs are too large for StorageService, check configuration");
         }
 
+        final Instant now = Instant.now();
+        assert now != null;
         final StorageBackedIdPSession newSession =
-                new StorageBackedIdPSession(this, sessionId, principalName, Instant.now());
+                new StorageBackedIdPSession(this, sessionId, principalName, now);
         newSession.doBindToAddress(remoteAddr);
 
         try {
@@ -889,8 +894,9 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         } catch (final VersionMismatchException e) {
             log.debug("Ignoring version mismatch while updating secondary index");
         }
-
-        return builder.build();
+        final Iterable<IdPSession> result = builder.build();
+        assert result != null;
+        return result;
     }
     
     /**

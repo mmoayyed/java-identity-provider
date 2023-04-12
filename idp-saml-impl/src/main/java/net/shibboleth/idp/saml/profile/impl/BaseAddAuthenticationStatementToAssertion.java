@@ -37,6 +37,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
@@ -71,13 +72,13 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
     @NonnullAfterInit private Function<ProfileRequestContext,String> addressLookupStrategy;
     
     /** AuthenticationResult basis of statement. */
-    @Nullable private AuthenticationResult authenticationResult;
+    @NonnullBeforeExec private AuthenticationResult authenticationResult;
 
     /** The generator to use. */
-    @Nullable private IdentifierGenerationStrategy idGenerator;
+    @NonnullBeforeExec private IdentifierGenerationStrategy idGenerator;
     
     /** EntityID to populate as assertion issuer. */
-    @Nullable private String issuerId;
+    @NonnullBeforeExec private String issuerId;
     
     /** Constructor. */
     public BaseAddAuthenticationStatementToAssertion() {
@@ -159,7 +160,8 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      * @return the result to encode
      */
     @Nonnull public AuthenticationResult getAuthenticationResult() {
-        return Constraint.isNotNull(authenticationResult, "AuthenticationResult has not been initialized yet");
+        assert isPreExecuteCalled() && authenticationResult!=null;
+        return authenticationResult;
     }
 
     /**
@@ -168,7 +170,8 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      * @return the ID generation strategy
      */
     @Nonnull public IdentifierGenerationStrategy getIdGenerator() {
-        return Constraint.isNotNull(idGenerator, "IdentifierGenerationStrategy has not been initialized yet");
+        assert isPreExecuteCalled() && idGenerator!=null;
+        return idGenerator;
     }
 
     /**
@@ -177,7 +180,8 @@ public abstract class BaseAddAuthenticationStatementToAssertion extends Abstract
      * @return the issuer name
      */
     @Nonnull public String getIssuerId() {
-        return Constraint.isNotNull(issuerId, "Issuer name has not been initialized yet");
+        assert isPreExecuteCalled() && issuerId!=null;
+        return issuerId;
     }
     
     /** {@inheritDoc} */

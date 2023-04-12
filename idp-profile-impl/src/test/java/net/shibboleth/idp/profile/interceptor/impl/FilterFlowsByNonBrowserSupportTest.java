@@ -17,18 +17,16 @@
 
 package net.shibboleth.idp.profile.interceptor.impl;
 
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.testing.ActionTestingSupport;
-
-import static org.testng.Assert.assertEquals;
-
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+
 /** {@link FilterFlowsByNonBrowserSupport} unit test. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class FilterFlowsByNonBrowserSupportTest extends PopulateProfileInterceptorContextTest {
 
     private FilterFlowsByNonBrowserSupport action;

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -36,6 +35,7 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     @Nonnull private Function<ProfileRequestContext,SessionContext> sessionContextLookupStrategy;
     
     /** Session to copy results from. */
-    @Nullable private IdPSession session;
+    @NonnullBeforeExec private IdPSession session;
     
     /** Constructor. */
     public ExtractActiveAuthenticationResults() {
@@ -105,17 +105,15 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final IdPSession theSession = session;
-        assert theSession != null;
         if (authenticationContext.getHintedName() == null) {
-            authenticationContext.setHintedName(theSession.getPrincipalName());
+            authenticationContext.setHintedName(session.getPrincipalName());
         }
         
         final Instant now = Instant.now();
         final Duration maxAge = authenticationContext.getMaxAge();
         
         final List<AuthenticationResult> actives = new ArrayList<>();
-        for (final AuthenticationResult result : theSession.getAuthenticationResults()) {
+        for (final AuthenticationResult result : session.getAuthenticationResults()) {
             final AuthenticationFlowDescriptor descriptor =
                     authenticationContext.getPotentialFlows().get(result.getAuthenticationFlowId());
             if (descriptor == null) {

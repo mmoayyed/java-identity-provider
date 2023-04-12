@@ -41,7 +41,7 @@ import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier;
 import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseSupplier;
 
 /** {@link StorageBackedIdPSessionSerializer} unit test. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"null"})
 public class StorageBackedIdPSessionSerializerTest {
 
     private static final String DATAPATH = "/net/shibboleth/idp/session/impl/";

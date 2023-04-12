@@ -33,6 +33,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -70,7 +71,7 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
     @Nullable private Pattern matchExpression;
 
     /** Username context identifying identity to validate. */
-    @Nullable private UsernameContext usernameContext;
+    @NonnullBeforeExec private UsernameContext usernameContext;
     
     /** Constructor. */
     public ValidateRemoteUser() {
@@ -130,7 +131,6 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
             return false;
         }
 
-        assert usernameContext != null;
         if (usernameContext.getUsername() == null) {
             log.debug("{} No username available within UsernameContext", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
@@ -146,9 +146,7 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final UsernameContext uCtxt = usernameContext;
-        assert uCtxt != null;
-        final String userName = uCtxt.getUsername();
+        final String userName = usernameContext.getUsername();
         assert userName != null;
         if (!isAuthenticated(userName)) {
             log.info("{} User '{}' was not valid", getLogPrefix(), userName);

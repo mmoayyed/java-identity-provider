@@ -20,14 +20,13 @@ package net.shibboleth.idp.session.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
+
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -39,6 +38,7 @@ import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * An action that establishes a record of an {@link SPSession} in an existing {@link IdPSession} for the client.
@@ -71,7 +71,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext,SessionContext> sessionContextLookupStrategy;
     
     /** Existing or newly created SessionContext. */
-    @Nullable private SessionContext sessionCtx;
+    @NonnullAfterInit private SessionContext sessionCtx;
     
     /** Constructor. */
     public UpdateSessionWithSPSession() {
@@ -147,7 +147,6 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
             log.debug("{} SPSession was not returned, nothing to do", getLogPrefix());
             return;
         }
-        assert sessionCtx != null;
         final IdPSession idpSession = sessionCtx.getIdPSession();
         assert idpSession != null;
         try {

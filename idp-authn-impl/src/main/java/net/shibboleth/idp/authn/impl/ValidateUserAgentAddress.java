@@ -38,6 +38,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.IdPAuditFields;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -68,7 +69,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
     @Nonnull @NonnullElements private Map<String,Collection<IPRange>> mappings;
 
     /** User Agent context containing address to evaluate. */
-    @Nullable private UserAgentContext uaContext;
+    @NonnullBeforeExec private UserAgentContext uaContext;
     
     /** The principal name established by the action, if any. */
     @Nullable private String principalName;
@@ -107,15 +108,15 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
             return false;
         }
 
-        final UserAgentContext uaCtx = uaContext = authenticationContext.getSubcontext(UserAgentContext.class);
-        if (uaCtx == null) {
+        uaContext = authenticationContext.getSubcontext(UserAgentContext.class);
+        if (uaContext == null) {
             log.debug("{} No UserAgentContext available within authentication context", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                     AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
 
-        if (uaCtx.getAddress() == null) {
+        if (uaContext.getAddress() == null) {
             log.debug("{} No address available within UserAgentContext", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                     AuthnEventIds.NO_CREDENTIALS);
@@ -130,9 +131,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final UserAgentContext uaCtx = uaContext;
-        assert uaCtx != null;
-        final InetAddress addr = uaCtx.getAddress();
+        final InetAddress addr = uaContext.getAddress();
         assert addr != null;
         for (final Map.Entry<String,Collection<IPRange>> e : mappings.entrySet()) {
             final Collection<IPRange> ranges = e.getValue();

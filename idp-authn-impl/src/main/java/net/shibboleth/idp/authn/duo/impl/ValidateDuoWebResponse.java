@@ -46,6 +46,7 @@ import net.shibboleth.idp.authn.duo.DuoPrincipal;
 import net.shibboleth.idp.authn.impl.AbstractAuditingValidationAction;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
@@ -87,13 +88,13 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
     @Nonnull private Function<ProfileRequestContext,String> usernameLookupStrategy;
     
     /** Duo integration to use. */
-    @Nullable private DuoIntegration duoIntegration;
+    @NonnullBeforeExec private DuoIntegration duoIntegration;
     
     /** Attempted username. */
-    @Nullable @NotEmpty private String username;
+    @NonnullBeforeExec @NotEmpty private String username;
     
     /** Signed response string. */
-    @Nullable @NotEmpty private String signedResponse;
+    @NonnullBeforeExec @NotEmpty private String signedResponse;
     
     /** Constructor. */
     public ValidateDuoWebResponse() {
@@ -166,8 +167,8 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
             return false;
         }
         
-        final String response =  signedResponse = servletRequest.getParameter(RESPONSE_PARAM);
-        if (response == null || response.isEmpty()) {
+        signedResponse = servletRequest.getParameter(RESPONSE_PARAM);
+        if (signedResponse == null || signedResponse.isEmpty()) {
             log.warn("{} No signed Duo response in the request", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                     AuthnEventIds.NO_CREDENTIALS);
@@ -187,7 +188,6 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
                 
         final String usernameFromDuo;
         try {
-            assert duoIntegration != null && signedResponse != null;
             usernameFromDuo = DuoSupport.validateSignedResponseToken(duoIntegration, signedResponse);
         } catch (final InvalidKeyException | NoSuchAlgorithmException | DuoWebException | IOException e) {
             log.warn("{} Error validating signed Duo response for username '{}'", getLogPrefix(), username, e);
@@ -195,7 +195,6 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
             recordFailure(profileRequestContext);
             return;
         }
-        assert username != null;
         if (!username.equals(usernameFromDuo)) {
             log.warn("{} Username '{}' from Duo response does not match previously established username '{}'",
                     getLogPrefix(), usernameFromDuo, username);
@@ -213,10 +212,9 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
     @Override
     protected @Nonnull Subject populateSubject(@Nonnull final Subject subject) {
 
-        assert username != null;
+        assert isPreExecuteCalled();
         final DuoPrincipal princ = new DuoPrincipal(username);
         subject.getPrincipals().add(princ);
-        assert duoIntegration != null;
         final Set<Principal> princs = duoIntegration.getSupportedPrincipals(Principal.class);
         subject.getPrincipals().addAll(princs);
 

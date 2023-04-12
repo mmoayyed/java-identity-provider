@@ -20,7 +20,6 @@ package net.shibboleth.idp.session.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -34,7 +33,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.MultiRelyingPartyContext;
@@ -42,9 +40,11 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 
@@ -77,7 +77,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
     @Nonnull private QName role; 
     
     /** {@link LogoutContext} to process. */
-    @Nullable private LogoutContext logoutCtx;
+    @NonnullBeforeExec private LogoutContext logoutCtx;
     
     /** Constructor. */
     public PopulateMultiRPContextFromLogoutContext() {
@@ -148,12 +148,10 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         checkComponentActive();
         
-        final LogoutContext lCtx = logoutCtx;
-        assert lCtx != null;
         final MultiRelyingPartyContext multiCtx = new MultiRelyingPartyContext();
         profileRequestContext.addSubcontext(multiCtx, true);
         
-        for (final String relyingPartyId : lCtx.getSessionMap().keySet()) {
+        for (final String relyingPartyId : logoutCtx.getSessionMap().keySet()) {
             assert relyingPartyId != null;
             final RelyingPartyContext rpCtx = new RelyingPartyContext();
             rpCtx.setRelyingPartyId(relyingPartyId);
@@ -166,7 +164,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
             final EntityRoleCriterion roleCriterion = new EntityRoleCriterion(role);
             
             ProtocolCriterion protocolCriterion = null;
-            final SPSession spSession = lCtx.getSessions(relyingPartyId).iterator().next();
+            final SPSession spSession = logoutCtx.getSessions(relyingPartyId).iterator().next();
             final String protocol = spSession.getProtocol();
             if (protocol != null) {
                 protocolCriterion = new ProtocolCriterion(protocol);

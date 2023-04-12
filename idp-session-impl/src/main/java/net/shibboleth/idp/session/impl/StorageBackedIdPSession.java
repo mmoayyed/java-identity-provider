@@ -649,8 +649,10 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             }
             
             // Deserializer starting past the colon delimiter.
+            final String recordValue =record.getValue().substring(pos + 1);
+            assert recordValue!=null;
             return spSessionSerializer.deserialize(
-                    record.getVersion(), getId(), key, record.getValue().substring(pos + 1), record.getExpiration());
+                    record.getVersion(), getId(), key, recordValue, record.getExpiration());
             
         } catch (final IOException e) {
             log.error("IOException loading SPSession for service {} from storage: {}", serviceId, e.getMessage());
@@ -677,6 +679,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         // Look up the serializer instance for that class type.
         final Class<? extends SPSession> claz = session.getClass();
         assert claz != null;
+        @SuppressWarnings("unchecked")
         final StorageSerializer<SPSession> spSessionSerializer =
                 (StorageSerializer<SPSession>) registry.lookup(claz);
         if (spSessionSerializer == null) {

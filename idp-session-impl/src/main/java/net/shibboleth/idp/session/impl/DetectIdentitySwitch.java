@@ -20,14 +20,12 @@ package net.shibboleth.idp.session.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -39,9 +37,11 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 
 /**
@@ -76,10 +76,10 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
     @Nonnull private Function<ProfileRequestContext,SubjectCanonicalizationContext> c14nContextLookupStrategy;
     
     /** SessionContext to operate on. */
-    @Nullable private SessionContext sessionCtx;
+    @NonnullBeforeExec private SessionContext sessionCtx;
     
     /** A newly established principal name to check. */
-    @Nullable private String newPrincipalName;
+    @NonnullBeforeExec private String newPrincipalName;
     
     /** Constructor. */
     public DetectIdentitySwitch() {
@@ -161,10 +161,7 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        // Nullability checked in pre;
-        final SessionContext ctx =  sessionCtx;
-        assert ctx != null;
-        final IdPSession idpSession = ctx.getIdPSession();
+        final IdPSession idpSession = sessionCtx.getIdPSession();
         assert idpSession != null;
         if (idpSession.getPrincipalName().equals(newPrincipalName)) {
             log.debug("{} Identities from session and new authentication result match, nothing to do", getLogPrefix());
@@ -185,7 +182,7 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
         }
         
         // Establish context state as if the original session didn't exist.
-        ctx.setIdPSession(null);
+        sessionCtx.setIdPSession(null);
         authenticationContext.setActiveResults(CollectionSupport.<AuthenticationResult>emptyList());
         
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.IDENTITY_SWITCH);

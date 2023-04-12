@@ -63,6 +63,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("null")
     @Override
     protected void adjustProperties() throws ComponentInitializationException {
         sessionManager.setTrackSPSessions(true);
@@ -137,6 +138,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         }
         
         /** {@inheritDoc} */
+        @SuppressWarnings({"null"})
         public SPSession apply(ProfileRequestContext input) {
             return new BasicSPSession("https://sp.example.org", creationTime, expirationTime);
         }

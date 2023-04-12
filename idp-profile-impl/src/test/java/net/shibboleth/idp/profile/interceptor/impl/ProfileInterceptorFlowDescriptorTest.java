@@ -17,12 +17,6 @@
 
 package net.shibboleth.idp.profile.interceptor.impl;
 
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.shared.component.UnmodifiableComponentException;
-import net.shibboleth.shared.logic.PredicateSupport;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageService;
 import org.springframework.webflow.execution.RequestContext;
@@ -30,10 +24,14 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.shared.component.UnmodifiableComponentException;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 /** {@link ProfileInterceptorFlowDescriptor} unit test. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class ProfileInterceptorFlowDescriptorTest {
 
     private ProfileInterceptorFlowDescriptor descriptor;

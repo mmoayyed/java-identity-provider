@@ -62,6 +62,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** {@link StorageBackedSessionManager} unit test. */
+@SuppressWarnings({"javadoc", "null"})
 public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase {
 
     private static final Duration sessionSlop = Duration.ofMinutes(5);

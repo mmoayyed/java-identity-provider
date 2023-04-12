@@ -18,7 +18,17 @@
 package net.shibboleth.idp.session.impl;
 
 import java.time.Instant;
-import java.util.Arrays;
+
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageSerializer;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -38,17 +48,6 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
-
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageSerializer;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /** {@link UpdateSessionWithAuthenticationResult} unit test. */
 public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBaseTestCase {

@@ -39,6 +39,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 /** Base class for tests requiring a SessionManager component to be set up. */
+@SuppressWarnings({"null"})
 public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
     
     protected MemoryStorageService storageService;

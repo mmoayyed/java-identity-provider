@@ -97,7 +97,9 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             @Nullable final StorageBackedIdPSession target) {
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
         targetObject = target;
-        jsonProvider = JsonProvider.provider();
+        final JsonProvider prov = JsonProvider.provider();;
+        assert prov!=null;
+        jsonProvider = prov;
     }
 
 // Checkstyle: CyclomaticComplexity OFF
@@ -148,8 +150,9 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             }
 
             gen.writeEnd().close();
-
-            return sink.toString();
+            final String val = sink.toString();
+            assert val != null;
+            return val;
         } catch (final JsonException e) {
             log.error("Exception while serializing IdPSession: {}", e.getMessage());
             throw new IOException("Exception while serializing IdPSession", e);
@@ -181,22 +184,31 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                 final Instant creation =
                         Instant.ofEpochMilli(obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact());
                 final String principalName = obj.getString(PRINCIPAL_NAME_FIELD);
+                assert principalName!=null && creation != null;
                 objectToPopulate = new StorageBackedIdPSession(sessionManager, context, principalName, creation);
             }
 
             // Populate fields in-place, bypassing any storage interactions.
             objectToPopulate.setVersion(version);
-            objectToPopulate.doSetLastActivityInstant(
+            final Instant lastActivityInstant =
                     Instant.ofEpochMilli(expiration).minus(sessionManager.getSessionTimeout()).minus(
-                            sessionManager.getSessionSlop()));
+                            sessionManager.getSessionSlop());
+            assert lastActivityInstant!=null;
+            objectToPopulate.doSetLastActivityInstant(lastActivityInstant);
             if (obj.containsKey(IPV4_ADDRESS_FIELD)) {
-                objectToPopulate.doBindToAddress(obj.getString(IPV4_ADDRESS_FIELD));
+                final String addr = obj.getString(IPV4_ADDRESS_FIELD);
+                assert addr != null;
+                objectToPopulate.doBindToAddress(addr);
             }
             if (obj.containsKey(IPV6_ADDRESS_FIELD)) {
-                objectToPopulate.doBindToAddress(obj.getString(IPV6_ADDRESS_FIELD));
+                final String addr = obj.getString(IPV6_ADDRESS_FIELD);
+                assert addr != null;
+                objectToPopulate.doBindToAddress(addr);
             }
             if (obj.containsKey(UNK_ADDRESS_FIELD)) {
-                objectToPopulate.doBindToAddress(obj.getString(UNK_ADDRESS_FIELD));
+                final String addr = obj.getString(UNK_ADDRESS_FIELD);
+                assert addr != null;
+                objectToPopulate.doBindToAddress(addr);
             }
 
             objectToPopulate.getAuthenticationResultMap().clear();

@@ -40,6 +40,7 @@ import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.idp.session.context.LogoutPropagationContext.Result;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.DataSealer;
@@ -88,7 +89,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
     @Nullable private Function<ProfileRequestContext,SPSession> sessionLookupStrategy;
     
     /** {@link SPSession} to operate on. */
-    @Nullable private SPSession session;
+    @NonnullBeforeExec private SPSession session;
 
     /** The value used to look up a session by reference. */
     @Nullable private String sessionKey;

@@ -39,6 +39,7 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -80,7 +81,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextLookupStrategy;
     
     /** Existing or newly created SessionContext. */
-    @Nullable private SessionContext sessionCtx;
+    @NonnullBeforeExec private SessionContext sessionCtx;
 
     /** Existing SubjectContext. */
     @Nullable private SubjectContext subjectCtx;
@@ -150,7 +151,6 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             }
             
             // We can only do work if a session exists or a non-empty SubjectContext exists.
-            assert sessionCtx != null;
             return sessionCtx.getIdPSession() != null || (subjectCtx != null && subjectCtx.getPrincipalName() != null);
         }
         
@@ -161,10 +161,8 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-        final SessionContext sc = sessionCtx;
-        assert sc != null;;
 
-        final IdPSession session = sc.getIdPSession();
+        final IdPSession session = sessionCtx.getIdPSession();
         if (session != null) {
             try {
                 updateIdPSession(authenticationContext, session);
@@ -222,18 +220,17 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     private void createIdPSession(@Nonnull final AuthenticationContext authenticationContext)
             throws SessionException {
 
-        final SessionContext sc = sessionCtx;
         final SubjectContext sbc = subjectCtx;
-        assert sbc != null && sc != null;;
+        assert sbc != null && isPreExecuteCalled();
         final String principalName = sbc.getPrincipalName();
         assert principalName != null;
         log.debug("{} Creating new session for principal {}", getLogPrefix(), principalName);
         
-        sc.setIdPSession(sessionManager.createSession(principalName));
+        sessionCtx.setIdPSession(sessionManager.createSession(principalName));
         if (authenticationContext.isResultCacheable()) {
             final AuthenticationResult ar = authenticationContext.getAuthenticationResult();
             assert ar != null;
-            final IdPSession idPSession = sc.getIdPSession();
+            final IdPSession idPSession = sessionCtx.getIdPSession();
             assert idPSession != null;
             idPSession.addAuthenticationResult(ar);
         }

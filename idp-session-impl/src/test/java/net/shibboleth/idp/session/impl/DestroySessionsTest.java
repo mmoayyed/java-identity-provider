@@ -69,6 +69,7 @@ public class DestroySessionsTest extends SessionManagerBaseTestCase {
     }
     
     /** {@inheritDoc} */
+    @SuppressWarnings("null")
     @Override
     protected void adjustProperties() throws ComponentInitializationException {
         sessionManager.setTrackSPSessions(true);
