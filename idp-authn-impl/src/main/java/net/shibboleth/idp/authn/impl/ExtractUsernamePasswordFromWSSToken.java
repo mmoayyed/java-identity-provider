@@ -40,6 +40,7 @@ import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -57,7 +58,7 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromWSSToken.class);
 
     /** Inbound message to operate on. */
-    @Nullable private Envelope inboundMessage;
+    @NonnullBeforeExec private Envelope inboundMessage;
 
     /** {@inheritDoc} */
     @Override
@@ -79,7 +80,6 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-        assert inboundMessage != null;
         final Pair<String, String> usernamePassword = extractUsernamePassword(inboundMessage);
         if (usernamePassword == null) {
             log.debug("{} inbound message does not contain a username and password", getLogPrefix());

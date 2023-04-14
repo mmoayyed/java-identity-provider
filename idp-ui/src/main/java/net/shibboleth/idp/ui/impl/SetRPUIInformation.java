@@ -43,6 +43,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -77,7 +78,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * The {@link EntityDescriptor}. If we cannot find this we short cut the {@link #doExecute(ProfileRequestContext)}
      * stage.
      */
-    @Nullable private EntityDescriptor entityDescriptor;
+    @NonnullBeforeExec private EntityDescriptor entityDescriptor;
 
     /** The {@link SPSSODescriptor}. Not finding this is not fatal */
     @Nullable private SPSSODescriptor spSSODescriptor;
@@ -92,9 +93,11 @@ public class SetRPUIInformation extends AbstractProfileAction {
     public SetRPUIInformation() {
         metadataContextLookupStrategy = new SAMLMetadataContextLookupFunction();
 
-        rpUIContextCreateStrategy =
+        final Function<ProfileRequestContext, RelyingPartyUIContext> rccs =
                 new ChildContextLookup<>(RelyingPartyUIContext.class, true).compose(
                         new ChildContextLookup<>(AuthenticationContext.class, true));
+        assert rccs != null;
+        rpUIContextCreateStrategy = rccs;
     }
 
     /**

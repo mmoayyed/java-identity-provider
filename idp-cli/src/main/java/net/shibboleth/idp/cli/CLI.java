@@ -83,14 +83,18 @@ public final class CLI {
         } catch (final ClassNotFoundException e) {
             errorAndExit("Argument class " + argType + " not found ");
         } catch (final InstantiationException | IllegalAccessException e) {
-            errorAndExit(e.getMessage());
+            final String msg = e.getMessage();
+            assert msg != null;
+            errorAndExit(msg);
         }
         assert argObject != null;
         
         try {
             argObject.validate();
         } catch (final IllegalArgumentException e) {
-            errorAndExit(e.getMessage());
+            final String msg = e.getMessage();
+            assert msg != null;
+            errorAndExit(msg);
         }
         
         doRequest(argObject);
@@ -134,7 +138,9 @@ public final class CLI {
                 }
             }
         } catch (final MalformedURLException|ProtocolException e) {
-            errorAndExit(e.getMessage());
+            final String msg = e.getMessage();
+            assert msg != null;
+            errorAndExit(msg);
         } catch (final IOException e) {
             errorAndExit((url != null ? "(" + url.toString() + ") " : "") + e.getMessage());
         }

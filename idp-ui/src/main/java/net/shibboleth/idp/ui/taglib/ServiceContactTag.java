@@ -116,7 +116,7 @@ public class ServiceContactTag extends ServiceTagSupport {
         final List<EmailAddress> emails = contact.getEmailAddresses();
         String emailAddress = null;
 
-        if (emails != null && !emails.isEmpty()) {
+        if (!emails.isEmpty()) {
             emailAddress = emails.get(0).getURI();
         }
 
@@ -133,10 +133,6 @@ public class ServiceContactTag extends ServiceTagSupport {
             fullName.append(surName.getValue()).append(" ");
         }
         if (0 == fullName.length()) {
-            if (null == emails) {
-                log.debug("No name and no email");
-                return null;
-            }
             log.debug("no names found, using email address as text");
             fullName.append(emailAddress);
         }

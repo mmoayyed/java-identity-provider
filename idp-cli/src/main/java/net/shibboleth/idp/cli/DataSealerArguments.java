@@ -101,7 +101,7 @@ public class DataSealerArguments extends AbstractIdPHomeAwareCommandLineArgument
     }
 
     /** {@inheritDoc} */
-    public void printHelp(final PrintStream out) {
+    public void printHelp(@Nonnull final PrintStream out) {
         out.println("DataSealerCLI");
         out.println("Provides a command line interface for DataSealer wrap/unwrap operations.");
         out.println();

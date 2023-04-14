@@ -21,14 +21,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
-
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -36,9 +30,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import net.shibboleth.idp.test.flows.AbstractFlowTest;
+
 /** Tests for the profile interceptor flow. */
 @ContextConfiguration(locations = {"classpath:/intercept/test-webflow-config.xml",})
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "unchecked"})
 public class InterceptFlowTest extends AbstractFlowTest {
 
     /** Flow id. */
@@ -51,9 +49,6 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @Nonnull public final static String ACTIVATED_FLOWS_BEAN_ID = "ActivatedFlows";
 
     @Nonnull public final static String TEST_FLOW_REGISTRY_ID = "testFlowRegistry";
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InterceptFlowTest.class);
 
     /**
      * Clear the list of user configured flows defined in bean with ID {@link #INTERCEPT_FLOWS_BEAN_ID}.

@@ -51,6 +51,7 @@ import net.shibboleth.idp.saml.xml.SAMLConstants;
 /**
  * Validate a test SAML 1 Response.
  */
+@SuppressWarnings({"null"})
 public class SAML1TestResponseValidator {
 
     /** Expected IdP entity ID. */
@@ -299,6 +300,7 @@ public class SAML1TestResponseValidator {
      * 
      * @param assertion the assertion
      */
+    @SuppressWarnings("removal")
     public void assertAssertion(@Nullable final Assertion assertion) {
         assert assertion!=null;
         final String id = assertion.getID();

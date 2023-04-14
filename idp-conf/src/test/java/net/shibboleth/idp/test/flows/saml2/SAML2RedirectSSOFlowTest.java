@@ -42,6 +42,7 @@ import org.w3c.dom.Element;
 /**
  * SAML 2 Redirect SSO flow test.
  */
+@SuppressWarnings({"javadoc", "null"})
 public class SAML2RedirectSSOFlowTest extends AbstractSAML2SSOFlowTest {
 
     /** Flow id. */

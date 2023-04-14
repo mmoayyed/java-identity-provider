@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -36,6 +35,7 @@ import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** Profile configuration source for requested principals. */
-    @Nullable private AuthenticationProfileConfiguration authenticationProfileConfig;
+    @NonnullBeforeExec private AuthenticationProfileConfiguration authenticationProfileConfig;
 
     /** Constructor. */
     public InitializeRequestedPrincipalContext() {
@@ -143,7 +143,6 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        assert authenticationProfileConfig != null;
         final List<Principal> principals =
                 authenticationProfileConfig.getDefaultAuthenticationMethods(profileRequestContext);
         if (principals.isEmpty()) {

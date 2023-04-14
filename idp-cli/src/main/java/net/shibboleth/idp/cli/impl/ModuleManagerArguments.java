@@ -150,7 +150,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
 
     /** {@inheritDoc} */
     @Override
-    public void printHelp(final PrintStream out) {
+    public void printHelp(@Nonnull PrintStream out) {
         out.println("ModuleManager");
         out.println("Provides a command line interface for IdP Module management operations.");
         out.println();

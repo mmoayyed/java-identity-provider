@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.spring.factory;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,9 +29,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
-import net.shibboleth.shared.primitive.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionResource;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -51,7 +50,9 @@ import org.springframework.webflow.engine.model.registry.FlowModelRegistry;
 import org.springframework.webflow.engine.model.registry.FlowModelRegistryImpl;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -83,8 +84,8 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
     
     /** Constructor. */
     public FlowDefinitionRegistryFactoryBean() {
-        flowLocations = Collections.emptyMap();
-        flowLocationPatterns = Collections.emptyMap();
+        flowLocations = CollectionSupport.emptyMap();
+        flowLocationPatterns = CollectionSupport.emptyMap();
     }
 
     /** {@inheritDoc} */
@@ -166,8 +167,10 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
         assert flowBuilderServices != null;
         
         // This is the whole reason for this class.
+        final ApplicationContext ac = flowBuilderServices.getApplicationContext();
+        assert ac != null;
         final FlowDefinitionResourceFactory flowResourceFactory =
-                new FlowDefinitionResourceFactory(flowBuilderServices.getApplicationContext());
+                new FlowDefinitionResourceFactory(ac);
         
         final DefaultFlowRegistry flowRegistry = new DefaultFlowRegistry();
         flowRegistry.setParent(this.parent);
@@ -197,8 +200,11 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
             final LocalAttributeMap<Object> attributes = new LocalAttributeMap<>();
             updateFlowAttributes(attributes);
             
+            final String value = location.getValue();
+            final String key = location.getKey();
+            assert value != null && key != null;
             final FlowDefinitionResource resource =
-                    resourceFactory.createResource(basePath, location.getValue(), attributes, location.getKey());
+                    resourceFactory.createResource(basePath, value, attributes, key);
             registerFlow(resource, flowRegistry);
         }
     }
@@ -224,7 +230,9 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
                 } else {
                     base = "";
                 }
-                resources = resourceFactory.createResources(base, pattern.getKey(), attributes);
+                final String key = pattern.getKey();
+                assert base != null && key != null;
+                resources = resourceFactory.createResources(base, key, attributes);
             } catch (final IOException e) {
                 throw new IllegalStateException(
                         "An I/O Exception occurred resolving the flow location pattern '" + pattern.getKey() + "'", e);
@@ -291,7 +299,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
     private static class DefaultFlowRegistry extends FlowDefinitionRegistryImpl {
 
         /** The model registry. */
-        private FlowModelRegistry flowModelRegistry = new FlowModelRegistryImpl();
+        @Nonnull private FlowModelRegistry flowModelRegistry = new FlowModelRegistryImpl();
 
         /**
          * Get the model registry.

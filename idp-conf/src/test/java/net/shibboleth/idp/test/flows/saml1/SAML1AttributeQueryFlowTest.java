@@ -49,6 +49,7 @@ import org.testng.annotations.Test;
 /**
  * SAML 1 attribute query flow test.
  */
+@SuppressWarnings({"null"})
 public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
 
     /** Flow id. */

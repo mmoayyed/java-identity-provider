@@ -70,7 +70,7 @@ public class JarCheckArguments extends AbstractIdPHomeAwareCommandLineArguments 
 
     /** {@inheritDoc} */
     @Override
-    public void printHelp(final PrintStream out) {
+    public void printHelp(@Nonnull final PrintStream out) {
         out.println("JarCheck");
         out.println("Provides a command line interface to look for duplicates in an installation");
         out.println();

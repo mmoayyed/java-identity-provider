@@ -184,7 +184,9 @@ public class FlowDefinitionResourceFactory {
         } else if (flowResource instanceof FileSystemResource) {
             filePath = truncateFilePath(((FileSystemResource) flowResource).getPath(), localBasePath);
         } else if (flowResource instanceof UrlResource || flowResource instanceof VfsResource) {
-            filePath = truncateFilePath(flowResource.getURL().getPath(), localBasePath);
+            final String path = flowResource.getURL().getPath();
+            assert path != null;
+            filePath = truncateFilePath(path, localBasePath);
         } else {
             // Default to the filename.
             final String fname = flowResource.getFilename();
@@ -234,7 +236,9 @@ public class FlowDefinitionResourceFactory {
             @Nonnull @NotEmpty final String basePath) {
         final int basePathIndex = filePath.lastIndexOf(basePath);
         if (basePathIndex != -1) {
-            return filePath.substring(basePathIndex);
+            final String result = filePath.substring(basePathIndex);
+            assert result != null;
+            return result;
         }
         return filePath;
     }

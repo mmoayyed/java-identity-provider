@@ -44,6 +44,7 @@ import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -84,7 +85,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
     @Nullable private Function<ProfileRequestContext,String> responderLookupStrategy;
 
     /** A subordinate {@link MultiFactorAuthenticationContext}, if any. */
-    @Nullable private MultiFactorAuthenticationContext mfaContext;
+    @NonnullBeforeExec private MultiFactorAuthenticationContext mfaContext;
 
     /** Constructor. */
     public FinalizeMultiFactorAuthentication() {

@@ -138,7 +138,7 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
     @NonnullBeforeExec private SAMLAuthnContext samlAuthnContext;
     
     /** Store off profile config. */
-    @Nullable private BrowserSSOProfileConfiguration profileConfiguration;
+    @NonnullBeforeExec private BrowserSSOProfileConfiguration profileConfiguration;
     
     /** Incoming context translation function. */
     @Nullable private Function<AuthnContext,Collection<Principal>> authnContextTranslator;
@@ -298,14 +298,12 @@ public class ValidateSAMLAuthentication extends AbstractValidationAction {
 
         logSuccess();
         
-        final BrowserSSOProfileConfiguration prConfig = profileConfiguration;
-        assert prConfig!=null;
-        authnContextTranslator = prConfig.getAuthnContextTranslationStrategy(profileRequestContext);
-        authnContextTranslatorEx = prConfig.getAuthnContextTranslationStrategyEx(profileRequestContext);
+        authnContextTranslator = profileConfiguration.getAuthnContextTranslationStrategy(profileRequestContext);
+        authnContextTranslatorEx = profileConfiguration.getAuthnContextTranslationStrategyEx(profileRequestContext);
         
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         final AuthenticationResult ar = authenticationContext.getAuthenticationResult();
-        if (ar != null && prConfig.isProxiedAuthnInstant(profileRequestContext)) {
+        if (ar != null && profileConfiguration.isProxiedAuthnInstant(profileRequestContext)) {
             final AuthnStatement as = samlAuthnContext.getAuthnStatement();
             assert as != null;
             final Instant ai = as.getAuthnInstant();

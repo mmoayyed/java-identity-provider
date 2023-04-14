@@ -20,7 +20,6 @@ package net.shibboleth.idp.session.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -84,7 +83,7 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
     @NonnullBeforeExec private SessionContext sessionCtx;
 
     /** Existing SubjectContext. */
-    @Nullable private SubjectContext subjectCtx;
+    @NonnullBeforeExec private SubjectContext subjectCtx;
     
     /** Constructor. */
     public UpdateSessionWithAuthenticationResult() {
@@ -174,7 +173,6 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
             try {
                 createIdPSession(authenticationContext);
             } catch (final SessionException e) {
-                assert subjectCtx != null;
                 final String principalName = subjectCtx.getPrincipalName();
                 log.error("{} Error creating session for principal {}", getLogPrefix(), principalName, e);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);

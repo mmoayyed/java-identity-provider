@@ -49,6 +49,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractInterceptorA
     @Nonnull @NotEmpty public static final String PROTOCOL_URI = "https://www.apereo.org/cas/protocol";
     
     /** Default ticket validity. */
+    @SuppressWarnings("null")
     @Nonnull public static final Duration DEFAULT_TICKET_VALIDITY_PERIOD = Duration.ofSeconds(15);
 
     /** Lookup function to supply ticketValidityPeriod property. */
@@ -70,8 +71,9 @@ public abstract class AbstractProtocolConfiguration extends AbstractInterceptorA
         
         resolveAttributesPredicate = PredicateSupport.alwaysTrue();
         ticketValidityPeriodLookupStrategy = FunctionSupport.constant(DEFAULT_TICKET_VALIDITY_PERIOD);
-        
-        defaultSecurityConfiguration = new BasicSecurityConfiguration(Duration.ofMinutes(5),
+        final Duration fiveMins = Duration.ofMinutes(5);
+        assert fiveMins!=null;
+        defaultSecurityConfiguration = new BasicSecurityConfiguration(fiveMins,
                 new TicketIdentifierGenerationStrategy(getDefaultTicketPrefix(), getDefaultTicketLength()));
     }
 

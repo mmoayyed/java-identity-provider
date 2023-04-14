@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 /**
  * SAML 2 Unsolicited SSO flow test.
  */
+@SuppressWarnings({"javadoc", "null"})
 public class SAML2UnsolicitedSSOFlowTest extends AbstractSAML2FlowTest {
 
     /** Flow id. */

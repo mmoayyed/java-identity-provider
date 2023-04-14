@@ -171,7 +171,6 @@ public abstract class AbstractSubjectCanonicalizationAction
                 return false;
             }
             
-            assert sc != null;
             return doPreExecute(profileRequestContext, sc);
         }
         

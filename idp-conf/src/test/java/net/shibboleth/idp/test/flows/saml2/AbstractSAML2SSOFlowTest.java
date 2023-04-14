@@ -56,7 +56,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Abstract SAML 2 SSO flow test.
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
 
     /** Class logger. */

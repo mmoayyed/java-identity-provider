@@ -37,6 +37,7 @@ import net.shibboleth.shared.xml.SerializeSupport;
 /**
  * SAML 2 ECP SSO flow test.
  */
+@SuppressWarnings({"javadoc", "null"})
 public class SAML2ECPSSOFlowTest extends AbstractSAML2SSOFlowTest {
 
     /** Flow id. */

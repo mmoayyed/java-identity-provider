@@ -48,7 +48,7 @@ import java.time.temporal.ChronoUnit;
 @ContextConfiguration(locations = {
         "/test/test-cas-beans.xml",
 })
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class ProxyFlowTest extends AbstractFlowTest {
 
     /** Flow id. */

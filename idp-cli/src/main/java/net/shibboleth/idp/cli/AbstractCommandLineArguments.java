@@ -99,10 +99,11 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     
     /** Constructor. */
     public AbstractCommandLineArguments() {
-        url = System.getProperty(BASEURL_PROPERTY);
-        if (url == null) {
-            url = "http://localhost/idp";
+        String u = System.getProperty(BASEURL_PROPERTY);  
+        if (u == null) {
+            u = "http://localhost/idp";
         }
+        url = u;
     }
     
     /**
@@ -284,7 +285,9 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
         }
         final String rawHeader = username + ":" + password;
         try {
-            return "Basic " + Base64Support.encode(rawHeader.getBytes(StandardCharsets.UTF_8), false);
+            final byte[] bytes = rawHeader.getBytes(StandardCharsets.UTF_8);
+            assert bytes != null;
+            return "Basic " + Base64Support.encode(bytes, false);
         } catch (final EncodingException e) {
             System.err.println(e.getMessage());
             return null;

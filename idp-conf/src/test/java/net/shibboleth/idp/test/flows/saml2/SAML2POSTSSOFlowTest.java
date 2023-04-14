@@ -39,6 +39,7 @@ import org.w3c.dom.Element;
 /**
  * SAML 2 POST SSO flow test.
  */
+@SuppressWarnings({"javadoc", "null"})
 public class SAML2POSTSSOFlowTest extends AbstractSAML2SSOFlowTest {
 
     /** Flow id. */

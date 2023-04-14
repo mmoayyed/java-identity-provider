@@ -48,7 +48,7 @@ import java.time.Instant;
 @ContextConfiguration(locations = {
         "/test/test-cas-beans.xml",
 })
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class ValidateFlowTest extends AbstractFlowTest {
 
     /** Flow id. */

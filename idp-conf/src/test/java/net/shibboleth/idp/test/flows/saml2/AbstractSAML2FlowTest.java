@@ -18,9 +18,6 @@
 package net.shibboleth.idp.test.flows.saml2;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -29,9 +26,12 @@ import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.Assert;
 
+import net.shibboleth.idp.test.flows.AbstractFlowTest;
+
 /**
  * Abstract SAML 2 flow test.
  */
+@SuppressWarnings({"javadoc", "null"})
 public class AbstractSAML2FlowTest extends AbstractFlowTest {
 
     /**

@@ -19,6 +19,7 @@ package net.shibboleth.idp.cli;
 
 import java.io.PrintStream;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
@@ -87,7 +88,7 @@ public abstract class AbstractIdPHomeAwareCommandLineArguments
     
     /** {@inheritDoc} */
     @Override
-    public void printHelp(final PrintStream out) {
+    public void printHelp(@Nonnull final PrintStream out) {
         super.printHelp(out);
         out.println(String.format("  --%-20s %s", "home",
                 "Sets idp.home if not installed to default location."));

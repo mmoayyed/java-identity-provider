@@ -128,14 +128,16 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
             consent.setId(attribute.getId());
 
             if (consentFlowDescriptor.compareValues()) {
-                unsortedConsent.setValue(
-                        ((AttributeReleaseFlowDescriptor) consentFlowDescriptor).getAttributeValuesHashFunction().apply(
-                                attribute.getValues()));
+                String value = ((AttributeReleaseFlowDescriptor) consentFlowDescriptor).getAttributeValuesHashFunction().apply(
+                        attribute.getValues());
+                assert value != null;
+                unsortedConsent.setValue(value);
                 final List<IdPAttributeValue> sorted = new ArrayList<>(attribute.getValues());
                 Collections.sort(sorted);
-                consent.setValue(
-                        ((AttributeReleaseFlowDescriptor) consentFlowDescriptor).getAttributeValuesHashFunction().apply(
-                                sorted));
+                value = ((AttributeReleaseFlowDescriptor) consentFlowDescriptor).getAttributeValuesHashFunction().apply(
+                        sorted);
+                assert value != null;
+                consent.setValue(value);
             }
 
             // Remember previous choice.

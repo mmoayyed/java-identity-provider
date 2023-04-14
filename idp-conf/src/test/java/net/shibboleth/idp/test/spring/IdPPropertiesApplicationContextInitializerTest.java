@@ -36,7 +36,7 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /** {@link IdPPropertiesApplicationContextInitializer} unit test. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class IdPPropertiesApplicationContextInitializerTest {
 
     private MockServletContext sc;

@@ -19,14 +19,12 @@ package net.shibboleth.idp.test.flows.exception;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 /** Tests for the profile interceptor flow. */
 @ContextConfiguration(locations = {"classpath:/exception/test-webflow-config.xml",})
@@ -36,9 +34,6 @@ public class ExceptionFlowTest extends AbstractFlowTest {
     @Nonnull public final static String TEST_EXCEPTION_FLOW_ID = "test-exception-flow";
 
     @Nonnull public final static String TEST_COMMITTED_FLOW_ID = "test-committed-flow";
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ExceptionFlowTest.class);
 
     @Test public void testExceptionFlow() {
 

@@ -154,6 +154,7 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
     }
 
     /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
     public boolean test(@Nullable final ProfileRequestContext input,  @Nullable final AuthenticationResult input2) {
         checkComponentActive();
         

@@ -71,8 +71,9 @@ class FlowRelativeResourceLoader extends DefaultResourceLoader {
         }
         
         if (location.startsWith(CLASSPATH_URL_PREFIX)) {
-            return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()),
-                    getClassLoader());
+            final String subString = location.substring(CLASSPATH_URL_PREFIX.length());
+            assert subString!=null;
+            return new ClassPathResource(subString, getClassLoader());
         }
         return createFlowRelativeResource(location);
     }

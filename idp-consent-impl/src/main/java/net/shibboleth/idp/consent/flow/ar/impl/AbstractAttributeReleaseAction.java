@@ -77,9 +77,11 @@ public abstract class AbstractAttributeReleaseAction extends AbstractConsentActi
     public AbstractAttributeReleaseAction() {
         attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class);
 
-        attributeContextLookupStrategy =
+        final Function<ProfileRequestContext,AttributeContext> acls = 
                 new ChildContextLookup<>(AttributeContext.class).compose(
                         new ChildContextLookup<>(RelyingPartyContext.class));
+        assert acls != null;
+        attributeContextLookupStrategy = acls;
     }
 
     /**

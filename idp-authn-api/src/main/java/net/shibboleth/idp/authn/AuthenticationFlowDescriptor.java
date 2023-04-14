@@ -727,7 +727,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
     
     static {
-        STORAGE_EXPIRATION_OFFSET = Duration.ofMinutes(10);
+        final Duration tenMinutes =  Duration.ofMinutes(10);
+        assert tenMinutes!=null;
+        STORAGE_EXPIRATION_OFFSET = tenMinutes;
     }
 
 }

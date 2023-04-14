@@ -102,6 +102,7 @@ import net.shibboleth.shared.xml.ParserPool;
                 IdPPropertiesApplicationContextInitializer.class},
         loader = PreferFileSystemContextLoader.class)
 @WebAppConfiguration
+@SuppressWarnings({"javadoc", "null"})
 public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests {
 
     /** Logger. */
@@ -237,6 +238,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     /**
      * Creates an UnboundID in-memory directory server. Leverages LDIF found at {@value #LDIF_FILE}.
      */
+    @SuppressWarnings("null")
     @BeforeSuite public static void setupDirectoryServer() {
         directoryServer =
             new InMemoryDirectory(

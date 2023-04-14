@@ -113,7 +113,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     @NonnullBeforeExec private IdentifierGenerationStrategy idGenerator;
     
     /** Applicable profile configuration. */
-    @Nullable private BrowserSSOProfileConfiguration profileConfiguration;
+    @NonnullBeforeExec private BrowserSSOProfileConfiguration profileConfiguration;
 
     /** EntityID to populate into Issuer element. */
     @Nullable private String issuerId;
@@ -270,9 +270,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         object.setID(idGenerator.generateIdentifier());
         object.setIssueInstant(Instant.now());
         object.setVersion(SAMLVersion.VERSION_20);
-        final BrowserSSOProfileConfiguration profileConfig = profileConfiguration;
-        assert profileConfig!=null;
-        final Integer index = profileConfig.getAttributeIndex(profileRequestContext);
+        final Integer index = profileConfiguration.getAttributeIndex(profileRequestContext);
         if (index != null) {
             log.debug("{} Setting AttributeConsumingServiceIndex to '{}' for SAML AuthnRequest", getLogPrefix(),
                     index);
@@ -292,7 +290,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         // ForceAuthn comes from configuration, which by default will take into account the
         // AuthenticationContext parent's state (but may be overridden by deployer).
-        if (profileConfig.isForceAuthn(profileRequestContext)) {
+        if (profileConfiguration.isForceAuthn(profileRequestContext)) {
             log.debug("{} Setting ForceAuthn for SAML AuthnRequest", getLogPrefix());
             object.setForceAuthn(true);
         }
@@ -305,7 +303,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         
         final NameIDPolicy nip = nipBuilder.buildObject();
         nip.setAllowCreate(true);
-        final String qualifier = profileConfig.getSPNameQualifier(profileRequestContext);
+        final String qualifier = profileConfiguration.getSPNameQualifier(profileRequestContext);
         if (qualifier != null) {
             log.debug("{} Setting NameIDPolicy SPNameQualifier to '{}' for SAML AuthnRequest", getLogPrefix(),
                     qualifier);
@@ -313,7 +311,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         }
         
         // TODO: use metadata for NameID Formats too?
-        final List<String> formats = profileConfig.getNameIDFormatPrecedence(profileRequestContext);
+        final List<String> formats = profileConfiguration.getNameIDFormatPrecedence(profileRequestContext);
         if (!formats.isEmpty()) {
             log.debug("{} Setting NameIDPolicy Format to '{}' for SAML AuthnRequest", getLogPrefix(), formats.get(0));
             nip.setFormat(formats.get(0));
@@ -324,7 +322,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         final RequestedAuthnContext rac = getRequestedAuthnContext(profileRequestContext);
         if (rac != null) {
             final AuthnContextComparisonTypeEnumeration operator =
-                    profileConfig.getAuthnContextComparison(profileRequestContext);
+                    profileConfiguration.getAuthnContextComparison(profileRequestContext);
             if (operator != null) {
                 log.debug("{} Setting RequestedAuthnContext comparison to {}", getLogPrefix(), operator);
                 rac.setComparison(operator);

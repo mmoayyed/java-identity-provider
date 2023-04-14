@@ -49,6 +49,7 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
     @Nonnull @NotEmpty public static final String PROFILE_ID = PROTOCOL_URI + "/serviceValidate";
 
     /** Default ticket validity. */
+    @SuppressWarnings("null")
     @Nonnull public static final Duration DEFAULT_TICKET_VALIDITY_PERIOD = Duration.ofHours(12);
     
     /** Default ticket prefix. */

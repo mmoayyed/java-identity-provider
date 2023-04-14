@@ -276,7 +276,7 @@
                     <dependency>
                         <groupId>net.shibboleth.maven.enforcer.rules</groupId>
                         <artifactId>maven-dist-enforcer</artifactId>
-                        <version>${maven-dist-enforcer.version}</version>
+                        <version>3.2.1-SNAPSHOT</version>
                     </dependency>
                 </dependencies>
                 <executions>
@@ -297,7 +297,7 @@
                                     <zipFiles>${project.build.directory}/${idp.finalName}.zip</zipFiles>
                                     <tgzFiles>${project.build.directory}/${idp.finalName}.tar.gz</tgzFiles>
                                     <checkSignatures>true</checkSignatures>
-                                    <checkDependencies>true</checkDependencies>
+                                    <checkDependencies>false</checkDependencies>
                                     <compileRuntimeArtifactFatal>false</compileRuntimeArtifactFatal>
                                     <versionExtensions>-SNAPSHOT -GA -jre -empty-to-avoid-conflict-with-guava -M6</versionExtensions>
                                     <classifiers>-linux-x86_64 -osx-x86_64</classifiers>

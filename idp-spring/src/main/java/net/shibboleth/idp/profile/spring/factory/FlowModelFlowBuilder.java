@@ -37,6 +37,7 @@ import org.springframework.webflow.scope.FlashScope;
 import org.springframework.webflow.scope.FlowScope;
 import org.springframework.webflow.scope.ViewScope;
 
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.shared.spring.context.FilesystemGenericWebApplicationContext;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -72,10 +73,13 @@ public class FlowModelFlowBuilder extends org.springframework.webflow.engine.bui
     @Nonnull private String[] parseContextResources(@Nullable final List<BeanImportModel> beanImports) {
         if (beanImports != null && !beanImports.isEmpty()) {
             final String[] resources = new String[beanImports.size()];
-            return beanImports.stream()
+            final @Nonnull List<String> resultAsList = beanImports.stream()
                     .map(BeanImportModel::getResource)
-                    .collect(Collectors.toUnmodifiableList())
-                    .toArray(resources);
+                    .collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList()))
+                    .get();
+            final String result[] = resultAsList.toArray(resources);
+            assert result != null;
+            return result;
         }
         return new String[0];
     }

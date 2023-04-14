@@ -49,6 +49,7 @@ public class ServiceTagSupport extends BodyTagSupport {
     @Nonnull private static Logger log = LoggerFactory.getLogger(ServiceTagSupport.class);
 
     /** Strategy function for access to {@link RelyingPartyUIContext} for input to resolver. */
+    @SuppressWarnings("null")
     @Nonnull private static Function<ProfileRequestContext, RelyingPartyUIContext> uiContextLookupStrategy =
             new ChildContextLookup<>(RelyingPartyUIContext.class).compose(
                     new ChildContextLookup<>(AuthenticationContext.class));

@@ -55,7 +55,7 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 @ContextConfiguration(locations = {
         "/test/test-cas-beans.xml",
 })
-@SuppressWarnings("javadoc")
+@SuppressWarnings({"javadoc", "null"})
 public class ServiceValidateFlowTest extends AbstractFlowTest {
 
     /** Flow id. */

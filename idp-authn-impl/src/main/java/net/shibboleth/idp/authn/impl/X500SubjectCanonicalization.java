@@ -40,6 +40,7 @@ import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -83,7 +84,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     @Nullable private X509Certificate certificate;
     
     /** The subject DN to operate on. */
-    @Nullable private X500Principal x500Principal;
+    @NonnullBeforeExec private X500Principal x500Principal;
     
     /** Constructor. */
     public X500SubjectCanonicalization() {
@@ -165,8 +166,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
             }
             log.debug("{} No suitable subjectAltName extension");
         }
-        assert x500Principal != null;
-        final String x509PrincipalName =x500Principal.getName();
+        final String x509PrincipalName = x500Principal.getName();
         log.debug("{} Searching for RDN to extract from DN: {}", getLogPrefix(), x509PrincipalName);
         
         try {
