@@ -125,7 +125,7 @@
           class="org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver"
           c:mdResolver-ref="shibboleth.MetadataResolver" />
 
-    <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
+    <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.profile.spring.impl.OpenSAMLConfigBean"
           depends-on="shibboleth.ParserPool"
           p:parserPool-ref="shibboleth.ParserPool" />
 

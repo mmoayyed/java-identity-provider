@@ -168,7 +168,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
+    <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.profile.spring.impl.OpenSAMLConfigBean"
         depends-on="systemPrereqs,shibboleth.LoggingService"
         p:parserPool-ref="shibboleth.ParserPool"
         p:metricRegistry-ref="shibboleth.metrics.MetricRegistry" />
