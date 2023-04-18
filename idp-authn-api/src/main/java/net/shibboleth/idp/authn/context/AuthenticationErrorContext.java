@@ -19,15 +19,15 @@ package net.shibboleth.idp.authn.context;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -53,7 +53,7 @@ public final class AuthenticationErrorContext extends BaseContext {
     /** Constructor. */
     public AuthenticationErrorContext() {
         exceptions = new ArrayList<>();
-        classifiedErrors = new HashSet<>();
+        classifiedErrors = new LinkedHashSet<>();
     }
 
     /**
@@ -63,20 +63,6 @@ public final class AuthenticationErrorContext extends BaseContext {
      */
     @Nonnull @NonnullElements @Live public List<Exception> getExceptions() {
         return exceptions;
-    }
-    
-    /**
-     * Add an exception to the list.
-     * 
-     * @param e exception to add
-     * 
-     * @deprecated
-     */
-    @Deprecated(forRemoval=true, since="4.0.0")
-    public void addException(@Nonnull final Exception e) {
-        Constraint.isNotNull(e, "Exception cannot be null");
-        
-        exceptions.add(e);
     }
     
     /**
@@ -96,6 +82,34 @@ public final class AuthenticationErrorContext extends BaseContext {
      */
     public boolean isClassifiedError(@Nonnull @NotEmpty final String error) {
         return classifiedErrors.contains(error);
+    }
+    
+    /**
+     * Adds a classified error to the context, ensuring that it will be returned
+     * from {@link #getLastClassifiedError()} until another is added.
+     * 
+     * @param error error to add
+     * 
+     * @return this context
+     * 
+     * @since 5.0.0
+     */
+    @Nonnull public AuthenticationErrorContext addClassifiedError(@Nonnull @NotEmpty final String error) {
+        // This is done to preserve ordering so that the error is the "last one added".
+        classifiedErrors.remove(error);
+        classifiedErrors.add(error);
+        return this;
+    }
+    
+    /**
+     * Gets the last classified error added, or null if none.
+     * 
+     * @return last error added or null
+     * 
+     * @since 5.0.0
+     */
+    @Nullable public String getLastClassifiedError() {
+        return classifiedErrors.stream().reduce((first, second) -> second).orElse(null);
     }
     
 }

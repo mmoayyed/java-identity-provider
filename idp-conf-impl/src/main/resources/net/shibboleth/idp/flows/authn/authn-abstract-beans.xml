@@ -70,12 +70,6 @@
                 </entry>
                 <entry>
                     <key>
-                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.AUTHN_RESULT"/>
-                    </key>
-                    <bean class="net.shibboleth.idp.authn.audit.impl.AuthenticationErrorAuditExtractor" />
-                </entry>
-                <entry>
-                    <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SERVICE_PROVIDER"/>
                     </key>
                     <ref bean="shibboleth.RelyingPartyIdLookup.Simple" />

@@ -30,7 +30,9 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
+import net.shibboleth.idp.authn.AuthnAuditFields;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.profile.audit.impl.PopulateAuditContext;
 import net.shibboleth.idp.profile.audit.impl.WriteAuditLog;
 import net.shibboleth.profile.context.AuditContext;
@@ -114,14 +116,14 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
     /** {@inheritDoc} */
     @Override
     protected void recordSuccess(@Nonnull final ProfileRequestContext profileRequestContext) {
-        doAudit(profileRequestContext);
+        doAudit(profileRequestContext, true);
         super.recordSuccess(profileRequestContext);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void recordFailure(@Nonnull final ProfileRequestContext profileRequestContext) {
-        doAudit(profileRequestContext);
+        doAudit(profileRequestContext, false);
         super.recordFailure(profileRequestContext);
     }
     
@@ -136,12 +138,14 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
         return auditContextCreationStrategy.apply(profileRequestContext);
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Do audit extraction and output.
      * 
      * @param profileRequestContext profile request context
+     * @param success true iff this is an audit of successful validation
      */
-    protected void doAudit(@Nonnull final ProfileRequestContext profileRequestContext) {
+    protected void doAudit(@Nonnull final ProfileRequestContext profileRequestContext, final boolean success) {
 
         if (populateAuditContextAction != null && writeAuditLogAction != null) {
             final EventContext existingEvent = profileRequestContext.getSubcontext(EventContext.class);
@@ -149,15 +153,27 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
             try {
                 assert populateAuditContextAction != null;
                 populateAuditContextAction.execute(requestContext);
-                
-                final Map<String,String> fields = getAuditFields(profileRequestContext);
-                if (fields != null) {
-                    final AuditContext ac = getAuditContext(profileRequestContext);
-                    if (ac != null) {
+
+                final AuditContext ac = getAuditContext(profileRequestContext);
+                if (ac != null) {
+                    final Map<String,String> fields = getAuditFields(profileRequestContext);
+                    if (fields != null) {
                         for (final Map.Entry<String,String> field : fields.entrySet()) {
                             final String key = field.getKey();
                             assert key != null;
                             ac.getFieldValues(key).add(field.getValue());
+                        }
+                    }
+                    
+                    // Manual handling of "result" field.
+                    if (success) {
+                        ac.getFields().put(AuthnAuditFields.AUTHN_RESULT, "Success");
+                    } else {
+                        final AuthenticationErrorContext errorContext =
+                                profileRequestContext.ensureSubcontext(AuthenticationContext.class)
+                                    .getSubcontext(AuthenticationErrorContext.class);
+                        if (errorContext != null) {
+                            ac.getFields().put(AuthnAuditFields.AUTHN_RESULT, errorContext.getLastClassifiedError());
                         }
                     }
                 }
@@ -177,6 +193,7 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
             }
         }
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Subclasses can override this method to supply additional audit fields to store.

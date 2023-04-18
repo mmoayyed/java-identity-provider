@@ -528,8 +528,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
                 if (Iterables.any(entry.getValue(), checker::test)) {
                     final String key = entry.getKey();
                     assert key!=null;
-                    authenticationContext.ensureSubcontext(
-                            AuthenticationErrorContext.class).getClassifiedErrors().add(key);
+                    authenticationContext.ensureSubcontext(AuthenticationErrorContext.class).addClassifiedError(key);
                     if (!eventSet) {
                         eventSet = true;
                         ActionSupport.buildEvent(profileRequestContext, key);
@@ -539,8 +538,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         }
         
         if (!eventSet) {
-            authenticationContext.ensureSubcontext(
-                    AuthenticationErrorContext.class).getClassifiedErrors().add(eventId);
+            authenticationContext.ensureSubcontext(AuthenticationErrorContext.class).addClassifiedError(eventId);
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }
     }
@@ -575,7 +573,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
                     final String key = entry.getKey();
                     assert key!=null;
                     authenticationContext.ensureSubcontext(
-                            AuthenticationWarningContext.class).getClassifiedWarnings().add(key);
+                            AuthenticationWarningContext.class).addClassifiedWarning(key);
                     if (!eventSet) {
                         eventSet = true;
                         ActionSupport.buildEvent(profileRequestContext, key);
@@ -585,8 +583,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
         }
         
         if (!eventSet) {
-            authenticationContext.ensureSubcontext(
-                    AuthenticationWarningContext.class).getClassifiedWarnings().add(eventId);
+            authenticationContext.ensureSubcontext(AuthenticationWarningContext.class).addClassifiedWarning(eventId);
             ActionSupport.buildEvent(profileRequestContext, eventId);
         }
     }

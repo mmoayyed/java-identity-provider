@@ -18,9 +18,10 @@
 package net.shibboleth.idp.authn.context;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -46,7 +47,7 @@ public final class AuthenticationWarningContext extends BaseContext {
     
     /** Constructor. */
     public AuthenticationWarningContext() {
-        classifiedWarnings = new HashSet<>();
+        classifiedWarnings = new LinkedHashSet<>();
     }
 
     /**
@@ -66,6 +67,34 @@ public final class AuthenticationWarningContext extends BaseContext {
      */
     public boolean isClassifiedWarning(@Nonnull @NotEmpty final String warning) {
         return classifiedWarnings.contains(warning);
+    }
+
+    /**
+     * Adds a classified warning to the context, ensuring that it will be returned
+     * from {@link #getLastClassifiedWarning()} until another is added.
+     * 
+     * @param warning warning to add
+     * 
+     * @return this context
+     * 
+     * @since 5.0.0
+     */
+    @Nonnull public AuthenticationWarningContext addClassifiedWarning(@Nonnull @NotEmpty final String warning) {
+        // This is done to preserve ordering so that the error is the "last one added".
+        classifiedWarnings.remove(warning);
+        classifiedWarnings.add(warning);
+        return this;
+    }
+    
+    /**
+     * Gets the last classified warning added, or null if none.
+     * 
+     * @return last warning added or null
+     * 
+     * @since 5.0.0
+     */
+    @Nullable public String getLastClassifiedWarning() {
+        return classifiedWarnings.stream().reduce((first, second) -> second).orElse(null);
     }
 
 }
