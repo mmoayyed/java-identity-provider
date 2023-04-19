@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -235,6 +236,21 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
      */
     public static class DefaultResultMergingStrategy implements Function<ProfileRequestContext,AuthenticationResult> {
 
+        /** Whether to set the authentication time to that of the latest or earliest result. */
+        private boolean latest;
+        
+        /**
+         * Sets whether the final result's timestamp should be based on the latest constituent result.
+         * 
+         * <p>Defaults to false, meaning to use the earliest result's timestamp.</p>
+         * 
+         * @param flag flag to set
+         */
+        public void setUseLatestTimestamp(final boolean flag) {
+            latest = flag;
+        }
+        
+// Checkstyle: CyclomaticComplexity OFF
         /** {@inheritDoc} */
         @Nullable public AuthenticationResult apply(@Nullable final ProfileRequestContext input) {
             
@@ -250,6 +266,9 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
                             // Track whether SSO was performed.
                             boolean allPreviousResults = true;
                             
+                            // Track timestamp.
+                            Instant ts = null;
+                            
                             final Subject subject = new Subject();
                             for (final AuthenticationResult result : results) {
                                 assert result != null;
@@ -257,7 +276,22 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
                                 subject.getPrincipals().addAll(result.getSubject().getPrincipals());
                                 subject.getPublicCredentials().addAll(result.getSubject().getPublicCredentials());
                                 subject.getPrivateCredentials().addAll(result.getSubject().getPrivateCredentials());
+                                
                                 allPreviousResults = allPreviousResults && result.isPreviousResult();
+                                
+                                if (ts != null) {
+                                    if (latest) {
+                                        if (result.getAuthenticationInstant().isAfter(ts)) {
+                                            ts = result.getAuthenticationInstant();
+                                        }
+                                    } else {
+                                        if (result.getAuthenticationInstant().isBefore(ts)) {
+                                            ts = result.getAuthenticationInstant();
+                                        }
+                                    }
+                                } else {
+                                    ts = result.getAuthenticationInstant();
+                                }
                             }
                             
                             final AuthenticationFlowDescriptor afd = mfaContext.getAuthenticationFlowDescriptor();
@@ -266,6 +300,9 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
                             assert afdId != null;
                             final AuthenticationResult merged = new AuthenticationResult(afdId, subject);
                             merged.setPreviousResult(allPreviousResults);
+                            if (ts != null) {
+                                merged.setAuthenticationInstant(ts);
+                            }
                             return merged;
                         }
                     }
@@ -274,7 +311,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
             
             return null;
         }
-        
+// Checkstyle: CyclomaticComplexity ON        
     }
     
 }

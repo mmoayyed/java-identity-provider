@@ -36,8 +36,12 @@
 
     <bean id="FinalizeMultiFactorAuthentication" scope="prototype"
         class="net.shibboleth.idp.authn.impl.FinalizeMultiFactorAuthentication"
-        p:resultMergingStrategy="#{getObject('shibboleth.authn.MFA.resultMergingStrategy')}"
+        p:resultMergingStrategy="#{getObject('shibboleth.authn.MFA.resultMergingStrategy') ?: getObject('DefaultResultMergingStrategy')}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.MFA.resultCachingPredicate')}" />
+
+    <bean id="DefaultResultMergingStrategy" lazy-init="true"
+        class="net.shibboleth.idp.authn.impl.FinalizeMultiFactorAuthentication.DefaultResultMergingStrategy"
+        p:useLatestTimestamp="%{idp.authn.MFA.useLatestTimestamp:false}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
