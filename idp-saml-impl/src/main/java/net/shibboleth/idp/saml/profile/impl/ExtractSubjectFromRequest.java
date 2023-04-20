@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
-import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -44,6 +43,7 @@ import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /**
@@ -161,14 +161,14 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
             log.debug("{} Creating Subject for canonicalization around NameIdentifier {}", getLogPrefix(),
                     ((NameIdentifier) identifier).getValue());
             subject = new Subject(false,
-                    Collections.singleton(new NameIdentifierPrincipal((NameIdentifier) identifier)),
-                    Collections.emptySet(), Collections.emptySet());
+                    CollectionSupport.singleton(new NameIdentifierPrincipal((NameIdentifier) identifier)),
+                    CollectionSupport.emptySet(), CollectionSupport.emptySet());
         } else if (identifier instanceof NameID) {
             log.debug("{} Creating Subject for canonicalization around NameID {}", getLogPrefix(),
                     ((NameID) identifier).getValue());
             subject = new Subject(false,
-                    Collections.singleton(new NameIDPrincipal((NameID) identifier)),
-                    Collections.emptySet(), Collections.emptySet());
+                    CollectionSupport.singleton(new NameIDPrincipal((NameID) identifier)),
+                    CollectionSupport.emptySet(), CollectionSupport.emptySet());
         } else {
             subject = null;
         }

@@ -20,10 +20,8 @@ package net.shibboleth.idp.session.impl;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
@@ -40,11 +38,11 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.LogoutContext;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
@@ -53,7 +51,7 @@ import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier;
 import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseSupplier;
 
 /** {@link ProcessLogout} unit test. */
-@SuppressWarnings({"javadoc", "null"})
+@SuppressWarnings({"javadoc"})
 public class ProcessLogoutTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;
@@ -81,7 +79,7 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         sessionManager.setSessionSlop(Duration.ofSeconds(900));
         final SPSessionSerializerRegistry registry = new SPSessionSerializerRegistry();
         registry.setMappings(
-                Collections.<Class<? extends SPSession>,StorageSerializer<? extends SPSession>>singletonMap(
+                CollectionSupport.singletonMap(
                         BasicSPSession.class, new BasicSPSessionSerializer(Duration.ofSeconds(900))));
         registry.initialize();
         sessionManager.setSPSessionSerializerRegistry(registry);

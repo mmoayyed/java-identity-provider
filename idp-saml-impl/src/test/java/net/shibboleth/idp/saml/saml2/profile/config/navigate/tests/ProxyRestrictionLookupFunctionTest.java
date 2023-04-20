@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config.navigate.tests;
 
-import java.util.Collections;
 import java.util.Set;
 
 import javax.security.auth.Subject;
@@ -53,7 +52,7 @@ public class ProxyRestrictionLookupFunctionTest extends OpenSAMLInitBaseTestCase
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
         prc = new RequestContextBuilder()
-                .setRelyingPartyProfileConfigurations(Collections.singletonList(new BrowserSSOProfileConfiguration()))
+                .setRelyingPartyProfileConfigurations(CollectionSupport.singletonList(new BrowserSSOProfileConfiguration()))
                 .buildProfileRequestContext();
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         assert rpc!=null;

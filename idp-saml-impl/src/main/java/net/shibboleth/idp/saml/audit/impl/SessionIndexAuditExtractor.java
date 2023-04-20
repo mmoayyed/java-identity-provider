@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.audit.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -34,6 +33,7 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SessionIndex;
 
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns SessionIndex values from assertions in a response or a logout request. */
@@ -84,7 +84,7 @@ public class SessionIndexAuditExtractor implements Function<ProfileRequestContex
             return indexes;
         }
         
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 // Checkstyle: CyclomaticComplexity ON
     

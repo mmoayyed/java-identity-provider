@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.audit.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -31,6 +30,7 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the lower-level StatusCode(s) from a response. */
@@ -84,7 +84,7 @@ public class SubStatusCodeAuditExtractor implements Function<ProfileRequestConte
             }
         }
         
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 // Checkstyle: CyclomaticComplexity ON
     

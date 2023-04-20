@@ -23,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -58,9 +57,9 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration;
-import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.logic.PredicateSupport;
@@ -92,7 +91,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         profileConfig = new BrowserSSOProfileConfiguration();
         
         rc = new RequestContextBuilder().setInboundMessage(request).setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singletonList(profileConfig)).buildRequestContext();
+                CollectionSupport.singletonList(profileConfig)).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
         final MessageContext imc = prc.getInboundMessageContext();
         assert imc !=null;
@@ -147,7 +146,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
         badaction.setEndpointResolver(new DefaultEndpointResolver<>());
         badaction.setBindingDescriptorsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,List<BindingDescriptor>>constant(Collections.singletonList(binding)));
+                FunctionSupport.constant(CollectionSupport.singletonList(binding)));
         badaction.initialize();
         
         final Event event = badaction.execute(rc);
@@ -373,7 +372,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final PopulateBindingAndEndpointContexts badaction = new PopulateBindingAndEndpointContexts();
         badaction.setEndpointResolver(new DefaultEndpointResolver<>());
         badaction.setBindingDescriptorsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,List<BindingDescriptor>>constant(Collections.singletonList(binding)));
+                FunctionSupport.constant(CollectionSupport.singletonList(binding)));
         badaction.initialize();
         
         final Event event = badaction.execute(rc);

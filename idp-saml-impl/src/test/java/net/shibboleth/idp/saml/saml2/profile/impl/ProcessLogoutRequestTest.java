@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,7 +92,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
                         SessionIndex.DEFAULT_ELEMENT_NAME);
 
         final SingleLogoutProfileConfiguration logoutConfig = new SingleLogoutProfileConfiguration();
-        logoutConfig.setQualifiedNameIDFormats(Collections.singletonList(NameID.UNSPECIFIED));
+        logoutConfig.setQualifiedNameIDFormats(CollectionSupport.singletonList(NameID.UNSPECIFIED));
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 CollectionSupport.singletonList(logoutConfig)).buildRequestContext();
         

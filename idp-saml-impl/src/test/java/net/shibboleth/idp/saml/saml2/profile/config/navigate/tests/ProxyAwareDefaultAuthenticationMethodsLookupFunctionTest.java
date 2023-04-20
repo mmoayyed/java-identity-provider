@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.saml2.profile.config.navigate.tests;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +92,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunctionTest extends Op
                 new AuthenticationMethodPrincipal("baz")));
         
         final Map<Principal,Collection<Principal>> mappings = new HashMap<>();
-        mappings.put(new AuthnContextClassRefPrincipal("foo"), Collections.emptyList());
+        mappings.put(new AuthnContextClassRefPrincipal("foo"), CollectionSupport.emptyList());
         mappings.put(new AuthenticationMethodPrincipal("baz"),
                 List.of(new AuthnContextClassRefPrincipal("frobnitz"),
                         new AuthnContextDeclRefPrincipal("grue"),

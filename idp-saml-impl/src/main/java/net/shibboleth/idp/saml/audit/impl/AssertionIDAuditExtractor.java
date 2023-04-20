@@ -18,8 +18,6 @@
 package net.shibboleth.idp.saml.audit.impl;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,6 +28,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the ID attribute from the assertions in a response. */
@@ -47,6 +46,7 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
         responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         SAMLObject message = responseLookupStrategy.apply(input);
@@ -57,10 +57,9 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
                 message = ((ArtifactResponse) message).getMessage();
             }
             
-            if (message instanceof org.opensaml.saml.saml2.core.Response) {
+            if (message instanceof org.opensaml.saml.saml2.core.Response resp) {
                 
-                final List<org.opensaml.saml.saml2.core.Assertion> assertions =
-                        ((org.opensaml.saml.saml2.core.Response) message).getAssertions();
+                final var assertions = resp.getAssertions();
                 if (!assertions.isEmpty()) {
                     return assertions.
                             stream().
@@ -68,10 +67,9 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
                             collect(Collectors.toList());
                 }
                 
-            } else if (message instanceof org.opensaml.saml.saml1.core.Response) {
+            } else if (message instanceof org.opensaml.saml.saml1.core.Response resp) {
 
-                final List<org.opensaml.saml.saml1.core.Assertion> assertions =
-                        ((org.opensaml.saml.saml1.core.Response) message).getAssertions();
+                final var assertions = resp.getAssertions();
                 if (!assertions.isEmpty()) {
                     return assertions.
                             stream().
@@ -79,14 +77,21 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
                             collect(Collectors.toList());
                 }
                 
-            } else if (message instanceof org.opensaml.saml.saml2.core.Assertion) {
-                return Collections.singletonList(((org.opensaml.saml.saml2.core.Assertion) message).getID());
-            } else if (message instanceof org.opensaml.saml.saml1.core.Assertion) {
-                return Collections.singletonList(((org.opensaml.saml.saml1.core.Assertion) message).getID());
+            } else if (message instanceof org.opensaml.saml.saml2.core.Assertion a) {
+                final String id = a.getID();
+                if (id != null) {
+                    return CollectionSupport.singletonList(id);
+                }
+            } else if (message instanceof org.opensaml.saml.saml1.core.Assertion a) {
+                final String id = a.getID();
+                if (id != null) {
+                    return CollectionSupport.singletonList(id);
+                }
             }
         }
         
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
+// Checkstyle: CyclomaticComplexity ON
 
 }

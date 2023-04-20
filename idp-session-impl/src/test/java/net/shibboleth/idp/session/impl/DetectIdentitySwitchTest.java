@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.session.impl;
 
-import java.util.Collections;
-
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -29,6 +27,7 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 
@@ -42,7 +41,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link DetectIdentitySwitch} unit test. */
-@SuppressWarnings("null")
+@SuppressWarnings("javadoc")
 public class DetectIdentitySwitchTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;
@@ -80,7 +79,7 @@ public class DetectIdentitySwitchTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         sc.setIdPSession(sessionManager.createSession("joe"));
-        ac.setActiveResults(Collections.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
+        ac.setActiveResults(CollectionSupport.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -92,7 +91,7 @@ public class DetectIdentitySwitchTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         sc.setIdPSession(sessionManager.createSession("joe"));
-        ac.setActiveResults(Collections.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
+        ac.setActiveResults(CollectionSupport.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
         c14n.setPrincipalName("joe");
         
         final Event event = action.execute(src);
@@ -105,7 +104,7 @@ public class DetectIdentitySwitchTest extends SessionManagerBaseTestCase {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         
         sc.setIdPSession(sessionManager.createSession("joe"));
-        ac.setActiveResults(Collections.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
+        ac.setActiveResults(CollectionSupport.singletonList(new AuthenticationResult("test1", new UsernamePrincipal("joe"))));
         c14n.setPrincipalName("joe2");
         
         final Event event = action.execute(src);

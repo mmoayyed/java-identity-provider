@@ -19,8 +19,6 @@ package net.shibboleth.idp.saml.audit.impl;
 
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,6 +29,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 /** {@link Function} that returns the IssueInstant attribute from the assertions in a response. */
@@ -48,8 +47,8 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
         responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override
     @Nullable public Collection<Instant> apply(@Nullable final ProfileRequestContext input) {
         SAMLObject message = responseLookupStrategy.apply(input);
         if (message != null) {
@@ -59,10 +58,9 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
                 message = ((ArtifactResponse) message).getMessage();
             }
             
-            if (message instanceof org.opensaml.saml.saml2.core.Response) {
+            if (message instanceof org.opensaml.saml.saml2.core.Response resp) {
                 
-                final List<org.opensaml.saml.saml2.core.Assertion> assertions =
-                        ((org.opensaml.saml.saml2.core.Response) message).getAssertions();
+                final var assertions = resp.getAssertions();
                 if (!assertions.isEmpty()) {
                     return assertions.
                             stream().
@@ -70,10 +68,9 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
                             collect(Collectors.toList());
                 }
                 
-            } else if (message instanceof org.opensaml.saml.saml1.core.Response) {
+            } else if (message instanceof org.opensaml.saml.saml1.core.Response resp) {
 
-                final List<org.opensaml.saml.saml1.core.Assertion> assertions =
-                        ((org.opensaml.saml.saml1.core.Response) message).getAssertions();
+                final var assertions = resp.getAssertions();
                 if (!assertions.isEmpty()) {
                     return assertions.
                             stream().
@@ -81,14 +78,21 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
                             collect(Collectors.toList());
                 }
                 
-            } else if (message instanceof org.opensaml.saml.saml2.core.Assertion) {
-                return Collections.singletonList(((org.opensaml.saml.saml2.core.Assertion) message).getIssueInstant());
-            } else if (message instanceof org.opensaml.saml.saml1.core.Assertion) {
-                return Collections.singletonList(((org.opensaml.saml.saml1.core.Assertion) message).getIssueInstant());
+            } else if (message instanceof org.opensaml.saml.saml2.core.Assertion a) {
+                final Instant ts = a.getIssueInstant();
+                if (ts != null) {
+                    return CollectionSupport.singletonList(ts);
+                }
+            } else if (message instanceof org.opensaml.saml.saml1.core.Assertion a) {
+                final Instant ts = a.getIssueInstant();
+                if (ts != null) {
+                    return CollectionSupport.singletonList(ts);
+                }
             }
         }
         
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
+// Checkstyle: CyclomaticComplexity ON
 
 }

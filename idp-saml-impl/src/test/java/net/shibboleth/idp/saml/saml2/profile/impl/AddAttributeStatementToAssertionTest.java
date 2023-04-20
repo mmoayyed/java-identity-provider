@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,7 +105,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         registry = new AttributeTranscoderRegistryImpl();
         registry.setId("test");
         
-        registry.setNamingRegistry(Collections.singletonList(
+        registry.setNamingRegistry(CollectionSupport.singletonList(
                 new BasicNamingFunction<>(Attribute.class, new AbstractSAML2AttributeTranscoder.NamingFunction())));
 
         final SAML2StringAttributeTranscoder transcoder = new SAML2StringAttributeTranscoder();
@@ -223,7 +221,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
         localregistry.setId("test");
         
-        localregistry.setNamingRegistry(Collections.singletonList(
+        localregistry.setNamingRegistry(CollectionSupport.singletonList(
                 new BasicNamingFunction<>(Attribute.class, new AbstractSAML2AttributeTranscoder.NamingFunction())));
         
         final MockSAML2StringAttributeTranscoder transcoder = new MockSAML2StringAttributeTranscoder();
@@ -242,10 +240,10 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setTranscoderRegistry(new MockReloadableService<>(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
-        attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
+        attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue(MY_VALUE_1)));
 
         final AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setIdPAttributes(Arrays.asList(attribute));
+        attribCtx.setIdPAttributes(CollectionSupport.singletonList(attribute));
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
         rpCtx.addSubcontext(attribCtx);
@@ -266,7 +264,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
         localregistry.setId("test");
         
-        localregistry.setNamingRegistry(Collections.singletonList(
+        localregistry.setNamingRegistry(CollectionSupport.singletonList(
                 new BasicNamingFunction<>(Attribute.class, new AbstractSAML2AttributeTranscoder.NamingFunction())));
 
         final MockSAML2StringAttributeTranscoder transcoder = new MockSAML2StringAttributeTranscoder();
@@ -285,10 +283,10 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setTranscoderRegistry(new MockReloadableService<>(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
-        attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
+        attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue(MY_VALUE_1)));
 
         final AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setIdPAttributes(Arrays.asList(attribute));
+        attribCtx.setIdPAttributes(CollectionSupport.singletonList(attribute));
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
         rpCtx.addSubcontext(attribCtx);
@@ -410,15 +408,15 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     @Nonnull private AttributeContext buildAttributeContext() throws ComponentInitializationException {
 
         final IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
-        attribute1.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
+        attribute1.setValues(CollectionSupport.singletonList(new StringAttributeValue(MY_VALUE_1)));
 
         final IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
-        attribute2.setValues(Collections.singletonList(new StringAttributeValue(MY_VALUE_2)));
+        attribute2.setValues(CollectionSupport.singletonList(new StringAttributeValue(MY_VALUE_2)));
         
         final IdPAttribute attribute3 = new IdPAttribute(MY_NAME_3);
 
         final AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setIdPAttributes(Arrays.asList(attribute1, attribute2, attribute3));
+        attribCtx.setIdPAttributes(CollectionSupport.listOf(attribute1, attribute2, attribute3));
 
         return attribCtx;
     }

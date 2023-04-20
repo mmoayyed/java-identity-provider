@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.profile.impl.tests;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +39,7 @@ import net.shibboleth.idp.profile.impl.FilterAttributes;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.MockReloadableService;
 
@@ -76,7 +75,7 @@ public class FilterAttributesTest {
     @Test public void testNoAttributeContext() throws Exception {
         prc.ensureSubcontext(SubjectContext.class);
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.emptyList());
+        final AttributeFilterImpl engine = new AttributeFilterImpl("test", CollectionSupport.emptyList());
         engine.initialize();
 
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
@@ -98,7 +97,7 @@ public class FilterAttributesTest {
         assert rpCtx!= null;
         rpCtx.ensureSubcontext(AttributeContext.class);
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("test", Collections.emptyList());
+        final AttributeFilterImpl engine = new AttributeFilterImpl("test", CollectionSupport.emptyList());
         engine.initialize();
         
         final FilterAttributes action = new FilterAttributes(new MockReloadableService<>(engine));
@@ -115,12 +114,12 @@ public class FilterAttributesTest {
      */
     @Test public void testFilterAttributesAutoCreateFilterContext() throws Exception {
         final IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(CollectionSupport.listOf(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         final IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Arrays.asList(new StringAttributeValue("a"), new StringAttributeValue("b")));
+        attribute2.setValues(CollectionSupport.listOf(new StringAttributeValue("a"), new StringAttributeValue("b")));
 
-        final List<IdPAttribute> attributes = Arrays.asList(attribute1, attribute2);
+        final List<IdPAttribute> attributes = CollectionSupport.listOf(attribute1, attribute2);
 
         final MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
@@ -134,9 +133,9 @@ public class FilterAttributesTest {
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Collections.singletonList(attribute1Policy));
+                        CollectionSupport.singletonList(attribute1Policy));
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", CollectionSupport.singletonList(policy));
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
@@ -179,12 +178,12 @@ public class FilterAttributesTest {
      */
     @Test public void testFilterAttributesExistingFilterContext() throws Exception {
         final IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(CollectionSupport.listOf(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         final IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Arrays.asList(new StringAttributeValue("a"), new StringAttributeValue("b")));
+        attribute2.setValues(CollectionSupport.listOf(new StringAttributeValue("a"), new StringAttributeValue("b")));
 
-        final List<IdPAttribute> attributes = Arrays.asList(attribute1, attribute2);
+        final List<IdPAttribute> attributes = CollectionSupport.listOf(attribute1, attribute2);
 
         final MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
@@ -198,9 +197,9 @@ public class FilterAttributesTest {
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Collections.singletonList(attribute1Policy));
+                        CollectionSupport.singletonList(attribute1Policy));
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", CollectionSupport.singletonList(policy));
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
@@ -245,9 +244,9 @@ public class FilterAttributesTest {
      */
     @Test public void testUnableToFilterAttributes() throws Exception {
         final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
-        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(CollectionSupport.listOf(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
-        final List<IdPAttribute> attributes = Arrays.asList(attribute1);
+        final List<IdPAttribute> attributes = CollectionSupport.singletonList(attribute1);
 
         final MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
@@ -261,9 +260,9 @@ public class FilterAttributesTest {
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Collections.singletonList(attribute1Policy));
+                        CollectionSupport.singletonList(attribute1Policy));
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Collections.singletonList(policy));
+        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", CollectionSupport.singletonList(policy));
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
@@ -295,12 +294,12 @@ public class FilterAttributesTest {
      */
     @Test public void testUnableToFindFilter() throws Exception {
         final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
-        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(CollectionSupport.listOf(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         prc.ensureSubcontext(SubjectContext.class);
 
         final AttributeContext attributeCtx = new AttributeContext();
-        final List<IdPAttribute> attributes = Collections.singletonList(attribute1);
+        final List<IdPAttribute> attributes = CollectionSupport.singletonList(attribute1);
         attributeCtx.setIdPAttributes(attributes);
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!= null;

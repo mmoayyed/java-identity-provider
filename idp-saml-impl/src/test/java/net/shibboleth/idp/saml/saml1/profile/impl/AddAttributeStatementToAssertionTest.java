@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.saml1.profile.impl;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,7 +104,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         registry = new AttributeTranscoderRegistryImpl();
         registry.setId("test");
         
-        registry.setNamingRegistry(Collections.singletonList(
+        registry.setNamingRegistry(CollectionSupport.singletonList(
                 new BasicNamingFunction<>(AttributeDesignator.class, new AbstractSAML1AttributeTranscoder.NamingFunction())));
 
         final SAML1StringAttributeTranscoder transcoder = new SAML1StringAttributeTranscoder();
@@ -136,7 +134,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         rule2_2.put(SAML1AttributeTranscoder.PROP_NAME, MY_ALTNAME_1);
         rule2_2.put(SAML1AttributeTranscoder.PROP_NAMESPACE, MY_NAMESPACE);
 
-        registry.setTranscoderRegistry(Arrays.asList(
+        registry.setTranscoderRegistry(CollectionSupport.listOf(
                 new TranscodingRule(rule1_1),
                 new TranscodingRule(rule1_2),
                 new TranscodingRule(rule2_1),
@@ -216,7 +214,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
         localregistry.setId("test");
         
-        localregistry.setNamingRegistry(Collections.singletonList(
+        localregistry.setNamingRegistry(CollectionSupport.singletonList(
                 new BasicNamingFunction<>(AttributeDesignator.class, new AbstractSAML1AttributeTranscoder.NamingFunction())));
 
         final MockSAML1StringAttributeTranscoder transcoder = new MockSAML1StringAttributeTranscoder();
@@ -235,10 +233,10 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setTranscoderRegistry(new MockReloadableService<>(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
-        attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
+        attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue(MY_VALUE_1)));
 
         final AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setIdPAttributes(Arrays.asList(attribute));
+        attribCtx.setIdPAttributes(CollectionSupport.singletonList(attribute));
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
         rpCtx.addSubcontext(attribCtx);
@@ -259,7 +257,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         final AttributeTranscoderRegistryImpl localregistry = new AttributeTranscoderRegistryImpl();
         localregistry.setId("test");
         
-        localregistry.setNamingRegistry(Collections.singletonList(
+        localregistry.setNamingRegistry(CollectionSupport.singletonList(
                 new BasicNamingFunction<>(AttributeDesignator.class, new AbstractSAML1AttributeTranscoder.NamingFunction())));
 
         final MockSAML1StringAttributeTranscoder transcoder = new MockSAML1StringAttributeTranscoder();
@@ -278,10 +276,10 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setTranscoderRegistry(new MockReloadableService<>(localregistry));
 
         final IdPAttribute attribute = new IdPAttribute(MY_NAME_1);
-        attribute.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
+        attribute.setValues(CollectionSupport.singletonList(new StringAttributeValue(MY_VALUE_1)));
 
         final AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setIdPAttributes(Arrays.asList(attribute));
+        attribCtx.setIdPAttributes(CollectionSupport.singletonList(attribute));
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx!=null;
         rpCtx.addSubcontext(attribCtx);
@@ -406,13 +404,13 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     @Nonnull private AttributeContext buildAttributeContext() throws ComponentInitializationException {
 
         final IdPAttribute attribute1 = new IdPAttribute(MY_NAME_1);
-        attribute1.setValues(Arrays.asList(new StringAttributeValue(MY_VALUE_1)));
+        attribute1.setValues(CollectionSupport.singletonList(new StringAttributeValue(MY_VALUE_1)));
 
         final IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
-        attribute2.setValues(Collections.singletonList(new StringAttributeValue(MY_VALUE_2)));
+        attribute2.setValues(CollectionSupport.singletonList(new StringAttributeValue(MY_VALUE_2)));
 
         final AttributeContext attribCtx = new AttributeContext();
-        attribCtx.setIdPAttributes(Arrays.asList(attribute1, attribute2));
+        attribCtx.setIdPAttributes(CollectionSupport.listOf(attribute1, attribute2));
 
         return attribCtx;
     }

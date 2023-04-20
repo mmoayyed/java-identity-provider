@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -59,6 +58,7 @@ import net.shibboleth.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -229,7 +229,8 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
         } else if (configurationLookupStrategy == null) {
             configurationLookupStrategy = new Function<>() {
                 public List<EncryptionConfiguration> apply(final ProfileRequestContext input) {
-                    return Collections.singletonList(SecurityConfigurationSupport.getGlobalEncryptionConfiguration());
+                    return CollectionSupport.singletonList(
+                            SecurityConfigurationSupport.ensureGlobalEncryptionConfiguration());
                 }
             };
         }

@@ -19,7 +19,6 @@ package net.shibboleth.idp.saml.authn.principal.impl;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +104,7 @@ public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnC
             }
 
             log.trace("Passing unmapped value '{}' through", principal.getName());
-            return Collections.singletonList(principal);
+            return CollectionSupport.singletonList(principal);
         }
         
         log.trace("Input AuthnContext was null, returning nothing");
