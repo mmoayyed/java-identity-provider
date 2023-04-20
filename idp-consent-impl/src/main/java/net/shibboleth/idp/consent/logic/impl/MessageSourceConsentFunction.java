@@ -18,7 +18,6 @@
 package net.shibboleth.idp.consent.logic.impl;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
@@ -38,6 +37,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.StringDigester;
 import net.shibboleth.shared.codec.StringDigester.OutputFormat;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -186,9 +186,9 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
                 }
             }
     
-            return Collections.singletonMap(id, consent);
+            return CollectionSupport.singletonMap(id, consent);
         }
-        return Collections.emptyMap();
+        return CollectionSupport.emptyMap();
     }
     
 

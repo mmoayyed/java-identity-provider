@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.profile.interceptor.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -66,8 +63,7 @@ public class PopulateProfileInterceptorContextTest {
 
         final PopulateProfileInterceptorContext action = new PopulateProfileInterceptorContext();
         action.setAvailableFlows(interceptorFlows);
-        action.setActiveFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext, Collection<String>> constant(Arrays
-                .asList("test1", "test2", "test3")));
+        action.setActiveFlowsLookupStrategy(FunctionSupport.constant(CollectionSupport.listOf("test1", "test2", "test3")));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -98,8 +94,7 @@ public class PopulateProfileInterceptorContextTest {
     @Test public void testError() throws Exception {
         final PopulateProfileInterceptorContext action = new PopulateProfileInterceptorContext();
         action.setAvailableFlows(interceptorFlows);
-        action.setActiveFlowsLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, Collection<String>> constant(Collections.singletonList("test4")));
+        action.setActiveFlowsLookupStrategy(FunctionSupport.constant(CollectionSupport.singletonList("test4")));
         action.initialize();
 
         final Event event = action.execute(src);

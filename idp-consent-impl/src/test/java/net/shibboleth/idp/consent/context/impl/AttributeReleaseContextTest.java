@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.consent.context.impl;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.consent.context.AttributeReleaseContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -47,10 +47,10 @@ public class AttributeReleaseContextTest {
 
     @Test public void testConsentableAttributes() {
         final IdPAttribute attr1 = new IdPAttribute("attr1");
-        attr1.setValues(Collections.singletonList(new StringAttributeValue("value1")));
+        attr1.setValues(CollectionSupport.singletonList(new StringAttributeValue("value1")));
 
         final IdPAttribute attr2 = new IdPAttribute("attr2");
-        attr2.setValues(Collections.singletonList(new StringAttributeValue("value2")));
+        attr2.setValues(CollectionSupport.singletonList(new StringAttributeValue("value2")));
 
         map = new HashMap<>();
         map.put(attr1.getId(), attr1);

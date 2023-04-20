@@ -18,13 +18,13 @@
 package net.shibboleth.idp.consent.audit.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -54,12 +54,12 @@ public class CurrentConsentIdsAuditExtractor implements Function<ProfileRequestC
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         final ConsentContext consentContext = consentContextLookupStrategy.apply(input);
         if (consentContext != null) {
             return consentContext.getCurrentConsents().keySet();
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
 }

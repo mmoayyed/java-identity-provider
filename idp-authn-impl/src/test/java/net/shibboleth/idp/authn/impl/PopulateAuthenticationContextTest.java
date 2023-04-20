@@ -20,14 +20,12 @@ package net.shibboleth.idp.authn.impl;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.testing.ActionTestingSupport;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -110,8 +108,7 @@ final public class PopulateAuthenticationContextTest extends BaseAuthenticationC
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);
         action.setPotentialFlowsLookupStrategy(FunctionSupport.constant(authenticationFlows));
-        action.setActiveFlowsLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(Collections.singletonList("test2")));
+        action.setActiveFlowsLookupStrategy(FunctionSupport.constant(CollectionSupport.singletonList("test2")));
         action.initialize();
 
         action.execute(src);

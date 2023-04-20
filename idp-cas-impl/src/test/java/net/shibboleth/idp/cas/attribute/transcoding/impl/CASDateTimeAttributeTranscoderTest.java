@@ -19,7 +19,6 @@ package net.shibboleth.idp.cas.attribute.transcoding.impl;
 
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +66,7 @@ public class CASDateTimeAttributeTranscoderTest {
         final CASDateTimeAttributeTranscoder transcoder = new CASDateTimeAttributeTranscoder();
         transcoder.initialize();
         
-        registry.setNamingRegistry(Collections.singletonList(
+        registry.setNamingRegistry(CollectionSupport.singletonList(
                 new BasicNamingFunction<>(transcoder.getEncodedType(), new AbstractCASAttributeTranscoder.NamingFunction())));
         
         final Map<String,Object> ruleset1 = new HashMap<>();

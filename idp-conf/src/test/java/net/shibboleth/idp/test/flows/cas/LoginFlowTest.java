@@ -23,7 +23,6 @@ import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,6 +59,7 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.profile.relyingparty.VerifiedProfileCriterion;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.net.URISupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.service.ReloadableService;
@@ -93,7 +93,7 @@ public class LoginFlowTest extends AbstractFlowTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        setPostAuthenticationFlows(Collections.emptyList());
+        setPostAuthenticationFlows(CollectionSupport.emptyList());
     }
 
 
@@ -203,7 +203,7 @@ public class LoginFlowTest extends AbstractFlowTest {
     public void testLoginWithConsent() throws Exception {
         final String service = "https://start.example.org/";
         externalContext.getMockRequestParameterMap().put("service", service);
-        setPostAuthenticationFlows(Collections.singletonList("attribute-release"));
+        setPostAuthenticationFlows(CollectionSupport.singletonList("attribute-release"));
         overrideEndStateOutput(FLOW_ID, "RedirectToService");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);

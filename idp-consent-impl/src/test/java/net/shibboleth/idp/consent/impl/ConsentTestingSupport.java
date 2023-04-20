@@ -18,8 +18,6 @@
 package net.shibboleth.idp.consent.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.storage.impl.ConsentResult;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
  * Helper methods for creating test objects for consent action tests.
@@ -89,10 +88,10 @@ public class ConsentTestingSupport {
         attribute1.setValues(values);
 
         final IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Arrays.asList(value1a, value2));
+        attribute2.setValues(CollectionSupport.listOf(value1a, value2));
 
         final IdPAttribute attribute3 = new IdPAttribute("attribute3");
-        attribute3.setValues(Collections.singletonList(value3));
+        attribute3.setValues(CollectionSupport.singletonList(value3));
 
         final Map<String, IdPAttribute> map = new HashMap<>();
         map.put(attribute1.getId(), attribute1);

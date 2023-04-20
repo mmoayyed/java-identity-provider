@@ -19,7 +19,6 @@ package net.shibboleth.idp.consent.logic.impl;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -38,6 +37,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /** {@link AttributeValuesHashFunction} unit test. */
 @SuppressWarnings("javadoc")
@@ -55,7 +55,7 @@ public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
     }
 
     @Test public void testEmptyInput() {
-        Assert.assertNull(function.apply(Collections.emptyList()));
+        Assert.assertNull(function.apply(CollectionSupport.emptyList()));
     }
 
     @Test(enabled = true) public void testNullValue() {
@@ -82,14 +82,14 @@ public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
     @Test public void testScoped() {
         // NOTE Any change is an ODS drift
         final IdPAttributeValue val = new ScopedStringAttributeValue("Value", "Scope");
-        assertEquals(function.apply(Collections.singletonList(val)), "WFoLzGdi3WmUjhWe3Q6uSyoHVZJXukDWeOUb7CyH5V8=");
+        assertEquals(function.apply(CollectionSupport.singletonList(val)), "WFoLzGdi3WmUjhWe3Q6uSyoHVZJXukDWeOUb7CyH5V8=");
     }
 
     @Test public void testByte() {
         // NOTE Any change is an ODS drift
         final byte[] theBytes = {1,2,3};
         final IdPAttributeValue val = new ByteAttributeValue(theBytes);
-        assertEquals(function.apply(Collections.singletonList(val)), "saP1UTQcyQPZHOPI6tVhVWMKOmB3BDCTn/l5QFSsyX4=");
+        assertEquals(function.apply(CollectionSupport.singletonList(val)), "saP1UTQcyQPZHOPI6tVhVWMKOmB3BDCTn/l5QFSsyX4=");
     }
 
     @Test public void testXML() {
@@ -100,7 +100,7 @@ public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
         final XSString xmlString = builder.buildObject(XSString.TYPE_NAME);
         xmlString.setValue("value");
         final IdPAttributeValue val = new XMLObjectAttributeValue(xmlString);
-        assertEquals(function.apply(Collections.singletonList(val)), "c+NqWOijlvFBpla4r1q3F0RkpYZK7phCNe2gKb0r57o=");
+        assertEquals(function.apply(CollectionSupport.singletonList(val)), "c+NqWOijlvFBpla4r1q3F0RkpYZK7phCNe2gKb0r57o=");
     }
 
     private IdPAttributeValue testAV(@Nonnull Object type) {
@@ -116,11 +116,10 @@ public class AttributeValuesHashFunctionTest extends XMLObjectBaseTestCase {
     }
 
     @Test public void unknownTypeValue() {
-        assertEquals(function.apply(Collections.singletonList(testAV("42"))), "Lt6BAjtq4qQJ6ADEZKf/s5XZxzBh6mShY/UCphriugY=");
+        assertEquals(function.apply(CollectionSupport.singletonList(testAV("42"))), "Lt6BAjtq4qQJ6ADEZKf/s5XZxzBh6mShY/UCphriugY=");
     }
 
-    @SuppressWarnings("null")
     @Test public void unknownTypeNoValue() {
-        assertEquals(function.apply(Collections.singletonList(testAV(nullObj))), "xPtMT+sJsVtAtjNLzPrBBlfbY/yUsAQ7Ncxxc7Q5k70=");
+        assertEquals(function.apply(CollectionSupport.singletonList(testAV(nullObj))), "xPtMT+sJsVtAtjNLzPrBBlfbY/yUsAQ7Ncxxc7Q5k70=");
     }
 }

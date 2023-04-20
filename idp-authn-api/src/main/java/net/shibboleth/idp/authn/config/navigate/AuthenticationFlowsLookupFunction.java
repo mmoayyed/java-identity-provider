@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.config.navigate;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import javax.annotation.Nullable;
 
@@ -26,9 +25,9 @@ import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.AbstractRelyingPartyLookupFunction;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -43,17 +42,17 @@ public class AuthenticationFlowsLookupFunction extends AbstractRelyingPartyLooku
 
     /** {@inheritDoc} */
     @Override
-    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> apply(
+    @Nullable @NotLive @Unmodifiable public Collection<String> apply(
             @Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc instanceof AuthenticationProfileConfiguration) {
-                return ((AuthenticationProfileConfiguration) pc).getAuthenticationFlows(input);
+            if (pc instanceof AuthenticationProfileConfiguration apc) {
+                return apc.getAuthenticationFlows(input);
             }
         }
         
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
 }

@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -45,10 +43,12 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** Unit test for htpasswd file validation. */
+@SuppressWarnings("javadoc")
 public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTest {
 
     private static final String DATA_PATH = "src/test/resources/net/shibboleth/idp/authn/impl/";
@@ -65,11 +65,11 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         validator.setId("htpasswdtest");
         
         action = new ValidateCredentials();
-        action.setValidators(Collections.singletonList(validator));
+        action.setValidators(CollectionSupport.singletonList(validator));
         
         final Map<String,Collection<String>> mappings = new HashMap<>();
-        mappings.put("InvalidPassword", Collections.singleton(AuthnEventIds.INVALID_CREDENTIALS));
-        mappings.put(AuthnEventIds.UNKNOWN_USERNAME, Collections.singleton(AuthnEventIds.UNKNOWN_USERNAME));
+        mappings.put("InvalidPassword", CollectionSupport.singleton(AuthnEventIds.INVALID_CREDENTIALS));
+        mappings.put(AuthnEventIds.UNKNOWN_USERNAME, CollectionSupport.singleton(AuthnEventIds.UNKNOWN_USERNAME));
         action.setClassifiedMessages(mappings);
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -121,9 +121,9 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
-        rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
+        rpc.setRequestedPrincipals(CollectionSupport.singletonList(new TestPrincipal("test1")));
 
-        validator.setSupportedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test2")));
+        validator.setSupportedPrincipals(CollectionSupport.singletonList(new TestPrincipal("test2")));
         validator.initialize();
         
         action.initialize();
@@ -328,9 +328,9 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
-        rpc.setRequestedPrincipals(Collections.singletonList(new TestPrincipal("test1")));
+        rpc.setRequestedPrincipals(CollectionSupport.singletonList(new TestPrincipal("test1")));
 
-        validator.setSupportedPrincipals(Collections.singletonList(new TestPrincipal("test1")));
+        validator.setSupportedPrincipals(CollectionSupport.singletonList(new TestPrincipal("test1")));
         validator.initialize();
         
         action.initialize();

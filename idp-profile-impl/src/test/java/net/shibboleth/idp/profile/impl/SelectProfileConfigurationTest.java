@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import java.util.Collections;
-
 import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -29,6 +27,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.MockProfileConfiguration;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.springframework.webflow.execution.Event;
@@ -96,7 +95,7 @@ public class SelectProfileConfigurationTest {
      */
     @Test public void testInvalidProfileConfiguration() throws Exception {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
+                CollectionSupport.singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx != null;
@@ -118,7 +117,7 @@ public class SelectProfileConfigurationTest {
        action.initialize();        
 
        src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-               Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
+               CollectionSupport.singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
        final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
        assert rpCtx != null;
@@ -136,7 +135,7 @@ public class SelectProfileConfigurationTest {
      */
     @Test public void testSelectProfileConfiguration() throws Exception {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
+                CollectionSupport.singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx != null;
@@ -160,7 +159,7 @@ public class SelectProfileConfigurationTest {
      */
     @Test public void testFallback() throws Exception {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
+                CollectionSupport.singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         final RelyingPartyContext rpCtx = prc.getSubcontext(RelyingPartyContext.class);
         assert rpCtx != null;

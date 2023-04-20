@@ -26,7 +26,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.security.Security;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -137,7 +136,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 return RC_INIT;
             }
         } else {
-            updateURLs = Collections.emptyList();
+            updateURLs = CollectionSupport.emptyList();
         }
 
         try (final PluginInstaller inst = new PluginInstaller(Constraint.isNotNull(getHttpClient(), "HJttpClient cannot be non null (by construction"))) {

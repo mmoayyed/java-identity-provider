@@ -18,9 +18,7 @@
 package net.shibboleth.idp.authn.revocation.impl;
 
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
@@ -34,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.service.ReloadableService;
@@ -45,6 +44,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AttributeRevocationCondition} unit test. */
+@SuppressWarnings("javadoc")
 public class AttributeRevocationConditionTest extends BaseAuthenticationContextTest {
     
     private Collection<Instant> revocationsToResolve;
@@ -74,7 +74,7 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
 
         Assert.assertTrue(active.test(prc));
     }
@@ -83,9 +83,9 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
 
-        revocationsToResolve = Collections.singletonList(Instant.now().plusSeconds(3600));
+        revocationsToResolve = CollectionSupport.singletonList(Instant.now().plusSeconds(3600));
         
         Assert.assertFalse(active.test(prc));
     }
@@ -94,9 +94,9 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
 
-        revocationsToResolve = Collections.singletonList(Instant.now().minusSeconds(3600));
+        revocationsToResolve = CollectionSupport.singletonList(Instant.now().minusSeconds(3600));
         
         Assert.assertTrue(active.test(prc));
     }
@@ -145,7 +145,7 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
                             return "test";
                         }
 
-                        public void resolveAttributes(AttributeResolutionContext resolutionContext)
+                        public void resolveAttributes(@Nonnull final AttributeResolutionContext resolutionContext)
                                 throws ResolutionException {
                             if ("jdoe".equals(resolutionContext.getPrincipal()) && revocationsToResolve != null) {
                                 final IdPAttribute attr = new IdPAttribute("revocation");
@@ -154,7 +154,7 @@ public class AttributeRevocationConditionTest extends BaseAuthenticationContextT
                                             .map(i -> StringAttributeValue.valueOf(Long.toString(i.getEpochSecond())))
                                             .collect(Collectors.toUnmodifiableList())
                                         );
-                                resolutionContext.setResolvedIdPAttributes(Collections.singletonList(attr));
+                                resolutionContext.setResolvedIdPAttributes(CollectionSupport.singletonList(attr));
                             }
                         }
                     };

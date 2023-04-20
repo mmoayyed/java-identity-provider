@@ -34,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -88,6 +87,7 @@ import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resource.Resource;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
+
 /**
  *  The class where the heavy lifting of managing a plugin happens. 
  */
@@ -631,7 +631,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         final File inFile = pluginsContents.resolve(pluginId).toFile();
         if (!inFile.exists()) {
             LOG.debug("Contents file for plugin {} ({}) does not exist", pluginId, inFile.getAbsolutePath());
-            installedContents = Collections.emptyList();
+            installedContents = CollectionSupport.emptyList();
             return;
         }
         try (final BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(inFile))) {

@@ -19,7 +19,6 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -109,8 +108,9 @@ public class PrepareTicketValidationResponseAction extends
 
     /** Constructor. */
     public PrepareTicketValidationResponseAction() {
-        final Function<ProfileRequestContext,AttributeContext> acf = new ChildContextLookup<>(AttributeContext.class, true).compose(
-                new ChildContextLookup<>(RelyingPartyContext.class));
+        final Function<ProfileRequestContext,AttributeContext> acf =
+                new ChildContextLookup<>(AttributeContext.class, true).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
         assert acf != null;
         attributeContextFunction = acf;
         principalLookupFunction = new TicketPrincipalLookupFunction();
@@ -256,7 +256,7 @@ public class PrepareTicketValidationResponseAction extends
         if (transcodingRules.isEmpty()) {
             log.debug("{} Attribute {} does not have any transcoding rules, applying default", getLogPrefix(),
                     attribute.getId());
-            transcodingRules = Collections.singletonList(defaultTranscodingRule);
+            transcodingRules = CollectionSupport.singletonList(defaultTranscodingRule);
         }
         
         int count = 0;

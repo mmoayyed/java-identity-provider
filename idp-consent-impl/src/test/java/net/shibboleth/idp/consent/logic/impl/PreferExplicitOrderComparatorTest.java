@@ -27,6 +27,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.shared.collection.CollectionSupport;
+
 /** {@link PreferExplicitOrderComparator} unit test. */
 @SuppressWarnings("javadoc")
 public class PreferExplicitOrderComparatorTest {
@@ -109,7 +111,7 @@ public class PreferExplicitOrderComparatorTest {
 
     @Test public void testExplicitOrderingWithWhitespaceInConstructor() {
 
-        c = new PreferExplicitOrderComparator(Arrays.asList(" first ", "\tmiddle", "last\n"));
+        c = new PreferExplicitOrderComparator(CollectionSupport.listOf(" first ", "\tmiddle", "last\n"));
 
         Collections.sort(toBeSorted, c);
 
@@ -121,7 +123,7 @@ public class PreferExplicitOrderComparatorTest {
         // natural ordering
         Collections.sort(expected);
     
-        c = new PreferExplicitOrderComparator(Collections.<String> emptyList());
+        c = new PreferExplicitOrderComparator(CollectionSupport.emptyList());
     
         Collections.sort(toBeSorted, c);
     
@@ -133,7 +135,7 @@ public class PreferExplicitOrderComparatorTest {
         // natural ordering
         Collections.sort(expected);
     
-        c = new PreferExplicitOrderComparator(Arrays.asList("not", "known"));
+        c = new PreferExplicitOrderComparator(CollectionSupport.listOf("not", "known"));
     
         Collections.sort(toBeSorted, c);
     

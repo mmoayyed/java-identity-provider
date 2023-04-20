@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.audit.impl;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -34,6 +33,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.AuditContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
@@ -72,32 +72,32 @@ public class WriteAuditLogTest {
     }
 
     @Test public void testFormat() {
-        action.setFormattingMap(Collections.singletonMap("category", "Foo"));
+        action.setFormattingMap(CollectionSupport.singletonMap("category", "Foo"));
         List<String> format = action.getFormattingMap().get("category");
         Assert.assertEquals(format.size(), 1);
         Assert.assertEquals(format.get(0), "Foo");
 
-        action.setFormattingMap(Collections.singletonMap("category", "%Foo"));
+        action.setFormattingMap(CollectionSupport.singletonMap("category", "%Foo"));
         format = action.getFormattingMap().get("category");
         Assert.assertEquals(format.size(), 1);
         Assert.assertEquals(format.get(0), "%Foo");
 
-        action.setFormattingMap(Collections.singletonMap("category", "%Foo|%Bar %Baz%Bat"));
+        action.setFormattingMap(CollectionSupport.singletonMap("category", "%Foo|%Bar %Baz%Bat"));
         format = action.getFormattingMap().get("category");
         Assert.assertEquals(format.size(), 5);
         Assert.assertEquals(format.toArray(), new String[]{"%Foo", "|", "%Bar", " ", "%Baz%Bat"});
 
-        action.setFormattingMap(Collections.singletonMap("category", "%Foo|%Bar %Baz-Bat"));
+        action.setFormattingMap(CollectionSupport.singletonMap("category", "%Foo|%Bar %Baz-Bat"));
         format = action.getFormattingMap().get("category");
         Assert.assertEquals(format.size(), 5);
         Assert.assertEquals(format.toArray(), new String[]{"%Foo", "|", "%Bar", " ", "%Baz-Bat"});
 
-        action.setFormattingMap(Collections.singletonMap("category", "%Foo|%Bar %%%"));
+        action.setFormattingMap(CollectionSupport.singletonMap("category", "%Foo|%Bar %%%"));
         format = action.getFormattingMap().get("category");
         Assert.assertEquals(format.size(), 5);
         Assert.assertEquals(format.toArray(), new String[]{"%Foo", "|", "%Bar", " ", "%%%"});
 
-        action.setFormattingMap(Collections.singletonMap("category", "%Foo|%Bar % %%"));
+        action.setFormattingMap(CollectionSupport.singletonMap("category", "%Foo|%Bar % %%"));
         format = action.getFormattingMap().get("category");
         Assert.assertEquals(format.size(), 7);
         Assert.assertEquals(format.toArray(), new String[]{"%Foo", "|", "%Bar", " ", "%", " ", "%%"});
@@ -109,7 +109,7 @@ public class WriteAuditLogTest {
         ac.getFieldValues("B").add("bar");
         ac.getFieldValues("B").add("baz");
         
-        action.setFormattingMap(Collections.singletonMap("category", "%A %B"));
+        action.setFormattingMap(CollectionSupport.singletonMap("category", "%A %B"));
         action.initialize();
         
         final Event event = action.execute(src);
@@ -123,7 +123,7 @@ public class WriteAuditLogTest {
         ac.getFieldValues("B").add("bar");
         ac.getFieldValues("B").add("baz");
         
-        action.setFormattingMap(Collections.singletonMap("category", "%A - %C|%B"));
+        action.setFormattingMap(CollectionSupport.singletonMap("category", "%A - %C|%B"));
         action.initialize();
         
         final Event event = action.execute(src);
@@ -132,7 +132,7 @@ public class WriteAuditLogTest {
     }
     
     @Test public void testServletRequest() throws ComponentInitializationException {
-        action.setFormattingMap(Collections.singletonMap("category", "%a %URL - %UA"));
+        action.setFormattingMap(CollectionSupport.singletonMap("category", "%a %URL - %UA"));
         action.initialize();
         
         final Event event = action.execute(src);

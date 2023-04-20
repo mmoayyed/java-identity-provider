@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.installer.ant.impl.PasswordHandler;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.NonnullSupplier;
@@ -179,7 +180,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     private String credentialsKeyFileMode;
 
     /** Local overload of properties (to deal with nested calling). */
-    private Map<String, String> inheritedProperties = Collections.emptyMap();
+    private Map<String, String> inheritedProperties;
 
     /** Input handler from the prompting. */
     private final InputHandler inputHandler;
@@ -191,6 +192,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     public InstallerPropertiesImpl(final boolean copiedDistribution) {
         needSourceDir = !copiedDistribution;
         inputHandler = getInputHandler();
+        inheritedProperties = CollectionSupport.emptyMap();
     }
 
     /** Get an {@link InputHandler} for the prompting.

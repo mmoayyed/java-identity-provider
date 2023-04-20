@@ -18,8 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.security.auth.Subject;
@@ -39,9 +37,11 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link SelectAuthenticationFlow} unit test. */
+@SuppressWarnings("javadoc")
 public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest {
     
     private SelectAuthenticationFlow action; 
@@ -101,7 +101,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
         
         final Event event = action.execute(src);
         
@@ -113,7 +113,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
         authCtx.setForceAuthn(true);
         
         final Event event = action.execute(src);
@@ -127,7 +127,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
         rpc.setOperator("exact");
-        rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("foo")));
+        rpc.setRequestedPrincipals(CollectionSupport.singletonList(new TestPrincipal("foo")));
         assert authCtx != null;
         authCtx.addSubcontext(rpc, true);
         
@@ -138,7 +138,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
 
     @Test public void testPreferredNoMatch() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
+        final List<Principal> principals = CollectionSupport.singletonList(new TestPrincipal("test3"));
         final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
         ppc.setPreferredPrincipals(principals);
         assert authCtx != null;
@@ -156,7 +156,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
 
     @Test public void testPreferredNoneActive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
+        final List<Principal> principals = CollectionSupport.singletonList(new TestPrincipal("test3"));
         final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
         ppc.setPreferredPrincipals(principals);
         assert authCtx != null;
@@ -175,7 +175,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
     
     @Test public void testPreferredPickActiveNonMatch() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final List<Principal> principals = CollectionSupport.listOf(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
         final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
         ppc.setPreferredPrincipals(principals);
@@ -183,8 +183,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.addSubcontext(ppc, true);
         final AuthenticationResult active = new AuthenticationResult("test1", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test1"));
-        authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(CollectionSupport.singletonList(principals.get(0)));
         
         final Event event = action.execute(src);
         
@@ -194,7 +194,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
 
     @Test public void testPreferredPickActiveMatch() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final List<Principal> principals = CollectionSupport.listOf(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
         final PreferredPrincipalContext ppc = new PreferredPrincipalContext();
         ppc.setPreferredPrincipals(principals);
@@ -204,8 +204,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active3 = new AuthenticationResult("test3", new Subject());
         active1.getSubject().getPrincipals().add(new TestPrincipal("test1"));
         active3.getSubject().getPrincipals().add(new TestPrincipal("test3"));
-        authCtx.setActiveResults(Arrays.asList(active1, active3));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
+        authCtx.setActiveResults(CollectionSupport.listOf(active1, active3));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(CollectionSupport.singletonList(principals.get(0)));
         
         final Event event = action.execute(src);
         
@@ -215,7 +215,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
 
     @Test public void testRequestNoneActive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"));
+        final List<Principal> principals = CollectionSupport.singletonList(new TestPrincipal("test3"));
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
@@ -238,7 +238,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
         authCtx.getIntermediateFlows().put("test2", authCtx.getPotentialFlows().get("test2"));
-        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final List<Principal> principals = CollectionSupport.listOf(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
@@ -261,7 +261,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
     
     @Test public void testRequestPickInactive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final List<Principal> principals = CollectionSupport.listOf(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
@@ -272,8 +272,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.addSubcontext(rpc, true);
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
-        authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(CollectionSupport.singletonList(principals.get(0)));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "test3");
@@ -284,7 +284,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
 
     @Test public void testRequestPickActive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
-        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final List<Principal> principals = CollectionSupport.listOf(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
@@ -295,8 +295,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.addSubcontext(rpc, true);
         final AuthenticationResult active = new AuthenticationResult("test3", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test3"));
-        authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(CollectionSupport.singletonList(principals.get(0)));
         
         final Event event = action.execute(src);
         
@@ -307,7 +307,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
     @Test public void testRequestFavorSSO() throws ComponentInitializationException {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+        final List<Principal> principals = CollectionSupport.listOf(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
@@ -317,8 +317,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.addSubcontext(rpc, true);
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
-        authCtx.setActiveResults(Arrays.asList(active));
-        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(Collections.singletonList(principals.get(0)));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(CollectionSupport.singletonList(principals.get(0)));
         
         action = new SelectAuthenticationFlow();
         action.setFavorSSO(true);

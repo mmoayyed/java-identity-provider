@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
-import java.util.Collections;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
@@ -28,7 +27,6 @@ import net.shibboleth.idp.profile.IdPEventIds;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -116,7 +114,7 @@ public class InitializeRequestedPrincipalContextTest {
      */
     @Test public void testInvalidProfileConfiguration() throws Exception {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
+                CollectionSupport.singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         final AuthenticationContext authCtx = prc.ensureSubcontext(AuthenticationContext.class);
 
@@ -135,7 +133,7 @@ public class InitializeRequestedPrincipalContextTest {
         final MockAuthenticationProfileConfiguration mock =
                 new MockAuthenticationProfileConfiguration("mock", CollectionSupport.<Principal>emptyList());
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singleton(mock)).buildRequestContext();
+                CollectionSupport.singleton(mock)).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         final AuthenticationContext authCtx = prc.ensureSubcontext(AuthenticationContext.class);
         
@@ -162,7 +160,7 @@ public class InitializeRequestedPrincipalContextTest {
         final MockAuthenticationProfileConfiguration mock =
                 new MockAuthenticationProfileConfiguration("mock", CollectionSupport.singletonList(method));
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                Collections.<ProfileConfiguration>singleton(mock)).buildRequestContext();
+                CollectionSupport.singleton(mock)).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         final AuthenticationContext authCtx = prc.ensureSubcontext(AuthenticationContext.class);
 

@@ -32,9 +32,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -71,7 +69,7 @@ public abstract class AbstractIdPModule implements IdPModule {
     @Nonnull private Logger log = LoggerFactory.getLogger(AbstractIdPModule.class);
     
     /** Module resources. */
-    @Nonnull @NonnullElements private Collection<BasicModuleResource> moduleResources;
+    @Nonnull private Collection<ModuleResource> moduleResources;
     
     /** Constructor. */
     public AbstractIdPModule() {
@@ -79,8 +77,8 @@ public abstract class AbstractIdPModule implements IdPModule {
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<ModuleResource> getResources() {
-        return List.copyOf(moduleResources);
+    @Nonnull @NotLive @Unmodifiable public Collection<ModuleResource> getResources() {
+        return moduleResources;
     }
     
     /**
@@ -90,9 +88,9 @@ public abstract class AbstractIdPModule implements IdPModule {
      */
     public void setResources(@Nullable @NonnullElements final Collection<BasicModuleResource> resources) {
         if (resources != null) {
-            moduleResources = List.copyOf(resources);
+            moduleResources = CollectionSupport.copyToList(resources);
         } else {
-            moduleResources = Collections.emptyList();
+            moduleResources = CollectionSupport.emptyList();
         }
     }
     
@@ -164,7 +162,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                 results.put(resource, ((BasicModuleResource) resource).enable(moduleContext));
             }
         } else {
-            results = Collections.emptyMap();
+            results = CollectionSupport.emptyMap();
         }
         
         log.debug("Module {} enabled", getId());
@@ -190,7 +188,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                 results.put(resource, ((BasicModuleResource) resource).disable(moduleContext, clean));
             }
         } else {
-            results = Collections.emptyMap();
+            results = CollectionSupport.emptyMap();
         }
         
         log.debug("Module {} disabled", getId());

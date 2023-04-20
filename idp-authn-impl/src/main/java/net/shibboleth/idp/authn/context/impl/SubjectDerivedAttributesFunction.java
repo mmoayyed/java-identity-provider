@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.context.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,6 +36,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextSubjectLookupFunction;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -127,7 +127,7 @@ public class SubjectDerivedAttributesFunction extends AbstractIdentifiableInitia
     /** {@inheritDoc} */
     @Nullable public List<IdPAttribute> apply(@Nullable final ProfileRequestContext prc) {
         
-        Collection<Subject> subjects = Collections.emptyList();
+        Collection<Subject> subjects = CollectionSupport.emptyList();
         
         if (subjectLookupStrategy != null) {
             final Subject subject = subjectLookupStrategy.apply(prc);
@@ -135,7 +135,7 @@ public class SubjectDerivedAttributesFunction extends AbstractIdentifiableInitia
                 log.debug("{} No Subject returned from lookup, no attribute resolved", getLogPrefix());
                 return null;
             }
-            subjects = Collections.singletonList(subject);
+            subjects = CollectionSupport.singletonList(subject);
         } else {
             final SubjectContext cs = scLookupStrategy.apply(prc);
             if (cs == null || cs.getSubjects().isEmpty()) {

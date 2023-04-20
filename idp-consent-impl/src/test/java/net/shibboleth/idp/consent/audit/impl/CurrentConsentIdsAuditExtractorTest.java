@@ -17,14 +17,13 @@
 
 package net.shibboleth.idp.consent.audit.impl;
 
-import java.util.Collections;
-import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /** {@link CurrentConsentIdsAuditExtractor} unit test. */
 @SuppressWarnings("javadoc")
@@ -40,10 +39,10 @@ public class CurrentConsentIdsAuditExtractorTest extends AbstractConsentAuditExt
         final ConsentContext ctx = prc.getSubcontext(ConsentContext.class);
         assert ctx != null;
         ctx.getCurrentConsents().clear();
-        Assert.assertEquals(extractor.apply(prc), Collections.emptyList());
+        Assert.assertEquals(extractor.apply(prc), CollectionSupport.emptyList());
     }
 
     @Test public void testExtraction() {
-        Assert.assertEquals(extractor.apply(prc), List.of("consent1", "consent2"));
+        Assert.assertEquals(extractor.apply(prc), CollectionSupport.listOf("consent1", "consent2"));
     }
 }

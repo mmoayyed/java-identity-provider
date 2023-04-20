@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.security.Security;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -39,6 +38,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.plugin.AbstractIdPPlugin;
 import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.httpclient.HttpClientBuilder;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -132,7 +132,7 @@ public class PluginInstallerTest extends BasePluginTest {
 
         /** {@inheritDoc} */
         public @Nonnull List<URL> getUpdateURLs() throws IOException {
-            return Collections.emptyList();
+            return CollectionSupport.emptyList();
         }
 
         /** {@inheritDoc} */

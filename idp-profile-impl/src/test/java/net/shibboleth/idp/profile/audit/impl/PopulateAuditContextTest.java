@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.profile.audit.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -60,7 +58,7 @@ public class PopulateAuditContextTest {
     
     @Test public void testSingle() throws Exception {
         final Map<String,Function<ProfileRequestContext,Object>> map = new HashMap<>();
-        map.put("a", new MockFunction(Collections.singletonList("foo")));
+        map.put("a", new MockFunction(CollectionSupport.singletonList("foo")));
         
         action.setFieldExtractors(map);
         action.initialize();
@@ -77,8 +75,8 @@ public class PopulateAuditContextTest {
 
     @Test public void testMultiple() throws Exception {
         final Map<String,Function<ProfileRequestContext,Object>> map = new HashMap<>();
-        map.put("a", new MockFunction(Collections.singletonList("foo")));
-        map.put("A", new MockFunction(Arrays.asList("bar", "baz")));
+        map.put("a", new MockFunction(CollectionSupport.singletonList("foo")));
+        map.put("A", new MockFunction(CollectionSupport.listOf("bar", "baz")));
         
         action.setFieldExtractors(map);
         action.initialize();
@@ -97,8 +95,8 @@ public class PopulateAuditContextTest {
 
     @Test public void testSkipped() throws Exception {
         final Map<String,Function<ProfileRequestContext,Object>> map = new HashMap<>();
-        map.put("a", new MockFunction(Collections.singletonList("foo")));
-        map.put("A", new MockFunction(Arrays.asList("bar", "baz")));
+        map.put("a", new MockFunction(CollectionSupport.singletonList("foo")));
+        map.put("A", new MockFunction(CollectionSupport.listOf("bar", "baz")));
         
         action.setFieldExtractors(map);
         action.setFormattingMapParser(new FormattingMapParser(CollectionSupport.singletonMap("foo", "%A - %b %%")));

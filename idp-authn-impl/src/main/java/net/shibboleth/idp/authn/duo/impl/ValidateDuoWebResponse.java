@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -48,6 +47,7 @@ import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -240,10 +240,10 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
                 return Map.of(AuthnAuditFields.DUO_CLIENT_ID, duoIntegration.getIntegrationKey(),
                         IdPAuditFields.USERNAME, username);
             } else {
-                return Collections.singletonMap(IdPAuditFields.USERNAME, username);
+                return CollectionSupport.singletonMap(IdPAuditFields.USERNAME, username);
             }
         } else if (duoIntegration != null) {
-            return Collections.singletonMap(AuthnAuditFields.DUO_CLIENT_ID, duoIntegration.getIntegrationKey());
+            return CollectionSupport.singletonMap(AuthnAuditFields.DUO_CLIENT_ID, duoIntegration.getIntegrationKey());
         }
         
         return super.getAuditFields(profileRequestContext);

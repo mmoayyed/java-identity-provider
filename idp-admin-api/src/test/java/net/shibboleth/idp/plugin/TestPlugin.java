@@ -18,11 +18,11 @@
 package net.shibboleth.idp.plugin;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.TestModule;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
  * Test plugin for unit test.
@@ -40,8 +40,8 @@ public class TestPlugin extends PropertyDrivenIdPPlugin {
         
         try {
             final IdPModule module = new TestModule();
-            setEnableOnInstall(Collections.singleton(module));
-            setDisableOnRemoval(Collections.singleton(module));
+            setEnableOnInstall(CollectionSupport.singleton(module));
+            setDisableOnRemoval(CollectionSupport.singleton(module));
         } catch (final IOException | ModuleException e) {
             throw new PluginException(e);
         }

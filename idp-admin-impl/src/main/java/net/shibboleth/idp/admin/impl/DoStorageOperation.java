@@ -18,7 +18,6 @@
 package net.shibboleth.idp.admin.impl;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,6 +45,7 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -427,7 +427,7 @@ public class DoStorageOperation extends AbstractProfileAction {
         
         final Error e = new Error();
         final Errors errors = new Errors();
-        errors.setErrors(Collections.singletonList(e));
+        errors.setErrors(CollectionSupport.singletonList(e));
         e.setStatus(Integer.toString(status));
         e.setTitle(title);
         e.setDetail(detail);

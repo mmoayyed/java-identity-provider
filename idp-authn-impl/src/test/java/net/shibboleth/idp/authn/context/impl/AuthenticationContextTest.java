@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.context.impl;
 
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 
 import javax.security.auth.Subject;
 
@@ -29,6 +28,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -144,7 +144,7 @@ public class AuthenticationContextTest {
         RequestedPrincipalContext rpCtx = ctx.getSubcontext(RequestedPrincipalContext.class);
         assert rpCtx!=null;
         Assert.assertEquals(rpCtx.getOperator(), "foo");
-        Assert.assertEquals(rpCtx.getRequestedPrincipals(), Collections.singletonList(new TestPrincipal("bar")));
+        Assert.assertEquals(rpCtx.getRequestedPrincipals(), CollectionSupport.singletonList(new TestPrincipal("bar")));
         
         Assert.assertFalse(ctx.addRequestedPrincipalContext("foo", new TestPrincipal("bar"), false));
         
@@ -152,15 +152,20 @@ public class AuthenticationContextTest {
         rpCtx = ctx.getSubcontext(RequestedPrincipalContext.class);
         assert rpCtx!=null;
         Assert.assertEquals(rpCtx.getOperator(), "fob");
-        Assert.assertEquals(rpCtx.getRequestedPrincipals(), Collections.singletonList(new TestPrincipal("baz")));
+        Assert.assertEquals(rpCtx.getRequestedPrincipals(), CollectionSupport.singletonList(new TestPrincipal("baz")));
 
-        ctx.addRequestedPrincipalContext("fog", TestPrincipal.class.getName(), Arrays.asList("baf", "bag"), true);
+        ctx.addRequestedPrincipalContext("fog", TestPrincipal.class.getName(), CollectionSupport.listOf("baf", "bag"), true);
         rpCtx = ctx.getSubcontext(RequestedPrincipalContext.class);
         assert rpCtx!=null;
         Assert.assertEquals(rpCtx.getOperator(), "fog");
         Assert.assertEquals(rpCtx.getRequestedPrincipals().size(), 2);
     }
     
+    /**
+     * Tests helper method when bad type used.
+     * 
+     * @throws Exception
+     */
     @Test(expectedExceptions = ClassCastException.class)
     public void testRequestedPrincipalContextHelperBadType() throws Exception {
         final AuthenticationContext ctx = new AuthenticationContext();

@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
-import java.util.Collections;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -28,6 +27,7 @@ import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -59,7 +59,7 @@ public class AttributeValueLookupFunctionTest {
         
         final Map<String, IdPAttribute> unfilteredAttributes = ConsentTestingSupport.newAttributeMap();
         final IdPAttribute attribute4 = new IdPAttribute("attribute4");
-        attribute4.setValues(Collections.singletonList(new StringAttributeValue("value4")));
+        attribute4.setValues(CollectionSupport.singletonList(new StringAttributeValue("value4")));
         unfilteredAttributes.put(attribute4.getId(), attribute4);
         attributeCtx.setUnfilteredIdPAttributes(unfilteredAttributes.values());
         
@@ -96,7 +96,7 @@ public class AttributeValueLookupFunctionTest {
         final AttributeContext attributeCtx =
                 prc.ensureSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         assert attributeCtx!=null;
-        attributeCtx.setIdPAttributes(Collections.singleton(new IdPAttribute("EmptyAttribute")));
+        attributeCtx.setIdPAttributes(CollectionSupport.singleton(new IdPAttribute("EmptyAttribute")));
 
         function = new AttributeValueLookupFunction("EmptyAttribute");
         Assert.assertNull(function.apply(prc));
@@ -106,12 +106,12 @@ public class AttributeValueLookupFunctionTest {
         byte[] data = {1, 2, 3, 0xF};
 
         final IdPAttribute byteAttribute = new IdPAttribute("ByteAttribute");
-        byteAttribute.setValues(Collections.singletonList(new ByteAttributeValue(data)));
+        byteAttribute.setValues(CollectionSupport.singletonList(new ByteAttributeValue(data)));
 
         final AttributeContext attributeCtx =
                 prc.ensureSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         assert attributeCtx!=null;
-        attributeCtx.setIdPAttributes(Collections.singleton(byteAttribute));
+        attributeCtx.setIdPAttributes(CollectionSupport.singleton(byteAttribute));
 
         function = new AttributeValueLookupFunction("ByteAttribute");
         Assert.assertNull(function.apply(prc));

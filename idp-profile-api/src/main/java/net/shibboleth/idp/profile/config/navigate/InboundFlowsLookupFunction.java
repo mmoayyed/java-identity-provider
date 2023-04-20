@@ -18,7 +18,6 @@
 package net.shibboleth.idp.profile.config.navigate;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import javax.annotation.Nullable;
 
@@ -29,6 +28,7 @@ import net.shibboleth.idp.profile.config.InterceptorAwareProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -48,12 +48,12 @@ public class InboundFlowsLookupFunction extends AbstractRelyingPartyLookupFuncti
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc instanceof InterceptorAwareProfileConfiguration) {
-                return ((InterceptorAwareProfileConfiguration) pc).getInboundInterceptorFlows(input);
+            if (pc instanceof InterceptorAwareProfileConfiguration ipc) {
+                return ipc.getInboundInterceptorFlows(input);
             }
         }
         
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
 }

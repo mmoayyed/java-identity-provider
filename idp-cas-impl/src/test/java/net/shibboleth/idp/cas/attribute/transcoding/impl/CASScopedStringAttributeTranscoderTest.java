@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.cas.attribute.transcoding.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -72,7 +70,7 @@ public class CASScopedStringAttributeTranscoderTest {
         final CASScopedStringAttributeTranscoder transcoder = new CASScopedStringAttributeTranscoder();
         transcoder.initialize();
         
-        registry.setNamingRegistry(Collections.singletonList(
+        registry.setNamingRegistry(CollectionSupport.singletonList(
                 new BasicNamingFunction<>(transcoder.getEncodedType(), new AbstractCASAttributeTranscoder.NamingFunction())));
         
         final Map<String,Object> ruleset1 = new HashMap<>();
@@ -125,7 +123,7 @@ public class CASScopedStringAttributeTranscoderTest {
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
+                CollectionSupport.listOf(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
                     @Override
                     public @Nonnull Object getNativeValue() {
                         return intArray;
@@ -150,7 +148,7 @@ public class CASScopedStringAttributeTranscoderTest {
     
     @Test public void single() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                CollectionSupport.listOf(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new ScopedStringAttributeValue(STRING_1, SCOPE_1),
                         new StringAttributeValue(STRING_1),
                         new StringAttributeValue(STRING_1 + "@" + SCOPE_1));
@@ -201,7 +199,7 @@ public class CASScopedStringAttributeTranscoderTest {
         
     @Test public void multi() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                CollectionSupport.listOf(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new ScopedStringAttributeValue(STRING_1, SCOPE_1),
                         new ScopedStringAttributeValue(STRING_2, SCOPE_2));
 

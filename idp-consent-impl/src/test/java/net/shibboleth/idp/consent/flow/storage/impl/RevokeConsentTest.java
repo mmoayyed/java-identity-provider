@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.consent.flow.storage.impl;
 
-import java.util.Collections;
 
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.webflow.execution.Event;
@@ -42,7 +42,7 @@ public class RevokeConsentTest extends AbstractConsentIndexedStorageActionTest {
         ss.create("context", "key", ConsentTestingSupport.newConsentMap(),
                 ((AbstractConsentStorageAction) action).getStorageSerializer(), null);
         Assert.assertNotNull(ss.read("context", "key"));
-        ss.create("context", "_index", Collections.singletonList("key"),
+        ss.create("context", "_index", CollectionSupport.singletonList("key"),
                 ((AbstractConsentIndexedStorageAction) action).getStorageKeysSerializer(), null);
 
         action.initialize();

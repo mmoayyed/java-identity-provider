@@ -18,7 +18,6 @@ package net.shibboleth.idp.plugin;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -31,10 +30,12 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.TestModule;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
  * Unit tests exercising plugin code.
  */
+@SuppressWarnings("javadoc")
 public class IdPPluginTest {
     
     private IdPPlugin testPlugin;
@@ -59,8 +60,8 @@ public class IdPPluginTest {
         Assert.assertEquals(urls.get(1).toString(), "https://backup.example.org/plugin");
         
         final IdPModule test = new TestModule();
-        Assert.assertEquals(testPlugin.getEnableOnInstall(), Collections.singleton(test));
-        Assert.assertEquals(testPlugin.getDisableOnRemoval(), Collections.singleton(test));
+        Assert.assertEquals(testPlugin.getEnableOnInstall(), CollectionSupport.singleton(test));
+        Assert.assertEquals(testPlugin.getDisableOnRemoval(), CollectionSupport.singleton(test));
     }
 
 }

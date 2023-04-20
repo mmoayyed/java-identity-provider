@@ -25,7 +25,6 @@ import static org.testng.Assert.fail;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -34,6 +33,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /**
@@ -52,7 +52,7 @@ public class PluginStateTest {
 
         final IdPPlugin simple = new TestPlugin();
         
-        final PluginState state = new PluginState(simple, Collections.EMPTY_LIST);
+        final PluginState state = new PluginState(simple, CollectionSupport.emptyList());
         
         state.initialize();
 
@@ -120,7 +120,7 @@ public class PluginStateTest {
             }
         };
         
-        final PluginState state = new PluginState(simple, Collections.EMPTY_LIST);
+        final PluginState state = new PluginState(simple, CollectionSupport.emptyList());
         state.initialize();
         
         assertEquals(state.getPluginInfo().getAvailableVersions().size(), 3);

@@ -25,7 +25,6 @@ import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -60,6 +59,7 @@ import net.shibboleth.shared.testing.ConstantSupplier;
 import net.shibboleth.shared.testing.InMemoryDirectory;
 
 /** Unit test for JAAS validation. */
+@SuppressWarnings("javadoc")
 public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
 
     private static final String DATA_PATH = "src/test/resources/net/shibboleth/idp/authn/impl/";
@@ -86,6 +86,8 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
 
     /**
      * Shutdown the in-memory directory server.
+     * 
+     * @throws Exception
      */
     @AfterClass public void teardownDirectoryServer() throws Exception {
         if (directoryServer.openConnectionCount() > 0) {
@@ -102,11 +104,11 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         validator.setId("jaastest");
         
         action = new ValidateCredentials();
-        action.setValidators(Collections.singletonList(validator));
+        action.setValidators(CollectionSupport.singletonList(validator));
         
         final Map<String,Collection<String>> mappings = new HashMap<>();
-        mappings.put("UnknownUsername", Collections.singleton("DN_RESOLUTION_FAILURE"));
-        mappings.put("InvalidPassword", Collections.singleton("INVALID_CREDENTIALS"));
+        mappings.put("UnknownUsername", CollectionSupport.singleton("DN_RESOLUTION_FAILURE"));
+        mappings.put("InvalidPassword", CollectionSupport.singleton("INVALID_CREDENTIALS"));
         action.setClassifiedMessages(mappings);
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -174,7 +176,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        validator.setLoginConfigNames(Collections.singletonList("ShibBadAuth"));
+        validator.setLoginConfigNames(CollectionSupport.singletonList("ShibBadAuth"));
         validator.setLoginConfigType("JavaLoginConfig");
         validator.setLoginConfigParameters(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config"));
@@ -207,8 +209,8 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(CollectionSupport.<Principal>singletonList(new TestPrincipal("test1")));
 
-        validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
-                Collections.singletonList(new TestPrincipal("test2")))));
+        validator.setLoginConfigurations(CollectionSupport.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
+                CollectionSupport.singletonList(new TestPrincipal("test2")))));
         validator.setLoginConfigType("JavaLoginConfig");
         validator.setLoginConfigParameters(URISupport.fileURIFromAbsolutePath(getCurrentDir()
                 + '/' + DATA_PATH + "jaas.config"));
@@ -355,8 +357,8 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(CollectionSupport.<Principal>singletonList(new TestPrincipal("test1")));
 
-        validator.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
-                Collections.<Principal>singletonList(new TestPrincipal("test1")))));
+        validator.setLoginConfigurations(CollectionSupport.singletonList(new Pair<>("ShibUserPassAuth",
+                CollectionSupport.singletonList(new TestPrincipal("test1")))));
         validator.setLoginConfigType("JavaLoginConfig");
         validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
         validator.initialize();

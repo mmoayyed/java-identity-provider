@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
@@ -49,6 +48,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -154,7 +154,7 @@ import net.shibboleth.shared.logic.Constraint;
      *  has problems.
      */
     protected void createNewStore() throws IOException {
-        keyRings = new PGPPublicKeyRingCollection(Collections.emptyList());
+        keyRings = new PGPPublicKeyRingCollection(CollectionSupport.emptyList());
         saveStoreInternal();
     }
 
@@ -231,7 +231,7 @@ import net.shibboleth.shared.logic.Constraint;
         }
         keyRings = PGPPublicKeyRingCollection.addPublicKeyRing(
                 keyRings,
-                new PGPPublicKeyRing(Collections.singletonList(key)));
+                new PGPPublicKeyRing(CollectionSupport.singletonList(key)));
         saveStoreInternal();
     }
 

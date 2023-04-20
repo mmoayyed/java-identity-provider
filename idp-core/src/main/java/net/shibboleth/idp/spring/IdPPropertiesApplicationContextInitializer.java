@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
@@ -46,6 +45,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.ConstraintViolationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -249,7 +249,7 @@ public class IdPPropertiesApplicationContextInitializer
                 final String idpPropertiesNative = Path.of(IDP_PROPERTIES).toString();
                
                 try {
-                    Files.walkFileTree(searchRoot, Collections.singleton(FileVisitOption.FOLLOW_LINKS),
+                    Files.walkFileTree(searchRoot, CollectionSupport.singleton(FileVisitOption.FOLLOW_LINKS),
                             Integer.MAX_VALUE,
                             new FileVisitor<Path>() {
 

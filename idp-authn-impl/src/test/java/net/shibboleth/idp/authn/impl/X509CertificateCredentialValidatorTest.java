@@ -20,7 +20,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.x500.X500Principal;
@@ -45,10 +44,12 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link X509CertificateCredentialValidator} unit test. */
+@SuppressWarnings("javadoc")
 public class X509CertificateCredentialValidatorTest extends BaseAuthenticationContextTest {
     
     @Nonnull final private String entityCertBase64 = 
@@ -106,7 +107,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         validator.setId("x509");
         
         action = new ValidateCredentials();
-        action.setValidators(Collections.singletonList(validator));
+        action.setValidators(CollectionSupport.singletonList(validator));
         final MockHttpServletRequest request = new MockHttpServletRequest();
         action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         action.initialize();

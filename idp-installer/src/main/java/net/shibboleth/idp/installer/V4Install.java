@@ -29,7 +29,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.ServiceConfigurationError;
@@ -162,7 +161,7 @@ public class V4Install extends AbstractInitializableComponent {
             final PluginVersion pluginVersion = new PluginVersion(plugin);
             try {
                 log.debug("Considering Plugin {}, version {}", pluginId,  pluginVersion);
-                final PluginState state = new PluginState(plugin, Collections.emptyList());
+                final PluginState state = new PluginState(plugin, CollectionSupport.emptyList());
                 state.initialize();
                 if (!state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
                     log.warn("Installed Plugin {} version {} is not supported with IdP Version {}, continuing.",

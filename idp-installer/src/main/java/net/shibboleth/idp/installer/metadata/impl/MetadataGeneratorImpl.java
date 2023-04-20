@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -62,6 +60,7 @@ import net.shibboleth.idp.saml.xmlobject.ExtensionsConstants;
 import net.shibboleth.idp.saml.xmlobject.Scope;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -364,9 +363,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
     protected void writeIDPSSO() throws IOException {
         final List<String> protocols;
         if (isSAML1Commented()) {
-            protocols = Collections.singletonList(SAMLConstants.SAML20P_NS);
+            protocols = CollectionSupport.singletonList(SAMLConstants.SAML20P_NS);
         } else {
-            protocols = Arrays.asList(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS, "urn:mace:shibboleth:1.0");
+            protocols = CollectionSupport.listOf(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS, "urn:mace:shibboleth:1.0");
         }
 
         writeRoleDescriptor(IDPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME, protocols); 
@@ -421,9 +420,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         }
         final List<String> protocols;
         if (isSAML2AttributeQueryCommented()) {
-            protocols = Collections.singletonList(SAMLConstants.SAML11P_NS);
+            protocols = CollectionSupport.singletonList(SAMLConstants.SAML11P_NS);
         } else {
-            protocols = Arrays.asList(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS);
+            protocols = CollectionSupport.listOf(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS);
         }
         writeRoleDescriptor(AttributeAuthorityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME, protocols);
         writer.newLine();
@@ -614,7 +613,11 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
             signing.add(signingCert);
         }
         writeKeyDescriptors(signing, "signing");
-        writeKeyDescriptors(Collections.singletonList(params.getEncryptionCert()), "encryption");
+        
+        final List<String> encryption = params.getEncryptionCert();
+        if (encryption != null) {
+            writeKeyDescriptors(CollectionSupport.singletonList(encryption), "encryption");
+        }
         writer.newLine();
     }
 

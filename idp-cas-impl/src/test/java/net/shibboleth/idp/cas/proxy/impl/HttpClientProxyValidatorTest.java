@@ -28,7 +28,6 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -60,6 +59,7 @@ import net.shibboleth.idp.cas.flow.impl.AbstractFlowActionTest;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
  * Unit test for {@link HttpClientProxyValidator} class.
@@ -127,7 +127,7 @@ public class HttpClientProxyValidatorTest extends AbstractFlowActionTest {
         // This is an attempt to get them portably depending on whether IPv4 and/or IPv6 is enabled.
 
         // Resolve the 'localhost' addrs that will be resolved and used by HttpClient
-        final List<InetAddress> localhostAddrs = Arrays.asList(SystemDefaultDnsResolver.INSTANCE.resolve("localhost"));
+        final List<InetAddress> localhostAddrs = CollectionSupport.listOf(SystemDefaultDnsResolver.INSTANCE.resolve("localhost"));
 
         // Resolve available loopback and link-local interfaces
         // Using ByteBuffer just to get hashcode() and equals() for byte[] for filtering using the Set.

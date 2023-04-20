@@ -20,7 +20,6 @@ package net.shibboleth.idp.authn.context.impl;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -37,10 +36,12 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextSubjectLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
+
 /**
  * A Function which returns {@link IdPAttributeValue}s derived from the {@link java.security.Principal}s
  * associated with the request. The precise values are determined by an injected {@link Function}.
@@ -138,7 +139,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
     /** {@inheritDoc} */
     @Nullable public List<IdPAttributeValue> apply(@Nullable final ProfileRequestContext prc) {
         
-        Collection<Subject> subjects = Collections.emptyList();
+        Collection<Subject> subjects = CollectionSupport.emptyList();
         
         if (subjectLookupStrategy != null) {
             final Subject subject = subjectLookupStrategy.apply(prc);
@@ -146,7 +147,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
                 log.debug("{} No Subject returned from lookup, no attribute resolved", getLogPrefix());
                 return null;
             }
-            subjects = Collections.singletonList(subject);
+            subjects = CollectionSupport.singletonList(subject);
         } else {
             final SubjectContext cs = scLookupStrategy.apply(prc);
             if (cs == null || cs.getSubjects().isEmpty()) {

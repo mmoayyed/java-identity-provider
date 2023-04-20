@@ -22,7 +22,6 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +43,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
@@ -54,7 +54,8 @@ public class SubjectDerivedAttributeValuesFunctionTest {
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
     
-    @Nonnull private List<IdPAttributeValue> doResolve(@Nonnull final ContextDerivedAttributeDefinition defn, @Nonnull final AttributeResolutionContext ctx) throws ResolutionException {
+    @Nonnull private List<IdPAttributeValue> doResolve(@Nonnull final ContextDerivedAttributeDefinition defn,
+            @Nonnull final AttributeResolutionContext ctx) throws ResolutionException {
         final IdPAttribute attr = defn.resolve(ctx);
         assert attr!=null;
         return attr.getValues();
@@ -203,7 +204,7 @@ public class SubjectDerivedAttributeValuesFunctionTest {
     }
         
     @Test public void empty() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue> list = Collections.emptyList();
+        final List<IdPAttributeValue> list = CollectionSupport.emptyList();
         
         final IdPAttribute attr = new IdPAttribute("wibble");
         attr.setValues(list);

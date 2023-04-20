@@ -18,7 +18,6 @@
 package net.shibboleth.idp.installer.plugin.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -27,6 +26,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 @SuppressWarnings("javadoc")
 public class TestModule implements IdPModule {
@@ -74,31 +74,31 @@ public class TestModule implements IdPModule {
 
     /** {@inheritDoc} */
     public @Nonnull Collection<ModuleResource> getResources() {
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
-    public boolean isEnabled(ModuleContext moduleContext) {
+    public boolean isEnabled(@Nonnull final ModuleContext moduleContext) {
         return enabled;
     }
 
     /** {@inheritDoc} */
-    public @Nonnull Map<ModuleResource, ResourceResult> enable(ModuleContext moduleContext) throws ModuleException {
+    public @Nonnull Map<ModuleResource, ResourceResult> enable(@Nonnull final ModuleContext moduleContext) throws ModuleException {
         if (throwOnEnable != null) {
             throw throwOnEnable;
         }
         enabled = true;
-        return Collections.emptyMap();
+        return CollectionSupport.emptyMap();
     }
 
     /** {@inheritDoc} */
-    public @Nonnull Map<ModuleResource, ResourceResult> disable(ModuleContext moduleContext, boolean clean)
+    public @Nonnull Map<ModuleResource, ResourceResult> disable(@Nonnull final ModuleContext moduleContext, boolean clean)
             throws ModuleException {
         if (throwOnDisable != null) {
             throw throwOnDisable;
         }
         enabled = false;
-        return Collections.emptyMap();
+        return CollectionSupport.emptyMap();
     }
     
 }

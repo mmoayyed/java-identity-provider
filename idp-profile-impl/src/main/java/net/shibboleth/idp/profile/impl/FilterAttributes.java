@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import java.util.Collections;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -47,6 +46,7 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.service.ReloadableService;
@@ -151,8 +151,9 @@ public class FilterAttributes extends AbstractProfileAction {
         issuerLookupStrategy = new IssuerLookupFunction();
         recipientLookupStrategy = new RelyingPartyIdLookupFunction();
         
-        final Function<ProfileRequestContext,AttributeContext> acls = new ChildContextLookup<>(AttributeContext.class).compose(
-                new ChildContextLookup<>(RelyingPartyContext.class));
+        final Function<ProfileRequestContext,AttributeContext> acls =
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
         assert acls != null;
         attributeContextLookupStrategy = acls; 
 
@@ -165,13 +166,14 @@ public class FilterAttributes extends AbstractProfileAction {
         profileRequestContextFromFilterLookupStrategy = new RootContextLookup<>(ProfileRequestContext.class);
                 
         // Default: inbound msg context -> SAMLPeerEntityContext -> SAMLMetadataContext
-        final Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy = new ChildContextLookup<>(SAMLMetadataContext.class).compose(
-                new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
-                        new InboundMessageContextLookup()));
+        final Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy =
+                new ChildContextLookup<>(SAMLMetadataContext.class).compose(
+                        new ChildContextLookup<>(SAMLPeerEntityContext.class).compose(
+                                new InboundMessageContextLookup()));
         assert metadataContextLookupStrategy != null;
         
         // This is always set to navigate to the PRC and then apply the previous function.
-        Function<AttributeFilterContext,SAMLMetadataContext> mffls = metadataContextLookupStrategy.compose(
+        final Function<AttributeFilterContext,SAMLMetadataContext> mffls = metadataContextLookupStrategy.compose(
                 profileRequestContextFromFilterLookupStrategy);
         assert mffls != null;
         metadataFromFilterLookupStrategy = mffls; 
@@ -183,14 +185,15 @@ public class FilterAttributes extends AbstractProfileAction {
         proxiedRequesterContextLookupStrategy = prcls;
         
         // This is always set to navigate to the PRC and then apply the previous function.
-        final Function<AttributeFilterContext,ProxiedRequesterContext> pffls = proxiedRequesterContextLookupStrategy.compose(
-                profileRequestContextFromFilterLookupStrategy);
+        final Function<AttributeFilterContext,ProxiedRequesterContext> pffls =
+                proxiedRequesterContextLookupStrategy.compose(profileRequestContextFromFilterLookupStrategy);
         assert pffls != null;
         proxiesFromFilterLookupStrategy = pffls; 
         
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeFilterContext.
-        final Function<ProfileRequestContext,AttributeFilterContext> fccs = new ChildContextLookup<>(AttributeFilterContext.class, true).compose(
-                new ChildContextLookup<>(RelyingPartyContext.class));
+        final Function<ProfileRequestContext,AttributeFilterContext> fccs =
+                new ChildContextLookup<>(AttributeFilterContext.class, true).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
         assert fccs != null;
         filterContextCreationStrategy = fccs; 
         
@@ -289,8 +292,9 @@ public class FilterAttributes extends AbstractProfileAction {
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,SAMLMetadataContext> strategy) {
         checkSetterPreconditions();
-        final Function<AttributeFilterContext,SAMLMetadataContext> mffls = strategy.compose(profileRequestContextFromFilterLookupStrategy);
-        assert mffls!=null;
+        final Function<AttributeFilterContext,SAMLMetadataContext> mffls =
+                strategy.compose(profileRequestContextFromFilterLookupStrategy);
+        assert mffls != null;
         metadataFromFilterLookupStrategy = mffls;
                 
     }
@@ -393,7 +397,7 @@ public class FilterAttributes extends AbstractProfileAction {
             log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
             if (maskFailures) {
                 log.warn("Filter error masked, clearing resolved attributes");
-                attributeContext.setIdPAttributes(Collections.emptySet());
+                attributeContext.setIdPAttributes(CollectionSupport.emptySet());
             } else {
                 ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
             }

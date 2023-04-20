@@ -22,7 +22,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -33,6 +32,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -69,7 +69,7 @@ public class X509ProxyFilter implements Filter {
 
     /** Constructor. */
     public X509ProxyFilter() {
-        chainHeaders = Collections.emptyList();
+        chainHeaders = CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */

@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.cas.attribute.transcoding.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +66,7 @@ public class CASStringAttributeTranscoderTest {
         final CASStringAttributeTranscoder transcoder = new CASStringAttributeTranscoder();
         transcoder.initialize();
         
-        registry.setNamingRegistry(Collections.singletonList(
+        registry.setNamingRegistry(CollectionSupport.singletonList(
                 new BasicNamingFunction<>(transcoder.getEncodedType(), new AbstractCASAttributeTranscoder.NamingFunction())));
         
         final Map<String,Object> ruleset1 = new HashMap<>();
@@ -119,7 +117,7 @@ public class CASStringAttributeTranscoderTest {
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
+                CollectionSupport.listOf(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue() {
                     @Override
                     public @Nonnull Object getNativeValue() {
                         return intArray;
@@ -145,7 +143,7 @@ public class CASStringAttributeTranscoderTest {
     
     @Test public void single() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue(STRING_1));
+                CollectionSupport.listOf(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue(STRING_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_ID);
         inputAttribute.setValues(values);
@@ -190,7 +188,7 @@ public class CASStringAttributeTranscoderTest {
         
     @Test public void multi() throws Exception {
         final List<IdPAttributeValue> values =
-                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                CollectionSupport.listOf(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1),
                         new StringAttributeValue(STRING_2),
                         new ScopedStringAttributeValue(STRING_1, STRING_2));

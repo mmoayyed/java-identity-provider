@@ -24,10 +24,10 @@ import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,7 +86,7 @@ public class BaseMultiFactorAuthenticationContextTest {
         
         final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows.values());
-        action.setPotentialFlowsLookupStrategy(FunctionSupport.constant(Collections.singletonList(authenticationFlows.get("authn/MFA"))));
+        action.setPotentialFlowsLookupStrategy(FunctionSupport.constant(CollectionSupport.singletonList(authenticationFlows.get("authn/MFA"))));
         action.initialize();
 
         action.execute(src);

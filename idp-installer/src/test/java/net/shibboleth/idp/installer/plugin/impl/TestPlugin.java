@@ -19,7 +19,6 @@ package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -27,6 +26,7 @@ import javax.annotation.Nonnull;
 import org.springframework.core.io.ClassPathResource;
 
 import net.shibboleth.idp.plugin.AbstractIdPPlugin;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
  *
@@ -44,9 +44,9 @@ public class TestPlugin extends AbstractIdPPlugin {
     public @Nonnull List<URL> getUpdateURLs() {
         ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/plugin/plugins.props");
         try {
-            return Collections.singletonList(resource.getURL());
+            return CollectionSupport.singletonList(resource.getURL());
         } catch (IOException e) {
-            return Collections.EMPTY_LIST;
+            return CollectionSupport.emptyList();
         }
     }
     

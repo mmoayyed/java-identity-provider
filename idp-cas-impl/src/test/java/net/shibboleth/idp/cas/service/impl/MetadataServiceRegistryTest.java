@@ -21,7 +21,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Timer;
 
 import javax.annotation.Nonnull;
@@ -31,7 +30,6 @@ import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
-import org.opensaml.saml.metadata.resolver.index.MetadataIndex;
 import org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.annotations.AfterClass;
@@ -41,6 +39,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resource.Resource;
 import net.shibboleth.shared.spring.resource.ResourceHelper;
@@ -94,7 +93,7 @@ public class MetadataServiceRegistryTest {
         assert fiveHundredSeconds!=null;
         metadataResolver.setMaxRefreshDelay(fiveHundredSeconds);
         metadataResolver.setId("cas");
-        metadataResolver.setIndexes(Collections.<MetadataIndex>singleton(new EndpointMetadataIndex(
+        metadataResolver.setIndexes(CollectionSupport.singleton(new EndpointMetadataIndex(
                 new MetadataServiceRegistry.LoginEndpointPredicate())));
         metadataResolver.initialize();
     }

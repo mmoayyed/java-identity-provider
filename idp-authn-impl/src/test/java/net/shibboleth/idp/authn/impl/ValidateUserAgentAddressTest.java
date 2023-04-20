@@ -17,12 +17,6 @@
 
 package net.shibboleth.idp.authn.impl;
 
-
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -38,11 +32,13 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.IPRange;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ValidateUserAgentAddress} unit test. */
+@SuppressWarnings("javadoc")
 public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest {
     
     private ValidateUserAgentAddress action; 
@@ -53,9 +49,9 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
         super.setUp();
         
         action = new ValidateUserAgentAddress();
-        action.setMappings(Collections.<String,Collection<IPRange>>singletonMap(
-                "foo", Arrays.asList(IPRange.parseCIDRBlock("192.168.1.0/24"))));
-        action.setSupportedPrincipals(Arrays.asList(new TestPrincipal("UserAgentAuthentication")));
+        action.setMappings(CollectionSupport.singletonMap("foo",
+                CollectionSupport.singletonList(IPRange.parseCIDRBlock("192.168.1.0/24"))));
+        action.setSupportedPrincipals(CollectionSupport.singletonList(new TestPrincipal("UserAgentAuthentication")));
         final MockHttpServletRequest request = new MockHttpServletRequest();
         action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));
         action.initialize();
@@ -110,7 +106,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
-        rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("PasswordAuthentication")));
+        rpc.setRequestedPrincipals(CollectionSupport.singletonList(new TestPrincipal("PasswordAuthentication")));
         ac.addSubcontext(rpc, true);
         
         doExtract();
@@ -130,7 +126,7 @@ public class ValidateUserAgentAddressTest extends BaseAuthenticationContextTest 
         rpc.getPrincipalEvalPredicateFactoryRegistry().register(
                 TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
-        rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("UserAgentAuthentication")));
+        rpc.setRequestedPrincipals(CollectionSupport.singletonList(new TestPrincipal("UserAgentAuthentication")));
         ac.addSubcontext(rpc, true);
         
         doExtract();

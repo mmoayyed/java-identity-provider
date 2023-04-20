@@ -18,7 +18,6 @@
 package net.shibboleth.idp.consent.audit.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -27,6 +26,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -68,7 +68,7 @@ public class CurrentConsentIsApprovedAuditExtractor implements Function<ProfileR
                     map(Consent::isApproved).
                     collect(Collectors.toList());
         }
-        return Collections.emptyList();
+        return CollectionSupport.emptyList();
     }
 
 }

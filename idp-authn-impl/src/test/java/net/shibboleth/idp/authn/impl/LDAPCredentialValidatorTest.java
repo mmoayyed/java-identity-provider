@@ -20,9 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import static org.testng.Assert.assertEquals;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -59,12 +57,14 @@ import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 import net.shibboleth.shared.testing.InMemoryDirectory;
 import net.shibboleth.shared.testing.VelocityEngine;
 
 /** Unit test for LDAP credential validation. */
+@SuppressWarnings("javadoc")
 public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
 
     private static final String DATA_PATH = "/net/shibboleth/idp/authn/impl/";
@@ -109,6 +109,8 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
 
     /**
      * Shutdown the in-memory directory server.
+     * 
+     * @throws Exception 
      */
     @AfterClass public void teardownDirectoryServer() throws Exception {
         if (directoryServer.openConnectionCount() > 0) {
@@ -125,13 +127,13 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         validator.setId("ldaptest");
         
         action = new ValidateCredentials();
-        action.setValidators(Collections.singletonList(validator));
+        action.setValidators(CollectionSupport.singletonList(validator));
 
         final Map<String, Collection<String>> mappings = new HashMap<>();
-        mappings.put("UnknownUsername", Collections.singleton("DN_RESOLUTION_FAILURE"));
-        mappings.put("InvalidPassword", Collections.singleton("INVALID_CREDENTIALS"));
-        mappings.put("ExpiringPassword", Collections.singleton("ACCOUNT_WARNING"));
-        mappings.put("ExpiredPassword", Arrays.asList("PASSWORD_EXPIRED", "CHANGE_AFTER_RESET"));
+        mappings.put("UnknownUsername", CollectionSupport.singleton("DN_RESOLUTION_FAILURE"));
+        mappings.put("InvalidPassword", CollectionSupport.singleton("INVALID_CREDENTIALS"));
+        mappings.put("ExpiringPassword", CollectionSupport.singleton("ACCOUNT_WARNING"));
+        mappings.put("ExpiredPassword", CollectionSupport.listOf("PASSWORD_EXPIRED", "CHANGE_AFTER_RESET"));
         action.setClassifiedMessages(mappings);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));

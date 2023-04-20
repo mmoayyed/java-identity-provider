@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateException;
-import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -40,6 +39,7 @@ import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -113,7 +113,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
             @Nonnull final HttpClient client, @Nonnull final HttpClientSecurityParameters parameters) {
         httpClient = Constraint.isNotNull(client, "HTTP client cannot be null");
         securityParameters = Constraint.isNotNull(parameters, "HTTP client security parameters cannot be null");
-        allowedResponseCodes = Collections.singleton(200);
+        allowedResponseCodes = CollectionSupport.singleton(200);
     }
 
     /**
@@ -124,7 +124,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
     public void setAllowedResponseCodes(@NotEmpty @NonnullElements final Set<Integer> responseCodes) {
         Constraint.isNotEmpty(responseCodes, "Response codes cannot be null or empty.");
         Constraint.noNullItems(responseCodes.toArray(), "Response codes cannot contain null elements.");
-        allowedResponseCodes = Set.copyOf(responseCodes);
+        allowedResponseCodes = CollectionSupport.copyToSet(responseCodes);
     }
 
     /** {@inheritDoc} */
@@ -214,7 +214,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
                 new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME),
                 new ProtocolCriterion(AbstractProtocolConfiguration.PROTOCOL_URI),
                 new UsageCriterion(UsageType.SIGNING),
-                new TrustedNamesCriterion(Collections.singleton(requestUri.getHost())));
+                new TrustedNamesCriterion(CollectionSupport.singleton(requestUri.getHost())));
         context.setAttribute(CONTEXT_KEY_CRITERIA_SET, criteria);
     }
 

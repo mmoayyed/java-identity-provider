@@ -19,9 +19,7 @@ package net.shibboleth.idp.consent.storage.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -49,13 +47,13 @@ public class CollectionSerializerTest {
 
     @Test public void testEmpty() throws Exception {
         Assert.assertEquals(serializer.serialize(new ArrayList<String>()), "[]");
-        Assert.assertEquals(serializer.deserialize(-1, "context", "key", "[]", null), Collections.emptyList());
+        Assert.assertEquals(serializer.deserialize(-1, "context", "key", "[]", null), CollectionSupport.emptyList());
     }
 
     @SuppressWarnings("null")
     @Test public void testNullValue() throws Exception {
         Assert.assertEquals(serializer.serialize(CollectionSupport.<String> singletonList((String)nullObj)), "[]");
-        Assert.assertEquals(serializer.deserialize(-1, "context", "key", "[null]", null), Collections.emptyList());
+        Assert.assertEquals(serializer.deserialize(-1, "context", "key", "[null]", null), CollectionSupport.emptyList());
     }
 
     @Test public void testSimple() throws IOException {

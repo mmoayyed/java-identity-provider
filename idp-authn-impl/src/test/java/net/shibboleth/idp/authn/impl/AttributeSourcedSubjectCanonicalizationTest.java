@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.util.Collections;
-
 import javax.security.auth.Subject;
 
 import org.springframework.webflow.execution.Event;
@@ -39,6 +37,7 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link AttributeSourcedSubjectCanonicalization} unit test. */
+@SuppressWarnings("javadoc")
 public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticationContextTest {
     
     private AttributeSourcedSubjectCanonicalization action; 
@@ -96,12 +95,12 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         action.initialize();
         
         final IdPAttribute inputAttribute = new IdPAttribute("attr2");
-        inputAttribute.setValues(Collections.singletonList(new StringAttributeValue("foo")));
+        inputAttribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("foo")));
         
         final SubjectCanonicalizationContext sc = prc.ensureSubcontext(SubjectCanonicalizationContext.class);
         sc.setSubject(new Subject());
         
-        sc.ensureSubcontext(AttributeContext.class).setIdPAttributes(Collections.singleton(inputAttribute));
+        sc.ensureSubcontext(AttributeContext.class).setIdPAttributes(CollectionSupport.singleton(inputAttribute));
         
         final Event event = action.execute(src);
         
@@ -114,7 +113,7 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         action.initialize();
         
         final IdPAttribute inputAttribute = new IdPAttribute("attr2");
-        inputAttribute.setValues(Collections.singletonList(new StringAttributeValue("foo")));
+        inputAttribute.setValues(CollectionSupport.singletonList(new StringAttributeValue("foo")));
         final SubjectCanonicalizationContext sc = prc.ensureSubcontext(SubjectCanonicalizationContext.class);
         final Subject subject = new Subject();
         sc.setSubject(subject);
@@ -131,7 +130,7 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         action.initialize();
         
         final IdPAttribute inputAttribute = new IdPAttribute("attr2");
-        inputAttribute.setValues(Collections.singletonList(new ScopedStringAttributeValue("foo", "scope")));
+        inputAttribute.setValues(CollectionSupport.singletonList(new ScopedStringAttributeValue("foo", "scope")));
         final SubjectCanonicalizationContext sc = prc.ensureSubcontext(SubjectCanonicalizationContext.class);
         final Subject subject = new Subject();
         sc.setSubject(subject);
@@ -148,17 +147,17 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         action.initialize();
 
         final IdPAttribute attr2 = new IdPAttribute("attr2");
-        attr2.setValues(Collections.singletonList(new StringAttributeValue("foo")));
+        attr2.setValues(CollectionSupport.singletonList(new StringAttributeValue("foo")));
 
         final IdPAttribute attr2bar = new IdPAttribute("attr2");
-        attr2bar.setValues(Collections.singletonList(new StringAttributeValue("bar")));
+        attr2bar.setValues(CollectionSupport.singletonList(new StringAttributeValue("bar")));
 
         final SubjectCanonicalizationContext sc = prc.ensureSubcontext(SubjectCanonicalizationContext.class);
         final Subject subject = new Subject();
         sc.setSubject(subject);
         subject.getPrincipals().add(new IdPAttributePrincipal(attr2));
         
-        sc.ensureSubcontext(AttributeContext.class).setIdPAttributes(Collections.singleton(attr2bar));
+        sc.ensureSubcontext(AttributeContext.class).setIdPAttributes(CollectionSupport.singleton(attr2bar));
         
         Event event = action.execute(src);
         
@@ -167,7 +166,7 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
 
         subject.getPrincipals().clear();
         subject.getPrincipals().add(new IdPAttributePrincipal(attr2bar));
-        sc.ensureSubcontext(AttributeContext.class).setIdPAttributes(Collections.singleton(attr2));
+        sc.ensureSubcontext(AttributeContext.class).setIdPAttributes(CollectionSupport.singleton(attr2));
 
         event = action.execute(src);
         
@@ -180,17 +179,17 @@ public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticat
         action.initialize();
 
         final IdPAttribute attr2 = new IdPAttribute("attr2");
-        attr2.setValues(Collections.singletonList(new StringAttributeValue("bar")));
+        attr2.setValues(CollectionSupport.singletonList(new StringAttributeValue("bar")));
 
         final IdPAttribute attr1 = new IdPAttribute("attr1");
-        attr1.setValues(Collections.singletonList(new StringAttributeValue("foo")));
+        attr1.setValues(CollectionSupport.singletonList(new StringAttributeValue("foo")));
 
         final SubjectCanonicalizationContext sc = prc.ensureSubcontext(SubjectCanonicalizationContext.class);
         final Subject subject = new Subject();
         sc.setSubject(subject);
         subject.getPrincipals().add(new IdPAttributePrincipal(attr2));
         
-        sc.ensureSubcontext(AttributeContext.class).setIdPAttributes(Collections.singleton(attr1));
+        sc.ensureSubcontext(AttributeContext.class).setIdPAttributes(CollectionSupport.singleton(attr1));
         
         final Event event = action.execute(src);
         

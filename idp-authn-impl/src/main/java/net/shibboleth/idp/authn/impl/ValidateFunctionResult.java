@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -37,6 +36,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.ConstraintViolationException;
@@ -162,13 +162,13 @@ public class ValidateFunctionResult extends AbstractAuditingValidationAction {
     @Nullable protected Map<String,String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (result instanceof String) {
-            return Collections.singletonMap(IdPAuditFields.USERNAME, (String) result);
+            return CollectionSupport.singletonMap(IdPAuditFields.USERNAME, (String) result);
         } else if (result instanceof UsernamePrincipal) {
-            return Collections.singletonMap(IdPAuditFields.USERNAME, ((UsernamePrincipal) result).getName());
+            return CollectionSupport.singletonMap(IdPAuditFields.USERNAME, ((UsernamePrincipal) result).getName());
         } else if (result instanceof Subject) {
             final String name = getUsername((Subject) result);
             if (name != null) {
-                return Collections.singletonMap(IdPAuditFields.USERNAME, name);
+                return CollectionSupport.singletonMap(IdPAuditFields.USERNAME, name);
             }
         }
         

@@ -33,7 +33,6 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -55,6 +54,7 @@ import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -72,7 +72,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     private final String[][] deleteAfterUpgrades = { { "credentials", "secrets.properties", }, };
 
     /** The module IDs which are enabled. */
-    private Set<String> enabledModules = Collections.emptySet();
+    private Set<String> enabledModules;
 
     /** Whether the IdP properties file exists.*/
     private boolean idpPropertiesPresent;
@@ -100,6 +100,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
      */
     public CurrentInstallStateImpl(final InstallerProperties installerProps) {
         targetDir = installerProps.getTargetDir();
+        enabledModules = CollectionSupport.emptySet();
     }
 
     /** Work out what the "current" install state is (before we do any more work).
@@ -212,7 +213,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
 
         if (null == getInstalledVersion()) {
             // New install.  We need all files
-            pathsToDelete = Collections.emptyList();
+            pathsToDelete = CollectionSupport.emptyList();
         } else {
             pathsToDelete = new ArrayList<>();
             for (int i = 0; i < deleteAfterUpgrades.length; i++) {

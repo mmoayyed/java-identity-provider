@@ -18,11 +18,10 @@
 package net.shibboleth.idp.authn.principal.impl;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
 
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.shared.collection.CollectionSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -32,6 +31,7 @@ import org.testng.annotations.Test;
  * Tests the {@link RequestedPrincipalContext#isAcceptable(Principal)} method using a mocked up
  * registry of evaluation predicates.
  */
+@SuppressWarnings("javadoc")
 public class RequestedPrincipalContextPrincipalEvalTest {
     
     /**
@@ -62,13 +62,13 @@ public class RequestedPrincipalContextPrincipalEvalTest {
 
     @Test public void testUnknownOperator() {
         rpCtx.setOperator("unknown");
-        rpCtx.setRequestedPrincipals(Collections.<Principal>singletonList(foo));
+        rpCtx.setRequestedPrincipals(CollectionSupport.singletonList(foo));
         Assert.assertFalse(rpCtx.isAcceptable(foo));
     }
 
     @Test public void testExact() {
         rpCtx.setOperator("exact");
-        rpCtx.setRequestedPrincipals(Arrays.<Principal>asList(foo, bar));
+        rpCtx.setRequestedPrincipals(CollectionSupport.listOf(foo, bar));
         Assert.assertTrue(rpCtx.isAcceptable(foo));
         Assert.assertTrue(rpCtx.isAcceptable(bar));
         Assert.assertFalse(rpCtx.isAcceptable(baz));
@@ -76,7 +76,7 @@ public class RequestedPrincipalContextPrincipalEvalTest {
 
     @Test public void testBetterKnown() {
         rpCtx.setOperator("better");
-        rpCtx.setRequestedPrincipals(Arrays.<Principal>asList(foo));
+        rpCtx.setRequestedPrincipals(CollectionSupport.singletonList(foo));
         Assert.assertFalse(rpCtx.isAcceptable(foo));
         Assert.assertTrue(rpCtx.isAcceptable(bar));
         Assert.assertFalse(rpCtx.isAcceptable(baz));
@@ -84,7 +84,7 @@ public class RequestedPrincipalContextPrincipalEvalTest {
 
     @Test public void testBetterUnknown() {
         rpCtx.setOperator("better");
-        rpCtx.setRequestedPrincipals(Arrays.<Principal>asList(bar));
+        rpCtx.setRequestedPrincipals(CollectionSupport.singletonList(bar));
         Assert.assertFalse(rpCtx.isAcceptable(foo));
         Assert.assertFalse(rpCtx.isAcceptable(bar));
         Assert.assertFalse(rpCtx.isAcceptable(baz));

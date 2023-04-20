@@ -18,8 +18,6 @@
 package net.shibboleth.idp.consent.flow.ar.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +41,7 @@ import net.shibboleth.idp.consent.logic.impl.PreferExplicitOrderComparator;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link PopulateAttributeReleaseContext} unit test. */
@@ -106,7 +105,7 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
 
     @Test public void testExplicitAttributeOrderingWithKnownAttributesOnly() throws Exception {
 
-        final List<String> attributeOrder = Arrays.asList("attribute2", "attribute3", "attribute1");
+        final List<String> attributeOrder = CollectionSupport.listOf("attribute2", "attribute3", "attribute1");
 
         final Map<String, IdPAttribute> orderedAttributes = new TreeMap<>(Ordering.explicit(attributeOrder));
         orderedAttributes.putAll(ConsentTestingSupport.newAttributeMap());
@@ -128,10 +127,10 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
 
     @Test public void testExplicitAttributeOrderingWithUnknownAttributes() throws Exception {
 
-        final List<String> attributeOrder = Arrays.asList("attribute3", "attribute2");
+        final List<String> attributeOrder = CollectionSupport.listOf("attribute3", "attribute2");
 
         final IdPAttribute attribute4 = new IdPAttribute("attribute4");
-        attribute4.setValues(Collections.singletonList(new StringAttributeValue("value4")));
+        attribute4.setValues(CollectionSupport.singletonList(new StringAttributeValue("value4")));
 
         final Map<String, IdPAttribute> orderedAttributes = new LinkedHashMap<>();
         orderedAttributes.put("attribute3", ConsentTestingSupport.newAttributeMap().get("attribute3"));

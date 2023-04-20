@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn;
 
 import java.security.Principal;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -42,6 +41,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -114,8 +114,8 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
      */
     public AuthenticationResult(@Nonnull @NotEmpty final String flowId, @Nonnull final Principal principal) {
         this(flowId, new Subject(false,
-                Collections.singleton(Constraint.isNotNull(principal, "Principal cannot be null")),
-                Collections.emptySet(), Collections.emptySet()));
+                CollectionSupport.singleton(Constraint.isNotNull(principal, "Principal cannot be null")),
+                CollectionSupport.emptySet(), CollectionSupport.emptySet()));
     }
     
     /**

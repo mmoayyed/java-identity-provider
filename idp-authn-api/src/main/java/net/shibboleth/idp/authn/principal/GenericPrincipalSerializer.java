@@ -87,7 +87,8 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
         final BiMap<String,Integer> s = ImmutableBiMap.of();
         assert s!=null;
         symbolics = s;
-        final Set<Class<? extends Principal>> cpt = Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
+        final Set<Class<? extends Principal>> cpt =
+                Collections.synchronizedSet(new HashSet<Class<? extends Principal>>());
         assert cpt!=null;
         compatiblePrincipalTypes = cpt;
     }

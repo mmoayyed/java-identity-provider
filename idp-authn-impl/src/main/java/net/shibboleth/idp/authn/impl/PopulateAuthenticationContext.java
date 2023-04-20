@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -76,7 +75,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** Constructor. */
     public PopulateAuthenticationContext() {
         availableFlows = CollectionSupport.emptyList();
-        potentialFlowsLookupStrategy = FunctionSupport.constant(Collections.emptyList());
+        potentialFlowsLookupStrategy = FunctionSupport.constant(CollectionSupport.emptyList());
         activeFlowsLookupStrategy = new AuthenticationFlowsLookupFunction();
     }
     

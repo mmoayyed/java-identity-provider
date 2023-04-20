@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.security.Principal;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -189,13 +189,15 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         } else if (extContext.getPrincipal() != null) {
             log.info("{} External authentication succeeded for Principal: {}", getLogPrefix(),
                     extContext.getPrincipal());
-            extContext.setSubject(new Subject(false, Collections.singleton(extContext.getPrincipal()),
-                    Collections.emptySet(), Collections.emptySet()));
+            final Principal p = extContext.getPrincipal();
+            assert p != null;
+            extContext.setSubject(new Subject(false, CollectionSupport.singleton(p), CollectionSupport.emptySet(),
+                    CollectionSupport.emptySet()));
         } else if (principalName!= null) {
             log.info("{} External authentication succeeded for user: {}", getLogPrefix(), principalName);
             extContext.setSubject(new Subject(false,
-                    Collections.singleton(new UsernamePrincipal(principalName)),
-                    Collections.emptySet(), Collections.emptySet()));
+                    CollectionSupport.singleton(new UsernamePrincipal(principalName)),
+                    CollectionSupport.emptySet(), CollectionSupport.emptySet()));
         } else {
             log.info("{} External authentication failed, no user identity or error information returned",
                     getLogPrefix());
@@ -323,7 +325,7 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         if (subject != null) {
             final String name = getUsername(subject);
             if (name != null) {
-                return Collections.singletonMap(IdPAuditFields.USERNAME, name);
+                return CollectionSupport.singletonMap(IdPAuditFields.USERNAME, name);
             }
         }
         

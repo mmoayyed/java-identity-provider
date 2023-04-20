@@ -18,7 +18,6 @@
 package net.shibboleth.idp.profile.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -44,6 +43,7 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -115,7 +115,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
         attributeContextCreationStrategy = new ChildContextLookup<>(AttributeContext.class, true).compose(
                 new ChildContextLookup<>(RelyingPartyContext.class));
         
-        attributesLookupStrategy = FunctionSupport.constant(Collections.emptyList());
+        attributesLookupStrategy = FunctionSupport.constant(CollectionSupport.emptyList());
         
         maskFailures = true;
         createResolutionContext = true;

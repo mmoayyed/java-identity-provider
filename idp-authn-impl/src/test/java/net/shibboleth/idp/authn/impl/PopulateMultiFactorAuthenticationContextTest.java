@@ -19,8 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -34,6 +32,7 @@ import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
@@ -45,6 +44,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link PopulateMultiFactorAuthenticationContext} unit test. */
+@SuppressWarnings("javadoc")
 public class PopulateMultiFactorAuthenticationContextTest {
 
     private RequestContext rc;
@@ -75,8 +75,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
     
     @Test public void testTransitions() throws ComponentInitializationException {
         action.setTransitionMapLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>>constant(
-                        Collections.singletonMap("", new MultiFactorAuthenticationTransition())));
+                FunctionSupport.constant(CollectionSupport.singletonMap("", new MultiFactorAuthenticationTransition())));
         action.initialize();
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
@@ -138,8 +137,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
         ac.setMaxAge(Duration.ofMinutes(30));
         
         action.setTransitionMapLookupStrategy(
-                FunctionSupport.<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>>constant(
-                        Collections.singletonMap("", new MultiFactorAuthenticationTransition())));
+                FunctionSupport.constant(CollectionSupport.singletonMap("", new MultiFactorAuthenticationTransition())));
         action.initialize();
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
