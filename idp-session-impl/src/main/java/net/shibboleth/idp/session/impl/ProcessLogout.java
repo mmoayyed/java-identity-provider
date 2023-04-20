@@ -29,8 +29,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
-import com.google.common.base.Predicates;
-
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -44,6 +42,7 @@ import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.servlet.HttpServletSupport;
@@ -168,7 +167,7 @@ public class ProcessLogout extends AbstractProfileAction {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (!getActivationCondition().equals(Predicates.alwaysFalse())) {
+        if (!PredicateSupport.isAlwaysFalse(getActivationCondition())) {
             if (sessionResolver == null) {
                 throw new ComponentInitializationException("SessionResolver cannot be null");
             }

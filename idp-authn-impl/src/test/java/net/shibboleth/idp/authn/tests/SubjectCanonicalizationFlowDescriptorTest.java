@@ -22,6 +22,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
+import net.shibboleth.shared.logic.PredicateSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
@@ -29,9 +30,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
-
 /** {@link SubjectCanonicalizationFlowDescriptor} unit test. */
+@SuppressWarnings("javadoc")
 public class SubjectCanonicalizationFlowDescriptorTest {
 
     private SubjectCanonicalizationFlowDescriptor descriptor;
@@ -56,7 +56,7 @@ public class SubjectCanonicalizationFlowDescriptorTest {
 
     @Test public void testSetters() {
         try {
-            descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
+            descriptor.setActivationCondition(PredicateSupport.alwaysFalse());
             Assert.fail();
         } catch (UnmodifiableComponentException e) {
             // OK
@@ -76,7 +76,7 @@ public class SubjectCanonicalizationFlowDescriptorTest {
     @Test public void testPredicate() throws ComponentInitializationException {
         descriptor = new SubjectCanonicalizationFlowDescriptor();
         descriptor.setId("test");
-        descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
+        descriptor.setActivationCondition(PredicateSupport.alwaysFalse());
         descriptor.initialize();
 
         Assert.assertFalse(descriptor.test(prc));

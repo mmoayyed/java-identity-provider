@@ -27,8 +27,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -38,6 +36,7 @@ import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -115,7 +114,7 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (!getActivationCondition().equals(Predicates.alwaysFalse())) {
+        if (!PredicateSupport.isAlwaysFalse(getActivationCondition())) {
             if (sessionManager == null) {
                 throw new ComponentInitializationException("SessionManager cannot be null");
             } else if (spSessionCreationStrategy == null) {

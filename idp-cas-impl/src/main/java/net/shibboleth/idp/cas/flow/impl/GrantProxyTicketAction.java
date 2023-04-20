@@ -112,7 +112,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
      * evaluates to true under any condition, a server-side storage service must be enabled for IdP session
      * storage.
      *
-     * @param predicate Session validation predicate. Default is <code>Predicates.alwaysFalse()</code>.
+     * @param predicate Session validation predicate. Default is {@link PredicateSupport#alwaysFalse()}.
      */
     public void setValidateIdPSessionPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         checkSetterPreconditions();
@@ -148,8 +148,10 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
         return true;
     }
 
-    /** Null-safe getter
-     * @return Returns the proxyGrantingTicket.
+    /** 
+     * Null-safe getter.
+     * 
+     * @return the proxyGrantingTicket
      */
     @SuppressWarnings("null")
     @Nonnull private ProxyGrantingTicket getProxyGrantingTicket() {

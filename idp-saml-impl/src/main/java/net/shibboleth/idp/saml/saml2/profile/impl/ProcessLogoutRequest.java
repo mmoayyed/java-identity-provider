@@ -41,8 +41,6 @@ import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
@@ -60,6 +58,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 
@@ -276,7 +275,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (!getActivationCondition().equals(Predicates.alwaysFalse())) {
+        if (!PredicateSupport.isAlwaysFalse(getActivationCondition())) {
             if (sessionResolver == null) {
                 throw new ComponentInitializationException("SessionResolver cannot be null");
             }
