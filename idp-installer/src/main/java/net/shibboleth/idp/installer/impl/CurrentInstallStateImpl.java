@@ -69,10 +69,10 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     @Nonnull private final Path targetDir;
     
     /** The files we will delete if they created on upgrade. */
-    private final String[][] deleteAfterUpgrades = { { "credentials", "secrets.properties", }, };
+    @Nonnull private final String[][] deleteAfterUpgrades = { { "credentials", "secrets.properties", }, };
 
     /** The module IDs which are enabled. */
-    private Set<String> enabledModules;
+    @Nonnull private Set<String> enabledModules;
 
     /** Whether the IdP properties file exists.*/
     private boolean idpPropertiesPresent;
@@ -179,7 +179,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
      * Populate {{@link #enabledModules} from the current classpath and the new IdP home.
      */
     private void findEnabledModules() {
-        if (getInstalledVersion()==null) {
+        if (getInstalledVersion() == null) {
             return;
         }
         final ModuleContext moduleContext = new ModuleContext(targetDir);
@@ -204,6 +204,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+        
         idpPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("idp.properties"));
         ldapPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("ldap.properties"));
         systemPresent = Files.exists(targetDir.resolve("system"));
@@ -263,16 +264,16 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
 
     /** {@inheritDoc} */
     @Nonnull public Collection<String> getEnabledModules() {
-        assert enabledModules != null;
         return enabledModules;
     }
 
     /** {@inheritDoc} */
-    public synchronized ClassLoader getInstalledPluginsLoader() {
+    @Nullable public synchronized ClassLoader getInstalledPluginsLoader() {
 
         if (installedPluginsLoader != null) {
             return installedPluginsLoader;
         }
+        
         final Path libs = targetDir.resolve("dist").resolve("plugin-webapp").resolve("WEB-INF").resolve("lib");
         final URL[] urls;
         if (Files.exists(libs)) {
@@ -302,7 +303,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
                         toArray(URL[]::new);
             } catch (final IOException e) {
                 log.error("Error finding Plugins' classpath", e);
-                installedPluginsLoader = this.getClass().getClassLoader();
+                installedPluginsLoader = getClass().getClassLoader();
                 return installedPluginsLoader;
             }
         } else {

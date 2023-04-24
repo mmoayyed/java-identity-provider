@@ -28,14 +28,14 @@ import javax.annotation.Nullable;
 import org.apache.tools.ant.BuildException;
 
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
-import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.InitializableComponent;
 
 /** Tells the installers about the current install state. */
 public interface CurrentInstallState extends InitializableComponent {
 
     /** What to return if this is V3. */
-    static final String V3_VERSION = "3";
+    @Nonnull @NotEmpty static final String V3_VERSION = "3";
 
     /** What is the installer version.
      * @return {@value #V3_VERSION} for a V3 install, null for a new install or the value we wrote during last install.
@@ -73,21 +73,16 @@ public interface CurrentInstallState extends InitializableComponent {
      * For new installs this is false
      * @return whether the old install has %{idp.home}\system
      */
-    default boolean isSystemPresent() {
-        return true;
-    }
+    boolean isSystemPresent();
 
     /** Which modules (by ID) are enabled for this release.
      * @return those modules enabled.
      */
-    @Nonnull default Collection<String> getEnabledModules() {
-        return CollectionSupport.emptySet();
-    }
+    @Nonnull Collection<String> getEnabledModules();
 
     /** Build a classpath loader which adds all the plugins in.
      * @return a classloader
      */
-    default ClassLoader getInstalledPluginsLoader() {
-        return this.getClass().getClassLoader();
-    }
+    @Nullable ClassLoader getInstalledPluginsLoader();
+
 }
