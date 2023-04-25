@@ -154,7 +154,8 @@
             class="net.shibboleth.idp.saml.saml2.profile.impl.AddAuthnRequest" scope="prototype"
             p:profileContextLookupStrategy-ref="shibboleth.ChildLookup.ProxyProfileRequestContext"
             p:overwriteExisting="true"
-            p:issuerLookupStrategy-ref="shibboleth.IssuerLookup.Simple">
+            p:issuerLookupStrategy-ref="shibboleth.IssuerLookup.Simple"
+            p:nameIDLookupStrategy="#{getObject('%{idp.authn.SAML.NameIDLookupStrategy:}'.trim())}">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />

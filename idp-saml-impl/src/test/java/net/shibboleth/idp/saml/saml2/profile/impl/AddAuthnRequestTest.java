@@ -46,10 +46,12 @@ import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.Scoping;
+import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.opensaml.xmlsec.config.BasicXMLSecurityConfiguration;
 import org.springframework.webflow.execution.Event;
@@ -80,6 +82,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
     private ProfileRequestContext prc1,prc2;
     private RelyingPartyContext rpc;
     private AddAuthnRequest action;
+    private NameID nameID;
     
     /**
      * Set up test state.
@@ -103,9 +106,11 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         rp.initialize();
         rpc.setConfiguration(rp);
         rpc.setProfileConfig(new BrowserSSOProfileConfiguration());
-        BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
+        final BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
         assert bspc!=null;
         bspc.setSecurityConfiguration(new BasicXMLSecurityConfiguration());
+        
+        nameID = null;
         
         action = new AddAuthnRequest();
         action.setProfileContextLookupStrategy(
@@ -114,6 +119,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
                                 new WebflowRequestContextProfileRequestContextLookup())));
         action.setAuthenticationContextLookupStrategy(new ParentContextLookup<>(AuthenticationContext.class));
         action.setIssuerLookupStrategy(new IssuerLookupFunction());
+        action.setNameIDLookupStrategy(prc -> nameID);
         action.initialize();
     }
     
@@ -173,6 +179,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertTrue(allowCreate != null && allowCreate);
         
         assertNull(request.getRequestedAuthnContext());
+        assertNull(request.getSubject());
         
         final Scoping scoping = request.getScoping();
         assert scoping != null;
@@ -204,7 +211,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertTrue(passive != null && passive);
         
         omc.setMessage(null);
-        BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
+        final BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
         assert bspc!=null;
         bspc.setForceAuthn(false);
 
@@ -218,7 +225,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
 
     /** Test that the action works with a NameID format set. */
     @Test public void testNameIDFormat() {
-        BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
+        final BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
         assert bspc!=null;
         bspc.setNameIDFormatPrecedence(
                 CollectionSupport.listOf(NameIDType.EMAIL, NameIDType.KERBEROS));
@@ -242,7 +249,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
 
     /** Test that the action works with SPNameQualifier set. */
     @Test public void testSPNameQualifier() {
-        BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
+        final BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
         assert bspc!=null;
         bspc.setSPNameQualifier(ActionTestingSupport.INBOUND_MSG_ISSUER);
         
@@ -264,7 +271,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
     /** Test that the action works with AttributeConsumingrServiceIndex set. */
     @Test public void testAttributeIndex() {
         
-        BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
+        final BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
         assert bspc!=null;
         bspc.setAttributeIndex(42);
         
@@ -294,7 +301,7 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         attr2.setNameFormat(Attribute.URI_REFERENCE);
         attr2.setName("https://attr2.example.org");
 
-        BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
+        final BrowserSSOProfileConfiguration bspc = (BrowserSSOProfileConfiguration) rpc.getProfileConfig();
         assert bspc!=null;
         bspc.setRequestedAttributes(CollectionSupport.listOf(attr1, attr2));
         
@@ -316,6 +323,32 @@ public class AddAuthnRequestTest extends OpenSAMLInitBaseTestCase {
         assertEquals(extension.getRequestedAttributes().size(), 2);
     }
 
+    /** Test that the action works with a NameID set. */
+    @Test public void testNameIDForSubject() {
+        final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        final SAMLObjectBuilder<NameID> nameIDBuilder =
+                (SAMLObjectBuilder<NameID>) bf.<NameID>ensureBuilder(
+                        NameID.DEFAULT_ELEMENT_NAME);
+        nameID = nameIDBuilder.buildObject();
+        nameID.setValue("foo");
+        
+        final Event event = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
+        final MessageContext omc = prc2.getOutboundMessageContext();
+        assert omc!=null;
+
+        assertNotNull(omc.getMessage());
+        assertTrue(omc.getMessage() instanceof AuthnRequest);
+
+        final AuthnRequest request = (AuthnRequest) omc.getMessage();
+        assert request!=null;
+        final Subject subject = request.getSubject();
+        assert subject != null;
+        final NameID n = subject.getNameID();
+        assert n != null;
+        assertEquals(n.getValue(), "foo");
+    }
+    
     /** Test with Scoping element but no count. */
     @Test public void testScopingNoCount() {
         ac.getProxiableAuthorities().add("foo");

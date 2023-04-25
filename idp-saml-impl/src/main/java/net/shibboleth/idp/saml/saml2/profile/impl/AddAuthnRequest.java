@@ -65,10 +65,12 @@ import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Scoping;
+import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.slf4j.Logger;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -108,6 +110,9 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
 
     /** Strategy used to obtain the proxied requester context. */
     @Nonnull private Function<ProfileRequestContext,ProxiedRequesterContext> proxiedRequesterContextLookupStrategy;
+    
+    /** Optional strategy to populate request with a {@link NameID}. */
+    @Nullable private Function<ProfileRequestContext,NameID> nameIDLookupStrategy;
     
     /** The generator to use. */
     @NonnullBeforeExec private IdentifierGenerationStrategy idGenerator;
@@ -198,6 +203,19 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
         checkSetterPreconditions();
         proxiedRequesterContextLookupStrategy =
                 Constraint.isNotNull(strategy, "ProxiedRequesterContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set optional strategy to derive a {@link NameID} to populate into the {@link AuthnRequest}'s
+     * {@link Subject} element.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 5.0.0
+     */
+    public void setNameIDLookupStrategy(@Nullable final Function<ProfileRequestContext,NameID> strategy) {
+        checkSetterPreconditions();
+        nameIDLookupStrategy = strategy;
     }
 
 // Checkstyle: CyclomaticComplexity OFF
@@ -319,7 +337,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
 
         object.setNameIDPolicy(nip);
 
-        final RequestedAuthnContext rac = getRequestedAuthnContext(profileRequestContext);
+        final RequestedAuthnContext rac = buildRequestedAuthnContext(profileRequestContext);
         if (rac != null) {
             final AuthnContextComparisonTypeEnumeration operator =
                     profileConfiguration.getAuthnContextComparison(profileRequestContext);
@@ -329,11 +347,12 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
             }
             object.setRequestedAuthnContext(rac);
         }
-        
+
+        object.setSubject(buildSubject(profileRequestContext));
         object.setScoping(buildScoping(profileRequestContext, authenticationContext.getProxyCount(),
                 authenticationContext.getProxiableAuthorities()));
-
         object.setExtensions(buildExtensions(profileRequestContext));
+        
         final MessageContext omc = profileRequestContext.getOutboundMessageContext();
         assert omc != null;
         omc.setMessage(object);
@@ -347,7 +366,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
      * 
      * @return the object to include in the request, or null
      */
-    @Nullable private RequestedAuthnContext getRequestedAuthnContext(
+    @Nullable private RequestedAuthnContext buildRequestedAuthnContext(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
         // RequestedAuthnContext also based on profile configuration.
@@ -412,6 +431,36 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
     }
     
     /**
+     * Build a {@link Subject} element if necessary.
+     * 
+     * @param profileRequestContext profile request context
+     * 
+     * @return the {@link Subject} element to include
+     * 
+     * @since 5.0.0
+     */
+    @Nullable private Subject buildSubject(@Nonnull final ProfileRequestContext profileRequestContext) {
+
+        final NameID nameID = nameIDLookupStrategy != null
+                ? nameIDLookupStrategy.apply(profileRequestContext) : null;
+        if (nameID == null) {
+            return null;
+        }
+        
+        final XMLObjectBuilderFactory bf = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        final SAMLObjectBuilder<Subject> subjectBuilder =
+                (SAMLObjectBuilder<Subject>) bf.<Subject>ensureBuilder(Subject.DEFAULT_ELEMENT_NAME);
+        
+        final Subject subject = subjectBuilder.buildObject();
+        subject.setNameID(nameID);
+        
+        log.debug("{} Populating request with NameID '{}' and Format '{}'", getLogPrefix(),
+                nameID.getValue(), nameID.getFormat());
+        
+        return subject;
+    }
+    
+    /**
      * Build a {@link Scoping} element, decrementing the proxy count if set.
      * 
      * @param profileRequestContext current profile request context
@@ -425,7 +474,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
 
         boolean include = false;
         
-        assert profileConfiguration!=null;
+        assert profileConfiguration != null;
         if (profileConfiguration.isIgnoreScoping(profileRequestContext)) {
             log.warn("{} Skipping generation of Scoping element in violation of standard", getLogPrefix());
             return null;
