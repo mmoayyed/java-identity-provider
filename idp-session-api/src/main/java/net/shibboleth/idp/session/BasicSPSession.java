@@ -75,7 +75,7 @@ public class BasicSPSession implements SPSession {
     }
 
     /** {@inheritDoc} */
-    public String getSPSessionKey() {
+    @Nullable public String getSPSessionKey() {
         // A basic session doesn't have a secondary lookup key.
         return null;
     }

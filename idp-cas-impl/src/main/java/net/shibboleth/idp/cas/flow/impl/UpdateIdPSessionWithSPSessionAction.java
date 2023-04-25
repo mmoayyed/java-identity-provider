@@ -19,6 +19,7 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -35,6 +36,7 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
+import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -43,9 +45,10 @@ import net.shibboleth.shared.resolver.ResolverException;
 
 /**
  * Conditionally updates the {@link IdPSession} with a {@link CASSPSession} to support SLO.
- * If the service granted access to indicates participation in SLO via {@link Service#singleLogoutParticipant},
+ * 
+ * <p>If the service granted access to indicates participation in SLO via {@link Service#isSingleLogoutParticipant()},
  * then a {@link CASSPSession} is created to track the SP session in order that it may receive SLO messages upon
- * a request to the CAS <code>/logout</code> URI.
+ * a request to the CAS <code>/logout</code> URI.</p>
  * 
  * @param <RequestType> request
  * @param <ResponseType> response
@@ -64,6 +67,9 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
     /** Lifetime of sessions to create. */
     @Nonnull private final Duration sessionLifetime;
 
+    /** Strategy for obtaining the relying party ID for sessions. */
+    @Nonnull private Function<ProfileRequestContext,String> relyingPartyIdLookupStrategy;
+    
     /** Ticket. */
     @NonnullBeforeExec private Ticket ticket;
     
@@ -80,6 +86,18 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
             @Nonnull final Duration lifetime) {
         sessionResolver = Constraint.isNotNull(resolver, "Session resolver cannot be null");
         sessionLifetime = Constraint.isNotNull(lifetime, "Lifetime cannot be null");
+        relyingPartyIdLookupStrategy = new RelyingPartyIdLookupFunction();
+    }
+    
+    /**
+     * Set lookup strategy for relying party ID.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 5.0.0
+     */
+    public void setRelyingPartyIdLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        relyingPartyIdLookupStrategy = Constraint.isNotNull(strategy, "RelyingParty ID lookup strategy cannot be null");
     }
 
     @Override
@@ -117,13 +135,18 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
         if (session != null) {
             final Instant now = Instant.now();
             assert now != null;
+            
             final Instant expiration = now.plus(sessionLifetime); 
             assert expiration != null;
+            
+            final String relyingPartyId = relyingPartyIdLookupStrategy.apply(profileRequestContext);
+            
             final SPSession sps = new CASSPSession(
-                    ticket.getService(),
+                    relyingPartyId != null ? relyingPartyId : ticket.getService(),
                     now,
                     expiration,
-                    ticket.getId());
+                    ticket.getId(),
+                    ticket.getService());
             log.debug("{} Created SP session {}", getLogPrefix(), sps);
             try {
                 session.addSPSession(sps);

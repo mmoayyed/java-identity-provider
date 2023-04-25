@@ -43,7 +43,8 @@ public class CASSPSessionSerializerTest {
                 "https://foo.example.com/shibboleth",
                 other,
                 exp,
-                "ST-1234126-ABC1346DEADBEEF");
+                "ST-1234126-ABC1346DEADBEEF",
+                "https://foo.example.com/callback");
         final String serialized = serializer.serialize(original);
         final CASSPSession deserialized =
                 (CASSPSession) serializer.deserialize(1, "context", "key", serialized, exp.toEpochMilli());
@@ -51,6 +52,7 @@ public class CASSPSessionSerializerTest {
         assertEquals(deserialized.getCreationInstant(), original.getCreationInstant());
         assertEquals(deserialized.getExpirationInstant(), original.getExpirationInstant());
         assertEquals(deserialized.getTicketId(), original.getTicketId());
+        assertEquals(deserialized.getServiceURL(), original.getServiceURL());
     }
 
 }

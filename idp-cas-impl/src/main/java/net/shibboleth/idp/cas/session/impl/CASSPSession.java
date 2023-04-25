@@ -37,6 +37,9 @@ public class CASSPSession extends BasicSPSession {
 
     /** Validated ticket that started the SP session. */
     @Nonnull @NotEmpty private final String ticket;
+    
+    /** Full service URL. */
+    @Nonnull @NotEmpty private final String serviceURL;
 
     /**
      * Creates a new CAS SP session.
@@ -45,14 +48,17 @@ public class CASSPSession extends BasicSPSession {
      * @param creation   creation time of session
      * @param expiration expiration time of session
      * @param ticketId   ticket ID used to gain access to the service
+     * @param url full URL of service, as distinct from the possibly shortened ID
      */
     public CASSPSession(
             @Nonnull @NotEmpty final String id,
             @Nonnull final Instant creation,
             @Nonnull final Instant expiration,
-            @Nonnull @NotEmpty final String ticketId) {
+            @Nonnull @NotEmpty final String ticketId,
+            @Nonnull @NotEmpty final String url) {
         super(id, creation, expiration);
         ticket = Constraint.isNotNull(StringSupport.trimOrNull(ticketId), "Ticket ID cannot be null or empty");
+        serviceURL = Constraint.isNotNull(StringSupport.trimOrNull(url), "Service URL cannot be null or empty");
     }
 
     /** 
@@ -63,10 +69,19 @@ public class CASSPSession extends BasicSPSession {
     @Nonnull @NotEmpty public String getTicketId() {
         return ticket;
     }
+    
+    /**
+     * Get the service URL.
+     * 
+     * @return service URL
+     */
+    @Nonnull @NotEmpty public String getServiceURL() {
+        return serviceURL;
+    }
 
     /** {@inheritDoc} */
     @Override
-    public String getSPSessionKey() {
+    @Nullable public String getSPSessionKey() {
         return ticket;
     }
 
@@ -84,7 +99,7 @@ public class CASSPSession extends BasicSPSession {
 
     @Override
     public String toString() {
-        return "CASSPSession: " + getId() + " via " + ticket;
+        return "CASSPSession: " + getId() + " via " + ticket + " at service URL " + serviceURL;
     }
     
 }

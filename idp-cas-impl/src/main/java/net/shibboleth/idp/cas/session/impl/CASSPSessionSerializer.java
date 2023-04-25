@@ -41,6 +41,9 @@ public class CASSPSessionSerializer extends AbstractSPSessionSerializer {
     /** Field name of CAS ticket. */
     @Nonnull @NotEmpty private static final String TICKET_FIELD = "st";
 
+    /** Field name of CAS service URL. */
+    @Nonnull @NotEmpty private static final String SERVICE_URL_FIELD = "surl";
+
     /**
      * Constructor.
      *
@@ -55,15 +58,26 @@ public class CASSPSessionSerializer extends AbstractSPSessionSerializer {
         if (!(instance instanceof CASSPSession)) {
             throw new IllegalArgumentException("Expected instance of CASSPSession but got " + instance);
         }
-        generator.write(TICKET_FIELD, ((CASSPSession) instance).getTicketId());
+        
+        final CASSPSession casSession = (CASSPSession) instance;
+        generator.write(TICKET_FIELD, casSession.getTicketId());
+        if (!casSession.getServiceURL().equals(casSession.getId())) {
+            generator.write(SERVICE_URL_FIELD, casSession.getServiceURL());
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj, @Nonnull @NotEmpty final String id,
             @Nonnull final Instant creation, @Nonnull final Instant expiration) throws IOException {
+        
         final String ticketField = Constraint.isNotNull(obj.getString(TICKET_FIELD), "No ticket field");
-        return new CASSPSession(id, creation, expiration, ticketField);
+        
+        // Default the service URL to the session ID if absent.
+        final String serviceURL = obj.getString(SERVICE_URL_FIELD, id);
+        assert serviceURL != null;
+        
+        return new CASSPSession(id, creation, expiration, ticketField, serviceURL);
     }
     
 }

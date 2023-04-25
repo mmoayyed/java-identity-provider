@@ -119,8 +119,9 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         authnCtxLookupFunction = new ChildContextLookup<>(AuthenticationContext.class);
         final Function<ProfileRequestContext, String> plf = new SubjectContextPrincipalLookupFunction().compose(
                 new ChildContextLookup<>(SubjectContext.class));
-        final Function<ProfileRequestContext,AttributeContext> aclf = new ChildContextLookup<>(AttributeContext.class).compose(
-                new ChildContextLookup<>(RelyingPartyContext.class));
+        final Function<ProfileRequestContext,AttributeContext> aclf =
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
         assert plf != null && aclf != null;
         principalLookupFunction = plf;
         attributeContextLookupStrategy = aclf;
@@ -141,7 +142,9 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
     }
-
+    
+// Checkstyle: CyclomaticComplexity OFF
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -202,8 +205,10 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         }
 
         return true;
-    }    
+    }
+// Checkstyle: CyclomaticComplexity ON
     
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
                 

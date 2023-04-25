@@ -70,7 +70,9 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
         relyingPartyIdFromMetadata = flag;
     }
     
-    /** null safe getter
+    /**
+     * Null safe getter.
+     * 
      * @return Returns the service.
      */
     @SuppressWarnings("null")
