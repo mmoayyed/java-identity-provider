@@ -74,6 +74,8 @@ public class CASSPSession extends BasicSPSession {
      * Get the service URL.
      * 
      * @return service URL
+     * 
+     * @since 5.0.0
      */
     @Nonnull @NotEmpty public String getServiceURL() {
         return serviceURL;
