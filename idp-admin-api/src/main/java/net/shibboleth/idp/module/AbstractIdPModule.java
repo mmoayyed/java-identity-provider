@@ -85,7 +85,7 @@ public abstract class AbstractIdPModule implements IdPModule {
     public AbstractIdPModule() {
         moduleResources = CollectionSupport.emptyList();
         final String version = Version.getVersion();
-        idpNewExt = version != null ? IDPNEW_EXT_BASE + "-" + version : IDPNEW_EXT_BASE;
+        idpNewExt = version != null ? IDPNEW_EXT_BASE + "-" + version.replace(".", "") : IDPNEW_EXT_BASE;
     }
     
     /** {@inheritDoc} */

@@ -56,6 +56,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.io.ByteStreams;
 
+import net.shibboleth.idp.Version;
 import net.shibboleth.idp.module.IdPModule.ModuleResource;
 import net.shibboleth.shared.httpclient.HttpClientBuilder;
 import net.shibboleth.shared.testing.RepositorySupport;
@@ -292,7 +293,16 @@ public class IdPModuleTest {
         
         String vel = Files.readString(testHome.resolve("views/test.vm"));
         Assert.assertEquals(vel, VEL_OTHER_DATA);
-        vel = Files.readString(testHome.resolve("views/test.vm.idpnew"));
+        
+        // Adjust filename so works on both Eclipse and with Maven CLI.
+        final String ver = Version.getVersion();
+        final String idpNewExt;
+        if (ver != null) {
+            idpNewExt = AbstractIdPModule.IDPNEW_EXT_BASE + "-" + ver.replace(".", "");
+        } else {
+            idpNewExt = AbstractIdPModule.IDPNEW_EXT_BASE;
+        }
+        vel = Files.readString(testHome.resolve("views/test.vm" + idpNewExt));
         Assert.assertEquals(vel, VEL_DATA);
     }
     
