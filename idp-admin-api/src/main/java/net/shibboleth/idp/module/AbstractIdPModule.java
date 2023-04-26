@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 
+import net.shibboleth.idp.Version;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
@@ -65,15 +66,26 @@ import net.shibboleth.shared.spring.httpclient.resource.ConnectionClosingInputSt
  */
 public abstract class AbstractIdPModule implements IdPModule {
 
+    /** Extension for preserving user files. */
+    @Nonnull @NotEmpty public static final String IDPSAVE_EXT = ".idpsave";
+
+    /** Base extension for adding new default files. */
+    @Nonnull @NotEmpty public static final String IDPNEW_EXT_BASE = ".idpnew";
+
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(AbstractIdPModule.class);
     
     /** Module resources. */
     @Nonnull private Collection<ModuleResource> moduleResources;
     
+    /** Version-aware extension for new files added. */
+    @Nonnull private String idpNewExt;
+    
     /** Constructor. */
     public AbstractIdPModule() {
         moduleResources = CollectionSupport.emptyList();
+        final String version = Version.getVersion();
+        idpNewExt = version != null ? IDPNEW_EXT_BASE + "-" + version : IDPNEW_EXT_BASE;
     }
     
     /** {@inheritDoc} */
@@ -450,7 +462,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                 if (hasChanged) {
                     if (isReplace()) {
                         destPath = Path.of(moduleContext.getInstallLocation()).resolve(destination);
-                        final Path savedPath = destPath.resolveSibling(destPath.getFileName() + ".idpsave");
+                        final Path savedPath = destPath.resolveSibling(destPath.getFileName() + IDPSAVE_EXT);
                         if (savedPath.toFile().exists()) {
                             throw new IOException(savedPath + " exists, aborting");
                         }
@@ -459,7 +471,7 @@ public abstract class AbstractIdPModule implements IdPModule {
                         result = ResourceResult.REPLACED;
                     } else {
                         final Path basePath = Path.of(moduleContext.getInstallLocation()).resolve(destination);
-                        destPath = basePath.resolveSibling(basePath.getFileName() + ".idpnew");
+                        destPath = basePath.resolveSibling(basePath.getFileName() + idpNewExt);
                         result = ResourceResult.ADDED;
                     }
                     
@@ -518,11 +530,11 @@ public abstract class AbstractIdPModule implements IdPModule {
                         result = ResourceResult.REMOVED;
                     } else {
                         log.debug("Module {} backing up resource {}", getId(), resolved);
-                        Files.move(resolved, resolved.resolveSibling(resolved.getFileName() + ".idpsave"),
+                        Files.move(resolved, resolved.resolveSibling(resolved.getFileName() + IDPSAVE_EXT),
                                 StandardCopyOption.REPLACE_EXISTING);
                         result = ResourceResult.SAVED;
                     }
-                    final Path idpnewVersion = resolved.resolveSibling(resolved.getFileName() + ".idpnew");
+                    final Path idpnewVersion = resolved.resolveSibling(resolved.getFileName() + idpNewExt);
                     if (Files.exists(idpnewVersion)) {
                         Files.delete(idpnewVersion);
                     }

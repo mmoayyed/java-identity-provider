@@ -39,6 +39,8 @@ import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
@@ -294,13 +296,15 @@ public class IdPModuleTest {
         Assert.assertEquals(vel, VEL_DATA);
     }
     
-    private static TrustEngine<? super X509Credential> buildExplicitKeyTrustEngine() throws URISyntaxException, CertificateException, IOException {
+    @Nonnull private static TrustEngine<? super X509Credential> buildExplicitKeyTrustEngine()
+            throws URISyntaxException, CertificateException, IOException {
         
-        final InputStream certStream = IdPModuleTest.class.getResourceAsStream("/net/shibboleth/idp/module/repo-entity.crt");
-        final X509Certificate entityCert = X509Support.decodeCertificate(ByteStreams.toByteArray(certStream));
-        assert entityCert != null;
-        final X509Credential entityCredential = new BasicX509Credential(entityCert);
-        return new ExplicitKeyTrustEngine(new StaticCredentialResolver(entityCredential));
-        
+        try (final InputStream certStream = IdPModuleTest.class.getResourceAsStream("/net/shibboleth/idp/module/repo-entity.crt")) {
+            final X509Certificate entityCert = X509Support.decodeCertificate(ByteStreams.toByteArray(certStream));
+            assert entityCert != null;
+            final X509Credential entityCredential = new BasicX509Credential(entityCert);
+            return new ExplicitKeyTrustEngine(new StaticCredentialResolver(entityCredential));
+        }        
     }
+
 }
