@@ -361,9 +361,9 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             defTarget = baseDir.toAbsolutePath().toString();
             assert defTarget!=null;
         }
-        final Path targetDir= Path.of(getValue(TARGET_DIR, "Installation Directory:", () -> defTarget));
-        assert targetDir != null;
-        return targetDir;
+        final Path td = targetDir = Path.of(getValue(TARGET_DIR, "Installation Directory:", () -> defTarget));
+        assert td != null;
+        return td;
     }
 
     /**  {@inheritDoc} */
