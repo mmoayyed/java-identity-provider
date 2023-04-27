@@ -51,6 +51,15 @@
         class="net.shibboleth.shared.logic.StrategyIndirectedPredicate"
         c:objectStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty" />
 
+    <!-- Parent beans for EntityAttribute predicates. -->
+    <bean id="shibboleth.Conditions.MappedEntityAttributes" abstract="true"
+        class="net.shibboleth.saml.profile.context.logic.MappedEntityAttributesPredicate" />
+    <bean id="shibboleth.Conditions.EntityAttributes" abstract="true"
+        class="org.opensaml.saml.common.profile.logic.EntityAttributesPredicate" />
+    <bean id="shibboleth.TagCandidate" abstract="true"
+        class="org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate" />
+    
+
     <!-- IdPAttribute conditions. -->
     <bean id="shibboleth.Conditions.SimpleAttribute"
         class="net.shibboleth.idp.profile.logic.SimpleAttributePredicate" abstract="true" />

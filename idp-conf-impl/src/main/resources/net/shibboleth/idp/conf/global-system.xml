@@ -121,6 +121,9 @@
             value="net.shibboleth.shared.spring.resource.ConditionalResource" />
         <entry key="net.shibboleth.ext.spring.resource.RunnableFileSystemResource"
             value="net.shibboleth.shared.spring.resource.RunnableFileSystemResource" />
+            
+        <entry key="net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate"
+            value="net.shibboleth.saml.profile.context.logic.MappedEntityAttributesPredicate" />
     </util:map>
 
     <!-- This extends the original user-space resource list with the classpath-embedded message tree. -->
