@@ -178,7 +178,6 @@
         </constructor-arg>
     </bean>
 
-
     <bean id="shibboleth.IssuerLookup.Simple"
         class="net.shibboleth.profile.context.navigate.IssuerLookupFunction" />
     <alias alias="shibboleth.ResponderIdLookup.Simple" name="shibboleth.IssuerLookup.Simple" />
@@ -190,5 +189,33 @@
         class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
     <bean id="shibboleth.PrincipalNameLookup.Session"
         class="net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction" />
+    
+    <!-- Parent beans for metadata tag lookup. -->
+    <bean id="shibboleth.AbstractTagLookup" abstract="true"
+        p:profileMetadataLookupStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty"
+        p:explicitPropertyName="true"
+        p:enableCaching="false" />
         
+    <bean id="shibboleth.TagLookupString" abstract="true" parent="shibboleth.AbstractTagLookup"
+        class="net.shibboleth.idp.attribute.config.StringConfigurationLookupStrategy" />
+    <bean id="shibboleth.TagLookupBoolean" abstract="true" parent="shibboleth.AbstractTagLookup"
+        class="net.shibboleth.idp.attribute.config.BooleanConfigurationLookupStrategy" />
+    <bean id="shibboleth.TagLookupInteger" abstract="true" parent="shibboleth.AbstractTagLookup"
+        class="net.shibboleth.idp.attribute.config.IntegerConfigurationLookupStrategy" />
+    <bean id="shibboleth.TagLookupLong" abstract="true" parent="shibboleth.AbstractTagLookup"
+        class="net.shibboleth.idp.attribute.config.LongConfigurationLookupStrategy" />
+    <bean id="shibboleth.TagLookupDouble" abstract="true" parent="shibboleth.AbstractTagLookup"
+        class="net.shibboleth.idp.attribute.config.DoubleConfigurationLookupStrategy" />
+    <bean id="shibboleth.TagLookupDuration" abstract="true" parent="shibboleth.AbstractTagLookup"
+        class="net.shibboleth.idp.attribute.config.DurationConfigurationLookupStrategy" />
+    <bean id="shibboleth.TagLookupList" abstract="true" parent="shibboleth.AbstractTagLookup"
+        class="net.shibboleth.idp.attribute.config.ListConfigurationLookupStrategy"
+        p:propertyType="#{T(java.lang.String)}" />
+    <bean id="shibboleth.TagLookupSet" abstract="true" parent="shibboleth.AbstractTagLookup"
+        class="net.shibboleth.idp.attribute.config.SetConfigurationLookupStrategy"
+        p:propertyType="#{T(java.lang.String)}" />
+    <bean id="shibboleth.TagLookupBean" abstract="true" parent="shibboleth.AbstractTagLookup"
+        class="net.shibboleth.idp.attribute.config.BeanConfigurationLookupStrategy" />
+    
+    
 </beans>
