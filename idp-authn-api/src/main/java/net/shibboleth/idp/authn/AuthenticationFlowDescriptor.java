@@ -584,9 +584,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @return the new result
      */
     @Nonnull public AuthenticationResult newAuthenticationResult(@Nonnull final Subject subject) {
-        final String id = getId();
-        assert id != null;
-        final AuthenticationResult result = new AuthenticationResult(id, subject);
+        final AuthenticationResult result = new AuthenticationResult(ensureId(), subject);
 
         if (proxyRestrictionsEnforced) {
             result.setReuseCondition(PredicateSupport.and(reuseCondition, result.new ProxyRestrictionReusePredicate()));

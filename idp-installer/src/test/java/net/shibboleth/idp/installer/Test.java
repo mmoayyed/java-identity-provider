@@ -19,22 +19,14 @@ package net.shibboleth.idp.installer;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
-
-import org.slf4j.Logger;
-
 import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  *
  */
 public class Test {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(Test.class);
-   
     /**
      * @param args ...
      * 
@@ -43,11 +35,11 @@ public class Test {
      */
     public static void main(String[] args) throws IOException, ComponentInitializationException {
 
-        System.setProperty(InstallerPropertiesImpl.TARGET_DIR,"H:\\Downloads\\idp");
+        //System.setProperty(InstallerPropertiesImpl.TARGET_DIR,"H:\\Downloads\\idp");
         System.setProperty(InstallerPropertiesImpl.SOURCE_DIR,
-                "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.1.1-SNAPSHOT");
+                "h:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-5.0.0-SNAPSHOT");
         System.setProperty(InstallerPropertiesImpl.ANT_BASE_DIR,
-                "h:\\Perforce\\Juno\\New\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-4.1.1-SNAPSHOT\\bin");
+                "h:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-5.0.0-SNAPSHOT\\bin");
         System.setProperty(InstallerPropertiesImpl.KEY_STORE_PASSWORD, "p1");
         System.setProperty(InstallerPropertiesImpl.SEALER_PASSWORD, "p1");
         System.setProperty(InstallerPropertiesImpl.HOST_NAME, "machine.org.uk");

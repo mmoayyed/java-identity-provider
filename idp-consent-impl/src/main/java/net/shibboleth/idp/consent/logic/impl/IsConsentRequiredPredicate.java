@@ -108,7 +108,7 @@ public class IsConsentRequiredPredicate implements Predicate<ProfileRequestConte
         }
 
         for (final Consent currentConsent : currentConsents.values()) {
-            final Consent previousConsent = previousConsents.get(currentConsent.getId());
+            final Consent previousConsent = previousConsents.get(currentConsent.ensureId());
             if (previousConsent == null) {
                 log.debug("Consent is required, no previous consent for '{}'", currentConsent);
                 return true;

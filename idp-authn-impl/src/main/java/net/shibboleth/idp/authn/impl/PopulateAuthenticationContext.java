@@ -167,7 +167,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         
         // Install all the available flows for reference.
         for (final AuthenticationFlowDescriptor desc : availableFlows) {
-            authenticationContext.getAvailableFlows().put(desc.getId(), desc);
+            authenticationContext.getAvailableFlows().put(desc.ensureId(), desc);
         }
         
         // Now we have to filter the potential flows against the available and active flows and
@@ -177,26 +177,26 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
 
         if (activeFlows != null && !activeFlows.isEmpty()) {
             for (final AuthenticationFlowDescriptor desc : potentialFlowsLookupStrategy.apply(profileRequestContext)) {
-                final String flowId = desc.getId().substring(desc.getId().indexOf('/') + 1);
+                final String flowId = desc.ensureId().substring(desc.ensureId().indexOf('/') + 1);
                 if (activeFlows.contains(flowId)) {
-                    if (authenticationContext.getAvailableFlows().containsKey(desc.getId())
+                    if (authenticationContext.getAvailableFlows().containsKey(desc.ensureId())
                             && desc.test(profileRequestContext)) {
-                        authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+                        authenticationContext.getPotentialFlows().put(desc.ensureId(), desc);
                     } else {
-                        log.debug("{} Filtered out authentication flow {}", getLogPrefix(), desc.getId());
+                        log.debug("{} Filtered out authentication flow {}", getLogPrefix(), desc.ensureId());
                     }
                 } else {
                     log.debug("{} Filtered out authentication flow {} due to profile configuration", getLogPrefix(),
-                            desc.getId());
+                            desc.ensureId());
                 }
             }
         } else {
             for (final AuthenticationFlowDescriptor desc : potentialFlowsLookupStrategy.apply(profileRequestContext)) {
-                if (authenticationContext.getAvailableFlows().containsKey(desc.getId())
+                if (authenticationContext.getAvailableFlows().containsKey(desc.ensureId())
                         && desc.test(profileRequestContext)) {
-                    authenticationContext.getPotentialFlows().put(desc.getId(), desc);
+                    authenticationContext.getPotentialFlows().put(desc.ensureId(), desc);
                 } else {
-                    log.debug("{} Filtered out authentication flow {}", getLogPrefix(), desc.getId());
+                    log.debug("{} Filtered out authentication flow {}", getLogPrefix(), desc.ensureId());
                 }
             }
         }

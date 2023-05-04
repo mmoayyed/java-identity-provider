@@ -226,14 +226,11 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             log.warn("No lockout key returned for request");
             return false;
         }
-        final String id = getId();
-        assert id != null;
-
         // Read back account state. No state obviously means no lockout, but in the case of errors
         // that does fail open. Of course, in-memory won't fail...
         StorageRecord<?> sr = null;
         try {
-            sr = storageService.read(id, key);
+            sr = storageService.read(ensureId(), key);
         } catch (final IOException e) {
             sr = null;
             log.error("Error reading back account lockout state for '{}'", key, e);
@@ -289,10 +286,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         try {
             final String key = getLockoutKeyStrategy().apply(profileRequestContext);
             if (key != null) {
-                final String id = getId();
-                assert id != null;
                 log.debug("Clearing lockout state for '{}'", key);
-                storageService.delete(id, key);
+                storageService.delete(ensureId(), key);
                 return true;
             }
             log.warn("No lockout key returned for request");
@@ -326,9 +321,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         int counter = 0;
         StorageRecord<?> sr = null;
         try {
-            final String id = getId();
-            assert id != null;
-            sr = storageService.read(id, key);
+            sr = storageService.read(ensureId(), key);
             if (sr != null) {
                 counter = Integer.parseInt(sr.getValue());
             }
@@ -365,12 +358,10 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         log.debug("Invalid login count for '{}' will be {}, expiring at {}", key, counter,
                 Instant.ofEpochMilli(expiration));
 
-        final String id = getId();
-        assert id != null;
         // Create or update as required. Retry on errors.
         if (sr == null) {
             try {
-                if (storageService.create(id, key, Integer.toString(counter), expiration)) {
+                if (storageService.create(ensureId(), key, Integer.toString(counter), expiration)) {
                     return true;
                 }
             } catch (final IOException e) {
@@ -378,7 +369,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             }
         } else {
             try {
-                if (storageService.update(id, key, Integer.toString(counter), expiration)) {
+                if (storageService.update(ensureId(), key, Integer.toString(counter), expiration)) {
                     return true;
                 }
             } catch (final IOException e) {

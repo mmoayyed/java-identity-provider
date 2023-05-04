@@ -83,7 +83,7 @@ public class ExtractConsent extends AbstractConsentAction {
 
         final Map<String, Consent> currentConsents = consentContext.getCurrentConsents();
         for (final Consent consent : currentConsents.values()) {
-            if (consentIds.contains(consent.getId())) {
+            if (consentIds.contains(consent.ensureId())) {
                 consent.setApproved(Boolean.TRUE);
             } else {
                 consent.setApproved(Boolean.FALSE);

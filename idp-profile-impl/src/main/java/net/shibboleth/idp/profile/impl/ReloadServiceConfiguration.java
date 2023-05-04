@@ -34,6 +34,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.IdentifiedComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -116,7 +117,9 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
     @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         
         final String id;
-        if (service instanceof IdentifiedComponent) {
+        if (service instanceof AbstractIdentifiableInitializableComponent) {
+            id = ((AbstractIdentifiableInitializableComponent) service).ensureId();
+        } else if (service instanceof IdentifiedComponent) {
             id = ((IdentifiedComponent) service).getId();
         } else {
             id = "(unnamed)";

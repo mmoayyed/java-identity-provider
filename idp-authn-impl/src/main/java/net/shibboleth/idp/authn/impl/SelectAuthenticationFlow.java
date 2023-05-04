@@ -196,7 +196,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         AuthenticationResult activeResult = null;
         if (!authenticationContext.isForceAuthn()) {
-            activeResult = authenticationContext.getActiveResults().get(flow.getId());
+            activeResult = authenticationContext.getActiveResults().get(flow.ensureId());
             if (!activeResult.test(profileRequestContext)) {
                 log.debug("{} Active result for flow {} not reusable, ignoring", getLogPrefix(),
                         activeResult.getAuthenticationFlowId());
@@ -338,7 +338,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         AuthenticationFlowDescriptor selectedFlow = null;
         
         for (final AuthenticationFlowDescriptor flow : authenticationContext.getPotentialFlows().values()) {
-            if (!authenticationContext.getIntermediateFlows().containsKey(flow.getId())) {
+            if (!authenticationContext.getIntermediateFlows().containsKey(flow.ensureId())) {
                 if (!authenticationContext.isPassive() || flow.isPassiveAuthenticationSupported()) {
                     if (!noProxying || !flow.isProxyScopingEnforced()) {
                         if (flow.test(profileRequestContext)) {
@@ -440,7 +440,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             final PrincipalEvalPredicate predicate = rpCtx.getPredicate(p);
             if (predicate != null) {
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
-                    if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
+                    if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.ensureId())
                             && predicate.test(descriptor) && descriptor.test(profileRequestContext)) {
                         if (!authenticationContext.isPassive() || descriptor.isPassiveAuthenticationSupported()) {
                             if (!noProxying || !descriptor.isProxyScopingEnforced()) {
@@ -525,12 +525,12 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             final PrincipalEvalPredicate predicate = rpCtx.getPredicate(p);
             if (predicate != null) {
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
-                    if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
+                    if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.ensureId())
                             && predicate.test(descriptor) && descriptor.test(profileRequestContext)) {
                         
                         // Now check for an active result we can use from this flow. Not all results from a flow
                         // will necessarily match the request just because the flow might.
-                        final AuthenticationResult result = activeResults.get(descriptor.getId());
+                        final AuthenticationResult result = activeResults.get(descriptor.ensureId());
                         if (result == null || !result.test(profileRequestContext)
                                 || !predicate.test(result)) {
                             if (result != null) {

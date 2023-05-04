@@ -130,14 +130,12 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
             @Nullable final WarningHandler warningHandler,
             @Nullable final ErrorHandler errorHandler) throws Exception {
         checkComponentActive();
-        final String id = getId();
-        assert id!=null;
         
         if (!activationCondition.test(profileRequestContext)) {
             log.debug("{} Activation condition was false, ignoring request", getLogPrefix());
             return null;
         } else if (!isAcceptable(authenticationContext.getSubcontext(RequestedPrincipalContext.class),
-                customPrincipals, id)) {
+                customPrincipals, ensureId())) {
             return null;
         }
         

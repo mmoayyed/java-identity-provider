@@ -125,12 +125,12 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
             for (final String id : activeFlows) {
                 final String flowId = ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + id;
                 final Optional<ProfileInterceptorFlowDescriptor> flow =
-                        availableFlows.stream().filter(fd -> fd.getId().equals(flowId)).findFirst();
+                        availableFlows.stream().filter(fd -> fd.ensureId().equals(flowId)).findFirst();
                 
                 if (flow.isPresent()) {
                     log.debug("{} Installing {} flow {} into interceptor context", getLogPrefix(), loggingLabel,
                             flowId);
-                    interceptorContext.getAvailableFlows().put(flow.orElseThrow().getId(), flow.orElseThrow());
+                    interceptorContext.getAvailableFlows().put(flow.orElseThrow().ensureId(), flow.orElseThrow());
                 } else {
                     log.error("{} Configured {} interceptor flow {} not available for use", getLogPrefix(),
                             loggingLabel, flowId);

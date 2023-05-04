@@ -65,9 +65,11 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
                 Constraint.isNotNull(StringSupport.trimOrNull(userAttributeId),
                         "User attribute ID cannot be null nor empty");
 
-        attributeContextLookupStrategy =
+        final Function<ProfileRequestContext,AttributeContext> acls =
                 new ChildContextLookup<>(AttributeContext.class).compose(
                         new ChildContextLookup<>(RelyingPartyContext.class));
+        assert acls!=null;
+        attributeContextLookupStrategy = acls;
         
         useUnfilteredAttributes = true;
     }

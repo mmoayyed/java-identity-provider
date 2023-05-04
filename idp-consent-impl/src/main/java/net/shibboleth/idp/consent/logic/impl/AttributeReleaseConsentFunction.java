@@ -141,7 +141,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
             }
 
             // Remember previous choice.
-            final Consent previousConsent = consentContext.getPreviousConsents().get(consent.getId());
+            final Consent previousConsent = consentContext.getPreviousConsents().get(consent.ensureId());
             if (previousConsent != null) {
                 if (consentFlowDescriptor.compareValues()) {
                     if (Objects.equals(consent.getValue(), previousConsent.getValue())) {
@@ -154,7 +154,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
                 }
             }
 
-            currentConsents.put(consent.getId(), consent);
+            currentConsents.put(consent.ensureId(), consent);
         }
 
         return currentConsents;

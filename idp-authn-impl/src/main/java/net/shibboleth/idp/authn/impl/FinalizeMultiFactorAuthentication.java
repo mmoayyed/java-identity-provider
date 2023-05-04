@@ -296,9 +296,7 @@ public class FinalizeMultiFactorAuthentication extends AbstractAuthenticationAct
                             
                             final AuthenticationFlowDescriptor afd = mfaContext.getAuthenticationFlowDescriptor();
                             assert afd != null;
-                            final String afdId = afd.getId();
-                            assert afdId != null;
-                            final AuthenticationResult merged = new AuthenticationResult(afdId, subject);
+                            final AuthenticationResult merged = new AuthenticationResult(afd.ensureId(), subject);
                             merged.setPreviousResult(allPreviousResults);
                             if (ts != null) {
                                 merged.setAuthenticationInstant(ts);

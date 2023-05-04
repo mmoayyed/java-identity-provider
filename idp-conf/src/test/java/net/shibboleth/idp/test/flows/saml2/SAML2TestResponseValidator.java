@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.net.IPRange;
 
 import org.opensaml.core.xml.XMLObjectBuilder;
@@ -134,13 +135,13 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
 
         buildExpectedAttributes();
         // fool code analyzer
-        uidAttribute = uidAttribute;
-        homeOrgAttribute = homeOrgAttribute;
-        eppnAttribute = eppnAttribute;
-        mailAttribute = mailAttribute;
-        eduPersonScopedAffiliationAttribute = eduPersonScopedAffiliationAttribute;
-        expectedDesignatedAttributes = expectedDesignatedAttributes;
-        expectedAttributes = expectedAttributes;
+        uidAttribute = Constraint.isNotNull(uidAttribute, "");
+        homeOrgAttribute = Constraint.isNotNull(homeOrgAttribute, "");
+        eppnAttribute = Constraint.isNotNull(eppnAttribute, "");
+        mailAttribute = Constraint.isNotNull(mailAttribute, "");
+        eduPersonScopedAffiliationAttribute = Constraint.isNotNull(eduPersonScopedAffiliationAttribute, "");
+        expectedDesignatedAttributes = Constraint.isNotNull(expectedDesignatedAttributes, "");
+        expectedAttributes = Constraint.isNotNull(expectedAttributes, "");
     }
 
     /** Build expected attributes. */

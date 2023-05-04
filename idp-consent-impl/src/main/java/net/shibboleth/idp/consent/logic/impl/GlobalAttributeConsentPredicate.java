@@ -58,7 +58,7 @@ public class GlobalAttributeConsentPredicate implements Predicate<ProfileRequest
 
         final Map<String, Consent> previousConsents = consentContext.getPreviousConsents();
         for (final Consent consent : previousConsents.values()) {
-            if (consent.getId().equals(Consent.WILDCARD) && consent.isApproved()) {
+            if (consent.ensureId().equals(Consent.WILDCARD) && consent.isApproved()) {
                 return true;
             }
         }

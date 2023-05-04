@@ -113,7 +113,7 @@ public abstract class AbstractOutgoingSamlMessageAction extends
             return;
         }
         final SAMLBindingContext bindingContext = new SAMLBindingContext();
-        bindingContext.setBindingUri(outgoingBinding.getId());
+        bindingContext.setBindingUri(outgoingBinding.ensureId());
         bindingContext.setBindingDescriptor(outgoingBinding);
         msgContext.addSubcontext(bindingContext);
 

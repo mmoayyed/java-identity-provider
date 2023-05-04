@@ -80,11 +80,8 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
         }
-        final String flowId = flow.getId();
-        assert flowId != null;
-
-        log.debug("{} Selecting canonicalization flow {}", getLogPrefix(), flowId);
-        ActionSupport.buildEvent(profileRequestContext, flowId);
+        log.debug("{} Selecting canonicalization flow {}", getLogPrefix(), flow.ensureId());
+        ActionSupport.buildEvent(profileRequestContext, flow.ensureId());
     }
 
     /**
@@ -99,7 +96,7 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
         for (final SubjectCanonicalizationFlowDescriptor flow : c14nContext.getPotentialFlows().values()) {
-            if (!c14nContext.getIntermediateFlows().containsKey(flow.getId())) {
+            if (!c14nContext.getIntermediateFlows().containsKey(flow.ensureId())) {
                 log.debug("{} Checking canonicalization flow {} for applicability...", getLogPrefix(),
                         flow.getId());
                 c14nContext.setAttemptedFlow(flow);

@@ -81,10 +81,8 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
             log.debug("{} No flows available to choose from", getLogPrefix());
             return;
         }
-        final String id = flow.getId();
-        assert id != null;
-        log.debug("{} Selecting flow {}", getLogPrefix(), id);
-        ActionSupport.buildEvent(profileRequestContext, id);
+        log.debug("{} Selecting flow {}", getLogPrefix(), flow.ensureId());
+        ActionSupport.buildEvent(profileRequestContext, flow.ensureId());
     }
 
     /**

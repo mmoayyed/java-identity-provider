@@ -156,7 +156,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
                         consent.setValue(o.getString(VALUE_FIELD));
                     }
                     consent.setApproved(o.getBoolean(IS_APPROVED_FIELD, true));
-                    consents.put(consent.getId(), consent);
+                    consents.put(consent.ensureId(), consent);
                 }
             }
 
@@ -184,11 +184,11 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
             gen.writeStartArray();
             for (final Consent consent : filteredConsents) {
                 gen.writeStartObject();
-                final Integer symbol = symbolics.get(consent.getId());
+                final Integer symbol = symbolics.get(consent.ensureId());
                 if (symbol != null) {
                     gen.write(ID_FIELD, symbol);
                 } else {
-                    gen.write(ID_FIELD, consent.getId());
+                    gen.write(ID_FIELD, consent.ensureId());
                 }
                 if (consent.getValue() != null) {
                     gen.write(VALUE_FIELD, consent.getValue());

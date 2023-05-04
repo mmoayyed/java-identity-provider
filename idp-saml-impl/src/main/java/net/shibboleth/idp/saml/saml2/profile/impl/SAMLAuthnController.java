@@ -185,7 +185,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
                     url.substring(0, url.lastIndexOf("/start")));
             final BindingDescriptor bd = bindingMap.get(binding);
             if (bd != null) {
-                authnRequest.setProtocolBinding(bd.getId());
+                authnRequest.setProtocolBinding(bd.ensureId());
             }
         } else {
             log.error("Outbound AuthnContext message not found");

@@ -472,7 +472,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         bindingCtx.setRelayState(SAMLBindingSupport.getRelayState(imc));
         
         final Optional<BindingDescriptor> bindingDescriptor =
-                bindingDescriptors.stream().filter(b -> b.getId().equals(bindingURI)).findFirst();
+                bindingDescriptors.stream().filter(b -> b.ensureId().equals(bindingURI)).findFirst();
 
         if (bindingDescriptor.isPresent()) {
             bindingCtx.setBindingDescriptor(bindingDescriptor.orElseThrow());
@@ -520,7 +520,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                 assert bindingDescriptors!=null;
                 final Optional<BindingDescriptor> binding =
                         bindingDescriptors.stream().filter(
-                                b -> b.getId().equals(bindingCtx.getBindingUri())
+                                b -> b.ensureId().equals(bindingCtx.getBindingUri())
                                 ).findFirst();
                 if (binding.isPresent() && binding.orElseThrow().isSynchronous()) {
                     log.debug("{} Handling request via synchronous binding, preparing outbound binding context for {}",

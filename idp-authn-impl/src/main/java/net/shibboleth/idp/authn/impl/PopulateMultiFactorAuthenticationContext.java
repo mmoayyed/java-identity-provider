@@ -192,7 +192,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
                 }
                 if (acf != null) {
                     assert ac != null;
-                    final AuthenticationResult mfaResult = ac.getActiveResults().get(acf.getId());
+                    final AuthenticationResult mfaResult = ac.getActiveResults().get(acf.ensureId());
                     if (mfaResult != null) {
                         if (ac.isForceAuthn()) {
                             log.debug("{} Ignoring active result due to forced authentication requirement",
