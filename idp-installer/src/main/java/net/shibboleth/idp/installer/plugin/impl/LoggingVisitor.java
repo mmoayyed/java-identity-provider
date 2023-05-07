@@ -50,7 +50,7 @@ public final class LoggingVisitor extends SimpleFileVisitor<Path> {
     /** Path we are traversing. */
     private final Path from;
     
-    /** Path where we check for Duplicates. */
+    /** Path where we copy to. */
     private final Path to;
     /**
      * Constructor.
