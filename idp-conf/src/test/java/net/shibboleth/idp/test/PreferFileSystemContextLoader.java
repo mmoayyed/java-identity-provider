@@ -19,10 +19,12 @@ package net.shibboleth.idp.test;
 
 import javax.annotation.Nonnull;
 
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.test.context.web.GenericXmlWebContextLoader;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
+import net.shibboleth.shared.spring.custom.SchemaTypeAwareBeanDefinitionDocumentReader;
 import net.shibboleth.shared.spring.resource.ConditionalResourceResolver;
 import net.shibboleth.shared.spring.resource.PreferFileSystemResourceLoader;
 
@@ -46,4 +48,12 @@ public class PreferFileSystemContextLoader extends GenericXmlWebContextLoader {
         context.setResourceLoader(loader);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void loadBeanDefinitions(@Nonnull GenericWebApplicationContext context,
+            @Nonnull WebMergedContextConfiguration webMergedConfig) {
+        final XmlBeanDefinitionReader beanDefnReader = new XmlBeanDefinitionReader(context);
+        beanDefnReader.setDocumentReaderClass(SchemaTypeAwareBeanDefinitionDocumentReader.class);
+        beanDefnReader.loadBeanDefinitions(webMergedConfig.getLocations());
+    }
 }

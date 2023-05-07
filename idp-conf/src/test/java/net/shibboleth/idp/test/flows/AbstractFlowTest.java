@@ -17,7 +17,26 @@
 
 package net.shibboleth.idp.test.flows;
 
+import static org.testng.Assert.fail;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,13 +89,15 @@ import org.testng.annotations.BeforeSuite;
 
 import com.google.common.net.HttpHeaders;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.module.ModuleContext;
+import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.idp.test.PreferFileSystemApplicationContextInitializer;
 import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.idp.test.TestEnvironmentApplicationContextInitializer;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
@@ -86,14 +107,17 @@ import net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean;
 import net.shibboleth.shared.testing.InMemoryDirectory;
 import net.shibboleth.shared.xml.ParserPool;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 /**
  * Abstract flow test.
  */
 @ContextConfiguration(
         locations = {
-                "/system/conf/global-system.xml",
-                "/system/conf/mvc-beans.xml",
-                "/system/conf/webflow-config.xml",
+                "/net/shibboleth/idp/conf/global-system.xml",
+                "/net/shibboleth/idp/conf/mvc-beans.xml",
+                "/net/shibboleth/idp/conf/webflow-config.xml",
                 "/test/test-beans.xml",
                 "/test/override-beans.xml",},
         initializers = {
@@ -150,6 +174,30 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
 
     /** In-memory directory server. A single instance is used for all child tests. */
     @NonnullAfterInit private static InMemoryDirectory directoryServer;
+
+    /** The directory tree for IdPHome, we just need to specify the leaves of the tree. */
+    @Nonnull private final static List<Path> IDPHOMEPATHS = CollectionSupport.listOf(
+            Path.of("conf","admin"),
+            Path.of("conf","attributes", "custom"),
+            Path.of("conf","authn"),
+            Path.of("conf","c14n"),
+            Path.of("conf","examples"),
+            Path.of("conf","intercept"),
+            Path.of("credentials"),
+            Path.of("flows", "authn", "conditions", "account-locked"),
+            Path.of("flows", "authn", "conditions", "expired-password"),
+            Path.of("flows", "authn", "conditions", "expiring-password"),
+            Path.of("flows", "user", "prefs"),
+            Path.of("messages"),
+            Path.of("metadata"),
+            Path.of("system", "conf"),
+            Path.of("views", "client-storage"));
+
+    /** The modules to enable globally. */
+    @Nonnull private final static Set<String> MODULES = CollectionSupport.setOf(
+            "idp.admin.Hello");
+
+    private static Path IdPHome;
 
     /** Mock external context. */
     protected MockExternalContext externalContext;
@@ -261,6 +309,97 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
         }
     }
 
+    /** Set up the IdPHome we'll use.
+     * @throws IOException on badness
+     * @throws ModuleException on badness
+     */
+    @SuppressWarnings("null")
+    @BeforeSuite public static void setupIdPHome() throws IOException, ModuleException {
+        assert IdPHome==null;
+        IdPHome = Files.createTempDirectory("IdPHome");
+        log.info("Creating IdPHome at {}", IdPHome);
+        for (final Path p: IDPHOMEPATHS) {
+            final Path sub = IdPHome.resolve(p);
+            log.debug("Creating subdir {}", sub);
+            Files.createDirectories(sub);
+        }
+        /*
+        // TEMP CODE FOR TESTING
+        //
+        final Path nonTest = new File("H:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-conf\\src\\main\\resources").toPath();
+        final Path test = new File("H:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-conf\\src\\test\\resources").toPath();
+        Files.walkFileTree(nonTest, new CopyingVisitor(nonTest, IdPHome));
+        Files.walkFileTree(test, new CopyingVisitor(test, IdPHome));
+         */
+        final ModuleContext ctx = new ModuleContext(IdPHome);
+        for( final IdPModule module : ServiceLoader.load(IdPModule.class)) {
+            if (MODULES.contains(module.getId())) {
+                log.debug("Enabling Module {}", module.getId());
+                module.enable(ctx);
+            }
+        }
+    }
+
+    /** Return the idpHome set up in {@link #setupIdPHome()}.
+     * @return {@link #IdPHome}
+     */
+    @Nonnull public static Path getIdpHome() {
+        assert IdPHome!=null;
+        return IdPHome;
+    }
+
+    /** Helper to allow enabling of a module for an individual test/group of tests.
+     * @param module the module to enable
+     * @throws ModuleException if the enabling fails
+     */
+    protected void enableModule(final @Nonnull String moduleId) throws ModuleException {
+        for( final IdPModule module : ServiceLoader.load(IdPModule.class)) {
+            if (moduleId.equals(module.getId())) {
+                log.debug("Enabling Module {}", module.getId());
+                module.enable(new ModuleContext(IdPHome));
+                return;
+            }
+        }
+        fail("Could not find module " + moduleId);
+    }
+
+    /** Helper to allow disabling of a module for an individual test/group of tests.
+     * @param module the module to enable
+     * @throws ModuleException if the enabling fails
+     */
+    protected void disableModule(final @Nonnull String moduleId) throws ModuleException {
+        for( final IdPModule module : ServiceLoader.load(IdPModule.class)) {
+            if (moduleId.equals(module.getId())) {
+                log.debug("Enabling Module {}", module.getId());
+                module.disable(new ModuleContext(IdPHome), true);
+                return;
+            }
+        }
+        fail("Could not find module " + moduleId);
+    }
+
+
+    /** Delete the created IdpHome
+     * @throws IOException on badness
+     * @throws ModuleException  on badness
+     */
+    @AfterSuite(alwaysRun = true) public static void teardownIdpHome() throws IOException, ModuleException {
+        if (IdPHome == null || !Files.exists(IdPHome)) {
+            return;
+        }
+
+        final ModuleContext ctx = new ModuleContext(IdPHome);
+        for( final IdPModule module : ServiceLoader.load(IdPModule.class)) {
+            if (MODULES.contains(module.getId())) {
+                log.debug("Disabling Module {}", module.getId());
+                module.disable(ctx, true);
+            }
+        }
+
+        log.debug("Deleting IdPHome {}", IdPHome);
+        Files.walkFileTree(IdPHome, new DeletingVisitor());
+        IdPHome = null;
+    }
     /**
      * Assert that the flow execution result is not null, has ended, and its flow id equals the given flow id.
      * 
@@ -429,4 +568,78 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
         return (ProfileRequestContext) result.getOutcome().getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
     }
 
+    /**
+     * A @{link {@link FileVisitor} which deletes files.
+     */
+    private final static class DeletingVisitor extends SimpleFileVisitor<Path> {
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+            try {
+                Files.delete(file);
+            } catch (final IOException e) {
+                log.error("Could not delete {}", file.toAbsolutePath(), e);
+                file.toFile().deleteOnExit();
+                // and carry on
+            }
+            return FileVisitResult.CONTINUE;
+        }
+        @Override
+        public FileVisitResult postVisitDirectory(final Path dir, final IOException exc) throws IOException {
+            if (exc != null) {
+                throw exc;
+            }
+            try {
+                Files.delete(dir);
+            } catch (final IOException e) {
+                log.error("Could not delete {}", dir.toAbsolutePath(), e);
+                dir.toFile().deleteOnExit();
+                // and carry on
+            }
+            return FileVisitResult.CONTINUE;
+        }
+    }
+
+    /**
+     * A @{link {@link FileVisitor} which copies files.
+     */
+    private final static class CopyingVisitor extends SimpleFileVisitor<Path> {
+
+        /** Path we are traversing. */
+        private final Path from;
+
+        /** Path where we copy to. */
+        private final Path to;
+        /**
+         * Constructor.
+         *
+         * @param fromDir Path we are traversing
+         * @param toDir Path where we check for Duplicates
+         */
+        public CopyingVisitor(final Path fromDir, final Path toDir) {
+            from = fromDir;
+            to = toDir;
+        }
+        @Override
+        public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
+            final Path relDir = from.relativize(dir);
+            final Path toDir = to.resolve(relDir);
+            if (!Files.exists(toDir)) {
+                log.debug("Creating directory {}", toDir);
+                Files.createDirectory(toDir);
+            }
+            return FileVisitResult.CONTINUE;
+        };
+
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+            final Path relFile = from.relativize(file);
+            final Path toFile = to.resolve(relFile);
+            log.debug("Copying {}", relFile);
+            try(final InputStream in = new BufferedInputStream(new FileInputStream(file.toFile()));
+                final OutputStream out = new BufferedOutputStream(new FileOutputStream(toFile.toFile()))) {
+                in.transferTo(out);
+            }
+            return FileVisitResult.CONTINUE;
+        }
+    }
 }
