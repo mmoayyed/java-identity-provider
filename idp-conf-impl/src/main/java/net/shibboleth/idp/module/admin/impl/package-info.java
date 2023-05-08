@@ -18,5 +18,7 @@
 /**
  * Administrative modules.
  */
-
+@NonnullElements
 package net.shibboleth.idp.module.admin.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

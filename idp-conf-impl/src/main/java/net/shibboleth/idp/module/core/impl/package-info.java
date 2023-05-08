@@ -16,9 +16,9 @@
  */
 
 /**
- * Authentication modules.
+ * General modules.
  */
 @NonnullElements
-package net.shibboleth.idp.module.authn.impl;
+package net.shibboleth.idp.module.core.impl;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;

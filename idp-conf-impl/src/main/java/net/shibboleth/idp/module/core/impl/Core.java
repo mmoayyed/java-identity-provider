@@ -15,10 +15,27 @@
  * limitations under the License.
  */
 
-/**
- * Authentication modules.
- */
-@NonnullElements
-package net.shibboleth.idp.module.authn.impl;
+package net.shibboleth.idp.module.core.impl;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import java.io.IOException;
+
+import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.module.ModuleException;
+import net.shibboleth.idp.module.impl.CoreIdPModule;
+
+/**
+ * {@link IdPModule} implementation.
+ */
+public final class Core extends CoreIdPModule {
+
+    /**
+     * Constructor.
+     *  
+     * @throws ModuleException on error
+     * @throws IOException on error
+     */
+    public Core() throws IOException, ModuleException {
+        super(Core.class);
+    }
+
+}

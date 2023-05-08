@@ -1,3 +1,6 @@
+net.shibboleth.idp.module.core.impl.Core
+net.shibboleth.idp.module.core.impl.UserPrefs
+
 net.shibboleth.idp.module.authn.impl.Duo
 net.shibboleth.idp.module.authn.impl.IPAddress
 net.shibboleth.idp.module.authn.impl.MFA

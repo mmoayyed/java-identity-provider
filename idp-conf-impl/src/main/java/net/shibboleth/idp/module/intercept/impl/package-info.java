@@ -18,5 +18,7 @@
 /**
  * Interceptor modules.
  */
-
+@NonnullElements
 package net.shibboleth.idp.module.intercept.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

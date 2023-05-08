@@ -33,7 +33,7 @@ import net.shibboleth.shared.component.InitializableComponent;
 public interface InstallerProperties extends InitializableComponent {
 
     /** Those modules enabled by default. */
-    @Nonnull public static final Set<String> DEFAULT_MODULES = CollectionSupport.setOf("idp.authn.Password", "idp.admin.Hello");
+    @Nonnull public static final Set<String> DEFAULT_MODULES = CollectionSupport.setOf("idp.Core", "idp.authn.Password", "idp.admin.Hello");
 
     /** Get where we are installing/updating/building the war.
      * @return the target directory
