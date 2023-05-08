@@ -21,7 +21,8 @@
     <!-- Default strategy function to obtain the external path. -->
     <bean id="shibboleth.authn.RemoteUser.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
         c:target="#{getObject('shibboleth.authn.RemoteUser.externalAuthnPath') ?: '%{idp.authn.RemoteUser.externalAuthnPath:contextRelative:/Authn/RemoteUser}'.trim()}" />
-    
+
+    <!-- Legacy compatibility. -->
     <import resource="conditional:%{idp.home}/conf/authn/remoteuser-authn-config.xml" />
 
     <bean id="ValidateExternalAuthentication"

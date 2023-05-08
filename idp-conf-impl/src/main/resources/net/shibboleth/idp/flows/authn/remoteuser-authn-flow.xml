@@ -30,6 +30,7 @@
         <evaluate expression="'proceed'" />
 
         <transition on="proceed" to="CallSubjectCanonicalization" />
+        <transition on="NoCredentials" to="ReselectFlow" />
     </action-state>
 
     <!-- This runs a c14n step on the result of the authentication. -->

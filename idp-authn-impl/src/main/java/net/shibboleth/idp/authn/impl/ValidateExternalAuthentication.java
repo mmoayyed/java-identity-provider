@@ -203,6 +203,7 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
                     getLogPrefix());
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                     AuthnEventIds.NO_CREDENTIALS);
+            recordFailure(profileRequestContext);
             return;
         }
         final Subject subject = extContext.getSubject();

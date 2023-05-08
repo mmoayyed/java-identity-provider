@@ -120,7 +120,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         noProxying = authenticationContext.getProxyCount() != null && authenticationContext.getProxyCount() == 0;
         
-        final RequestedPrincipalContext rpc = requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
+        final RequestedPrincipalContext rpc = requestedPrincipalCtx =
+                authenticationContext.getSubcontext(RequestedPrincipalContext.class);
         if (rpc != null) {
             if (rpc.getOperator() == null || rpc.getRequestedPrincipals().isEmpty()) {
                 requestedPrincipalCtx = null;
