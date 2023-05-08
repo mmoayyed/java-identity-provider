@@ -229,6 +229,7 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
             authenticationContext.setResultCacheable(false);
         }
         
+        assert extContext != null;
         filterAttributes(extContext);
         
         buildAuthenticationResult(profileRequestContext, authenticationContext);
@@ -252,17 +253,21 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
         // Override supplied Subject with our own, after transferring over any custom Principals
         // and adding any filtered inbound attributes.
         assert isPreExecuteCalled();
-        final Subject localSubject = Constraint.isNotNull(extContext.getSubject(), "external Authn Subject cannot be null");
+        final Subject localSubject =
+                Constraint.isNotNull(extContext.getSubject(), "external Authn Subject cannot be null");
         localSubject.getPrincipals().addAll(subject.getPrincipals());
 
-        final AttributeContext ac= attributeContext;
+        final AttributeContext ac = attributeContext;
         if (ac != null && !ac.getIdPAttributes().isEmpty()) {
             log.debug("{} Adding filtered inbound attributes to Subject", getLogPrefix());
             localSubject.getPrincipals().addAll(
                 ac.getIdPAttributes().
                 values().
                 stream().
-                map((IdPAttribute a) -> {assert a != null;return new IdPAttributePrincipal(a);}).
+                map((IdPAttribute a) -> {
+                    assert a != null;
+                    return new IdPAttributePrincipal(a);
+                    }).
                 collect(CollectionSupport.nonnullCollector(Collectors.toList())).get());
         }
         
@@ -339,11 +344,12 @@ public class ValidateExternalAuthentication extends AbstractAuditingValidationAc
      */
     private void filterAttributes(@Nonnull final ExternalAuthenticationContext localExtContext) {
         
-        final AttributeContext ac = attributeContext = localExtContext.getSubcontext(AttributeContext.class);
+        final AttributeContext ac = localExtContext.getSubcontext(AttributeContext.class);
         if (ac == null) {
             log.debug("{} No attribute context, no attributes to filter", getLogPrefix());
             return;
         }
+        attributeContext = ac;
 
         if (ac.getIdPAttributes().isEmpty()) {
             log.debug("{} No attributes to filter", getLogPrefix());
