@@ -61,7 +61,7 @@
         p:deniedUsernames="#{getObject('shibboleth.authn.RemoteUser.deniedUsernames') ?: (getObject('shibboleth.authn.RemoteUser.blacklistedUsernames') ?: getObject('PropertyDrivenDenyList'))}"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') ?: %{idp.authn.RemoteUserInternal.addDefaultPrincipals:true}}"
         p:classifiedMessages="#{getObject('shibboleth.authn.RemoteUserInternal.ClassifiedMessageMap') ?: getObject('shibboleth.authn.RemoteUser.ClassifiedMessageMap')}"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUserInternal.resultCachingPredicate') ?: getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}"
         p:populateAuditContextAction="#{%{idp.authn.RemoteUserInternal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.RemoteUserInternal.PopulateAuditContext') : null}"
         p:writeAuditLogAction="#{%{idp.authn.RemoteUserInternal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuthnAuditLog') : null}" />
 
