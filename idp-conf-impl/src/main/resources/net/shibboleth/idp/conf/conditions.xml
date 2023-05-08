@@ -37,9 +37,9 @@
         class="net.shibboleth.profile.context.logic.RelyingPartyIdPredicate" abstract="true" />
         
     <bean id="shibboleth.Conditions.Scripted"
-        class="net.shibboleth.idp.profile.logic.ScriptedPredicate" abstract="true" />
+        class="net.shibboleth.profile.context.logic.ScriptedPredicate" abstract="true" />
     <bean id="shibboleth.Conditions.Expression"
-        class="net.shibboleth.idp.profile.logic.SpringExpressionPredicate" abstract="true" />
+        class="net.shibboleth.profile.context.logic.SpringExpressionPredicate" abstract="true" />
 
     <bean id="shibboleth.BiConditions.Scripted"
         class="net.shibboleth.shared.logic.ScriptedBiPredicate" abstract="true" />
@@ -62,13 +62,13 @@
 
     <!-- IdPAttribute conditions. -->
     <bean id="shibboleth.Conditions.SimpleAttribute"
-        class="net.shibboleth.idp.profile.logic.SimpleAttributePredicate" abstract="true" />
+        class="net.shibboleth.profile.context.logic.SimpleAttributePredicate" abstract="true" />
     <bean id="shibboleth.Conditions.DynamicAttribute"
-        class="net.shibboleth.idp.profile.logic.DynamicAttributePredicate" abstract="true" />
+        class="net.shibboleth.profile.context.logic.DynamicAttributePredicate" abstract="true" />
     <bean id="shibboleth.Conditions.RegexAttribute"
-        class="net.shibboleth.idp.profile.logic.RegexAttributePredicate" abstract="true" />
+        class="net.shibboleth.profile.context.logic.RegexAttributePredicate" abstract="true" />
     <bean id="shibboleth.Conditions.DateAttribute"
-        class="net.shibboleth.idp.profile.logic.DateAttributePredicate" abstract="true" />
+        class="net.shibboleth.profile.context.logic.DateAttributePredicate" abstract="true" />
 
     <!-- Parent bean for building predicates acting over a candidate c14n Subject based on proxy authn. -->
     <bean id="shibboleth.Conditions.ProxyAuthentication" abstract="true"
