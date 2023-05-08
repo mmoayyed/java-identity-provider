@@ -47,7 +47,7 @@
         p:lowercase="#{getObject('shibboleth.authn.RemoteUser.Lowercase') ?: %{idp.authn.RemoteUserInternal.lowercase:false}}"
         p:uppercase="#{getObject('shibboleth.authn.RemoteUser.Uppercase') ?: %{idp.authn.RemoteUserInternal.uppercase:false}}"
         p:trim="#{getObject('shibboleth.authn.RemoteUser.Trim') ?: %{idp.authn.RemoteUserInternal.trim:true}}"
-        p:transforms="#{getObject('shibboleth.authn.RemoteUser.Transforms')}" />
+        p:transforms="#{getObject('shibboleth.authn.RemoteUserInternal.Transforms') ?: getObject('shibboleth.authn.RemoteUser.Transforms')}" />
 
     <bean id="PropertyDrivenAllowList" parent="shibboleth.CommaDelimStringArray"
         c:_0="#{'%{idp.authn.RemoteUserInternal.allowedUsernames:}'.trim()}" />
@@ -60,7 +60,7 @@
         p:allowedUsernames="#{getObject('shibboleth.authn.RemoteUser.allowedUsernames') ?: (getObject('shibboleth.authn.RemoteUser.whitelistedUsernames') ?: getObject('PropertyDrivenAllowList'))}"
         p:deniedUsernames="#{getObject('shibboleth.authn.RemoteUser.deniedUsernames') ?: (getObject('shibboleth.authn.RemoteUser.blacklistedUsernames') ?: getObject('PropertyDrivenDenyList'))}"
         p:addDefaultPrincipals="#{getObject('shibboleth.authn.RemoteUser.addDefaultPrincipals') ?: %{idp.authn.RemoteUserInternal.addDefaultPrincipals:true}}"
-        p:classifiedMessages="#{getObject('shibboleth.authn.RemoteUser.ClassifiedMessageMap')}"
+        p:classifiedMessages="#{getObject('shibboleth.authn.RemoteUserInternal.ClassifiedMessageMap') ?: getObject('shibboleth.authn.RemoteUser.ClassifiedMessageMap')}"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.RemoteUser.resultCachingPredicate')}"
         p:populateAuditContextAction="#{%{idp.authn.RemoteUserInternal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.RemoteUserInternal.PopulateAuditContext') : null}"
         p:writeAuditLogAction="#{%{idp.authn.RemoteUserInternal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuthnAuditLog') : null}" />

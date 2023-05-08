@@ -4,7 +4,6 @@ net.shibboleth.idp.module.authn.impl.Function
 net.shibboleth.idp.module.authn.impl.IPAddress
 net.shibboleth.idp.module.authn.impl.MFA
 net.shibboleth.idp.module.authn.impl.Password
-net.shibboleth.idp.module.authn.impl.RemoteUserInternal
 net.shibboleth.idp.module.authn.impl.SPNEGO
 net.shibboleth.idp.module.authn.impl.X509
 net.shibboleth.idp.module.authn.impl.Demo
