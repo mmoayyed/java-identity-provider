@@ -28,12 +28,12 @@
             class="net.shibboleth.idp.authn.impl.ValidateCredentials" scope="prototype"
             p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: %{idp.authn.X509Internal.addDefaultPrincipals:true}}"
             p:classifiedMessages="#{getObject('shibboleth.authn.X509Internal.ClassifiedMessageMap')}"
-            p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}"
+            p:resultCachingPredicate="#{getObject('shibboleth.authn.X509Internal.resultCachingPredicate') ?: getObject('shibboleth.authn.X509.resultCachingPredicate')}"
             p:populateAuditContextAction="#{%{idp.authn.X509Internal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('shibboleth.authn.X509Internal.PopulateAuditContext') : null}"
             p:writeAuditLogAction="#{%{idp.authn.X509Internal.audit.enabled:%{idp.authn.audit.enabled:false}} ? getObject('WriteAuthnAuditLog') : null}">
         <property name="validators">
             <bean id="x509" class="net.shibboleth.idp.authn.impl.X509CertificateCredentialValidator"
-                p:trustEngine="#{getObject('shibboleth.authn.X509.TrustEngine')}"
+                p:trustEngine="#{getObject('shibboleth.authn.X509Internal.TrustEngine') ?: getObject('shibboleth.authn.X509.TrustEngine')}"
                 p:saveCertificateToCredentialSet="%{idp.authn.X509Internal.saveCertificateToCredentialSet:true}" />
         </property>    
     </bean>
