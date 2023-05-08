@@ -1,5 +1,4 @@
 net.shibboleth.idp.module.authn.impl.Duo
-net.shibboleth.idp.module.authn.impl.Function
 net.shibboleth.idp.module.authn.impl.IPAddress
 net.shibboleth.idp.module.authn.impl.MFA
 net.shibboleth.idp.module.authn.impl.Password
