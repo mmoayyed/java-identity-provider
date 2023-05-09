@@ -92,6 +92,16 @@
         <jdbc:script location="classpath:/test/test-jdbc.sql"/>
     </jdbc:initialize-database>
 
+    <!-- Allows flows to run out of the module source tree. -->
+    <bean id="shibboleth.FlowPatterns" parent="shibboleth.DefaultFlowPatterns">
+        <property name="sourceMap">
+            <map merge="true">
+                <entry key="classpath*:/net/shibboleth/idp/module/flows/**/*-flow.xml"
+                    value="/net/shibboleth/idp/module/flows" />
+            </map>
+        </property>
+    </bean>
+    
     <!--
     <bean id="shibboleth.authn.TOTP.SeedSource" parent="shibboleth.authn.TOTP.StaticSeedSource">
         <property name="seeds">
