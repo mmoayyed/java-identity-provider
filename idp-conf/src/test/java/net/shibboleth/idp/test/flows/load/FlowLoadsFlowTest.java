@@ -34,6 +34,7 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
 @ContextConfiguration(locations = {"classpath:/flow-load-test/test-webflow-config.xml",})
 public class FlowLoadsFlowTest extends AbstractFlowTest {
     
+    /** Test flow ID. */
     @Nonnull public final static String TEST_FLOW_LOADS_ID = "test-flow-loads";
     
     /**

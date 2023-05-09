@@ -27,6 +27,7 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
  * Tests for C14N.
  */
 @ContextConfiguration({"classpath:/c14n/test-webflow-config.xml", "classpath:/c14n/locate-resolver.xml"})
+@SuppressWarnings("javadoc")
 public class TestC14N extends AbstractFlowTest {
 
     @Test public void testTransientNameID() {

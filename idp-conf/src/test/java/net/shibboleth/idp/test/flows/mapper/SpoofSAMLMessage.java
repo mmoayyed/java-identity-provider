@@ -28,6 +28,7 @@ import org.opensaml.saml.common.messaging.context.SAMLProtocolContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
+@SuppressWarnings("javadoc")
 public class SpoofSAMLMessage extends AbstractProfileAction {
     
     @Override

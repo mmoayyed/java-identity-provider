@@ -23,9 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
 
-/**
- *
- */
+@SuppressWarnings("javadoc")
 @ContextConfiguration({"classpath:/mapping/configs/override.xml", })
 public class MappingTest extends AbstractFlowTest {
     @Test(enabled=true) public void testResolveAndFilter() {

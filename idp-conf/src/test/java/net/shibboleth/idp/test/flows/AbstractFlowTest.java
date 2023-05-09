@@ -21,7 +21,6 @@ import static org.testng.Assert.fail;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -313,7 +312,6 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * @throws IOException on badness
      * @throws ModuleException on badness
      */
-    @SuppressWarnings("null")
     @BeforeSuite public static void setupIdPHome() throws IOException, ModuleException {
         assert IdPHome==null;
         IdPHome = Files.createTempDirectory("IdPHome");

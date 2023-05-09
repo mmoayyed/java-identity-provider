@@ -47,6 +47,7 @@ import net.shibboleth.shared.primitive.StringSupport;
 /**
  * Action to mock up a Subject for C14N.
  */
+@SuppressWarnings("javadoc")
 public class SetupForSAML1C14N extends AbstractProfileAction {
     
     private String attributeName;
