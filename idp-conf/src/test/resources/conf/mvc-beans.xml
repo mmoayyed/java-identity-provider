@@ -24,4 +24,14 @@
         <property name="defaultLocale" value="en"/>
     </bean>
     
+    <!-- Allows flows to run out of the module source tree. -->
+    <bean id="shibboleth.FlowPatterns" parent="shibboleth.DefaultFlowPatterns">
+        <property name="sourceMap">
+            <map merge="true">
+                <entry key="classpath*:/net/shibboleth/idp/module/flows/**/*-flow.xml"
+                    value="/net/shibboleth/idp/module/flows" />
+            </map>
+        </property>
+    </bean>
+        
 </beans>
