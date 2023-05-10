@@ -15,18 +15,18 @@
     <!-- Enumerate the system key strategy beans to unlock, typically just one. -->
      
     <util:list id="shibboleth.unlock-keys.KeyStrategies">
-        <ref bean="shibboleth.DataSealerKeyStrategy" />
+<!--         <ref bean="shibboleth.DataSealerKeyStrategy" /> -->
     </util:list>
      
     <!-- Enumerate credential bean refs and private key resources. -->
      
     <util:list id="shibboleth.unlock-keys.Credentials">
-        <ref bean="shibboleth.DefaultSigningCredential" />
+<!--         <ref bean="shibboleth.DefaultSigningCredential" /> -->
     </util:list>
      
     <util:list id="shibboleth.unlock-keys.PrivateKeys">
-        <bean class="org.springframework.core.io.FileSystemResource"
-            c:_0="%{idp.signing.key}"/>
+<!--         <bean class="org.springframework.core.io.FileSystemResource" -->
+<!--             c:_0="%{idp.signing.key}"/> -->
     </util:list>
 
     <!-- Uncomment to move the definition of this bean from credentials.xml --> 

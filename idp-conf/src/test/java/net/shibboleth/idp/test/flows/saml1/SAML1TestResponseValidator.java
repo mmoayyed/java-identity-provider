@@ -51,7 +51,6 @@ import net.shibboleth.idp.saml.xml.SAMLConstants;
 /**
  * Validate a test SAML 1 Response.
  */
-@SuppressWarnings({"null"})
 public class SAML1TestResponseValidator {
 
     /** Expected IdP entity ID. */

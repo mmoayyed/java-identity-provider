@@ -93,11 +93,11 @@ public class IdPPropertiesApplicationContextInitializerTest {
     }
 
     @Test public void testUserDefinedFound() {
-        sc.addInitParameter("idp.home", "classpath:");
+        sc.addInitParameter("idp.home", "classpath:/net/shibboleth/idp/module");
         listener.contextInitialized(new ServletContextEvent(sc));
         final WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
         Assert.assertTrue(wac.getEnvironment().containsProperty("idp.home"));
-        Assert.assertEquals(wac.getEnvironment().getProperty("idp.home"), "classpath:");
+        Assert.assertEquals(wac.getEnvironment().getProperty("idp.home"), "classpath:/net/shibboleth/idp/module");
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testUserDefinedEndsWithSlash() {
@@ -115,7 +115,7 @@ public class IdPPropertiesApplicationContextInitializerTest {
     }
 
     @Test public void testAdditionalProperties() {
-        sc.addInitParameter("idp.home", "classpath:");
+        sc.addInitParameter("idp.home", "classpath:/net/shibboleth/idp/module");
         listener.contextInitialized(new ServletContextEvent(sc));
         final WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
         Assert.assertEquals(wac.getEnvironment().getProperty("idp.authn.LDAP.ldapURL"), "ldap://localhost:10389");

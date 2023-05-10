@@ -59,7 +59,7 @@ public class TestEnvironmentApplicationContextInitializer
         assert idpHome!=null && flow!= null;
         //mock.setProperty("idp.home", idpHome);
         //mock.setProperty("idp.webflows", flow);
-        mock.setProperty("idp.home", "classpath:");
+        mock.setProperty("idp.home", "classpath:/net/shibboleth/idp/module");
         mock.setProperty("idp.webflows", "classpath*:/flows");
         mock.setProperty("idp.storage.htmlLocalStorage", "false");
         mock.setProperty("idp.session.trackSPSessions", "false");

@@ -26,7 +26,7 @@
 
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>classpath:/test/test-relying-party-cas.xml</value>
-        <value>classpath:/conf/credentials.xml</value>
+        <value>classpath:/net/shibboleth/idp/module/conf/credentials.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.AttributeFilterResources">

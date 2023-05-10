@@ -72,10 +72,6 @@
     <bean id="exampleMetadata-sp123" class="org.springframework.core.io.ClassPathResource">
         <constructor-arg value="/metadata/example-sp123-metadata.xml"/>
     </bean>
-
-    <bean id="duoMetadata" class="org.springframework.core.io.ClassPathResource">
-        <constructor-arg value="/metadata/duo-metadata.xml"/>
-    </bean>
       
     <util:list id="testbed.MetadataResolverResources">
         <value>%{idp.home}/conf/metadata-providers.xml</value>

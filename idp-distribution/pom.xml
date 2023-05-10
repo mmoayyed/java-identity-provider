@@ -175,7 +175,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <outputDirectory>${idp.assemblyDirectory}</outputDirectory>
-                                    <excludes>**/META-INF/**,**/logs/*,**/credentials/*</excludes>
+                                    <excludes>**/META-INF/**,**/logs/*</excludes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

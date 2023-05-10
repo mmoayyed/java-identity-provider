@@ -72,7 +72,7 @@ import com.google.common.net.InetAddresses;
 /**
  * SAML 2 {@link Response} validator.
  */
-@SuppressWarnings({"javadoc", "null"})
+@SuppressWarnings({"null"})
 public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValidator {
 
     /** Authentication context class reference. */

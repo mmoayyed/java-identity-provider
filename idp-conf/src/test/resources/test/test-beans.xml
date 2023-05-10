@@ -21,7 +21,7 @@
         p:entityId="https://sp.example.org" />
 
     <bean id="test.idp.X509Certificate" class="net.shibboleth.shared.spring.security.factory.X509CertificateFactoryBean"
-        p:resource="classpath:/credentials/idp-encryption.crt" />
+        p:resource="classpath:/net/shibboleth/idp/module/credentials/idp-encryption.crt" />
 
     <bean id="test.idp.Credential" class="org.opensaml.security.x509.BasicX509Credential"
         c:entityCertificate-ref="test.idp.X509Certificate"
