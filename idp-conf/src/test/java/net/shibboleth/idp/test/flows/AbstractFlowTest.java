@@ -347,7 +347,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     }
 
     /** Helper to allow enabling of a module for an individual test/group of tests.
-     * @param module the module to enable
+     * @param moduleId the module to enable
      * @throws ModuleException if the enabling fails
      */
     protected void enableModule(final @Nonnull String moduleId) throws ModuleException {
@@ -362,7 +362,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     }
 
     /** Helper to allow disabling of a module for an individual test/group of tests.
-     * @param module the module to enable
+     * @param moduleId the module to enable
      * @throws ModuleException if the enabling fails
      */
     protected void disableModule(final @Nonnull String moduleId) throws ModuleException {
