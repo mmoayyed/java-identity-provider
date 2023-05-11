@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.test;
 
-import java.io.File;
-
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -28,7 +26,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.mock.env.MockPropertySource;
 
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -50,15 +47,6 @@ public class TestEnvironmentApplicationContextInitializer
     /** {@inheritDoc} */
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         final MockPropertySource mock = new MockPropertySource();
-        String idpHome = AbstractFlowTest.getIdpHome().toFile().getAbsolutePath();
-        String flow  = AbstractFlowTest.getIdpHome().resolve("flows").toFile().getAbsolutePath();
-        if (File.separatorChar == '\\') {
-            idpHome = idpHome.replace('\\', '/');
-            flow  = flow.replace('\\', '/');
-        }
-        assert idpHome!=null && flow!= null;
-        //mock.setProperty("idp.home", idpHome);
-        //mock.setProperty("idp.webflows", flow);
         mock.setProperty("idp.home", "classpath:/net/shibboleth/idp/module");
         mock.setProperty("idp.webflows", "classpath*:/flows");
         mock.setProperty("idp.storage.htmlLocalStorage", "false");
