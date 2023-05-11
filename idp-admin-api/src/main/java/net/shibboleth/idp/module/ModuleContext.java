@@ -73,7 +73,7 @@ public final class ModuleContext {
      * 
      * @since 4.2.0
      */
-    @Nonnull @NotEmpty String getInstallLocation() {
+    @Nonnull @NotEmpty public String getInstallLocation() {
         return idpHome;
     }
     
@@ -82,7 +82,7 @@ public final class ModuleContext {
      * 
      * @return HTTP client instance
      */
-    @Nullable HttpClient getHttpClient() {
+    @Nullable public HttpClient getHttpClient() {
         return httpClient;
     }
     
@@ -100,7 +100,7 @@ public final class ModuleContext {
      * 
      * @return HTTP client security parameters to use
      */
-    @Nullable HttpClientSecurityParameters getHttpClientSecurityParameters() {
+    @Nullable public HttpClientSecurityParameters getHttpClientSecurityParameters() {
         return httpClientSecurityParams;
     }
 
