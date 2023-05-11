@@ -18,6 +18,8 @@
 package net.shibboleth.idp.module.core.impl;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -29,6 +31,9 @@ import net.shibboleth.idp.module.impl.CoreIdPModule;
 
 /**
  * {@link IdPModule} implementation.
+ * 
+ * <p>This is a somewhat special module as it represents the "core" software
+ * being installed or upgraded so has some different characteristics and methods.
  */
 public final class Core extends CoreIdPModule {
 
@@ -46,6 +51,25 @@ public final class Core extends CoreIdPModule {
     @Override
     public boolean isEnabled(@Nonnull final ModuleContext moduleContext) {
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull public Map<ModuleResource, ResourceResult> enable(@Nonnull final ModuleContext moduleContext)
+            throws ModuleException {
+        
+        // First we need to ensure the basic directory layout is in place. On upgrade this won't have any effect.
+        try {
+            final Path home = Path.of(moduleContext.getInstallLocation());
+            Files.createDirectories(home.resolve("conf"));
+            Files.createDirectories(home.resolve("flows"));
+            Files.createDirectories(home.resolve("messages"));
+            Files.createDirectories(home.resolve("views"));
+        } catch (final Exception e) {
+            throw new ModuleException(e);
+        }
+        
+        return super.enable(moduleContext);
     }
 
     /** {@inheritDoc} */
