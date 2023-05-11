@@ -18,19 +18,15 @@
 package net.shibboleth.idp.module.core.impl;
 
 import java.io.IOException;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.impl.CoreIdPModule;
 
 /**
  * {@link IdPModule} implementation.
  */
-public final class Core extends CoreIdPModule {
+public final class CommandLine extends CoreIdPModule {
 
     /**
      * Constructor.
@@ -38,22 +34,8 @@ public final class Core extends CoreIdPModule {
      * @throws ModuleException on error
      * @throws IOException on error
      */
-    public Core() throws IOException, ModuleException {
-        super(Core.class);
+    public CommandLine() throws IOException, ModuleException {
+        super(CommandLine.class);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean isEnabled(@Nonnull final ModuleContext moduleContext) {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull public Map<ModuleResource, ResourceResult> disable(@Nonnull final ModuleContext moduleContext,
-            final boolean clean) throws ModuleException {
-        throw new ModuleException("This module cannot be disabled.");
-    }
-
-    
 }

@@ -1,4 +1,5 @@
 net.shibboleth.idp.module.core.impl.Core
+net.shibboleth.idp.module.core.impl.CommandLine
 net.shibboleth.idp.module.core.impl.EditWebApp
 net.shibboleth.idp.module.core.impl.UserPrefs
 

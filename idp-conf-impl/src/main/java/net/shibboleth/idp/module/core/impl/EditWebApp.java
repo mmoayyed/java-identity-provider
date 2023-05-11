@@ -19,10 +19,7 @@ package net.shibboleth.idp.module.core.impl;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
-
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.impl.CoreIdPModule;
 
@@ -39,12 +36,6 @@ public final class EditWebApp extends CoreIdPModule {
      */
     public EditWebApp() throws IOException, ModuleException {
         super(EditWebApp.class);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isEnabled(@Nonnull final ModuleContext moduleContext) {
-        return true;
     }
 
 }
