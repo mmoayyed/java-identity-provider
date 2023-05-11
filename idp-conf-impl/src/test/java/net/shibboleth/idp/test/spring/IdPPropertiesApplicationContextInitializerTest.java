@@ -45,7 +45,7 @@ public class IdPPropertiesApplicationContextInitializerTest {
 
     @BeforeMethod public void setUp() {
         sc = new MockServletContext("");
-        sc.addInitParameter(ContextLoader.CONTEXT_CLASS_PARAM, "net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext");
+        sc.addInitParameter(ContextLoader.CONTEXT_CLASS_PARAM, "net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext");
         sc.addInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, "classpath:/net/shibboleth/idp/conf/global-system.xml");
         sc.addInitParameter(ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM,
                 IdPPropertiesApplicationContextInitializer.class.getName());
