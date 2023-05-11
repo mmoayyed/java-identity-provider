@@ -18,7 +18,6 @@
 package net.shibboleth.idp.module;
 
 import java.io.PrintStream;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 
@@ -65,29 +64,6 @@ public final class ModuleContext {
     public ModuleContext(@Nonnull @NotEmpty final String home) {
         idpHome = Constraint.isNotEmpty(home, "Home location cannot be null or empty");
         languageRanges = CollectionSupport.emptyList();
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param home location of IdP install
-     */
-    public ModuleContext(@Nonnull final Path home) {
-        this(home.toString());
-    }
-    
-    /**
-     * Gets software installation location.
-     * 
-     * <p>Use the String variant to avoid Windows borkage.</p>
-     * 
-     * @return install path
-     * 
-     * @deprecated
-     */
-    @Deprecated(since="4.2", forRemoval=true)
-    @Nonnull Path getIdPHome() {
-        return Path.of(idpHome);
     }
     
     /**

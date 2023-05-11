@@ -66,7 +66,7 @@ public class RollbackTester {
         final IdPModule enabled2 = new TestModule("enabled2", null, new ModuleException()); 
         final IdPModule disabled1 = new TestModule("disabled1", null, null);
         final IdPModule disabled2 = new TestModule("disablde2", new ModuleException(), null);
-        final ModuleContext ctx = new ModuleContext(mc);
+        final ModuleContext ctx = new ModuleContext(mc.toString());
 
         try {
             assertFalse(from.toFile().exists());
@@ -82,7 +82,7 @@ public class RollbackTester {
             assertFalse(disabled1.isEnabled(ctx));
             assertFalse(disabled2.isEnabled(ctx));
             
-            try (final RollbackPluginInstall rp = new RollbackPluginInstall(new ModuleContext(parent), new HashMap<>())) {
+            try (final RollbackPluginInstall rp = new RollbackPluginInstall(new ModuleContext(parent.toString()), new HashMap<>())) {
                 rp.getFilesCopied().add(copied);
                 rp.getFilesRenamedAway().add(renamed);
                 rp.getModulesDisabled().add(disabled1);

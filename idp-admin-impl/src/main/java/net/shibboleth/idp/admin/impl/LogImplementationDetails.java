@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.admin.impl;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
@@ -74,20 +73,9 @@ public final class LogImplementationDetails {
                         idpPlugin.getMinorVersion(), idpPlugin.getPatchVersion());
             }
         }
-        Path idpHome;
-        try {
-            if (idpHomeLocation != null) {
-                idpHome = Path.of(idpHomeLocation);
-            } else {
-                idpHome = null;
-            }
-        } catch (final RuntimeException e) {
-            logger.info("Could not resolve idp.home from {} ", idpHomeLocation, e);
-            idpHome = null;
-        }
-
-        if (idpHome != null) {
-            final ModuleContext context = new ModuleContext(idpHome);
+        
+        if (idpHomeLocation != null) {
+            final ModuleContext context = new ModuleContext(idpHomeLocation);
             final List<IdPModule> modules = ServiceLoader.
                     load(IdPModule.class).
                     stream().

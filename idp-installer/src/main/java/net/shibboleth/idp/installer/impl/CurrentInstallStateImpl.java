@@ -182,7 +182,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
         if (getInstalledVersion() == null) {
             return;
         }
-        final ModuleContext moduleContext = new ModuleContext(targetDir);
+        final ModuleContext moduleContext = new ModuleContext(targetDir.toString());
         enabledModules = new HashSet<>();
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
 

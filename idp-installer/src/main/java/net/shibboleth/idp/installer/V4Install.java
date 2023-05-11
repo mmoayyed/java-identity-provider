@@ -460,7 +460,7 @@ public class V4Install extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     protected void enableModules() throws BuildException {
-        final ModuleContext moduleContext = new ModuleContext(installerProps.getTargetDir());
+        final ModuleContext moduleContext = new ModuleContext(installerProps.getTargetDir().toString());
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
 
         while (modules.hasNext()) {

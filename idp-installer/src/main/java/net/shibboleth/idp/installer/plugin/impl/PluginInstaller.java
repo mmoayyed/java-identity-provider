@@ -930,7 +930,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new ComponentInitializationException(e);
         }
         assert idpHome != null;
-        moduleContext = new ModuleContext(idpHome);
+        moduleContext = new ModuleContext(idpHome.toString());
         moduleContext.setHttpClientSecurityParameters(securityParams);
         moduleContext.setHttpClient(httpClient);
         distPath = idpHome.resolve("dist");

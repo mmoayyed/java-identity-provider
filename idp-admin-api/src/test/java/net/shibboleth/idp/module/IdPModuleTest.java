@@ -86,7 +86,7 @@ public class IdPModuleTest {
         testModule = opt.get().get();
         
         testHome = Files.createTempDirectory("test-idp-home-");
-        context = new ModuleContext(testHome);
+        context = new ModuleContext(testHome.toString());
         
         final HttpClientBuilder builder = new HttpClientBuilder();
         builder.setTLSSocketFactory(SecurityEnhancedHttpClientSupport.buildTLSSocketFactory(true, false));
