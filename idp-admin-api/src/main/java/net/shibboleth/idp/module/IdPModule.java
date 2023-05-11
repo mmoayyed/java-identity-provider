@@ -167,7 +167,25 @@ public interface IdPModule extends IdentifiedComponent {
          * @return true iff the resource should be marked executable
          */
         public boolean isExecutable();
-}
+
+        /**
+         * Gets whether the resource should be processed on Windows.
+         * 
+         * @return true iff the resource should be processed on Windows
+         * 
+         * @since 5.0.0
+         */
+        public boolean isWindows();
+
+        /**
+         * Gets whether the resource should be processed on non-Windows platforms.
+         * 
+         * @return true iff the resource should be processed on non-Windows platforms
+         * 
+         * @since 5.0.0
+         */
+        public boolean isNonWindows();
+    }
  
     /** Resource management outcome. */
     public enum ResourceResult {

@@ -80,6 +80,12 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
     /** Suffix of property for resource executability. */
     @Nonnull @NotEmpty public static final String MODULE_EXEC_PROPERTY = ".exec";
 
+    /** Suffix of property for resource Windows applicability. */
+    @Nonnull @NotEmpty public static final String MODULE_WINDOWS_PROPERTY = ".windows";
+
+    /** Suffix of property for resource non-Windows applicability. */
+    @Nonnull @NotEmpty public static final String MODULE_NONWINDOWS_PROPERTY = ".nonwindows";
+
     /** Suffix of property for module post-enable message. */
     @Nonnull @NotEmpty public static final String MODULE_POSTENABLE_PROPERTY = ".postenable";
 
@@ -199,7 +205,13 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
                 
                 final Boolean exec = Boolean.valueOf(
                         moduleProperties.getProperty(getId() + renumstr + MODULE_EXEC_PROPERTY, "false"));
-                
+
+                final Boolean windows = Boolean.valueOf(
+                        moduleProperties.getProperty(getId() + renumstr + MODULE_WINDOWS_PROPERTY, "true"));
+
+                final Boolean nonwindows = Boolean.valueOf(
+                        moduleProperties.getProperty(getId() + renumstr + MODULE_NONWINDOWS_PROPERTY, "true"));
+
                 final Path destPath = Path.of(dest);
                 if (dest.contains("..") || destPath.isAbsolute() || destPath.startsWith("/")) {
                     throw new ModuleException("Module contained a suspect resource destination");
@@ -209,7 +221,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
                     requireHttpClient = src.startsWith("https://") || src.startsWith("http://");
                 }
                 
-                resources.add(new BasicModuleResource(src, destPath, replace, optional, exec));
+                resources.add(new BasicModuleResource(src, destPath, replace, optional, exec, windows, nonwindows));
             }
             
             setResources(resources);

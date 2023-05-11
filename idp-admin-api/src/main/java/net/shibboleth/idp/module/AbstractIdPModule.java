@@ -39,6 +39,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
@@ -171,7 +172,15 @@ public abstract class AbstractIdPModule implements IdPModule {
             results = new LinkedHashMap<>(moduleResources.size());
 
             for (final ModuleResource resource : moduleResources) {
-                results.put(resource, ((BasicModuleResource) resource).enable(moduleContext));
+                if (SystemUtils.IS_OS_WINDOWS) {
+                    if (resource.isWindows()) {
+                        results.put(resource, ((BasicModuleResource) resource).enable(moduleContext));
+                    }
+                } else {
+                    if (resource.isNonWindows()) {
+                        results.put(resource, ((BasicModuleResource) resource).enable(moduleContext));
+                    }
+                }
             }
         } else {
             results = CollectionSupport.emptyMap();
@@ -197,7 +206,15 @@ public abstract class AbstractIdPModule implements IdPModule {
         if (!moduleResources.isEmpty()) {
             results = new LinkedHashMap<>(moduleResources.size());
             for (final ModuleResource resource : moduleResources) {
-                results.put(resource, ((BasicModuleResource) resource).disable(moduleContext, clean));
+                if (SystemUtils.IS_OS_WINDOWS) {
+                    if (resource.isWindows()) {
+                        results.put(resource, ((BasicModuleResource) resource).disable(moduleContext, clean));
+                    }
+                } else {
+                    if (resource.isNonWindows()) {
+                        results.put(resource, ((BasicModuleResource) resource).disable(moduleContext, clean));
+                    }
+                }
             }
         } else {
             results = CollectionSupport.emptyMap();
@@ -246,6 +263,12 @@ public abstract class AbstractIdPModule implements IdPModule {
 
         /** Executable criteria. */
         private final boolean executable;
+        
+        /** Process on Windows? */
+        private final boolean windows;
+
+        /** Process on non-Windows? */
+        private final boolean nonwindows;
 
         /**
          * Constructor.
@@ -255,14 +278,19 @@ public abstract class AbstractIdPModule implements IdPModule {
          * @param shouldReplace whether to replace when enabling
          * @param isOptional whether the resource is optional
          * @param isExecutable whether the resource is executable
+         * @param isWindows whether the resource should be processed on Windows
+         * @param isNonWindows whether the resource should be processed on non-Windows platforms
          */
         public BasicModuleResource(@Nonnull @NotEmpty final String src, @Nonnull final Path dest,
-                final boolean shouldReplace, final boolean isOptional, final boolean isExecutable) {
+                final boolean shouldReplace, final boolean isOptional, final boolean isExecutable,
+                final boolean isWindows, final boolean isNonWindows) {
             source = Constraint.isNotNull(StringSupport.trimOrNull(src), "Source cannot be null");
             destination = Constraint.isNotNull(dest, "Destination cannot be null");
             replace = shouldReplace;
             optional = isOptional;
             executable = isExecutable;
+            windows = isWindows;
+            nonwindows = isNonWindows;
         }
 
         /** {@inheritDoc} */
@@ -302,6 +330,16 @@ public abstract class AbstractIdPModule implements IdPModule {
         /** {@inheritDoc} */
         public boolean isExecutable() {
             return executable;
+        }
+
+        /** {@inheritDoc} */
+        public boolean isWindows() {
+            return windows;
+        }
+
+        /** {@inheritDoc} */
+        public boolean isNonWindows() {
+            return nonwindows;
         }
 
         /**
