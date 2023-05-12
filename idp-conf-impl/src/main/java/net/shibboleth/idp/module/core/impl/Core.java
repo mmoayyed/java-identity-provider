@@ -62,6 +62,8 @@ public final class Core extends CoreIdPModule {
         try {
             final Path home = Path.of(moduleContext.getInstallLocation());
             Files.createDirectories(home.resolve("conf"));
+            Files.createDirectories(home.resolve("credentials"));
+            Files.createDirectories(home.resolve("metadata"));
             Files.createDirectories(home.resolve("flows"));
             Files.createDirectories(home.resolve("messages"));
             Files.createDirectories(home.resolve("views"));
