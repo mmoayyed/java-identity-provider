@@ -32,8 +32,12 @@ import net.shibboleth.shared.component.InitializableComponent;
  */
 public interface InstallerProperties extends InitializableComponent {
 
+    /** Those modules which are "core". */
+    @Nonnull public static final Set<String> CORE_MODULES = CollectionSupport.setOf("idp.Core");
+
     /** Those modules enabled by default. */
-    @Nonnull public static final Set<String> DEFAULT_MODULES = CollectionSupport.setOf("idp.Core", "idp.authn.Password", "idp.admin.Hello");
+    @Nonnull public static final Set<String> DEFAULT_MODULES = CollectionSupport.setOf("idp.EditWebApp",
+            "idp.CommandLine" ,"idp.authn.Password", "idp.admin.Hello");
 
     /** Get where we are installing/updating/building the war.
      * @return the target directory
@@ -138,10 +142,19 @@ public interface InstallerProperties extends InitializableComponent {
      * @throws BuildException  if badness happens
      */
     @Nullable public Path getInitialEditWeb() throws BuildException;
+
     /** Get the modules to enable after first install.
      * @return the modules
      */
     @Nonnull public default Set<String> getModulesToEnable() {
         return DEFAULT_MODULES;
     }
+
+    /** Get the modules to enable before ant install.
+     * @return the modules
+     */
+    @Nonnull public default Set<String> getCoreModules() {
+        return CORE_MODULES;
+    }
+
 }

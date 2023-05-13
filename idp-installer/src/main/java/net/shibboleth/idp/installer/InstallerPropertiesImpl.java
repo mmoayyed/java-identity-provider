@@ -57,7 +57,7 @@ import net.shibboleth.shared.primitive.StringSupport;
 
 */
 public class InstallerPropertiesImpl extends AbstractInitializableComponent implements InstallerProperties {
-    
+
     /** The base directory, inherited and shared with ant. */
     public static final String ANT_BASE_DIR = Launcher.ANTHOME_PROPERTY;
 

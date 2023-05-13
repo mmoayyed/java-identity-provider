@@ -145,10 +145,6 @@ public final class CopyDistribution extends AbstractInitializableComponent {
             log.error("Source distribution {} not found.", src);
             throw new BuildException("Source distribution not found");
         }
-        distCopy(src, dist, "conf");
-        distCopy(src, dist, "flows");
-        distCopy(src, dist, "messages");
-        distCopy(src, dist, "views");
         distCopy(src, dist, "webapp");
     }
 
@@ -156,7 +152,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     protected void copyBinDocSystem() {
-        distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "bin", true);
+        distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "bin/lib", true);
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "doc");
         if (installState.isSystemPresent()) {
             distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "system");

@@ -39,7 +39,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.taskdefs.Copy;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -118,12 +117,10 @@ public class V4Install extends AbstractInitializableComponent {
         checkComponentActive();
         handleVersioning();
         checkPreConditions();
-
-        createUserDirectories();
+        enableCoreModules();
         keyManager.execute();
         populatePropertyFiles(keyManager.isCreatedSealer());
-        handleEditWebApp();
-        populateUserDirectories();
+        checkWebXml(installerProps.getTargetDir().resolve("edit-webapp").resolve("WEB-INF").resolve("web.xml"));
         enableModules();
         deleteSpuriousFiles();
         generateMetadata();
@@ -155,7 +152,7 @@ public class V4Install extends AbstractInitializableComponent {
             }
         }
         final String versionAsString = Version.getVersion();
-        final PluginVersion idpVersion = new PluginVersion(versionAsString!=null?versionAsString:"4.2.0");
+        final PluginVersion idpVersion = new PluginVersion(versionAsString!=null?versionAsString:"5.0.0");
         for (final IdPPlugin plugin: ServiceLoader.load(IdPPlugin.class, currentState.getInstalledPluginsLoader())) {
             final String pluginId = plugin.getPluginId();
             final PluginVersion pluginVersion = new PluginVersion(plugin);
@@ -207,22 +204,6 @@ public class V4Install extends AbstractInitializableComponent {
         }
     }
 
-    /** Create (if they do not exist) the user editable folders, suitable for
-     * later population during update or install.
-     * @throws BuildException if badness occurs
-     */
-    protected void createUserDirectories() throws BuildException {
-        final Path target = installerProps.getTargetDir();
-        InstallerSupport.createDirectory(target.resolve("conf"));
-        InstallerSupport.createDirectory(target.resolve("credentials"));
-        InstallerSupport.createDirectory(target.resolve("flows"));
-        InstallerSupport.createDirectory(target.resolve("logs"));
-        InstallerSupport.createDirectory(target.resolve("messages"));
-        InstallerSupport.createDirectory(target.resolve("metadata"));
-        InstallerSupport.createDirectory(target.resolve("views"));
-        InstallerSupport.createDirectory(target.resolve("war"));
-    }
-    
     /** Create the properties we need to replace when we merge idp.properties.
      * @param sealerCreated have we just created a sealer
      * @return what we need to replace
@@ -250,23 +231,18 @@ public class V4Install extends AbstractInitializableComponent {
                 "idp.attribute.resolver.LDAP.bindDNCredential",
                 "idp.persistentId.salt");
         final Path conf = installerProps.getTargetDir().resolve("conf");
-        final Path dstConf = installerProps.getTargetDir().resolve("dist").resolve("conf");
         if (!currentState.isIdPPropertiesPresent()) {
             // We have to populate it
             try {
                 final Path target = conf.resolve("idp.properties");
-                if (Files.exists(target)) {
-                    throw new BuildException("Internal error - idp.properties");
+                if (!Files.exists(target)) {
+                   throw new BuildException("idp.properties didnt exist.  Was irp.Core installed");
                 }
                 final Path mergePath = installerProps.getIdPMergeProperties();
-                final Path source = dstConf.resolve("idp.properties");
-                if (!Files.exists(source)) {
-                    throw new BuildException("missing idp.properties in dist");
-                }
                 final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments(doNotReplaceList);
                 final Properties replacements;
                 if (mergePath != null) {
-                    log.debug("Creating {} from {} and {}", target, source, mergePath);
+                    log.debug("Updating {} from ", target, mergePath);
                     replacements = new Properties();
                     final File mergeFile = mergePath.toFile();
                     if (!installerProps.isNoTidy()) {
@@ -277,9 +253,9 @@ public class V4Install extends AbstractInitializableComponent {
                     }
                 } else {
                     replacements = getIdPReplacements(sealerCreated);
-                    log.debug("Creating {} from {} and {}", target, source, replacements.keySet());
+                    log.debug("Updating {} from {}", target, replacements.keySet());
                 }
-                try (final FileInputStream stream = new FileInputStream(source.toFile())) {
+                try (final FileInputStream stream = new FileInputStream(target.toFile())) {
                     propertiesToReWrite.load(stream);
                 }
                 propertiesToReWrite.replaceProperties(replacements);
@@ -287,7 +263,7 @@ public class V4Install extends AbstractInitializableComponent {
                     propertiesToReWrite.store(stream);
                 }
             } catch (final IOException e) {
-                throw new BuildException("Failed to generate idp.properties", e);
+                throw new BuildException("Failed to regenerate idp.properties", e);
             }
         }
 
@@ -296,14 +272,10 @@ public class V4Install extends AbstractInitializableComponent {
             log.debug("Merging {} with ldap.properties", ldapMergePath);
             try {
                 final Path target = conf.resolve("ldap.properties");
-                if (Files.exists(target)) {
-                    throw new BuildException("Internal error - ldap.properties");
+                if (!Files.exists(target)) {
+                    throw new BuildException("Internal error - ldap.properties doesnt exist ?");
                 }
-                final Path source = dstConf.resolve("ldap.properties");
-                if (!Files.exists(source)) {
-                    throw new BuildException("missing ldap.properties in dist");
-                }
-                log.debug("Creating {} from {} and {}", target, source, ldapMergePath);
+                log.debug("Updating {} from {}", target, ldapMergePath);
                 final PropertiesWithComments propertiesToReWrite = new PropertiesWithComments(doNotReplaceList);
                 final Properties replacements = new Properties();
                 final File mergeFile = ldapMergePath.toFile();
@@ -313,7 +285,7 @@ public class V4Install extends AbstractInitializableComponent {
                 try (final FileInputStream stream = new FileInputStream(mergeFile)) {
                     replacements.load(stream);
                 }
-                try (final FileInputStream stream = new FileInputStream(source.toFile())) {
+                try (final FileInputStream stream = new FileInputStream(target.toFile())) {
                     propertiesToReWrite.load(stream);
                 }
                 propertiesToReWrite.replaceProperties(replacements);
@@ -321,7 +293,7 @@ public class V4Install extends AbstractInitializableComponent {
                     propertiesToReWrite.store(stream);
                 }
             } catch (final IOException e) {
-                throw new BuildException("Failed to generate ldap.properties", e);
+                throw new BuildException("Failed to regenerate ldap.properties", e);
             }
         }
 
@@ -374,42 +346,6 @@ public class V4Install extends AbstractInitializableComponent {
     }
     // CheckStyle: CyclomaticComplexity|MethodLength ON
 
-    /** Create and populate (if it does not exist) edit-webapp.
-     * @throws BuildException if badness occurs
-     */
-    protected void handleEditWebApp() throws BuildException {
-        final Path editWebApp = installerProps.getTargetDir().resolve("edit-webapp");
-        final Path css = editWebApp.resolve("css");
-        final Path images = editWebApp.resolve("images");
-        final Path distEditWebApp =  installerProps.getTargetDir().resolve("dist").resolve("webapp");
-
-        if (Files.exists(editWebApp)) {
-            checkWebXml(editWebApp.resolve("WEB-INF").resolve("web.xml"));
-            InstallerSupport.copyDirIfNotPresent(distEditWebApp.resolve("css"), css);
-            InstallerSupport.copyDirIfNotPresent(distEditWebApp.resolve("images"), images);
-            return;
-        }
-        final Path suppliedInput = installerProps.getInitialEditWeb();
-        if (suppliedInput != null) {
-            final Copy copy = InstallerSupport.getCopyTask(suppliedInput, editWebApp);
-            copy.setFailOnError(false);
-            copy.execute();
-        } else {
-            InstallerSupport.createDirectory(editWebApp);
-            InstallerSupport.createDirectory(css);
-            InstallerSupport.createDirectory(images);
-            InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF"));
-            InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF").resolve("lib"));
-            InstallerSupport.createDirectory(editWebApp.resolve("WEB-INF").resolve("classes"));
-            final Copy cssCopy = InstallerSupport.getCopyTask(distEditWebApp.resolve("css"), css);
-            cssCopy.setFailOnError(false);
-            cssCopy.execute();
-            final Copy imagesCopy = InstallerSupport.getCopyTask(distEditWebApp.resolve("images"), images);
-            imagesCopy.setFailOnError(false);
-            imagesCopy.execute();
-        }
-    }
-
     /** If it exists check web.xml for deprecated content.
      * @param webXml the path of the file
      * We do this in a very simplistic fashion at first
@@ -438,29 +374,45 @@ public class V4Install extends AbstractInitializableComponent {
         }
     }
 
-    /** Create and populate (if they not exist) the "user visible" folders.
-     * (conf, flows, messages, views, logs)
+    /** Enable Core modules if this is a new install
      * @throws BuildException if badness occurs
      */
-    protected void populateUserDirectories() throws BuildException {
-        final Path targetBase = installerProps.getTargetDir();
-        final Path distBase = targetBase.resolve("dist");
-        final Path preConfPath = installerProps.getConfPreOverlay();
-        if (preConfPath != null) {
-            InstallerSupport.copyDirIfNotPresent(preConfPath, targetBase.resolve("conf"));
+    protected void enableCoreModules() throws BuildException {
+        if (currentState.getInstalledVersion() != null) {
+            // Not an initial install
+            return;
         }
-        InstallerSupport.copyDirIfNotPresent(distBase.resolve("conf"), targetBase.resolve("conf"));
-        InstallerSupport.copyDirIfNotPresent(distBase.resolve("flows"), targetBase.resolve("flows"));
-        InstallerSupport.copyDirIfNotPresent(distBase.resolve("views"), targetBase.resolve("views"));
-        InstallerSupport.copyDirIfNotPresent(distBase.resolve("messages"), targetBase.resolve("messages"));
-        InstallerSupport.createDirectory(targetBase.resolve("logs"));
+        final String targetDir = installerProps.getTargetDir().toString();
+        assert targetDir!=null;
+        final ModuleContext moduleContext = new ModuleContext(targetDir);
+        final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
+
+        while (modules.hasNext()) {
+            try {
+                final IdPModule module = modules.next();
+                final String id = module.getId();
+                if (currentState.getInstalledVersion() == null && installerProps.getCoreModules().contains(id)) {
+                    try {
+                        module.enable(moduleContext);
+                    } catch (final ModuleException e) {
+                        log.error("Error performing initial enable on module {}", id, e);
+                        throw new BuildException(e);
+                    }
+                }
+            } catch (final ServiceConfigurationError e) {
+                log.error("Error loading modules", e);
+            }
+        }
     }
+
     
     /** ReEnable modules which were already enabled.
      * @throws BuildException if badness occurs
      */
     protected void enableModules() throws BuildException {
-        final ModuleContext moduleContext = new ModuleContext(installerProps.getTargetDir().toString());
+        final String targetDir = installerProps.getTargetDir().toString();
+        assert targetDir!=null;
+        final ModuleContext moduleContext = new ModuleContext(targetDir);
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
 
         while (modules.hasNext()) {
