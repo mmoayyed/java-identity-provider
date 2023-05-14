@@ -215,9 +215,7 @@ public class V4Install extends AbstractInitializableComponent {
         return result;
     }
 
-    /** Create (if they do not exist) propertyFiles. (idp.properties, ldap.properties).
-     * This *MUST* happen before {@link #populateUserDirectories()} or it will not be effective.
-     * Note that in V3 serice.properties and nameid.properties but we do not any more.
+    /** Modify the idp.properties and ldap.properties, then create secrets.properties.
      * @param sealerCreated have we just created a sealer
      * @throws BuildException if badness occurs
      */
