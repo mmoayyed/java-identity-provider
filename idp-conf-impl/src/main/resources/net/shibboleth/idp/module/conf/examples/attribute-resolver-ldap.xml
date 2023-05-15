@@ -59,6 +59,7 @@
         principal="%{idp.attribute.resolver.LDAP.bindDN}"
         principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
         useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}"
+        startTLSTimeout="%{idp.attribute.resolver.LDAP.startTLSTimeout}"
         connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
         trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}"
         responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}"

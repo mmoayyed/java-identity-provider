@@ -317,6 +317,9 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     /** Whether to use startTLS for connections. */
     private boolean useStartTLS;
 
+    /** Wait time for startTLS responses. */
+    private Duration startTLSTimeout;
+
     /** Whether to use the allow-all hostname verifier. */
     private boolean disableHostnameVerification;
 
@@ -477,6 +480,13 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
      */
     public void setUseStartTLS(final boolean b) {
         useStartTLS = b;
+    }
+
+    /** Set {@link #startTLSTimeout}.
+     * @param timeout what to set
+     */
+    public void setStartTLSTimeout(@Nullable final Duration timeout) {
+        startTLSTimeout = timeout;
     }
 
     /** Set {@link #disableHostnameVerification}.
@@ -790,6 +800,7 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         final ConnectionConfig config = new ConnectionConfig();
         config.setLdapUrl(ldapUrl);
         config.setUseStartTLS(useStartTLS);
+        config.setStartTLSTimeout(startTLSTimeout);
         config.setConnectTimeout(connectTimeout);
         config.setResponseTimeout(responseTimeout);
         switch (connectionStrategyType) {
@@ -1023,7 +1034,8 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     public String toString() {
         return MoreObjects.toStringHelper(this).add("authenticatorType", authenticatorType).add("trustType", trustType)
                 .add("connectionStrategyType", connectionStrategyType).add("ldapUrl", ldapUrl)
-                .add("useStartTLS", useStartTLS).add("disableHostnameVerification", disableHostnameVerification)
+                .add("useStartTLS", useStartTLS).add("startTLSTimeout", startTLSTimeout)
+                .add("disableHostnameVerification", disableHostnameVerification)
                 .add("connectTimeout", connectTimeout).add("responseTimeout", responseTimeout)
                 .add("trustCertificatesCredentialConfig", trustCertificatesCredentialConfig)
                 .add("truststoreCredentialConfig", truststoreCredentialConfig).add("disablePooling", disablePooling)

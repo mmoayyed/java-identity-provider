@@ -86,6 +86,7 @@ public class LDAPAuthenticationFactoryBeanTest {
         factoryBean.setTrustType("disabled");
         factoryBean.setConnectionStrategyType("ACTIVE_PASSIVE");
         factoryBean.setUseStartTLS(false);
+        factoryBean.setStartTLSTimeout(Duration.ofSeconds(3));
         factoryBean.setConnectTimeout(Duration.ofSeconds(3));
         factoryBean.setResponseTimeout(Duration.ofSeconds(3));
         factoryBean.setDisablePooling(false);
