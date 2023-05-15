@@ -35,7 +35,7 @@ public class CoreIdPModule extends PropertyDrivenIdPModule {
 
     /** Documentation base URL. */
     @Nonnull @NotEmpty
-    public static final String MODULE_URL_BASE = "https://wiki.shibboleth.net/confluence/display/IDP4";
+    public static final String MODULE_URL_BASE = "https://shibboleth.atlassian.net/wiki/spaces/IDP5";
     
     /**
      * Constructor.
