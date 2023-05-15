@@ -201,6 +201,11 @@
                 <value>idp.nameid.saml2.legacyGenerator</value>
                 <value>idp.service.attribute.registry.namingRegistry</value>
                 <value>idp.service.attribute.resolver.suppressDisplayInfo</value>
+                <value>idp.httpclient.memorycaching.maxCacheEntries</value>
+                <value>idp.httpclient.memorycaching.maxCacheEntrySize</value>
+                <value>idp.httpclient.filecaching.maxCacheEntries</value>
+                <value>idp.httpclient.filecaching.maxCacheEntrySize</value>
+                <value>idp.httpclient.filecaching.cacheDirectory</value>
             </list>
         </property>
     </bean>
