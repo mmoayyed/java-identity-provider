@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.InitializableComponent;
 
@@ -135,25 +137,27 @@ public interface InstallerProperties extends InitializableComponent {
      * @return the path or null if non specified.
      * @throws BuildException  if badness happens
      */
+    @Deprecated
     @Nullable public Path getConfPreOverlay() throws BuildException;
 
     /** Get a path to use to do the initial edit-webapp populate.
      * @return the path or null if non specified.
      * @throws BuildException  if badness happens
      */
+    @Deprecated
     @Nullable public Path getInitialEditWeb() throws BuildException;
 
     /** Get the modules to enable after first install.
      * @return the modules
      */
-    @Nonnull public default Set<String> getModulesToEnable() {
+    @Nonnull  @NotLive @Unmodifiable public default Set<String> getModulesToEnable() {
         return DEFAULT_MODULES;
     }
 
     /** Get the modules to enable before ant install.
      * @return the modules
      */
-    @Nonnull public default Set<String> getCoreModules() {
+    @Nonnull  @NotLive @Unmodifiable public default Set<String> getCoreModules() {
         return CORE_MODULES;
     }
 

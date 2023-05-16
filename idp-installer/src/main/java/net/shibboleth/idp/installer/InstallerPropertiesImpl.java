@@ -45,6 +45,8 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.installer.ant.impl.PasswordHandler;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -536,7 +538,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Set<String> getModulesToEnable() {
+    @Override @Nonnull  @NotLive @Unmodifiable public Set<String> getModulesToEnable() {
         String prop = StringSupport.trimOrNull(installerProperties.getProperty(INITIAL_INSTALL_MODULES));
         if (prop == null) {
             return InstallerProperties.DEFAULT_MODULES;
@@ -546,15 +548,15 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             prop = prop.substring(1);
         }
         final String[] modules = prop.split(",");
+        assert modules != null;
         if (!additive) {
-            final Set<String> result = Set.copyOf(Arrays.asList(modules));
-            assert result != null;
+            final Set<String> result = CollectionSupport.copyToSet(CollectionSupport.arrayAsList(modules));
             return result;
         }
         final Set<String> result = new HashSet<>(modules.length + InstallerProperties.DEFAULT_MODULES.size());
         result.addAll(InstallerProperties.DEFAULT_MODULES);
         result.addAll(Arrays.asList(modules));
-        return result;
+        return CollectionSupport.copyToSet(result);
     }
 
     /** {@inheritDoc}. */
@@ -572,15 +574,6 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     /** {@inheritDoc}. default is {@value #DEFAULT_KEY_SIZE}. */
     @Override public int getKeySize() {
         return keySize;
-    }
-
-    /** Get the directory specified as the property as a File, or null if it doesn't exist.
-     * @param propName the name to lookup;
-     * @return null if the property is not provided a {@link File} otherwise
-     * @throws BuildException if the property is supplied but the file doesn't exist.
-     */
-    protected Path getMergeDir(final String propName) throws BuildException {
-        return getMergePath(propName, true);
     }
 
     /** Get the file specified as the property as a File, or null if it doesn't exist.
@@ -637,6 +630,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
 
     /** {@inheritDoc}. */
+    @Deprecated
     @Override public Path getConfPreOverlay() throws BuildException {
         return getMergeFile(CONF_PRE_OVERLAY);
     }
