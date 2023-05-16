@@ -160,26 +160,6 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                    <!-- Unpack idp-conf to assembly directory. -->
-                    <execution>
-                        <id>unpack-idp-conf</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>idp-conf</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <outputDirectory>${idp.assemblyDirectory}</outputDirectory>
-                                    <excludes>**/META-INF/**,**/logs/*</excludes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
                     <!-- Copy runtime dependencies to bin\lib directory. -->
                     <execution>
                         <id>copy-runtime-dependencies</id>
