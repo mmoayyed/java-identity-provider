@@ -109,16 +109,13 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     private void findPreviousVersion() throws ComponentInitializationException {
         final Path conf = targetDir.resolve("conf");
         final Path currentInstall = targetDir.resolve("dist").resolve(InstallerSupport.VERSION_NAME);
-        final Path rp = conf.resolve("relying-party.xml");
+        final Path rp = conf.resolve("idp.properties");
         if (!Files.exists(rp)) {
             // No relying party, no install
-            log.debug("No relying-party.xml file detetected at {} .  Inferring a clean install", rp);
+            log.debug("No idp.properties file detetected at {} .  Inferring a clean install", rp);
             oldVersion = null;
-        } else if (!Files.exists(conf.resolve("idp.properties"))) {
-            throw new ComponentInitializationException("V2 Installation detected");
         } else if (!Files.exists(currentInstall)) {
-            log.debug("No {} file detetected.  Inferring a V3 install", currentInstall);
-            oldVersion= V3_VERSION;
+            throw new ComponentInitializationException("V3 Installation detected");
         } else {
             final Properties vers = new Properties(1);
             try {
