@@ -26,6 +26,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.slf4j.Logger;
 
+import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.UninitializedComponentException;
@@ -45,13 +46,13 @@ public final class CopyDistribution extends AbstractInitializableComponent {
     @Nonnull private final InstallerProperties installerProps;
 
     /** The state of the current install. */
-    @Nonnull private final CurrentInstallState installState;
+    @Nonnull private final CurrentInstallStateImpl installState;
 
     /** Constructor.
      * @param props The environment for the work.
      * @param state  Where we are right now.
      */
-    public CopyDistribution(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState state) {
+    public CopyDistribution(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallStateImpl state) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }

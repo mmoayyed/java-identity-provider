@@ -47,6 +47,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.Version;
+import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.installer.plugin.impl.PluginState;
 import net.shibboleth.idp.module.IdPModule;
@@ -77,7 +78,7 @@ public class V4Install extends AbstractInitializableComponent {
     @Nonnull private final InstallerProperties installerProps;
 
     /** Current Install. */
-    @Nonnull private final CurrentInstallState currentState;
+    @Nonnull private final CurrentInstallStateImpl currentState;
 
     /** Key Manager. */
     @Nonnull private final KeyManagement keyManager;
@@ -89,7 +90,7 @@ public class V4Install extends AbstractInitializableComponent {
      * @param props The properties to drive the installs.
      * @param installState The current install.
      */
-    public V4Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
+    public V4Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallStateImpl installState) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }
@@ -338,8 +339,6 @@ public class V4Install extends AbstractInitializableComponent {
             } catch (final IOException e) {
                 throw new BuildException("Failed to generate secrets.properties", e);
             }
-        } else if (CurrentInstallState.V3_VERSION.equals(currentState.getInstalledVersion())) {
-            log.debug("Detected a V3 to V4 update.");
         }
     }
     // CheckStyle: CyclomaticComplexity|MethodLength ON
@@ -537,7 +536,7 @@ public class V4Install extends AbstractInitializableComponent {
         @Nonnull private final InstallerProperties installerProps;
 
         /** Current Install. */
-        @Nonnull private final CurrentInstallState currentState;
+        @Nonnull private final CurrentInstallStateImpl currentState;
         
         /** Did we create idp-signing.*?*/
         private boolean createdSigning;
@@ -556,7 +555,7 @@ public class V4Install extends AbstractInitializableComponent {
          * @param installState - about where we installing into.
          */
         protected KeyManagement(@Nonnull final InstallerProperties props,
-                @Nonnull final CurrentInstallState installState) {
+                @Nonnull final CurrentInstallStateImpl installState) {
             if (!props.isInitialized()) {
                 throw new UninitializedComponentException("Installer Properties not Initialized");
             }

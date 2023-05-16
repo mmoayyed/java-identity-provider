@@ -47,7 +47,6 @@ import javax.annotation.Nullable;
 import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.installer.CurrentInstallState;
 import net.shibboleth.idp.installer.InstallerProperties;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.module.IdPModule;
@@ -60,7 +59,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** Tells the installers about the current install state. */
-public final class CurrentInstallStateImpl extends AbstractInitializableComponent implements CurrentInstallState {
+public final class CurrentInstallStateImpl extends AbstractInitializableComponent {
 
     /** Class logger. */
     @Nonnull private final Logger log = InstallationLogger.getLogger(CurrentInstallStateImpl.class);
@@ -180,7 +179,9 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
         if (getInstalledVersion() == null) {
             return;
         }
-        final ModuleContext moduleContext = new ModuleContext(targetDir.toString());
+        final String td = targetDir.toString();
+        assert td != null;
+        final ModuleContext moduleContext = new ModuleContext(td);
         enabledModules = new HashSet<>();
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
 
