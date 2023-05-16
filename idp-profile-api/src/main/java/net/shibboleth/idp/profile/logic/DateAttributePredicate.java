@@ -32,6 +32,7 @@ import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
  * @deprecated
  */
 @Deprecated(since="5.0.0", forRemoval=true)
+@SuppressWarnings("null")
 public class DateAttributePredicate extends net.shibboleth.profile.context.logic.DateAttributePredicate {
 
     /**
@@ -42,7 +43,7 @@ public class DateAttributePredicate extends net.shibboleth.profile.context.logic
     public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute) {
         super(attribute);
         DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
-                net.shibboleth.profile.context.logic.DateAttributePredicate.class.getName());
+                "Parent bean 'shibboleth.Conditions.DateAttribute'");
     }
 
     /**
@@ -56,7 +57,7 @@ public class DateAttributePredicate extends net.shibboleth.profile.context.logic
             @Nonnull @ParameterName(name="formatter") final DateTimeFormatter formatter) {
         super(attribute, formatter);
         DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
-                net.shibboleth.profile.context.logic.DateAttributePredicate.class.getName());
+                "Parent bean 'shibboleth.Conditions.DateAttribute'");
     }
 
     /**
@@ -70,7 +71,7 @@ public class DateAttributePredicate extends net.shibboleth.profile.context.logic
             @Nonnull @NotEmpty @ParameterName(name="formatString") final String formatString) {
         super(attribute, formatString);
         DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
-                net.shibboleth.profile.context.logic.DateAttributePredicate.class.getName());
+                "Parent bean 'shibboleth.Conditions.DateAttribute'");
     }
     
 }

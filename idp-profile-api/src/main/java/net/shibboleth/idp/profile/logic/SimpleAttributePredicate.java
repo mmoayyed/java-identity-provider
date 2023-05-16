@@ -29,9 +29,10 @@ import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 public class SimpleAttributePredicate extends net.shibboleth.profile.context.logic.SimpleAttributePredicate {
     
     /** Constructor. */
+    @SuppressWarnings("null")
     public SimpleAttributePredicate() {
         DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
-                net.shibboleth.profile.context.logic.SimpleAttributePredicate.class.getName());
+                "Parent bean 'shibboleth.Conditions.SimpleAttribute'");
     }
 
 }

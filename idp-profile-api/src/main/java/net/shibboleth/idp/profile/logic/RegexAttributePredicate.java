@@ -29,9 +29,10 @@ import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 public class RegexAttributePredicate extends net.shibboleth.profile.context.logic.RegexAttributePredicate {
 
     /** Constructor. */
+    @SuppressWarnings("null")
     public RegexAttributePredicate() {
         DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
-                net.shibboleth.profile.context.logic.RegexAttributePredicate.class.getName());
+                "Parent bean 'shibboleth.Conditions.RegexAttribute'");
     }
 
 }

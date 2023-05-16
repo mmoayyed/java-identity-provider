@@ -29,9 +29,10 @@ import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 public class LoopDetectionPredicate extends net.shibboleth.profile.context.logic.LoopDetectionPredicate {
     
     /** Constructor. */
+    @SuppressWarnings("null")
     public LoopDetectionPredicate() {
         DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
-                net.shibboleth.profile.context.logic.LoopDetectionPredicate.class.getName());
+                "Parent bean 'shibboleth.Conditions.LoopDetection'");
     }
 
 }

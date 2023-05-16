@@ -29,9 +29,10 @@ import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 public class DynamicAttributePredicate extends net.shibboleth.profile.context.logic.DynamicAttributePredicate {
 
     /** Constructor. */
+    @SuppressWarnings("null")
     public DynamicAttributePredicate() {
         DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
-                net.shibboleth.profile.context.logic.DynamicAttributePredicate.class.getName());
+                "Parent bean 'shibboleth.Conditions.DynamicAttribute'");
     }
 
 }
