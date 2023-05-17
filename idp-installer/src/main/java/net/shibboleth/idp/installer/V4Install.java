@@ -75,7 +75,7 @@ public class V4Install extends AbstractInitializableComponent {
     private final Logger log = InstallationLogger.getLogger(V4Install.class);
 
     /** Installer Properties. */
-    @Nonnull private final InstallerProperties installerProps;
+    @Nonnull private final InstallerPropertiesImpl installerProps;
 
     /** Current Install. */
     @Nonnull private final CurrentInstallState currentState;
@@ -90,7 +90,7 @@ public class V4Install extends AbstractInitializableComponent {
      * @param props The properties to drive the installs.
      * @param installState The current install.
      */
-    public V4Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
+    public V4Install(@Nonnull final InstallerPropertiesImpl props, @Nonnull final CurrentInstallState installState) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }
@@ -533,7 +533,7 @@ public class V4Install extends AbstractInitializableComponent {
     private class KeyManagement extends AbstractInitializableComponent {
 
         /** Properties for the job. */
-        @Nonnull private final InstallerProperties installerProps;
+        @Nonnull private final InstallerPropertiesImpl installerProps;
 
         /** Current Install. */
         @Nonnull private final CurrentInstallState currentState;
@@ -546,7 +546,7 @@ public class V4Install extends AbstractInitializableComponent {
 
         /** Did we create idp-backchannel.*?*/
         private boolean createdBackchannel;
-
+        
         /** Did we create sealer.*?*/
         private boolean createdSealer;
 
@@ -554,7 +554,7 @@ public class V4Install extends AbstractInitializableComponent {
          * @param props The properties to drive the installs. 
          * @param installState - about where we installing into.
          */
-        protected KeyManagement(@Nonnull final InstallerProperties props,
+        protected KeyManagement(@Nonnull final InstallerPropertiesImpl props,
                 @Nonnull final CurrentInstallState installState) {
             if (!props.isInitialized()) {
                 throw new UninitializedComponentException("Installer Properties not Initialized");

@@ -44,7 +44,7 @@ public class Test {
         System.setProperty(InstallerPropertiesImpl.SEALER_PASSWORD, "p1");
         System.setProperty(InstallerPropertiesImpl.HOST_NAME, "machine.org.uk");
 
-        final InstallerProperties ip = new InstallerPropertiesImpl(false);
+        final InstallerPropertiesImpl ip = new InstallerPropertiesImpl(false);
         ip.initialize();
         final CurrentInstallState is = new CurrentInstallState(ip);
         is.initialize();

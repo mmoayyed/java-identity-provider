@@ -43,7 +43,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
     private final Logger log = InstallationLogger.getLogger(CopyDistribution.class);
 
     /** Properties for the job. */
-    @Nonnull private final InstallerProperties installerProps;
+    @Nonnull private final InstallerPropertiesImpl installerProps;
 
     /** The state of the current install. */
     @Nonnull private final CurrentInstallState installState;
@@ -52,7 +52,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @param props The environment for the work.
      * @param state  Where we are right now.
      */
-    public CopyDistribution(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState state) {
+    public CopyDistribution(@Nonnull final InstallerPropertiesImpl props, @Nonnull final CurrentInstallState state) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }

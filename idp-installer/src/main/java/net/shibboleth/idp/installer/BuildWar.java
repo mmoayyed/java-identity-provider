@@ -61,7 +61,7 @@ public final class BuildWar extends AbstractInitializableComponent {
      * @param props The environment for the work.
      * @param installState  Where we are right now.
      */
-    public BuildWar(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
+    public BuildWar(@Nonnull final InstallerPropertiesImpl props, @Nonnull final CurrentInstallState installState) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not initialized");
         }

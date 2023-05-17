@@ -53,12 +53,12 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.primitive.StringSupport;
 
-/** Class implement {@link InstallerProperties} with properties/UI driven values.
+/** Class which encapsulated all the properties/UI driven configuration of an install.
 
  NOTE Updated to this properties should be reflected in the "PropertyDriverInstallation" wiki page."/
 
 */
-public class InstallerPropertiesImpl extends AbstractInitializableComponent implements InstallerProperties {
+public class InstallerPropertiesImpl extends AbstractInitializableComponent {
 
     /** The base directory, inherited and shared with ant. */
     public static final String ANT_BASE_DIR = Launcher.ANTHOME_PROPERTY;
@@ -74,12 +74,6 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
 
     /** The LDAP Password (usually associated with a username in ldap.properties). */
     public static final String LDAP_PASSWORD = "idp.LDAP.credential";
-
-    /** The name of a directory to overlay "under" the distribution conf. */
-    public static final String CONF_PRE_OVERLAY = "idp.conf.preoverlay";
-
-    /** The name of a directory to use to populate the initial webapp. */
-    public static final String INITIAL_EDIT_WEBAPP = "idp.initial.edit-webapp";
 
     /** Where to install to.  Default is basedir */
     public static final String TARGET_DIR = "idp.target.dir";
@@ -131,7 +125,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     public static final int DEFAULT_KEY_SIZE = 3072;
 
     /** Class logger. */
-    @Nonnull private final Logger log = InstallationLogger.getLogger(InstallerProperties.class);
+    @Nonnull private final Logger log = InstallationLogger.getLogger(InstallerPropertiesImpl.class);
 
     /** The base directory. */
     @NonnullAfterInit private Path baseDir;
@@ -186,6 +180,13 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
 
     /** Input handler from the prompting. */
     private final InputHandler inputHandler;
+
+    /** Those modules which are "core". */
+    @Nonnull public static final Set<String> CORE_MODULES = CollectionSupport.setOf("idp.Core");
+
+    /** Those modules enabled by default. */
+    @Nonnull public static final Set<String> DEFAULT_MODULES = CollectionSupport.setOf("idp.EditWebApp",
+            "idp.CommandLine" ,"idp.authn.Password", "idp.admin.Hello");
 
     /**
      * Constructor.
@@ -346,8 +347,10 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return result;
     }
 
-    /** {@inheritDoc}
+    /** Get where we are installing/updating/building the war.
      * This is slightly complicated because the default depends on what we are doing.
+     * @return the target directory
+     * @throws BuildException if something goes awry.
      */
     @Nonnull public Path getTargetDir() throws BuildException {
         checkComponentActive();
@@ -368,13 +371,15 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return td;
     }
 
-    /**  {@inheritDoc} */
+    /** Where is the install coming from?
+     * @return the source directory
+     */
     @Nullable public Path getSourceDir() {
         return srcDir;
     }
 
-    /**  {@inheritDoc}
-     * Defaults to information pulled from {{@link #getHostName()}.
+    /** Get the EntityId for this install.
+     * @return the  name.
      */
     @Nonnull public String getEntityID() {
         String result = entityID;
@@ -384,7 +389,8 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return result;
     }
 
-    /** {@inheritDoc} */
+    /** Does the user want us to *not* tidy up.
+     * @return do we not tidy up?*/
     public boolean isNoTidy() {
         return !tidy;
     }
@@ -453,8 +459,9 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
     }
     // CheckStyle: CyclomaticComplexity ON
 
-    /**  {@inheritDoc}
+    /** Get the host name for this install.
      * Defaults to information pulled from the network.
+     * @return the host name.
      */
     @Nonnull public String getHostName() {
         String result = hostname;
@@ -464,8 +471,10 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return result;
     }
 
-    /** {@inheritDoc} */
-    @Override @Nonnull public String getCredentialsKeyFileMode() {
+    /** Mode to set on all files in credentials.
+    * @return the mode
+    */
+    @Nonnull public String getCredentialsKeyFileMode() {
         String result = credentialsKeyFileMode;
         if (result != null) {
             return result;
@@ -475,13 +484,16 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return result;
     }
 
-    /** {@inheritDoc} */
-    @Override @Nullable public String getCredentialsGroup() {
+    /** Group to set on all files in credentials and conf.
+    * @return the mode or null if none to be set
+    */
+    @Nullable public String getCredentialsGroup() {
         return installerProperties.getProperty(GROUP_CONF_CREDENTIALS);
     }
 
-    /** {@inheritDoc} */
-    @Override
+    /** Do we set the mode?
+    * @return do we the mode
+    */
     public boolean isSetGroupAndMode() {
         return setGroupAndMode;
     }
@@ -500,8 +512,10 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return "localdomain";
     }
 
-    /** {@inheritDoc}. */
-    @Override @Nonnull public String getScope() {
+    /** Get the scope for this installation.
+     * @return The scope.
+     */
+    @Nonnull public String getScope() {
         String result = scope;
         if (result  == null) {
             result = scope = getValue(SCOPE, "Attribute Scope:", () -> defaultScope());
@@ -509,18 +523,26 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return result;
     }
 
-    /** {@inheritDoc}. */
-    @Override @Nullable public String getLDAPPassword() throws BuildException {
+    /** Get the LDAP password iff one was provided.  DO NOT PROMPT
+    *
+    * @return the password if provided by a properties
+    * @throws BuildException  if badness happens
+    */
+    @Nullable public String getLDAPPassword() throws BuildException {
         return installerProperties.getProperty(LDAP_PASSWORD);
     }
 
-    /** {@inheritDoc}. */
-    @Override @Nonnull public String getSubjectAltName() {
+    /** Get the SubjectAltName for the certificates.
+     * @return the  SubjectAltName
+     */
+    @Nonnull public String getSubjectAltName() {
         return "https://" + getHostName() + "/idp/shibboleth";
     }
 
-    /** {@inheritDoc}. */
-    @Override  @Nonnull public String getKeyStorePassword() {
+    /** Get the password for the keystore for this installation.
+     * @return the password.
+     */
+    @Nonnull public String getKeyStorePassword() {
         @SuppressWarnings("null") @Nonnull String result = keyStorePassword;
         if (keyStorePassword == null) {
             result = keyStorePassword = getPassword(KEY_STORE_PASSWORD, "Backchannel PKCS12 Password:");
@@ -528,8 +550,10 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return result;
     }
 
-    /** {@inheritDoc}. */
-    @Override @Nonnull public String getSealerPassword() {
+    /** Get the password for the sealer for this installation.
+     * @return the password.
+     */
+    @Nonnull public String getSealerPassword() {
         String result = sealerPassword;
         if (result == null) {
             result = sealerPassword = getPassword(SEALER_PASSWORD, "Cookie Encryption Key Password:");
@@ -537,11 +561,13 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return result;
     }
 
-    /** {@inheritDoc} */
-    @Override @Nonnull  @NotLive @Unmodifiable public Set<String> getModulesToEnable() {
+    /** Get the modules to enable after first install.
+     * @return the modules
+     */
+    @Nonnull  @NotLive @Unmodifiable public Set<String> getModulesToEnable() {
         String prop = StringSupport.trimOrNull(installerProperties.getProperty(INITIAL_INSTALL_MODULES));
         if (prop == null) {
-            return InstallerProperties.DEFAULT_MODULES;
+            return InstallerPropertiesImpl.DEFAULT_MODULES;
         }
         final boolean additive = prop.startsWith("+");
         if (additive) {
@@ -553,13 +579,23 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
             final Set<String> result = CollectionSupport.copyToSet(CollectionSupport.arrayAsList(modules));
             return result;
         }
-        final Set<String> result = new HashSet<>(modules.length + InstallerProperties.DEFAULT_MODULES.size());
-        result.addAll(InstallerProperties.DEFAULT_MODULES);
+        final Set<String> result = new HashSet<>(modules.length + InstallerPropertiesImpl.DEFAULT_MODULES.size());
+        result.addAll(InstallerPropertiesImpl.DEFAULT_MODULES);
         result.addAll(Arrays.asList(modules));
         return CollectionSupport.copyToSet(result);
     }
+    
+    /** Get the modules to enable before ant install.
+     * @return the modules
+     */
+    @Nonnull  @NotLive @Unmodifiable public Set<String> getCoreModules() {
+        return InstallerPropertiesImpl.CORE_MODULES;
+    }
 
-    /** {@inheritDoc}. */
+
+    /** Get the alias for the sealer key.
+     * @return the alias
+     */
     @Nonnull public String getSealerAlias() {
         String result = sealerAlias;
         if (result == null) {
@@ -571,8 +607,10 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return result;
     }
 
-    /** {@inheritDoc}. default is {@value #DEFAULT_KEY_SIZE}. */
-    @Override public int getKeySize() {
+    /** Get the key size for signing, encryption and backchannel.
+     * @return the keysize
+     *  default is {@value #DEFAULT_KEY_SIZE}. */
+    public int getKeySize() {
         return keySize;
     }
 
@@ -619,24 +657,22 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent impl
         return result;
     }
 
-    /** {@inheritDoc}. */
-    @Override public Path getIdPMergeProperties() throws BuildException {
+    /** Get the a file to merge with idp.properties or null.
+    *
+    * @return the file or null if it none required.
+    * @throws BuildException if badness happens
+    */
+    public Path getIdPMergeProperties() throws BuildException {
         return getMergeFile(IDP_PROPERTIES_MERGE);
     }
 
-    /** {@inheritDoc}. */
-    @Override public Path getLDAPMergeProperties() throws BuildException {
+    /** Get the a file to merge with ldap.properties or null.
+    *
+    * @return the path or null if it none required.
+    * @throws BuildException  if badness happens
+    */
+    public Path getLDAPMergeProperties() throws BuildException {
         return getMergeFile(LDAP_PROPERTIES_MERGE);
     }
 
-    /** {@inheritDoc}. */
-    @Deprecated
-    @Override public Path getConfPreOverlay() throws BuildException {
-        return getMergeFile(CONF_PRE_OVERLAY);
-    }
-
-    /** {@inheritDoc}. */
-    @Override public Path getInitialEditWeb() throws BuildException {
-        return getMergeFile(INITIAL_EDIT_WEBAPP);
-    }
 }
