@@ -29,17 +29,15 @@ import javax.annotation.Nullable;
 
 import org.springframework.core.io.Resource;
 
-import net.shibboleth.idp.installer.MetadataGeneratorParameters;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /**
- * Implementation of {@link MetadataGeneratorParameters}.
+ * Parameters to metadata generation
  */
-public class MetadataGeneratorParametersImpl extends AbstractInitializableComponent
-    implements MetadataGeneratorParameters {
+public class MetadataGeneratorParametersImpl extends AbstractInitializableComponent {
 
     /**
      * The file with the certificate the IDP uses to encrypt.
@@ -97,7 +95,11 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
         }
     }
 
-    /**  {@inheritDoc} */
+    /**
+     * Get the (mutli-line) string representations of the encryption certs.
+     *
+     * @return Returns the encryption cert or null if none available.
+     */
     @Nullable public List<String> getEncryptionCert() {
         return encryptionCerts;
     }
@@ -116,7 +118,11 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
         }
     }
 
-    /**  {@inheritDoc} */
+    /**
+     * Get the (mutli-line) string representation of the signing cert.
+     *
+     * @return Returns the signing cert or null if none available.
+     */
     @Nullable public List<String> getSigningCert() {
         return signingCerts;
     }
@@ -134,7 +140,11 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
         }
     }
 
-    /**  {@inheritDoc} */
+    /**
+     * Get the (mutli-line)string representation of the back channel cert.
+     *
+     * @return Returns the back channel cert or null if non available.
+     */
     @Nullable public List<String> getBackchannelCert() {
         return backChannelCerts;
     }
@@ -196,7 +206,11 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
         }
     }
 
-    /**  {@inheritDoc} */
+    /**
+     * Returns the entityID.
+     *
+     * @return the entityID.
+     */
     @Nonnull @NotEmpty public String getEntityID() {
         assert entityID != null;
         return entityID;
@@ -211,7 +225,11 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
         entityID = id;
     }
 
-    /**  {@inheritDoc} */
+    /**
+     * Returns the dnsName (for use in endpoints).
+     *
+     * @return the dnsname.
+     */
     @Nonnull @NotEmpty public String getDnsName() {
         assert dnsName != null;
         return dnsName;
@@ -226,7 +244,11 @@ public class MetadataGeneratorParametersImpl extends AbstractInitializableCompon
         dnsName = name;
     }
 
-    /**  {@inheritDoc} */
+    /**
+     * Returns the scope used.
+     *
+     * @return the scope.
+     */
     public String getScope() {
         return scope;
     }

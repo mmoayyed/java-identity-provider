@@ -54,8 +54,6 @@ import org.opensaml.xmlsec.signature.X509Certificate;
 import org.opensaml.xmlsec.signature.X509Data;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 
-import net.shibboleth.idp.installer.MetadataGenerator;
-import net.shibboleth.idp.installer.MetadataGeneratorParameters;
 import net.shibboleth.idp.saml.xmlobject.ExtensionsConstants;
 import net.shibboleth.idp.saml.xmlobject.Scope;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
@@ -71,7 +69,7 @@ import net.shibboleth.shared.xml.XMLConstants;
  * This class gathers information which it then uses to generate IdP Metadata. Loosely based on the SP metadata
  * generator, and the V2 metadata.
  */
-public class MetadataGeneratorImpl extends AbstractInitializableComponent implements MetadataGenerator {
+public class MetadataGeneratorImpl extends AbstractInitializableComponent {
 
     /**
      * The end points we understand.
@@ -166,7 +164,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
     private File output;
 
     /** The parameters. */
-    private MetadataGeneratorParameters params;
+    private MetadataGeneratorParametersImpl params;
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
@@ -180,14 +178,18 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         endpoints = EnumSet.allOf(Endpoints.class);
     }
 
-    /** {@inheritDoc} */
+    /** Set where to write the metadata.
+     * @param file what to set.
+     */
     public void setOutput(@Nonnull final File file) {
         checkSetterPreconditions();
         output = Constraint.isNotNull(file, "provided file must be nonnull");
     }
 
-    /** {@inheritDoc} */
-    public void setParameters(@Nonnull final MetadataGeneratorParameters what) {
+    /** Set a description of the IdP.
+     * @param what what to set.  This component does not have to be initialized.
+     */
+    public void setParameters(@Nonnull final MetadataGeneratorParametersImpl what) {
         checkSetterPreconditions();
         params = Constraint.isNotNull(what, "provided params must be nonnull");
     }
@@ -272,7 +274,9 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent implem
         saml2LogoutCommented = asComment;
     }
 
-    /** {@inheritDoc} */
+    /** Generate the metadata given the parameters.
+     * @throws BuildException if badness occurs.
+     */
     public void generate() throws BuildException {
         checkComponentActive();
         try {
