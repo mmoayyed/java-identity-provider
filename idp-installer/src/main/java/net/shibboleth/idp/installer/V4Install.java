@@ -49,6 +49,7 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.impl.CurrentInstallState;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
+import net.shibboleth.idp.installer.impl.InstallerProperties;
 import net.shibboleth.idp.installer.plugin.impl.PluginState;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
@@ -75,7 +76,7 @@ public class V4Install extends AbstractInitializableComponent {
     private final Logger log = InstallationLogger.getLogger(V4Install.class);
 
     /** Installer Properties. */
-    @Nonnull private final InstallerPropertiesImpl installerProps;
+    @Nonnull private final InstallerProperties installerProps;
 
     /** Current Install. */
     @Nonnull private final CurrentInstallState currentState;
@@ -90,7 +91,7 @@ public class V4Install extends AbstractInitializableComponent {
      * @param props The properties to drive the installs.
      * @param installState The current install.
      */
-    public V4Install(@Nonnull final InstallerPropertiesImpl props, @Nonnull final CurrentInstallState installState) {
+    public V4Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }
@@ -533,7 +534,7 @@ public class V4Install extends AbstractInitializableComponent {
     private class KeyManagement extends AbstractInitializableComponent {
 
         /** Properties for the job. */
-        @Nonnull private final InstallerPropertiesImpl installerProps;
+        @Nonnull private final InstallerProperties installerProps;
 
         /** Current Install. */
         @Nonnull private final CurrentInstallState currentState;
@@ -554,7 +555,7 @@ public class V4Install extends AbstractInitializableComponent {
          * @param props The properties to drive the installs. 
          * @param installState - about where we installing into.
          */
-        protected KeyManagement(@Nonnull final InstallerPropertiesImpl props,
+        protected KeyManagement(@Nonnull final InstallerProperties props,
                 @Nonnull final CurrentInstallState installState) {
             if (!props.isInitialized()) {
                 throw new UninitializedComponentException("Installer Properties not Initialized");

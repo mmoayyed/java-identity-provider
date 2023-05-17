@@ -20,6 +20,7 @@ package net.shibboleth.idp.installer;
 import java.io.IOException;
 
 import net.shibboleth.idp.installer.impl.CurrentInstallState;
+import net.shibboleth.idp.installer.impl.InstallerProperties;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.shared.component.ComponentInitializationException;
 /**
@@ -36,15 +37,15 @@ public class Test {
     public static void main(String[] args) throws IOException, ComponentInitializationException {
 
         //System.setProperty(InstallerPropertiesImpl.TARGET_DIR,"H:\\Downloads\\idp");
-        System.setProperty(InstallerPropertiesImpl.SOURCE_DIR,
+        System.setProperty(InstallerProperties.SOURCE_DIR,
                 "h:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-5.0.0-SNAPSHOT");
-        System.setProperty(InstallerPropertiesImpl.ANT_BASE_DIR,
+        System.setProperty(InstallerProperties.ANT_BASE_DIR,
                 "h:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-5.0.0-SNAPSHOT\\bin");
-        System.setProperty(InstallerPropertiesImpl.KEY_STORE_PASSWORD, "p1");
-        System.setProperty(InstallerPropertiesImpl.SEALER_PASSWORD, "p1");
-        System.setProperty(InstallerPropertiesImpl.HOST_NAME, "machine.org.uk");
+        System.setProperty(InstallerProperties.KEY_STORE_PASSWORD, "p1");
+        System.setProperty(InstallerProperties.SEALER_PASSWORD, "p1");
+        System.setProperty(InstallerProperties.HOST_NAME, "machine.org.uk");
 
-        final InstallerPropertiesImpl ip = new InstallerPropertiesImpl(false);
+        final InstallerProperties ip = new InstallerProperties(false);
         ip.initialize();
         final CurrentInstallState is = new CurrentInstallState(ip);
         is.initialize();

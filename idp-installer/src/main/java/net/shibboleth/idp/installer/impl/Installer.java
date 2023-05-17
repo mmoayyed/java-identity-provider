@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.CopyDistribution;
-import net.shibboleth.idp.installer.InstallerPropertiesImpl;
 import net.shibboleth.idp.installer.V4Install;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
@@ -54,7 +53,7 @@ public final class Installer {
             log.error("Parameter must be \"install\", \"install-nocopy\" or \"build-war\" was \"{}\"", args[0]);
             return;
         }
-        final InstallerPropertiesImpl ip = new InstallerPropertiesImpl(!copyInstall);
+        final InstallerProperties ip = new InstallerProperties(!copyInstall);
         ip.initialize();
         final CurrentInstallState is = new CurrentInstallState(ip);
         is.initialize();

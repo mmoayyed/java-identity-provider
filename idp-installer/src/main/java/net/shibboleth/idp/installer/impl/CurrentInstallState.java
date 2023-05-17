@@ -47,7 +47,6 @@ import javax.annotation.Nullable;
 import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.installer.InstallerPropertiesImpl;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
@@ -97,7 +96,7 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
     /** Constructor.
      * @param installerProps the installer situation.
      */
-    public CurrentInstallState(final InstallerPropertiesImpl installerProps) {
+    public CurrentInstallState(final InstallerProperties installerProps) {
         targetDir = installerProps.getTargetDir();
         enabledModules = CollectionSupport.emptySet();
     }

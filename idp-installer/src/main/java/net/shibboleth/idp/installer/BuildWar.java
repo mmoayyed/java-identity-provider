@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.impl.CurrentInstallState;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
+import net.shibboleth.idp.installer.impl.InstallerProperties;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.UninitializedComponentException;
@@ -61,7 +62,7 @@ public final class BuildWar extends AbstractInitializableComponent {
      * @param props The environment for the work.
      * @param installState  Where we are right now.
      */
-    public BuildWar(@Nonnull final InstallerPropertiesImpl props, @Nonnull final CurrentInstallState installState) {
+    public BuildWar(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not initialized");
         }

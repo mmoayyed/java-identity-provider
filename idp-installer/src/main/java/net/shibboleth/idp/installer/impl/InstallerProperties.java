@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer;
+package net.shibboleth.idp.installer.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +43,6 @@ import org.apache.tools.ant.launch.Launcher;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.installer.ant.impl.PasswordHandler;
-import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -58,7 +57,7 @@ import net.shibboleth.shared.primitive.StringSupport;
  NOTE Updated to this properties should be reflected in the "PropertyDriverInstallation" wiki page."/
 
 */
-public class InstallerPropertiesImpl extends AbstractInitializableComponent {
+public class InstallerProperties extends AbstractInitializableComponent {
 
     /** The base directory, inherited and shared with ant. */
     public static final String ANT_BASE_DIR = Launcher.ANTHOME_PROPERTY;
@@ -125,7 +124,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent {
     public static final int DEFAULT_KEY_SIZE = 3072;
 
     /** Class logger. */
-    @Nonnull private final Logger log = InstallationLogger.getLogger(InstallerPropertiesImpl.class);
+    @Nonnull private final Logger log = InstallationLogger.getLogger(InstallerProperties.class);
 
     /** The base directory. */
     @NonnullAfterInit private Path baseDir;
@@ -192,7 +191,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent {
      * Constructor.
      * @param copiedDistribution Has the distribution been copied? If no we don't need the source dir.
      */
-    public InstallerPropertiesImpl(final boolean copiedDistribution) {
+    public InstallerProperties(final boolean copiedDistribution) {
         needSourceDir = !copiedDistribution;
         inputHandler = getInputHandler();
         inheritedProperties = CollectionSupport.emptyMap();
@@ -567,7 +566,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent {
     @Nonnull  @NotLive @Unmodifiable public Set<String> getModulesToEnable() {
         String prop = StringSupport.trimOrNull(installerProperties.getProperty(INITIAL_INSTALL_MODULES));
         if (prop == null) {
-            return InstallerPropertiesImpl.DEFAULT_MODULES;
+            return InstallerProperties.DEFAULT_MODULES;
         }
         final boolean additive = prop.startsWith("+");
         if (additive) {
@@ -579,8 +578,8 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent {
             final Set<String> result = CollectionSupport.copyToSet(CollectionSupport.arrayAsList(modules));
             return result;
         }
-        final Set<String> result = new HashSet<>(modules.length + InstallerPropertiesImpl.DEFAULT_MODULES.size());
-        result.addAll(InstallerPropertiesImpl.DEFAULT_MODULES);
+        final Set<String> result = new HashSet<>(modules.length + InstallerProperties.DEFAULT_MODULES.size());
+        result.addAll(InstallerProperties.DEFAULT_MODULES);
         result.addAll(Arrays.asList(modules));
         return CollectionSupport.copyToSet(result);
     }
@@ -589,7 +588,7 @@ public class InstallerPropertiesImpl extends AbstractInitializableComponent {
      * @return the modules
      */
     @Nonnull  @NotLive @Unmodifiable public Set<String> getCoreModules() {
-        return InstallerPropertiesImpl.CORE_MODULES;
+        return InstallerProperties.CORE_MODULES;
     }
 
 

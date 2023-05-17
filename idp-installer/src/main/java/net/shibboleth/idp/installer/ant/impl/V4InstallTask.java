@@ -28,9 +28,9 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.CopyDistribution;
-import net.shibboleth.idp.installer.InstallerPropertiesImpl;
 import net.shibboleth.idp.installer.V4Install;
 import net.shibboleth.idp.installer.impl.CurrentInstallState;
+import net.shibboleth.idp.installer.impl.InstallerProperties;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -67,7 +67,7 @@ public class V4InstallTask extends Task {
             throw new BuildException("Invalid parameter to task");
         }
         try {
-            final InstallerPropertiesImpl ip = new InstallerPropertiesImpl(!copyInstall);
+            final InstallerProperties ip = new InstallerProperties(!copyInstall);
 
             // Grab the ant properties and plug in.  Note Java V2 to V11 conversion.
             ip.setInheritedProperties(

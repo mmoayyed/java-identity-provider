@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.installer.impl.CurrentInstallState;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
+import net.shibboleth.idp.installer.impl.InstallerProperties;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.UninitializedComponentException;
 import net.shibboleth.shared.logic.Constraint;
@@ -43,7 +44,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
     private final Logger log = InstallationLogger.getLogger(CopyDistribution.class);
 
     /** Properties for the job. */
-    @Nonnull private final InstallerPropertiesImpl installerProps;
+    @Nonnull private final InstallerProperties installerProps;
 
     /** The state of the current install. */
     @Nonnull private final CurrentInstallState installState;
@@ -52,7 +53,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @param props The environment for the work.
      * @param state  Where we are right now.
      */
-    public CopyDistribution(@Nonnull final InstallerPropertiesImpl props, @Nonnull final CurrentInstallState state) {
+    public CopyDistribution(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState state) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }
