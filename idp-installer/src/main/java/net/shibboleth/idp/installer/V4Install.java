@@ -47,7 +47,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.Version;
-import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
+import net.shibboleth.idp.installer.impl.CurrentInstallState;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.installer.plugin.impl.PluginState;
 import net.shibboleth.idp.module.IdPModule;
@@ -78,7 +78,7 @@ public class V4Install extends AbstractInitializableComponent {
     @Nonnull private final InstallerProperties installerProps;
 
     /** Current Install. */
-    @Nonnull private final CurrentInstallStateImpl currentState;
+    @Nonnull private final CurrentInstallState currentState;
 
     /** Key Manager. */
     @Nonnull private final KeyManagement keyManager;
@@ -90,7 +90,7 @@ public class V4Install extends AbstractInitializableComponent {
      * @param props The properties to drive the installs.
      * @param installState The current install.
      */
-    public V4Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallStateImpl installState) {
+    public V4Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }
@@ -536,7 +536,7 @@ public class V4Install extends AbstractInitializableComponent {
         @Nonnull private final InstallerProperties installerProps;
 
         /** Current Install. */
-        @Nonnull private final CurrentInstallStateImpl currentState;
+        @Nonnull private final CurrentInstallState currentState;
         
         /** Did we create idp-signing.*?*/
         private boolean createdSigning;
@@ -555,7 +555,7 @@ public class V4Install extends AbstractInitializableComponent {
          * @param installState - about where we installing into.
          */
         protected KeyManagement(@Nonnull final InstallerProperties props,
-                @Nonnull final CurrentInstallStateImpl installState) {
+                @Nonnull final CurrentInstallState installState) {
             if (!props.isInitialized()) {
                 throw new UninitializedComponentException("Installer Properties not Initialized");
             }

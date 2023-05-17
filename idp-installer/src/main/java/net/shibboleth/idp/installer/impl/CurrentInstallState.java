@@ -59,10 +59,10 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** Tells the installers about the current install state. */
-public final class CurrentInstallStateImpl extends AbstractInitializableComponent {
+public final class CurrentInstallState extends AbstractInitializableComponent {
 
     /** Class logger. */
-    @Nonnull private final Logger log = InstallationLogger.getLogger(CurrentInstallStateImpl.class);
+    @Nonnull private final Logger log = InstallationLogger.getLogger(CurrentInstallState.class);
 
     /** Where we are installing to. */
     @Nonnull private final Path targetDir;
@@ -97,7 +97,7 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
     /** Constructor.
      * @param installerProps the installer situation.
      */
-    public CurrentInstallStateImpl(final InstallerProperties installerProps) {
+    public CurrentInstallState(final InstallerProperties installerProps) {
         targetDir = installerProps.getTargetDir();
         enabledModules = CollectionSupport.emptySet();
     }
@@ -120,13 +120,13 @@ public final class CurrentInstallStateImpl extends AbstractInitializableComponen
             try {
                 vers.load(new FileInputStream(currentInstall.toFile()));
             } catch (final IOException e) {
-                LoggerFactory.getLogger(CurrentInstallStateImpl.class).
+                LoggerFactory.getLogger(CurrentInstallState.class).
                     error("Could not load {}", currentInstall.toAbsolutePath(), e);
                 throw new ComponentInitializationException(e);
             }
             oldVersion = vers.getProperty(InstallerSupport.VERSION_NAME);
             if (null == oldVersion) {
-                LoggerFactory.getLogger(CurrentInstallStateImpl.class).
+                LoggerFactory.getLogger(CurrentInstallState.class).
                 error("Failed loading {}", currentInstall.toAbsolutePath());
                 throw new ComponentInitializationException("File " + InstallerSupport.VERSION_NAME +
                         " did not contain property " + InstallerSupport.VERSION_NAME);

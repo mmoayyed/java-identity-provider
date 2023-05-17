@@ -56,7 +56,7 @@ public final class Installer {
         }
         final InstallerPropertiesImpl ip = new InstallerPropertiesImpl(!copyInstall);
         ip.initialize();
-        final CurrentInstallStateImpl is = new CurrentInstallStateImpl(ip);
+        final CurrentInstallState is = new CurrentInstallState(ip);
         is.initialize();
 
         if (copyInstall) {

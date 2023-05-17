@@ -19,7 +19,7 @@ package net.shibboleth.idp.installer;
 
 import java.io.IOException;
 
-import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
+import net.shibboleth.idp.installer.impl.CurrentInstallState;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.shared.component.ComponentInitializationException;
 /**
@@ -46,7 +46,7 @@ public class Test {
 
         final InstallerProperties ip = new InstallerPropertiesImpl(false);
         ip.initialize();
-        final CurrentInstallStateImpl is = new CurrentInstallStateImpl(ip);
+        final CurrentInstallState is = new CurrentInstallState(ip);
         is.initialize();
 
         final CopyDistribution dist = new CopyDistribution(ip, is);

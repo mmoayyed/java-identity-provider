@@ -30,7 +30,7 @@ import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.CopyDistribution;
 import net.shibboleth.idp.installer.InstallerPropertiesImpl;
 import net.shibboleth.idp.installer.V4Install;
-import net.shibboleth.idp.installer.impl.CurrentInstallStateImpl;
+import net.shibboleth.idp.installer.impl.CurrentInstallState;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -81,9 +81,9 @@ public class V4InstallTask extends Task {
                             e-> (String) e.getValue(),
                             CollectionSupport.warningMergeFunction("InstallerProperties", true))));
 
-            final CurrentInstallStateImpl is;
+            final CurrentInstallState is;
             ip.initialize();
-            is = new CurrentInstallStateImpl(ip);
+            is = new CurrentInstallState(ip);
             is.initialize();
             if (copyInstall) {
                 final CopyDistribution dist = new CopyDistribution(ip, is);
