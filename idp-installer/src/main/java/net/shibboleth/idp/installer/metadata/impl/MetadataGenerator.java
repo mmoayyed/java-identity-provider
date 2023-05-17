@@ -69,7 +69,7 @@ import net.shibboleth.shared.xml.XMLConstants;
  * This class gathers information which it then uses to generate IdP Metadata. Loosely based on the SP metadata
  * generator, and the V2 metadata.
  */
-public class MetadataGeneratorImpl extends AbstractInitializableComponent {
+public class MetadataGenerator extends AbstractInitializableComponent {
 
     /**
      * The end points we understand.
@@ -164,7 +164,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent {
     private File output;
 
     /** The parameters. */
-    private MetadataGeneratorParametersImpl params;
+    private MetadataGeneratorParameters params;
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
@@ -189,7 +189,7 @@ public class MetadataGeneratorImpl extends AbstractInitializableComponent {
     /** Set a description of the IdP.
      * @param what what to set.  This component does not have to be initialized.
      */
-    public void setParameters(@Nonnull final MetadataGeneratorParametersImpl what) {
+    public void setParameters(@Nonnull final MetadataGeneratorParameters what) {
         checkSetterPreconditions();
         params = Constraint.isNotNull(what, "provided params must be nonnull");
     }

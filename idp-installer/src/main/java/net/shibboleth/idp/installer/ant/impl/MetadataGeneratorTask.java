@@ -30,8 +30,8 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
-import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParametersImpl;
+import net.shibboleth.idp.installer.metadata.impl.MetadataGenerator;
+import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParameters;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.spring.util.ApplicationContextBuilder;
@@ -157,7 +157,7 @@ public class MetadataGeneratorTask extends Task {
             throw new BuildException("DNS Name - output file not provided");
         }
         try {
-            final MetadataGeneratorParametersImpl parameters;
+            final MetadataGeneratorParameters parameters;
 
             final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator-ant.xml");
 
@@ -167,13 +167,13 @@ public class MetadataGeneratorTask extends Task {
                     .setContextInitializer(new Initializer())
                     .build();
             
-            parameters = context.getBean("IdPConfiguration", MetadataGeneratorParametersImpl.class);
+            parameters = context.getBean("IdPConfiguration", MetadataGeneratorParameters.class);
 
             parameters.setBackchannelCert(backchannelCert);
             parameters.setDnsName(dns);
             parameters.initialize();
 
-            final MetadataGeneratorImpl generator = new MetadataGeneratorImpl();
+            final MetadataGenerator generator = new MetadataGenerator();
             generator.setSAML2AttributeQueryCommented(saml2AttributeQueryCommented);
             generator.setSAML2LogoutCommented(saml2LogoutCommented);
             generator.setParameters(parameters);

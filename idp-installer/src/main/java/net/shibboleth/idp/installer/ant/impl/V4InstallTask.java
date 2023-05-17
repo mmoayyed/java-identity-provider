@@ -31,7 +31,7 @@ import net.shibboleth.idp.installer.impl.CopyDistribution;
 import net.shibboleth.idp.installer.impl.CurrentInstallState;
 import net.shibboleth.idp.installer.impl.InstallerProperties;
 import net.shibboleth.idp.installer.impl.V5Install;
-import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
+import net.shibboleth.idp.installer.metadata.impl.MetadataGenerator;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -93,7 +93,7 @@ public class V4InstallTask extends Task {
 
             if (doInstall) {
                 final V5Install inst = new V5Install(ip, is);
-                inst.setMetadataGenerator(new MetadataGeneratorImpl());
+                inst.setMetadataGenerator(new MetadataGenerator());
                 inst.initialize();
                 inst.execute();
             }

@@ -49,8 +49,8 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.PropertiesWithComments;
-import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
-import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParametersImpl;
+import net.shibboleth.idp.installer.metadata.impl.MetadataGenerator;
+import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParameters;
 import net.shibboleth.idp.installer.plugin.impl.PluginState;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
@@ -86,7 +86,7 @@ public class V5Install extends AbstractInitializableComponent {
     @Nonnull private final KeyManagement keyManager;
 
     /** What will generate metadata? */
-    private MetadataGeneratorImpl metadataGenerator;
+    private MetadataGenerator metadataGenerator;
 
     /** Constructor.
      * @param props The properties to drive the installs.
@@ -130,13 +130,13 @@ public class V5Install extends AbstractInitializableComponent {
         reprotect();
     }
 
-    /** Set the {@link MetadataGeneratorImpl}.
+    /** Set the {@link MetadataGenerator}.
      * @param what what to set.  This need not have been initialized yet
-     * {@link MetadataGeneratorImpl#setOutput(File)} and
-     * {@link MetadataGeneratorImpl#setParameters(MetadataGeneratorParametersImpl)} are called
+     * {@link MetadataGenerator#setOutput(File)} and
+     * {@link MetadataGenerator#setParameters(MetadataGeneratorParameters)} are called
      * prior to initialization.
      */
-    public void setMetadataGenerator(final MetadataGeneratorImpl what) {
+    public void setMetadataGenerator(final MetadataGenerator what) {
         checkSetterPreconditions();
         metadataGenerator = what;
     }
@@ -476,13 +476,13 @@ public class V5Install extends AbstractInitializableComponent {
         }
         final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
         final GenericApplicationContext context = new ApplicationContextBuilder()
-                .setName(MetadataGeneratorImpl.class.getName())
+                .setName(MetadataGenerator.class.getName())
                 .setServiceConfigurations(CollectionSupport.singletonList(resource))
                 .setContextInitializer(new Initializer())
                 .build();
 
-        final MetadataGeneratorParametersImpl parameters = context.getBean("IdPConfiguration",
-                MetadataGeneratorParametersImpl.class);
+        final MetadataGeneratorParameters parameters = context.getBean("IdPConfiguration",
+                MetadataGeneratorParameters.class);
 
         log.info("Creating Metadata to {}", metadataFile);
         log.debug("Parameters {}", parameters);

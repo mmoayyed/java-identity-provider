@@ -37,7 +37,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 /**
  * Parameters to metadata generation
  */
-public class MetadataGeneratorParametersImpl extends AbstractInitializableComponent {
+public class MetadataGeneratorParameters extends AbstractInitializableComponent {
 
     /**
      * The file with the certificate the IDP uses to encrypt.
