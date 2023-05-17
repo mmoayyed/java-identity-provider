@@ -19,9 +19,6 @@ package net.shibboleth.idp.installer.impl;
 
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.installer.BuildWar;
-import net.shibboleth.idp.installer.CopyDistribution;
-import net.shibboleth.idp.installer.V4Install;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /**
@@ -64,7 +61,7 @@ public final class Installer {
         }
 
         if (doInstall) {
-            final V4Install inst = new V4Install(ip, is);
+            final V5Install inst = new V5Install(ip, is);
             inst.execute();
         }
 

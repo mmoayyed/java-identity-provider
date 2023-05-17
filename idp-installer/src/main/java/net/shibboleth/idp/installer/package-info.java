@@ -16,12 +16,6 @@
  */
 /**
  * Classes available for installation.
- * <b>NOTE</b> that only {@link net.shibboleth.idp.installer.InstallerSupport}
- * is suitable for programmatic extension.  All other classes are either for use
- * only by this package  (i.e. {@link net.shibboleth.idp.installer.PropertiesWithComments})
- * or are final and have limited public methods (the three classes that do the heavy lifting
- * {@link net.shibboleth.idp.installer.V4Install}, {@link net.shibboleth.idp.installer.CopyDistribution},
- * {@link net.shibboleth.idp.installer.BuildWar}
  */
 
 package net.shibboleth.idp.installer;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer;
+package net.shibboleth.idp.installer.impl;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -47,9 +47,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.Version;
-import net.shibboleth.idp.installer.impl.CurrentInstallState;
-import net.shibboleth.idp.installer.impl.InstallationLogger;
-import net.shibboleth.idp.installer.impl.InstallerProperties;
+import net.shibboleth.idp.installer.InstallerSupport;
+import net.shibboleth.idp.installer.MetadataGenerator;
+import net.shibboleth.idp.installer.MetadataGeneratorParameters;
+import net.shibboleth.idp.installer.PropertiesWithComments;
 import net.shibboleth.idp.installer.plugin.impl.PluginState;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
@@ -70,10 +71,10 @@ import net.shibboleth.shared.spring.util.ApplicationContextBuilder;
 
 /** Code to do most of the V4 Install.
  */
-public class V4Install extends AbstractInitializableComponent {
+public class V5Install extends AbstractInitializableComponent {
 
     /** Log. */
-    private final Logger log = InstallationLogger.getLogger(V4Install.class);
+    private final Logger log = InstallationLogger.getLogger(V5Install.class);
 
     /** Installer Properties. */
     @Nonnull private final InstallerProperties installerProps;
@@ -91,7 +92,7 @@ public class V4Install extends AbstractInitializableComponent {
      * @param props The properties to drive the installs.
      * @param installState The current install.
      */
-    public V4Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
+    public V5Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }

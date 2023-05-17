@@ -26,11 +26,11 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.installer.BuildWar;
-import net.shibboleth.idp.installer.CopyDistribution;
-import net.shibboleth.idp.installer.V4Install;
+import net.shibboleth.idp.installer.impl.BuildWar;
+import net.shibboleth.idp.installer.impl.CopyDistribution;
 import net.shibboleth.idp.installer.impl.CurrentInstallState;
 import net.shibboleth.idp.installer.impl.InstallerProperties;
+import net.shibboleth.idp.installer.impl.V5Install;
 import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorImpl;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -92,7 +92,7 @@ public class V4InstallTask extends Task {
             }
 
             if (doInstall) {
-                final V4Install inst = new V4Install(ip, is);
+                final V5Install inst = new V5Install(ip, is);
                 inst.setMetadataGenerator(new MetadataGeneratorImpl());
                 inst.initialize();
                 inst.execute();

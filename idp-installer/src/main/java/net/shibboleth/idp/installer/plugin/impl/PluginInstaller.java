@@ -65,9 +65,9 @@ import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.Version;
-import net.shibboleth.idp.installer.BuildWar;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.ProgressReportingOutputStream;
+import net.shibboleth.idp.installer.impl.BuildWar;
 import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.idp.module.IdPModule;

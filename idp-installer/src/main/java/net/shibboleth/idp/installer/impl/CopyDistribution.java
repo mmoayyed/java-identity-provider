@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer;
+package net.shibboleth.idp.installer.impl;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,9 +26,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.installer.impl.CurrentInstallState;
-import net.shibboleth.idp.installer.impl.InstallationLogger;
-import net.shibboleth.idp.installer.impl.InstallerProperties;
+import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.UninitializedComponentException;
 import net.shibboleth.shared.logic.Constraint;
