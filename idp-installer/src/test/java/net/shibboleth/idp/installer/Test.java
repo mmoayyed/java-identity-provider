@@ -62,7 +62,7 @@ public class Test {
         inst.initialize();
         inst.execute();
 
-        final BuildWar bw = new BuildWar(ip, is);
+        final BuildWar bw = new BuildWar(ip.getTargetDir());
         bw.initialize();
         bw.execute();
     }

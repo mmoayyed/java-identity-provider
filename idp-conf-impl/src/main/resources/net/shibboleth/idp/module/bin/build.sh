@@ -4,4 +4,5 @@ declare LOCATION
 
 LOCATION=$(dirname $0)
 
-$LOCATION/ant.sh "$@" build-war
+$LOCATION/runclass.sh net.shibboleth.idp.installer.impl.IdPBuildWar --ansi --home "$LOCATION/.." "$@"
+

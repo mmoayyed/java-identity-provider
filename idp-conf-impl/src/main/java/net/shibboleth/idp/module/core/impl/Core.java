@@ -17,12 +17,15 @@
 
 package net.shibboleth.idp.module.core.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+
+import org.springframework.util.ResourceUtils;
 
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
@@ -60,13 +63,28 @@ public final class Core extends CoreIdPModule {
         
         // First we need to ensure the basic directory layout is in place. On upgrade this won't have any effect.
         try {
-            final Path home = Path.of(moduleContext.getInstallLocation());
-            Files.createDirectories(home.resolve("conf"));
-            Files.createDirectories(home.resolve("credentials"));
-            Files.createDirectories(home.resolve("metadata"));
-            Files.createDirectories(home.resolve("flows"));
-            Files.createDirectories(home.resolve("messages"));
-            Files.createDirectories(home.resolve("views"));
+            if (!moduleContext.getInstallLocation().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                final Path home = Path.of(moduleContext.getInstallLocation());
+                Files.createDirectories(home.resolve("conf"));
+                Files.createDirectories(home.resolve("credentials"));
+                Files.createDirectories(home.resolve("metadata"));
+                Files.createDirectories(home.resolve("flows"));
+                Files.createDirectories(home.resolve("messages"));
+                Files.createDirectories(home.resolve("views"));
+                // Tidy up files we no longer need in V5
+                Path antFile = home.resolve("bin").resolve("build.xml");
+                if (Files.exists(antFile)) {
+                    Files.delete(antFile);
+                }
+                antFile = home.resolve("bin").resolve("ant.bat");
+                if (Files.exists(antFile)) {
+                    Files.delete(antFile);
+                }
+                antFile = home.resolve("bin").resolve("ant.sh");
+                if (Files.exists(antFile)) {
+                    Files.delete(antFile);
+                }
+            }
         } catch (final Exception e) {
             throw new ModuleException(e);
         }

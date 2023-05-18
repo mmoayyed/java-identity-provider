@@ -98,7 +98,7 @@ public class V4InstallTask extends Task {
                 inst.execute();
             }
 
-            final BuildWar bw = new BuildWar(ip, is);
+            final BuildWar bw = new BuildWar(ip.getTargetDir());
             bw.initialize();
             bw.execute();
         } catch (final ComponentInitializationException e) {

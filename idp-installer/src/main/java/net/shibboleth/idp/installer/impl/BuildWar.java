@@ -32,8 +32,8 @@ import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.component.UninitializedComponentException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Code to build the war file during an install or on request.
@@ -51,24 +51,10 @@ import net.shibboleth.shared.logic.Constraint;
 public final class BuildWar extends AbstractInitializableComponent {
 
     /** Log. */
-    private final Logger log = InstallationLogger.getLogger(BuildWar.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BuildWar.class);
 
     /** Location of the install for the job. */
     private final Path targetDir;
-
-    /** Constructor.
-     * @param props The environment for the work.
-     * @param installState  Where we are right now.
-     */
-    public BuildWar(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
-        if (!props.isInitialized()) {
-            throw new UninitializedComponentException("Installer Properties not initialized");
-        }
-        if (!installState.isInitialized()) {
-            throw new UninitializedComponentException("Current Install Srare not initialized");
-        }
-        targetDir = props.getTargetDir();
-    }
 
     /** Constructor.
      * @param idpHome Where to install to.
@@ -76,7 +62,6 @@ public final class BuildWar extends AbstractInitializableComponent {
     public BuildWar(final Path idpHome) {
         targetDir = Constraint.isNotNull(idpHome, "IdPHome should not be null");
     }
-
 
     /** Method to do a single overlay into webapp.
      *
