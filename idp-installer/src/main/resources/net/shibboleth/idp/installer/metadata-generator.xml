@@ -16,7 +16,7 @@
     <context:property-placeholder />
 
 	<bean id="IdPConfiguration"
-		class="net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParametersImpl"
+		class="net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParameters"
 		p:encryptionCertResource="%{idp.encryption.cert}"
         p:signingCertResource="%{idp.signing.cert}"
         p:backchannelCertResource="%{idp.backchannel.cert}"
