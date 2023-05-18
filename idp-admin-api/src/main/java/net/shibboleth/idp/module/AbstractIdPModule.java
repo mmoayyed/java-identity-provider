@@ -141,7 +141,11 @@ public abstract class AbstractIdPModule implements IdPModule {
                 }
             } else {
                 final Path resolved = Path.of(moduleContext.getInstallLocation()).resolve(resource.getDestination());
-                if (!resolved.toFile().exists()) {
+                if (SystemUtils.IS_OS_WINDOWS && resource.isWindows() && !resolved.toFile().exists()) {
+                    log.debug("Module {}: resource destination {} missing, module is disabled", getId(), resolved);
+                    return false;
+                }
+                if (!SystemUtils.IS_OS_WINDOWS && resource.isNonWindows() && !resolved.toFile().exists()) {
                     log.debug("Module {}: resource destination {} missing, module is disabled", getId(), resolved);
                     return false;
                 }
@@ -175,10 +179,14 @@ public abstract class AbstractIdPModule implements IdPModule {
                 if (SystemUtils.IS_OS_WINDOWS) {
                     if (resource.isWindows()) {
                         results.put(resource, ((BasicModuleResource) resource).enable(moduleContext));
+                    } else {
+                        log.debug("Module {}: skipping non-Windows resource {}", getId(), resource);
                     }
                 } else {
                     if (resource.isNonWindows()) {
                         results.put(resource, ((BasicModuleResource) resource).enable(moduleContext));
+                    } else {
+                        log.debug("Module {}: skipping Windows resource {}", getId(), resource);
                     }
                 }
             }
