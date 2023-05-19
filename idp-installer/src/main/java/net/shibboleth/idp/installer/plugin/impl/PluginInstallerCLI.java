@@ -26,6 +26,8 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -268,21 +270,24 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             log.error("Could not interrogate plugin {}", plugin.getPluginId(), e);
             return;
         }
-        final Map<PluginVersion, VersionInfo> versions = state.getPluginInfo().getAvailableVersions();
+        final Map<PluginVersion, VersionInfo> versionMap = state.getPluginInfo().getAvailableVersions();
+        final List<PluginVersion> versionList = new ArrayList<>(versionMap.keySet());
+        versionList.sort(null);
         outOrLog("\tVersions ");
-        for (final Entry<PluginVersion, VersionInfo> entry  : versions.entrySet()) {
+        for (final PluginVersion version:versionList) {
             final String downLoadDetails;
-            if (state.getPluginInfo().getUpdateBaseName(entry.getKey()) == null ||
-                state.getPluginInfo().getUpdateURL(entry.getKey())==null ) {
+            if (state.getPluginInfo().getUpdateBaseName(version) == null ||
+                state.getPluginInfo().getUpdateURL(version)==null ) {
                 downLoadDetails = " - No download available";
             } else {
                 downLoadDetails = "";
             }
+            final VersionInfo info = versionMap.get(version);
             outOrLog(String.format("\t%s:\tMin=%s\tMax=%s\tSupport level: %s%s",
-                    entry.getKey(),
-                    entry.getValue().getMinSupported(),
-                    entry.getValue().getMaxSupported(),
-                    entry.getValue().getSupportLevel(),
+                    version,
+                    info.getMinSupported(),
+                    info.getMaxSupported(),
+                    info.getSupportLevel(),
                     downLoadDetails));
         }
     }
