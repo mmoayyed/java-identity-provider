@@ -57,6 +57,7 @@ import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 import net.shibboleth.idp.plugin.PluginVersion;
@@ -67,7 +68,7 @@ import net.shibboleth.idp.plugin.PluginVersion;
 public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<PluginInstallerArguments> {
 
     /** Class logger. */
-    @Nonnull final private Logger log = InstallationLogger.getLogger(PluginInstallerCLI.class);
+    private Logger log;
 
     /** A Plugin Installer to use. */
     @Nullable private PluginInstaller installer;
@@ -85,7 +86,11 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Logger getLogger() {
-        return log;
+        Logger theLog = log;
+        if (theLog == null) {
+            theLog = log = LoggerFactory.getLogger(PluginInstallerCLI.class);
+        }
+        return theLog;
     }
 
     /** {@inheritDoc} */
