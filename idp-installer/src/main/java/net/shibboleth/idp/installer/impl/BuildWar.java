@@ -54,12 +54,12 @@ public final class BuildWar extends AbstractInitializableComponent {
     @Nonnull private final Logger log = LoggerFactory.getLogger(BuildWar.class);
 
     /** Location of the install for the job. */
-    private final Path targetDir;
+    @Nonnull private final Path targetDir;
 
     /** Constructor.
      * @param idpHome Where to install to.
      */
-    public BuildWar(final Path idpHome) {
+    public BuildWar(@Nonnull final Path idpHome) {
         targetDir = Constraint.isNotNull(idpHome, "IdPHome should not be null");
     }
 

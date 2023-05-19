@@ -93,7 +93,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
      *
      * @param what The idpHome to set.
      */
-    public void setIdpHome(final Path what) {
+    public void setIdpHome(@Nonnull final Path what) {
         checkSetterPreconditions();
         idpHome = what;
     }
@@ -114,7 +114,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
      * {@link PGPPublicKeyRingCollection#PGPPublicKeyRingCollection(InputStream,
      *   org.bouncycastle.openpgp.operator.KeyFingerPrintCalculator)}
      */
-    private static PGPPublicKeyRingCollection loadStoreFrom(final InputStream in) throws IOException {
+    private static PGPPublicKeyRingCollection loadStoreFrom(@Nonnull final InputStream in) throws IOException {
         try (final InputStream decoded = PGPUtil.getDecoderStream(in)) {
            final ArrayList<PGPPublicKeyRing> listr = new ArrayList<>();
 
@@ -143,6 +143,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
      */
     protected void loadStore() throws IOException {
         try (final InputStream in = Files.newInputStream(store)) {
+            assert in != null;
             keyRings = loadStoreFrom(in);
         }
     }
@@ -205,8 +206,8 @@ import net.shibboleth.shared.primitive.LoggerFactory;
      * @throws IOException if the load or save fails
      */
     public void importKeyFromStream(final Signature sigForKey,
-                            final InputStream keyStream,
-                            final Predicate<String> accept) throws IOException {
+                            @Nonnull final InputStream keyStream,
+                            @Nonnull final Predicate<String> accept) throws IOException {
         final PGPPublicKeyRingCollection providedStore = loadStoreFrom(keyStream);
 
         final PGPPublicKey key = providedStore.getPublicKey(sigForKey.getSignature().getKeyID());

@@ -188,6 +188,14 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         idpHome = Constraint.isNotNull(home, "IdPHome should be non-null");
     }
 
+    /** Get a null safe idpHome.
+     * @return idpHome
+     */
+    @Nonnull private Path getIdpHome() {
+        assert idpHome!=null;
+        return idpHome;
+    }
+
     /** Set the plugin id.
      * @param id what to set.
      */
@@ -313,7 +321,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         }
 
         if (isRebuildWar()) {
-            final BuildWar builder = new BuildWar(idpHome);
+            final BuildWar builder = new BuildWar(getIdpHome());
             try {
                 builder.initialize();
             } catch (final ComponentInitializationException e) {
@@ -365,7 +373,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             }
 
             if (isRebuildWar()) {
-                final BuildWar builder = new BuildWar(idpHome);
+                final BuildWar builder = new BuildWar(getIdpHome());
                 try {
                     builder.initialize();
                 } catch (final ComponentInitializationException e) {
@@ -571,7 +579,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             props.setProperty(PLUGIN_RELATIVE_PATHS_PROPERTY, "true");
             int count = 1;
             for (final Path p: copiedFiles) {
-                final Path relPath = idpHome.relativize(p);
+                final Path relPath = getIdpHome().relativize(p);
                 props.setProperty(PLUGIN_FILE_PROPERTY_PREFIX+Integer.toString(count++), relPath.toString());
             }
             final File outFile = pluginsContents.resolve(pluginId).toFile();
@@ -588,7 +596,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param props The property files
      * @return the idpHome it was installed to or null if no files installed
      */
-    private Path inferInstalledIdpHome(final Properties props) {
+    @Nullable private Path inferInstalledIdpHome(final Properties props) {
         if (props.get(PLUGIN_FILE_PROPERTY_PREFIX+"1") == null) {
             // No files
             return null;
@@ -605,7 +613,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             }
             if (index >= 0) {
                 final String s = val.substring(0, index);
-                if (idpHome.toString().equals(s)) {
+                if (getIdpHome().toString().equals(s)) {
                     LOG.debug("Inferred install to {}", s);
                 } else {
                     LOG.info("Inferred initial install to {}", s);
@@ -656,10 +664,10 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         while (val != null) {
             final Path valAsPath = Path.of(val);
             if (relativePaths || installedIdPHome == null) {
-                result.add(idpHome.resolve(valAsPath));
+                result.add(getIdpHome().resolve(valAsPath));
             } else {
                 final Path relPath = installedIdPHome.relativize(valAsPath);
-                final Path newPath = idpHome.resolve(relPath);
+                final Path newPath = getIdpHome().resolve(relPath);
                 result.add(newPath);
             }
             val = props.getProperty(PLUGIN_FILE_PROPERTY_PREFIX+Integer.toString(count++));
@@ -882,7 +890,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         try (final InputStream sigStream = new BufferedInputStream(
                 new FileInputStream(base.resolve(fileName + ".asc").toFile()))) {
             final TrustStore trust = new TrustStore();
-            trust.setIdpHome(idpHome);
+            trust.setIdpHome(getIdpHome());
             trust.setTrustStore(truststore);
             trust.setPluginId(pluginId);
             trust.initialize();
@@ -920,18 +928,19 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
-        if (idpHome == null) {
+        Path myIdpHome = idpHome;
+        if (myIdpHome == null) {
             throw new ComponentInitializationException("idp.home property must be set");
         }
         try {
-            assert idpHome != null;
-            idpHome = PluginInstallerSupport.canonicalPath(idpHome);
+            idpHome = myIdpHome = PluginInstallerSupport.canonicalPath(myIdpHome);
         } catch (final IOException e) {
             LOG.error("Could not canonicalize idp home", e);
             throw new ComponentInitializationException(e);
         }
-        assert idpHome != null;
-        moduleContext = new ModuleContext(idpHome.toString());
+        final String idpHomeString = myIdpHome.toString();
+        assert idpHomeString!= null;
+        moduleContext = new ModuleContext(idpHomeString);
         moduleContext.setHttpClientSecurityParameters(securityParams);
         moduleContext.setHttpClient(httpClient);
         distPath = idpHome.resolve("dist");

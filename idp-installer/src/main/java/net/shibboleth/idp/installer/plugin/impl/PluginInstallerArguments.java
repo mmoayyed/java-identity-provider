@@ -386,7 +386,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     }
 
     /** {@inheritDoc} */
-    public void printHelp(final PrintStream out) {
+    public void printHelp(final @Nonnull PrintStream out) {
         out.println("Plugin");
         out.println("Provides a command line interface for plugin management operations.");
         out.println();
