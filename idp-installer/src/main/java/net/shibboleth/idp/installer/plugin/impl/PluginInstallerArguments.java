@@ -32,9 +32,9 @@ import org.slf4j.Logger;
 import com.beust.jcommander.Parameter;
 
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
-import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -147,7 +147,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** {@inheritDoc} */
     public @Nonnull Logger getLog() {
         if (log == null) {
-            log = InstallationLogger.getLogger(PluginInstallerArguments.class);
+            log = LoggerFactory.getLogger(PluginInstallerArguments.class);
         }
         assert log != null;
         return log;

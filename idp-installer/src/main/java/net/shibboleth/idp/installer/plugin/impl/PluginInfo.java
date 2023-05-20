@@ -29,14 +29,14 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.installer.plugin.impl.PluginState.VersionInfo;
 import net.shibboleth.idp.plugin.PluginSupport;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
+import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.idp.plugin.PluginVersion;
 
 /**
  * Class which encapsulates the information about a given plugin as downloaded
@@ -48,7 +48,7 @@ public class PluginInfo {
     private static final Pattern SPACE_CONTAINING = Pattern.compile("\\s+");
 
     /** Class logger. */
-    @Nonnull private final Logger log = InstallationLogger.getLogger(PluginInfo.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PluginInfo.class);
 
     /** The support information. */
     @Nonnull private final Map<PluginVersion, VersionInfo> versionInfo = new HashMap<>();

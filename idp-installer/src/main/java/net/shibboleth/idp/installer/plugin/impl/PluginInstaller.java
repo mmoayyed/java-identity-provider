@@ -84,6 +84,7 @@ import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.PredicateSupport;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.resource.Resource;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
@@ -94,7 +95,7 @@ import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 public final class PluginInstaller extends AbstractInitializableComponent implements AutoCloseable {
 
     /** Class logger. */
-    @Nonnull private static final Logger LOG = InstallationLogger.getLogger(PluginInstaller.class);
+    @Nonnull private static final Logger LOG = LoggerFactory.getLogger(PluginInstaller.class);
 
     /** Property Name for version. */
     private static final String PLUGIN_VERSION_PROPERTY ="idp.plugin.version";

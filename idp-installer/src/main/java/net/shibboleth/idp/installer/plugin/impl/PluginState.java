@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.PluginVersion;
@@ -38,6 +37,7 @@ import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.httpclient.HttpClientBuilder;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 
 /**
@@ -56,7 +56,7 @@ public class PluginState extends AbstractInitializableComponent {
     @Nonnull private final PluginVersion myPluginVersion;
 
     /** Class logger. */
-    @Nonnull private final Logger log = InstallationLogger.getLogger(PluginState.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PluginState.class);
 
     /** The HttpClient to use.*/
     @NonnullAfterInit private HttpClient httpClient;

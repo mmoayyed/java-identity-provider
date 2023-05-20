@@ -34,9 +34,9 @@ import org.apache.tools.ant.BuildException;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.installer.InstallerSupport;
-import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.collection.Pair;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Support for copying files during plugin manipulation.
@@ -45,7 +45,7 @@ public final class PluginInstallerSupport {
     
     /** Class logger. */
     @Nonnull
-    private static final Logger LOG = InstallationLogger.getLogger(PluginInstallerSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginInstallerSupport.class);
 
     /** Constructor. */
     private PluginInstallerSupport() {

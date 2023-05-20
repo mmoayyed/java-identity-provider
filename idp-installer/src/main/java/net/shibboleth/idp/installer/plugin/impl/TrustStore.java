@@ -46,12 +46,12 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProv
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.installer.impl.InstallationLogger;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Code to handle (load, update, check) the trust store for an individual plugin.
@@ -60,7 +60,7 @@ import net.shibboleth.shared.logic.Constraint;
 @NotThreadSafe public final class TrustStore extends AbstractInitializableComponent {
 
     /** logger. */
-    @Nonnull private final Logger log = InstallationLogger.getLogger(TrustStore.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TrustStore.class);
     
     /** Where the IdP is installed.  */
     @NonnullAfterInit private Path idpHome;
