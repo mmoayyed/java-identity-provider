@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Command line arguments for the "build" verb.
@@ -37,7 +38,7 @@ public class IdPBuildArguments extends AbstractIdPHomeAwareCommandLineArguments 
     /** {@inheritDoc} */
     public @Nonnull Logger getLog() {
         if (log == null) {
-            log = InstallationLogger.getLogger(IdPBuildArguments.class);
+            log = LoggerFactory.getLogger(IdPBuildArguments.class);
         }
         assert log != null;
         return log;

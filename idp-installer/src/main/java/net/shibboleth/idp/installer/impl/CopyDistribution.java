@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.UninitializedComponentException;
-import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Copy the distribution to the final location.  Prior to doing so
@@ -39,27 +39,20 @@ import net.shibboleth.shared.logic.Constraint;
 public final class CopyDistribution extends AbstractInitializableComponent {
 
     /** Log. */
-    private final Logger log = InstallationLogger.getLogger(CopyDistribution.class);
+    private final Logger log = LoggerFactory.getLogger(CopyDistribution.class);
 
     /** Properties for the job. */
     @Nonnull private final InstallerProperties installerProps;
-
-    /** The state of the current install. */
-    @Nonnull private final CurrentInstallState installState;
 
     /** Constructor.
      * @param props The environment for the work.
      * @param state  Where we are right now.
      */
-    public CopyDistribution(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState state) {
+    public CopyDistribution(@Nonnull final InstallerProperties props) {
+        installerProps = props;
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }
-        if (!state.isInitialized()) {
-            throw new UninitializedComponentException("Installer State not Initialized");
-        }
-        installerProps = Constraint.isNotNull(props, "Installer Properties should be non null");
-        installState = Constraint.isNotNull(state, "Current state should be non-null");
     }
 
     /** Copy the distribution from the dstribution to their new locations, having
@@ -70,7 +63,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         checkComponentActive();
         deleteOld();
         copyDist();
-        copyBinDocSystem();
+        copyBinDoc();
     }
 
     /** Helper for the {@link #deleteOld()} method.
@@ -100,12 +93,12 @@ public final class CopyDistribution extends AbstractInitializableComponent {
         final Path system = installerProps.getTargetDir().resolve("system");
         if (Files.exists(system)) {
             InstallerSupport.setReadOnly(system, false);
+            delete(system, null);
         }
-        delete(system, null);
     }
 
     /** Helper for the {@link #copyDist()} and
-     *  {@link #copyBinDocSystem()} methods.
+     *  {@link #copyBinDoc()} methods.
      * @param srcDist the source distribution.
      * @param dist the dist directory
      * @param to the subfolder name
@@ -123,7 +116,7 @@ public final class CopyDistribution extends AbstractInitializableComponent {
     }
     
     /** Helper for the {@link #copyDist()} and
-     *  {@link #copyBinDocSystem()} methods.
+     *  {@link #copyBinDoc()} methods.
      * @param srcDist the source distribution.
      * @param dist the dist directory
      * @param to the subfolder name
@@ -151,11 +144,8 @@ public final class CopyDistribution extends AbstractInitializableComponent {
     /** Populate the per distribution (but non dist) folders.
      * @throws BuildException if badness occurs
      */
-    protected void copyBinDocSystem() {
+    protected void copyBinDoc() {
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "bin/lib", true);
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "doc");
-        if (installState.isSystemPresent()) {
-            distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "system");
-        }
     }
 }

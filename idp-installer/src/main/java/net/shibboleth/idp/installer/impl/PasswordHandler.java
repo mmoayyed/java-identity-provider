@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.ant.impl;
+package net.shibboleth.idp.installer.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,9 +29,14 @@ import org.apache.tools.ant.input.SecureInputHandler;
 
 import net.shibboleth.idp.installer.PropertiesWithComments;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import org.slf4j.Logger;
+
 
 /** Ant helper class to ask for passwords, rejecting zero length passwords and asking for confirmation. */
 public class PasswordHandler extends SecureInputHandler {
+    
+    @Nonnull final private Logger log = LoggerFactory.getLogger(PasswordHandler.class);
 
     /** Spool the file to a {@link PropertiesWithComments}, read it in again as a {@link Properties} and check
      * for equivalence.
@@ -60,7 +65,7 @@ public class PasswordHandler extends SecureInputHandler {
             // test
             return password.equals(loadProps.getProperty(propertyName));
         } catch (final IOException e) {
-            System.console().printf("Internal error :\n" + e.getStackTrace() + "\n");
+            log.error("Internal error", e);
             return false;
         }
     }

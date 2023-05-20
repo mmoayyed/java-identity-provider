@@ -80,6 +80,7 @@ public class IdPBuildWar extends AbstractCommandLine<IdPBuildArguments> {
         }
 
         final Path idpHome = Path.of(args.getIdPHome());
+        assert idpHome!=null;
         if (!Files.exists(idpHome)) {
             getLogger().error("Could not find {}", idpHome);
             return RC_INIT;

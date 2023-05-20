@@ -37,8 +37,11 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.tools.ant.BuildException;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -62,6 +65,7 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.UninitializedComponentException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategyTool;
 import net.shibboleth.shared.security.impl.SelfSignedCertificateGenerator;
@@ -74,7 +78,7 @@ import net.shibboleth.shared.spring.util.ApplicationContextBuilder;
 public class V5Install extends AbstractInitializableComponent {
 
     /** Log. */
-    private final Logger log = InstallationLogger.getLogger(V5Install.class);
+    private final Logger log = LoggerFactory.getLogger(V5Install.class);
 
     /** Installer Properties. */
     @Nonnull private final InstallerProperties installerProps;
@@ -86,13 +90,20 @@ public class V5Install extends AbstractInitializableComponent {
     @Nonnull private final KeyManagement keyManager;
 
     /** What will generate metadata? */
-    private MetadataGenerator metadataGenerator;
+    @Nonnull private final MetadataGenerator metadataGenerator = new MetadataGenerator();
+
+    /** The HttpClient to use.*/
+    @Nonnull private final HttpClient httpClient;
+
+    /** The Injected security parameters. */
+    @Nullable private final HttpClientSecurityParameters httpClientSecurityParameters;
 
     /** Constructor.
      * @param props The properties to drive the installs.
      * @param installState The current install.
      */
-    public V5Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState) {
+    public V5Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState,
+            @Nonnull final HttpClient client, @Nullable final HttpClientSecurityParameters securityParams) {
         if (!props.isInitialized()) {
             throw new UninitializedComponentException("Installer Properties not Initialized");
         }
@@ -101,6 +112,8 @@ public class V5Install extends AbstractInitializableComponent {
         }
         installerProps = props;
         currentState = installState;
+        httpClient = client;
+        httpClientSecurityParameters = securityParams;
         keyManager = new KeyManagement(installerProps, currentState);
     }
 
@@ -108,9 +121,6 @@ public class V5Install extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         keyManager.initialize();
-        if (metadataGenerator == null) {
-            log.warn("No MetadataGenerator configured.");
-        }
     }
 
     /** Method to do the work. It assumes that the distribution has been copied.
@@ -128,17 +138,6 @@ public class V5Install extends AbstractInitializableComponent {
         deleteSpuriousFiles();
         generateMetadata();
         reprotect();
-    }
-
-    /** Set the {@link MetadataGenerator}.
-     * @param what what to set.  This need not have been initialized yet
-     * {@link MetadataGenerator#setOutput(File)} and
-     * {@link MetadataGenerator#setParameters(MetadataGeneratorParameters)} are called
-     * prior to initialization.
-     */
-    public void setMetadataGenerator(final MetadataGenerator what) {
-        checkSetterPreconditions();
-        metadataGenerator = what;
     }
     
     /** Check for any preconditions to the install. 
@@ -162,6 +161,7 @@ public class V5Install extends AbstractInitializableComponent {
             try {
                 log.debug("Considering Plugin {}, version {}", pluginId,  pluginVersion);
                 final PluginState state = new PluginState(plugin, CollectionSupport.emptyList());
+                state.setHttpClient(httpClient);
                 state.initialize();
                 if (!state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
                     log.warn("Installed Plugin {} version {} is not supported with IdP Version {}, continuing.",
@@ -181,11 +181,11 @@ public class V5Install extends AbstractInitializableComponent {
         final String installedVersion = currentState.getInstalledVersion();
         String currentVersion = Version.getVersion();
         if (null == currentVersion) {
-            currentVersion = "4Generic";
+            currentVersion = "5Generic";
         }
         if (null == installedVersion) {
             log.info("New Install.  Version: {}", currentVersion);
-        } else if (currentVersion == installedVersion) {
+        } else if (currentVersion.equals(installedVersion)) {
             log.info("Reinstall of version {}", currentVersion);
         } else {
             log.info("Update from version {} to version {}", installedVersion, currentVersion);
@@ -384,6 +384,8 @@ public class V5Install extends AbstractInitializableComponent {
         final String targetDir = installerProps.getTargetDir().toString();
         assert targetDir!=null;
         final ModuleContext moduleContext = new ModuleContext(targetDir);
+        moduleContext.setHttpClient(httpClient);
+        moduleContext.setHttpClientSecurityParameters(httpClientSecurityParameters);
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
 
         while (modules.hasNext()) {
@@ -412,6 +414,8 @@ public class V5Install extends AbstractInitializableComponent {
         final String targetDir = installerProps.getTargetDir().toString();
         assert targetDir!=null;
         final ModuleContext moduleContext = new ModuleContext(targetDir);
+        moduleContext.setHttpClient(httpClient);
+        moduleContext.setHttpClientSecurityParameters(httpClientSecurityParameters);
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
 
         while (modules.hasNext()) {
@@ -462,10 +466,6 @@ public class V5Install extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     protected void generateMetadata() throws BuildException {
-        if (metadataGenerator == null) {
-            log.debug("No Metadata generator specified.");
-            return;
-        }
 
         final Path parentDir = installerProps.getTargetDir().resolve("metadata");
         final File metadataFile = parentDir.resolve("idp-metadata.xml").toFile();
@@ -506,15 +506,9 @@ public class V5Install extends AbstractInitializableComponent {
         InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("dist"), true);
         InstallerSupport.setReadOnly(pluginContents, false);
         InstallerSupport.setReadOnly(pluginWebapp, false);
-        if (currentState.isSystemPresent()) {
-            InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("system"), true);
-        }
 
         if (installerProps.isSetGroupAndMode()) {
             InstallerSupport.setMode(installerProps.getTargetDir().resolve("bin"), "755", "**/*.sh");
-            if (currentState.isSystemPresent()) {
-                InstallerSupport.setMode(installerProps.getTargetDir().resolve("system"), "444", "**/*");
-            }
             InstallerSupport.setMode(installerProps.getTargetDir().resolve("dist"), "444", "**/*");
             InstallerSupport.setMode(pluginContents,  "640", "**/*");
             InstallerSupport.setMode(pluginWebapp,  "640", "**/*");

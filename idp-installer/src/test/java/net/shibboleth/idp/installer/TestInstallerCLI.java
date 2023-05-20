@@ -17,54 +17,28 @@
 
 package net.shibboleth.idp.installer;
 
-import java.io.IOException;
+import org.testng.annotations.Test;
 
-import net.shibboleth.idp.installer.impl.BuildWar;
-import net.shibboleth.idp.installer.impl.CopyDistribution;
-import net.shibboleth.idp.installer.impl.CurrentInstallState;
+import net.shibboleth.idp.installer.impl.IdPInstallerCLI;
 import net.shibboleth.idp.installer.impl.InstallerProperties;
-import net.shibboleth.idp.installer.impl.V5Install;
-import net.shibboleth.idp.installer.metadata.impl.MetadataGenerator;
-import net.shibboleth.shared.component.ComponentInitializationException;
 /**
  *
  */
-public class Test {
+public class TestInstallerCLI {
 
-    /**
-     * @param args ...
-     * 
-     * @throws IOException ...
-     * @throws ComponentInitializationException ...
-     */
-    public static void main(String[] args) throws IOException, ComponentInitializationException {
+    @Test(enabled = false)
+    public void install() {
 
-        //System.setProperty(InstallerPropertiesImpl.TARGET_DIR,"H:\\Downloads\\idp");
-        System.setProperty(InstallerProperties.SOURCE_DIR,
-                "h:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-5.0.0-SNAPSHOT");
-        System.setProperty(InstallerProperties.ANT_BASE_DIR,
-                "h:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-5.0.0-SNAPSHOT\\bin");
         System.setProperty(InstallerProperties.KEY_STORE_PASSWORD, "p1");
         System.setProperty(InstallerProperties.SEALER_PASSWORD, "p1");
         System.setProperty(InstallerProperties.HOST_NAME, "machine.org.uk");
-
-        final InstallerProperties ip = new InstallerProperties(false);
-        ip.initialize();
-        final CurrentInstallState is = new CurrentInstallState(ip);
-        is.initialize();
-
-        final CopyDistribution dist = new CopyDistribution(ip, is);
-        dist.initialize();
-        dist.execute();
-
-        final V5Install inst = new V5Install(ip, is);
-        inst.setMetadataGenerator(new MetadataGenerator());
-        inst.initialize();
-        inst.execute();
-
-        final BuildWar bw = new BuildWar(ip.getTargetDir());
-        bw.initialize();
-        bw.execute();
+        
+        IdPInstallerCLI.runMain(new String[] {
+                "-s",
+                "h:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-5.0.0-SNAPSHOT",
+                "--home", "classpath:/net/shibboleth/idp/module",
+                "-t",
+                "h:\\downloads\\idp",
+               });
     }
-
 }

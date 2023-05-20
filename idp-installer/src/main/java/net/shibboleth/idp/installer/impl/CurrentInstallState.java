@@ -61,7 +61,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 public final class CurrentInstallState extends AbstractInitializableComponent {
 
     /** Class logger. */
-    @Nonnull private final Logger log = InstallationLogger.getLogger(CurrentInstallState.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CurrentInstallState.class);
 
     /** Where we are installing to. */
     @Nonnull private final Path targetDir;
@@ -77,9 +77,6 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
 
     /** Whether the LDAP properties file exists.*/
     private boolean ldapPropertiesPresent;
-
-    /** Whether system is present. */
-    private boolean systemPresent;
 
     /** Old Version. */
     private String oldVersion;
@@ -107,10 +104,10 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
     private void findPreviousVersion() throws ComponentInitializationException {
         final Path conf = targetDir.resolve("conf");
         final Path currentInstall = targetDir.resolve("dist").resolve(InstallerSupport.VERSION_NAME);
-        final Path rp = conf.resolve("idp.properties");
-        if (!Files.exists(rp)) {
-            // No relying party, no install
-            log.debug("No idp.properties file detetected at {} .  Inferring a clean install", rp);
+        final Path ip = conf.resolve("idp.properties");
+        if (!Files.exists(ip)) {
+            // No idp.properties, no install
+            log.debug("No idp.properties file detetected at {} .  Inferring a clean install", ip);
             oldVersion = null;
         } else if (!Files.exists(currentInstall)) {
             throw new ComponentInitializationException("V3 Installation detected");
@@ -205,7 +202,11 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
         
         idpPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("idp.properties"));
         ldapPropertiesPresent = Files.exists(targetDir.resolve("conf").resolve("ldap.properties"));
-        systemPresent = Files.exists(targetDir.resolve("system"));
+        if (Files.exists(targetDir.resolve("system"))) {
+            log.error("'system' folder exists emove this and make appropriate changes to web.xml before proceeding");
+            log.error("see https://shibboleth.atlassian.net/wiki/spaces/IDP5/pages/3199500925/Upgrading");
+            throw new ComponentInitializationException("'systems folder exists");
+        }
         findPreviousVersion();
         setupPreviousProps();
         findEnabledModules();
@@ -253,11 +254,6 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
     public @Nonnull List<Path> getPathsToBeDeleted() {
         assert pathsToDelete != null;
         return pathsToDelete;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isSystemPresent() {
-        return systemPresent;
     }
 
     /** {@inheritDoc} */

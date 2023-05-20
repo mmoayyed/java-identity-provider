@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.annotation.Nonnull;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Chmod;
@@ -35,7 +37,7 @@ import org.apache.tools.ant.types.selectors.PresentSelector;
 import org.apache.tools.ant.types.selectors.PresentSelector.FilePresence;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.installer.impl.InstallationLogger;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
 /** General common names and helper functions for the Installer. 
  * This is not intended for general use.
@@ -52,7 +54,7 @@ public final class InstallerSupport {
     private static final Project ANT_PROJECT = new Project();
 
     /** Log. */
-    private static Logger log = InstallationLogger.getLogger(InstallerSupport.class);
+    @Nonnull private static Logger log = LoggerFactory.getLogger(InstallerSupport.class);
 
     /** Private Constructor. */
     private InstallerSupport() {}

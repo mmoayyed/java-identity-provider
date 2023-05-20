@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -39,16 +38,15 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputHandler;
 import org.apache.tools.ant.input.InputRequest;
-import org.apache.tools.ant.launch.Launcher;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.installer.ant.impl.PasswordHandler;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -58,9 +56,6 @@ import net.shibboleth.shared.primitive.StringSupport;
 
 */
 public class InstallerProperties extends AbstractInitializableComponent {
-
-    /** The base directory, inherited and shared with ant. */
-    public static final String ANT_BASE_DIR = Launcher.ANTHOME_PROPERTY;
 
     /** The name of a property file to fill in some or all of the above. This file is deleted after processing. */
     public static final String PROPERTY_SOURCE_FILE = "idp.property.file";
@@ -76,9 +71,6 @@ public class InstallerProperties extends AbstractInitializableComponent {
 
     /** Where to install to.  Default is basedir */
     public static final String TARGET_DIR = "idp.target.dir";
-
-    /** Where to install from (installs only). */
-    public static final String SOURCE_DIR = "idp.src.dir";
 
     /** The entity ID. */
     public static final String ENTITY_ID = "idp.entityID";
@@ -124,10 +116,7 @@ public class InstallerProperties extends AbstractInitializableComponent {
     public static final int DEFAULT_KEY_SIZE = 3072;
 
     /** Class logger. */
-    @Nonnull private final Logger log = InstallationLogger.getLogger(InstallerProperties.class);
-
-    /** The base directory. */
-    @NonnullAfterInit private Path baseDir;
+    @Nonnull private final Logger log = LoggerFactory.getLogger(InstallerProperties.class);
 
     /** The properties driving the install. */
     @NonnullAfterInit private Properties installerProperties;
@@ -136,13 +125,10 @@ public class InstallerProperties extends AbstractInitializableComponent {
     private Path targetDir;
 
     /** The sourceDirectory. */
-    private Path srcDir;
+    @Nonnull private final Path srcDir;
 
     /** Do we allow prompting?*/
     private boolean noPrompt;
-
-    /** Is a source Dir needed? */
-    private final boolean needSourceDir;
 
     /** The entity ID. */
     private String entityID;
@@ -174,9 +160,6 @@ public class InstallerProperties extends AbstractInitializableComponent {
     /** credentials key file mode. */
     private String credentialsKeyFileMode;
 
-    /** Local overload of properties (to deal with nested calling). */
-    private Map<String, String> inheritedProperties;
-
     /** Input handler from the prompting. */
     private final InputHandler inputHandler;
 
@@ -191,28 +174,20 @@ public class InstallerProperties extends AbstractInitializableComponent {
      * Constructor.
      * @param copiedDistribution Has the distribution been copied? If no we don't need the source dir.
      */
-    public InstallerProperties(final boolean copiedDistribution) {
-        needSourceDir = !copiedDistribution;
+    public InstallerProperties(@Nonnull final Path sourceDir) {
+        srcDir = sourceDir;
         inputHandler = getInputHandler();
-        inheritedProperties = CollectionSupport.emptyMap();
     }
 
     /** Get an {@link InputHandler} for the prompting.
      * @return an input handler */
     protected InputHandler getInputHandler() {
         return new DefaultInputHandler() {
-            // we wants the prompts to be more obviously prompts
+            // we want the prompts to be more obviously prompts
             protected String getPrompt(final InputRequest request) {
                 return super.getPrompt(request) + " ? ";
             }
         };
-    }
-
-    /** Set any properties inherited from the base environment.
-     * @param props what to set
-     */
-    public void setInheritedProperties(final Map<String,String> props) {
-        inheritedProperties = props;
     }
 
     /** {@inheritDoc} */
@@ -220,46 +195,20 @@ public class InstallerProperties extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         installerProperties = new Properties(System.getProperties());
 
-        for (final Map.Entry<String,String> entry:inheritedProperties.entrySet()) {
-            installerProperties.setProperty(entry.getKey(), entry.getValue());
+        if (!Files.exists(srcDir)) {
+            log.error("Source dir {} did not exist", srcDir.toAbsolutePath());
+            throw new ComponentInitializationException(srcDir.toString() + " must exist");
         }
+        log.debug("Source dir {}", srcDir);
 
-        final String antBase = installerProperties.getProperty(ANT_BASE_DIR);
-        if (antBase == null) {
-            throw new ComponentInitializationException(ANT_BASE_DIR + " must be specified");
-        }
-        try {
-            baseDir =  Path.of(antBase).resolve("..").toRealPath();
-        } catch (final IOException e) {
-            throw new ComponentInitializationException(e);
-        }
-        if (!Files.exists(baseDir)) {
-            log.error("Base dir {} did not exist", baseDir.toAbsolutePath());
-            throw new ComponentInitializationException(ANT_BASE_DIR + " must exist");
-        }
-        log.debug("base dir {}", baseDir);
-        final String noTidy = installerProperties.getProperty(NO_TIDY);
-        tidy = noTidy == null;
-        final String setModeString = installerProperties.getProperty(PERFORM_SET_MODE);
-        if (setModeString != null) {
-            setGroupAndMode = Boolean.valueOf(setModeString);
-        }
-
-        final String propertyFile = installerProperties.getProperty(PROPERTY_SOURCE_FILE);
+        final Path propertyFile = getMergeFile(PROPERTY_SOURCE_FILE);
         if (propertyFile != null) {
-            final Path file = baseDir.resolve(propertyFile);
-            if (!Files.exists(file)) {
-                log.error("Property file {} did not exist", file.toAbsolutePath());
-                throw new ComponentInitializationException(file + " must exist");
-            }
-            log.debug("Loading properties from {}", file.toAbsolutePath());
-
             /* The file specified in the system file idp.property.file (if present). */
-            final File idpPropertyFile = file.toFile();
+            final File idpPropertyFile = propertyFile.toFile();
             try(final FileInputStream stream = new FileInputStream(idpPropertyFile)) {
                 installerProperties.load(stream);
             } catch (final IOException e) {
-                log.error("Could not load {}: {}", file.toAbsolutePath(), e.getMessage());
+                log.error("Could not load {}: {}", propertyFile.toAbsolutePath(), e.getMessage());
                 throw new ComponentInitializationException(e);
             }
             if (!isNoTidy()) {
@@ -267,17 +216,15 @@ public class InstallerProperties extends AbstractInitializableComponent {
             }
         }
 
+        final String noTidy = installerProperties.getProperty(NO_TIDY);
+        tidy = noTidy == null;
+        final String setModeString = installerProperties.getProperty(PERFORM_SET_MODE);
+        if (setModeString != null) {
+            setGroupAndMode = Boolean.valueOf(setModeString);
+        }
+
         String value = installerProperties.getProperty(NO_PROMPT);
         noPrompt = value != null;
-
-        if (needSourceDir) {
-            final String baseDirAsString = baseDir.toString();
-            assert baseDirAsString!=null;
-            value = getValue(SOURCE_DIR, "Source (Distribution) Directory (press <enter> to accept default):",
-                    () -> baseDirAsString);
-            srcDir = Path.of(value);
-            log.debug("Source directory {}", srcDir.toAbsolutePath());
-        }
 
         value = installerProperties.getProperty(KEY_SIZE);
         if (value == null) {
@@ -356,16 +303,7 @@ public class InstallerProperties extends AbstractInitializableComponent {
         if (targetDir != null) {
             return targetDir;
         }
-        final String defTarget;
-        if (needSourceDir) {
-            // Source is not "here"
-            defTarget = "/opt/shibboleth-idp";
-        } else {
-            // build-war or Windows so "here" is also "where"
-            defTarget = baseDir.toAbsolutePath().toString();
-            assert defTarget!=null;
-        }
-        final Path td = targetDir = Path.of(getValue(TARGET_DIR, "Installation Directory:", () -> defTarget));
+        final Path td = targetDir = Path.of(getValue(TARGET_DIR, "Installation Directory:", () -> "/opt/shibboleth-idp"));
         assert td != null;
         return td;
     }
@@ -615,45 +553,31 @@ public class InstallerProperties extends AbstractInitializableComponent {
 
     /** Get the file specified as the property as a File, or null if it doesn't exist.
      * @param propName the name to lookup;
-     * @return null if the property is not provided a {@link File} otherwise
+     * @return null if the property is not provided a {@link Path} otherwise
      * @throws BuildException if the property is supplied but the file doesn't exist.
      */
     protected Path getMergeFile(final String propName) throws BuildException {
-        return getMergePath(propName, false);
-    }
-
-    /** Get the {@link Path} specified as the property as a File, or null if it doesn't exist.
-     * Police for type if required
-     * @param propName the name to lookup;
-     * @param mustBeDir if null do not policy.  Otherwise policy according to value
-     * @return null if the property is not provided a {@link File} otherwise
-     * @throws BuildException if the property is supplied but the file doesn't exist.
-     */
-    private Path getMergePath(final String propName, final Boolean mustBeDir) throws BuildException {
         final String propValue = installerProperties.getProperty(propName);
         if (propValue == null) {
             return null;
         }
-        final Path result = baseDir.resolve(propValue);
-        log.debug("Property '{}' had value '{}' returning path '{}'", propName, propValue, result);
-        if (!Files.exists(result)) {
-            log.error("Could not find specified file specified by property {} ({})", propName, result );
-            throw new BuildException("Property file not found");
-        }
-        if (mustBeDir != null) {
-            if (mustBeDir) {
-                if (!Files.isDirectory(result)) {
-                    log.error("Path '{}' supplied by property '{}' was not a directory", result, propName);
-                    throw new BuildException("No a directory");
-                }
-            } else {
-                if (Files.isDirectory(result)) {
-                    log.error("Path '{}' supplied by property '{}' was not a file", result, propName);
-                    throw new BuildException("No a file");
-                }                
+        Path path = Path.of(propValue);
+        if (Files.exists(path)) {
+            log.debug("Property '{}' had value '{}' Path exists ", propName, propValue);
+        } else {
+            path = srcDir.resolve(path);
+            if (!Files.exists(path)) {
+                log.debug("Property '{}' had value '{}' neither '{}' nor '{}' exist", propName, propValue, path);
+                log.error("Path '{}' supplied for '{}' does not exist", propValue, propName);
+                throw new BuildException("Property file not found");
             }
+            log.debug("Property '{}' had value '{}' Path {} exists ", propName, propValue, path);
         }
-        return result;
+        if (Files.isDirectory(path)) {
+            log.error("Path '{}' supplied by property '{}' was not a file", path, propName);
+            throw new BuildException("No a file");
+        }                
+        return path;
     }
 
     /** Get the a file to merge with idp.properties or null.
