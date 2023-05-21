@@ -66,7 +66,6 @@ import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.UninitializedComponentException;
 import net.shibboleth.shared.primitive.LoggerFactory;
-import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategyTool;
 import net.shibboleth.shared.security.impl.SelfSignedCertificateGenerator;
 import net.shibboleth.shared.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext;
@@ -144,15 +143,6 @@ public class V5Install extends AbstractInitializableComponent {
      * @throws BuildException if one is broken.
      */
     protected void checkPreConditions() throws BuildException {
-        final Properties props = currentState.getCurrentlyInstalledProperties();
-        if (props != null) {
-            final String value = StringSupport.trimOrNull(props.getProperty("idp.service.relyingparty.resources"));
-            if ("shibboleth.LegacyRelyingPartyResolverResources".equals(value)) {
-                log.error("Install failed: system will not work after V4 upgrade");
-                log.error("idp.service.relyingparty.resources is set to shibboleth.RelyingPartyResolverResources");
-                throw new BuildException("Install failed: system will not work after V4 upgrade");
-            }
-        }
         final String versionAsString = Version.getVersion();
         final PluginVersion idpVersion = new PluginVersion(versionAsString!=null?versionAsString:"5.0.0");
         for (final IdPPlugin plugin: ServiceLoader.load(IdPPlugin.class, currentState.getInstalledPluginsLoader())) {

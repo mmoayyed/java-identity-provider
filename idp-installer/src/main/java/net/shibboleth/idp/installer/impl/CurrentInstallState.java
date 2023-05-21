@@ -81,9 +81,6 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
     /** Old Version. */
     private String oldVersion;
     
-    /** Previous props. */
-    private Properties props;
-    
     /** The files to delete after an upgrade. */
     @NonnullAfterInit private List<Path> pathsToDelete;
 
@@ -131,43 +128,6 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
         }
     }
 
-    /** Populate {{@link #props} from idp.properties and other files pointed to by
-     * {@value IdPPropertiesApplicationContextInitializer#IDP_ADDITIONAL_PROPERTY}.
-     * @throws ComponentInitializationException on various IO issues
-     */
-    private void setupPreviousProps() throws ComponentInitializationException {
-        if (!isIdPPropertiesPresent()) {
-            return ;
-        }
-        final Properties localProps = props = new Properties();
-        try {
-            final File idpPropsFile = targetDir.resolve("conf").resolve("idp.properties").toFile();
-            final InputStream idpPropsStream = new FileInputStream(idpPropsFile);
-            localProps .load(idpPropsStream);
-        } catch (final IOException e) {
-            log.error("Error loading idp.properties", e);
-            return;
-        }
-        final String targetDirString = targetDir.toString();
-        assert targetDirString!=null;
-        final Collection<String> additionalSources = IdPPropertiesApplicationContextInitializer.getAdditionalSources(targetDirString, localProps);
-        for (final String source : additionalSources) {
-            final Path path = Path.of(source);
-            if (Files.exists(path)) {
-                try {
-                    final InputStream stream = new FileInputStream(path.toFile());
-                    props.load(stream);
-                } catch (final IOException e) {
-                    log.error("Error loading {}", path, e);
-                    throw new ComponentInitializationException(e);
-                }
-            } else {
-                log.warn("Unable to find property resource '{}' (check {}?)", path,
-                        IdPPropertiesApplicationContextInitializer.IDP_ADDITIONAL_PROPERTY);
-            }
-        }
-    }
-
     /**
      * Populate {{@link #enabledModules} from the current classpath and the new IdP home.
      */
@@ -208,7 +168,6 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
             throw new ComponentInitializationException("'systems folder exists");
         }
         findPreviousVersion();
-        setupPreviousProps();
         findEnabledModules();
 
         if (null == getInstalledVersion()) {
@@ -243,11 +202,6 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
     /** {@inheritDoc} */
     public boolean isLDAPPropertiesPresent() {
         return ldapPropertiesPresent;
-    }
-
-    /** {@inheritDoc} */
-    @Nullable public Properties getCurrentlyInstalledProperties() {
-        return props;
     }
 
     /** {@inheritDoc} */
