@@ -109,7 +109,6 @@ public class IdPPropertiesApplicationContextInitializer
 
         LOG.debug("Attempting to find resource '{}'", searchPath);
         final Resource resource = applicationContext.getResource(searchPath);
-
         if (resource.exists()) {
             LOG.debug("Found resource '{}' at search path '{}'", resource, searchPath);
 
@@ -123,23 +122,28 @@ public class IdPPropertiesApplicationContextInitializer
                 return;
             }
 
+            final boolean idpHomeIsClasspath;
             if ("classpath:".equals(searchLocation) || resource instanceof ClassPathResource) {
                 setIdPHomeProperty(searchLocation, properties);
+                idpHomeIsClasspath = true;
             } else {
+                idpHomeIsClasspath = false;
                 String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
                 // Minimal normalization required on Windows to allow SWF's flow machinery to work.
                 // Just replace backslashes with forward slashes.
                 if (File.separatorChar == '\\') {
                     searchLocationAbsolutePath = searchLocationAbsolutePath.replace('\\', '/');
                 }
+                assert searchLocationAbsolutePath!=null;
                 setIdPHomeProperty(searchLocationAbsolutePath, properties);
             }
 
-            loadAdditionalPropertySources(applicationContext, searchLocation, properties);
+            loadAdditionalPropertySources(applicationContext, searchLocation, properties, idpHomeIsClasspath);
 
             logProperties(properties);
-
-            appendPropertySource(applicationContext, resource.toString(), properties);
+            final String resourceString = resource.toString();
+            assert resourceString!=null;
+            appendPropertySource(applicationContext, resourceString, properties);
 
         } else if (isFailFast(applicationContext)) {
             LOG.error("Unable to find '{}' at '{}'", getSearchTarget(), searchLocation);
@@ -227,22 +231,34 @@ public class IdPPropertiesApplicationContextInitializer
         }
     }
 
-// Checkstyle: AnonInnerLength OFF
-    /** 
+    /**
      * Find out all the additional property files we need to load.
-     *   
+     *
      * @param searchLocation Where to search from
      * @param properties the content of idp.properties so far
-     * 
      * @return a collection of paths
      */
     public static Collection<String> getAdditionalSources(@Nonnull final String searchLocation,
                             @Nonnull final Properties properties) {
+        return getAdditionalSources(searchLocation, properties, false);
+    }
+
+        // Checkstyle: AnonInnerLength OFF
+    /**
+     * Find out all the additional property files we need to load.
+     *
+     * @param searchLocation Where to search from
+     * @param properties the content of idp.properties so far
+     * @param idpHomeIsClasspath does idp.home point to a classpath 
+     * @return a collection of paths
+     */
+    public static Collection<String> getAdditionalSources(@Nonnull final String searchLocation,
+                            @Nonnull final Properties properties, final boolean idpHomeIsClasspath) {
         
         final Collection<String> sources = new ArrayList<>();
        
         final Boolean autosearch = Boolean.valueOf(properties.getProperty(IDP_AUTOSEARCH_PROPERTY, "false"));
-        if (autosearch) {
+        if (!idpHomeIsClasspath && autosearch) {
             final Path searchRoot = Path.of(searchLocation).resolve("conf");
             if (searchRoot.toFile().isDirectory()) {
                 final Path registryRoot = searchRoot.resolve("attributes");
@@ -299,13 +315,12 @@ public class IdPPropertiesApplicationContextInitializer
     }
 // Checkstyle: AnonInnerLength ON
 
-    
     /**
      * Load additional property sources.
-     * 
+     *
      * File names of additional property sources are defined by {@link #IDP_ADDITIONAL_PROPERTY}, and are resolved
      * relative to the given search location.
-     * 
+     *
      * @param applicationContext the application context
      * @param searchLocation the location from which additional property sources are resolved
      * @param properties the properties to be filled with additional property sources
@@ -314,8 +329,27 @@ public class IdPPropertiesApplicationContextInitializer
      */
     public void loadAdditionalPropertySources(@Nonnull final ConfigurableApplicationContext applicationContext,
             @Nonnull final String searchLocation, @Nonnull final Properties properties) {
+        loadAdditionalPropertySources(applicationContext, searchLocation, properties, false);
+    }
+
+    /**
+     * Load additional property sources.
+     *
+     * File names of additional property sources are defined by {@link #IDP_ADDITIONAL_PROPERTY}, and are resolved
+     * relative to the given search location.
+     *
+     * @param applicationContext the application context
+     * @param searchLocation the location from which additional property sources are resolved
+     * @param properties the properties to be filled with additional property sources
+     * @param idpHomeIsClasspath does idp.home point to a classpath
+     * @throws ConstraintViolationException if an error occurs loading the additional property sources and
+     *             {@link #isFailFast(ConfigurableApplicationContext)} is true
+     */
+    protected void loadAdditionalPropertySources(@Nonnull final ConfigurableApplicationContext applicationContext,
+            @Nonnull final String searchLocation, @Nonnull final Properties properties, boolean idpHomeIsClasspath) {
         
-        for (final String source : getAdditionalSources(searchLocation, properties)) {
+        for (final String source : getAdditionalSources(searchLocation, properties, idpHomeIsClasspath)) {
+            assert source != null;
             LOG.debug("Attempting to load properties from resource '{}'", source);
             final Resource additionalResource = applicationContext.getResource(source);
             if (additionalResource.exists()) {
@@ -328,6 +362,9 @@ public class IdPPropertiesApplicationContextInitializer
                     LOG.warn("Unable to load properties from resource '{}'", additionalResource);
                     continue;
                 }
+            } else if (idpHomeIsClasspath) {
+                LOG.debug("Unable to find property resource '{}' (check {}?)", additionalResource,
+                        IDP_ADDITIONAL_PROPERTY);
             } else {
                 LOG.warn("Unable to find property resource '{}' (check {}?)", additionalResource,
                         IDP_ADDITIONAL_PROPERTY);
