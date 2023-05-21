@@ -17,10 +17,8 @@
 
 package net.shibboleth.idp.installer.impl;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -50,7 +48,6 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
-import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;

@@ -19,6 +19,7 @@ package net.shibboleth.idp.installer.impl;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,9 +29,12 @@ import org.apache.tools.ant.BuildException;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.shared.cli.AbstractCommandLine;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -67,6 +71,12 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
             localLog = log = LoggerFactory.getLogger(IdPInstallerCLI.class);
         }
         return localLog;
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull protected List<Resource> getAdditionalSpringResources() {
+        return CollectionSupport.singletonList(
+               new ClassPathResource("net/shibboleth/idp/conf/http-client.xml"));
     }
 
     /** {@inheritDoc} */
