@@ -40,6 +40,7 @@ import javax.annotation.Nullable;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.tools.ant.BuildException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.opensaml.security.httpclient.HttpClientSecurityContextHandler;
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.core.io.ClassPathResource;
@@ -260,6 +261,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         final HttpClient client = getHttpClient();
         if (client != null) {
             state.setHttpClient(client);
+            state.setHttpClientSecurityParameters(getHttpClientSecurityParameters());
         }
         try {
             state.initialize();
@@ -467,7 +469,12 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
                     final HttpClient client = getHttpClient();
                     assert client != null;
-                    propertyResource = new HTTPResource(client , url);
+                    final HTTPResource httpResource;
+                    propertyResource = httpResource = new HTTPResource(client , url);
+                    final HttpClientSecurityContextHandler handler = new HttpClientSecurityContextHandler();
+                    handler.setHttpClientSecurityParameters(getHttpClientSecurityParameters());
+                    handler.initialize();
+                    httpResource.setHttpClientContextHandler(handler);
                 } else {
                     log.error("Only file and http[s] URLs are allowed");
                     continue;
@@ -479,7 +486,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 }
                 props.load(propertyResource.getInputStream());
                 return props;
-            } catch (final IOException e) {
+            } catch (final IOException | ComponentInitializationException e) {
                 log.error("Could not open Update URL {} :", url, e);
                 continue;
             }
@@ -586,6 +593,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         final HttpClient client = getHttpClient();
         if (client != null) {
             state.setHttpClient(client);
+            state.setHttpClientSecurityParameters(getHttpClientSecurityParameters());
         }
         try {
             state.initialize();

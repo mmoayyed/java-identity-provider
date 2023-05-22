@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.opensaml.security.httpclient.HttpClientSecurityContextHandler;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -60,6 +63,9 @@ public class PluginState extends AbstractInitializableComponent {
 
     /** The HttpClient to use.*/
     @NonnullAfterInit private HttpClient httpClient;
+
+    /** The Injected security parameters. */
+    @Nullable private HttpClientSecurityParameters httpClientSecurityParameters;
 
     /** If overridden these are the urls to us for update (rather than what the plguin asks for. */
     @Nonnull private final List<URL> updateOverrideURLs;
@@ -104,12 +110,32 @@ public class PluginState extends AbstractInitializableComponent {
     }
 
     /** Set the client.
+     *
      * @param what what to set.
      */
     public void setHttpClient(@Nonnull final HttpClient what) {
         checkSetterPreconditions();
         httpClient = Constraint.isNotNull(what, "HttpClient cannot be null");
     }
+
+    /** Gets {@link HttpClient} security parameters, if any.
+     *
+     * @return HTTP client security parameters to use
+     */
+    @Nullable public HttpClientSecurityParameters getHttpClientSecurityParameters() {
+        return httpClientSecurityParameters;
+    }
+
+    /**
+     * Sets {@link HttpClient} security parameters to use.
+     *
+     * @param params security parameters
+     */
+    public void setHttpClientSecurityParameters(@Nullable final HttpClientSecurityParameters params) {
+        httpClientSecurityParameters = params;
+    }
+
+    /**
 
     /** {@inheritDoc} */
     // CheckStyle: CyclomaticComplexity OFF
@@ -138,8 +164,13 @@ public class PluginState extends AbstractInitializableComponent {
                         assert path != null;
                         propertyResource = new FileSystemResource(path);
                     } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+                            final HTTPResource httpResource;
                             assert(httpClient != null);
-                            propertyResource = new HTTPResource(httpClient, url);
+                            propertyResource = httpResource = new HTTPResource(httpClient, url);
+                            final HttpClientSecurityContextHandler handler = new HttpClientSecurityContextHandler();
+                            handler.setHttpClientSecurityParameters(httpClientSecurityParameters);
+                            handler.initialize();
+                            httpResource.setHttpClientContextHandler(handler);
                     } else {
                         log.error("Plugin {}: Only file and http[s] URLs are allowed: '{}'", plugin.getPluginId(), url);
                         continue;

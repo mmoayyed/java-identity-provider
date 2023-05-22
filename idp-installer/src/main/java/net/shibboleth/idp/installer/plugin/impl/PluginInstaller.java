@@ -61,6 +61,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.tools.ant.BuildException;
+import org.opensaml.security.httpclient.HttpClientSecurityContextHandler;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 
@@ -291,6 +292,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         if (checkVersion) {
             final PluginState state = new PluginState(getDescription(), updateOverrideURLs);
             state.setHttpClient(httpClient);
+            state.setHttpClientSecurityParameters(securityParams);
             try {
                 state.initialize();
             } catch (final ComponentInitializationException e) {
@@ -672,10 +674,14 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     private void download(@Nonnull final URL baseURL, @Nonnull final String fileName) throws BuildException {
         try {
             downloadDirectory = Files.createTempDirectory("plugin-installer-download");
-            final Resource baseResource = new HTTPResource(httpClient, baseURL);
+            final HTTPResource baseResource = new HTTPResource(httpClient, baseURL);
+            final HttpClientSecurityContextHandler handler = new HttpClientSecurityContextHandler();
+            handler.setHttpClientSecurityParameters(securityParams);
+            handler.initialize();
+            baseResource.setHttpClientContextHandler(handler);
             download(baseResource, fileName);
             download(baseResource, fileName + ".asc");
-        } catch (final IOException e) {
+        } catch (final IOException | ComponentInitializationException e) {
             LOG.error("Error in download", e);
             throw new BuildException(e);
         }

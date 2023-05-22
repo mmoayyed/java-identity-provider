@@ -141,6 +141,7 @@ public class V5Install {
                 log.debug("Considering Plugin {}, version {}", pluginId,  pluginVersion);
                 final PluginState state = new PluginState(plugin, CollectionSupport.emptyList());
                 state.setHttpClient(httpClient);
+                state.setHttpClientSecurityParameters(httpClientSecurityParameters);
                 state.initialize();
                 if (!state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
                     log.warn("Installed Plugin {} version {} is not supported with IdP Version {}, continuing.",
