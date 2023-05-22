@@ -44,7 +44,6 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
-import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.NonnullSupplier;
@@ -55,7 +54,7 @@ import net.shibboleth.shared.primitive.StringSupport;
  NOTE Updated to this properties should be reflected in the "PropertyDriverInstallation" wiki page."/
 
 */
-public class InstallerProperties extends AbstractInitializableComponent {
+public class InstallerProperties  {
 
     /** The name of a property file to fill in some or all of the above. This file is deleted after processing. */
     public static final String PROPERTY_SOURCE_FILE = "idp.property.file";
@@ -299,7 +298,6 @@ public class InstallerProperties extends AbstractInitializableComponent {
      * @throws BuildException if something goes awry.
      */
     @Nonnull public Path getTargetDir() throws BuildException {
-        checkComponentActive();
         if (targetDir != null) {
             return targetDir;
         }

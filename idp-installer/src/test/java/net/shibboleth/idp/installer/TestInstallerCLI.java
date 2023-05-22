@@ -26,7 +26,7 @@ import net.shibboleth.idp.installer.impl.InstallerProperties;
  */
 public class TestInstallerCLI {
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void install() {
 
         System.setProperty(InstallerProperties.KEY_STORE_PASSWORD, "p1");

@@ -30,8 +30,6 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.InstallerSupport;
-import net.shibboleth.shared.component.AbstractInitializableComponent;
-import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -48,7 +46,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
  * <li>Deletes webapp.tmp</li>
  * </ul>
  */
-public final class BuildWar extends AbstractInitializableComponent {
+public final class BuildWar {
 
     /** Log. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BuildWar.class);
@@ -61,6 +59,7 @@ public final class BuildWar extends AbstractInitializableComponent {
      */
     public BuildWar(@Nonnull final Path idpHome) {
         targetDir = Constraint.isNotNull(idpHome, "IdPHome should not be null");
+        Constraint.isTrue(Files.exists(targetDir), "Target Dir " + targetDir + " does not exist");
     }
 
     /** Method to do a single overlay into webapp.
@@ -86,7 +85,6 @@ public final class BuildWar extends AbstractInitializableComponent {
      * @throws BuildException if unexpected badness occurs.
      */
     public void execute() throws BuildException {
-        checkComponentActive();
         final Path warFile = targetDir.resolve("war").resolve("idp.war");
 
         log.info("Rebuilding {}, Version {}", warFile.toAbsolutePath(), Version.getVersion());
@@ -114,13 +112,5 @@ public final class BuildWar extends AbstractInitializableComponent {
         log.info("Creating war file {}", warFile);
         jarTask.execute();
         InstallerSupport.deleteTree(webAppTmp);
-    }
-
-    /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        if (!Files.exists(targetDir)) {
-            throw new ComponentInitializationException("Target Dir " + targetDir + " does not exist");
-        }
     }
 }

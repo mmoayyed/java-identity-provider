@@ -133,20 +133,17 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
 
         try {
             final InstallerProperties ip = new InstallerProperties(source);
-            ip.initialize();
+            ip.doInitialize();
             final CurrentInstallState ic = new CurrentInstallState(ip);
             ic.initialize();
 
             final CopyDistribution cd = new CopyDistribution(ip);
-            cd.initialize();
             cd.execute();
 
             final V5Install install = new V5Install(ip, ic, httpClient, clientSecurityParameters);
-            install.initialize();
             install.execute();
 
             final BuildWar bw = new BuildWar(ip.getTargetDir());
-            bw.initialize();
             bw.execute();
 
         } catch (final ComponentInitializationException e) {

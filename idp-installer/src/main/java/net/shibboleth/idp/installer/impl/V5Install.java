@@ -62,7 +62,6 @@ import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.collection.CollectionSupport;
-import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.UninitializedComponentException;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -74,7 +73,7 @@ import net.shibboleth.shared.spring.util.ApplicationContextBuilder;
 
 /** Code to do most of the V4 Install.
  */
-public class V5Install extends AbstractInitializableComponent {
+public class V5Install {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(V5Install.class);
@@ -103,9 +102,6 @@ public class V5Install extends AbstractInitializableComponent {
      */
     public V5Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState,
             @Nonnull final HttpClient client, @Nullable final HttpClientSecurityParameters securityParams) {
-        if (!props.isInitialized()) {
-            throw new UninitializedComponentException("Installer Properties not Initialized");
-        }
         if (!installState.isInitialized()) {
             throw new UninitializedComponentException("Installer State not Initialized");
         }
@@ -113,20 +109,13 @@ public class V5Install extends AbstractInitializableComponent {
         currentState = installState;
         httpClient = client;
         httpClientSecurityParameters = securityParams;
-        keyManager = new KeyManagement(installerProps, currentState);
-    }
-
-    /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        keyManager.initialize();
+        keyManager = new KeyManagement();
     }
 
     /** Method to do the work. It assumes that the distribution has been copied.
      * @throws BuildException if unexpected badness occurs.
      */
     public void execute() throws BuildException {
-        checkComponentActive();
         handleVersioning();
         checkPreConditions();
         enableCoreModules();
@@ -516,14 +505,8 @@ public class V5Install extends AbstractInitializableComponent {
     /**
      * Create (if needs be) all the keys needed by an install.
      */
-    private class KeyManagement extends AbstractInitializableComponent {
+    private class KeyManagement {
 
-        /** Properties for the job. */
-        @Nonnull private final InstallerProperties installerProps;
-
-        /** Current Install. */
-        @Nonnull private final CurrentInstallState currentState;
-        
         /** Did we create idp-signing.*?*/
         private boolean createdSigning;
 
@@ -536,22 +519,6 @@ public class V5Install extends AbstractInitializableComponent {
         /** Did we create sealer.*?*/
         private boolean createdSealer;
 
-        /** Constructor.
-         * @param props The properties to drive the installs. 
-         * @param installState - about where we installing into.
-         */
-        protected KeyManagement(@Nonnull final InstallerProperties props,
-                @Nonnull final CurrentInstallState installState) {
-            if (!props.isInitialized()) {
-                throw new UninitializedComponentException("Installer Properties not Initialized");
-            }
-            if (!installState.isInitialized()) {
-                throw new UninitializedComponentException("Installer State not Initialized");
-            }
-            installerProps = props;
-            currentState = installState;
-        }
-
         /** Create any keys that are needed.
          * @throws BuildException if badness occurs
          */
@@ -560,7 +527,6 @@ public class V5Install extends AbstractInitializableComponent {
                 log.debug("Skipping key generation");
                 return;
             }
-            checkComponentActive();
             createdSigning = generateKey("idp-signing");
             createdEncryption = generateKey("idp-encryption");
             generateKeyStore();

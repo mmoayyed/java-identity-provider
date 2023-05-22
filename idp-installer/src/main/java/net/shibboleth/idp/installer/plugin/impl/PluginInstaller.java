@@ -321,11 +321,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
         if (isRebuildWar()) {
             final BuildWar builder = new BuildWar(getIdpHome());
-            try {
-                builder.initialize();
-            } catch (final ComponentInitializationException e) {
-                throw new BuildException(e);
-            }
             builder.execute();
         } else {
             LOG.info("WAR file not rebuilt.");
@@ -373,11 +368,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
             if (isRebuildWar()) {
                 final BuildWar builder = new BuildWar(getIdpHome());
-                try {
-                    builder.initialize();
-                } catch (final ComponentInitializationException e) {
-                    throw new BuildException(e);
-                }
                 builder.execute();
                 LOG.info("Removed resources for {} from the WAR file.", pluginId);
             } else {

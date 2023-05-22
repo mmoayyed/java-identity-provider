@@ -27,8 +27,6 @@ import org.apache.tools.ant.taskdefs.Copy;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.installer.InstallerSupport;
-import net.shibboleth.shared.component.AbstractInitializableComponent;
-import net.shibboleth.shared.component.UninitializedComponentException;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -36,7 +34,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
  * take a backup of the old distribution. "The final location" means
  * the dist, doc and system subdirectories.
  */
-public final class CopyDistribution extends AbstractInitializableComponent {
+public final class CopyDistribution {
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(CopyDistribution.class);
@@ -50,9 +48,6 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      */
     public CopyDistribution(@Nonnull final InstallerProperties props) {
         installerProps = props;
-        if (!props.isInitialized()) {
-            throw new UninitializedComponentException("Installer Properties not Initialized");
-        }
     }
 
     /** Copy the distribution from the dstribution to their new locations, having
@@ -60,7 +55,6 @@ public final class CopyDistribution extends AbstractInitializableComponent {
      * @throws BuildException if badness occurs
      */
     public void execute() throws BuildException {
-        checkComponentActive();
         deleteOld();
         copyDist();
         copyBinDoc();

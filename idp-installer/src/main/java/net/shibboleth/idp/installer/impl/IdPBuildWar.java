@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.shared.cli.AbstractCommandLine;
-import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -86,12 +85,6 @@ public class IdPBuildWar extends AbstractCommandLine<IdPBuildArguments> {
             return RC_INIT;
         }
         final BuildWar build = new BuildWar(idpHome);
-        try {
-            build.initialize();
-        } catch (ComponentInitializationException e) {
-            getLogger().error("Internal error", e);
-            return RC_INIT;
-        }
         build.execute();
 
         return RC_OK;
