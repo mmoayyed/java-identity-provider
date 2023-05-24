@@ -44,7 +44,6 @@ public final class CopyDistribution {
 
     /** Constructor.
      * @param props The environment for the work.
-     * @param state  Where we are right now.
      */
     public CopyDistribution(@Nonnull final InstallerProperties props) {
         installerProps = props;

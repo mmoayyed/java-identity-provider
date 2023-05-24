@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 /** Ant helper class to ask for passwords, rejecting zero length passwords and asking for confirmation. */
 public class PasswordHandler extends SecureInputHandler {
     
+    /** Logger. */
     @Nonnull final private Logger log = LoggerFactory.getLogger(PasswordHandler.class);
 
     /** Spool the file to a {@link PropertiesWithComments}, read it in again as a {@link Properties} and check

@@ -43,6 +43,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
  */
 public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> {
 
+    /** Logger. */
     @Nullable private Logger log;
     
     /** {@inheritDoc} */

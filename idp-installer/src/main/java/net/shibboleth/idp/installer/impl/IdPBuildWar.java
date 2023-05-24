@@ -34,6 +34,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
  */
 public class IdPBuildWar extends AbstractCommandLine<IdPBuildArguments> {
 
+    /** Logger. */
     @Nullable private Logger log;
     
     /** {@inheritDoc} */
@@ -63,9 +64,7 @@ public class IdPBuildWar extends AbstractCommandLine<IdPBuildArguments> {
         return localLog;
     }
 
-    /** {@inheritDoc} 
-     * NOTE that we do not call the super classe
-     * */
+    /** {@inheritDoc} */
     protected int doRun(@Nonnull final IdPBuildArguments args) {
 
         super.doRun(args);

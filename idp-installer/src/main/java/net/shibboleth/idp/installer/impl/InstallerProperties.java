@@ -171,7 +171,7 @@ public class InstallerProperties  {
 
     /**
      * Constructor.
-     * @param copiedDistribution Has the distribution been copied? If no we don't need the source dir.
+     * @param sourceDir Where the *source* installation is.
      */
     public InstallerProperties(@Nonnull final Path sourceDir) {
         srcDir = sourceDir;

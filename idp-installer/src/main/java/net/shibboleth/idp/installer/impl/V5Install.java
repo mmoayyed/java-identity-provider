@@ -99,6 +99,9 @@ public class V5Install {
     /** Constructor.
      * @param props The properties to drive the installs.
      * @param installState The current install.
+     * @param client {@link HttpClient} to use on any Plugin operations
+     * @param securityParams {@link HttpClientSecurityParameters} to use on any Plugin operations
+     * 
      */
     public V5Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState,
             @Nonnull final HttpClient client, @Nullable final HttpClientSecurityParameters securityParams) {
