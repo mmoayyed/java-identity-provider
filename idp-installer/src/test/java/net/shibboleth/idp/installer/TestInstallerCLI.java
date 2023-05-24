@@ -32,7 +32,7 @@ public class TestInstallerCLI {
         System.setProperty(InstallerProperties.KEY_STORE_PASSWORD, "p1");
         System.setProperty(InstallerProperties.SEALER_PASSWORD, "p1");
         System.setProperty(InstallerProperties.HOST_NAME, "machine.org.uk");
-        
+//        System.setProperty(InstallerProperties.SEALER_KEYSIZE, "256");
         IdPInstallerCLI.runMain(new String[] {
                 "-s",
                 "h:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-5.0.0-SNAPSHOT",

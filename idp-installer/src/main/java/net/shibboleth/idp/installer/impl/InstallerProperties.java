@@ -92,6 +92,9 @@ public class InstallerProperties  {
     /** The sealer alias to use.  */
     public static final String SEALER_ALIAS = "idp.sealer.alias";
 
+    /** The sealer alias to use.  */
+    public static final String SEALER_KEYSIZE = "idp.sealer.keysize";
+
     /** The the key size to generate.  */
     public static final String KEY_SIZE = "idp.keysize";
 
@@ -527,6 +530,24 @@ public class InstallerProperties  {
         return InstallerProperties.CORE_MODULES;
     }
 
+    /** Return the sealer key size, if this has been specified.
+     * @return the key size or null if non specified
+     */
+    @Nullable Integer getSealerKeySize() throws BuildException {
+        final String val = installerProperties.getProperty(SEALER_KEYSIZE);
+        if (val == null) {
+            return null;
+        }
+        final Integer result;
+        try {
+            result = Integer.valueOf(val);
+        }
+        catch (final NumberFormatException e) {
+            log.error("Provided value for property {} ({}') was not an integer", SEALER_ALIAS, val);
+            throw new BuildException(e);
+        }
+        return result;
+    }
 
     /** Get the alias for the sealer key.
      * @return the alias

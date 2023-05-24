@@ -651,6 +651,10 @@ public class V5Install {
                 final BasicKeystoreKeyStrategyTool generator = new BasicKeystoreKeyStrategyTool();
                 generator.setKeystoreFile(sealerFile);
                 generator.setVersionFile(versionFile);
+                final Integer keySize = installerProps.getSealerKeySize();
+                if (keySize != null) {
+                    generator.setKeySize(keySize);
+                }
                 generator.setKeyAlias(installerProps.getSealerAlias());
                 generator.setKeystorePassword(installerProps.getSealerPassword());
                 log.info("Creating Sealer KeyStore");
