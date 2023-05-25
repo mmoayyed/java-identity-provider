@@ -53,7 +53,7 @@
     </bean>
 
     <util:list id="shibboleth.RelyingPartyOverrides">
-
+        
     </util:list>
 
 </beans>
