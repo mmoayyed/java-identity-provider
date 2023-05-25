@@ -15,9 +15,12 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
-    <!-- Profile ID for flow. -->    
+    <!-- Profile ID for flow. -->
     <bean id="shibboleth.AdminProfileId" class="java.lang.String"
         c:_0="http://shibboleth.net/ns/profiles/metrics" />
+
+    <!-- Profile counter name. -->
+    <bean id="shibboleth.metrics.ProfileCounter" class="java.lang.String" c:_0="net.shibboleth.idp.profiles.metrics" />
 
     <!-- Default operation/resource suppliers for access checks. -->
     

@@ -33,6 +33,7 @@
 
     <bean id="PopulateMetricContext"
         class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:counterName="net.shibboleth.idp.profiles.logout"
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
 
     <bean id="PopulateUserAgentContext"

@@ -20,6 +20,10 @@
     <util:constant id="shibboleth.EndpointType"
         static-field="org.opensaml.saml.saml2.metadata.SingleLogoutService.DEFAULT_ELEMENT_NAME" />
 
+    <util:constant id="shibboleth.metrics.ProfileCounter"
+        static-field="net.shibboleth.idp.saml.saml2.profile.config.impl.SingleLogoutProfileConfiguration.PROFILE_COUNTER" />
+        
+
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.saml.saml2.profile.config.SingleLogoutProfileConfiguration).PROFILE_ID}"

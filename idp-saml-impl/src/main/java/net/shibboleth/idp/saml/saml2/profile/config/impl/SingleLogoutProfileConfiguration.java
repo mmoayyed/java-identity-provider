@@ -43,6 +43,9 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAwareProfileConfiguration
         implements net.shibboleth.saml.saml2.profile.config.SingleLogoutProfileConfiguration {
 
+    /** Name of profile counter. */
+    @Nonnull @NotEmpty public static final String PROFILE_COUNTER = "net.shibboleth.idp.profiles.saml2.logout";
+
     /** Predicate used to determine if SOAP-based requests should be signed. */
     @Nonnull private Predicate<MessageContext> signSOAPRequestsPredicate;
     

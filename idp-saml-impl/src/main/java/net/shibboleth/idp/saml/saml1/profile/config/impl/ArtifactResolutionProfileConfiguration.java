@@ -34,6 +34,9 @@ import net.shibboleth.shared.logic.PredicateSupport;
 public class ArtifactResolutionProfileConfiguration extends AbstractSAMLProfileConfiguration
         implements net.shibboleth.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration {
 
+    /** Name of profile counter. */
+    @Nonnull @NotEmpty public static final String PROFILE_COUNTER = "net.shibboleth.idp.profiles.saml1.query.artifact";
+
     /** Predicate used to determine whether to sign assertions. */
     @Nonnull private Predicate<ProfileRequestContext> signAssertionsPredicate;
 

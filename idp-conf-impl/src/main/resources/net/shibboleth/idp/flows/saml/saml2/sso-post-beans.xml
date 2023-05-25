@@ -11,6 +11,10 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <util:constant id="shibboleth.metrics.ProfileCounter"
+        static-field="net.shibboleth.idp.saml.saml2.profile.config.impl.BrowserSSOProfileConfiguration.PROFILE_COUNTER" />
+
+
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"

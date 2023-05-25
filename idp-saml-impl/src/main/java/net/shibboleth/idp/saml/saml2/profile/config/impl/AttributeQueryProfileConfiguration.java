@@ -28,6 +28,9 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 public class AttributeQueryProfileConfiguration extends AbstractSAML2AssertionProducingProfileConfiguration
         implements net.shibboleth.saml.saml2.profile.config.AttributeQueryProfileConfiguration {
     
+    /** Name of profile counter. */
+    @Nonnull @NotEmpty public static final String PROFILE_COUNTER = "net.shibboleth.idp.profiles.sam2.query.attribute";
+    
     /** Constructor. */
     public AttributeQueryProfileConfiguration() {
         this(PROFILE_ID);

@@ -29,6 +29,9 @@ public class AttributeQueryProfileConfiguration extends AbstractSAML1AssertionPr
         implements net.shibboleth.saml.saml1.profile.config.AttributeQueryProfileConfiguration,
             SAMLAssertionProducingProfileConfiguration {
     
+    /** Name of profile counter. */
+    @Nonnull @NotEmpty public static final String PROFILE_COUNTER = "net.shibboleth.idp.profiles.saml1.query.attribute";
+    
     /** Constructor. */
     public AttributeQueryProfileConfiguration() {
         this(PROFILE_ID);

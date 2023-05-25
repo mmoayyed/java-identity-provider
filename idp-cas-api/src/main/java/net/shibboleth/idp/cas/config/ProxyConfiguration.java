@@ -29,10 +29,13 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 public class ProxyConfiguration extends AbstractProtocolConfiguration {
 
     /** Proxy ticket profile URI. */
-    public static final String PROFILE_ID = PROTOCOL_URI + "/proxy";
+    @Nonnull @NotEmpty public static final String PROFILE_ID = PROTOCOL_URI + "/proxy";
+
+    /** Proxy ticket profile counter name. */
+    @Nonnull @NotEmpty public static final String PROFILE_COUNTER = PROTOCOL_COUNTER + ".proxy";
 
     /** Default ticket prefix. */
-    public static final String DEFAULT_TICKET_PREFIX = "PT";
+    @Nonnull @NotEmpty public static final String DEFAULT_TICKET_PREFIX = "PT";
 
     /** Default ticket length (random part). */
     public static final int DEFAULT_TICKET_LENGTH = 25;

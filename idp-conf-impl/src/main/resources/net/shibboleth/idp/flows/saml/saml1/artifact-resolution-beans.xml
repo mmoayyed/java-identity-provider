@@ -17,6 +17,10 @@
 
     <import resource="common-beans.xml" />
 
+    <util:constant id="shibboleth.metrics.ProfileCounter"
+        static-field="net.shibboleth.idp.saml.saml1.profile.config.impl.ArtifactResolutionProfileConfiguration.PROFILE_COUNTER" />
+
+
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="#{T(net.shibboleth.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration).PROFILE_ID}"

@@ -51,6 +51,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProduc
             AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration,
             SAMLAssertionProducingProfileConfiguration {
 
+    /** Name of profile counter. */
+    @Nonnull @NotEmpty public static final String PROFILE_COUNTER = "net.shibboleth.idp.profiles.saml1.sso.browser";
+
     /** Whether attributes should be resolved in the course of the profile. */
     @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;
 

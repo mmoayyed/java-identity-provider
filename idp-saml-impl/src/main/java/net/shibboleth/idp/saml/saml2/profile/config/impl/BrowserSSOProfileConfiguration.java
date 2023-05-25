@@ -59,6 +59,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
         implements AuthenticationProfileConfiguration, AttributeResolvingProfileConfiguration,
             net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration {
     
+    /** Name of profile counter. */
+    @Nonnull @NotEmpty public static final String PROFILE_COUNTER = "net.shibboleth.idp.profiles.saml2.sso.browser";
+    
     /** Whether attributes should be resolved in the course of the profile. */
     @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;
 

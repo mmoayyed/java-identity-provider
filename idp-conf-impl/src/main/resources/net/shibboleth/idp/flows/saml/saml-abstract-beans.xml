@@ -25,6 +25,7 @@
 
     <bean id="PopulateMetricContext"
         class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:counterName="#{getObject('shibboleth.metrics.ProfileCounter')}"
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
 
     <bean id="PostDecodePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"

@@ -17,6 +17,9 @@
         p:loggingId="%{idp.service.logging.saml2sso:SSO}"
         p:browserProfile="false" />
 
+    <util:constant id="shibboleth.metrics.ProfileCounter"
+        static-field="net.shibboleth.idp.saml.saml2.profile.config.impl.ECPProfileConfiguration.PROFILE_COUNTER" />
+
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
             <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype"

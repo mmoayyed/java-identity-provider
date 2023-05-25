@@ -54,6 +54,9 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     /** Proxy ticket profile URI. */
     @Nonnull @NotEmpty public static final String PROFILE_ID = PROTOCOL_URI + "/login";
 
+    /** Proxy ticket profile counter name. */
+    @Nonnull @NotEmpty public static final String PROFILE_COUNTER = PROTOCOL_COUNTER + ".login";
+    
     /** Default ticket prefix. */
     @Nonnull @NotEmpty public static final String DEFAULT_TICKET_PREFIX = "ST";
 

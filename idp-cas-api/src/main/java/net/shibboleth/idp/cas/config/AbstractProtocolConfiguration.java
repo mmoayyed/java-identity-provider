@@ -47,6 +47,9 @@ public abstract class AbstractProtocolConfiguration extends AbstractInterceptorA
 
     /** CAS base protocol URI. */
     @Nonnull @NotEmpty public static final String PROTOCOL_URI = "https://www.apereo.org/cas/protocol";
+
+    /** CAS base profile counter prefix. */
+    @Nonnull @NotEmpty public static final String PROTOCOL_COUNTER = "net.shibboleth.idp.profiles.cas";
     
     /** Default ticket validity. */
     @SuppressWarnings("null")

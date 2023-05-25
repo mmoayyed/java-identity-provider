@@ -39,6 +39,9 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration 
         implements net.shibboleth.saml.saml2.profile.config.ECPProfileConfiguration {
 
+    /** Name of profile counter. */
+    @Nonnull @NotEmpty public static final String PROFILE_COUNTER = "net.shibboleth.idp.profiles.saml2.sso.ecp";
+
     /** Lookup function to supply Local error events to handle without a SOAP fault. */
     @Nonnull private Function<ProfileRequestContext,Set<String>> localEventsLookupStrategy;
         

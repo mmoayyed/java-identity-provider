@@ -17,6 +17,10 @@
 
     <import resource="common-beans.xml" />
     <import resource="conditional:%{idp.home}/conf/intercept/consent-intercept-config.xml" />
+
+    <util:constant id="shibboleth.metrics.ProfileCounter"
+        static-field="net.shibboleth.idp.saml.saml1.profile.config.impl.AttributeQueryProfileConfiguration.PROFILE_COUNTER" />
+
     
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
