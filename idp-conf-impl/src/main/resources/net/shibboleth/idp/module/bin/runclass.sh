@@ -42,7 +42,7 @@ if [ -z "$NO_PLUGIN_WEBAPP" ] ; then
   LOCALCLASSPATH="$LOCATION/../dist/plugin-webapp/WEB-INF/lib/*":$LOCALCLASSPATH
 fi
 LOCALCLASSPATH="$LOCATION/../edit-webapp/WEB-INF/lib/*":$LOCALCLASSPATH
-LOCALCLASSPATH="$LOCATION/lib/*":$LOCALCLASSPATH
+LOCALCLASSPATH="$LOCATION/../dist/binlib/*":$LOCALCLASSPATH
 
 if [ -n "$JAVA_HOME" ] ; then
   if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then

@@ -312,7 +312,7 @@ public class InstallerProperties  {
     /** Where is the install coming from?
      * @return the source directory
      */
-    @Nullable public Path getSourceDir() {
+    @Nonnull public Path getSourceDir() {
         return srcDir;
     }
 

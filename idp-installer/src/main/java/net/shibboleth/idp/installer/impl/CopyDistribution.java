@@ -75,7 +75,7 @@ public final class CopyDistribution {
         }
     }
 
-    /** Delete old copies of bin/lib (leaving bin for scripts), disty, doc and system.
+    /** Delete old copies of bin/lib (leaving bin for scripts), dist, doc and system.
      * system has to be unprotected first which also means we need to create it too.
      * @throws BuildException if badness occurs
      */
@@ -138,7 +138,12 @@ public final class CopyDistribution {
      * @throws BuildException if badness occurs
      */
     protected void copyBinDoc() {
-        distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "bin/lib", true);
         distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "doc");
+        final Path fromPath = installerProps.getSourceDir().resolve("bin").resolve("lib");
+        final Path toPath = installerProps.getTargetDir().resolve("dist").resolve("binlib");
+        log.debug("Copying distribution from {} to {}", fromPath, toPath);
+        final Copy copy = InstallerSupport.getCopyTask(fromPath, toPath);
+        copy.setOverwrite(false);
+        copy.execute();
     }
 }
