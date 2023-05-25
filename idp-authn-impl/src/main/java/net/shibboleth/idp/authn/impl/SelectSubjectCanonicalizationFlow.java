@@ -63,7 +63,7 @@ public class SelectSubjectCanonicalizationFlow extends AbstractSubjectCanonicali
             log.info("{} Moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
                     flow.getId());
             c14nContext.getIntermediateFlows().put(
-                    flow.getId(), c14nContext.getAttemptedFlow());
+                    flow.ensureId(), c14nContext.getAttemptedFlow());
         }
         
         return super.doPreExecute(profileRequestContext, c14nContext);

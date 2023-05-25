@@ -139,7 +139,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         final AuthenticationFlowDescriptor flow = authenticationContext.getAttemptedFlow();
         if (flow != null) {
             log.info("{} Moving incomplete flow {} to intermediate set", getLogPrefix(), flow.getId());
-            authenticationContext.getIntermediateFlows().put(flow.getId(), authenticationContext.getAttemptedFlow());
+            authenticationContext.getIntermediateFlows().put(flow.ensureId(), authenticationContext.getAttemptedFlow());
         }
         
         return true;
@@ -368,8 +368,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext,
             @Nonnull final AuthenticationFlowDescriptor descriptor) {
 
-        final String id = descriptor.getId();
-        assert id != null;
+        final String id = descriptor.ensureId();
         log.debug("{} Selecting inactive authentication flow {}", getLogPrefix(), id);
         authenticationContext.setAttemptedFlow(descriptor);
         ActionSupport.buildEvent(profileRequestContext, id);

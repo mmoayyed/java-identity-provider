@@ -131,7 +131,7 @@ public class ValidateCredentials extends AbstractAuditingValidationAction implem
     @Nonnull @NotEmpty public String getMetricName() {
         // only called in execute when we know the field is non-null
         assert currentValidator != null;
-        final String cvId = currentValidator. getId();
+        final String cvId = currentValidator.getId();
         return super.getMetricName() + '.' + cvId;
     }
        
