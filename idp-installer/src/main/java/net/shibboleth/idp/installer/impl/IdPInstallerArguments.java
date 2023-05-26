@@ -134,6 +134,8 @@ public class IdPInstallerArguments extends AbstractCommandLineArguments {
         out.println(String.format("  %-22s %s", "-t, --targetDir", "Where to install the IdP or location to update"));
         out.println(String.format("  %-22s %s", "--propertyFile", "Property file containing other parameterization"));
         out.println(String.format("  %-22s %s", "--noPrompt", "Unattended Install"));
+        out.println(String.format("  %-22s %s", "-hc, --http-client", "Bean name for an http client (for Module and Plugin Operations"));
+        out.println(String.format("  %-22s %s", "-hs, --http-securityt", "Bean name for http security parameters (for Module and Plugin Operations"));
         out.println();
     }
 
