@@ -22,7 +22,6 @@ import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -292,20 +291,6 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     public void validate() throws IllegalArgumentException {
         super.validate();
 
-        final List<String> otherArgs = getOtherArgs();
-        if (otherArgs.size() > 1) {
-            final StringBuffer output = new StringBuffer().append('"');
-            for (int i = 2; i <= otherArgs.size() ; i++ ) {
-                output.append(otherArgs.get(i-1));
-                if (i == otherArgs.size()) {
-                    output.append('"');
-                } else {
-                    output.append(' ');
-                }
-            }
-            getLog().error("Unexpected extra arguments {}", output);
-            throw new IllegalArgumentException("Unexpected extra arguments");
-        }
         if (list || fullList || listAvailable) {
             operation = OperationType.LIST;
             if (input !=  null || uninstallId != null) {

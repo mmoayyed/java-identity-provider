@@ -92,7 +92,7 @@ public class InstallerProperties  {
     /** The sealer alias to use.  */
     public static final String SEALER_ALIAS = "idp.sealer.alias";
 
-    /** The sealer alias to use.  */
+    /** The keysize for the sealer.  */
     public static final String SEALER_KEYSIZE = "idp.sealer.keysize";
 
     /** The the key size to generate.  */
