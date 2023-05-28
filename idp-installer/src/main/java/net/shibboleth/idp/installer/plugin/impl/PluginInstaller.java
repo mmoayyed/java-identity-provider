@@ -67,7 +67,6 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.InstallerSupport;
-import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.idp.installer.impl.BuildWar;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.idp.module.IdPModule;
@@ -86,7 +85,6 @@ import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.PredicateSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.shared.resource.Resource;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 
 /**
@@ -335,6 +333,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     public void uninstall() throws BuildException {
 
         String moduleId = null;
+        assert pluginId != null;
         description = getInstalledPlugin(pluginId);
         if (description == null) {
             LOG.warn("Description for {} not found", pluginId);
@@ -673,14 +672,15 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void download(@Nonnull final URL baseURL, @Nonnull final String fileName) throws BuildException {
         try {
-            downloadDirectory = Files.createTempDirectory("plugin-installer-download");
+            final Path dir = downloadDirectory = Files.createTempDirectory("plugin-installer-download");
+            assert dir != null;
             final HTTPResource baseResource = new HTTPResource(httpClient, baseURL);
             final HttpClientSecurityContextHandler handler = new HttpClientSecurityContextHandler();
             handler.setHttpClientSecurityParameters(securityParams);
             handler.initialize();
             baseResource.setHttpClientContextHandler(handler);
-            download(baseResource, fileName);
-            download(baseResource, fileName + ".asc");
+            PluginInstallerSupport.download(baseResource, handler, dir,  fileName);
+            PluginInstallerSupport.download(baseResource, handler, dir,  fileName + ".asc");
         } catch (final IOException | ComponentInitializationException e) {
             LOG.error("Error in download", e);
             throw new BuildException(e);
@@ -737,21 +737,6 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 break;
 
             default:
-        }
-    }
-
-    /** Download helper method.
-     * @param baseResource where to go for the file
-     * @param fileName the file name
-     * @throws IOException as required
-     */
-    private void download(final Resource baseResource, @Nonnull final String fileName) throws IOException {
-        final Resource fileResource = baseResource.createRelativeResource(fileName);
-        final Path filePath = downloadDirectory.resolve(fileName);
-        LOG.info("Downloading from {}", fileResource.getDescription());
-        LOG.debug("Downloading to {}", filePath);
-        try (final OutputStream fileOut = new ProgressReportingOutputStream(new FileOutputStream(filePath.toFile()))) {
-            fileResource.getInputStream().transferTo(fileOut);
         }
     }
 
@@ -839,7 +824,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return the the appropriate  {@link ArchiveInputStream} 
      * @throws IOException  if we trip over an unpack
      */
-    private ArchiveInputStream getStreamFor(final Path fullName, final boolean isZip) throws IOException {
+    @Nonnull private ArchiveInputStream getStreamFor(final Path fullName, final boolean isZip) throws IOException {
         final InputStream inStream = new BufferedInputStream(new FileInputStream(fullName.toFile()));
         if (isZip) {
             return new ZipArchiveInputStream(inStream);
@@ -881,7 +866,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param fileName the name.
      * @throws BuildException if badness is detected.
      */
-    private void checkSignature(final Path base, final String fileName) throws BuildException {
+    private void checkSignature(@Nonnull final Path base, @Nonnull final String fileName) throws BuildException {
         try (final InputStream sigStream = new BufferedInputStream(
                 new FileInputStream(base.resolve(fileName + ".asc").toFile()))) {
             final TrustStore trust = new TrustStore();
@@ -955,7 +940,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return an appropriate loader
      * @throws BuildException if a directory traversal fails.
      */
-    private synchronized URLClassLoader getInstalledPluginsLoader() throws BuildException {
+    @Nonnull private synchronized URLClassLoader getInstalledPluginsLoader() throws BuildException {
 
         if (installedPluginsLoader != null) {
             return installedPluginsLoader;
@@ -1001,7 +986,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return an appropriate loader
      * @throws BuildException if a directory traversal fails.
      */
-    private synchronized URLClassLoader getDistributionLoader() throws BuildException {
+    @Nonnull private synchronized URLClassLoader getDistributionLoader() throws BuildException {
         if (installingPluginLoader!= null) {
             return installingPluginLoader;
         }
@@ -1027,18 +1012,17 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return All the plugins.
      * @throws BuildException if loafing the classpath fails.
      */
-    public List<IdPPlugin> getInstalledPlugins() throws BuildException {
+    @Nonnull public List<IdPPlugin> getInstalledPlugins() throws BuildException {
        final Stream<Provider<IdPPlugin>> loaderStream =
                ServiceLoader.load(IdPPlugin.class, getInstalledPluginsLoader()).stream();
-       return loaderStream.map(ServiceLoader.Provider::get).collect(Collectors.toList());
+       return loaderStream.map(ServiceLoader.Provider::get).collect(CollectionSupport.nonnullCollector(Collectors.toList())).get();
     }
 
     /** Find the {@link IdPPlugin} with the provided Id.
      * @param name what to find
      * @return the {@link IdPPlugin} or null if not found.
      */
-    @Nullable public IdPPlugin getInstalledPlugin(final String name) {
-        Constraint.isNotNull(name, "Plugin Name must not be null");
+    @Nullable public IdPPlugin getInstalledPlugin(@Nonnull final String name) {
         final List<IdPPlugin> plugins = getInstalledPlugins();
         for (final IdPPlugin plugin: plugins) {
             if (plugin.getPluginId().equals(name)) {
@@ -1075,7 +1059,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Return a version we can use in a test proof manner.
      * @return the IdP version or a fixed value
      */
-    protected static PluginVersion getIdPVersion() {
+    @Nonnull protected static PluginVersion getIdPVersion() {
         final String version  = Version.getVersion();
 
         if (version == null) {

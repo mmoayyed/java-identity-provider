@@ -50,7 +50,6 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
     @Override
     @Nonnull
     protected Class<IdPInstallerArguments> getArgumentClass() {
-        // TODO Auto-generated method stub
         return IdPInstallerArguments.class;
     }
 

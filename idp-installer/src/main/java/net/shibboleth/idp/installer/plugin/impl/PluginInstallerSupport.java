@@ -18,25 +18,41 @@
 package net.shibboleth.idp.installer.plugin.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.tools.ant.BuildException;
+import org.opensaml.security.httpclient.HttpClientSecurityContextHandler;
 import org.slf4j.Logger;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
+import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.InstallerSupport;
+import net.shibboleth.idp.installer.ProgressReportingOutputStream;
+import net.shibboleth.idp.installer.plugin.impl.PluginState.VersionInfo;
+import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
+import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.collection.Pair;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 
 /**
  * Support for copying files during plugin manipulation.
@@ -222,4 +238,129 @@ public final class PluginInstallerSupport {
             return FileVisitResult.CONTINUE;
         }
     }
+
+    /** Find the best update version (plugin or IdP).
+     * @param pluginVersion The Plugin version
+     * @param pluginInfo all about the plugin
+     * @return the best version (or null)
+     */
+    @Nullable static public PluginVersion getBestVersion(@Nonnull final PluginVersion pluginVersion, @Nonnull final PluginInfo pluginInfo) {
+        return getBestVersion(PluginInstaller.getIdPVersion(), pluginVersion, pluginInfo);
+    }
+
+   /** Find the best update version  (plugin or IdP).
+     * @param idPVersion The IdP version to check.
+     * @param pluginVersion The Plugin version
+     * @param pluginInfo all about the plugin
+     * @return the best version (or null)
+     */
+    @Nullable static public PluginVersion getBestVersion(@Nonnull final PluginVersion idPVersion,
+            @Nonnull final PluginVersion pluginVersion, @Nonnull final PluginInfo pluginInfo) {
+
+        final List<PluginVersion> availableVersions = new ArrayList<>(pluginInfo.getAvailableVersions().keySet());
+        availableVersions.sort(null);
+        LOG.debug("Considering versions: {}", availableVersions);
+
+        for (int i = availableVersions.size()-1; i >= 0; i--) {
+            final PluginVersion version = availableVersions.get(i);
+            if (version.compareTo(pluginVersion) <= 0) {
+                LOG.debug("Version {} is less than or the same as {}. All done", version, pluginVersion);
+                return null;
+            }
+            final VersionInfo versionInfo = pluginInfo.getAvailableVersions().get(version);
+            if (versionInfo.getSupportLevel() != SupportLevel.Current) {
+                LOG.debug("Version {} has support level {}, ignoring", version, versionInfo.getSupportLevel());
+                continue;
+            }
+            if (!pluginInfo.isSupportedWithIdPVersion(version, idPVersion)) {
+                LOG.debug("Version {} is not supported with idpVersion {}", version, idPVersion);
+                continue;
+            }
+            LOG.debug("Version {} is supported with idpVersion {}", version, idPVersion);
+            if (pluginInfo.getUpdateURL(version) == null || pluginInfo.getUpdateBaseName(version) == null) {
+                LOG.debug("Version {} is does not have update information", version);
+                continue;
+            }
+            return version;
+        }
+        return null;
+    }
+
+    /** Load the property file describing all the plugin we know about from a known location.
+     * @param updateURLs where to look
+     * @param commandLine the programming calling us.
+     * @return the property files plugins.
+     */
+    @Nullable public static Properties loadPluginInfo(@Nonnull final List<URL> updateURLs,
+            @Nonnull final AbstractIdPHomeAwareCommandLine<?> commandLine) {
+        final List<URL> urls;
+        final Properties props = new Properties();
+        try {
+            if (updateURLs.isEmpty()) {
+                urls = List.of(
+                        new URL("https://shibboleth.net/downloads/identity-provider/plugins/plugins.properties"),
+                        new URL("http://plugins.shibboleth.net/plugins.properties"));
+            } else {
+                urls = updateURLs;
+            }
+        } catch (final IOException e) {
+            LOG.error("Could not load update URLs", e);
+            return null;
+        }
+        for (final URL url: urls) {
+            final Resource propertyResource;
+            try {
+                if ("file".equals(url.getProtocol())) {
+                    final String path =url.getPath();
+                    assert path != null;
+                    propertyResource = new FileSystemResource(path);
+                } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
+                    final HttpClient client = commandLine.getHttpClient();
+                    assert client != null;
+                    final HTTPResource httpResource;
+                    propertyResource = httpResource = new HTTPResource(client , url);
+                    final HttpClientSecurityContextHandler handler = new HttpClientSecurityContextHandler();
+                    handler.setHttpClientSecurityParameters(commandLine.getHttpClientSecurityParameters());
+                    handler.initialize();
+                    httpResource.setHttpClientContextHandler(handler);
+                } else {
+                    LOG.error("Only file and http[s] URLs are allowed");
+                    continue;
+                }
+                LOG.debug("Plugin Listing: Looking for update at {}", propertyResource.getDescription());
+                if (!propertyResource.exists()) {
+                    LOG.info("{} could not be located", propertyResource.getDescription());
+                    continue;
+                }
+                props.load(propertyResource.getInputStream());
+                return props;
+            } catch (final IOException | ComponentInitializationException e) {
+                LOG.error("Could not open Update URL {} :", url, e);
+                continue;
+            }
+        }
+        LOG.error("Could not locate any active update servers");
+        return null;
+    }
+
+    /** Download helper method.
+     * @param baseResource where to go for the file
+     * @param handler HttpClientSecurityContextHandler to use
+     * @param downloadDirectory where to download to
+     * @param fileName the file name
+     * @throws IOException as required
+     */
+    public static void download(@Nonnull final HTTPResource baseResource,
+            @Nonnull final HttpClientSecurityContextHandler handler,
+            @Nonnull final Path downloadDirectory,
+            @Nonnull final String fileName) throws IOException {
+        final HTTPResource httpResource = baseResource.createRelative(fileName, handler);
+        final Path filePath = downloadDirectory.resolve(fileName);
+        LOG.info("Downloading from {}", httpResource.getDescription());
+        LOG.debug("Downloading to {}", filePath);
+        try (final OutputStream fileOut = new ProgressReportingOutputStream(new FileOutputStream(filePath.toFile()))) {
+            httpResource.getInputStream().transferTo(fileOut);
+        }
+    }
+
 }

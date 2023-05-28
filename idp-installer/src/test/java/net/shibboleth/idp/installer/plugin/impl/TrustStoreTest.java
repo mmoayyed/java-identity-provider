@@ -30,6 +30,8 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.Security;
 
+import javax.annotation.Nonnull;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -37,6 +39,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeTest;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 @SuppressWarnings("javadoc")
@@ -44,7 +47,7 @@ public class TrustStoreTest {
     
     private final static String pluginId = "net.shibboleth.plugin.test";
     
-    private Path dir;
+    @NonnullBeforeTest private Path dir;
     
     
     @BeforeClass public void setup() throws IOException {
@@ -76,12 +79,18 @@ public class TrustStoreTest {
         Files.deleteIfExists(dir.resolve("credentials").resolve(pluginId).resolve("truststore.asc"));
     }
 
+    @Nonnull private Path getDir() {
+        assert dir != null;
+        return dir;
+    }
+
     @Test public void signatureAbsentTest() throws ComponentInitializationException, IOException {
         final TrustStore ts = new TrustStore();
-        ts.setIdpHome(dir);
+        ts.setIdpHome(getDir());
         ts.setPluginId(pluginId);
         ts.initialize();
         try (InputStream sigStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico.asc")) {
+            assert sigStream!=null;
             final Signature signature = TrustStore.signatureOf(sigStream);
             assertFalse(ts.contains(signature));
         }
@@ -97,10 +106,11 @@ public class TrustStoreTest {
     @Test public void signaturePresentTest() throws ComponentInitializationException, IOException {
         populateKeyStore();
         final TrustStore ts = new TrustStore();
-        ts.setIdpHome(dir);
+        ts.setIdpHome(getDir());
         ts.setPluginId(pluginId);
         ts.initialize();
-        try( final InputStream sigStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico.asc")) {
+        try(final InputStream sigStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico.asc")) {
+            assert sigStream!=null;
             final Signature signature = TrustStore.signatureOf(sigStream);
             assertTrue(ts.contains(signature));
         }        
@@ -109,7 +119,7 @@ public class TrustStoreTest {
     @Test public void signingTest()  throws ComponentInitializationException, IOException {
         populateKeyStore();
         final TrustStore ts = new TrustStore();
-        ts.setIdpHome(dir);
+        ts.setIdpHome(getDir());
         ts.setPluginId(pluginId);
         ts.initialize();
         try( final InputStream sigStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico.asc");
@@ -117,7 +127,8 @@ public class TrustStoreTest {
                final InputStream dataStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico");
                final InputStream dataStream2 = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico")) {
 
-            Signature badSig = TrustStore.signatureOf(badSigStream);
+            assert badSigStream!= null && sigStream != null;
+            final Signature badSig = TrustStore.signatureOf(badSigStream);
             assertTrue(ts.contains(badSig));
             assertFalse(ts.checkSignature(dataStream, badSig));
             assertTrue(ts.checkSignature(dataStream2, TrustStore.signatureOf(sigStream)));
@@ -128,23 +139,24 @@ public class TrustStoreTest {
         populateKeyStore();
         final Signature signature;
         try( final InputStream sigStream = TrustStoreTest.class.getResourceAsStream("/net/shibboleth/idp/installer/plugin/shib.ico.asc")) {
+            assert sigStream!=null;
             signature = TrustStore.signatureOf(sigStream);
         }
         TrustStore ts = new TrustStore();
-        ts.setIdpHome(dir);
+        ts.setIdpHome(getDir());
         ts.setPluginId(pluginId);
         ts.initialize();
         assertTrue(ts.contains(signature));
         ts.saveStore();
 
         ts = new TrustStore();
-        ts.setIdpHome(dir);
+        ts.setIdpHome(getDir());
         ts.setPluginId(pluginId);
         ts.initialize();
         assertTrue(ts.contains(signature));
 
         ts = new TrustStore();
-        ts.setIdpHome(dir);
+        ts.setIdpHome(getDir());
         ts.setTrustStore(dir.resolve("credentials").resolve(pluginId).resolve("truststore.asc").toString());
         ts.setPluginId(pluginId);
         ts.initialize();

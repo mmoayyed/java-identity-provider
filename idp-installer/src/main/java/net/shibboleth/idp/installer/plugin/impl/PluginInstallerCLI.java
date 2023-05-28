@@ -40,18 +40,15 @@ import javax.annotation.Nullable;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.tools.ant.BuildException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.opensaml.security.httpclient.HttpClientSecurityContextHandler;
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.plugin.impl.PluginState.VersionInfo;
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
 import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.cli.AbstractCommandLine;
@@ -60,7 +57,6 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
-import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 
 /**
  * Command line for Plugin Installation.
@@ -74,7 +70,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     @Nullable private PluginInstaller installer;
 
     /** Update URLs. */
-    private List<URL> updateURLs;
+    @Nonnull private List<URL> updateURLs = CollectionSupport.emptyList();
 
     /**
       * Constrained Constructor.
@@ -116,7 +112,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     /** {@inheritDoc} */
     //CheckStyle: CyclomaticComplexity|MethodLength OFF
     protected int doRun(@Nonnull final PluginInstallerArguments args) {
-        
+
         if (args.getHttpClientName() == null) {
             args.setHttpClientName("shibboleth.InternalHttpClient");
         }
@@ -140,8 +136,6 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 log.error("Could not convert update URL {}", args.getUpdateURL(), e);
                 return RC_INIT;
             }
-        } else {
-            updateURLs = CollectionSupport.emptyList();
         }
 
         try (final PluginInstaller inst = new PluginInstaller(Constraint.isNotNull(getHttpClient(), "HJttpClient cannot be non null (by construction"))) {
@@ -394,7 +388,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @return whether it worked
      */
     private int doListAvailable() {
-        final Properties props = loadPluginInfo();
+        final Properties props = PluginInstallerSupport.loadPluginInfo(updateURLs, this);
         if (props == null) {
             return RC_IO;
         }
@@ -412,27 +406,30 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             }
         }
 
-        for (final Entry<String, PluginInfo> e: plugins.entrySet()) {
+        for (final Entry<String, PluginInfo> entry: plugins.entrySet()) {
             final PluginVersion nullVersion = new PluginVersion(0, 0, 0);
+            final String key = entry.getKey();
+            final PluginInfo value = entry.getValue();
+            assert key!=null && value !=null;
             assert installer != null;
-            final IdPPlugin existingPlugin = installer.getInstalledPlugin(e.getKey());
+            final IdPPlugin existingPlugin = installer.getInstalledPlugin(key);
             if (existingPlugin == null) {
-                final PluginVersion version = getBestVersion(nullVersion, e.getValue());
+                final PluginVersion version = PluginInstallerSupport.getBestVersion(nullVersion, value);
                 if (version == null) {
-                    log.debug("Plugin {} has no version available", e.getKey());
+                    log.debug("Plugin {} has no version available", entry.getKey());
                 } else {
-                    outOrLog(String.format("Plugin %s: version %s available for install", e.getKey(), version));
+                    outOrLog(String.format("Plugin %s: version %s available for install", entry.getKey(), version));
                 }
             } else {
                 final PluginVersion existingVersion = new PluginVersion(existingPlugin);
-                final PluginVersion version = getBestVersion(existingVersion, e.getValue());
+                final PluginVersion version = PluginInstallerSupport.getBestVersion(existingVersion, value);
                 if (version == null) {
                     outOrLog(String.format("Plugin %s: Installed version %s: No update available",
-                            e.getKey(),
+                            entry.getKey(),
                             existingVersion));
                 } else {
                     outOrLog(String.format("Plugin %s: Installed version %s: Update to %s available",
-                            e.getKey(),
+                            entry.getKey(),
                             existingVersion,
                             version));
                 }
@@ -441,59 +438,6 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         return RC_OK;
     }
 
-    /** Load the property file describing all the plugin we know about from a known location.
-     * @return the property files plugins.
-     */
-    private Properties loadPluginInfo() {
-        final List<URL> urls;
-        final Properties props = new Properties();
-        try {
-            if (updateURLs == null || updateURLs.isEmpty()) {
-                urls = List.of(
-                        new URL("https://shibboleth.net/downloads/identity-provider/plugins/plugins.properties"),
-                        new URL("http://plugins.shibboleth.net/plugins.properties"));
-            } else {
-                urls = updateURLs;
-            }
-        } catch (final IOException e) {
-            log.error("Could not load update URLs", e);
-            return null;
-        }
-        for (final URL url: urls) {
-            final Resource propertyResource;
-            try {
-                if ("file".equals(url.getProtocol())) {
-                    final String path =url.getPath();
-                    assert path != null;
-                    propertyResource = new FileSystemResource(path);
-                } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
-                    final HttpClient client = getHttpClient();
-                    assert client != null;
-                    final HTTPResource httpResource;
-                    propertyResource = httpResource = new HTTPResource(client , url);
-                    final HttpClientSecurityContextHandler handler = new HttpClientSecurityContextHandler();
-                    handler.setHttpClientSecurityParameters(getHttpClientSecurityParameters());
-                    handler.initialize();
-                    httpResource.setHttpClientContextHandler(handler);
-                } else {
-                    log.error("Only file and http[s] URLs are allowed");
-                    continue;
-                }
-                log.debug("Plugin Listing: Looking for update at {}", propertyResource.getDescription());
-                if (!propertyResource.exists()) {
-                    log.info("{} could not be located", propertyResource.getDescription());
-                    continue;
-                }
-                props.load(propertyResource.getInputStream());
-                return props;
-            } catch (final IOException | ComponentInitializationException e) {
-                log.error("Could not open Update URL {} :", url, e);
-                continue;
-            }
-        }
-        log.error("Could not locate any active update servers");
-        return null;
-    }
 
     /** Given the pluginId find the best version and install.
      * If already installed whine
@@ -509,7 +453,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             log.error("Plugin {} is already installed", pluginId);
             return RC_INIT;
         }
-        final Properties props = loadPluginInfo();
+        final Properties props = PluginInstallerSupport.loadPluginInfo(updateURLs, this);
         if (props == null) {
             log.error("AutoInstall not possible");
             return RC_INIT;
@@ -519,7 +463,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             log.error("Plugin {}: Information not found", pluginId);
             return RC_INIT;
         }
-        final PluginVersion versionToInstall = getBestVersion(new PluginVersion(0,0,0), info);
+        final PluginVersion versionToInstall = PluginInstallerSupport.getBestVersion(new PluginVersion(0,0,0), info);
         if (versionToInstall == null) {
             log.error("Plugin {}: No version available to install", pluginId);
             return RC_INIT;
@@ -530,46 +474,6 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 info.getUpdateBaseName(versionToInstall) + ".tar.gz",
                 checkVersion);
         return RC_OK;
-    }
-
-
-
-    /** Find the best update version.  Helper function for {@linkplain #doUpdate(String, PluginVersion, boolean)}.
-     * @param pluginVersion The Plugin version
-     * @param pluginInfo all about the plugin
-     * @return the best version (or null)
-     */
-    @Nullable private PluginVersion getBestVersion(final PluginVersion pluginVersion , final PluginInfo pluginInfo) {
-
-        final PluginVersion idPVersion = PluginInstaller.getIdPVersion();
-
-        final List<PluginVersion> availableVersions = new ArrayList<>(pluginInfo.getAvailableVersions().keySet());
-        availableVersions.sort(null);
-        log.debug("Considering versions: {}", availableVersions);
-
-        for (int i = availableVersions.size()-1; i >= 0; i--) {
-            final PluginVersion version = availableVersions.get(i);
-            if (version.compareTo(pluginVersion) <= 0) {
-                log.debug("Version {} is less than or the same as {}. All done", version, pluginVersion);
-                return null;
-            }
-            final VersionInfo versionInfo = pluginInfo.getAvailableVersions().get(version);
-            if (versionInfo.getSupportLevel() != SupportLevel.Current) {
-                log.debug("Version {} has support level {}, ignoring", version, versionInfo.getSupportLevel());
-                continue;
-            }
-            if (!pluginInfo.isSupportedWithIdPVersion(version, idPVersion)) {
-                log.debug("Version {} is not supported with idpVersion {}", version, idPVersion);
-                continue;
-            }
-            log.debug("Version {} is supported with idpVersion {}", version, idPVersion);
-            if (pluginInfo.getUpdateURL(version) == null || pluginInfo.getUpdateBaseName(version) == null) {
-                log.debug("Version {} is does not have update information", version);
-                continue;
-            }
-            return version;
-        }
-        return null;
     }
 
     /** Update the plugin.
@@ -603,7 +507,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         final PluginVersion installVersion;
         if (pluginVersion == null) {
-            installVersion = getBestVersion(new PluginVersion(plugin), state.getPluginInfo());
+            installVersion = PluginInstallerSupport.getBestVersion(new PluginVersion(plugin), state.getPluginInfo());
             if (installVersion == null) {
                 log.info("No suitable update version available");
                 return;

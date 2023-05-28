@@ -25,7 +25,6 @@ import static org.testng.Assert.fail;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -112,7 +111,9 @@ public class PluginStateTest {
             @Override
             public @Nonnull java.util.List<URL> getUpdateURLs() {
                 try {
-                    return List.of(new URL("http://example.org/dir"), super.getUpdateURLs().get(0));
+                    final URL u = super.getUpdateURLs().get(0);
+                    assert u != null;
+                    return CollectionSupport.listOf(new URL("http://example.org/dir"), u);
                 } catch (final MalformedURLException e) {
                     fail(e.toString());
                     return super.getUpdateURLs();

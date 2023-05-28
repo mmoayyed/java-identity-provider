@@ -85,7 +85,9 @@ public class PluginState extends AbstractInitializableComponent {
     /** get our PluginInfo.
      * @return our PluginInfo.
      */
-    public PluginInfo getPluginInfo() {
+    @Nonnull public PluginInfo getPluginInfo() {
+        checkComponentActive();
+        assert myPluginInfo!=null;
         return myPluginInfo;
     }
     
