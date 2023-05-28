@@ -67,7 +67,7 @@ public class RollbackTester {
         final IdPModule disabled1 = new TestModule("disabled1", null, null);
         final IdPModule disabled2 = new TestModule("disablde2", new ModuleException(), null);
         final String mcs = mc.toString();
-        final String parentString = parent.toString(); 
+        final String parentString = parent.toString();
         assert mcs!=null && parentString!=null;
         final ModuleContext ctx = new ModuleContext(mcs);
 

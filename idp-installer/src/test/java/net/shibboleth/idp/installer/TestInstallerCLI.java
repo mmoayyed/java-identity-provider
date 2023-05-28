@@ -42,11 +42,11 @@ public class TestInstallerCLI {
                 "-hc", "shibboleth.InternalHttpClient"
                });
     }
-
+/*
     @Test(enabled = false)
     public void updateList430() {
         UpdateIdPCLI.runMain(new String[] {
-                "-l", 
+                "-l",
                 "--pretendVersion","4.3.0",
                 "--updateURL", "file:C:\\Users\\rdw\\Desktop\\logs\\plugins.properties",
                 "--home", "H:\\Downloads\\idp"});
@@ -55,7 +55,7 @@ public class TestInstallerCLI {
     @Test(enabled = false)
     public void updateList431() {
         UpdateIdPCLI.runMain(new String[] {
-                "-l", 
+                "-l",
                 "--pretendVersion","4.3.1",
                 "--updateURL", "file:C:\\Users\\rdw\\Desktop\\logs\\plugins.properties",
                 "--home", "H:\\Downloads\\idp"});
@@ -84,5 +84,5 @@ public class TestInstallerCLI {
                 "--pretendVersion","4.3.0",
                 "--updateURL", "file:C:\\Users\\rdw\\Desktop\\logs\\plugins.properties",
                 "--home", "H:\\Downloads\\idp"});
-    }
+    }*/
 }
