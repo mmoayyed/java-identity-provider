@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.installer.impl.IdPInstallerCLI;
 import net.shibboleth.idp.installer.impl.InstallerProperties;
-import net.shibboleth.idp.installer.impl.UpdateIdPCLI;
+//import net.shibboleth.idp.installer.impl.UpdateIdPCLI;
 /**
  *
  */
