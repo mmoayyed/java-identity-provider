@@ -144,7 +144,7 @@ public final class PluginVersion implements Comparable<PluginVersion>{
     public boolean equals(final Object obj) {
         if (obj instanceof PluginVersion) {
             final PluginVersion other= (PluginVersion)obj;
-            return other.major == major && other.minor == minor && other.patch == other.patch;
+            return other.major == major && other.minor == minor && other.patch == patch;
         }
         return false;
     }
