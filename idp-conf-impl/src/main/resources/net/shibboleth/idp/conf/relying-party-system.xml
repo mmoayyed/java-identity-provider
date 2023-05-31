@@ -22,7 +22,7 @@
         p:unverifiedConfiguration="#{getObject('shibboleth.UnverifiedRelyingParty')}"
         p:defaultConfiguration="#{getObject('shibboleth.DefaultRelyingParty')}"
         p:relyingPartyConfigurations="#{getObject('shibboleth.RelyingPartyOverrides')}"
-        p:overrideCounterPrefix="net.shibboleth.idp.relyingparty.configurations" />
+        p:metricName="net.shibboleth.idp.relyingparty.configurations" />
 
     <!--
     Auto-wiring exposers for credentials to get them loaded into the bean above.
