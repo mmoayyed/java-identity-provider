@@ -80,9 +80,11 @@
         depends-on="shibboleth.OpenSAMLConfig"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:authenticationFlowDescriptors="#{@'shibboleth.AuthenticationFlowDescriptorManager'.getComponents()}"
-        p:cookieManager-ref="shibboleth.CookieManager"
         p:cookieName="%{idp.session.cookieName:__Host-shib_idp_session}"
-        p:storageService-ref="#{'%{idp.session.StorageService:shibboleth.ClientSessionStorageService}'.trim()}"
+        p:cookieManager-ref="#{%{idp.session.persistent:false} ? 'shibboleth.PersistentCookieManager' : 'shibboleth.CookieManager'}"
+        p:storageService-ref="#{'%{idp.session.StorageService:}'.isEmpty() ?
+            (%{idp.session.persistent:false} ? 'shibboleth.ClientPersistentStorageService' : 'shibboleth.ClientSessionStorageService')
+                : '%{idp.session.StorageService:}'.trim()}"
         p:consistentAddressCondition="#{getObject('%{idp.session.consistentAddressCondition:}'.trim()) ?:
             T(net.shibboleth.idp.session.impl.StorageBackedSessionManager.DefaultConsistentAddressConditionFactory).getDefaultConsistentAddressCondition(%{idp.session.consistentAddress:true})}"
         p:sessionTimeout="%{idp.session.timeout:PT60M}"
