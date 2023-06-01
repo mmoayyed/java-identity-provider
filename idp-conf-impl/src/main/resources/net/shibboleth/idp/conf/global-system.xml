@@ -293,7 +293,7 @@
         p:httpOnly="%{idp.cookie.httpOnly:true}"
         p:cookieDomain="%{idp.cookie.domain:}"
         p:cookiePath="%{idp.cookie.path:/}"
-        p:maxAge="%{idp.cookie.maxAge:31536000}" />
+        p:maxAge="%{idp.cookie.maxAge:P1Y}" />
 
     <bean id="shibboleth.UserPrefsCookieManager" class="net.shibboleth.shared.net.CookieManager"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
@@ -302,7 +302,7 @@
         p:httpOnly="false"
         p:cookieDomain="%{idp.cookie.domain:}"
         p:cookiePath="%{idp.cookie.path:/}"
-        p:maxAge="%{idp.cookie.maxAge:31536000}" />
+        p:maxAge="%{idp.cookie.maxAge:P1Y}" />
 
     <bean id="shibboleth.StorageService" lazy-init="true"
         class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"
@@ -312,14 +312,14 @@
         class="org.opensaml.storage.impl.client.ClientStorageService"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:cookieManager-ref="shibboleth.CookieManager"
-        p:storageName="%{idp.storage.clientSessionStorageName:shib_idp_session_ss}"
+        p:storageName="%{idp.storage.clientSessionStorageName:__Host-shib_idp_session_ss}"
         p:dataSealer-ref="shibboleth.DataSealer" />
 
     <bean id="shibboleth.ClientPersistentStorageService" lazy-init="true"
         class="org.opensaml.storage.impl.client.ClientStorageService"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:cookieManager-ref="shibboleth.PersistentCookieManager"
-        p:storageName="%{idp.storage.clientPersistentStorageName:shib_idp_persistent_ss}"
+        p:storageName="%{idp.storage.clientPersistentStorageName:__Host-shib_idp_persistent_ss}"
         p:dataSealer-ref="shibboleth.DataSealer"
         p:keyStrategy-ref="#{ '%{idp.sealer.keyStrategy:shibboleth.DataSealerKeyStrategy}'.trim() }" />
 
