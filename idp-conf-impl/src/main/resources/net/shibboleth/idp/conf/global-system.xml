@@ -125,6 +125,10 @@
         <entry key="net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate"
             value="net.shibboleth.saml.profile.context.logic.MappedEntityAttributesPredicate" />
     </util:map>
+    
+    <util:map id="shibboleth.ContextLookAsideMap">
+        <entry key="net.shibboleth.idp.profile.context.RelyingPartyContext" value="#{T(net.shibboleth.profile.context.RelyingPartyContext)}" />
+    </util:map>
 
     <!-- This extends the original user-space resource list with the classpath-embedded message tree. -->
     <bean id ="ExtendedMessageSourceResources" parent="shibboleth.ListCombiner"
@@ -140,7 +144,7 @@
             p:cacheSeconds="%{idp.message.cacheSeconds:300}"
             p:basenames-ref="ExtendedMessageSourceResources"
             p:defaultEncoding="UTF-8" />
-
+    
     <import resource="${idp.home}/conf/global.xml" />
     <import resource="${idp.home}/conf/errors.xml" />
     <import resource="audit-system.xml" />
@@ -174,7 +178,8 @@
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.profile.spring.impl.OpenSAMLConfigBean"
         depends-on="systemPrereqs,shibboleth.LoggingService"
         p:parserPool-ref="shibboleth.ParserPool"
-        p:metricRegistry-ref="shibboleth.metrics.MetricRegistry" />
+        p:metricRegistry-ref="shibboleth.metrics.MetricRegistry"
+        p:contextLookAsideMap-ref="shibboleth.ContextLookAsideMap" />
 
     <bean class="net.shibboleth.idp.admin.impl.LogImplementationDetails" c:_0="%{idp.home}" />
 
