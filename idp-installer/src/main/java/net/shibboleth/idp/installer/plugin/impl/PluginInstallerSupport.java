@@ -31,6 +31,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,7 +52,9 @@ import net.shibboleth.idp.plugin.PluginVersion;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 
 /**
@@ -363,4 +366,32 @@ public final class PluginInstallerSupport {
         }
     }
 
+/** Predicate to ask the user if they want to install the trust store provided. */
+    public static class InstallerQuery implements Predicate<String> {
+
+        /** What to say. */
+        @Nonnull
+        private final String promptText;
+
+        /**
+         * Constructor.
+         * @param text What to say before the prompt information
+         */
+        public InstallerQuery(@Nonnull final String text) {
+            promptText = Constraint.isNotNull(text, "Text should not be null");
+        }
+
+        /** {@inheritDoc} */
+        public boolean test(final String keyString) {
+            if (System.console() == null) {
+                LOG.error("No Console Attached to installer");
+                return false;
+            }
+            System.console().printf("%s:\n%s [yN] ", promptText, keyString);
+            System.console().flush();
+            final String result  = StringSupport.trimOrNull(System.console().readLine());
+            return result != null && "y".equalsIgnoreCase(result.substring(0, 1));
+        }
+    }
 }
+

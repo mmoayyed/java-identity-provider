@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,7 +55,6 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
-import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Command line for Plugin Installation.
@@ -218,7 +216,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         assert idpHome != null;
         inst.setIdpHome(idpHome);
         if (!args.isUnattended()) {
-            inst.setAcceptKey(new InstallerQuery("Accept this key"));
+            inst.setAcceptKey(new PluginInstallerSupport.InstallerQuery("Accept this key"));
         }
         inst.setTrustore(args.getTruststore());
         final HttpClient client = getHttpClient();
@@ -549,33 +547,5 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      */
     public static void main(@Nonnull final String[] args) {
         System.exit(runMain(args));
-    }
-
-    /** Predicate to ask the user if they want to install the trust store provided. */
-    private class InstallerQuery implements Predicate<String> {
-
-        /** What to say. */
-        @Nonnull
-        private final String promptText;
-
-        /**
-         * Constructor.
-         * @param text What to say before the prompt information
-         */
-        public InstallerQuery(@Nonnull final String text) {
-            promptText = Constraint.isNotNull(text, "Text should not be null");
-        }
-
-        /** {@inheritDoc} */
-        public boolean test(final String keyString) {
-        	if (System.console() == null) {
-        		log.error("No Console Attached to installer");
-        		return false;
-        	}
-            System.console().printf("%s:\n%s [yN] ", promptText, keyString);
-            System.console().flush();
-            final String result  = StringSupport.trimOrNull(System.console().readLine());
-            return result != null && "y".equalsIgnoreCase(result.substring(0, 1));
-        }
     }
 }
