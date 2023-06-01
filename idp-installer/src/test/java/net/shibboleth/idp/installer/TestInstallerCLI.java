@@ -42,6 +42,28 @@ public class TestInstallerCLI {
                 "-hc", "shibboleth.InternalHttpClient"
                });
     }
+
+    @Test(enabled = false)
+    public void silentInstall() {
+
+        System.setProperty(InstallerProperties.KEY_STORE_PASSWORD, "p1");
+        System.setProperty(InstallerProperties.SEALER_PASSWORD, "p1");
+        System.setProperty(InstallerProperties.HOST_NAME, "machine.org.uk");
+ //       System.setProperty(InstallerProperties.TARGET_DIR,  "h:\\downloads\\idp");
+//        System.setProperty(InstallerProperties.SEALER_KEYSIZE, "256");
+        IdPInstallerCLI.runMain(new String[] {
+                "-ks", "p1",
+                "--sealerPassword", "p1",
+                "-e", "https://test.example.org/id",
+                "-h", "machine.org",
+                "--scope", "machine.org",
+                "-t", "h:\\downloads\\idp",
+                "-s", "h:\\Perforce\\Juno\\V5\\java-identity-provider\\idp-distribution\\target\\shibboleth-identity-provider-5.0.0-SNAPSHOT",
+                "-hc", "shibboleth.InternalHttpClient"
+               });
+    }
+
+
 /*
     @Test(enabled = false)
     public void updateList430() {

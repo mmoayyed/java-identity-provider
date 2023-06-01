@@ -51,6 +51,26 @@ public class IdPInstallerArguments extends AbstractCommandLineArguments {
     @Parameter(names= {"--noPrompt"})
     private boolean noPrompt;
 
+    /** DNS name of the IdP. */
+    @Parameter(names= {"-h", "--hostName"})
+    private String hostName;
+
+    /** Scope to assert. */
+    @Parameter(names= {"--scope"})
+    private String scope;
+
+    /** EntityID to install. */
+    @Parameter(names= {"-e", "--entityID"})
+    private String entityID;
+
+    /** Password for the keystore we will generate. */
+    @Parameter(names= {"-kp", "--keystorePassword"})
+    private String keystorePassword;
+
+    /** Password for the sealer we will generate. */
+    @Parameter(names= {"-sp", "--sealerPassword"})
+    private String sealerPassword;
+
     /** Import Property File. */
     @Parameter(names= {"--propertyFile"})
     private String propertyFile;
@@ -102,7 +122,42 @@ public class IdPInstallerArguments extends AbstractCommandLineArguments {
     @Nullable public String getPropertyFile() {
         return propertyFile;
     }
-    
+
+    /** Return the DNS name for the IdP
+     * @return Returns the DNS name.
+     */
+    @Nullable public String getHostName() {
+        return hostName;
+    }
+
+    /** Return the scope to assert.
+     * @return Returns the scope.
+     */
+    public String getScope() {
+        return scope;
+    }
+
+    /** The entityID to create.
+     * @return Returns the entityID.
+     */
+    public String getEntityID() {
+        return entityID;
+    }
+
+    /** The key store password.
+     * @return Returns the keystorePassword.
+     */
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    /** The sealer password.
+     * @return Returns the sealerPassword.
+     */
+    public String getSealerPassword() {
+        return sealerPassword;
+    }
+
     /**
      * Get bean name for the {@link org.apache.hc.client5.http.classic.HttpClient} (if specified).
      *

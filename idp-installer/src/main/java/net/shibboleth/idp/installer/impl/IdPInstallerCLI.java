@@ -121,15 +121,13 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
             System.setProperty(InstallerProperties.NO_PROMPT, "true");
         }
 
-        final String propFile = args.getPropertyFile();
-        if (propFile!=null) {
-            System.setProperty(InstallerProperties.PROPERTY_SOURCE_FILE, propFile);
-        }
-
-        final String target = args.getTargetDirectory();
-        if (target!=null) {
-            System.setProperty(InstallerProperties.TARGET_DIR, target);
-        }
+        setIfNotNull(args.getPropertyFile(), InstallerProperties.PROPERTY_SOURCE_FILE);
+        setIfNotNull(args.getTargetDirectory(), InstallerProperties.TARGET_DIR);
+        setIfNotNull(args.getHostName(), InstallerProperties.HOST_NAME);
+        setIfNotNull(args.getScope(), InstallerProperties.SCOPE);
+        setIfNotNull(args.getEntityID(), InstallerProperties.ENTITY_ID);
+        setIfNotNull(args.getKeystorePassword(), InstallerProperties.KEY_STORE_PASSWORD);
+        setIfNotNull(args.getSealerPassword(), InstallerProperties.SEALER_PASSWORD);
 
         try {
             final InstallerProperties ip = new InstallerProperties(source);
@@ -156,6 +154,18 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
         return RC_OK;
     }
     
+    /** Helper for translating arguments to properties.  Look at the value and if its nonnul
+     * set the associate property.
+     * @param propertyFile
+     * @param propertySourceFile
+     */
+    private void setIfNotNull(@Nullable String value, @Nonnull String propertyName) {
+        if (value == null) {
+            return;
+        }
+        System.setProperty(propertyName, value);
+    }
+
     /** Shim for CLI entry point: Allows the code to be run from a test.
     *
     * @return one of the predefines {@link AbstractCommandLine#RC_INIT},
