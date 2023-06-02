@@ -56,7 +56,7 @@ public class ResolverTestRequest {
      * @param index <code>&lt;AttributeConsumingService&gt;</code> index
      * @param prot protocol ID
      */
-    public ResolverTestRequest(@Nonnull @NotEmpty final String princ, @Nullable final String requester,
+    public ResolverTestRequest(@Nonnull @NotEmpty final String princ, @Nonnull @NotEmpty final String requester,
             @Nullable final Integer index, @Nullable final String prot) {
         
         principal = Constraint.isNotNull(StringSupport.trimOrNull(princ), "Principal name cannot be null or empty");
