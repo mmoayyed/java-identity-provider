@@ -340,14 +340,21 @@ public class V5Install {
         try (final BufferedReader in = new BufferedReader(new FileReader(webXml.toFile()))) {
             final Pattern pat = Pattern.compile(".*net\\.shibboleth\\.ext\\.spring"+
                     "\\.context\\.DeferPlaceholderFileSystemXmlWebApplicationContext.*");
+            final Pattern systemInWebXml = Pattern.compile(".*\\$\\{idp\\.home\\}/system.*");
+            boolean foundPat1 = false, foundSystemInWebXml = false;
             String line = in.readLine();
             while (line != null) {
-                if (pat.matcher(line).matches()) {
-                    log.warn("Your copy of edit-webapp/WEB-INF/web.xml contains a reference to a replaced class, " +
+                if (!foundPat1 && pat.matcher(line).matches()) {
+                    foundPat1=true;
+                    log.warn("Your copy of edit-webapp/WEB-INF/web.xml contains a reference to a replaced class, {}",
                             DeferPlaceholderFileSystemXmlWebApplicationContext.class.getCanonicalName());
-                    log.warn("You MUST update this to " + DelimiterAwareApplicationContext.class.getCanonicalName() +
-                            " and rebuild the war after installation or the IdP will refuse to start.");
-                    break;
+                    log.warn("You MUST update this to {} and rebuild the war after installation or the IdP will refuse to start.",
+                            DelimiterAwareApplicationContext.class.getCanonicalName());
+                }
+                if (!foundSystemInWebXml && systemInWebXml.matcher(line).matches()) {
+                    foundSystemInWebXml=true;
+                    log.warn("Your copy of edit-webapp/WEB-INF/web.xml contains a reference to ${idp.home}/system");
+                    log.warn("This no longer exists.  Make the required changed and rebuild the war after installation or the IdP will refuse to start.");
                 }
                 line = in.readLine();
             }
