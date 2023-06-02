@@ -154,10 +154,10 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
         return RC_OK;
     }
     
-    /** Helper for translating arguments to properties.  Look at the value and if its nonnul
+    /** Helper for translating arguments to properties.  Look at the value and if it is non-null
      * set the associate property.
-     * @param propertyFile
-     * @param propertySourceFile
+     * @param value the value to check and potentially set
+     * @param propertyName the property name to set
      */
     private void setIfNotNull(@Nullable String value, @Nonnull String propertyName) {
         if (value == null) {
