@@ -84,7 +84,7 @@ public final class PluginSupport {
         if (idpVersion!=null) {
             return new PluginVersion(idpVersion);
         }
-        log.error("Could not locate IdP Version, assuming 4.1.0");
-        return new PluginVersion(4,1,0);
+        log.error("Could not locate IdP Version, assuming 5.0.0");
+        return new PluginVersion(5,0,0);
     }
 }
