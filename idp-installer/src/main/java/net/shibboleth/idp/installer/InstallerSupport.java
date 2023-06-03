@@ -56,7 +56,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 
-/** General common names and helper functions for the IdP & Plugin Installers.
+/** General common names and helper functions for the IdP and Plugin Installers.
  * This is not intended for general use.
  */
 public final class InstallerSupport {

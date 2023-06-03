@@ -155,7 +155,7 @@ public final class PluginSupport {
     /** Load the property file describing all the plugin we know about from a known location.
      * @param updateURLs where to look
      * @param client the http client to use
-     * @param securityParameters the HttpClientSecurityParameters, if any 
+     * @param securityParameters the HttpClientSecurityParameters, if any
      * @return the property files for the component.
      */
     @Nullable public static Properties loadPluginInfo(@Nonnull final List<URL> updateURLs, @Nonnull final HttpClient client,
