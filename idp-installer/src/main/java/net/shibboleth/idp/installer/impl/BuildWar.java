@@ -68,11 +68,11 @@ public final class BuildWar {
      * @param webAppTo Where to copy to.
      * @throws BuildException if unexpected badness occurs.
      */
-    private void overlayWebapp(final Path from, final Path webAppTo) throws BuildException {
+    private void overlayWebapp(@Nonnull final Path from, @Nonnull final Path webAppTo) throws BuildException {
         if (!Files.exists(from)) {
             return;
         }
-        final Copy overlay = InstallerSupport.getCopyTask(from, webAppTo);
+        final Copy overlay = InstallerSupport.getCopyTask(from, webAppTo, "**/*.idpnew");
         overlay.setOverwrite(true);
         overlay.setPreserveLastModified(true);
         overlay.setFailOnError(true);
@@ -93,6 +93,7 @@ public final class BuildWar {
         InstallerSupport.deleteTree(webAppTmp);
         final Path dist = targetDir.resolve("dist");
         final Path distWebApp =  dist.resolve("webapp");
+        assert distWebApp!=null && webAppTmp != null;
         final Copy initial = InstallerSupport.getCopyTask(distWebApp, webAppTmp);
         initial.setPreserveLastModified(true);
         initial.setFailOnError(true);
@@ -100,8 +101,11 @@ public final class BuildWar {
         log.info("Initial populate from {} to {}", distWebApp, webAppTmp);
         initial.execute();
 
-        overlayWebapp(targetDir.resolve("dist").resolve("plugin-webapp"), webAppTmp);
-        overlayWebapp(targetDir.resolve("edit-webapp"), webAppTmp);
+        final Path pluginWebapp = targetDir.resolve("dist").resolve("plugin-webapp");
+        final Path editWebapp = targetDir.resolve("edit-webapp");
+        assert pluginWebapp!=null && editWebapp!=null;
+        overlayWebapp(pluginWebapp, webAppTmp);
+        overlayWebapp(editWebapp, webAppTmp);
 
         final File warFileFile = warFile.toFile();
         if (warFileFile.exists() && !warFile.toFile().delete()) {

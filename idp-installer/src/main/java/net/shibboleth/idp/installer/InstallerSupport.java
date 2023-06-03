@@ -80,7 +80,7 @@ public final class InstallerSupport {
      * @param dir what to create
      * @throws BuildException if badness occurs
      */
-    public static void createDirectory(final Path dir) throws BuildException{
+    public static void createDirectory(@Nonnull final Path dir) throws BuildException{
         if (!Files.exists(dir)) {
             try {
                 Files.createDirectories(dir);
@@ -99,13 +99,25 @@ public final class InstallerSupport {
      * @param to where to copy to
      * @return a partially populated {@link Copy} task
      */
-    public static Copy getCopyTask(final Path from, final Path to) {
+    @Nonnull public static Copy getCopyTask(@Nonnull final Path from, @Nonnull final Path to) {
+        return getCopyTask(from, to, "**/.gitkeep");
+    }
+
+    /** Copy files.  We use ant rather than {@link Files#copy(Path, Path, java.nio.file.CopyOption...)}
+     * because the latter has issues with the Windows ReadOnly Attribute, and the former is tried
+     * and tested technology.
+     * @param from where to copy from
+     * @param to where to copy to
+     * @param excludes pattern to exclude
+     * @return a partially populated {@link Copy} task
+     */
+    @Nonnull public static Copy getCopyTask(@Nonnull final Path from, @Nonnull final Path to, @Nonnull final String exclude) {
         final Copy result = new Copy();
         result.setTodir(to.toFile());
         final FileSet fromSet = new FileSet();
         fromSet.setDir(from.toFile());
-        final String[] gitkeep= {"**/.gitkeep"};
-        fromSet.appendExcludes(gitkeep);
+        final String[] excludes = {exclude};
+        fromSet.appendExcludes(excludes );
         result.setPreserveLastModified(true);
         result.addFileset(fromSet);
         result.setProject(ANT_PROJECT);
@@ -128,7 +140,7 @@ public final class InstallerSupport {
         </code>
      *
      */
-    public static void copyDirIfNotPresent(final Path from, final Path to) throws BuildException {
+    public static void copyDirIfNotPresent(@Nonnull final Path from, @Nonnull final Path to) throws BuildException {
         createDirectory(to);
         final Copy copy = new Copy();
         copy.setTodir(to.toFile());
@@ -152,7 +164,7 @@ public final class InstallerSupport {
      * @param readOnly what to set it as
      * @throws BuildException if badness occurs
      */
-    private static void setReadOnlyFile(final Path file, final boolean readOnly) throws BuildException {
+    private static void setReadOnlyFile(@Nonnull final Path file, final boolean readOnly) throws BuildException {
         if (readOnly) {
             log.debug("Setting readonly bits on file {}", file);
         } else {
@@ -182,7 +194,7 @@ public final class InstallerSupport {
      * @param readOnly what to set it as
      * @throws BuildException if badness occurs
      */
-    public static void setReadOnlyDir(final Path directory, final boolean readOnly) throws BuildException {
+    public static void setReadOnlyDir(@Nonnull final Path directory, final boolean readOnly) throws BuildException {
         if (readOnly) {
             log.debug("Recursively setting readonly bits on directory {}", directory);
         } else {
@@ -213,7 +225,7 @@ public final class InstallerSupport {
      * @param readOnly what to set it as
      * @throws BuildException if badness occurs
      */
-    public static void setReadOnly(final Path path, final boolean readOnly) throws BuildException {
+    public static void setReadOnly(@Nonnull final Path path, final boolean readOnly) throws BuildException {
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
             log.debug("Not windows. Not [re]setting readonly bit");
             return;
@@ -235,7 +247,7 @@ public final class InstallerSupport {
      * @param includes what to include
      * @throws BuildException if badness occurs
      */
-    public static void setMode(final Path directory, final String permissions, final String includes)
+    public static void setMode(@Nonnull final Path directory, @Nonnull final String permissions, @Nonnull final String includes)
             throws BuildException {
         if (!Files.exists(directory) ) {
             log.debug("Directory {} does not exist, not performing chmod", directory);
@@ -261,7 +273,7 @@ public final class InstallerSupport {
      * @param includes what to include
      * @throws BuildException if badness occurs
      */
-    public static void setGroup(final Path directory, final String group, final String includes)
+    public static void setGroup(@Nonnull final Path directory, @Nonnull final String group, @Nonnull final String includes)
             throws BuildException {
         if (!Files.exists(directory) ) {
             log.debug("Directory {} does not exist, not performing chgrp", directory);

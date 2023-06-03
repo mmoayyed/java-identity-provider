@@ -175,6 +175,7 @@ public class V5Install {
         }
         try {
             final Path versFile = installerProps.getTargetDir().resolve("dist").resolve(InstallerSupport.VERSION_NAME);
+            assert versFile!=null;
             if (Files.exists(versFile) ) {
                 InstallerSupport.setReadOnly(versFile, false);
             }
@@ -490,24 +491,28 @@ public class V5Install {
      * @throws BuildException if badness occurs
      */
     protected void reprotect() throws BuildException {
-        final Path pluginContents = installerProps.getTargetDir().resolve("dist").resolve("plugin-contents");
-        final Path pluginWebapp = installerProps.getTargetDir().resolve("dist").resolve("plugin-webapp");
+        final Path dist = installerProps.getTargetDir().resolve("dist");
+        final Path pluginContents = dist.resolve("plugin-contents");
+        final Path pluginWebapp = dist.resolve("plugin-webapp");
+        assert pluginContents!=null && pluginWebapp!=null && dist != null;
 
-        InstallerSupport.setReadOnly(installerProps.getTargetDir().resolve("dist"), true);
+        InstallerSupport.setReadOnly(dist, true);
         InstallerSupport.setReadOnly(pluginContents, false);
         InstallerSupport.setReadOnly(pluginWebapp, false);
 
         if (installerProps.isSetGroupAndMode()) {
-            InstallerSupport.setMode(installerProps.getTargetDir().resolve("bin"), "755", "**/*.sh");
-            InstallerSupport.setMode(installerProps.getTargetDir().resolve("dist"), "444", "**/*");
+            final Path bin = installerProps.getTargetDir().resolve("bin");
+            final Path credentials = installerProps.getTargetDir().resolve("credentials");
+            assert bin!=null && credentials!=null;
+            InstallerSupport.setMode(bin, "755", "**/*.sh");
+            InstallerSupport.setMode(dist, "444", "**/*");
             InstallerSupport.setMode(pluginContents,  "640", "**/*");
             InstallerSupport.setMode(pluginWebapp,  "640", "**/*");
             if (currentState.getInstalledVersion() == null) {
-                InstallerSupport.setMode(installerProps.getTargetDir().resolve("credentials"),
-                        installerProps.getCredentialsKeyFileMode(), "**/*");
+                InstallerSupport.setMode(credentials, installerProps.getCredentialsKeyFileMode(), "**/*");
                 final String group = installerProps.getCredentialsGroup();
                 if (group != null) {
-                    InstallerSupport.setGroup(installerProps.getTargetDir().resolve("credentials"), group, "**/*");
+                    InstallerSupport.setGroup(credentials, group, "**/*");
                 }
             }
         }

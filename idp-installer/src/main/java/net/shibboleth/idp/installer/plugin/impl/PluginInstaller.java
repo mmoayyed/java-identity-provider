@@ -355,6 +355,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             LOG.warn("Installed contents for {} not found", pluginId);
         } else {
             for (final Path content: getInstalledContents()) {
+                assert content!=null;
                 if (!Files.exists(content)) {
                     continue;
                 }
@@ -925,14 +926,15 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         moduleContext.setHttpClientSecurityParameters(securityParams);
         moduleContext.setHttpClient(httpClient);
         distPath = idpHome.resolve("dist");
-        workspacePath = distPath.resolve("plugin-workspace");
-        pluginsWebapp = distPath.resolve("plugin-webapp");
-        pluginsContents = distPath.resolve("plugin-contents");
+        final Path wsp = workspacePath = distPath.resolve("plugin-workspace");
+        final Path pwp = pluginsWebapp = distPath.resolve("plugin-webapp");
+        final Path pcp = pluginsContents = distPath.resolve("plugin-contents");
+        assert wsp!=null && pwp!=null && pcp!=null && distPath!=null;
         InstallerSupport.setReadOnly(distPath, false);
         // Just in case they have been protected
-        InstallerSupport.setMode(workspacePath, "640", "**/*");
-        InstallerSupport.setMode(pluginsWebapp, "640", "**/*");
-        InstallerSupport.setMode(pluginsContents, "640", "**/*");
+        InstallerSupport.setMode(wsp, "640", "**/*");
+        InstallerSupport.setMode(pwp, "640", "**/*");
+        InstallerSupport.setMode(pcp, "640", "**/*");
     }
 
     /** Generate a {@link URLClassLoader} which looks at the
@@ -1054,6 +1056,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         InstallerSupport.deleteTree(downloadDirectory);
         InstallerSupport.deleteTree(unpackDirectory);
         InstallerSupport.deleteTree(workspacePath);
+        assert distPath!=null;
         InstallerSupport.setReadOnly(distPath, true);
     }
     

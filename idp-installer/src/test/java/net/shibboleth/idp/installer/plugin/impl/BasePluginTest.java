@@ -67,11 +67,12 @@ public class BasePluginTest {
     }
 
     @AfterSuite public void teardownIdPHome() throws IOException {
-        if (idpHome == null) {
+        final Path ih = idpHome;
+        if (ih == null) {
             return;
         }
-        InstallerSupport.setReadOnly(idpHome, false);
-        InstallerSupport.deleteTree(idpHome);
+        InstallerSupport.setReadOnly(ih, false);
+        InstallerSupport.deleteTree(ih);
     }
 
     protected Path getIdpHome() {

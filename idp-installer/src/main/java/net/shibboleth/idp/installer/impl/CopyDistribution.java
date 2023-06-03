@@ -84,7 +84,9 @@ public final class CopyDistribution {
         delete(installerProps.getTargetDir().resolve("dist"), "plugin-webapp/** plugin-contents/**");
         delete(installerProps.getTargetDir().resolve("doc"), null);
         final Path system = installerProps.getTargetDir().resolve("system");
+        assert system!=null;
         if (Files.exists(system)) {
+            assert system!=null;
             InstallerSupport.setReadOnly(system, false);
             delete(system, null);
         }
@@ -103,6 +105,7 @@ public final class CopyDistribution {
         final Path toPath =  dist.resolve(to);
         final Path fromPath = srcDist.resolve(to);
         log.debug("Copying distribution from {} to {}", fromPath, toPath);
+        assert fromPath!=null && toPath!=null;
         final Copy copy = InstallerSupport.getCopyTask(fromPath, toPath);
         copy.setOverwrite(overwrite);
         copy.execute();
@@ -125,6 +128,7 @@ public final class CopyDistribution {
      */
     protected void copyDist() {
         final Path dist = installerProps.getTargetDir().resolve("dist");
+        assert dist!=null;
         InstallerSupport.createDirectory(dist);
         final Path src = installerProps.getSourceDir();
         if (!Files.exists(src)) {
@@ -138,9 +142,9 @@ public final class CopyDistribution {
      * @throws BuildException if badness occurs
      */
     protected void copyBinDoc() {
-        distCopy(installerProps.getSourceDir(), installerProps.getTargetDir(), "doc");
         final Path fromPath = installerProps.getSourceDir().resolve("bin").resolve("lib");
         final Path toPath = installerProps.getTargetDir().resolve("dist").resolve("binlib");
+        assert fromPath!=null && toPath!=null;
         log.debug("Copying distribution from {} to {}", fromPath, toPath);
         final Copy copy = InstallerSupport.getCopyTask(fromPath, toPath);
         copy.setOverwrite(false);

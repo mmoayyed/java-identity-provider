@@ -46,7 +46,7 @@ public class TestInstallerCLI {
     public void silentInstall() {
 
         IdPInstallerCLI.runMain(new String[] {
-                "-ks", "p1",
+                "-kp", "p1",
                 "--sealerPassword", "p1",
                 "-e", "https://test.example.org/id",
                 "--hostName", "machine.org",
