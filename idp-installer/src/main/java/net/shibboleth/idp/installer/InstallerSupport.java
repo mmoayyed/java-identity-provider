@@ -17,11 +17,21 @@
 
 package net.shibboleth.idp.installer;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -35,11 +45,18 @@ import org.apache.tools.ant.taskdefs.optional.unix.Chgrp;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.selectors.PresentSelector;
 import org.apache.tools.ant.types.selectors.PresentSelector.FilePresence;
+import org.opensaml.security.httpclient.HttpClientSecurityContextHandler;
 import org.slf4j.Logger;
 
+import net.shibboleth.idp.installer.plugin.impl.LoggingVisitor;
+import net.shibboleth.shared.annotation.constraint.Live;
+import net.shibboleth.shared.collection.Pair;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.StringSupport;
+import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 
-/** General common names and helper functions for the Installer. 
+/** General common names and helper functions for the IdP & Plugin Installers.
  * This is not intended for general use.
  */
 public final class InstallerSupport {
@@ -270,7 +287,7 @@ public final class InstallerSupport {
      * @param where where
      * @throws BuildException if badness occurs
      */
-    public static void deleteTree(final Path where) throws BuildException {
+    public static void deleteTree(@Nullable final Path where) throws BuildException {
         deleteTree(where, null);
     }
 
@@ -279,8 +296,11 @@ public final class InstallerSupport {
      * @param excludes wildcards to exclude
      * @throws BuildException if badness occurs
      */
-    public static void deleteTree(final Path where, final String excludes) throws BuildException {
-        if (!Files.exists(where)) {
+    public static void deleteTree(@Nullable final Path where, @Nullable final String excludes) throws BuildException {
+        if (where == null) {
+            return;
+        }
+        if (where == null || !Files.exists(where)) {
             log.debug("Directory {} does not exist. Skipping delete.", where);
             return;
         }
@@ -307,7 +327,7 @@ public final class InstallerSupport {
         delete.setVerbose(!log.isDebugEnabled());
         delete.execute();
     }
-    
+
     /** Return a {@link Jar} task.
      * @param baseDir where from
      * @param destFile where to
@@ -319,5 +339,180 @@ public final class InstallerSupport {
         jarTask.setDestFile(destFile.toFile());
         jarTask.setProject(InstallerSupport.ANT_PROJECT);
         return jarTask;
+    }
+
+    /** Download helper method.
+     * @param baseResource where to go for the file
+     * @param handler HttpClientSecurityContextHandler to use
+     * @param downloadDirectory where to download to
+     * @param fileName the file name
+     * @throws IOException as required
+     */
+    public static void download(@Nonnull final HTTPResource baseResource,
+            @Nonnull final HttpClientSecurityContextHandler handler,
+            @Nonnull final Path downloadDirectory,
+            @Nonnull final String fileName) throws IOException {
+        final HTTPResource httpResource = baseResource.createRelative(fileName, handler);
+        final Path filePath = downloadDirectory.resolve(fileName);
+        log.info("Downloading from {}", httpResource.getDescription());
+        log.debug("Downloading to {}", filePath);
+        try (final OutputStream fileOut = new ProgressReportingOutputStream(new FileOutputStream(filePath.toFile()))) {
+            httpResource.getInputStream().transferTo(fileOut);
+        }
+    }
+
+    /** Return the canonical path.
+     * @param from the path we get given
+     * @return the canonicalized one
+     * @throws IOException  as from {@link File#getCanonicalFile()}
+     */
+    @SuppressWarnings("null")
+    @Nonnull
+    public static Path canonicalPath(@Nonnull final Path from) throws IOException {
+        return from.toFile().getCanonicalFile().toPath();
+    }
+
+    /** Rename Files into the provided tree.
+     * @param fromBase The root directory of the from files
+     * @param toBase The root directory to rename to
+     * @param fromFiles The list of files (inside fromBase) to rename
+     * @param renames All the work as it is done
+     * @throws IOException If any of the file operations fail
+     */
+    public static void renameToTree(@Nonnull final Path fromBase,
+            @Nonnull final Path toBase,
+            @Nonnull final List<Path> fromFiles,
+            @Nonnull @Live final List<Pair<Path, Path>> renames) throws IOException {
+        if (!Files.exists(toBase)) {
+            Files.createDirectories(toBase);
+        }
+        for (final Path path : fromFiles) {
+            if (!Files.exists(path)) {
+                log.info("File {} was not renamed away because it does not exist", path);
+                continue;
+            }
+            final Path relName = fromBase.relativize(path);
+            log.trace("Relative name {}", relName);
+            final Path to = toBase.resolve(relName);
+            Files.createDirectories(to.getParent());
+            Files.move(path,to);
+            renames.add(new Pair<>(path, to));
+        }
+    }
+
+    /** Traverse "from" looking to see if any of the files are already in "to".
+     * @param from source directory
+     * @param to target directory
+     * @return true if there was a match
+     * @throws BuildException if anything threw and {@link IOException}
+     */
+    public static boolean detectDuplicates(@Nonnull final Path from, @Nullable final Path to) throws BuildException {
+
+        if (to == null || !Files.exists(to)) {
+            return false;
+        }
+        final NameClashVisitor detector = new NameClashVisitor(from, to);
+        log.debug("Walking {}, looking for a name clash in {}", from, to);
+        try {
+            Files.walkFileTree(from, detector);
+        } catch (final IOException e) {
+            log.error("Failed during duplicate detection:", e);
+            throw new BuildException(e);
+        }
+        return detector.wasNameClash();
+    }
+
+    /** Copy a directory tree and keep a log of what has changed.
+     * @param from source directory
+     * @param to target directory
+     * @param pathsCopied the list of files copied up (including if there was a failure)
+     * @throws BuildException from the copy
+     */
+    public static void copyWithLogging(@Nullable final Path from, 
+            @Nonnull final Path to, @Nonnull @Live final List<Path> pathsCopied) throws BuildException {
+        if (from == null || !Files.exists(from)) {
+            return;
+        }
+        log.debug("Copying from {} to {}", from, to);
+        final LoggingVisitor visitor = new LoggingVisitor(from, to);
+        try {
+            Files.walkFileTree(from, visitor);
+        } catch (final IOException e) {
+            pathsCopied.addAll(visitor.getCopiedList());
+            log.error("Error copying files from {} to {}", from, to, e);
+            throw new BuildException(e);
+        }
+        pathsCopied.addAll(visitor.getCopiedList());
+    }
+
+    /**
+     * A @{link {@link FileVisitor} which detects (and logs) whether a copy would overwrite.
+     */
+    private static final class NameClashVisitor extends SimpleFileVisitor<Path> {
+        /** did we find a duplicate. */
+        private boolean nameClash;
+
+        /** Path we are traversing. */
+        private final Path from;
+
+        /** Path where we check for Duplicates. */
+        private final Path to;
+
+        /**
+         * Constructor.
+         *
+         * @param fromDir Path we are traversing
+         * @param toDir Path where we check for Duplicates
+         */
+        public NameClashVisitor(@Nonnull final Path fromDir, @Nonnull final Path toDir) {
+            from = fromDir;
+            to = toDir;
+        }
+
+        @Override
+        public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+            final Path relFile = from.relativize(file);
+            final Path toFile = to.resolve(relFile);
+            if (Files.exists(toFile)) {
+                nameClash = true;
+                log.warn("{} already exists", toFile);
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        /** did we find a name clash?
+         * @return whether we found a name clash.
+         */
+        public boolean wasNameClash() {
+            return nameClash;
+        }
+    }
+
+    /** Predicate to ask the user if they want to install the trust store provided. */
+    public static class InstallerQuery implements Predicate<String> {
+
+        /** What to say. */
+        @Nonnull
+        private final String promptText;
+
+        /**
+         * Constructor.
+         * @param text What to say before the prompt information
+         */
+        public InstallerQuery(@Nonnull final String text) {
+            promptText = Constraint.isNotNull(text, "Text should not be null");
+        }
+
+        /** {@inheritDoc} */
+        public boolean test(final String keyString) {
+            if (System.console() == null) {
+                log.error("No Console Attached to installer");
+                return false;
+            }
+            System.console().printf("%s:\n%s [yN] ", promptText, keyString);
+            System.console().flush();
+            final String result  = StringSupport.trimOrNull(System.console().readLine());
+            return result != null && "y".equalsIgnoreCase(result.substring(0, 1));
+        }
     }
 }

@@ -59,7 +59,7 @@ import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.idp.plugin.InstallableComponentVersion;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -136,10 +136,10 @@ public class V5Install {
      */
     protected void checkPreConditions() throws BuildException {
         final String versionAsString = Version.getVersion();
-        final PluginVersion idpVersion = new PluginVersion(versionAsString!=null?versionAsString:"5.0.0");
+        final InstallableComponentVersion idpVersion = new InstallableComponentVersion(versionAsString!=null?versionAsString:"5.0.0");
         for (final IdPPlugin plugin: ServiceLoader.load(IdPPlugin.class, currentState.getInstalledPluginsLoader())) {
             final String pluginId = plugin.getPluginId();
-            final PluginVersion pluginVersion = new PluginVersion(plugin);
+            final InstallableComponentVersion pluginVersion = new InstallableComponentVersion(plugin);
             try {
                 log.debug("Considering Plugin {}, version {}", pluginId,  pluginVersion);
                 final PluginState state = new PluginState(plugin, CollectionSupport.emptyList());

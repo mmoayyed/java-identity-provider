@@ -32,6 +32,7 @@ import org.springframework.core.io.Resource;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.ProgressReportingOutputStream;
 import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.httpclient.HttpClientBuilder;
@@ -156,7 +157,7 @@ public class PluginCLITest extends BasePluginTest {
                     AbstractCommandLine.RC_OK);
         } finally {
             if (unpack != null) {
-                PluginInstallerSupport.deleteTree(unpack);
+                InstallerSupport.deleteTree(unpack);
             }
         }
     }

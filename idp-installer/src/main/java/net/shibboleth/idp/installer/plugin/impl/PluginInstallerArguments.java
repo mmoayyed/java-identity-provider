@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import com.beust.jcommander.Parameter;
 
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
-import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.idp.plugin.InstallableComponentVersion;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -108,8 +108,8 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     @Parameter(names= {"--noRebuild", "--no-rebuild"})
     private boolean noRebuild;
 
-    /** The {@link #forceUpdateVersion} as a {@link PluginVersion}. */
-    @Nullable private PluginVersion updateVersion;
+    /** The {@link #forceUpdateVersion} as a {@link InstallableComponentVersion}. */
+    @Nullable private InstallableComponentVersion updateVersion;
 
     /** Decomposed input - name. */
     @Nullable private String inputName;
@@ -260,7 +260,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     /** Return the version to update to or null.
      * @return the version or null
      */
-    @Nullable public PluginVersion getUpdateVersion() {
+    @Nullable public InstallableComponentVersion getUpdateVersion() {
         return updateVersion;
     }
 
@@ -318,7 +318,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
             pluginId = updatePluginId;
             operation = OperationType.UPDATE;
             if (forceUpdateVersion != null) {
-                updateVersion = new PluginVersion(forceUpdateVersion);
+                updateVersion = new InstallableComponentVersion(forceUpdateVersion);
             }
         } else if (uninstallId != null) {
             pluginId = uninstallId;

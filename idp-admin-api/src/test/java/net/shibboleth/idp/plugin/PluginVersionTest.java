@@ -24,14 +24,14 @@ import static org.testng.Assert.fail;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {@link PluginVersion}
+ * Tests for {@link InstallableComponentVersion}
  */
 @SuppressWarnings("javadoc")
 public final class PluginVersionTest {
 
     private void failParse(final String what) {
         try {
-            new PluginVersion(what);
+            new InstallableComponentVersion(what);
             fail("Invalid version parsed OK");
         } catch (final NumberFormatException e) {
             return;
@@ -39,23 +39,23 @@ public final class PluginVersionTest {
     }
     
     @Test public void parseTest() {
-        PluginVersion ver = new PluginVersion("4.2.1");
+        InstallableComponentVersion ver = new InstallableComponentVersion("4.2.1");
         assertEquals(ver.getMajor(), 4);
         assertEquals(ver.getMinor(), 2);
         assertEquals(ver.getPatch(), 1);
 
-        ver = new PluginVersion("3.4");
+        ver = new InstallableComponentVersion("3.4");
         assertEquals(ver.getMajor(), 3);
         assertEquals(ver.getMinor(), 4);
         assertEquals(ver.getPatch(), 0);
         
-        ver = new PluginVersion("2");
+        ver = new InstallableComponentVersion("2");
         assertEquals(ver.getMajor(), 2);
         assertEquals(ver.getMinor(), 0);
         assertEquals(ver.getPatch(), 0);
 
         // Edge cases
-        ver = new PluginVersion("2.-.");
+        ver = new InstallableComponentVersion("2.-.");
         assertEquals(ver.getMajor(), 2);
         assertEquals(ver.getMinor(), 0);
         assertEquals(ver.getPatch(), 0);
@@ -72,19 +72,19 @@ public final class PluginVersionTest {
         failParse("10001.99.0");
 
         try {
-            new PluginVersion(1,2,-1);
+            new InstallableComponentVersion(1,2,-1);
             fail("Bad version not caught");
         } catch (NumberFormatException ex) {
             // OK
         }
         try {
-            new PluginVersion(10000,2,0);
+            new InstallableComponentVersion(10000,2,0);
             fail("Bad version not caught");
         } catch (NumberFormatException ex) {
             // OK
         }
         try {
-            new PluginVersion(1, 10000,2);
+            new InstallableComponentVersion(1, 10000,2);
             fail("Bad version not caught");
         } catch (NumberFormatException ex) {
             // OK
@@ -95,9 +95,9 @@ public final class PluginVersionTest {
         // check direction
         assertTrue(Integer.valueOf(-1).compareTo(Integer.valueOf(0)) < 0);
         
-        assertTrue(new PluginVersion("4.5.6").compareTo(new PluginVersion(4,5,6)) == 0); 
-        assertTrue(new PluginVersion(4,0,0).compareTo(new PluginVersion(3,9,9)) > 0); 
-        assertTrue(new PluginVersion(4,1,0).compareTo(new PluginVersion(4,2,1)) < 0);
-        assertTrue(new PluginVersion(4,1,0).compareTo(new PluginVersion(4,1,1)) < 0);
+        assertTrue(new InstallableComponentVersion("4.5.6").compareTo(new InstallableComponentVersion(4,5,6)) == 0); 
+        assertTrue(new InstallableComponentVersion(4,0,0).compareTo(new InstallableComponentVersion(3,9,9)) > 0); 
+        assertTrue(new InstallableComponentVersion(4,1,0).compareTo(new InstallableComponentVersion(4,2,1)) < 0);
+        assertTrue(new InstallableComponentVersion(4,1,0).compareTo(new InstallableComponentVersion(4,1,1)) < 0);
     }
 }

@@ -77,7 +77,7 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
     @Nullable private String pluginId;
     
     /** Handles parsing of plugin version. */
-    @Nullable private PluginVersion pluginVersion;
+    @Nullable private InstallableComponentVersion pluginVersion;
     
     /** Plugin update URLs. */
     @Nonnull @NonnullElements private List<URL> updateURLs = CollectionSupport.emptyList();
@@ -144,7 +144,7 @@ public abstract class PropertyDrivenIdPPlugin extends AbstractIdPPlugin {
         }
         
         try {
-            pluginVersion = new PluginVersion(version);
+            pluginVersion = new InstallableComponentVersion(version);
         } catch (final NumberFormatException e) {
             throw new PluginException(e);
         }

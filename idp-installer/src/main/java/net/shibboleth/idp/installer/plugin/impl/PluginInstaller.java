@@ -75,7 +75,7 @@ import net.shibboleth.idp.module.IdPModule.ResourceResult;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.idp.plugin.InstallableComponentVersion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -296,8 +296,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             } catch (final ComponentInitializationException e) {
                throw new BuildException(e);
             }
-            final PluginVersion pluginVersion = new PluginVersion(getDescription());
-            final PluginVersion idpVersion = getIdPVersion();
+            final InstallableComponentVersion pluginVersion = new InstallableComponentVersion(getDescription());
+            final InstallableComponentVersion idpVersion = getIdPVersion();
             if (!state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idpVersion)) {
                 LOG.error("Plugin {} version {} is not supported with IdP Version {}",
                         pluginId, pluginVersion, idpVersion);
@@ -513,10 +513,11 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      */
     private void installNew(final RollbackPluginInstall rollBack) throws BuildException {
         final Path from = distribution.resolve("webapp");
-        if (PluginInstallerSupport.detectDuplicates(from, getPluginsWebapp())) {
+        assert from != null;
+        if (InstallerSupport.detectDuplicates(from, getPluginsWebapp())) {
             throw new BuildException("Install would overwrite files");
         }
-        PluginInstallerSupport.copyWithLogging(from, getPluginsWebapp(), rollBack.getFilesCopied());
+        InstallerSupport.copyWithLogging(from, getPluginsWebapp(), rollBack.getFilesCopied());
 
         String moduleId = null;
         try {
@@ -546,7 +547,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 final Path rollbackDir = workspacePath.resolve("rollback");
                 assert rollbackDir != null;
                 LOG.debug("Uninstalling version {} of {}", oldVersion, pluginId);
-                PluginInstallerSupport.renameToTree(getPluginsWebapp(),
+                InstallerSupport.renameToTree(getPluginsWebapp(),
                         rollbackDir,
                         getInstalledContents(),
                         rollback.getFilesRenamedAway());
@@ -565,7 +566,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         try {
             Files.createDirectories(pluginsContents);
             final Properties props = new Properties(1+copiedFiles.size());
-            props.setProperty(PLUGIN_VERSION_PROPERTY, new PluginVersion(getDescription()).toString());
+            props.setProperty(PLUGIN_VERSION_PROPERTY, new InstallableComponentVersion(getDescription()).toString());
             props.setProperty(PLUGIN_RELATIVE_PATHS_PROPERTY, "true");
             int count = 1;
             for (final Path p: copiedFiles) {
@@ -679,8 +680,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             handler.setHttpClientSecurityParameters(securityParams);
             handler.initialize();
             baseResource.setHttpClientContextHandler(handler);
-            PluginInstallerSupport.download(baseResource, handler, dir,  fileName);
-            PluginInstallerSupport.download(baseResource, handler, dir,  fileName + ".asc");
+            InstallerSupport.download(baseResource, handler, dir,  fileName);
+            InstallerSupport.download(baseResource, handler, dir,  fileName + ".asc");
         } catch (final IOException | ComponentInitializationException e) {
             LOG.error("Error in download", e);
             throw new BuildException(e);
@@ -787,7 +788,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                 }
                 final Path next = contents.next();
                 assert next != null;
-                distribution = PluginInstallerSupport.canonicalPath(next);
+                distribution = InstallerSupport.canonicalPath(next);
                 if (contents.hasNext()) {
                     LOG.error("Too many packages in distributions {}", fullName);
                     throw new BuildException("Too many packages in distributions");
@@ -913,7 +914,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throw new ComponentInitializationException("idp.home property must be set");
         }
         try {
-            idpHome = myIdpHome = PluginInstallerSupport.canonicalPath(myIdpHome);
+            idpHome = myIdpHome = InstallerSupport.canonicalPath(myIdpHome);
         } catch (final IOException e) {
             LOG.error("Could not canonicalize idp home", e);
             throw new ComponentInitializationException(e);
@@ -1050,24 +1051,24 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     public void close() {
         closeSilently(installedPluginsLoader);
         closeSilently(installingPluginLoader);
-        PluginInstallerSupport.deleteTree(downloadDirectory);
-        PluginInstallerSupport.deleteTree(unpackDirectory);
-        PluginInstallerSupport.deleteTree(workspacePath);
+        InstallerSupport.deleteTree(downloadDirectory);
+        InstallerSupport.deleteTree(unpackDirectory);
+        InstallerSupport.deleteTree(workspacePath);
         InstallerSupport.setReadOnly(distPath, true);
     }
     
     /** Return a version we can use in a test proof manner.
      * @return the IdP version or a fixed value
      */
-    @Nonnull protected static PluginVersion getIdPVersion() {
+    @Nonnull protected static InstallableComponentVersion getIdPVersion() {
         final String version  = Version.getVersion();
 
         if (version == null) {
             LOG.error("Could not determine IdP Version. Assuming 4.2.0");
             LOG.error("You should never see this outside a test environment");
-            return new PluginVersion(4,2,0);
+            return new InstallableComponentVersion(4,2,0);
         } 
-        return new PluginVersion(version);
+        return new InstallableComponentVersion(version);
     }
 }
 

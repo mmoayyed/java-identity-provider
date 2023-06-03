@@ -33,8 +33,8 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
-import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.idp.plugin.InstallableComponentInfo;
+import net.shibboleth.idp.plugin.InstallableComponentVersion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -53,10 +53,10 @@ public class PluginState extends AbstractInitializableComponent {
     @Nonnull private final IdPPlugin plugin;
 
     /** My Plugin Info. */
-    @NonnullAfterInit private PluginInfo myPluginInfo;
+    @NonnullAfterInit private InstallableComponentInfo myPluginInfo;
 
     /** The version of this plugin. */
-    @Nonnull private final PluginVersion myPluginVersion;
+    @Nonnull private final InstallableComponentVersion myPluginVersion;
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PluginState.class);
@@ -79,13 +79,13 @@ public class PluginState extends AbstractInitializableComponent {
     public PluginState(@Nonnull final IdPPlugin description, final List<URL> updateOverrides) {
         updateOverrideURLs = Constraint.isNotNull(updateOverrides, "updated Locations must not be null");
         plugin = Constraint.isNotNull(description, "Plugin must not be null");
-        myPluginVersion = new PluginVersion(plugin);
+        myPluginVersion = new InstallableComponentVersion(plugin);
     }
     
     /** get our PluginInfo.
      * @return our PluginInfo.
      */
-    @Nonnull public PluginInfo getPluginInfo() {
+    @Nonnull public InstallableComponentInfo getPluginInfo() {
         checkComponentActive();
         assert myPluginInfo!=null;
         return myPluginInfo;
@@ -212,51 +212,4 @@ public class PluginState extends AbstractInitializableComponent {
         }
     }
     // CheckStyle: CyclomaticComplexity ON
-
-    /** Encapsulation of the information about a given IdP version. */
-    public static class VersionInfo {
-        
-        /** Maximum version - this version is NOT SUPPORTED. */ 
-        private final PluginVersion maxSupported; 
-
-        /** Minimum version - this version IS supported. */ 
-        private final PluginVersion minSupported; 
-        
-        /** support level. */
-        private final SupportLevel supportLevel;
-
-        /**
-         * Constructor.
-         *
-         * @param max support level
-         * @param min support level
-         * @param support support level
-         */
-        VersionInfo(final PluginVersion max, final PluginVersion min, final SupportLevel support) {
-            maxSupported = max;
-            minSupported = min;
-            supportLevel = support;
-        }
-
-        /** get Maximum version - this version is NOT SUPPORTED.
-         * @return Returns the maxSupported.
-         */
-        public PluginVersion getMaxSupported() {
-            return maxSupported;
-        }
-
-        /** get Minimum (IdP) version - this version IS supported.
-         * @return Returns the minSupported.
-         */
-        public PluginVersion getMinSupported() {
-            return minSupported;
-        }
-
-        /** get support level.
-         * @return Returns the supportLevel.
-         */
-        public SupportLevel getSupportLevel() {
-            return supportLevel;
-        }
-    }
 }

@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.idp.plugin.InstallableComponentVersion;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
@@ -41,8 +41,8 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 @SuppressWarnings("javadoc")
 public class PluginStateTest {
     
-    private boolean testSupportState(final PluginVersion pluginVersion, final PluginState state, final String IdpVersion) {
-        final PluginVersion idPVersion = new PluginVersion(IdpVersion);
+    private boolean testSupportState(@Nonnull final InstallableComponentVersion pluginVersion, final PluginState state, final String IdpVersion) {
+        final InstallableComponentVersion idPVersion = new InstallableComponentVersion(IdpVersion);
         return state.getPluginInfo().isSupportedWithIdPVersion(pluginVersion, idPVersion);
     }
 
@@ -55,27 +55,27 @@ public class PluginStateTest {
         
         state.initialize();
 
-        final PluginVersion pluginVersion = new PluginVersion(simple.getMajorVersion(), simple.getMinorVersion(), simple.getPatchVersion());
+        final InstallableComponentVersion pluginVersion = new InstallableComponentVersion(simple.getMajorVersion(), simple.getMinorVersion(), simple.getPatchVersion());
         
-        assertEquals(pluginVersion, new PluginVersion("1.2.3"));
+        assertEquals(pluginVersion, new InstallableComponentVersion("1.2.3"));
         assertEquals(state.getPluginInfo().getAvailableVersions().size(), 3);
-        assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new PluginVersion(1, 2, 3)));
-        assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new PluginVersion(1, 2, 4)));
-        assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new PluginVersion(2,0,0)));
-        assertFalse(state.getPluginInfo().getAvailableVersions().containsKey(new PluginVersion(3, 2, 3)));
+        assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new InstallableComponentVersion(1, 2, 3)));
+        assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new InstallableComponentVersion(1, 2, 4)));
+        assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new InstallableComponentVersion(2,0,0)));
+        assertFalse(state.getPluginInfo().getAvailableVersions().containsKey(new InstallableComponentVersion(3, 2, 3)));
 
         assertTrue(testSupportState(pluginVersion, state, "4.1.0"));
         assertTrue(testSupportState(pluginVersion, state, "4.2.0"));
         assertTrue(testSupportState(pluginVersion, state, "4.99.9"));
         assertFalse(testSupportState(pluginVersion, state, "5.0.0"));
 
-        final PluginVersion v124 = new PluginVersion(1,2,3);        
+        final InstallableComponentVersion v124 = new InstallableComponentVersion(1,2,3);        
         assertTrue(testSupportState(v124, state,"4.1.0"));
         assertTrue(testSupportState(v124, state, "4.99.9"));
         assertFalse(testSupportState(v124, state, "5.0.0"));
         assertFalse(testSupportState(v124, state, "4.0.0"));
 
-        final PluginVersion v2 = new PluginVersion(2,0,0);
+        final InstallableComponentVersion v2 = new InstallableComponentVersion(2,0,0);
         assertTrue(testSupportState(v2, state, "4.99.1"));
         assertTrue(testSupportState(v2, state, "4.99.999"));
         assertFalse(testSupportState(v2, state, "4.99.0"));
@@ -91,9 +91,9 @@ public class PluginStateTest {
         final TestPlugin tp = new TestPlugin();
         final PluginState state = new PluginState(tp, tp.getUpdateURLs());
         state.initialize();
-        final PluginVersion v123 = new PluginVersion(1,2,3);
-        final PluginVersion v124 = new PluginVersion(1,2,4);
-        final PluginVersion v2 = new PluginVersion(2,0,0);
+        final InstallableComponentVersion v123 = new InstallableComponentVersion(1,2,3);
+        final InstallableComponentVersion v124 = new InstallableComponentVersion(1,2,4);
+        final InstallableComponentVersion v2 = new InstallableComponentVersion(2,0,0);
 
         assertEquals(state.getPluginInfo().getUpdateURL(v123), new URL("https://example.org/plugins/"));
         assertEquals(state.getPluginInfo().getUpdateURL(v124), new URL("https://example.org/plugins4/"));

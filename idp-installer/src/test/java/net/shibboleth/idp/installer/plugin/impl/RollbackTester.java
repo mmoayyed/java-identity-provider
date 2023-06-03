@@ -29,6 +29,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.module.ModuleException;
@@ -45,7 +46,7 @@ public class RollbackTester {
     }
     
     @AfterClass public void teardown() {
-        PluginInstallerSupport.deleteTree(parent);
+        InstallerSupport.deleteTree(parent);
     }
     
     @Test public void rollbackTest() throws IOException, ModuleException {

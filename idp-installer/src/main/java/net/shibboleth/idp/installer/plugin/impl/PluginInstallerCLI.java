@@ -46,9 +46,11 @@ import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
-import net.shibboleth.idp.installer.plugin.impl.PluginState.VersionInfo;
+import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.idp.plugin.PluginVersion;
+import net.shibboleth.idp.plugin.InstallableComponentInfo;
+import net.shibboleth.idp.plugin.InstallableComponentVersion;
+import net.shibboleth.idp.plugin.PluginSupport;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -216,7 +218,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         assert idpHome != null;
         inst.setIdpHome(idpHome);
         if (!args.isUnattended()) {
-            inst.setAcceptKey(new PluginInstallerSupport.InstallerQuery("Accept this key"));
+            inst.setAcceptKey(new InstallerSupport.InstallerQuery("Accept this key"));
         }
         inst.setTrustore(args.getTruststore());
         final HttpClient client = getHttpClient();
@@ -261,19 +263,20 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             log.error("Could not interrogate plugin {}", plugin.getPluginId(), e);
             return;
         }
-        final Map<PluginVersion, VersionInfo> versionMap = state.getPluginInfo().getAvailableVersions();
-        final List<PluginVersion> versionList = new ArrayList<>(versionMap.keySet());
+        final Map<InstallableComponentVersion, InstallableComponentInfo.VersionInfo> versionMap = state.getPluginInfo().getAvailableVersions();
+        final List<InstallableComponentVersion> versionList = new ArrayList<>(versionMap.keySet());
         versionList.sort(null);
         outOrLog("\tVersions ");
-        for (final PluginVersion version:versionList) {
+        for (final InstallableComponentVersion version:versionList) {
             final String downLoadDetails;
+            assert version != null;
             if (state.getPluginInfo().getUpdateBaseName(version) == null ||
                 state.getPluginInfo().getUpdateURL(version)==null ) {
                 downLoadDetails = " - No download available";
             } else {
                 downLoadDetails = "";
             }
-            final VersionInfo info = versionMap.get(version);
+            final InstallableComponentInfo.VersionInfo info = versionMap.get(version);
             outOrLog(String.format("\t%s:\tMin=%s\tMax=%s\tSupport level: %s%s",
                     version,
                     info.getMinSupported(),
@@ -367,7 +370,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             log.error("Plugin {} found, but no contents listed", pluginId);
             return;
         }
-        final String installedVersion = new PluginVersion(thePlugin).toString();
+        final String installedVersion = new InstallableComponentVersion(thePlugin).toString();
         if (!fromContentsVersion.equals(installedVersion)) {
             log.error("Installed version of Plugin {} ({}) does not match contents ({})", 
                     pluginId, installedVersion, fromContentsVersion);
@@ -386,41 +389,44 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @return whether it worked
      */
     private int doListAvailable() {
-        final Properties props = PluginInstallerSupport.loadPluginInfo(updateURLs, this);
+        final HttpClient client = getHttpClient();
+        assert client != null;
+        final Properties props = PluginSupport.loadPluginInfo(updateURLs, client, getHttpClientSecurityParameters());
         if (props == null) {
             return RC_IO;
         }
 
-        final Map<String, PluginInfo> plugins = new HashMap<>();
+        final Map<String, InstallableComponentInfo> plugins = new HashMap<>();
         final Enumeration<Object> en = props.keys();
         while (en.hasMoreElements()) {
             final String key = (String)en.nextElement();
             if (key.endsWith(".versions")) {
                 final String pluginId = key.substring(0, key.length()-9);
-                final PluginInfo info = new PluginInfo(pluginId, props);
+                assert pluginId != null;
+                final InstallableComponentInfo info = new PluginInfo(pluginId, props);
                 if (info.isInfoComplete()) {
                     plugins.put(pluginId, info);
                 }
             }
         }
 
-        for (final Entry<String, PluginInfo> entry: plugins.entrySet()) {
-            final PluginVersion nullVersion = new PluginVersion(0, 0, 0);
+        for (final Entry<String, InstallableComponentInfo> entry: plugins.entrySet()) {
+            final InstallableComponentVersion nullVersion = new InstallableComponentVersion(0, 0, 0);
             final String key = entry.getKey();
-            final PluginInfo value = entry.getValue();
+            final InstallableComponentInfo value = entry.getValue();
             assert key!=null && value !=null;
             assert installer != null;
             final IdPPlugin existingPlugin = installer.getInstalledPlugin(key);
             if (existingPlugin == null) {
-                final PluginVersion version = PluginInstallerSupport.getBestVersion(nullVersion, value);
+                final InstallableComponentVersion version = PluginSupport.getBestVersion(nullVersion, value);
                 if (version == null) {
                     log.debug("Plugin {} has no version available", entry.getKey());
                 } else {
                     outOrLog(String.format("Plugin %s: version %s available for install", entry.getKey(), version));
                 }
             } else {
-                final PluginVersion existingVersion = new PluginVersion(existingPlugin);
-                final PluginVersion version = PluginInstallerSupport.getBestVersion(existingVersion, value);
+                final InstallableComponentVersion existingVersion = new InstallableComponentVersion(existingPlugin);
+                final InstallableComponentVersion version = PluginSupport.getBestVersion(existingVersion, value);
                 if (version == null) {
                     outOrLog(String.format("Plugin %s: Installed version %s: No update available",
                             entry.getKey(),
@@ -451,17 +457,19 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             log.error("Plugin {} is already installed", pluginId);
             return RC_INIT;
         }
-        final Properties props = PluginInstallerSupport.loadPluginInfo(updateURLs, this);
+        final HttpClient client = getHttpClient();
+        assert client != null;
+        final Properties props = PluginSupport.loadPluginInfo(updateURLs, client, getHttpClientSecurityParameters());
         if (props == null) {
             log.error("AutoInstall not possible");
             return RC_INIT;
         }
-        final PluginInfo info = new PluginInfo(pluginId, props);
+        final InstallableComponentInfo info = new PluginInfo(pluginId, props);
         if (!info.isInfoComplete()) {
             log.error("Plugin {}: Information not found", pluginId);
             return RC_INIT;
         }
-        final PluginVersion versionToInstall = PluginInstallerSupport.getBestVersion(new PluginVersion(0,0,0), info);
+        final InstallableComponentVersion versionToInstall = PluginSupport.getBestVersion(new InstallableComponentVersion(0,0,0), info);
         if (versionToInstall == null) {
             log.error("Plugin {}: No version available to install", pluginId);
             return RC_INIT;
@@ -480,7 +488,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      * @param checkVersion are we checking the version. 
      */
     private void doUpdate(@Nonnull final String pluginId, 
-            @Nullable final PluginVersion pluginVersion,
+            @Nullable final InstallableComponentVersion pluginVersion,
             final boolean checkVersion) {
         
         final PluginInstaller inst = installer;
@@ -503,16 +511,16 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             log.error("Could not interrogate plugin {}", plugin.getPluginId(), e);
             return;
         }
-        final PluginVersion installVersion;
+        final InstallableComponentVersion installVersion;
         if (pluginVersion == null) {
-            installVersion = PluginInstallerSupport.getBestVersion(new PluginVersion(plugin), state.getPluginInfo());
+            installVersion = PluginSupport.getBestVersion(new InstallableComponentVersion(plugin), state.getPluginInfo());
             if (installVersion == null) {
                 log.info("No suitable update version available");
                 return;
             }
         } else {
             installVersion = pluginVersion;
-            final Map<PluginVersion, VersionInfo> versions = state.getPluginInfo().getAvailableVersions();
+            final Map<InstallableComponentVersion, InstallableComponentInfo.VersionInfo> versions = state.getPluginInfo().getAvailableVersions();
             if (!versions.containsKey(installVersion)) {
                 log.error("Specified version {} could not be found. Available versions: {}",
                         installVersion, versions.keySet());
