@@ -21,6 +21,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.installer.impl.IdPInstallerCLI;
 import net.shibboleth.idp.installer.impl.InstallerProperties;
+import net.shibboleth.idp.installer.impl.UpdateIdPCLI;
 //import net.shibboleth.idp.installer.impl.UpdateIdPCLI;
 /**
  *
@@ -58,13 +59,12 @@ public class TestInstallerCLI {
     }
 
 
-/*
     @Test(enabled = false)
     public void updateList430() {
         UpdateIdPCLI.runMain(new String[] {
                 "-l",
                 "--pretendVersion","4.3.0",
-                "--updateURL", "file:C:\\Users\\rdw\\Desktop\\logs\\plugins.properties",
+                "--updateURL", "file:H:\\Perforce\\juno\\Plugins\\java-idp-plugin-mgmt\\idp-versions.properties",
                 "--home", "H:\\Downloads\\idp"});
     }
 
@@ -73,7 +73,7 @@ public class TestInstallerCLI {
         UpdateIdPCLI.runMain(new String[] {
                 "-l",
                 "--pretendVersion","4.3.1",
-                "--updateURL", "file:C:\\Users\\rdw\\Desktop\\logs\\plugins.properties",
+                "--updateURL", "file:H:\\Perforce\\juno\\Plugins\\java-idp-plugin-mgmt\\idp-versions.properties",
                 "--home", "H:\\Downloads\\idp"});
     }
 
@@ -81,7 +81,7 @@ public class TestInstallerCLI {
     public void check430() {
         UpdateIdPCLI.runMain(new String[] {
                 "--pretendVersion","4.3.0",
-                "--updateURL", "file:C:\\Users\\rdw\\Desktop\\logs\\plugins.properties",
+                "--updateURL", "file:H:\\Perforce\\juno\\Plugins\\java-idp-plugin-mgmt\\idp-versions.properties",
                 "--home", "H:\\Downloads\\idp"});
     }
 
@@ -89,7 +89,7 @@ public class TestInstallerCLI {
     public void check431() {
         UpdateIdPCLI.runMain(new String[] {
                 "--pretendVersion","4.3.1",
-                "--updateURL", "file:C:\\Users\\rdw\\Desktop\\logs\\plugins.properties",
+                "--updateURL", "file:H:\\Perforce\\juno\\Plugins\\java-idp-plugin-mgmt\\idp-versions.properties",
                 "--home", "H:\\Downloads\\idp"});
     }
 
@@ -98,7 +98,7 @@ public class TestInstallerCLI {
         UpdateIdPCLI.runMain(new String[] {
                 "-d", "H:\\downloads\\idp", 
                 "--pretendVersion","4.3.0",
-                "--updateURL", "file:C:\\Users\\rdw\\Desktop\\logs\\plugins.properties",
+                "--updateURL", "file:H:\\Perforce\\juno\\Plugins\\java-idp-plugin-mgmt\\idp-versions.properties",
                 "--home", "H:\\Downloads\\idp"});
-    }*/
+    }
 }

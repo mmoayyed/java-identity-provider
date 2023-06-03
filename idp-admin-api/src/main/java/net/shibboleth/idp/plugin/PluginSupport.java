@@ -129,10 +129,10 @@ public final class PluginSupport {
                 continue;
             }
             if (!pluginInfo.isSupportedWithIdPVersion(version, installIntoVersion)) {
-                log.debug("Version {} is not supported with idpVersion {}", version, installIntoVersion);
+                log.debug("Version {} is not supported with Application Version {}", version, installIntoVersion);
                 continue;
             }
-            log.debug("Version {} is supported with idpVersion {}", version, installIntoVersion);
+            log.debug("Version {} is supported with Application Version {}", version, installIntoVersion);
             if (pluginInfo.getUpdateURL(version) == null || pluginInfo.getUpdateBaseName(version) == null) {
                 log.debug("Version {} is does not have update information", version);
                 continue;
