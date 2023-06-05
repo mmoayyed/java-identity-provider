@@ -116,8 +116,8 @@ public final class InstallerSupport {
         result.setTodir(to.toFile());
         final FileSet fromSet = new FileSet();
         fromSet.setDir(from.toFile());
-        final String[] excludes = {exclude};
-        fromSet.appendExcludes(excludes );
+        final String[] excludeArray = {excludes};
+        fromSet.appendExcludes(excludeArray);
         result.setPreserveLastModified(true);
         result.addFileset(fromSet);
         result.setProject(ANT_PROJECT);
