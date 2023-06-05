@@ -42,7 +42,7 @@ public class TestInstallerCLI {
                });
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void silentInstall() {
 
         IdPInstallerCLI.runMain(new String[] {

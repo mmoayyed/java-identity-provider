@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.plugin.PluginSupport.SupportLevel;
+import net.shibboleth.idp.plugin.InstallableComponentSupport.SupportLevel;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -120,7 +120,7 @@ public abstract class InstallableComponentInfo {
      * @param props what to load.
      */
     private void  parse(@Nonnull final Properties props) {
-        final String name = componentId + PluginSupport.AVAILABLE_VERSIONS_PROPERTY_SUFFIX;
+        final String name = componentId + InstallableComponentSupport.AVAILABLE_VERSIONS_PROPERTY_SUFFIX;
         final String availableVersions = StringSupport.trim(props.getProperty(name));
         if (availableVersions == null) {
             log.warn("Component {}: Could not find {} property.", componentId, name);
@@ -158,8 +158,8 @@ public abstract class InstallableComponentInfo {
         }
 
         final String supportLevelString = StringSupport.trimOrNull(
-                props.getProperty(componentId + PluginSupport.SUPPORT_LEVEL_INTERFIX + version));
-        PluginSupport.SupportLevel supportLevel;
+                props.getProperty(componentId + InstallableComponentSupport.SUPPORT_LEVEL_INTERFIX + version));
+        InstallableComponentSupport.SupportLevel supportLevel;
         if (supportLevelString == null) {
             log.debug("Component {}, Version {}: Could not find support level for {}.", componentId, version);
             supportLevel = SupportLevel.Unknown;
@@ -178,9 +178,9 @@ public abstract class InstallableComponentInfo {
         info = new InstallableComponentInfo.VersionInfo(maxVersionInfo, minVersionInfo, supportLevel);
         versionInfo.put(theVersion, info);
         String downloadURL =  StringSupport.trimOrNull(
-                getDefaultedValue(props, PluginSupport.DOWNLOAD_URL_INTERFIX, version));
+                getDefaultedValue(props, InstallableComponentSupport.DOWNLOAD_URL_INTERFIX, version));
         final String baseName =  StringSupport.trimOrNull(
-                getDefaultedValue(props, PluginSupport.BASE_NAME_INTERFIX, version));
+                getDefaultedValue(props, InstallableComponentSupport.BASE_NAME_INTERFIX, version));
         if (baseName != null && downloadURL != null) {
             try {
                 if (!downloadURL.endsWith("/")) {
@@ -240,11 +240,11 @@ public abstract class InstallableComponentInfo {
         if (result != null) {
             return result;
         }
-        result = props.getProperty(componentId + interfix + PluginSupport.VERSION_PATTERN);
+        result = props.getProperty(componentId + interfix + InstallableComponentSupport.VERSION_PATTERN);
         if (result == null) {
             return result;
         }
-        return result.replaceAll(PluginSupport.VERSION_PATTERN_REGEX, version);
+        return result.replaceAll(InstallableComponentSupport.VERSION_PATTERN_REGEX, version);
     }
 
     /** Can the specified component be installed into this version?

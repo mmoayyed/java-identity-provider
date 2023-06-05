@@ -50,7 +50,7 @@ import net.shibboleth.idp.installer.plugin.impl.TrustStore;
 import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.idp.plugin.InstallableComponentInfo;
 import net.shibboleth.idp.plugin.InstallableComponentVersion;
-import net.shibboleth.idp.plugin.PluginSupport;
+import net.shibboleth.idp.plugin.InstallableComponentSupport;
 import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -120,18 +120,23 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
             return RC_INIT;
         }
 
-        final List<URL> urls = new ArrayList<>(args.getUpdateURLs().size());
-        try {
-            for (final String s:args.getUpdateURLs()) {
+        final List<String> urlStrings = args.getUpdateURLs().isEmpty() ?
+                CollectionSupport.listOf(
+                        "https://shibboleth.net/downloads/identity-provider/plugins/idp-versions.properties",
+                        "http://plugins.shibboleth.net/idp-versions.properties") :
+                args.getUpdateURLs();
+        final List<URL> urls = new ArrayList<>(urlStrings.size());
+        for (final String s:urlStrings) {
+            try {
                 urls.add(new URL(s));
+            } catch (MalformedURLException e) {
+                getLogger().error("Could not convert {} to a URL", s);
+                return RC_IO;
             }
-        } catch (MalformedURLException e) {
-            getLogger().error("Internal error", e);
-            return RC_IO;
         }
         final HttpClient client = getHttpClient();
         assert client != null;
-        final Properties properties = PluginSupport.loadPluginInfo(urls, client, getHttpClientSecurityParameters());
+        final Properties properties = InstallableComponentSupport.loadInfo(urls, client, getHttpClientSecurityParameters());
         if (properties == null) {
             return RC_IO;
         }
@@ -155,7 +160,7 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
         
         final InstallableComponentVersion from = args.getUpdateFromVersion();
         final InstallableComponentVersion newIdPVersion =
-                PluginSupport.getBestVersion(from, from, info);
+                InstallableComponentSupport.getBestVersion(from, from, info);
         if (newIdPVersion == null) {
             getLogger().info("No Upgrade available from {}", from);
             return RC_OK;

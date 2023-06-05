@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.plugin.InstallableComponentInfo;
 import net.shibboleth.idp.plugin.InstallableComponentVersion;
-import net.shibboleth.idp.plugin.PluginSupport;
+import net.shibboleth.idp.plugin.InstallableComponentSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -46,7 +46,7 @@ public class PluginInfo extends InstallableComponentInfo {
     @Override
     protected @Nullable InstallableComponentVersion getMaxVersion(@Nonnull Properties props, @Nonnull String version) {
         final String maxVersionInfo = StringSupport.trimOrNull(
-                props.getProperty(getComponentId()  + PluginSupport.MAX_IDP_VERSION_INTERFIX + version));
+                props.getProperty(getComponentId()  + InstallableComponentSupport.MAX_IDP_VERSION_INTERFIX + version));
         if (maxVersionInfo == null) {
             return null;
         }
@@ -58,7 +58,7 @@ public class PluginInfo extends InstallableComponentInfo {
     @Nullable
     protected InstallableComponentVersion getMinVersion(@Nonnull Properties props, @Nonnull String version) {
         final String minVersionInfo = StringSupport.trimOrNull(
-                props.getProperty(getComponentId() + PluginSupport.MIN_IDP_VERSION_INTERFIX + version));
+                props.getProperty(getComponentId() + InstallableComponentSupport.MIN_IDP_VERSION_INTERFIX + version));
         if (minVersionInfo == null) {
             return null;
         }

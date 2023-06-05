@@ -34,7 +34,6 @@ import javax.annotation.Nonnull;
         super(plugin);
     }
 
-    
     /**
      * Constructor.
      *
@@ -44,5 +43,17 @@ import javax.annotation.Nonnull;
      */
     public PluginVersion(final String version) throws NumberFormatException {
         super(version);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param maj Major Version
+     * @param min Minor Version
+     * @param pat Patch Version
+     * @throws NumberFormatException if the values are out of range
+     */
+    public PluginVersion(final int maj, final int min, final int pat) {
+        super(maj, min, pat);
     }
 }
