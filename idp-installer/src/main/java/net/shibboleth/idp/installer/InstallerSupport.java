@@ -111,7 +111,7 @@ public final class InstallerSupport {
      * @param excludes pattern to exclude
      * @return a partially populated {@link Copy} task
      */
-    @Nonnull public static Copy getCopyTask(@Nonnull final Path from, @Nonnull final Path to, @Nonnull final String exclude) {
+    @Nonnull public static Copy getCopyTask(@Nonnull final Path from, @Nonnull final Path to, @Nonnull final String excludes) {
         final Copy result = new Copy();
         result.setTodir(to.toFile());
         final FileSet fromSet = new FileSet();
