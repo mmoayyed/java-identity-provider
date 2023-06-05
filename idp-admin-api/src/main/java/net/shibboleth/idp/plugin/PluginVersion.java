@@ -19,9 +19,6 @@ package net.shibboleth.idp.plugin;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.shared.primitive.DeprecationSupport;
-import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
-
 /**
  * @deprecated class.
  */
@@ -35,7 +32,6 @@ import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
      */
     public PluginVersion(@Nonnull IdPPlugin plugin) throws NumberFormatException {
         super(plugin);
-        DeprecationSupport.warnOnce(ObjectType.CLASS, PluginVersion.class.toString(), null, InstallableComponentVersion.class.toString());
     }
 
     
@@ -48,6 +44,5 @@ import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
      */
     public PluginVersion(final String version) throws NumberFormatException {
         super(version);
-        DeprecationSupport.warnOnce(ObjectType.CLASS, PluginVersion.class.toString(), null, InstallableComponentVersion.class.toString());
     }
 }
