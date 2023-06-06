@@ -35,6 +35,8 @@ import org.slf4j.Logger;
 
 import com.google.common.base.Strings;
 
+import net.shibboleth.profile.module.ModuleContext;
+import net.shibboleth.profile.module.ModuleException;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;

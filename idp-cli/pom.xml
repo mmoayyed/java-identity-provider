@@ -46,6 +46,12 @@
         </dependency>
 
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-profile-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-cli</artifactId>
             <scope>provided</scope>

@@ -17,142 +17,20 @@
 
 package net.shibboleth.idp.module;
 
-import java.io.PrintStream;
-import java.util.List;
-import java.util.Locale.LanguageRange;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.hc.client5.http.classic.HttpClient;
-import org.opensaml.security.httpclient.HttpClientSecurityParameters;
-
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.annotation.constraint.NotLive;
-import net.shibboleth.shared.annotation.constraint.Unmodifiable;
-import net.shibboleth.shared.collection.CollectionSupport;
-import net.shibboleth.shared.logic.Constraint;
-
 /**
  * Information required to perform some module operations.
  * 
  * @since 4.1.0
  */
-public final class ModuleContext {
-
-    /** IdP installation root. */
-    @Nonnull private String idpHome;
-    
-    /** HttpClient if needed. */
-    @Nullable private HttpClient httpClient;
-    
-    /** HTTP security parameters. */
-    @Nullable private HttpClientSecurityParameters httpClientSecurityParams;
-    
-    /** Language expressions to use for i18n. */
-    @Nonnull @NonnullElements private List<LanguageRange> languageRanges;
-    
-    /** Output stream for sending output to the module consumer. */
-    @Nullable private PrintStream messageStream;
+@Deprecated(forRemoval = true, since = "5.0.0")
+public final class ModuleContext extends net.shibboleth.profile.module.ModuleContext {
 
     /**
      * Constructor.
      *
-     * @param home location of IdP install
+     * @param home
      */
-    public ModuleContext(@Nonnull @NotEmpty final String home) {
-        idpHome = Constraint.isNotEmpty(home, "Home location cannot be null or empty");
-        languageRanges = CollectionSupport.emptyList();
+    public ModuleContext(String home) {
+        super(home);
     }
-    
-    /**
-     * Gets software installation location.
-     * 
-     * @return install path
-     * 
-     * @since 4.2.0
-     */
-    @Nonnull @NotEmpty public String getInstallLocation() {
-        return idpHome;
-    }
-    
-    /**
-     * Gets an {@link HttpClient} instance to use if available.
-     * 
-     * @return HTTP client instance
-     */
-    @Nullable public HttpClient getHttpClient() {
-        return httpClient;
-    }
-    
-    /**
-     * Sets an {@link HttpClient} instance to use.
-     * 
-     * @param client client to use
-     */
-    public void setHttpClient(@Nullable final HttpClient client) {
-        httpClient = client;
-    }
-
-    /**
-     * Gets {@link HttpClient} security parameters, if any.
-     * 
-     * @return HTTP client security parameters to use
-     */
-    @Nullable public HttpClientSecurityParameters getHttpClientSecurityParameters() {
-        return httpClientSecurityParams;
-    }
-
-    /**
-     * Sets {@link HttpClient} security parameters to use.
-     * 
-     * @param params security parameters
-     */
-    public void setHttpClientSecurityParameters(@Nullable final HttpClientSecurityParameters params) {
-        httpClientSecurityParams = params;
-    }
-    
-    /**
-     * Gets the language ranges to use for i18n.
-     * 
-     * @return language ranges
-     */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<LanguageRange> getLanguageRanges() {
-        return languageRanges;
-    }
-    
-    /**
-     * Sets the language ranges to use for i18n.
-     * 
-     * @param ranges language ranges
-     */
-    public void setLanguageRanges(@Nullable @NonnullElements final List<LanguageRange> ranges) {
-        if (ranges != null) {
-            languageRanges = CollectionSupport.copyToList(ranges);
-        } else {
-            languageRanges = CollectionSupport.emptyList();
-        }
-    }
-
-    /**
-     * Gets the output stream to receive any instructions or additional information after
-     * performing operations.
-     * 
-     * @return output stream, or null
-     */
-    @Nullable public PrintStream getMessageStream() {
-        return messageStream;
-    }
-    
-    /**
-     * Sets the output stream to receive any instructions or additional information after
-     * performing operations.
-     * 
-     * @param stream output stream
-     */
-    public void setMessageStream(@Nullable final PrintStream stream) {
-        messageStream = stream;
-    }
-    
 }

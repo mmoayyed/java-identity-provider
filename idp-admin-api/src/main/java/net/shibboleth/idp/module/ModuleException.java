@@ -26,14 +26,14 @@ import javax.annotation.concurrent.ThreadSafe;
  * @since 4.1.0
  */
 @ThreadSafe
-public class ModuleException extends Exception {
+@Deprecated(forRemoval = true, since = "5.0.0")
+public class ModuleException extends net.shibboleth.profile.module.ModuleException {
 
     /** Serial number. */
     private static final long serialVersionUID = 2811724801157828005L;
 
     /** Constructor. */
     public ModuleException() {
-        
     }
 
     /**
@@ -63,5 +63,5 @@ public class ModuleException extends Exception {
     public ModuleException(@Nullable final String message, @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
-    
+ 
 }

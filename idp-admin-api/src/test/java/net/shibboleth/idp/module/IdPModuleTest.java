@@ -57,7 +57,9 @@ import org.testng.annotations.Test;
 import com.google.common.io.ByteStreams;
 
 import net.shibboleth.idp.Version;
-import net.shibboleth.idp.module.IdPModule.ModuleResource;
+import net.shibboleth.profile.module.Module;
+import net.shibboleth.profile.module.ModuleContext;
+import net.shibboleth.profile.module.ModuleException;
 import net.shibboleth.shared.httpclient.HttpClientBuilder;
 import net.shibboleth.shared.testing.RepositorySupport;
 
@@ -169,10 +171,10 @@ public class IdPModuleTest {
         assert url != null;
         Assert.assertEquals(url, "https://wiki.shibboleth.net/confluence/display/IDP4/Home");
         
-        final Iterator<ModuleResource> resources = testModule.getResources().iterator();
+        final Iterator<Module.ModuleResource> resources = testModule.getResources().iterator();
         Assert.assertEquals(testModule.getResources().size(), 2);
         
-        ModuleResource resource = resources.next();
+        net.shibboleth.profile.module.Module.ModuleResource resource = resources.next();
         Assert.assertEquals(resource.getSource(), "/net/shibboleth/idp/module/test.xml");
         Assert.assertEquals(resource.getDestination(), Path.of("conf/test.xml"));
         

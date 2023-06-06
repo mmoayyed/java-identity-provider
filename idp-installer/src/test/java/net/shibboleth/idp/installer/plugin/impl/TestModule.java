@@ -24,8 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleContext;
-import net.shibboleth.idp.module.ModuleException;
+import net.shibboleth.profile.module.ModuleContext;
+import net.shibboleth.profile.module.ModuleException;
 import net.shibboleth.shared.collection.CollectionSupport;
 
 @SuppressWarnings("javadoc")

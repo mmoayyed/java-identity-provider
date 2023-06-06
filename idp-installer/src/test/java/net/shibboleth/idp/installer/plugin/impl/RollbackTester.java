@@ -31,8 +31,8 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleContext;
-import net.shibboleth.idp.module.ModuleException;
+import net.shibboleth.profile.module.ModuleContext;
+import net.shibboleth.profile.module.ModuleException;
 import net.shibboleth.shared.collection.Pair;
 
 /** Tests for {@link RollbackPluginInstall}. */

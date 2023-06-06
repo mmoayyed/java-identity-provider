@@ -19,6 +19,8 @@ package net.shibboleth.idp.module;
 
 import java.io.IOException;
 
+import net.shibboleth.profile.module.ModuleException;
+
 /**
  * Test {@link IdPModule} implementation.
  */

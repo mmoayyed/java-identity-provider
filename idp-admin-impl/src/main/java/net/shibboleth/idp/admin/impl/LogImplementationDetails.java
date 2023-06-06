@@ -29,8 +29,8 @@ import com.google.common.base.StandardSystemProperty;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.profile.module.ModuleContext;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.primitive.LoggerFactory;
 

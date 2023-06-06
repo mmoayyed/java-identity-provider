@@ -28,9 +28,9 @@ import javax.annotation.Nonnull;
 import org.springframework.util.ResourceUtils;
 
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleContext;
-import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.impl.CoreIdPModule;
+import net.shibboleth.profile.module.ModuleContext;
+import net.shibboleth.profile.module.ModuleException;
 
 /**
  * {@link IdPModule} implementation.

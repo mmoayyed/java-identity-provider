@@ -20,8 +20,8 @@ package net.shibboleth.idp.plugin;
 import java.io.IOException;
 
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.TestModule;
+import net.shibboleth.profile.module.ModuleException;
 import net.shibboleth.shared.collection.CollectionSupport;
 
 /**

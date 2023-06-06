@@ -35,10 +35,10 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.IdPModule.ModuleResource;
-import net.shibboleth.idp.module.IdPModule.ResourceResult;
-import net.shibboleth.idp.module.ModuleContext;
 import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.profile.module.Module.ModuleResource;
+import net.shibboleth.profile.module.Module.ResourceResult;
+import net.shibboleth.profile.module.ModuleContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;

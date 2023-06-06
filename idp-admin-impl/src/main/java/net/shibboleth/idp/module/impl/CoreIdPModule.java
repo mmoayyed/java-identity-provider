@@ -22,8 +22,8 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.PropertyDrivenIdPModule;
+import net.shibboleth.profile.module.ModuleException;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**

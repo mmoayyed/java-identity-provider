@@ -20,8 +20,8 @@ package net.shibboleth.idp.module.profile.impl;
 import java.io.IOException;
 
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.impl.CoreIdPModule;
+import net.shibboleth.profile.module.ModuleException;
 
 /**
  * {@link IdPModule} implementation.
