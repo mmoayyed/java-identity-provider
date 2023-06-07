@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.module;
 
+import javax.annotation.Nonnull;
+
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+
 /**
  * Information required to perform some module operations.
  * 
@@ -28,9 +32,10 @@ public final class ModuleContext extends net.shibboleth.profile.module.ModuleCon
     /**
      * Constructor.
      *
-     * @param home
+     * @param home location of IdP install
      */
-    public ModuleContext(String home) {
+    public ModuleContext(@Nonnull @NotEmpty final String home) {
         super(home);
     }
+
 }
