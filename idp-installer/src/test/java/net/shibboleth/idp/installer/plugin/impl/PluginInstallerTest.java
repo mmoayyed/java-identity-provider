@@ -36,8 +36,9 @@ import org.slf4j.Logger;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.plugin.AbstractIdPPlugin;
+import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.profile.plugin.AbstractPlugin;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.httpclient.HttpClientBuilder;
@@ -122,7 +123,7 @@ public class PluginInstallerTest extends BasePluginTest {
     }
 
 
-    public static class Wibble extends AbstractIdPPlugin {
+    public static class Wibble extends AbstractPlugin<IdPModule> {
 
         /** {@inheritDoc} */
         public @Nonnull String getPluginId() {

@@ -25,13 +25,12 @@ import javax.annotation.Nonnull;
 
 import org.springframework.core.io.ClassPathResource;
 
-import net.shibboleth.idp.plugin.AbstractIdPPlugin;
+import net.shibboleth.idp.module.IdPModule;
+import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.profile.plugin.AbstractPlugin;
 import net.shibboleth.shared.collection.CollectionSupport;
 
-/**
- *
- */
-public class TestPlugin extends AbstractIdPPlugin {
+public class TestPlugin extends AbstractPlugin<IdPModule> implements IdPPlugin {
 
     /** {@inheritDoc} */
     @Override

@@ -26,7 +26,8 @@ import javax.annotation.concurrent.ThreadSafe;
  * @since 4.1.0
  */
 @ThreadSafe
-public class PluginException extends Exception {
+@Deprecated
+public class PluginException extends net.shibboleth.profile.plugin.PluginException {
 
     /** Serial number. */
     private static final long serialVersionUID = 3469763471281379002L;

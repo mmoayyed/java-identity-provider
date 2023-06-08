@@ -22,6 +22,7 @@ import java.io.IOException;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.module.TestModule;
 import net.shibboleth.profile.module.ModuleException;
+import net.shibboleth.profile.plugin.PluginException;
 import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
