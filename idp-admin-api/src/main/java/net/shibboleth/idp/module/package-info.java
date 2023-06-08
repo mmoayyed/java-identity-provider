@@ -18,5 +18,7 @@
 /**
  * APIs for representing units of IdP functionality as modules.
  */
-
+@NonnullElements
 package net.shibboleth.idp.module;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
