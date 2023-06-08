@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.Version;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
-/** 
+/**
  * Methods for supporting plugins.
  * 
  * @deprecated
