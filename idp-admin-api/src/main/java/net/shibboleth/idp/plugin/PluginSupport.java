@@ -20,13 +20,17 @@ package net.shibboleth.idp.plugin;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.Version;
+import net.shibboleth.shared.primitive.LoggerFactory;
 
-/** @deprecated.  Methods for supporting plugins.
+/** 
+ * Methods for supporting plugins.
+ * 
+ * @deprecated
  */
-@Deprecated(forRemoval = true, since = "5.0.0") public final class PluginSupport {
+@Deprecated(forRemoval = true, since = "5.0.0")
+public final class PluginSupport {
     
     /** Property Name suffix for available versions inside {@link IdPPlugin#getUpdateURLs()}. */
     @Nonnull public static final String AVAILABLE_VERSIONS_PROPERTY_SUFFIX = ".versions";
