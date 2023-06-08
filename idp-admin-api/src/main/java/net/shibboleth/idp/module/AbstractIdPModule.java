@@ -36,6 +36,7 @@ public abstract class AbstractIdPModule extends AbstractModule implements IdPMod
     /** Base extension for adding new default files. */
     @Nonnull @NotEmpty public static final String IDPNEW_EXT_BASE = ".idpnew";
 
+    /** Constructor. */
     public AbstractIdPModule() {
         super(Version.getVersion(), IDPNEW_EXT_BASE, IDPSAVE_EXT);
     }
