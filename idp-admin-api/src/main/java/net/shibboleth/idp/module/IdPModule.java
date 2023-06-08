@@ -17,11 +17,33 @@
 
 package net.shibboleth.idp.module;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.profile.module.Module;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * This interface is exported (via the service API) by every IdP module.
  * 
  * @since 4.1.0
  */
-public interface IdPModule extends Module {}
+public interface IdPModule extends Module {
+
+    /** Extension for preserving user files. */
+    @Nonnull @NotEmpty public static final String IDPSAVE_EXT = ".idpsave";
+
+    /** Base extension for adding new default files. */
+    @Nonnull @NotEmpty public static final String IDPNEW_EXT_BASE = ".idpnew";
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull default String getSaveExtension() {
+        return IDPSAVE_EXT;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull default String getNewExtension() {
+        return IDPNEW_EXT_BASE;
+    }
+}

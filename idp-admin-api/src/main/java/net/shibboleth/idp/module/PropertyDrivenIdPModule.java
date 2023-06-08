@@ -35,6 +35,8 @@ import org.slf4j.Logger;
 
 import com.google.common.base.Strings;
 
+import net.shibboleth.idp.Version;
+import net.shibboleth.profile.module.AbstractModule;
 import net.shibboleth.profile.module.ModuleContext;
 import net.shibboleth.profile.module.ModuleException;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
@@ -50,7 +52,7 @@ import net.shibboleth.shared.primitive.StringSupport;
  * 
  * @since 4.1.0
  */
-public class PropertyDrivenIdPModule extends AbstractIdPModule {
+public class PropertyDrivenIdPModule extends AbstractModule implements IdPModule {
 
     /** Default name of module properties resource. */
     @Nonnull @NotEmpty public static final String DEFAULT_RESOURCE = "module.properties";
@@ -143,6 +145,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
      */
     public PropertyDrivenIdPModule(@Nonnull final InputStream inputStream)
             throws IOException, ModuleException {
+        super(Version.getVersion());
         locales = CollectionSupport.emptyList();
         moduleProperties = new Properties();
         moduleProperties.load(inputStream);
@@ -159,6 +162,7 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
      * @throws ModuleException if the module is not in a valid state
      */
     public PropertyDrivenIdPModule(@Nonnull final Properties properties) throws ModuleException {
+        super(Version.getVersion());
         locales = CollectionSupport.emptyList();
         moduleProperties = Constraint.isNotNull(properties, "Properties cannot be null");
         moduleId = "";
@@ -349,6 +353,18 @@ public class PropertyDrivenIdPModule extends AbstractIdPModule {
         }
         
         return results;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull
+    public String getSaveExtension() {
+        return IdPModule.IDPSAVE_EXT;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull
+    public String getNewExtension() {
+        return IdPModule.IDPNEW_EXT_BASE;
     }
 
 }

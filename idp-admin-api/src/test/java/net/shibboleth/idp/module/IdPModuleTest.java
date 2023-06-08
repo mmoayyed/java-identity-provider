@@ -300,9 +300,9 @@ public class IdPModuleTest {
         final String ver = Version.getVersion();
         final String idpNewExt;
         if (ver != null) {
-            idpNewExt = AbstractIdPModule.IDPNEW_EXT_BASE + "-" + ver.replace(".", "");
+            idpNewExt = IdPModule.IDPNEW_EXT_BASE + "-" + ver.replace(".", "");
         } else {
-            idpNewExt = AbstractIdPModule.IDPNEW_EXT_BASE;
+            idpNewExt = IdPModule.IDPNEW_EXT_BASE;
         }
         vel = Files.readString(testHome.resolve("views/test.vm" + idpNewExt));
         Assert.assertEquals(vel, VEL_DATA);
