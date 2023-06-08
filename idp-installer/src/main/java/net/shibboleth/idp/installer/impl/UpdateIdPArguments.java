@@ -31,7 +31,7 @@ import com.beust.jcommander.Parameter;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
-import net.shibboleth.idp.plugin.InstallableComponentVersion;
+import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;

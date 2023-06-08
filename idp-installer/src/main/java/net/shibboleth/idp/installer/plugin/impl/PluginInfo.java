@@ -22,9 +22,9 @@ import java.util.Properties;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.plugin.InstallableComponentInfo;
-import net.shibboleth.idp.plugin.InstallableComponentVersion;
-import net.shibboleth.idp.plugin.InstallableComponentSupport;
+import net.shibboleth.profile.installablecomponent.InstallableComponentInfo;
+import net.shibboleth.profile.installablecomponent.InstallableComponentSupport;
+import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**

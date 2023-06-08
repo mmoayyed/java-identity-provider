@@ -32,6 +32,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.module.PropertyDrivenIdPModule;
+import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;

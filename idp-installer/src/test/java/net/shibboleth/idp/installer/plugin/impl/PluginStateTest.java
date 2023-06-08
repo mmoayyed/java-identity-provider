@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.idp.plugin.InstallableComponentVersion;
+import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 

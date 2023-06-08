@@ -19,6 +19,8 @@ package net.shibboleth.idp.plugin;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
+
 /**
  * @deprecated class.
  */

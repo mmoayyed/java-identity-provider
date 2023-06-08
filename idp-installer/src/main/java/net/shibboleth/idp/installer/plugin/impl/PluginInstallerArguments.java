@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import com.beust.jcommander.Parameter;
 
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
-import net.shibboleth.idp.plugin.InstallableComponentVersion;
+import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;

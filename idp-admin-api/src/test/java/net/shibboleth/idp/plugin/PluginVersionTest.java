@@ -23,6 +23,8 @@ import static org.testng.Assert.fail;
 
 import org.testng.annotations.Test;
 
+import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
+
 /**
  * Tests for {@link InstallableComponentVersion}
  */

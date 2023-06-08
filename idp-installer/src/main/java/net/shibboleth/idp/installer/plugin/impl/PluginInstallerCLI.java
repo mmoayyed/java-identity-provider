@@ -48,9 +48,9 @@ import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.plugin.IdPPlugin;
-import net.shibboleth.idp.plugin.InstallableComponentInfo;
-import net.shibboleth.idp.plugin.InstallableComponentVersion;
-import net.shibboleth.idp.plugin.InstallableComponentSupport;
+import net.shibboleth.profile.installablecomponent.InstallableComponentInfo;
+import net.shibboleth.profile.installablecomponent.InstallableComponentSupport;
+import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -384,6 +384,26 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
     }
 
+    /** Find the best update version.
+     * @param pluginVersion The Plugin version
+     * @param pluginInfo all about the plugin
+     * @return the best version (or null)
+     */
+    @Nullable public InstallableComponentVersion getBestVersion(
+            @Nonnull final InstallableComponentVersion pluginVersion,
+            @Nonnull final InstallableComponentInfo pluginInfo) {
+
+        final InstallableComponentVersion idpVersion;
+        String idpVersionString = Version.getVersion();
+        if (idpVersionString!=null) {
+            idpVersion =  new InstallableComponentVersion(idpVersionString);
+        } else {
+            log.error("Could not locate IdP Version, assuming 5.0.0");
+            idpVersion = new InstallableComponentVersion(5,0,0);
+        }
+        return InstallableComponentSupport.getBestVersion(idpVersion, pluginVersion, pluginInfo);
+    }
+
     /** Go to the well known url (or the provided one) and list all
      * the available plugin ids.
      * @return whether it worked
@@ -418,7 +438,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             assert installer != null;
             final IdPPlugin existingPlugin = installer.getInstalledPlugin(key);
             if (existingPlugin == null) {
-                final InstallableComponentVersion version = InstallableComponentSupport.getBestVersion(nullVersion, value);
+                final InstallableComponentVersion version = getBestVersion(nullVersion, value);
                 if (version == null) {
                     log.debug("Plugin {} has no version available", entry.getKey());
                 } else {
@@ -426,7 +446,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 }
             } else {
                 final InstallableComponentVersion existingVersion = new InstallableComponentVersion(existingPlugin);
-                final InstallableComponentVersion version = InstallableComponentSupport.getBestVersion(existingVersion, value);
+                final InstallableComponentVersion version = getBestVersion(existingVersion, value);
                 if (version == null) {
                     outOrLog(String.format("Plugin %s: Installed version %s: No update available",
                             entry.getKey(),
@@ -467,7 +487,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             log.error("Plugin {}: Information not found", pluginId);
             return RC_INIT;
         }
-        final InstallableComponentVersion versionToInstall = InstallableComponentSupport.getBestVersion(new InstallableComponentVersion(0,0,0), info);
+        final InstallableComponentVersion versionToInstall = getBestVersion(new InstallableComponentVersion(0,0,0), info);
         if (versionToInstall == null) {
             log.error("Plugin {}: No version available to install", pluginId);
             return RC_INIT;
@@ -533,7 +553,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         }
         final InstallableComponentVersion installVersion;
         if (pluginVersion == null) {
-            installVersion = InstallableComponentSupport.getBestVersion(new InstallableComponentVersion(plugin), state.getPluginInfo());
+            installVersion = getBestVersion(new InstallableComponentVersion(plugin), state.getPluginInfo());
             if (installVersion == null) {
                 log.info("No suitable update version available");
                 return;
