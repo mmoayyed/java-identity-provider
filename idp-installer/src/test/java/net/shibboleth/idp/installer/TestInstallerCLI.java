@@ -42,7 +42,7 @@ public class TestInstallerCLI {
                });
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void silentInstall() {
 
         IdPInstallerCLI.runMain(new String[] {
@@ -58,6 +58,16 @@ public class TestInstallerCLI {
                });
     }
 
+    @Test(enabled = false)
+    public void forceDownload() {
+
+        UpdateIdPCLI.runMain(new String[] {
+                "--pretendVersion","5.0.0",
+                "-d", "h:\\downloads",
+                "--home", "H:\\Downloads\\idp3",
+                "-fd", "4.3.0"});
+
+    }
 
     @Test(enabled = false)
     public void updateList430() {

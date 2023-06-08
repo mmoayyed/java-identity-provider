@@ -51,7 +51,7 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
     private boolean list;
 
     /** Where to download. */
-    @Parameter(names= {"-d", "--dowloadDir"})
+    @Parameter(names= {"-d", "--downloadDir"})
     @Nullable private String downloadDir;
 
     /** Truststore to use for signing. */
@@ -59,7 +59,7 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
     @Nullable private String truststore;
 
     /** Force download version. */
-    @Parameter(names= {"-fd", "--force-download"})
+    @Parameter(names= {"-fd", "--forceDownload"})
     @Nullable private String forceDownloadVersion;
  
     /** location to override the default update location. */
@@ -178,15 +178,29 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
     public void validate() throws IllegalArgumentException {
         super.validate();
         
-        if (StringSupport.trimOrNull(pretendVersion) != null) {
-            fromVersion = new InstallableComponentVersion(pretendVersion);
-        } else {
-            final String currentVersion = Version.getVersion();
-            if (currentVersion == null) {
-                getLog().error("Could not determine current version.");
-                throw new IllegalArgumentException("Could not determine current version.");
+        try {
+            if (StringSupport.trimOrNull(pretendVersion) != null) {
+                fromVersion = new InstallableComponentVersion(pretendVersion);
+            } else {
+                final String currentVersion = Version.getVersion();
+                if (currentVersion == null) {
+                    getLog().error("Could not determine current version.");
+                    throw new IllegalArgumentException("Could not determine current version.");
+                }
+                fromVersion = new InstallableComponentVersion(currentVersion);
             }
-            fromVersion = new InstallableComponentVersion(currentVersion);
+
+            if (StringSupport.trimOrNull(forceDownloadVersion) != null) {
+                updateVersion = new InstallableComponentVersion(forceDownloadVersion);
+                if (downloadDir == null) {
+                    getLog().error("Must specify a downloadDir if forceDownload is specified.");
+                    throw new IllegalArgumentException("Must specify a downloadDir if forceDownload is specified.");
+                }
+            }
+
+        } catch (final NumberFormatException e) {
+            getLog().error("Error in version specifier");
+            throw new IllegalArgumentException("Error in version specifier", e);
         }
 
         if (list) {
@@ -222,8 +236,8 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
         out.println();
         out.println("With no options displays the update status of the IdP");
         out.println();
-        out.println(String.format("  %-22s %s", "-d, --download <file>", "Download the distribution for an available update"));
-        out.println(String.format("  %-22s %s", "-fd, --force=download <file>", "Specify the version to be downloaded by -d"));
+        out.println(String.format("  %-22s %s", "-d, --downloadDir <directory>", "Download the distribution for an available update"));
+        out.println(String.format("  %-22s %s", "-fd, --force-download <file>", "Specify the version to be downloaded by -d"));
         out.println();
         out.println(String.format("  %-22s %s", "-l, --list", "list all available versions"));
         out.println();

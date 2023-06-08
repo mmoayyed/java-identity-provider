@@ -159,13 +159,20 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
     private int checkUpdate(@Nonnull UpdateIdPArguments args, @Nonnull final InstallableComponentInfo info, boolean doDownload) {
         
         final InstallableComponentVersion from = args.getUpdateFromVersion();
-        final InstallableComponentVersion newIdPVersion =
-                InstallableComponentSupport.getBestVersion(from, from, info);
+        InstallableComponentVersion newIdPVersion = args.getUpdateToVersion();
+        boolean versionSpecified = newIdPVersion != null;
+        if (!versionSpecified) {
+            newIdPVersion = InstallableComponentSupport.getBestVersion(from, from, info);
+        }
         if (newIdPVersion == null) {
             getLogger().info("No Upgrade available from {}", from);
             return RC_OK;
         }
-        getLogger().info("Version {} can be upgraded to {}", from, newIdPVersion);
+        if (versionSpecified) {
+            getLogger().info("Download version {}", newIdPVersion);
+        } else {
+            getLogger().info("Version {} can be upgraded to {}", from, newIdPVersion);
+        }
         if (!doDownload) {
             return RC_OK;
         }
@@ -247,6 +254,8 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
                 args.getDownloadLocation().resolve(fileName).toFile().deleteOnExit();
                 args.getDownloadLocation().resolve(fileName + ".asc").toFile().deleteOnExit();
             }
+        } else {
+            getLogger().info("Signature checked OK");
         }
         return result;
     }
