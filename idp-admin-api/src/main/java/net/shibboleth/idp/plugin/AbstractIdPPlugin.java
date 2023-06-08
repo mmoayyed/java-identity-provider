@@ -17,104 +17,13 @@
 
 package net.shibboleth.idp.plugin;
 
-import java.util.Set;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.annotation.constraint.NotLive;
-import net.shibboleth.shared.annotation.constraint.Unmodifiable;
-import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.profile.plugin.AbstractPlugin;
 
 /**
  * A base class implementing {@link IdPPlugin} that defaults common settings.
  * 
  * @since 4.1.0
  */
-public abstract class AbstractIdPPlugin implements IdPPlugin {
-    
-    /** Modules to enable on install. */
-    @Nonnull @NonnullElements private Set<IdPModule> enableModules;
-
-    /** Modules to disable on removal. */
-    @Nonnull @NonnullElements private Set<IdPModule> disableModules;
-
-    /** Constructor. */
-    public AbstractIdPPlugin() {
-        enableModules = CollectionSupport.emptySet();
-        disableModules = CollectionSupport.emptySet();
-    }
-
-    /** {@inheritDoc} */
-    @Nonnull @NotEmpty public String getPluginId() {
-        final String result = getClass().getPackageName();
-        assert result != null;
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @Nonnegative public int getPatchVersion() {
-        return 0;
-    }
-
-    /** {@inheritDoc} */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<String> getRequiredModules() {
-        return CollectionSupport.emptySet();
-    }
-
-    /** {@inheritDoc} */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<IdPModule> getEnableOnInstall() {
-        return enableModules;
-    }
-
-    /** {@inheritDoc} */
-    public String getLicenseFileLocation() {
-        return null;
-    }
-
-    /**
-     * Set the modules to enable on install.
-     * 
-     * @param modules modules to enable
-     */
-    protected void setEnableOnInstall(@Nonnull @NonnullElements final Set<IdPModule> modules) {
-        enableModules = CollectionSupport.copyToSet(modules);
-    }
-
-    /** {@inheritDoc} */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<IdPModule> getDisableOnRemoval() {
-        return disableModules;
-    }
-
-    /**
-     * Set the modules to disable on removal.
-     * 
-     * @param modules modules to disable
-     */
-    protected void setDisableOnRemoval(@Nonnull @NonnullElements final Set<IdPModule> modules) {
-        disableModules = CollectionSupport.copyToSet(modules);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof IdPModule && getPluginId().equals(((IdPPlugin) obj).getPluginId());
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return getPluginId().hashCode();
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "IdPPlugin " + getPluginId();
-    }
-
+public abstract class AbstractIdPPlugin extends AbstractPlugin<IdPModule> implements IdPPlugin {
 }
