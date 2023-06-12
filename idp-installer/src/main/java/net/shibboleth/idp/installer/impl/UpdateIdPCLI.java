@@ -43,6 +43,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.Version;
+import net.shibboleth.idp.admin.impl.IdPInfo;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.impl.UpdateIdPArguments.OperationType;
@@ -61,9 +62,6 @@ import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
  * Command line update cheker.
  */
 public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArguments> {
-
-    /** The "plugin Id" to look up idp versions with. */
-    @Nonnull public static String IDP_PLUGIN_ID = "net.shibboleth.idp";
 
     /** The place we publish our keys. */
     @Nonnull public static String SHIBBOLETH_SIGNING_KEYS = "http://shibboleth.net/downloads/PGP_KEYS";
@@ -273,7 +271,7 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
             assert idpHome != null;
             trust.setIdpHome(idpHome);
             trust.setTrustStore(args.getTruststore());
-            trust.setPluginId(IDP_PLUGIN_ID);
+            trust.setPluginId(IdPInfo.IDP_PLUGIN_ID);
             trust.initialize();
             final Signature sig = TrustStore.signatureOf(sigStream);
             if (!trust.contains(sig)) {
@@ -306,7 +304,7 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
             }
 
         } catch (final ComponentInitializationException | IOException e) {
-            getLogger().error("Could not manage truststore for [{}, {}] ", args.getIdPHome(), IDP_PLUGIN_ID, e);
+            getLogger().error("Could not manage truststore for [{}, {}] ", args.getIdPHome(), IdPInfo.IDP_PLUGIN_ID, e);
             return RC_IO;
         }
         return RC_OK;
@@ -335,32 +333,4 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
        System.exit(runMain(args));
    }
 
-   /** Local implementaion of {@link InstallableComponentInfo} for an IdP Version. */
-   private static class IdPInfo extends InstallableComponentInfo {
-
-    /**
-     * Constructor.
-     * @param props The property file to populate from
-     */
-    public IdPInfo(@Nonnull Properties props) {
-        super(IDP_PLUGIN_ID, props);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nullable
-    protected InstallableComponentVersion getMaxVersion(@Nonnull Properties props, @Nonnull String version) {
-        // The maximum version that version "us" can be installed in is "us" (a re-intall).
-        return new InstallableComponentVersion(version);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nullable
-    protected InstallableComponentVersion getMinVersion(@Nonnull Properties props, @Nonnull String version) {
-        // We can always be on anything from V4.0.0
-        return new InstallableComponentVersion(4,0,0);
-    }
-       
-   }
 }

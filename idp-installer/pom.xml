@@ -52,6 +52,13 @@
         </dependency>
 
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-admin-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>net.shibboleth</groupId>
             <artifactId>shib-metadata-api</artifactId>
             <scope>provided</scope>

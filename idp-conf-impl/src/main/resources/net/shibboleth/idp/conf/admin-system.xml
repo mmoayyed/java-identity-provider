@@ -320,5 +320,19 @@
         class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="net.shibboleth.idp.managedbean"
         p:service-ref="shibboleth.ManagedBeanService" />
-        
+
+    <util:list id="shibboleth.IdPUpdateCheckUrls">
+        <value>https://shibboleth.net/downloads/identity-provider/plugins/idp-versions.properties</value>
+        <value>http://plugins.shibboleth.net/idp-versions.properties</value>
+    </util:list>
+
+    <bean id="shibboleth.UpdateStatus"
+       class="net.shibboleth.idp.admin.impl.ReportUpdateStatus"
+       lazy-init="false"
+       depends-on="shibboleth.LoggingService"
+       p:updateUrls-ref="%{idp.updateCheck.urls:shibboleth.IdPUpdateCheckUrls}"
+       p:enabled="%{idp.updateCheck.enabled:true}"
+       p:httpClient-ref="%{idp.updateCheck.httpClient:shibboleth.InternalHttpClient}"
+       p:securityParams="#{ environment.containsProperty('idp.updateCheck.httpSecurityParameters') ? getObject('idp.updateCheck.httpSecurityParameters') :null}"/>
+
 </beans>
