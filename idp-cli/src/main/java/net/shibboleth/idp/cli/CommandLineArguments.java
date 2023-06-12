@@ -55,7 +55,7 @@ public interface CommandLineArguments {
      * 
      * @throws MalformedURLException if the URL constructed is invalid 
      */
-    @Nonnull public URL buildURL() throws MalformedURLException;
+    @Nonnull URL buildURL() throws MalformedURLException;
     
     /**
      * Builds the HTTP-Basic value to be used in the Authorization -header, containing username and password.
@@ -64,7 +64,7 @@ public interface CommandLineArguments {
      * 
      * @since 4.2.0
      */
-    @Nullable @NotEmpty public default String getBasicAuthHeader() {
+    @Nullable @NotEmpty default String getBasicAuthHeader() {
         return null;
     }
 
@@ -75,7 +75,7 @@ public interface CommandLineArguments {
      * 
      * @since 4.2.0
      */
-    @Nullable @NonnullElements @NotLive @Unmodifiable public default Map<String,String> getHeaders() {
+    @Nullable @NonnullElements @NotLive @Unmodifiable default Map<String,String> getHeaders() {
         return null;
     }
     
@@ -86,7 +86,7 @@ public interface CommandLineArguments {
      * 
      * @since 4.2.0
      */
-    @Nullable @NotEmpty public default String getMethod() {
+    @Nullable @NotEmpty default String getMethod() {
         return null;
     }
 
