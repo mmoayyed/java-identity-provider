@@ -31,6 +31,7 @@ import org.opensaml.security.config.SecurityConfiguration;
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;
 import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
+import net.shibboleth.shared.annotation.ConfigurationSetting;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.InitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
@@ -95,6 +96,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractInterceptorA
      * 
      * @return ticket validity period
      */
+    @ConfigurationSetting(name="ticketValidityPeriod")
     @Nonnull public Duration getTicketValidityPeriod(@Nullable final ProfileRequestContext profileRequestContext) {
         
         final Duration ticketTTL = ticketValidityPeriodLookupStrategy.apply(profileRequestContext);

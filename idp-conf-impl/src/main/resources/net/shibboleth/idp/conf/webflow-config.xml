@@ -25,6 +25,7 @@
                 <!-- Administrative and debugging flows. -->
                 <entry key="admin/hello" value="classpath:/net/shibboleth/idp/flows/admin/hello-flow.xml" />
                 <entry key="admin/resolvertest" value="classpath:/net/shibboleth/idp/flows/admin/resolvertest-flow.xml" />
+                <entry key="admin/dumpconfig" value="classpath:/net/shibboleth/idp/flows/admin/dumpconfig-flow.xml" />
                 <entry key="admin/reload-service" value="classpath:/net/shibboleth/idp/flows/admin/reload-service-flow.xml" />
                 <entry key="admin/reload-metadata" value="classpath:/net/shibboleth/idp/flows/admin/reload-metadata-flow.xml" />
                 <entry key="admin/lockout" value="classpath:/net/shibboleth/idp/flows/admin/lockout-flow.xml" />

@@ -28,6 +28,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.cas.service.DefaultServiceComparator;
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
+import net.shibboleth.shared.annotation.ConfigurationSetting;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
@@ -95,6 +96,7 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
      * 
      * @return PGTIOU ticket ID generator
      */
+    @ConfigurationSetting(name="pGTIOUGenerator")
     @Nonnull public IdentifierGenerationStrategy getPGTIOUGenerator(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
@@ -131,6 +133,7 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
      * 
      * @return ticket requester/validator comparator
      */
+    @ConfigurationSetting(name="serviceComparator")
     @Nonnull public Comparator<String> getServiceComparator(
             @Nullable final ProfileRequestContext profileRequestContext) {
         return Constraint.isNotNull(
@@ -167,6 +170,7 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
      * 
      * @return attribute name
      */
+    @ConfigurationSetting(name="userAttribute")
     @Nullable public String getUserAttribute(@Nullable final ProfileRequestContext profileRequestContext) {
         return userAttributeLookupStrategy.apply(profileRequestContext);
     }

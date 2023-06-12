@@ -224,13 +224,9 @@ public class OutputMetrics extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext)) {
-            return false;
-        } else if (getHttpServletResponse() == null) {
-            log.debug("{} No HttpServletResponse available", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
@@ -248,6 +244,7 @@ public class OutputMetrics extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
+        
         final HttpServletResponse response = getHttpServletResponse();
         if (response == null) {
             log.warn("{} No HttpServletResponse available", getLogPrefix());
@@ -270,7 +267,7 @@ public class OutputMetrics extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         MetricFilter filter = ALL_METRICS.equals(metricId) ? MetricFilter.ALL : metricFilterMap.get(metricId);
         if (filter == null) {

@@ -93,6 +93,23 @@
     </bean>
 
     <bean parent="shibboleth.AdminFlow"
+            c:id="http://shibboleth.net/ns/profiles/dumpconfig"
+            p:loggingId="%{idp.dumpconfig.logging:DumpConfig}"
+            p:policyName="%{idp.dumpconfig.accessPolicy:AccessByIPAddress}"
+            p:nonBrowserSupported="%{idp.dumpconfig.nonBrowserSupported:false}"
+            p:authenticated="%{idp.dumpconfig.authenticated:false}"
+            p:resolveAttributes="%{idp.dumpconfig.resolveAttributes:false}">
+        <property name="postAuthenticationFlows">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.dumpconfig.postAuthenticationFlows:}'.trim()}" />
+        </property>
+        <property name="defaultAuthenticationMethodsByString">
+            <bean parent="shibboleth.CommaDelimStringArray"
+                c:_0="#{'%{idp.dumpconfig.defaultAuthenticationMethods:}'.trim()}" />
+        </property>
+    </bean>
+
+    <bean parent="shibboleth.AdminFlow"
             c:id="http://shibboleth.net/ns/profiles/mdquery"
             p:loggingId="%{idp.mdquery.logging:MetadataQuery}"
             p:policyName="%{idp.mdquery.accessPolicy:AccessByIPAddress}"

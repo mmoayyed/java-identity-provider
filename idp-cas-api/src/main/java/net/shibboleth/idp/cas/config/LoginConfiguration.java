@@ -31,6 +31,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.shared.annotation.ConfigurationSetting;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -230,6 +231,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * 
      * @since 4.2.0
      */
+    @ConfigurationSetting(name="storeConsentInTickets")
     public boolean isStoreConsentInTickets(@Nullable final ProfileRequestContext profileRequestContext) {
         return storeConsentInTicketsPredicate.test(profileRequestContext);
     }

@@ -29,6 +29,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>idp-cas-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>idp-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -48,6 +53,10 @@
             <artifactId>shib-profile-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-messaging-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>

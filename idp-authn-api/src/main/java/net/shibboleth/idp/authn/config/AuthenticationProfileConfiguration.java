@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
+import net.shibboleth.shared.annotation.ConfigurationSetting;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
@@ -42,6 +43,7 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * 
      * @return  default authentication methods to use
      */
+    @ConfigurationSetting(name="defaultAuthenticationMethods")
     @Nonnull @NonnullElements @NotLive @Unmodifiable List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext);
         
@@ -56,6 +58,7 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * 
      * @return  a set of authentication flow IDs to allow 
      */
+    @ConfigurationSetting(name="authenticationFlows")
     @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext);
 
@@ -70,6 +73,7 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * 
      * @return  a set of interceptor flow IDs to enable
      */
+    @ConfigurationSetting(name="postAuthenticationFlows")
     @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getPostAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext);
 
@@ -82,6 +86,7 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * 
      * @since 4.0.0
      */
+    @ConfigurationSetting(name="forceAuthn")
     boolean isForceAuthn(@Nullable final ProfileRequestContext profileRequestContext);
     
     /**
@@ -95,6 +100,7 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * 
      * @since 4.0.0
      */
+    @ConfigurationSetting(name="proxyCount")
     @NonNegative @Nullable Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext);
     
     /**
@@ -108,4 +114,5 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
     default boolean isLocal() {
         return false;
     }
+
 }

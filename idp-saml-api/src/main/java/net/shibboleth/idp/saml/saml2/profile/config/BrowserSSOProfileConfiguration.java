@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
+import net.shibboleth.shared.annotation.ConfigurationSetting;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
@@ -60,6 +61,7 @@ public interface BrowserSSOProfileConfiguration
      * 
      * @since 4.0.0
      */
+    @ConfigurationSetting(name="ignoreScoping")
     boolean isIgnoreScoping(@Nullable final ProfileRequestContext profileRequestContext);
     
     /**
@@ -71,6 +73,7 @@ public interface BrowserSSOProfileConfiguration
      * 
      * @since 4.0.0
      */
+    @ConfigurationSetting(name="skipEndpointValidationWhenSigned")
     boolean isSkipEndpointValidationWhenSigned(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
@@ -80,6 +83,7 @@ public interface BrowserSSOProfileConfiguration
      * 
      * @return audiences for a proxied assertion
      */
+    @ConfigurationSetting(name="proxyAudiences")
     @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getProxyAudiences(
             @Nullable final ProfileRequestContext profileRequestContext);
     
@@ -94,6 +98,7 @@ public interface BrowserSSOProfileConfiguration
      * 
      * @since 4.2.0
      */
+    @ConfigurationSetting(name="suppressAuthenticatingAuthority")
     boolean isSuppressAuthenticatingAuthority(@Nullable final ProfileRequestContext profileRequestContext);
         
     /**
@@ -108,6 +113,7 @@ public interface BrowserSSOProfileConfiguration
      * 
      * @since 4.0.0
      */
+    @ConfigurationSetting(name="proxiedAuthnInstant")
     boolean isProxiedAuthnInstant(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
@@ -119,6 +125,7 @@ public interface BrowserSSOProfileConfiguration
      * 
      * @since 4.3.0
      */
+    @ConfigurationSetting(name="requireSignedRequests")
     boolean isRequireSignedRequests(@Nullable final ProfileRequestContext profileRequestContext);
     
     /**
@@ -129,6 +136,7 @@ public interface BrowserSSOProfileConfiguration
      * 
      * @return max lifetime of service provider should maintain a session
      */
+    @ConfigurationSetting(name="maximumSPSessionLifetime")
     @Nullable Duration getMaximumSPSessionLifetime(@Nullable final ProfileRequestContext profileRequestContext);
     
     /**
@@ -154,7 +162,6 @@ public interface BrowserSSOProfileConfiguration
      */
     @Deprecated(since="5.0.0", forRemoval=true)
     @NonNegative long getMaximumTokenDelegationChainLength(@Nullable final ProfileRequestContext profileRequestContext);
-
     
     /**
      * Get the function to use to translate an inbound proxied SAML 2.0 {@link AuthnContext} into the appropriate
@@ -166,6 +173,7 @@ public interface BrowserSSOProfileConfiguration
      * 
      * @since 4.0.0
      */
+    @ConfigurationSetting(name="authnContextTranslationStrategy")
     @Nullable Function<AuthnContext,Collection<Principal>> getAuthnContextTranslationStrategy(
             @Nullable final ProfileRequestContext profileRequestContext);
 
@@ -182,6 +190,7 @@ public interface BrowserSSOProfileConfiguration
      * 
      * @since 4.1.0
      */
+    @ConfigurationSetting(name="authnContextTranslationStrategyEx")
     @Nullable Function<ProfileRequestContext,Collection<Principal>> getAuthnContextTranslationStrategyEx(
             @Nullable final ProfileRequestContext profileRequestContext);
 
