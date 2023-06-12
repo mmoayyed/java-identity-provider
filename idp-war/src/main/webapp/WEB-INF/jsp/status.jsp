@@ -19,7 +19,7 @@
 <%@ page import="com.codahale.metrics.Gauge" %>
 <%@ page import="net.shibboleth.idp.module.IdPModule" %>
 <%@ page import="net.shibboleth.idp.plugin.IdPPlugin" %>
-<%@ page import="net.shibboleth.idp.module.ModuleContext" %>
+<%@ page import="net.shibboleth.profile.module.ModuleContext" %>
 <%@ page import="net.shibboleth.shared.component.IdentifiedComponent" %>
 <%@ page import="net.shibboleth.shared.service.ReloadableService" %>
 <%
