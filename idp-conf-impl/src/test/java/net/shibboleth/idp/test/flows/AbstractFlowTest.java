@@ -149,7 +149,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     @Nonnull public final static String SAML2_TRANSFORM_C14N_BEAN_NAME = "c14n/SAML2Transform";
 
     /** In-memory directory server. A single instance is used for all child tests. */
-    @NonnullAfterInit private static InMemoryDirectory directoryServer;
+    @NonnullAfterInit private InMemoryDirectory directoryServer;
 
     /** Mock external context. */
     protected MockExternalContext externalContext;
@@ -239,7 +239,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * Creates an UnboundID in-memory directory server. Leverages LDIF found at {@value #LDIF_FILE}.
      */
     @SuppressWarnings("null")
-    @BeforeSuite public static void setupDirectoryServer() {
+    @BeforeSuite public void setupDirectoryServer() {
         directoryServer =
             new InMemoryDirectory(
                 new String[] {"dc=example,dc=org", "ou=system"},
@@ -255,7 +255,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * 
      * Always run this method to avoid starting the server multiple times when tests fail.
      */
-    @AfterSuite(alwaysRun = true) public static void teardownDirectoryServer() {
+    @AfterSuite(alwaysRun = true) public void teardownDirectoryServer() {
         if (directoryServer != null) {
             directoryServer.stop(true);
         }
