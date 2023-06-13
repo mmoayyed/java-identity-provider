@@ -202,6 +202,32 @@
                 <value>idp.authn.resolveAttribute</value>
                 <value>idp.authn.SAML.inboundMessageHandlerFunction</value>
                 <value>idp.authn.SAML.outboundMessageHandlerFunction</value>
+                <value>idp.duo.apiHost</value>
+                <value>idp.duo.applicationKey</value>
+                <value>idp.duo.integrationKey</value>
+                <value>idp.duo.secretKey</value>
+                <value>idp.duo.nonbrowser.apiHost</value>
+                <value>idp.duo.nonbrowser.integrationKey</value>
+                <value>idp.duo.nonbrowser.secretKey</value>
+                <value>idp.duo.nonbrowser.header.factor</value>
+                <value>idp.duo.nonbrowser.header.device</value>
+                <value>idp.duo.nonbrowser.header.passcode</value>
+                <value>idp.duo.nonbrowser.header.auto</value>
+                <value>idp.duo.nonbrowser.clientAddressTrusted</value>
+                <value>idp.authn.Duo.order</value>
+                <value>idp.authn.Duo.nonBrowserSupported</value>
+                <value>idp.authn.Duo.passiveAuthenticationSupported</value>
+                <value>idp.authn.Duo.forcedAuthenticationSupported</value>
+                <value>idp.authn.Duo.proxyRestrictionsEnforced</value>
+                <value>idp.authn.Duo.proxyScopingEnforced</value>
+                <value>idp.authn.Duo.discoveryRequired</value>
+                <value>idp.authn.Duo.lifetime</value>
+                <value>idp.authn.Duo.inactivityTimeout</value>
+                <value>idp.authn.Duo.reuseCondition</value>
+                <value>idp.authn.Duo.activationCondition</value>
+                <value>idp.authn.Duo.subjectDecorator</value>
+                <value>idp.authn.Duo.supportedPrincipals</value>
+                <value>idp.authn.Duo.addDefaultPrincipals</value>
                 <value>idp.nameid.saml1.legacyGenerator</value>
                 <value>idp.nameid.saml2.legacyGenerator</value>
                 <value>idp.service.attribute.registry.namingRegistry</value>

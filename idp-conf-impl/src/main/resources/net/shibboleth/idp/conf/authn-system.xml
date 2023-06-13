@@ -233,25 +233,6 @@
         </property>
     </bean>
 
-    <bean p:id="authn/Duo" parent="shibboleth.AuthenticationFlow"
-            p:order="%{idp.authn.Duo.order:1000}"
-            p:nonBrowserSupported="%{idp.authn.Duo.nonBrowserSupported:false}"
-            p:passiveAuthenticationSupported="%{idp.authn.Duo.passiveAuthenticationSupported:false}"
-            p:forcedAuthenticationSupported="%{idp.authn.Duo.forcedAuthenticationSupported:true}"
-            p:proxyRestrictionsEnforced="%{idp.authn.Duo.proxyRestrictionsEnforced:%{idp.authn.enforceProxyRestrictions:true}}"
-            p:proxyScopingEnforced="%{idp.authn.Duo.proxyScopingEnforced:false}"
-            p:discoveryRequired="%{idp.authn.Duo.discoveryRequired:false}"
-            p:lifetime="%{idp.authn.Duo.lifetime:%{idp.authn.defaultLifetime:PT1H}}"
-            p:inactivityTimeout="%{idp.authn.Duo.inactivityTimeout:%{idp.authn.defaultTimeout:PT30M}}"
-            p:reuseCondition-ref="#{'%{idp.authn.Duo.reuseCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:activationCondition-ref="#{'%{idp.authn.Duo.activationCondition:shibboleth.Conditions.TRUE}'.trim()}"
-            p:subjectDecorator="#{getObject('%{idp.authn.Duo.subjectDecorator:}'.trim())}">
-        <property name="supportedPrincipalsByString">
-            <bean parent="shibboleth.CommaDelimStringArray"
-                c:_0="#{'%{idp.authn.Duo.supportedPrincipals:}'.trim()}" />
-        </property>
-    </bean>
-
     <bean p:id="authn/MFA" parent="shibboleth.AuthenticationFlow"
             p:order="%{idp.authn.MFA.order:1000}"
             p:nonBrowserSupported="%{idp.authn.MFA.nonBrowserSupported:true}"
@@ -345,6 +326,7 @@
         </constructor-arg>
     </bean>
 
+    <!-- TBD: If still needed, likely moved to Duo OIDC plugin. -->
     <bean p:id="duo" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
             c:claz="net.shibboleth.idp.authn.duo.DuoPrincipal">
         <constructor-arg name="serializer">
