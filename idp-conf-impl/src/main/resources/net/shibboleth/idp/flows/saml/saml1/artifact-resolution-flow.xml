@@ -8,6 +8,7 @@
     <action-state id="InitializeProfileRequestContext">
         <on-entry>
             <set name="flowScope.inboundSecuritySubflow" value="'intercept/security-policy/saml-soap'" />
+            <evaluate expression="T(net.shibboleth.shared.primitive.DeprecationSupport).atRiskOnce(T(net.shibboleth.shared.primitive.DeprecationSupport.ObjectType).WEBFLOW, 'SAML 1.1 Artifact Resolution', null)" />
         </on-entry>
         <evaluate expression="InitializeProfileRequestContext" />
         <evaluate expression="FlowStartPopulateAuditContext" />
