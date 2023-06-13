@@ -22,6 +22,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
@@ -39,16 +40,16 @@ import org.opensaml.security.x509.X509Support;
 public class X509ResourceCredentialConfig implements CredentialConfig {
 
     /** Name of the trust certificates to use for the SSL connection. */
-    private Resource trustCertificates;
+    @Nullable private Resource trustCertificates;
 
     /** Name of the authentication certificate to use for the SSL connection. */
-    private Resource authenticationCertificate;
+    @Nullable private Resource authenticationCertificate;
 
     /** Name of the key to use for the SSL connection. */
-    private Resource authenticationKey;
+    @Nullable private Resource authenticationKey;
 
     /** Password to decrypt the authentication key. */
-    private String authenticationKeyPassword;
+    @Nullable private String authenticationKeyPassword;
 
     /**
      * Set the trust certificates resource.

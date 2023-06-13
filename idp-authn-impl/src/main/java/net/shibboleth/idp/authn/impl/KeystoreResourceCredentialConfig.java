@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
@@ -38,31 +39,31 @@ import org.ldaptive.ssl.SSLContextInitializer;
 public class KeystoreResourceCredentialConfig implements CredentialConfig {
 
     /** Handles loading keystores. */
-    private final KeyStoreCredentialReader keyStoreReader = new KeyStoreCredentialReader();
+    @Nonnull private final KeyStoreCredentialReader keyStoreReader = new KeyStoreCredentialReader();
 
     /** Truststore resource. */
-    private Resource truststore;
+    @Nullable private Resource truststore;
 
     /** Password for truststore. */
-    private String truststorePassword;
+    @Nullable private String truststorePassword;
 
     /** Type of truststore. */
-    private String truststoreType;
+    @Nullable private String truststoreType;
 
     /** Truststore aliases to use. */
-    private String[] truststoreAliases;
+    @Nullable private String[] truststoreAliases;
 
     /** Keystore resource. */
-    private Resource keystore;
+    @Nullable private Resource keystore;
 
     /** Password for keystore. */
-    private String keystorePassword;
+    @Nullable private String keystorePassword;
 
     /** Type of keystore. */
-    private String keystoreType;
+    @Nullable private String keystoreType;
 
     /** Keystore aliases to use. */
-    private String[] keystoreAliases;
+    @Nullable private String[] keystoreAliases;
 
     /**
      * Set the truststore resource.

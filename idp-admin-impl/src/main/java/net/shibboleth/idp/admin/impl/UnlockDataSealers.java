@@ -105,7 +105,8 @@ public class UnlockDataSealers extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        @Nonnull final HttpServletRequest request = Constraint.isNotNull(getHttpServletRequest(), "Could noit locate servlet request");
+        @Nonnull final HttpServletRequest request =
+                Constraint.isNotNull(getHttpServletRequest(), "Could not locate servlet request");
         
         final String[] keystorePasswords = request.getParameterValues(KEYSTORE_PASSWORD_PARAM_NAME);
         final String[] keyPasswords = request.getParameterValues(KEY_PASSWORD_PARAM_NAME);
