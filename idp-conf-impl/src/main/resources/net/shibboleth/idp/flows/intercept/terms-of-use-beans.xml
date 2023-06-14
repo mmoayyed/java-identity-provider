@@ -8,9 +8,6 @@
 
     default-init-method="initialize" default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-
     <!-- Default audit format. -->
     <util:map id="DefaultAuditFormattingMap">
         <entry key="Shibboleth-Consent-Audit" value="#{'%{idp.consent.terms-of-use.auditFormat:%T|%SP|%e|%u|%CCI|%CCV|%CCA}'.trim()}" />

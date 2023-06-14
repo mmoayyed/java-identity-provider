@@ -11,9 +11,6 @@
                            
        default-init-method="initialize"
        default-destroy-method="destroy">
-    
-    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <bean id="shibboleth.authn.RemoteUser.checkHeaders" parent="shibboleth.CommaDelimStringArray"
         c:_0="#{'%{idp.authn.RemoteUserInternal.checkHeaders:}'.trim()}" />

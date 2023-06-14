@@ -12,22 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean destroy-method="" class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-    <bean destroy-method="" class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-
-    <bean id="conversionService" destroy-method=""
-          class="org.springframework.context.support.ConversionServiceFactoryBean">
-        <property name="converters">
-            <set>
-                <bean class="net.shibboleth.shared.spring.config.StringToIPRangeConverter" destroy-method=""/>
-                <bean class="net.shibboleth.shared.spring.config.BooleanToPredicateConverter" destroy-method=""/>
-                <bean class="net.shibboleth.shared.spring.config.StringBooleanToPredicateConverter" destroy-method=""/>
-                <bean class="net.shibboleth.shared.spring.config.StringToResourceConverter" destroy-method=""/>
-                <bean class="net.shibboleth.shared.spring.config.StringToDurationConverter" destroy-method=""/>
-            </set>
-        </property>
-    </bean>
-
     <bean id="shibboleth.StorageService"
         class="org.opensaml.storage.impl.MemoryStorageService" />
 

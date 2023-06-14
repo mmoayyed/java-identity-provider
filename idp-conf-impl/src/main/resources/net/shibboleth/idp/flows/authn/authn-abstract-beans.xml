@@ -12,11 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- The actual abstract-authn flow doesn't use anything in here so far but child flows do. -->
-
-    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-
     <!-- Most/all of this is for login flow auditing right now. -->
 
     <!-- Private copy of AuditContext for login flows. -->

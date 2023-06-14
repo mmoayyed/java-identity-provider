@@ -12,9 +12,6 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-
     <!-- These are beans that are common to most or all SAML profile flows, regardless of version. -->
 
     <bean id="FlowStartPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"

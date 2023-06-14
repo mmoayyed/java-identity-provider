@@ -12,9 +12,6 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-
     <bean id="UseLocalStorage" class="java.lang.Boolean">
         <constructor-arg value="%{idp.storage.htmlLocalStorage:false}" type="boolean" />
     </bean>

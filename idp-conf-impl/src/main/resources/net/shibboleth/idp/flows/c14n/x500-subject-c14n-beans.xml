@@ -19,9 +19,6 @@
         c:_0="#{'%{idp.c14n.x500.objectIDs:}'.trim()}" />
 
     <import resource="conditional:%{idp.home}/conf/c14n/x500-subject-c14n-config.xml" />
-
-    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="X500SubjectCanonicalization"
         class="net.shibboleth.idp.authn.impl.X500SubjectCanonicalization" scope="prototype"

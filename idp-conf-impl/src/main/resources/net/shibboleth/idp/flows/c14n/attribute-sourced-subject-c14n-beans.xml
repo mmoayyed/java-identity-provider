@@ -19,9 +19,6 @@
         c:_0="#{'%{idp.c14n.attribute.attributeSourceIds:%{idp.c14n.attribute.attributesToResolve:}}'.trim()}" />
 
     <import resource="conditional:%{idp.home}/conf/c14n/attribute-sourced-subject-c14n-config.xml" />
-
-    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
             c:resolverService-ref="shibboleth.AttributeResolverService"

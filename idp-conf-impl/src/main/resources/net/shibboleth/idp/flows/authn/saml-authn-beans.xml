@@ -12,8 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-
     <bean id="PropertyDrivenDiscovery" parent="shibboleth.Functions.Constant"
         c:target="#{'%{idp.authn.SAML.proxyEntityID:}'.trim()}" />
 

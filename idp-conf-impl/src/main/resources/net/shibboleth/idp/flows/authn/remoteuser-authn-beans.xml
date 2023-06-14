@@ -12,9 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-
     <!-- Default strategy function to obtain the external path. -->
     <bean id="shibboleth.authn.RemoteUser.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
         c:target="#{getObject('shibboleth.authn.RemoteUser.externalAuthnPath') ?: '%{idp.authn.RemoteUser.externalAuthnPath:contextRelative:/Authn/RemoteUser}'.trim()}" />

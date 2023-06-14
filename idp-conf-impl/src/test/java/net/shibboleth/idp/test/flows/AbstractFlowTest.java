@@ -102,7 +102,7 @@ import net.shibboleth.shared.xml.ParserPool;
                 IdPPropertiesApplicationContextInitializer.class},
         loader = PreferFileSystemContextLoader.class)
 @WebAppConfiguration
-@SuppressWarnings({"javadoc", "null"})
+@SuppressWarnings({"null"})
 public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests {
 
     /** Logger. */

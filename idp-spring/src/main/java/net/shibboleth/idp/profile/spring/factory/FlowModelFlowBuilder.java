@@ -38,7 +38,9 @@ import org.springframework.webflow.scope.FlashScope;
 import org.springframework.webflow.scope.FlowScope;
 import org.springframework.webflow.scope.ViewScope;
 
+import net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor;
 import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.shared.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.shared.spring.context.FilesystemGenericWebApplicationContext;
 import net.shibboleth.shared.spring.custom.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -131,6 +133,10 @@ public class FlowModelFlowBuilder extends org.springframework.webflow.engine.bui
         propertyConfigurer.setPlaceholderSuffix("}");
         propertyConfigurer.setEnvironment(flowContext.getEnvironment());
         flowContext.addBeanFactoryPostProcessor(propertyConfigurer);
+        
+        // Shibboleth change - auto-inject our profile flow bean processors.
+        flowContext.getBeanFactory().addBeanPostProcessor(new IdentifiableBeanPostProcessor());
+        flowContext.getBeanFactory().addBeanPostProcessor(new ProfileActionBeanPostProcessor());
         
         // Shibboleth change - Use our document reader instead, which fixes import resolution.
         new SchemaTypeAwareXMLBeanDefinitionReader(flowContext).loadBeanDefinitions(resources);
