@@ -36,7 +36,6 @@
         
     <!-- BeanFactoryPostProcessors to apply. -->
     <util:list id="shibboleth.BeanFactoryPostProcessors">
-        <ref bean="shibboleth.PropertySourcesPlaceholderConfigurer" />
         <ref bean="shibboleth.RelocatedBeanFactoryPostProcessor" />
     </util:list>
     
