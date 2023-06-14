@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigUtils;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestScope;
@@ -123,6 +124,13 @@ public class FlowModelFlowBuilder extends org.springframework.webflow.engine.bui
         flowContext.getEnvironment().setPlaceholderSuffix("}");
 
         AnnotationConfigUtils.registerAnnotationConfigProcessors(flowContext);
+
+        // Shibboleth change - auto-inject the property replacement bean.
+        final PropertySourcesPlaceholderConfigurer propertyConfigurer = new PropertySourcesPlaceholderConfigurer();
+        propertyConfigurer.setPlaceholderPrefix("%{");
+        propertyConfigurer.setPlaceholderSuffix("}");
+        propertyConfigurer.setEnvironment(flowContext.getEnvironment());
+        flowContext.addBeanFactoryPostProcessor(propertyConfigurer);
         
         // Shibboleth change - Use our document reader instead, which fixes import resolution.
         new SchemaTypeAwareXMLBeanDefinitionReader(flowContext).loadBeanDefinitions(resources);

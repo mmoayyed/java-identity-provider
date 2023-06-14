@@ -14,9 +14,6 @@
 
     <!-- The actual abstract-authn flow doesn't use anything in here so far but child flows do. -->
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
     <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 

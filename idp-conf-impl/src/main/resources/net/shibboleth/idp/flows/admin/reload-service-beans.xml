@@ -12,9 +12,6 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
     <!-- Profile ID for flow. -->
     <bean id="shibboleth.AdminProfileId" class="java.lang.String"
         c:_0="http://shibboleth.net/ns/profiles/reload-service-configuration" />

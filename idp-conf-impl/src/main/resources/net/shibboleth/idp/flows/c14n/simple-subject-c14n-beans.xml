@@ -12,9 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
     <import resource="conditional:%{idp.home}/conf/c14n/simple-subject-c14n-config.xml" />
 
     <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />

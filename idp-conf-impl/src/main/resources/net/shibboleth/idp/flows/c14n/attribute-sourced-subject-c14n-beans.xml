@@ -12,9 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
     <!-- Property-driven defaults to be overridden. -->
     <bean id="shibboleth.c14n.attribute.AttributesToResolve" parent="shibboleth.CommaDelimStringArray"
         c:_0="#{'%{idp.c14n.attribute.attributesToResolve:}'.trim()}" />

@@ -12,9 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
     <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
 
     <bean id="PropertyDrivenDiscovery" parent="shibboleth.Functions.Constant"

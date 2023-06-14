@@ -19,11 +19,7 @@
         <entry key="bar" value="foo"/>
     </util:map>
     
-    <bean id="shibboleth.Predicate" destroy-method="" class="com.google.common.base.Predicates" factory-method="alwaysFalse"/>
-    
-    <bean id="shibboleth.PropertySourcesPlaceholderConfigurer" destroy-method=""
-        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+    <bean id="shibboleth.Predicate" class="net.shibboleth.shared.logic.PredicateSupport" factory-method="alwaysFalse"/>
 
     <!-- Necessary for encoder parsing to function, normally part of registry wiring. -->
     
