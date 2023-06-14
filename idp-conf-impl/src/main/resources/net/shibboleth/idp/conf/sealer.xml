@@ -12,10 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
-        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
     <!-- Isolated for potential reusability. -->
 
     <bean id="shibboleth.DataSealerKeyStrategy" lazy-init="true"

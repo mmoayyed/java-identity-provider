@@ -12,10 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="shibboleth.PropertySourcesPlaceholderConfigurer" destroy-method=""
-        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
     <!-- These are parent beans for custom HTTP clients and resources. -->
         
     <bean id="shibboleth.HttpClientFactory" abstract="true"
