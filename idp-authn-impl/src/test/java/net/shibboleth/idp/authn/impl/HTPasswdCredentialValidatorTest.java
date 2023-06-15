@@ -45,6 +45,7 @@ import net.shibboleth.idp.authn.testing.TestPrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.spring.resource.ResourceHelper;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** Unit test for htpasswd file validation. */
@@ -61,7 +62,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         super.setUp();
 
         validator = new HTPasswdCredentialValidator();
-        validator.setResource(new ClassPathResource("net/shibboleth/idp/authn/impl/htpasswd.txt"));
+        validator.setResource(ResourceHelper.of(new ClassPathResource("net/shibboleth/idp/authn/impl/htpasswd.txt")));
         validator.setId("htpasswdtest");
         
         action = new ValidateCredentials();
@@ -231,7 +232,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
-        validator.setResource(new FileSystemResource(DATA_PATH + "htpasswd.txt"));
+        validator.setResource(ResourceHelper.of(new FileSystemResource(DATA_PATH + "htpasswd.txt")));
         validator.initialize();
         
         action.initialize();

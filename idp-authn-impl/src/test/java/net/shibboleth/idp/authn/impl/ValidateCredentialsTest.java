@@ -51,6 +51,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.spring.resource.ResourceHelper;
 import net.shibboleth.shared.testing.ConstantSupplier;
 import net.shibboleth.shared.testing.InMemoryDirectory;
 import net.shibboleth.shared.testing.VelocityEngine;
@@ -121,7 +122,7 @@ public class ValidateCredentialsTest extends BaseAuthenticationContextTest {
 
         final HTPasswdCredentialValidator htpasswd = new HTPasswdCredentialValidator();
         htpasswd.setId("htpasswd");
-        htpasswd.setResource(new ClassPathResource(DATA_PATH + "htpasswd.txt"));
+        htpasswd.setResource(ResourceHelper.of(new ClassPathResource(DATA_PATH + "htpasswd.txt")));
         htpasswd.initialize();
         
         action = new ValidateCredentials();

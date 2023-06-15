@@ -55,6 +55,7 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.net.URISupport;
+import net.shibboleth.shared.spring.resource.ResourceHelper;
 import net.shibboleth.shared.testing.ConstantSupplier;
 import net.shibboleth.shared.testing.InMemoryDirectory;
 
@@ -252,7 +253,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
+        validator.setLoginConfigResource(ResourceHelper.of(new ClassPathResource(DATA_CLASSPATH + "jaas.config")));
         
         validator.initialize();
         action.initialize();
@@ -276,7 +277,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         assert ac != null;
         ac.setAttemptedFlow(authenticationFlows.get(0));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
+        validator.setLoginConfigResource(ResourceHelper.of(new ClassPathResource(DATA_CLASSPATH + "jaas.config")));
         validator.initialize();
         
         action.initialize();
@@ -327,7 +328,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
+        validator.setLoginConfigResource(ResourceHelper.of(new ClassPathResource(DATA_CLASSPATH + "jaas.config")));
         validator.initialize();
         
         action.initialize();
@@ -360,7 +361,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         validator.setLoginConfigurations(CollectionSupport.singletonList(new Pair<>("ShibUserPassAuth",
                 CollectionSupport.singletonList(new TestPrincipal("test1")))));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
+        validator.setLoginConfigResource(ResourceHelper.of(new ClassPathResource(DATA_CLASSPATH + "jaas.config")));
         validator.initialize();
         
         action.initialize();
@@ -388,7 +389,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
 
         validator.setLoginConfigNames(Arrays.asList("ShibBadAuth", "ShibUserPassAuth"));
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
+        validator.setLoginConfigResource(ResourceHelper.of(new ClassPathResource(DATA_CLASSPATH + "jaas.config")));
         validator.initialize();
         
         action.initialize();
@@ -413,7 +414,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         validator.setLoginConfigType("JavaLoginConfig");
-        validator.setLoginConfigResource(new ClassPathResource(DATA_CLASSPATH + "jaas.config"));
+        validator.setLoginConfigResource(ResourceHelper.of(new ClassPathResource(DATA_CLASSPATH + "jaas.config")));
         validator.setMatchExpression(Pattern.compile(".+_THE_.+"));
         validator.initialize();
         
