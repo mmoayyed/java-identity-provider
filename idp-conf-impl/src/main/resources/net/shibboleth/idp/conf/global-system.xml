@@ -128,6 +128,7 @@
     
     <util:map id="shibboleth.ContextLookAsideMap">
         <entry key="net.shibboleth.idp.profile.context.RelyingPartyContext" value="#{T(net.shibboleth.profile.context.RelyingPartyContext)}" />
+        <entry key="net.shibboleth.idp.profile.context.AuditContext" value="#{T(net.shibboleth.profile.context.AuditContext)}" />
     </util:map>
 
     <!-- This extends the original user-space resource list with the classpath-embedded message tree. -->
