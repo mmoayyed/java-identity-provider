@@ -71,14 +71,15 @@ public class PropertyDrivenIdPModule extends PropertyDrivenModule implements IdP
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull
-    public String getSaveExtension() {
+    @Override
+    @Nonnull public String getSaveExtension() {
         return IdPModule.IDPSAVE_EXT;
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull
-    public String getNewExtension() {
+    @Override
+    @Nonnull public String getNewExtension() {
         return IdPModule.IDPNEW_EXT_BASE;
     }
+
 }

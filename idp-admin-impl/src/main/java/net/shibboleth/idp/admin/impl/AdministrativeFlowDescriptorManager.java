@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.idp.admin.AdministrativeFlowDescriptor;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.spring.config.IdentifiedComponentManager;
 
 /**
@@ -41,7 +40,7 @@ public class AdministrativeFlowDescriptorManager extends IdentifiedComponentMana
      */
     @Autowired
     public AdministrativeFlowDescriptorManager(
-            @Nullable @NonnullElements final Collection<AdministrativeFlowDescriptor> freeObjects) {
+            @Nullable final Collection<AdministrativeFlowDescriptor> freeObjects) {
         super(freeObjects);
     }
 

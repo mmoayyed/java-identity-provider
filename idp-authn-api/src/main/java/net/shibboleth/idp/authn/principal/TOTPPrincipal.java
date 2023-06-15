@@ -46,7 +46,6 @@ public class TOTPPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return username;
     }
@@ -82,8 +81,7 @@ public class TOTPPrincipal implements CloneablePrincipal {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public TOTPPrincipal clone() throws CloneNotSupportedException {
+    @Nonnull public TOTPPrincipal clone() throws CloneNotSupportedException {
         final TOTPPrincipal copy = (TOTPPrincipal) super.clone();
         copy.username = username;
         return copy;

@@ -83,7 +83,7 @@ public class DefaultPrincipalDeterminationStrategy<T extends Principal> implemen
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public T apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public T apply(@Nullable final ProfileRequestContext input) {
         final AuthenticationContext ac = authnContextLookupStrategy.apply(input);
         if (ac == null || ac.getAuthenticationResult() == null) {
             return defaultPrincipal;

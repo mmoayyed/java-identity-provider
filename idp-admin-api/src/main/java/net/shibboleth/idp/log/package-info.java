@@ -16,4 +16,7 @@
  */
 
 /** IdP logging setup and management classes. */
+@NonnullElements
 package net.shibboleth.idp.log;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

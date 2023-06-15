@@ -46,7 +46,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -80,10 +79,10 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
     @Nullable private Configuration.Parameters loginConfigParameters;
     
     /** Holder for simple configurations defined by name. */
-    @Nonnull @NonnullElements private Collection<String> loginConfigNames;
+    @Nonnull private Collection<String> loginConfigNames;
     
     /** Application name(s) in JAAS configuration to use. */
-    @Nonnull @NonnullElements private Collection<Pair<String,Subject>> loginConfigurations;
+    @Nonnull private Collection<Pair<String,Subject>> loginConfigurations;
     
     /** Strategy function to dynamically derive the login config(s) to use. */
     @Nullable private Function<ProfileRequestContext,Collection<Pair<String,Subject>>> loginConfigStrategy;
@@ -180,7 +179,7 @@ public class JAASCredentialValidator extends AbstractUsernamePasswordCredentialV
      * 
      * @param names list of JAAS application names to use
      */
-    public void setLoginConfigNames(@Nullable @NonnullElements final Collection<String> names) {
+    public void setLoginConfigNames(@Nullable final Collection<String> names) {
         checkSetterPreconditions();
         loginConfigNames = StringSupport.normalizeStringCollection(names);
     }

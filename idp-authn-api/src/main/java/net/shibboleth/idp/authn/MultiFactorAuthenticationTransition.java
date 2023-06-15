@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
@@ -51,7 +50,7 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class MultiFactorAuthenticationTransition {
 
     /** A function that determines the next flow to execute. */
-    @Nonnull @NonnullElements private Map<String,Function<ProfileRequestContext,String>> nextFlowStrategyMap;
+    @Nonnull private Map<String,Function<ProfileRequestContext,String>> nextFlowStrategyMap;
     
     /** Constructor. */
     public MultiFactorAuthenticationTransition() {
@@ -78,7 +77,7 @@ public class MultiFactorAuthenticationTransition {
      * 
      * @return a map of transition functions keyed by event ID
      */
-    @Nonnull @NonnullElements @Live Map<String,Function<ProfileRequestContext,String>> getNextFlowStrategyMap() {
+    @Nonnull @Live Map<String,Function<ProfileRequestContext,String>> getNextFlowStrategyMap() {
         return nextFlowStrategyMap;
     }
     
@@ -92,7 +91,7 @@ public class MultiFactorAuthenticationTransition {
      * @param map map of transition rules
      */
     @SuppressWarnings("unchecked")
-    public void setNextFlowStrategyMap(@Nonnull @NonnullElements final Map<String,Object> map) {
+    public void setNextFlowStrategyMap(@Nonnull final Map<String,Object> map) {
         Constraint.isNotNull(map, "Transition strategy map cannot be null");
         
         nextFlowStrategyMap.clear();

@@ -36,6 +36,8 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.context.navigate.SubjectCanonicalizationContextSubjectLookupFunction;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -125,7 +127,7 @@ public class SubjectDerivedAttributesFunction extends AbstractIdentifiableInitia
     }
 
     /** {@inheritDoc} */
-    @Nullable public List<IdPAttribute> apply(@Nullable final ProfileRequestContext prc) {
+    @Nullable @Unmodifiable @NotLive public List<IdPAttribute> apply(@Nullable final ProfileRequestContext prc) {
         
         Collection<Subject> subjects = CollectionSupport.emptyList();
         

@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
@@ -48,8 +47,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
     @Nonnull private final Logger log = LoggerFactory.getLogger(PrincipalEvalPredicateFactoryRegistry.class);
     
     /** Storage for the registry mappings. */
-    @Nonnull @NonnullElements
-    private Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> registry;
+    @Nonnull private Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> registry;
 
     /** Constructor. */
     public PrincipalEvalPredicateFactoryRegistry() {
@@ -66,7 +64,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
      * @since 4.1.0
      */
     @Autowired
-    public PrincipalEvalPredicateFactoryRegistry(@Nullable @NonnullElements @ParameterName(name="registrations")
+    public PrincipalEvalPredicateFactoryRegistry(@Nullable @ParameterName(name="registrations")
             final Collection<PrincipalEvalPredicateFactoryRegistration> registrations) {
         registry = new ConcurrentHashMap<>();
         if (registrations != null) {
@@ -82,8 +80,8 @@ public final class PrincipalEvalPredicateFactoryRegistry {
      * 
      * @since 4.1.0
      */
-    public void setRegistrations(@Nullable @NonnullElements
-            final Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> fromMap) {
+    public void setRegistrations(
+            @Nullable final Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> fromMap) {
         if (fromMap != null) {
             fromMap.entrySet().forEach(entry -> {
                 if (registry.containsKey(entry.getKey())) {

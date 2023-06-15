@@ -18,5 +18,7 @@
 /**
  * Classes implementing proxied authentication flows.
  */
-
+@NonnullElements
 package net.shibboleth.idp.authn.proxy.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

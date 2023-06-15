@@ -21,7 +21,6 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -52,7 +51,6 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -94,7 +92,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     @Nullable private Consumer<ProfileRequestContext> cleanupHook;
     
     /** Error messages associated with a specific error condition token. */
-    @Nonnull @NonnullElements private Map<String,Collection<String>> classifiedMessages;
+    @Nonnull private Map<String,Collection<String>> classifiedMessages;
     
     /** Predicate to apply when setting AuthenticationResult cacheability. */
     @Nullable private Predicate<ProfileRequestContext> resultCachingPredicate;
@@ -168,7 +166,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * 
      * @return classified error message map
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public Map<String,Collection<String>> getClassifiedErrors() {
+    @Nonnull @Unmodifiable @NotLive public Map<String,Collection<String>> getClassifiedErrors() {
         // For now this is using the older wrapper approach to guarding a live map to maintain the map insertion order.
         final Map<String,Collection<String>> result = Collections.unmodifiableMap(classifiedMessages);
         assert result != null;
@@ -182,14 +180,14 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * 
      * @param messages the error message / event mappings to set
      */
-    public void setClassifiedMessages(@Nullable @NonnullElements final Map<String,Collection<String>> messages) {
+    public void setClassifiedMessages(@Nullable final Map<String,Collection<String>> messages) {
         checkSetterPreconditions();
         if (messages != null) {
             classifiedMessages = new LinkedHashMap<>();
             for (final Map.Entry<String, Collection<String>> entry : messages.entrySet()) {
                 if (entry.getKey() != null && !entry.getKey().isEmpty()
                         && entry.getValue() != null && !entry.getValue().isEmpty()) {
-                    classifiedMessages.put(entry.getKey(), List.copyOf(entry.getValue()));
+                    classifiedMessages.put(entry.getKey(), CollectionSupport.copyToList(entry.getValue()));
                 }
             }
         } else {
@@ -284,7 +282,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
+    @Nonnull @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
         final Set<T> result = getSubject().getPrincipals(c);
         assert result != null;
@@ -299,7 +297,7 @@ public abstract class AbstractValidationAction extends AbstractAuthenticationAct
      * 
      * @param principals supported principals to include
      */
-    public void setSupportedPrincipals(@Nullable @NonnullElements final Collection<Principal> principals) {
+    public void setSupportedPrincipals(@Nullable final Collection<Principal> principals) {
         checkSetterPreconditions();
         getSubject().getPrincipals().clear();
         

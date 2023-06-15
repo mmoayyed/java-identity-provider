@@ -31,7 +31,7 @@ import org.opensaml.messaging.context.BaseContext;
 public final class KerberosTicketContext extends BaseContext {
 
     /** Kerberos ticket to be validated. */
-    private KerberosTicket ticket;
+    @Nullable private KerberosTicket ticket;
 
     /**
      * Get the Kerberos ticket to be validated.

@@ -16,4 +16,7 @@
  */
 
 /** Implementation of functionality related to Java Principals. */
+@NonnullElements
 package net.shibboleth.idp.authn.principal.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

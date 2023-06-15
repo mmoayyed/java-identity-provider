@@ -37,7 +37,6 @@ import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -73,7 +72,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
     private boolean previousResult;
     
     /** A map of additional data to associate with the result. */
-    @Nonnull @NonnullElements private final Map<String,String> additionalData;
+    @Nonnull private final Map<String,String> additionalData;
     
     /** Whether this result can be reused. */
     @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
@@ -172,7 +171,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
+    @Nonnull @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
         final Set<T> result = subject.getPrincipals(c);
         assert result != null;
@@ -266,7 +265,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent, Predi
      * 
      * @since 4.0.0
      */
-    @Nonnull @NonnullElements @Live public Map<String,String> getAdditionalData() {
+    @Nonnull @Live public Map<String,String> getAdditionalData() {
         return additionalData;
     }
 

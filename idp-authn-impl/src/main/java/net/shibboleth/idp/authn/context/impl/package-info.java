@@ -18,5 +18,7 @@
 /**
  * Implementation classes related to authentication contexts.
  */
-
+@NonnullElements
 package net.shibboleth.idp.authn.context.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

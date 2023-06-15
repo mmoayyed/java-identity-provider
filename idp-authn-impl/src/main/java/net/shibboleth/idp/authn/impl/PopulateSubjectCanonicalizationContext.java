@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.authn.AbstractSubjectCanonicalizationAction;
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -46,7 +45,7 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateSubjectCanonicalizationContext.class);
     
     /** The flows to make available for possible use. */
-    @Nonnull @NonnullElements private Collection<SubjectCanonicalizationFlowDescriptor> availableFlows;
+    @Nonnull private Collection<SubjectCanonicalizationFlowDescriptor> availableFlows;
 
     /** Constructor. */
     PopulateSubjectCanonicalizationContext() {
@@ -58,8 +57,7 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
      * 
      * @param flows the flows available for possible use
      */
-    public void setAvailableFlows(
-            @Nonnull @NonnullElements final Collection<SubjectCanonicalizationFlowDescriptor> flows) {
+    public void setAvailableFlows(@Nonnull final Collection<SubjectCanonicalizationFlowDescriptor> flows) {
         checkSetterPreconditions();
         availableFlows = CollectionSupport.copyToList(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }

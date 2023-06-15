@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
@@ -70,7 +69,7 @@ public abstract class AbstractSubjectCanonicalizationAction
     @NonnullBeforeExec private SubjectCanonicalizationContext scContext;
 
     /** Match patterns and replacement strings to apply. */
-    @Nonnull @NonnullElements private List<Pair<Pattern,String>> transforms;
+    @Nonnull private List<Pair<Pattern,String>> transforms;
 
     /** Convert to uppercase prior to transforms? */
     private boolean uppercase;
@@ -116,7 +115,7 @@ public abstract class AbstractSubjectCanonicalizationAction
      * 
      * @param newTransforms collection of replacement transforms
      */
-    public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String, String>> newTransforms) {
+    public void setTransforms(@Nullable final Collection<Pair<String, String>> newTransforms) {
         checkSetterPreconditions();
         if (newTransforms != null) {
             transforms = new ArrayList<>();

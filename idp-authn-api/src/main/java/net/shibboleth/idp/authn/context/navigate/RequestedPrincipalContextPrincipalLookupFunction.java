@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 
@@ -35,7 +37,7 @@ public class RequestedPrincipalContextPrincipalLookupFunction
         implements ContextDataLookupFunction<RequestedPrincipalContext,Collection<String>> {
 
     /** {@inheritDoc} */
-    @Nullable public Collection<String> apply(@Nullable final RequestedPrincipalContext input) {
+    @Nullable @NotLive @Unmodifiable public Collection<String> apply(@Nullable final RequestedPrincipalContext input) {
         
         if (input != null) {
             return input.getRequestedPrincipals()

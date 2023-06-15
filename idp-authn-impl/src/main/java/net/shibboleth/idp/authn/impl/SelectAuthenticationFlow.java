@@ -36,7 +36,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.PreferredPrincipalContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 
 /**
  * An authentication action that selects an authentication flow to invoke, or re-uses an
@@ -477,7 +476,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
      */
     private void selectRequestedFlow(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext,
-            @Nonnull @NonnullElements final Map<String,AuthenticationResult> activeResults) {
+            @Nonnull final Map<String,AuthenticationResult> activeResults) {
 
         final RequestedPrincipalContext rpCtx = requestedPrincipalCtx;
         assert rpCtx != null;

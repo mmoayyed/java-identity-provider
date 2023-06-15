@@ -36,6 +36,8 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -159,7 +161,8 @@ public class ValidateFunctionResult extends AbstractAuditingValidationAction {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Map<String,String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nullable @Unmodifiable @NotLive protected Map<String,String> getAuditFields(
+            @Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (result instanceof String) {
             return CollectionSupport.singletonMap(IdPAuditFields.USERNAME, (String) result);

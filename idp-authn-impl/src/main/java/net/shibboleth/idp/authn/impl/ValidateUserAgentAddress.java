@@ -39,8 +39,9 @@ import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.net.IPRange;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -66,7 +67,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUserAgentAddress.class);
 
     /** Map of IP ranges to principal names. */
-    @Nonnull @NonnullElements private Map<String,Collection<IPRange>> mappings;
+    @Nonnull private Map<String,Collection<IPRange>> mappings;
 
     /** User Agent context containing address to evaluate. */
     @NonnullBeforeExec private UserAgentContext uaContext;
@@ -85,7 +86,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
      * 
      * @param newMappings the IP range(s) to authenticate as particular principals
      */
-    public void setMappings(@Nullable @NonnullElements final Map<String,Collection<IPRange>> newMappings) {
+    public void setMappings(@Nullable final Map<String,Collection<IPRange>> newMappings) {
         checkSetterPreconditions();
         if (newMappings != null) {
             mappings = new HashMap<>(newMappings.size());
@@ -161,8 +162,7 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
      * 
      * @return true if the given IP address meets this stage's IP range requirements, false otherwise
      */
-    private boolean isAuthenticated(@Nonnull final InetAddress address,
-            @Nonnull @NonnullElements final Collection<IPRange> ranges) {
+    private boolean isAuthenticated(@Nonnull final InetAddress address, @Nonnull final Collection<IPRange> ranges) {
         final byte[] resolvedAddress = address.getAddress();
         assert resolvedAddress != null;
         for (final IPRange range : ranges) {
@@ -185,9 +185,10 @@ public class ValidateUserAgentAddress extends AbstractAuditingValidationAction {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Map<String, String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nullable @Unmodifiable @NotLive protected Map<String,String> getAuditFields(
+            @Nonnull final ProfileRequestContext profileRequestContext) {
         if (principalName != null) {
-            return Map.of(IdPAuditFields.USERNAME, principalName);
+            return CollectionSupport.singletonMap(IdPAuditFields.USERNAME, principalName);
         }
         
         return super.getAuditFields(profileRequestContext);

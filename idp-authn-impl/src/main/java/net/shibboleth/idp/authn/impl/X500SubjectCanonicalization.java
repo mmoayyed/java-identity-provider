@@ -41,7 +41,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -75,10 +74,10 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     @Nonnull private final Logger log = LoggerFactory.getLogger(X500SubjectCanonicalization.class);
     
     /** subjectAltName types to search for. */
-    @Nonnull @NonnullElements private List<Integer> subjectAltNameTypes;
+    @Nonnull private List<Integer> subjectAltNameTypes;
     
     /** OIDs to search for. */
-    @Nonnull @NonnullElements private List<String> objectIds;
+    @Nonnull private List<String> objectIds;
     
     /** The certificate to operate on. */
     @Nullable private X509Certificate certificate;
@@ -97,7 +96,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      * 
      * @param types types to search for
      */
-    public void setSubjectAltNameTypes(@Nullable @NonnullElements final List<Integer> types) {
+    public void setSubjectAltNameTypes(@Nullable final List<Integer> types) {
         checkSetterPreconditions();
         if (types != null) {
             subjectAltNameTypes = CollectionSupport.copyToList(types);
@@ -111,7 +110,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
      * 
      * @param ids RDN OIDs to search for
      */
-    public void setObjectIds(@Nullable @NonnullElements final List<String> ids) {
+    public void setObjectIds(@Nullable final List<String> ids) {
         checkSetterPreconditions();
         objectIds = CollectionSupport.copyToList(StringSupport.normalizeStringCollection(ids));
     }

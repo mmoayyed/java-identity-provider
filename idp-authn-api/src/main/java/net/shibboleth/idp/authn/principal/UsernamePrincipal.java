@@ -42,7 +42,6 @@ public class UsernamePrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return username;
     }
@@ -78,8 +77,7 @@ public class UsernamePrincipal implements CloneablePrincipal {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public UsernamePrincipal clone() throws CloneNotSupportedException {
+    @Nonnull public UsernamePrincipal clone() throws CloneNotSupportedException {
         final UsernamePrincipal copy = (UsernamePrincipal) super.clone();
         copy.username = username;
         return copy;

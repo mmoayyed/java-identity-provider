@@ -297,7 +297,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         return false;
     }
     
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /**
      * Implement invalid login attempt counter via storage service, retrying as necessary.
      * 
@@ -379,7 +379,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         
         return doIncrement(profileRequestContext, key, retries-1);
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
     
     /**
      * A function to generate a key for lockout storage. This effectively defines

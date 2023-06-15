@@ -47,6 +47,8 @@ import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
@@ -233,7 +235,8 @@ public class ValidateDuoWebResponse extends AbstractAuditingValidationAction {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Map<String,String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nullable @Unmodifiable @NotLive protected Map<String,String> getAuditFields(
+            @Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (username != null) {
             if (duoIntegration != null) {

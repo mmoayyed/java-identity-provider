@@ -43,7 +43,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -78,10 +77,10 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
     private boolean resolveFromSubject;
     
     /** Indexed attributes pulled from subject. */
-    @Nonnull @NonnullElements private Map<String,IdPAttribute> subjectSourcedAttributes;
+    @Nonnull private Map<String,IdPAttribute> subjectSourcedAttributes;
     
     /** Ordered list of attributes to look for and read from. */
-    @Nonnull @NonnullElements private List<String> attributeSourceIds;
+    @Nonnull private List<String> attributeSourceIds;
         
     /** Lookup strategy for {@link AttributeContext} to read from. */
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
@@ -128,7 +127,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
      * 
      * @param ids   attribute IDs to read from
      */
-    public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
+    public void setAttributeSourceIds(@Nonnull final List<String> ids) {
         checkSetterPreconditions();
         attributeSourceIds = new ArrayList<>(StringSupport.normalizeStringCollection(ids));
     }
@@ -165,7 +164,8 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
         }
         
         if (resolveFromSubject) {
-            @Nonnull final Subject subject = Constraint.isNotNull(c14nContext.getSubject(), "Expected a non-null Subject");
+            final Subject subject =
+                    Constraint.isNotNull(c14nContext.getSubject(), "Expected a non-null Subject");
             final Set<IdPAttributePrincipal> subjectSourced = subject.getPrincipals(IdPAttributePrincipal.class);
             if (subjectSourced != null && !subjectSourced.isEmpty()) {
                 subjectSourcedAttributes = new HashMap<>(subjectSourced.size());

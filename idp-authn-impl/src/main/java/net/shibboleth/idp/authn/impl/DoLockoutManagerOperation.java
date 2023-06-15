@@ -166,6 +166,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
         return true;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
@@ -233,6 +234,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Helper method to get the manager bean to operate on.

@@ -22,7 +22,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -42,7 +41,7 @@ public class KerberosSettings {
     private boolean refreshKrb5Config;
 
     /** List of realms (KerberosRealmSettings objects). */
-    @Nonnull @NonnullElements private Collection<KerberosRealmSettings> realmSettings;
+    @Nonnull private Collection<KerberosRealmSettings> realmSettings;
 
     /** Constructor. */
     public KerberosSettings() {
@@ -92,7 +91,7 @@ public class KerberosSettings {
      * 
      * @param realms realms to set.
      */
-    public void setRealms(@Nullable @NonnullElements final Collection<KerberosRealmSettings> realms) {
+    public void setRealms(@Nullable final Collection<KerberosRealmSettings> realms) {
         if (realms != null) {
             realmSettings = CollectionSupport.copyToList(realms);
         } else {
@@ -105,7 +104,7 @@ public class KerberosSettings {
      * 
      * @return list of realms
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<KerberosRealmSettings> getRealms() {
+    @Nonnull @NotLive @Unmodifiable public Collection<KerberosRealmSettings> getRealms() {
         return realmSettings;
     }
     

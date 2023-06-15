@@ -43,7 +43,6 @@ public class DuoPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return username;
     }
@@ -79,8 +78,7 @@ public class DuoPrincipal implements CloneablePrincipal {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public DuoPrincipal clone() throws CloneNotSupportedException {
+    @Nonnull public DuoPrincipal clone() throws CloneNotSupportedException {
         final DuoPrincipal copy = (DuoPrincipal) super.clone();
         copy.username = username;
         return copy;

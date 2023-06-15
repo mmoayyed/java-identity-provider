@@ -18,5 +18,7 @@
 /**
  * Implementation classes for plugins.
  */
-
+@NonnullElements
 package net.shibboleth.idp.plugin.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

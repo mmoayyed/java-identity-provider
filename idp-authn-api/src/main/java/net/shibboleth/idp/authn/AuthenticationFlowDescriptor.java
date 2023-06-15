@@ -45,7 +45,6 @@ import net.shibboleth.idp.authn.principal.PrincipalService;
 import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.idp.profile.FlowDescriptor;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -126,7 +125,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     @Nullable private StorageSerializer<AuthenticationResult> resultSerializer;
     
     /** Weighted sort oredering of custom Principals produced by flow(s). */
-    @Nonnull @NonnullElements private Map<Principal,Integer> principalWeightMap;
+    @Nonnull private Map<Principal,Integer> principalWeightMap;
     
     /** Access to principal services. */
     @Nullable private PrincipalServiceManager principalServiceManager;
@@ -446,7 +445,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NonnullElements @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
+    @Override @Nonnull @Unmodifiable public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
         final Set<T> result = supportedPrincipals.getPrincipals(c);
         assert result != null;
@@ -462,7 +461,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @return a live collection of supported principals
      */
-    @Nonnull @NonnullElements public Collection<Principal> getSupportedPrincipals() {
+    @Nonnull public Collection<Principal> getSupportedPrincipals() {
         final Collection<Principal> result = supportedPrincipals.getPrincipals();
         assert result != null;
         return result;
@@ -473,7 +472,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @param principals supported principals to add
      */
-    public void setSupportedPrincipals(@Nonnull @NonnullElements final Collection<Principal> principals) {
+    public void setSupportedPrincipals(@Nonnull final Collection<Principal> principals) {
         checkSetterPreconditions();
         Constraint.isNotNull(principals, "Principal collection cannot be null.");
 
@@ -493,7 +492,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @since 4.1.0
      */
-    public void setSupportedPrincipalsByString(@Nonnull @NonnullElements final Collection<String> principals) {
+    public void setSupportedPrincipalsByString(@Nonnull final Collection<String> principals) {
         checkSetterPreconditions();
         stringBasedPrincipals = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(principals));
     }
@@ -534,9 +533,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @since 4.0.0
      */
-    public void setPrincipalWeightMap(@Nullable @NonnullElements final Map<Principal,Integer> map) {
+    public void setPrincipalWeightMap(@Nullable final Map<Principal,Integer> map) {
         checkSetterPreconditions();
-        principalWeightMap = map != null ? map : CollectionSupport.emptyMap();
+        principalWeightMap = map != null ? CollectionSupport.copyToMap(map) : CollectionSupport.emptyMap();
     }
     
     /**
@@ -638,8 +637,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @since 4.0.0
      */
     @SuppressWarnings("unchecked")
-    @Nullable public <T extends Principal> T getHighestWeighted(
-            @Nonnull @NonnullElements final Collection<T> principals) {
+    @Nullable public <T extends Principal> T getHighestWeighted(@Nonnull final Collection<T> principals) {
         if (principals.isEmpty()) {
             return null;
         } else if (principalWeightMap.isEmpty() || principals.size() == 1) {

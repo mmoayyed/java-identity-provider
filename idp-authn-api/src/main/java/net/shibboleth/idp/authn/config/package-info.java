@@ -18,5 +18,7 @@
 /**
  * Configuration touchpoints for authentication flows.
  */
-
+@NonnullElements
 package net.shibboleth.idp.authn.config;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

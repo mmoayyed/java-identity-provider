@@ -41,7 +41,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class PostAuthenticationFlowsLookupFunction extends AbstractRelyingPartyLookupFunction<Collection<String>> {
 
     /** {@inheritDoc} */
-    @Override
     @Nullable @NotLive @Unmodifiable public Collection<String> apply(
             @Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);

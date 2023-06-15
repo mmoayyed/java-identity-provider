@@ -41,7 +41,6 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
@@ -250,7 +249,7 @@ public class AttributeRevocationCondition extends AbstractInitializableComponent
      * @return true iff the revocation applies to this result
      */
     protected boolean isRevoked(@Nonnull @NotEmpty final String principal, @Nonnull final AuthenticationResult result,
-            @Nonnull @NonnullElements final Collection<Instant> revocationRecords) {
+            @Nonnull final Collection<Instant> revocationRecords) {
         
         for (final Instant i : revocationRecords) {
             if (result.getAuthenticationInstant().isBefore(i)) {

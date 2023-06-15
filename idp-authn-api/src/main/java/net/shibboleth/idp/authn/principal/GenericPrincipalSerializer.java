@@ -47,7 +47,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.logic.Constraint;
@@ -75,10 +74,10 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
     @Nonnull private final Logger log = LoggerFactory.getLogger(GenericPrincipalSerializer.class);
 
     /** Shrinkage of long constants into symbolic numbers. */
-    @Nonnull @NonnullElements private BiMap<String,Integer> symbolics;
+    @Nonnull private BiMap<String,Integer> symbolics;
     
     /** A cache of Principal types that support string-based construction. */
-    @Nonnull @NonnullElements private final Set<Class<? extends Principal>> compatiblePrincipalTypes;
+    @Nonnull private final Set<Class<? extends Principal>> compatiblePrincipalTypes;
 
     /**
      * Constructor.
@@ -98,7 +97,7 @@ public class GenericPrincipalSerializer extends AbstractPrincipalSerializer<Stri
      * 
      * @param mappings  string to symbolic mappings
      */
-    public void setSymbolics(@Nonnull @NonnullElements final Map<String,Integer> mappings) {
+    public void setSymbolics(@Nonnull final Map<String,Integer> mappings) {
         checkSetterPreconditions();
         final BiMap<String,Integer> s = HashBiMap.create(Constraint.isNotNull(mappings, "Mappings cannot be null"));
         assert s!=null;

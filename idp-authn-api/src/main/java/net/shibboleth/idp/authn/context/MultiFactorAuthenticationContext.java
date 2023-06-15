@@ -29,7 +29,6 @@ import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -48,10 +47,10 @@ import org.opensaml.messaging.context.BaseContext;
 public final class MultiFactorAuthenticationContext extends BaseContext {
 
     /** Map of login "factors" (flows) and the transition rules to run after them. */
-    @Nonnull @NonnullElements private Map<String,MultiFactorAuthenticationTransition> transitionMap;
+    @Nonnull private Map<String,MultiFactorAuthenticationTransition> transitionMap;
     
     /** Authentication results that are active (may be generated earlier or during current request). */
-    @Nonnull @NonnullElements private final Map<String,AuthenticationResult> activeResults;
+    @Nonnull private final Map<String,AuthenticationResult> activeResults;
 
     /** Login flow descriptor for the MFA flow. */
     @Nullable private AuthenticationFlowDescriptor mfaFlowDescriptor;
@@ -73,7 +72,7 @@ public final class MultiFactorAuthenticationContext extends BaseContext {
      * 
      * @return  map of transition logic
      */
-    @Nonnull @NonnullElements @Live public Map<String,MultiFactorAuthenticationTransition> getTransitionMap() {
+    @Nonnull @Live public Map<String,MultiFactorAuthenticationTransition> getTransitionMap() {
         return transitionMap;
     }
     
@@ -104,7 +103,7 @@ public final class MultiFactorAuthenticationContext extends BaseContext {
      * 
      * @return list of results
      */
-    @Nonnull @NonnullElements @Live public Map<String,AuthenticationResult> getActiveResults() {
+    @Nonnull @Live public Map<String,AuthenticationResult> getActiveResults() {
         return activeResults;
     }
     

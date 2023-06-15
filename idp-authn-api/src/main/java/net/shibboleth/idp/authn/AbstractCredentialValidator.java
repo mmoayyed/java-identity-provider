@@ -34,7 +34,6 @@ import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -88,7 +87,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
+    @Nonnull @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
             @Nonnull final Class<T> c) {
         final Subject localCopy = customPrincipals;
         if (localCopy == null) {
@@ -107,7 +106,7 @@ public abstract class AbstractCredentialValidator extends AbstractIdentifiedInit
      * 
      * @param principals supported principals to include
      */
-    public void setSupportedPrincipals(@Nullable @NonnullElements final Collection<Principal> principals) {
+    public void setSupportedPrincipals(@Nullable final Collection<Principal> principals) {
         checkSetterPreconditions();
         
         if (principals != null) {

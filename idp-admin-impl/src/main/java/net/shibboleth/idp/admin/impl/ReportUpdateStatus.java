@@ -121,7 +121,7 @@ public class ReportUpdateStatus  extends AbstractIdentifiableInitializableCompon
     @Override
     public void run() {
         try {
-            String versionStr = Version.getVersion();
+            final String versionStr = Version.getVersion();
             if (versionStr == null) {
                 log.error("Could not find Current IdP Version");
                 return;
@@ -135,7 +135,8 @@ public class ReportUpdateStatus  extends AbstractIdentifiableInitializableCompon
             }
             final InstallableComponentInfo info = new IdPInfo(properties);
         
-            final InstallableComponentVersion newIdPVersion = InstallableComponentSupport.getBestVersion(version, version, info);
+            final InstallableComponentVersion newIdPVersion =
+                    InstallableComponentSupport.getBestVersion(version, version, info);
             if (newIdPVersion == null) {
                 log.info("No Upgrade available from {}", version);
             } else {
@@ -162,4 +163,5 @@ public class ReportUpdateStatus  extends AbstractIdentifiableInitializableCompon
             log.error("Check for update status failed unexpectedly", t);
         }
     }
+    
 }

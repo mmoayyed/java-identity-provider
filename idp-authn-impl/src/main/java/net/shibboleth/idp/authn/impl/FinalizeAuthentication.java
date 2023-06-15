@@ -280,7 +280,8 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             return null;
         }
         
-        final AuthenticationFlowDescriptor flowDescriptor = authenticationContext.getAvailableFlows().get(ar.getAuthenticationFlowId());
+        final AuthenticationFlowDescriptor flowDescriptor =
+                authenticationContext.getAvailableFlows().get(ar.getAuthenticationFlowId());
         return flowDescriptor.getHighestWeighted(matches);
     }
 

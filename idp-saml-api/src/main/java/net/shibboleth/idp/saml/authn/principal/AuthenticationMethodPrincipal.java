@@ -44,7 +44,6 @@ public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return authnMethod;
     }
@@ -80,8 +79,7 @@ public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public AuthenticationMethodPrincipal clone() throws CloneNotSupportedException {
+    @Nonnull public AuthenticationMethodPrincipal clone() throws CloneNotSupportedException {
         final AuthenticationMethodPrincipal copy = (AuthenticationMethodPrincipal) super.clone();
         copy.authnMethod = authnMethod;
         return copy;

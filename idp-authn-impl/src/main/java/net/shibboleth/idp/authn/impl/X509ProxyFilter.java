@@ -30,7 +30,6 @@ import javax.annotation.Nullable;
 import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -65,7 +64,7 @@ public class X509ProxyFilter implements Filter {
     @Nullable @NotEmpty private String leafHeader;
 
     /** Name of headers containing chain certificates. */
-    @Nonnull @NonnullElements private Collection<String> chainHeaders;
+    @Nonnull private Collection<String> chainHeaders;
 
     /** Constructor. */
     public X509ProxyFilter() {

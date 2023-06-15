@@ -18,4 +18,7 @@
 /**
  * Public APIs related to Duo authentication.
  */
+@NonnullElements
 package net.shibboleth.idp.authn.duo;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

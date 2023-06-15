@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -65,10 +64,10 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
     @Nonnull private Logger log = LoggerFactory.getLogger(UnlockPrivateKeys.class);
     
     /** Credentials to operate on. */
-    @Nonnull @NonnullElements private Collection<MutableCredential> credentials;
+    @Nonnull private Collection<MutableCredential> credentials;
 
     /** Keys to load. */
-    @Nonnull @NonnullElements private Collection<Resource> keyResources;
+    @Nonnull private Collection<Resource> keyResources;
 
     /** Constructor. */
     public UnlockPrivateKeys() {
@@ -81,7 +80,7 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
      * 
      * @param creds credentials to load keys into
      */
-    public void setCredentials(@Nullable @NonnullElements final Collection<MutableCredential> creds) {
+    public void setCredentials(@Nullable final Collection<MutableCredential> creds) {
         checkSetterPreconditions();
         
         if (creds != null) {
@@ -96,7 +95,7 @@ public class UnlockPrivateKeys extends AbstractProfileAction {
      * 
      * @param keys key resources to load
      */
-    public void setKeyResources(@Nullable @NonnullElements final Collection<Resource> keys) {
+    public void setKeyResources(@Nullable final Collection<Resource> keys) {
         checkSetterPreconditions();
         
         if (keys != null) {

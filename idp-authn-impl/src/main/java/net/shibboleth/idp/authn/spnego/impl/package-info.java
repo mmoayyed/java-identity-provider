@@ -16,4 +16,7 @@
  */
 
 /** Implementation of SPNEGO authentication flow. */
+@NonnullElements
 package net.shibboleth.idp.authn.spnego.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

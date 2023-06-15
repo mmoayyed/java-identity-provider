@@ -30,7 +30,6 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 
 import com.google.common.base.Strings;
@@ -53,7 +52,7 @@ import com.google.common.collect.Multimap;
 public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredicateFactory {
 
     /** Rules for matching. */
-    @Nonnull @NonnullElements private final HashMultimap<String,String> matchingRules;
+    @Nonnull private final HashMultimap<String,String> matchingRules;
 
     /** Constructor. */
     InexactPrincipalEvalPredicateFactory() {
@@ -67,7 +66,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
      * 
      * @return  a mutable multimap of the matching rules to apply
      */
-    @Nonnull @NonnullElements @Live Multimap<String,String> getMatchingRules() {
+    @Nonnull @Live Multimap<String,String> getMatchingRules() {
         return matchingRules;
     }
     
@@ -78,7 +77,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
      * 
      * @param rules matching rules
      */
-    public void setMatchingRules(@Nonnull @NonnullElements final Map<String,Collection<String>> rules) {
+    public void setMatchingRules(@Nonnull final Map<String,Collection<String>> rules) {
         Constraint.isNotNull(rules, "Map cannot be null");
         matchingRules.clear();
         

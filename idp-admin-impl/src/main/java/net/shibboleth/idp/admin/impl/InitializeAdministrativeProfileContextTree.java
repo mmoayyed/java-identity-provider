@@ -90,7 +90,9 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
     }
 
     /**
-     * @return Returns the flowDescriptor.
+     * Get the {@link AdministrativeFlowDescriptor} to operate on.
+     * 
+     * @return the flowDescriptor
      */
     @SuppressWarnings("null")
     @Nonnull private AdministrativeFlowDescriptor getFlowDescriptor() {
@@ -152,4 +154,5 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
             uiCtx.setFallbackLanguages(fallbackLanguages);
         }
     }
+
 }

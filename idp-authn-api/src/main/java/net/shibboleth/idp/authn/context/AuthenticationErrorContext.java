@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -45,10 +44,10 @@ import org.opensaml.messaging.context.BaseContext;
 public final class AuthenticationErrorContext extends BaseContext {
 
     /** Ordered list of exceptions encountered. */
-    @Nonnull @NonnullElements private List<Exception> exceptions;
+    @Nonnull private List<Exception> exceptions;
     
     /** Error conditions detected through classified error messages. */
-    @Nonnull @NonnullElements private Collection<String> classifiedErrors;
+    @Nonnull private Collection<String> classifiedErrors;
     
     /** Constructor. */
     public AuthenticationErrorContext() {
@@ -61,7 +60,7 @@ public final class AuthenticationErrorContext extends BaseContext {
      * 
      * @return  immutable list of exceptions
      */
-    @Nonnull @NonnullElements @Live public List<Exception> getExceptions() {
+    @Nonnull @Live public List<Exception> getExceptions() {
         return exceptions;
     }
     
@@ -70,7 +69,7 @@ public final class AuthenticationErrorContext extends BaseContext {
      * 
      * @return mutable collection of error strings
      */
-    @Nonnull @NonnullElements @Live public Collection<String> getClassifiedErrors() {
+    @Nonnull @Live public Collection<String> getClassifiedErrors() {
         return classifiedErrors;
     }
     

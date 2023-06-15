@@ -18,4 +18,7 @@
 /**
  * Context classes for managing authentication-related state.
  */
+@NonnullElements
 package net.shibboleth.idp.authn.context;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

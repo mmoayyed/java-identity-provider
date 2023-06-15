@@ -43,8 +43,8 @@ import net.shibboleth.idp.authn.principal.ProxyAuthenticationPrincipal;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NullableElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -94,22 +94,22 @@ public final class AuthenticationContext extends BaseContext {
     @Nullable @NonNegative private Integer proxyCount;
 
     /** Allowable proxied sources of authority. */
-    @Nonnull @NonnullElements private Set<String> proxiableAuthorities;
+    @Nonnull private Set<String> proxiableAuthorities;
     
     /** Lookup strategy for a fixed event to return from validators for testing. */
     @Nullable private Function<ProfileRequestContext,String> fixedEventLookupStrategy;
     
     /** Flows that are known to the system. */
-    @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> availableFlows;
+    @Nonnull private final Map<String,AuthenticationFlowDescriptor> availableFlows;
 
     /** Flows that could potentially be used to authenticate the user. */
-    @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> potentialFlows;
+    @Nonnull private final Map<String,AuthenticationFlowDescriptor> potentialFlows;
 
     /** Authentication results associated with an active session and available for (re)use. */
-    @Nonnull @NonnullElements private final Map<String,AuthenticationResult> activeResults;
+    @Nonnull private final Map<String,AuthenticationResult> activeResults;
 
     /** Previously attempted flows (could be failures or intermediate results). */
-    @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> intermediateFlows;
+    @Nonnull private final Map<String,AuthenticationFlowDescriptor> intermediateFlows;
     
     /** Instance of registry used for auto-creation of {@link RequestedPrincipalContext}. */
     @Nullable private PrincipalEvalPredicateFactoryRegistry evalRegistry;
@@ -167,7 +167,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return authentication results currently active for the subject
      */
-    @Nonnull @NonnullElements @Live public Map<String,AuthenticationResult> getActiveResults() {
+    @Nonnull @Live public Map<String,AuthenticationResult> getActiveResults() {
         return activeResults;
     }
 
@@ -178,8 +178,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return this authentication context
      */
-    @Nonnull public AuthenticationContext setActiveResults(
-            @Nonnull @NonnullElements final Iterable<AuthenticationResult> results) {
+    @Nonnull public AuthenticationContext setActiveResults(@Nonnull final Iterable<AuthenticationResult> results) {
         Constraint.isNotNull(results, "AuthenticationResult collection cannot be null");
 
         activeResults.clear();
@@ -201,7 +200,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @since 3.3.0
      */
-    @Nonnull @NonnullElements @Live public Map<String,AuthenticationFlowDescriptor> getAvailableFlows() {
+    @Nonnull @Live public Map<String,AuthenticationFlowDescriptor> getAvailableFlows() {
         return availableFlows;
     }
     
@@ -212,7 +211,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return the potential flows
      */
-    @Nonnull @NonnullElements @Live public Map<String,AuthenticationFlowDescriptor> getPotentialFlows() {
+    @Nonnull @Live public Map<String,AuthenticationFlowDescriptor> getPotentialFlows() {
         return potentialFlows;
     }
 
@@ -225,7 +224,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return the intermediately executed flows
      */
-    @Nonnull @NonnullElements @Live public Map<String,AuthenticationFlowDescriptor> getIntermediateFlows() {
+    @Nonnull @Live public Map<String,AuthenticationFlowDescriptor> getIntermediateFlows() {
         return intermediateFlows;
     }
     
@@ -484,7 +483,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @since 4.0.0
      */
-    @Nonnull @NonnullElements @Live public Set<String> getProxiableAuthorities() {
+    @Nonnull @Live public Set<String> getProxiableAuthorities() {
         return proxiableAuthorities;
     }
     
@@ -578,7 +577,7 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return the state map
      */
-    @Nonnull @Live public Map<String,Object> getAuthenticationStateMap() {
+    @Nonnull @NullableElements @Live public Map<String,Object> getAuthenticationStateMap() {
         return stateMap;
     }
     
@@ -675,7 +674,7 @@ public final class AuthenticationContext extends BaseContext {
      * @return true iff the input is compatible with the requested authentication requirements or if
      *  no such requirements have been imposed
      */
-    public boolean isAcceptable(@Nonnull @NonnullElements final Collection<Principal> principals) {
+    public boolean isAcceptable(@Nonnull final Collection<Principal> principals) {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
             return rpCtx.isAcceptable(principals);
@@ -789,7 +788,7 @@ public final class AuthenticationContext extends BaseContext {
      * @return true iff a new context was created
      */
     public boolean addRequestedPrincipalContext(@Nonnull @NotEmpty final String operator,
-            @Nonnull @NonnullElements final List<Principal> principals, final boolean replace) {
+            @Nonnull final List<Principal> principals, final boolean replace) {
         
         RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null && !replace) {
@@ -838,7 +837,7 @@ public final class AuthenticationContext extends BaseContext {
      * @return true iff proxying is permissible or inapplicable
      */
     private boolean checkProxyRestrictions(
-            @Nullable @NonnullElements final Collection<ProxyAuthenticationPrincipal> principals) {
+            @Nullable final Collection<ProxyAuthenticationPrincipal> principals) {
         
         if (principals == null || principals.isEmpty()) {
             return true;

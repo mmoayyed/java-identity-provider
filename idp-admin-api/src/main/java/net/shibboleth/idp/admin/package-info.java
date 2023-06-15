@@ -16,5 +16,7 @@
  */
 
 /** Classes supporting administrative interface machinery. */
-
+@NonnullElements
 package net.shibboleth.idp.admin;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

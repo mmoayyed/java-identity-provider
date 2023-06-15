@@ -240,7 +240,8 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             if (descriptor != null) {
                 if (descriptor.test(profileRequestContext)) {
                     if (descriptor.isResultActive(candidate)) {
-                        final BiPredicate<ProfileRequestContext, AuthenticationResult> revocationCondition = descriptor.getRevocationCondition();
+                        final BiPredicate<ProfileRequestContext, AuthenticationResult> revocationCondition =
+                                descriptor.getRevocationCondition();
                         if (authenticationContext.getMaxAge() != null
                                 && candidate.getAuthenticationInstant().plus(
                                         authenticationContext.getMaxAge()).isBefore(Instant.now())) {

@@ -26,4 +26,5 @@ import net.shibboleth.profile.plugin.Plugin;
  * @since 4.1.0
  */
 public interface IdPPlugin extends Plugin<IdPModule>{
+    
 }

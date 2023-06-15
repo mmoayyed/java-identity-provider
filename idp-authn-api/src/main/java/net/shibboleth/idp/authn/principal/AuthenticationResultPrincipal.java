@@ -44,7 +44,6 @@ public class AuthenticationResultPrincipal implements Principal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return authnResult.getAuthenticationFlowId();
     }

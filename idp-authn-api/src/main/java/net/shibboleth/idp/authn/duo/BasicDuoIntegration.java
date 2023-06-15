@@ -26,8 +26,8 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -128,8 +128,8 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @Unmodifiable
-    public <T extends Principal> Set<T> getSupportedPrincipals(@Nonnull final Class<T> c) {
+    @Nonnull @Unmodifiable @NotLive public <T extends Principal> Set<T> getSupportedPrincipals(
+            @Nonnull final Class<T> c) {
         final Set<T> result = supportedPrincipals.getPrincipals(c);
         assert result != null;
         return result;
@@ -144,8 +144,7 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
      * @param <T> a type of principal to add, if not generic
      * @param principals supported principals to include
      */
-    public <T extends Principal> void setSupportedPrincipals(
-            @Nullable @NonnullElements final Collection<T> principals) {
+    public <T extends Principal> void setSupportedPrincipals(@Nullable final Collection<T> principals) {
         checkSetterPreconditions();
 
         supportedPrincipals.getPrincipals().clear();

@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.spring.config.IdentifiedComponentManager;
 
 /**
@@ -40,8 +39,7 @@ public class AuthenticationFlowDescriptorManager extends IdentifiedComponentMana
      * @param freeObjects  free-standing objects
      */
     @Autowired
-    public AuthenticationFlowDescriptorManager(
-            @Nullable @NonnullElements final List<AuthenticationFlowDescriptor> freeObjects) {
+    public AuthenticationFlowDescriptorManager(@Nullable final List<AuthenticationFlowDescriptor> freeObjects) {
         super(freeObjects);
     }
 

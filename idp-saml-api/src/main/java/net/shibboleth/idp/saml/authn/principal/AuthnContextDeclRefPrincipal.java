@@ -47,7 +47,6 @@ public final class AuthnContextDeclRefPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return authnContextDeclRef;
     }
@@ -96,8 +95,7 @@ public final class AuthnContextDeclRefPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public AuthnContextDeclRefPrincipal clone() throws CloneNotSupportedException {
+    @Nonnull public AuthnContextDeclRefPrincipal clone() throws CloneNotSupportedException {
         final AuthnContextDeclRefPrincipal copy = (AuthnContextDeclRefPrincipal) super.clone();
         copy.authnContextDeclRef = authnContextDeclRef;
         return copy;

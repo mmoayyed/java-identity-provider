@@ -45,7 +45,6 @@ import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Positive;
@@ -223,7 +222,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      *  
      * @param displayNames utility class collection of language-annotated strings
      */
-    public void setDisplayNames(@Nonnull @NonnullElements final Collection<LangBearingString> displayNames) {
+    public void setDisplayNames(@Nonnull final Collection<LangBearingString> displayNames) {
         uiInfo.getDisplayNames().clear();
         for (final LangBearingString s : displayNames) {
             final DisplayName displayName =
@@ -240,7 +239,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      *  
      * @param descriptions utility class collection of language-annotated strings
      */
-    public void setDescriptions(@Nonnull @NonnullElements final Collection<LangBearingString> descriptions) {
+    public void setDescriptions(@Nonnull final Collection<LangBearingString> descriptions) {
         uiInfo.getDescriptions().clear();
         for (final LangBearingString s : descriptions) {
             final Description desc =
@@ -258,7 +257,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      * 
      * @param logos utility class collection of logo metadata
      */
-    public void setLogos(@Nonnull @NonnullElements final Collection<Logo> logos) {
+    public void setLogos(@Nonnull final Collection<Logo> logos) {
         uiInfo.getLogos().clear();
         for (final Logo src : logos) {
             final org.opensaml.saml.ext.saml2mdui.Logo logo =
@@ -278,7 +277,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      *  
      * @param urls utility class collection of language-annotated strings
      */
-    public void setInformationURLs(@Nonnull @NonnullElements final Collection<LangBearingString> urls) {
+    public void setInformationURLs(@Nonnull final Collection<LangBearingString> urls) {
         uiInfo.getInformationURLs().clear();
         for (final LangBearingString s : urls) {
             final InformationURL url =
@@ -295,7 +294,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      *  
      * @param urls utility class collection of language-annotated strings
      */
-    public void setPrivacyStatementURLs(@Nonnull @NonnullElements final Collection<LangBearingString> urls) {
+    public void setPrivacyStatementURLs(@Nonnull final Collection<LangBearingString> urls) {
         uiInfo.getPrivacyStatementURLs().clear();
         for (final LangBearingString s : urls) {
             final PrivacyStatementURL url =
@@ -354,13 +353,13 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
+    @Nonnull @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         return CollectionSupport.emptyList();
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows(
+    @Nonnull @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         return CollectionSupport.emptyList();
     }
@@ -372,7 +371,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
+    @Nonnull @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
         // Check for string-based representation first, then back off to native objects.
@@ -406,7 +405,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      * 
      * @param methods   default authentication methods to use
      */
-    public void setDefaultAuthenticationMethods(@Nullable @NonnullElements final Collection<Principal> methods) {
+    public void setDefaultAuthenticationMethods(@Nullable final Collection<Principal> methods) {
 
         if (methods != null) {
             defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(List.copyOf(methods));
@@ -433,8 +432,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      * 
      * @since 4.2.0
      */
-    public void setDefaultAuthenticationMethodsByString(
-            @Nullable @NonnullElements final Collection<String> methods) {
+    public void setDefaultAuthenticationMethodsByString(@Nullable final Collection<String> methods) {
         if (methods != null) {
             stringBasedPrincipalsLookupStrategy = FunctionSupport.constant(List.copyOf(methods));
         } else {
@@ -456,7 +454,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
@@ -470,7 +468,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      * 
      * @param flows   flow identifiers to use
      */
-    public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setAuthenticationFlows(@Nullable final Collection<String> flows) {
 
         if (flows != null) {
             authenticationFlowsLookupStrategy =
@@ -491,7 +489,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
@@ -505,7 +503,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setPostAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setPostAuthenticationFlows(@Nullable final Collection<String> flows) {
 
         if (flows != null) {
             postAuthenticationFlowsLookupStrategy =

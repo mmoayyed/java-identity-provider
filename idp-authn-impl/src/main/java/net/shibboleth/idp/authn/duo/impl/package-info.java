@@ -18,5 +18,7 @@
 /**
  * Implementation of Duo authentication.
  */
-
+@NonnullElements
 package net.shibboleth.idp.authn.duo.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

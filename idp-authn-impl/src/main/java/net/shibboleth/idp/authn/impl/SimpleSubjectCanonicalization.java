@@ -46,9 +46,6 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
  */
 public class SimpleSubjectCanonicalization extends AbstractSubjectCanonicalizationAction {
 
-    /** Class logger. */
-   // @Nonnull private final Logger log = LoggerFactory.getLogger(SelectAuthenticationFlow.class);
-
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
     

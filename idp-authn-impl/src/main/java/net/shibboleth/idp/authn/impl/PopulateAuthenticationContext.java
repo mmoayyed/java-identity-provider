@@ -32,7 +32,6 @@ import net.shibboleth.idp.authn.config.navigate.AuthenticationFlowsLookupFunctio
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
@@ -57,7 +56,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateAuthenticationContext.class);
     
     /** All of the known flows in the system. */
-    @Nonnull @NonnullElements private Collection<AuthenticationFlowDescriptor> availableFlows;
+    @Nonnull private Collection<AuthenticationFlowDescriptor> availableFlows;
 
     /** Lookup function for the flows to make available for possible use. */
     @Nonnull
@@ -84,7 +83,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
      * 
      * @param flows the flows known to the system
      */
-    public void setAvailableFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
+    public void setAvailableFlows(@Nonnull final Collection<AuthenticationFlowDescriptor> flows) {
         checkSetterPreconditions();
         availableFlows = CollectionSupport.copyToList(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }

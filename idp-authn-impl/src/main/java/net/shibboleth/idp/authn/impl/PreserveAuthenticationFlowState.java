@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -53,7 +52,7 @@ public class PreserveAuthenticationFlowState extends AbstractAuthenticationActio
     @Nonnull private final Logger log = LoggerFactory.getLogger(PreserveAuthenticationFlowState.class);
     
     /** Parameter names to look for. */
-    @Nonnull @NonnullElements private Collection<String> parameterNames;
+    @Nonnull private Collection<String> parameterNames;
     
     /** Constructor. */
     PreserveAuthenticationFlowState() {
@@ -65,7 +64,7 @@ public class PreserveAuthenticationFlowState extends AbstractAuthenticationActio
      * 
      * @param names parameter names
      */
-    public void setParameterNames(@Nullable @NonnullElements final Collection<String> names) {
+    public void setParameterNames(@Nullable final Collection<String> names) {
         checkSetterPreconditions();
         if (names == null) {
             parameterNames = CollectionSupport.emptyList();
@@ -97,8 +96,7 @@ public class PreserveAuthenticationFlowState extends AbstractAuthenticationActio
 
         final Map<String,Object> state = authenticationContext.getAuthenticationStateMap();
         state.clear();
-        final HttpServletRequest request = getHttpServletRequest();
-        assert request != null;
+        final HttpServletRequest request = ensureHttpServletRequest();
 
         final Map<String,String[]> params = request.getParameterMap();
         for (final String name : parameterNames) {

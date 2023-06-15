@@ -30,7 +30,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
@@ -65,7 +64,7 @@ public class UnlockDataSealers extends AbstractProfileAction {
     @Nonnull private Logger log = LoggerFactory.getLogger(UnlockDataSealers.class);
     
     /** Key source(s) to operate on. */
-    @Nonnull @NonnullElements private Collection<BasicKeystoreKeyStrategy> keyStrategies;
+    @Nonnull private Collection<BasicKeystoreKeyStrategy> keyStrategies;
 
     /** Constructor. */
     public UnlockDataSealers() {
@@ -77,7 +76,7 @@ public class UnlockDataSealers extends AbstractProfileAction {
      * 
      * @param strategies objects to unlock
      */
-    public void setKeyStrategies(@Nullable @NonnullElements final Collection<BasicKeystoreKeyStrategy> strategies) {
+    public void setKeyStrategies(@Nullable final Collection<BasicKeystoreKeyStrategy> strategies) {
         checkSetterPreconditions();
         
         if (strategies != null) {

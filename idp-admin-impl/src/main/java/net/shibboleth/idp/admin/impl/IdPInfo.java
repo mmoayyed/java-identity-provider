@@ -30,28 +30,30 @@ import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 public final class IdPInfo extends InstallableComponentInfo {
 
     /** The "plugin Id" to look up idp versions with. */
-    @Nonnull public static String IDP_PLUGIN_ID = "net.shibboleth.idp";
+    @Nonnull public static final String IDP_PLUGIN_ID = "net.shibboleth.idp";
 
      /**
       * Constructor.
       * @param props The property file to populate from
       */
-     public IdPInfo(@Nonnull Properties props) {
+     public IdPInfo(@Nonnull final Properties props) {
          super(IDP_PLUGIN_ID, props);
      }
 
      /** {@inheritDoc} */
      @Override
-     protected InstallableComponentVersion getMaxVersion(@Nonnull Properties props, @Nonnull String version) {
+     protected InstallableComponentVersion getMaxVersion(@Nonnull final Properties props,
+             @Nonnull final String version) {
          // The maximum version that version "us" can be installed in is "us" (a re-intall).
          return new InstallableComponentVersion(version);
      }
 
      /** {@inheritDoc} */
      @Override
-     @Nullable
-     protected InstallableComponentVersion getMinVersion(@Nonnull Properties props, @Nonnull String version) {
+     @Nullable protected InstallableComponentVersion getMinVersion(@Nonnull final Properties props,
+             final @Nonnull String version) {
          // We can always be on anything from V4.0.0
          return new InstallableComponentVersion(4,0,0);
      }
+
 }

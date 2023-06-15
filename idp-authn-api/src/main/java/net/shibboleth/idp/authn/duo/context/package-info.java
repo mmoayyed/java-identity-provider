@@ -18,4 +18,7 @@
 /**
  * Context classes related to Duo authentication.
  */
+@NonnullElements
 package net.shibboleth.idp.authn.duo.context;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -178,7 +177,7 @@ public class RevocationCacheCondition extends AbstractInitializableComponent
      * @return true iff the revocation applies to this result
      */
     protected boolean isRevoked(@Nonnull @NotEmpty final String principal, @Nonnull final AuthenticationResult result,
-            @Nonnull @NonnullElements final Collection<String> revocationRecords) {
+            @Nonnull final Collection<String> revocationRecords) {
         
         for (final String r : revocationRecords) {
             if (result.getAuthenticationInstant().isBefore(Instant.ofEpochSecond(Long.valueOf(r)))) {

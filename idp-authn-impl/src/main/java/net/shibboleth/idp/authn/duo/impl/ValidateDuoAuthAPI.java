@@ -50,6 +50,9 @@ import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrate
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
@@ -336,7 +339,8 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Map<String,String> getAuditFields(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nullable @Unmodifiable @NotLive protected Map<String,String> getAuditFields(
+            @Nonnull final ProfileRequestContext profileRequestContext) {
         final Map<String,String> fields = new HashMap<>();
         
         if (username != null) {
@@ -356,7 +360,7 @@ public class ValidateDuoAuthAPI extends AbstractAuditingValidationAction {
             }
         }
         
-        return Map.copyOf(fields);
+        return CollectionSupport.copyToMap(fields);
     }
     
 }

@@ -18,5 +18,7 @@
 /**
  * Audit implementation classes.
  */
-
+@NonnullElements
 package net.shibboleth.idp.authn.audit.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

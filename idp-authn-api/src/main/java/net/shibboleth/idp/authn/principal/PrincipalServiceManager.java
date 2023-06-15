@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -47,10 +46,10 @@ public class PrincipalServiceManager {
     @Nonnull private final Logger log = LoggerFactory.getLogger(PrincipalServiceManager.class);
     
     /** Service index by class. */
-    @Nonnull @NonnullElements private final Map<Class<?>,PrincipalService<?>> classIndexedMap;
+    @Nonnull private final Map<Class<?>,PrincipalService<?>> classIndexedMap;
 
     /** Service index by ID. */
-    @Nonnull @NonnullElements private final Map<String,PrincipalService<?>> idIndexedMap;
+    @Nonnull private final Map<String,PrincipalService<?>> idIndexedMap;
 
     /**
      * Constructor.
@@ -59,7 +58,7 @@ public class PrincipalServiceManager {
      */
     @Autowired
     public PrincipalServiceManager(
-            @Nullable @NonnullElements @ParameterName(name="services") final Collection<PrincipalService<?>> services) {
+            @Nullable @ParameterName(name="services") final Collection<PrincipalService<?>> services) {
         if (services != null) {
             classIndexedMap = new HashMap<>(services.size());
             idIndexedMap = new HashMap<>(services.size());
@@ -78,7 +77,7 @@ public class PrincipalServiceManager {
      * 
      * @return all registered services
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<PrincipalService<?>> all() {
+    @Nonnull @NotLive @Unmodifiable public Collection<PrincipalService<?>> all() {
         final Collection<PrincipalService<?>> values = classIndexedMap.values();
         assert values!=null;
         return CollectionSupport.copyToList(values);

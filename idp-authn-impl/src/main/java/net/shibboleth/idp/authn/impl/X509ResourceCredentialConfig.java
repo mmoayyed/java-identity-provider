@@ -89,7 +89,7 @@ public class X509ResourceCredentialConfig implements CredentialConfig {
     }
 
     /** {@inheritDoc} */
-    @Override public SSLContextInitializer createSSLContextInitializer() throws GeneralSecurityException {
+    @Nonnull public SSLContextInitializer createSSLContextInitializer() throws GeneralSecurityException {
         final X509SSLContextInitializer sslInit = new X509SSLContextInitializer();
         try {
             if (trustCertificates != null) {
@@ -109,4 +109,5 @@ public class X509ResourceCredentialConfig implements CredentialConfig {
         }
         return sslInit;
     }
+
 }

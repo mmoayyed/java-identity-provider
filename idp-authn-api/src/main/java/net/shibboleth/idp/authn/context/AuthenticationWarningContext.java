@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
@@ -43,7 +42,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 public final class AuthenticationWarningContext extends BaseContext {
 
     /** Warning conditions detected through classified warning messages. */
-    @Nonnull @NonnullElements private Collection<String> classifiedWarnings;
+    @Nonnull private Collection<String> classifiedWarnings;
     
     /** Constructor. */
     public AuthenticationWarningContext() {
@@ -55,7 +54,7 @@ public final class AuthenticationWarningContext extends BaseContext {
      * 
      * @return mutable collection of warning strings
      */
-    @Nonnull @NonnullElements @Live public Collection<String> getClassifiedWarnings() {
+    @Nonnull @Live public Collection<String> getClassifiedWarnings() {
         return classifiedWarnings;
     }
     

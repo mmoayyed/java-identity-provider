@@ -75,12 +75,8 @@ public class SubjectScriptContextExtender extends AbstractInitializableComponent
             log.debug("SubjectScriptContextExtender could not locate SubjectContext");
         } else {
             final List<Subject> subjects = sc.getSubjects();
-            if (null == subjects) {
-                scriptContext.setAttribute("subjects", null, ScriptContext.ENGINE_SCOPE);
-            } else {
-                scriptContext.setAttribute(
-                        "subjects", subjects.toArray(new Subject[subjects.size()]), ScriptContext.ENGINE_SCOPE);
-            }
+            scriptContext.setAttribute(
+                    "subjects", subjects.toArray(new Subject[subjects.size()]), ScriptContext.ENGINE_SCOPE);
         }
     }
 

@@ -37,7 +37,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -71,7 +70,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
     @Nullable private Pattern matchExpression;
     
     /** Match patterns and replacement strings to apply prior to use. */
-    @Nonnull @NonnullElements private List<Pair<Pattern,String>> transforms;
+    @Nonnull private List<Pair<Pattern,String>> transforms;
 
     /** Convert username to uppercase prior to transforms? */
     private boolean uppercase;
@@ -143,7 +142,7 @@ public abstract class AbstractUsernamePasswordCredentialValidator extends Abstra
      * 
      * @param newTransforms collection of replacement transforms
      */
-    public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String,String>> newTransforms) {
+    public void setTransforms(@Nullable final Collection<Pair<String,String>> newTransforms) {
         checkSetterPreconditions();
         if (newTransforms != null) {
             transforms = new ArrayList<>();

@@ -36,7 +36,8 @@ import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.profile.audit.impl.PopulateAuditContext;
 import net.shibboleth.idp.profile.audit.impl.WriteAuditLog;
 import net.shibboleth.profile.context.AuditContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -201,7 +202,7 @@ public abstract class AbstractAuditingValidationAction extends AbstractValidatio
      * @param profileRequestContext profile request context
      * @return audit fields
      */
-    @Nullable @NonnullElements protected Map<String,String> getAuditFields(
+    @Nullable @Unmodifiable @NotLive protected Map<String,String> getAuditFields(
             @Nonnull final ProfileRequestContext profileRequestContext) {
         return null;
     }

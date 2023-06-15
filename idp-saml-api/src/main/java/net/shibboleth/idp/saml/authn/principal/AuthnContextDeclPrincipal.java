@@ -58,7 +58,6 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return name;
     }
@@ -103,8 +102,7 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public AuthnContextDeclPrincipal clone() throws CloneNotSupportedException {
+    @Nonnull public AuthnContextDeclPrincipal clone() throws CloneNotSupportedException {
         final AuthnContextDeclPrincipal copy = (AuthnContextDeclPrincipal) super.clone();
         try {
             copy.authnContextDecl = XMLObjectSupport.cloneXMLObject(authnContextDecl, 

@@ -25,7 +25,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -50,7 +49,7 @@ import org.opensaml.messaging.context.BaseContext;
 public final class PreferredPrincipalContext extends BaseContext {
 
     /** The principals reflecting the preference. */
-    @Nonnull @NonnullElements private List<Principal> preferredPrincipals;
+    @Nonnull private List<Principal> preferredPrincipals;
     
     /** Constructor. */
     public PreferredPrincipalContext() {
@@ -62,7 +61,7 @@ public final class PreferredPrincipalContext extends BaseContext {
      * 
      * @return  immutable list of principals 
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Principal> getPreferredPrincipals() {
+    @Nonnull @Unmodifiable @NotLive public List<Principal> getPreferredPrincipals() {
         return preferredPrincipals;
     }
     
@@ -73,8 +72,7 @@ public final class PreferredPrincipalContext extends BaseContext {
      * 
      * @return this context
      */
-    @Nonnull public PreferredPrincipalContext setPreferredPrincipals(
-            @Nonnull @NonnullElements final List<Principal> principals) {
+    @Nonnull public PreferredPrincipalContext setPreferredPrincipals(@Nonnull final List<Principal> principals) {
         
         preferredPrincipals = CollectionSupport.copyToList(
                 Constraint.isNotNull(principals, "Principal list cannot be null"));
@@ -102,7 +100,7 @@ public final class PreferredPrincipalContext extends BaseContext {
      * 
      * @return true iff the input is compatible with the requested authentication preferences
      */
-    public boolean isAcceptable(@Nonnull @NonnullElements final Collection<Principal> principals) {
+    public boolean isAcceptable(@Nonnull final Collection<Principal> principals) {
         return !Collections.disjoint(preferredPrincipals, principals);
     }
 

@@ -27,7 +27,6 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -57,10 +56,10 @@ public final class SubjectCanonicalizationContext extends BaseContext {
     @Nullable private String responderId;
 
     /** Flows that could potentially be used. */
-    @Nonnull @NonnullElements private final Map<String, SubjectCanonicalizationFlowDescriptor> potentialFlows;
+    @Nonnull private final Map<String, SubjectCanonicalizationFlowDescriptor> potentialFlows;
 
     /** Previously attempted flows (could be failures or intermediate results). */
-    @Nonnull @NonnullElements private final Map<String, SubjectCanonicalizationFlowDescriptor> intermediateFlows;
+    @Nonnull private final Map<String, SubjectCanonicalizationFlowDescriptor> intermediateFlows;
     
     /** The last c14 flow attempted. */
     @Nullable private SubjectCanonicalizationFlowDescriptor attemptedFlow;
@@ -183,7 +182,7 @@ public final class SubjectCanonicalizationContext extends BaseContext {
      * 
      * @return the potential flows
      */
-    @Nonnull @NonnullElements @Live public Map<String, SubjectCanonicalizationFlowDescriptor> getPotentialFlows() {
+    @Nonnull @Live public Map<String, SubjectCanonicalizationFlowDescriptor> getPotentialFlows() {
         return potentialFlows;
     }
 
@@ -193,7 +192,7 @@ public final class SubjectCanonicalizationContext extends BaseContext {
      * 
      * @return the intermediately executed flows
      */
-    @Nonnull @NonnullElements @Live public Map<String, SubjectCanonicalizationFlowDescriptor> getIntermediateFlows() {
+    @Nonnull @Live public Map<String, SubjectCanonicalizationFlowDescriptor> getIntermediateFlows() {
         return intermediateFlows;
     }
 

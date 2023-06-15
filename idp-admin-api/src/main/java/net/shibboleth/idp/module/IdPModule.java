@@ -30,10 +30,10 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 public interface IdPModule extends Module {
 
     /** Extension for preserving user files. */
-    @Nonnull @NotEmpty public static final String IDPSAVE_EXT = ".idpsave";
+    @Nonnull @NotEmpty static final String IDPSAVE_EXT = ".idpsave";
 
     /** Base extension for adding new default files. */
-    @Nonnull @NotEmpty public static final String IDPNEW_EXT_BASE = ".idpnew";
+    @Nonnull @NotEmpty static final String IDPNEW_EXT_BASE = ".idpnew";
 
     /** {@inheritDoc} */
     @Override
@@ -46,4 +46,5 @@ public interface IdPModule extends Module {
     @Nonnull default String getNewExtension() {
         return IDPNEW_EXT_BASE;
     }
+
 }

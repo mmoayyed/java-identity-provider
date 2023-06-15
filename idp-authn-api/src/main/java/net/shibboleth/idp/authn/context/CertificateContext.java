@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -43,7 +42,7 @@ public final class CertificateContext extends BaseContext {
     @Nullable private Certificate certificate;
     
     /** Additional certificates as input to validation. */
-    @Nonnull @NonnullElements private Collection<Certificate> intermediates;
+    @Nonnull private Collection<Certificate> intermediates;
 
     /** Constructor. */
     public CertificateContext() {
@@ -76,7 +75,7 @@ public final class CertificateContext extends BaseContext {
      * 
      * @return any additional certificates
      */
-    @Nonnull @NonnullElements @Live public Collection<Certificate> getIntermediates() {
+    @Nonnull @Live public Collection<Certificate> getIntermediates() {
         return intermediates;
     }
 
@@ -87,7 +86,7 @@ public final class CertificateContext extends BaseContext {
      * 
      * @return this context
      */
-    @Nonnull public CertificateContext setIntermediates(@Nonnull @NonnullElements final Collection<Certificate> certs) {
+    @Nonnull public CertificateContext setIntermediates(@Nonnull final Collection<Certificate> certs) {
         Constraint.isNotNull(certs, "Intermediate certificate collection cannot be null");
         
         intermediates.clear();

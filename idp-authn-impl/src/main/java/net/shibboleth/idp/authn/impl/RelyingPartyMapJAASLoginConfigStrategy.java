@@ -31,6 +31,8 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
@@ -84,7 +86,7 @@ public class RelyingPartyMapJAASLoginConfigStrategy
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Collection<Pair<String, Subject>> apply(
+    @Nonnull @Unmodifiable @NotLive public Collection<Pair<String, Subject>> apply(
             final @Nullable ProfileRequestContext profileRequestContext) {
 
         final RelyingPartyContext relyingPartyContext =

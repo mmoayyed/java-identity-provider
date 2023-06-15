@@ -48,7 +48,7 @@ public abstract class AbstractExtractionAction extends AbstractAuthenticationAct
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractExtractionAction.class);
     
     /** Match patterns and replacement strings to apply. */
-    @Nonnull @NonnullElements private List<Pair<Pattern,String>> transforms;
+    @Nonnull private List<Pair<Pattern,String>> transforms;
 
     /** Convert to uppercase prior to transforms? */
     private boolean uppercase;
@@ -73,7 +73,7 @@ public abstract class AbstractExtractionAction extends AbstractAuthenticationAct
      * 
      * @param newTransforms collection of replacement transforms
      */
-    public void setTransforms(@Nullable @NonnullElements final Collection<Pair<String, String>> newTransforms) {
+    public void setTransforms(@Nullable final Collection<Pair<String, String>> newTransforms) {
         checkSetterPreconditions();
         if (newTransforms != null) {
             transforms = new ArrayList<>();

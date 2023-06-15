@@ -41,8 +41,9 @@ import net.shibboleth.idp.authn.CredentialValidator.ErrorHandler;
 import net.shibboleth.idp.authn.CredentialValidator.WarningHandler;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -64,7 +65,7 @@ public class ValidateCredentials extends AbstractAuditingValidationAction implem
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateCredentials.class);
     
     /** Ordered list of validators. */
-    @Nonnull @NonnullElements private List<CredentialValidator> credentialValidators;
+    @Nonnull private List<CredentialValidator> credentialValidators;
     
     /** Whether all validators must succeed. */
     private boolean requireAll;
@@ -73,7 +74,7 @@ public class ValidateCredentials extends AbstractAuditingValidationAction implem
     @Nullable private AccountLockoutManager lockoutManager;
     
     /** Results from successful validators. */
-    @Nonnull @NonnullElements private Collection<Subject> results;
+    @Nonnull private Collection<Subject> results;
     
     /** Currently executing validator. */
     @Nullable private CredentialValidator currentValidator;
@@ -106,7 +107,7 @@ public class ValidateCredentials extends AbstractAuditingValidationAction implem
      * 
      * @param validators validators to use
      */
-    public void setValidators(@Nullable @NonnullElements final List<CredentialValidator> validators) {
+    public void setValidators(@Nullable final List<CredentialValidator> validators) {
         checkSetterPreconditions();
         if (validators != null) {
             credentialValidators = CollectionSupport.copyToList(validators);
@@ -270,11 +271,11 @@ public class ValidateCredentials extends AbstractAuditingValidationAction implem
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements protected Map<String,String> getAuditFields(
+    @Nonnull @Unmodifiable @NotLive protected Map<String,String> getAuditFields(
             @Nonnull final ProfileRequestContext profileRequestContext) {
         // only called in execute when we know the field is non-null
         assert currentValidator!=null;
-        return Map.of(AuthnAuditFields.CREDENTIAL_VALIDATOR, currentValidator.getId());
+        return CollectionSupport.singletonMap(AuthnAuditFields.CREDENTIAL_VALIDATOR, currentValidator.getId());
     }
     
     /**

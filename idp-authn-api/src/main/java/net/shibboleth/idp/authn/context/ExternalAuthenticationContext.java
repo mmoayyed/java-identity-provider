@@ -30,7 +30,6 @@ import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -61,7 +60,7 @@ public final class ExternalAuthenticationContext extends BaseContext {
     @Nullable private Instant authnInstant;
     
     /** Proxied authenticating sources. */
-    @Nonnull @NonnullElements private Collection<String> authenticatingAuthorities;
+    @Nonnull private Collection<String> authenticatingAuthorities;
     
     /** Error message. */
     @Nullable private String authnError;
@@ -214,7 +213,7 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * 
      * @since 3.4.0
      */
-    @Nonnull @NonnullElements @Live public Collection<String> getAuthenticatingAuthorities() {
+    @Nonnull @Live public Collection<String> getAuthenticatingAuthorities() {
         return authenticatingAuthorities;
     }
 

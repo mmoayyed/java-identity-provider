@@ -57,7 +57,7 @@ public class NameIDPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override public String getName() {
+    @Nonnull public String getName() {
         return name;
     }
     
@@ -93,8 +93,7 @@ public class NameIDPrincipal implements CloneablePrincipal {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public NameIDPrincipal clone() throws CloneNotSupportedException {
+    @Nonnull public NameIDPrincipal clone() throws CloneNotSupportedException {
         final NameIDPrincipal copy = (NameIDPrincipal) super.clone();
         try {
             copy.nameID = XMLObjectSupport.cloneXMLObject(nameID, CloneOutputOption.RootDOMInNewDocument);

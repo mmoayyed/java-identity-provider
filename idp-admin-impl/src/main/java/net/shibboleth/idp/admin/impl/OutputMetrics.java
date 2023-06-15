@@ -51,7 +51,6 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -100,7 +99,7 @@ public class OutputMetrics extends AbstractProfileAction {
     private boolean useDefaultTimeZone;
 
     /** Map of custom metric groups to filters. */
-    @Nonnull @NonnullElements private Map<String,MetricFilter> metricFilterMap;
+    @Nonnull private Map<String,MetricFilter> metricFilterMap;
     
     /** Metric ID to operate on. */
     @NonnullBeforeExec private String metricId;
@@ -166,7 +165,7 @@ public class OutputMetrics extends AbstractProfileAction {
         checkSetterPreconditions();
         
         if (format != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(StringSupport.trimOrNull(format));
             assert formatter!=null;
             dateTimeFormatter = formatter;
         }
@@ -190,7 +189,7 @@ public class OutputMetrics extends AbstractProfileAction {
      * 
      * @param map group to filter map
      */
-    public void setMetricFilterMap(@Nonnull @NonnullElements final Map<String,MetricFilter> map) {
+    public void setMetricFilterMap(@Nonnull final Map<String,MetricFilter> map) {
         checkSetterPreconditions();
         
         Constraint.isNotNull(map, "MetricFilter map cannot be null");

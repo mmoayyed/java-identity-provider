@@ -29,7 +29,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.shared.annotation.ConfigurationSetting;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 
@@ -44,7 +43,7 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * @return  default authentication methods to use
      */
     @ConfigurationSetting(name="defaultAuthenticationMethods")
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<Principal> getDefaultAuthenticationMethods(
+    @Nonnull @NotLive @Unmodifiable List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext);
         
     /**
@@ -59,7 +58,7 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * @return  a set of authentication flow IDs to allow 
      */
     @ConfigurationSetting(name="authenticationFlows")
-    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext);
 
     /**
@@ -74,7 +73,7 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * @return  a set of interceptor flow IDs to enable
      */
     @ConfigurationSetting(name="postAuthenticationFlows")
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getPostAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable List<String> getPostAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext);
 
     /**

@@ -46,7 +46,9 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.codec.StringDigester;
 import net.shibboleth.shared.codec.StringDigester.OutputFormat;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -75,7 +77,7 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
     private long lastModified;
     
     /** In-memory copy of entries. */
-    @Nonnull @NonnullElements private final Map<String,String> credentialMap;
+    @Nonnull private final Map<String,String> credentialMap;
     
     /** Constructor. */
     public HTPasswdCredentialValidator() {
@@ -204,8 +206,7 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
         }
         
         try {
-            if (resource.isFile() && resource.exists()
-                    && (resource.lastModified() > lastModified)) {
+            if (resource.isFile() && resource.exists() && resource.lastModified() > lastModified) {
                 try (final InputStream is = resource.getInputStream()) {
                     credentialMap.clear();
                     credentialMap.putAll(readCredentials(is));
@@ -223,7 +224,7 @@ public class HTPasswdCredentialValidator extends AbstractUsernamePasswordCredent
      * 
      * @return map of credentials
      */
-    @Nonnull @NonnullElements private Map<String,String> readCredentials(@Nonnull final InputStream is) {
+    @Nonnull @Unmodifiable @NotLive private Map<String,String> readCredentials(@Nonnull final InputStream is) {
         
         final Map<String,String> credentials = new HashMap<>();
         

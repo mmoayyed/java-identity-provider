@@ -44,7 +44,6 @@ public class IdPAttributePrincipal implements Principal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return attribute.getId();
     }

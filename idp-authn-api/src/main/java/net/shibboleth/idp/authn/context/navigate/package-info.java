@@ -18,5 +18,7 @@
 /**
  * Functions for traversing authentication contexts.
  */
-
+@NonnullElements
 package net.shibboleth.idp.authn.context.navigate;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

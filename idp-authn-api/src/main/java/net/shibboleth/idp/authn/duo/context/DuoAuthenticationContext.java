@@ -27,7 +27,6 @@ import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 
 /**
  * Context that carries Duo factor and device or passcode to be used in validation.
@@ -173,7 +172,7 @@ public final class DuoAuthenticationContext extends BaseContext {
      * 
      * @return the pushinfo
      */
-    @Nonnull @NonnullElements @Live public Map<String,String> getPushInfo() {
+    @Nonnull @Live public Map<String,String> getPushInfo() {
         return pushInfo;
     }
     

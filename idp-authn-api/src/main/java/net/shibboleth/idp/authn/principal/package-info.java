@@ -18,5 +18,7 @@
 /**
  * Classes supporting Java {@link java.security.Principal} usage.
  */
-
+@NonnullElements
 package net.shibboleth.idp.authn.principal;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

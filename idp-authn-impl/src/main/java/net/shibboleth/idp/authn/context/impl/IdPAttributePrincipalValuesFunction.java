@@ -29,6 +29,8 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -61,10 +63,9 @@ public class IdPAttributePrincipalValuesFunction extends AbstractInitializableCo
     }
 
     /** {@inheritDoc} */
-    @Nullable public List<IdPAttributeValue> apply(@Nullable final Principal principal) {
+    @Nullable @Unmodifiable @NotLive public List<IdPAttributeValue> apply(@Nullable final Principal principal) {
 
-        if (null != principal && principal instanceof IdPAttributePrincipal) {
-            final IdPAttributePrincipal attributePrincipal = (IdPAttributePrincipal) principal;
+        if (principal instanceof IdPAttributePrincipal attributePrincipal) {
             final IdPAttribute attribute = attributePrincipal.getAttribute();
             if (attributeName.equals(attribute.getId())) {
                 return attribute.getValues();

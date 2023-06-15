@@ -19,6 +19,8 @@ package net.shibboleth.idp.authn.principal;
 
 import java.security.Principal;
 
+import javax.annotation.Nonnull;
+
 /** Principal that can be cloned without knowledge of the underlying type. */
 public interface CloneablePrincipal extends Principal, Cloneable {
 
@@ -31,5 +33,5 @@ public interface CloneablePrincipal extends Principal, Cloneable {
      *
      * @see java.lang.Object#clone
      */
-    Object clone() throws CloneNotSupportedException;
+    @Nonnull Object clone() throws CloneNotSupportedException;
 }

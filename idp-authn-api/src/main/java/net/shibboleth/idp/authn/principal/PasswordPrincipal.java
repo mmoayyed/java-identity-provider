@@ -41,7 +41,6 @@ public class PasswordPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return password;
     }
@@ -77,8 +76,7 @@ public class PasswordPrincipal implements CloneablePrincipal {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public PasswordPrincipal clone() throws CloneNotSupportedException {
+    @Nonnull public PasswordPrincipal clone() throws CloneNotSupportedException {
         final PasswordPrincipal copy = (PasswordPrincipal) super.clone();
         copy.password = password;
         return copy;

@@ -69,7 +69,7 @@ public class X500PrincipalSerializer extends AbstractPrincipalSerializer<String>
 
         final String name;
         try {
-            final byte encoded[] = x500Principal.getEncoded();
+            final byte[] encoded = x500Principal.getEncoded();
             assert encoded != null;
             name = Base64Support.encode(encoded, false);
         } catch (final EncodingException e) {
@@ -113,5 +113,5 @@ public class X500PrincipalSerializer extends AbstractPrincipalSerializer<String>
             throw new IOException("Found invalid data while parsing X500Principal", e);
         }
     }    
+
 }
- 

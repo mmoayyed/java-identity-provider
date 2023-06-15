@@ -36,7 +36,6 @@ import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -54,10 +53,10 @@ import com.google.common.base.MoreObjects;
 public class ProxyAuthenticationPrincipal implements Principal, Predicate<ProfileRequestContext> {
 
     /** The authorities. */
-    @Nonnull @NonnullElements private Collection<String> authorities;
+    @Nonnull private Collection<String> authorities;
 
     /** The audiences. */
-    @Nonnull @NonnullElements private Set<String> audiences;
+    @Nonnull private Set<String> audiences;
 
     /** Constrains additional proxy hops. */
     @Nullable private Integer proxyCount;
@@ -73,7 +72,7 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
      *
      * @param proxiedAuthorities initial set of authorities
      */
-    public ProxyAuthenticationPrincipal(@Nonnull @NonnullElements final Collection<String> proxiedAuthorities) {
+    public ProxyAuthenticationPrincipal(@Nonnull final Collection<String> proxiedAuthorities) {
         Constraint.isNotNull(proxiedAuthorities, "Proxied authority collection cannot be null");
         
         authorities = new ArrayList<>(List.copyOf(proxiedAuthorities));
@@ -92,7 +91,7 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
      * 
      * @return the authorities
      */
-    @Nonnull @NonnullElements @Live public Collection<String> getAuthorities() {
+    @Nonnull @Live public Collection<String> getAuthorities() {
         return authorities;
     }
 
@@ -102,7 +101,7 @@ public class ProxyAuthenticationPrincipal implements Principal, Predicate<Profil
      * 
      * @return the audiences
      */
-    @Nonnull @NonnullElements @Live public Set<String> getAudiences() {
+    @Nonnull @Live public Set<String> getAudiences() {
         return audiences;
     }
     

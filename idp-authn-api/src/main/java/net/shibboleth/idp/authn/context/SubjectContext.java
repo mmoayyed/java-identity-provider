@@ -28,7 +28,6 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -60,7 +59,7 @@ public final class SubjectContext extends BaseContext {
     @Nullable private String principalName;
 
     /** The active authentication results for the subject. */
-    @Nonnull @NonnullElements private final Map<String,AuthenticationResult> authenticationResults;
+    @Nonnull private final Map<String,AuthenticationResult> authenticationResults;
     
     /** Constructor. */
     public SubjectContext() {
@@ -120,7 +119,7 @@ public final class SubjectContext extends BaseContext {
      * 
      * @return  mutable map of authentication flow IDs to authentication results
      */
-    @Nonnull @NonnullElements @Live public Map<String,AuthenticationResult> getAuthenticationResults() {
+    @Nonnull @Live public Map<String,AuthenticationResult> getAuthenticationResults() {
         return authenticationResults;
     }
     
@@ -130,7 +129,7 @@ public final class SubjectContext extends BaseContext {
      * 
      * @return immutable list of Subjects 
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Subject> getSubjects() {
+    @Nonnull @Unmodifiable @NotLive public List<Subject> getSubjects() {
         return authenticationResults.values()
                 .stream()
                 .map(AuthenticationResult::getSubject)

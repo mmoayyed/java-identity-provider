@@ -18,5 +18,7 @@
 /**
  * Predicates related to authentication.
  */
-
+@NonnullElements
 package net.shibboleth.idp.authn.revocation.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

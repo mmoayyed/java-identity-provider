@@ -201,8 +201,8 @@ public class DoStorageOperation extends AbstractProfileAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         try {
-            @Nonnull final HttpServletRequest request = Constraint.isNotNull(getHttpServletRequest(), "No Servlet request present");
-            @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
+            final HttpServletRequest request = ensureHttpServletRequest();
+            final HttpServletResponse response = ensureHttpServletResponse();
             
             response.setContentType("application/json");
             response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
@@ -252,8 +252,10 @@ public class DoStorageOperation extends AbstractProfileAction {
     private void doRead() throws IOException {
         final StorageRecord<?> record;
         try {
-            @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
-            @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
+            final StorageService storageServ =
+                    Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
+            final HttpServletResponse response =
+                    Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
             record = storageServ.read(getContext(), getKey());
             if (record != null) {
                 response.setStatus(HttpServletResponse.SC_OK);
@@ -289,9 +291,10 @@ public class DoStorageOperation extends AbstractProfileAction {
      * @throws IOException if an error is raised
      */
     private void doCreate() throws IOException {
-        @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
-        @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
-        @Nonnull final HttpServletRequest request = Constraint.isNotNull(getHttpServletRequest(), "No Servlet request present");
+        final StorageService storageServ =
+                Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
+        final HttpServletRequest request = ensureHttpServletRequest();
+        final HttpServletResponse response = ensureHttpServletResponse();
 
         final JsonFactory jsonFactory = new JsonFactory();
         final JsonParser parser = jsonFactory.createParser(request.getInputStream());
@@ -333,9 +336,10 @@ public class DoStorageOperation extends AbstractProfileAction {
      */
     private void doUpdate() throws IOException {
         final JsonFactory jsonFactory = new JsonFactory();
-        @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
-        @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
-        @Nonnull final HttpServletRequest request = Constraint.isNotNull(getHttpServletRequest(), "No Servlet request present");
+        final StorageService storageServ =
+                Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
+        final HttpServletRequest request = ensureHttpServletRequest();
+        final HttpServletResponse response = ensureHttpServletResponse();
 
         final JsonParser parser = jsonFactory.createParser(request .getInputStream());
         
@@ -394,8 +398,9 @@ public class DoStorageOperation extends AbstractProfileAction {
      */
     private void doDelete() throws IOException {
         try {
-            @Nonnull final StorageService storageServ = Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
-            @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
+            final StorageService storageServ =
+                    Constraint.isNotNull(storageService, "Null storge service not detected in preExecute");
+            final HttpServletResponse response = ensureHttpServletResponse();
 
             if (storageServ.delete(getContext(), getKey())) {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -420,7 +425,7 @@ public class DoStorageOperation extends AbstractProfileAction {
     private void sendError(final int status, @Nonnull @NotEmpty final String title,
             @Nonnull @NotEmpty final String detail) throws IOException {
         
-        @Nonnull final HttpServletResponse response = Constraint.isNotNull(getHttpServletResponse(), "No Servlet response present");
+        final HttpServletResponse response = ensureHttpServletResponse();
         response.setContentType("application/json");
         response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
         response.setStatus(status);

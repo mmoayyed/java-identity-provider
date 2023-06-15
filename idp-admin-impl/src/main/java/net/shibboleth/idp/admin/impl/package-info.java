@@ -18,5 +18,7 @@
 /**
  * Implementation classes for administrative profiles.
  */
-
+@NonnullElements
 package net.shibboleth.idp.admin.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

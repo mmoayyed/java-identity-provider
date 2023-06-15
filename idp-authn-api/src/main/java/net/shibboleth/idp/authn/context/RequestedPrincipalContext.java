@@ -30,7 +30,6 @@ import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -69,7 +68,7 @@ public final class RequestedPrincipalContext extends BaseContext {
     @Nullable private String operatorString;
 
     /** The principals reflecting the request requirements. */
-    @Nonnull @NonnullElements private List<Principal> requestedPrincipals;
+    @Nonnull private List<Principal> requestedPrincipals;
     
     /** The principal that satisfied the request, if any. */
     @Nullable private Principal matchingPrincipal;
@@ -134,7 +133,7 @@ public final class RequestedPrincipalContext extends BaseContext {
      * 
      * @return  immutable list of principals 
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Principal> getRequestedPrincipals() {
+    @Nonnull @Unmodifiable @NotLive public List<Principal> getRequestedPrincipals() {
         return requestedPrincipals;
     }
     
@@ -145,8 +144,7 @@ public final class RequestedPrincipalContext extends BaseContext {
      * 
      * @return this context
      */
-    @Nonnull public RequestedPrincipalContext setRequestedPrincipals(
-            @Nonnull @NonnullElements final List<Principal> principals) {
+    @Nonnull public RequestedPrincipalContext setRequestedPrincipals(@Nonnull final List<Principal> principals) {
         
         requestedPrincipals =
                 CollectionSupport.copyToList(Constraint.isNotNull(principals, "Principal list cannot be null"));
@@ -227,7 +225,7 @@ public final class RequestedPrincipalContext extends BaseContext {
      *  
      *  @since 3.3.0
      */
-    public boolean isAcceptable(@Nonnull @NonnullElements final Collection<Principal> principals) {
+    public boolean isAcceptable(@Nonnull final Collection<Principal> principals) {
         return isAcceptable(new PrincipalSupportingComponent() {
             @Nonnull public <T extends Principal> Set<T> getSupportedPrincipals(@Nonnull final Class<T> c) {
                 final HashSet<T> set = new HashSet<>();

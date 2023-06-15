@@ -34,7 +34,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -62,10 +61,10 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateRemoteUser.class);
     
     /** Usernames to accept. */
-    @Nonnull @NonnullElements private Set<String> allowedUsernames;
+    @Nonnull private Set<String> allowedUsernames;
 
     /** Usernames to deny. */
-    @Nonnull @NonnullElements private Set<String> deniedUsernames;
+    @Nonnull private Set<String> deniedUsernames;
 
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
@@ -85,7 +84,7 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
      * 
      * @param allowed usernames to allow
      */
-    public void setAllowedUsernames(@Nullable @NonnullElements final Collection<String> allowed) {
+    public void setAllowedUsernames(@Nullable final Collection<String> allowed) {
         checkSetterPreconditions();
         allowedUsernames = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(allowed));
     }
@@ -95,7 +94,7 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
      * 
      * @param denied usernames to deny
      */
-    public void setDeniedUsernames(@Nullable @NonnullElements final Collection<String> denied) {
+    public void setDeniedUsernames(@Nullable final Collection<String> denied) {
         checkSetterPreconditions();
         deniedUsernames = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(denied));
     }

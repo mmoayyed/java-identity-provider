@@ -46,7 +46,6 @@ public class HOTPPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nonnull @NotEmpty public String getName() {
         return username;
     }
@@ -82,8 +81,7 @@ public class HOTPPrincipal implements CloneablePrincipal {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public HOTPPrincipal clone() throws CloneNotSupportedException {
+    @Nonnull public HOTPPrincipal clone() throws CloneNotSupportedException {
         final HOTPPrincipal copy = (HOTPPrincipal) super.clone();
         copy.username = username;
         return copy;

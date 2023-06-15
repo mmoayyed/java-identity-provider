@@ -43,7 +43,6 @@ import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -91,10 +90,10 @@ public class RemoteUserAuthServlet extends HttpServlet {
     private boolean checkRemoteUser;
     
     /** List of request attributes to check for an identity. */
-    @Nonnull @NonnullElements private Collection<String> checkAttributes;
+    @Nonnull private Collection<String> checkAttributes;
 
     /** List of request headers to check for an identity. */
-    @Nonnull @NonnullElements private Collection<String> checkHeaders;
+    @Nonnull private Collection<String> checkHeaders;
     
     /** Request attribute to check for a {@link Subject}. */
     @Nullable @NotEmpty private String subjectAttribute;
@@ -126,7 +125,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
      * 
      * @param attributes    list of request attributes to check
      */
-    public void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
+    public void setCheckAttributes(@Nonnull final Collection<String> attributes) {
         checkAttributes = CollectionSupport.copyToList(attributes);
     }
 
@@ -135,7 +134,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
      * 
      * @param headers list of request headers to check
      */
-    public void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
+    public void setCheckHeaders(@Nonnull final Collection<String> headers) {
         checkHeaders = CollectionSupport.copyToList(headers);
     }
     

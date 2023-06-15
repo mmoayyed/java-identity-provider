@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * A set of APIs of general use in building IdP plugins.
  */
-
+@NonnullElements
 package net.shibboleth.idp.plugin;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

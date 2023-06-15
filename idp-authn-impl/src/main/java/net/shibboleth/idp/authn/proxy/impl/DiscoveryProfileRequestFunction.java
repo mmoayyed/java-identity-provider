@@ -101,7 +101,7 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
     }
     
     /** {@inheritDoc} */
-    @Nullable public String apply(final @Nullable Pair<RequestContext,ProfileRequestContext> input) {
+    @Nullable public String apply(@Nullable final Pair<RequestContext,ProfileRequestContext> input) {
         
         assert input != null;
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(input.getSecond());

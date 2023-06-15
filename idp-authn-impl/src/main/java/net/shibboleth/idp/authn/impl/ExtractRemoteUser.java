@@ -31,7 +31,6 @@ import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernameContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -56,10 +55,10 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     private boolean checkRemoteUser;
     
     /** List of request attributes to check for an identity. */
-    @Nonnull @NonnullElements private Collection<String> checkAttributes;
+    @Nonnull private Collection<String> checkAttributes;
 
     /** List of request headers to check for an identity. */
-    @Nonnull @NonnullElements private Collection<String> checkHeaders;
+    @Nonnull private Collection<String> checkHeaders;
     
     /** Constructor. */
     public ExtractRemoteUser() {
@@ -83,7 +82,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param attributes    list of request attributes to check
      */
-    public void setCheckAttributes(@Nullable @NonnullElements final Collection<String> attributes) {
+    public void setCheckAttributes(@Nullable final Collection<String> attributes) {
         checkSetterPreconditions();
         checkAttributes = StringSupport.normalizeStringCollection(attributes);
     }
@@ -93,7 +92,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
      * 
      * @param headers list of request headers to check
      */
-    public void setCheckHeaders(@Nullable @NonnullElements final Collection<String> headers) {
+    public void setCheckHeaders(@Nullable final Collection<String> headers) {
         checkSetterPreconditions();
         checkHeaders = StringSupport.normalizeStringCollection(headers);
     }

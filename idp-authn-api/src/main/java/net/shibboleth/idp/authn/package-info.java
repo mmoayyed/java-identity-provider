@@ -16,5 +16,7 @@
  */
 
 /** APIs related to the authentication of a subject. */
-
+@NonnullElements
 package net.shibboleth.idp.authn;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

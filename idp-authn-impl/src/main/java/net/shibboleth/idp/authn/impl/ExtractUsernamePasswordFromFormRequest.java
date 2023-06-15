@@ -99,7 +99,6 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
     }
     
     /** {@inheritDoc} */
-    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -140,5 +139,5 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractExtractionAc
             authenticationContext.setResultCacheable(false);
         }
     }
-    // CheckStyle: ReturnCount ON
+
 }

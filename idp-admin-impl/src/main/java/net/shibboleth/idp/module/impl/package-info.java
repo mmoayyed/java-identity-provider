@@ -18,5 +18,7 @@
 /**
  * Implementation classes supporting module system.
  */
-
+@NonnullElements
 package net.shibboleth.idp.module.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

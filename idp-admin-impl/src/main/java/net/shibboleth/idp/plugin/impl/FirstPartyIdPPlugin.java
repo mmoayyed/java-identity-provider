@@ -27,7 +27,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.plugin.IdPPlugin;
 import net.shibboleth.idp.plugin.PropertyDrivenIdPPlugin;
 import net.shibboleth.profile.plugin.PluginException;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -53,7 +52,7 @@ public class FirstPartyIdPPlugin extends PropertyDrivenIdPPlugin {
     /** {@inheritDoc} 
      * @throws PluginException if the URLs cannot be resolved */
     @Override
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<URL> getDefaultUpdateURLs() throws PluginException {
+    @Nonnull @Unmodifiable @NotLive public List<URL> getDefaultUpdateURLs() throws PluginException {
         try {
             // The second location is a backup CNAME pointing into AWS S3 at present.
             return CollectionSupport.listOf(
