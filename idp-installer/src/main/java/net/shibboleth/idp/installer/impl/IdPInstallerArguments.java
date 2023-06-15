@@ -191,7 +191,7 @@ public class IdPInstallerArguments extends AbstractCommandLineArguments {
         out.println(String.format("  %-22s %s", "-h, --hostName", "DNS name for the IdP"));
         out.println(String.format("  %-22s %s", "-e, --entityID", "Entity ID for the IdP"));
         out.println(String.format("  %-22s %s", "-kp, --keystorePassword", "Password for the generated KeyStore"));
-        out.println(String.format("  %-22s %s", "-sp, --slearePassword", "Password for the generated Data Sealer"));
+        out.println(String.format("  %-22s %s", "-sp, --sealerPassword", "Password for the generated Data Sealer"));
         out.println(String.format("  %-22s %s", "--noPrompt", "Unattended Install"));
 
         out.println(String.format("  %-22s %s", "-hc, --http-client", "Bean name for an http client (for Module and Plugin Operations"));

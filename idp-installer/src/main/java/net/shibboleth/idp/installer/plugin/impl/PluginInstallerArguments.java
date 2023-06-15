@@ -381,7 +381,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
         out.println(String.format("  %-22s %s", "-L, --list-available", "List plugins available to download."));
         out.println(String.format("  %-22s %s", "-cl, --contents-list", "Details of what was installed"));
         out.println(String.format("  %-22s %s", "-i, --input <what>", "Install (file name or web address)"));
-        out.println(String.format("  %-22s %s", "-I, ----install-ID <what>",
+        out.println(String.format("  %-22s %s", "-I, --install-ID <what>",
                 "Install PluginID (must be available at download URL)"));
         out.println(String.format("  %-22s %s", "--noCheck", "Do not check the version"));
         out.println(String.format("  %-22s %s", "-u, --update <PluginId>", "update"));
