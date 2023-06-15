@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.profile.logic;
 
-
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,6 +30,7 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.shared.scripting.EvaluableScript;
+import net.shibboleth.shared.spring.resource.ResourceHelper;
 
 /**
  * Deprecated stub for relocated class.
@@ -76,13 +75,11 @@ public class ScriptedPredicate extends net.shibboleth.profile.context.logic.Scri
      */
     public static ScriptedPredicate resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource) throws ScriptException, IOException {
-        try (final InputStream is = resource.getInputStream()) {
-            final EvaluableScript script = new EvaluableScript();
-            script.setEngineName(engineName);
-            script.setScript(is);
-            script.initializeWithScriptException();
-            return new ScriptedPredicate(script, resource.getDescription());
-        }
+        final EvaluableScript script = new EvaluableScript();
+        script.setEngineName(engineName);
+        script.setScript(ResourceHelper.of(resource));
+        script.initializeWithScriptException();
+        return new ScriptedPredicate(script, resource.getDescription());
     }
 
     /**

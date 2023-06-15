@@ -37,7 +37,6 @@ import org.apache.commons.codec.digest.Crypt;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.springframework.core.io.Resource;
 
 import com.google.common.base.Strings;
 
@@ -53,6 +52,7 @@ import net.shibboleth.shared.codec.StringDigester.OutputFormat;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.resource.Resource;
 
 /**
  * A password validator that authenticates against Apache htpasswd files.

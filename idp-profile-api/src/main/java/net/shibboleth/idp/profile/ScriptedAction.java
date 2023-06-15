@@ -18,7 +18,6 @@
 package net.shibboleth.idp.profile;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,11 +28,11 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.springframework.core.io.Resource;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.resource.Resource;
 import net.shibboleth.shared.scripting.AbstractScriptEvaluator;
 import net.shibboleth.shared.scripting.EvaluableScript;
 
@@ -62,21 +61,8 @@ public class ScriptedAction extends AbstractProfileAction {
      * Constructor.
      * 
      * @param theScript the script we will evaluate
-     * @param extraInfo debugging information
-     * 
-     * @deprecated ...
      */
-    @Deprecated
-    public ScriptedAction(@Nonnull final EvaluableScript theScript, @Nullable final String extraInfo) {
-        scriptEvaluator = new ActionScriptEvaluator(theScript);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param theScript the script we will evaluate
-     */
-    public ScriptedAction(@Nonnull final EvaluableScript theScript) {
+    protected ScriptedAction(@Nonnull final EvaluableScript theScript) {
         scriptEvaluator = new ActionScriptEvaluator(theScript);
     }
 
@@ -144,13 +130,11 @@ public class ScriptedAction extends AbstractProfileAction {
     public static ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource)
             throws ScriptException, IOException {
-        try (final InputStream is = resource.getInputStream()) {
-            final EvaluableScript script = new EvaluableScript();
-            script.setEngineName(engineName);
-            script.setScript(is);
-            script.initializeWithScriptException();
-            return new ScriptedAction(script);
-        }
+        final EvaluableScript script = new EvaluableScript();
+        script.setEngineName(engineName);
+        script.setScript(resource);
+        script.initializeWithScriptException();
+        return new ScriptedAction(script);
     }
 
     /**
