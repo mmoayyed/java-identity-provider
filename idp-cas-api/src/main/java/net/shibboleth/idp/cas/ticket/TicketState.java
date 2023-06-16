@@ -25,9 +25,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -51,7 +51,7 @@ public class TicketState {
     @Nonnull private String authenticationMethod;
 
     /** Attribute IDs that were consented to during the ticket request. */
-    @Nullable @NonnullElements private Set<String> consentedAttributeIds;
+    @Nullable private Set<String> consentedAttributeIds;
 
     /**
      * Creates a new instance with required fields.
@@ -115,7 +115,7 @@ public class TicketState {
      * 
      * @since 4.2.0
      */
-    @Nullable @NonnullElements @Unmodifiable @NotLive public Set<String> getConsentedAttributeIds() {
+    @Nullable @Unmodifiable @NotLive public Set<String> getConsentedAttributeIds() {
         return consentedAttributeIds;
     }
     
@@ -126,9 +126,9 @@ public class TicketState {
      * 
      * @since 4.2.0
      */
-    public void setConsentedAttributeIds(@Nullable @NonnullElements final Collection<String> attributeIds) {
+    public void setConsentedAttributeIds(@Nullable final Collection<String> attributeIds) {
         if (attributeIds != null) {
-            consentedAttributeIds = Set.copyOf(StringSupport.normalizeStringCollection(attributeIds));
+            consentedAttributeIds = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(attributeIds));
         } else {
             consentedAttributeIds = null;
         }
@@ -150,4 +150,5 @@ public class TicketState {
     public int hashCode() {
         return Objects.hash(sessId, authenticatedPrincipalName, authenticationInstant, authenticationMethod);
     }
+    
 }

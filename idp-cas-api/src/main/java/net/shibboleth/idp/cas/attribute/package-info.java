@@ -18,5 +18,7 @@
 /**
  * APIs for CAS attribute support.
  */
-
+@NonnullElements
 package net.shibboleth.idp.cas.attribute;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

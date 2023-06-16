@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
@@ -45,12 +44,10 @@ public class PatternServiceRegistry extends AbstractIdentifiableInitializableCom
         implements ServiceRegistry {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(PatternServiceRegistry.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PatternServiceRegistry.class);
 
     /** Map of service definitions to compiled patterns. */
-    @Nonnull
-    @NonnullElements
-    private Map<ServiceDefinition, Pattern> definitions = CollectionSupport.emptyMap();
+    @Nonnull private Map<ServiceDefinition, Pattern> definitions = CollectionSupport.emptyMap();
 
     /**
      * Sets the list of service definitions that back the registry.
@@ -58,7 +55,7 @@ public class PatternServiceRegistry extends AbstractIdentifiableInitializableCom
      * @param serviceDefinitions List of service definitions, each of which defines a match pattern to evaluate a
      *            candidate service URL.
      */
-    public void setDefinitions(@Nonnull @NonnullElements final List<ServiceDefinition> serviceDefinitions) {
+    public void setDefinitions(@Nonnull final List<ServiceDefinition> serviceDefinitions) {
         Constraint.noNullItems(serviceDefinitions, "Definitions cannot be null or contain null items");
         // Preserve order of services in map
         definitions = new LinkedHashMap<>(serviceDefinitions.size());
@@ -67,9 +64,8 @@ public class PatternServiceRegistry extends AbstractIdentifiableInitializableCom
         }
     }
 
-    @Override
-    @Nullable
-    public Service lookup(@Nonnull final String serviceURL) {
+    /** {@inheritDoc} */
+    @Nullable public Service lookup(@Nonnull final String serviceURL) {
         Constraint.isNotNull(serviceURL, "Service URL cannot be null");
         for (final ServiceDefinition def : definitions.keySet()) {
             log.debug("Evaluating whether {} matches {}", serviceURL, def);
@@ -81,4 +77,5 @@ public class PatternServiceRegistry extends AbstractIdentifiableInitializableCom
         }
         return null;
     }
+
 }

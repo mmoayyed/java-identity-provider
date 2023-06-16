@@ -39,6 +39,7 @@ import org.opensaml.saml.saml1.core.StatusMessage;
  */
 public class BuildSamlValidationFailureMessageAction extends AbstractOutgoingSamlMessageAction {
 
+    /** {@inheritDoc} */
     @Override
     @Nonnull protected Response buildSamlResponse(@Nonnull final ProfileRequestContext profileRequestContext)
             throws EventException {

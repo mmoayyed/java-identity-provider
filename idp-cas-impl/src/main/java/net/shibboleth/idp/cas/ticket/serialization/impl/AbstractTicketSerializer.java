@@ -89,25 +89,22 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
 
     /** JSON generator factory. */
     @SuppressWarnings("null")
-    @Nonnull
-    private final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory(null);
+    @Nonnull private final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory(null);
 
     /** JSON reader factory. */
     @SuppressWarnings("null")
-    @Nonnull
-    private final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
+    @Nonnull private final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
-    @Override
+    /** {@inheritDoc} */
     public void initialize() throws ComponentInitializationException {}
 
-    @Override
+    /** {@inheritDoc} */
     public boolean isInitialized() {
         return true;
     }
 
-    @Override
-    @Nonnull
-    public String serialize(@Nonnull final T ticket) throws IOException {
+    /** {@inheritDoc} */
+    @Nonnull public String serialize(@Nonnull final T ticket) throws IOException {
         final StringWriter buffer = new StringWriter(200);
         try (final JsonGenerator gen = generatorFactory.createGenerator(buffer)) {
             gen.writeStartObject()
@@ -143,9 +140,8 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
         return result;
     }
 
-    @Override
-    @Nonnull
-    public T deserialize(
+    /** {@inheritDoc} */
+    @Nonnull public T deserialize(
             final long version,
             @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key,
@@ -155,17 +151,23 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
         try (final JsonReader reader = readerFactory.createReader(new StringReader(value))) {
             final JsonObject to = reader.readObject();
             final String service = Constraint.isNotNull(to.getString(SERVICE_FIELD), "Service field was not present");
-            final Instant expiry = Instant.ofEpochMilli(Constraint.isNotNull(to.getJsonNumber(EXPIRATION_FIELD), "Expriation Field was not present").longValueExact());
+            final Instant expiry = Instant.ofEpochMilli(Constraint.isNotNull(to.getJsonNumber(EXPIRATION_FIELD),
+                    "Expriation Field was not present").longValueExact());
             assert expiry != null;
             final JsonObject so = to.getJsonObject(STATE_FIELD);
             final TicketState state;
             if (so != null) {
-                final String sessionField = Constraint.isNotNull(so.getString(SESSION_FIELD), "Session field was not present");
-                final String principalField = Constraint.isNotNull(so.getString(PRINCIPAL_FIELD), "Principal field was not present");
-                final JsonNumber authnInstantField = Constraint.isNotNull(so.getJsonNumber(AUTHN_INSTANT_FIELD), "Authn Instant field was not present");
+                final String sessionField =
+                        Constraint.isNotNull(so.getString(SESSION_FIELD), "Session field was not present");
+                final String principalField =
+                        Constraint.isNotNull(so.getString(PRINCIPAL_FIELD), "Principal field was not present");
+                final JsonNumber authnInstantField =
+                        Constraint.isNotNull(so.getJsonNumber(AUTHN_INSTANT_FIELD),
+                                "Authn Instant field was not present");
                 final Instant authnInstant = Instant.ofEpochMilli(authnInstantField.longValueExact());
                 assert authnInstant!=null;
-                final String authnMethodField = Constraint.isNotNull(so.getString(AUTHN_METHOD_FIELD), "Authn Method field was not present");
+                final String authnMethodField =
+                        Constraint.isNotNull(so.getString(AUTHN_METHOD_FIELD), "Authn Method field was not present");
                 state = new TicketState(
                         sessionField, 
                         principalField,
@@ -203,7 +205,7 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
      * 
      * @return the newly created ticket
      */
-    protected abstract T createTicket(
+    @Nonnull protected abstract T createTicket(
             @Nonnull final JsonObject o,
             @Nonnull final String id,
             @Nonnull final String service,
@@ -216,4 +218,5 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
      * @param ticket ticket
      */
     protected abstract void serializeInternal(@Nonnull final JsonGenerator generator, @Nonnull final T ticket);
+
 }

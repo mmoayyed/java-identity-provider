@@ -80,4 +80,5 @@ public class TicketValidationRequest extends ServiceTicketResponse {
     public void setPgtUrl(@Nullable final String url) {
         pgtUrl = StringSupport.trimOrNull(url);
     }
+
 }

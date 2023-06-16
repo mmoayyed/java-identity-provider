@@ -34,7 +34,9 @@ import org.opensaml.profile.context.ProfileRequestContext;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("rawtypes")
 public class GatewayLookupFunction implements Function<ProfileRequestContext,Boolean> {
+    
     /** Lookup strategy for protocol context. */
     @Nonnull private final Function<ProfileRequestContext,ProtocolContext> protocolContextFunction;
 

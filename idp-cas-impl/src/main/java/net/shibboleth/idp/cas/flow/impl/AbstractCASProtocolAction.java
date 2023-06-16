@@ -36,6 +36,7 @@ import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
+
 /**
  * Base class for CAS protocol actions.
  * 

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.protocol;
 
+import javax.annotation.Nullable;
+
 import org.opensaml.messaging.context.BaseContext;
 
 /**
@@ -28,18 +30,19 @@ import org.opensaml.messaging.context.BaseContext;
  * @param <ResponseType> response type
  */
 public final class ProtocolContext<RequestType, ResponseType> extends BaseContext {
+    
     /** CAS protocol request. */
-    private RequestType request;
+    @Nullable private RequestType request;
 
     /** CAS protocol response. */
-    private ResponseType response;
+    @Nullable private ResponseType response;
 
     /**
      * Get the CAS protocol request.
      * 
      * @return CAS protocol request
      */
-    public RequestType getRequest() {
+    @Nullable public RequestType getRequest() {
         return request;
     }
 
@@ -48,7 +51,7 @@ public final class ProtocolContext<RequestType, ResponseType> extends BaseContex
      *
      * @param req CAS protocol request.
      */
-    public void setRequest(final RequestType req) {
+    public void setRequest(@Nullable final RequestType req) {
         request = req;
     }
 
@@ -57,7 +60,7 @@ public final class ProtocolContext<RequestType, ResponseType> extends BaseContex
      * 
      * @return CAS protocol response
      */
-    public ResponseType getResponse() {
+    @Nullable public ResponseType getResponse() {
         return response;
     }
 
@@ -66,7 +69,7 @@ public final class ProtocolContext<RequestType, ResponseType> extends BaseContex
      *
      * @param resp CAS protocol response.
      */
-    public void setResponse(final ResponseType resp) {
+    public void setResponse(@Nullable final ResponseType resp) {
         response = resp;
     }
 }

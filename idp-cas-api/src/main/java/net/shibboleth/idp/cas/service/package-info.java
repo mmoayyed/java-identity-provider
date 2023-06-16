@@ -16,5 +16,7 @@
  */
 
 /** APIs related to CAS services. */
-
+@NonnullElements
 package net.shibboleth.idp.cas.service;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

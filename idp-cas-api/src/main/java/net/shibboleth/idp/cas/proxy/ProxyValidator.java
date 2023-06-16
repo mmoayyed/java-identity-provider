@@ -29,6 +29,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * @author Marvin S. Addison
  */
 public interface ProxyValidator {
+    
     /**
      * Validates the proxy callback endpoint.
      *
@@ -39,4 +40,5 @@ public interface ProxyValidator {
      */
     void validate(@Nonnull ProfileRequestContext profileRequestContext, @Nonnull URI proxyCallbackUri)
             throws GeneralSecurityException;
+
 }

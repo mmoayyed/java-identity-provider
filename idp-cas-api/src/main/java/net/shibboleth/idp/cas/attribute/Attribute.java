@@ -23,7 +23,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -37,7 +36,7 @@ public class Attribute {
     @Nonnull @NotEmpty private String name;
     
     /** String values. */
-    @Nonnull @NonnullElements private final Collection<String> values;
+    @Nonnull private final Collection<String> values;
     
     /**
      * Constructor.
@@ -67,7 +66,7 @@ public class Attribute {
      * 
      * @return string value collection
      */
-    @Nonnull @NonnullElements @Live public Collection<String> getValues() {
+    @Nonnull @Live public Collection<String> getValues() {
         return values;
     }
     

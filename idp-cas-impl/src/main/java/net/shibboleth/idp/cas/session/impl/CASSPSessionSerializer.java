@@ -53,6 +53,7 @@ public class CASSPSessionSerializer extends AbstractSPSessionSerializer {
         super(offset);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void doSerializeAdditional(@Nonnull final SPSession instance, @Nonnull final JsonGenerator generator) {
         if (!(instance instanceof CASSPSession)) {

@@ -73,6 +73,7 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
         casTicketService = Constraint.isNotNull(ticketService, "Ticket service cannot be null.");
     }
 
+    /** {@inheritDoc} */
     @Override
     @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {

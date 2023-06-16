@@ -33,20 +33,22 @@ import net.shibboleth.idp.cas.ticket.ServiceTicket;
 public class ServiceTicketSerializer extends AbstractTicketSerializer<ServiceTicket> {
 
     /** Renew field name. */
-    private static final String RENEW_FIELD = "r";
+    @Nonnull private static final String RENEW_FIELD = "r";
 
-
+    /** {@inheritDoc} */
     @Override
     protected void serializeInternal(@Nonnull final JsonGenerator generator, @Nonnull final ServiceTicket ticket) {
         generator.write(RENEW_FIELD, ticket.isRenew());
     }
 
+    /** {@inheritDoc} */
     @Override
-    protected ServiceTicket createTicket(
+    @Nonnull protected ServiceTicket createTicket(
             @Nonnull final JsonObject o,
             @Nonnull final String id,
             @Nonnull final String service,
             @Nonnull final Instant expiry) {
         return new ServiceTicket(id, service, expiry, o.getBoolean(RENEW_FIELD));
     }
+
 }

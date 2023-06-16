@@ -81,6 +81,7 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
         return service;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -103,6 +104,7 @@ public class BuildSAMLMetadataContextAction<RequestType,ResponseType>
         return true;
     }    
     
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
         

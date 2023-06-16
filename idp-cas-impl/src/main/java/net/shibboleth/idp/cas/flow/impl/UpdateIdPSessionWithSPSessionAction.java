@@ -100,6 +100,7 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
         relyingPartyIdLookupStrategy = Constraint.isNotNull(strategy, "RelyingParty ID lookup strategy cannot be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -121,6 +122,7 @@ public class UpdateIdPSessionWithSPSessionAction<RequestType,ResponseType>
         return true;
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 

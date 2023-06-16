@@ -16,5 +16,7 @@
  */
 
 /** APIs related to CAS tickets. */
-
+@NonnullElements
 package net.shibboleth.idp.cas.ticket;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

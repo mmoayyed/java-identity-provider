@@ -33,7 +33,6 @@ import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.shared.annotation.ConfigurationSetting;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -96,7 +95,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
+    @Nonnull @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<AuthnContextClassRefPrincipal> methods =
                 defaultAuthenticationContextsLookupStrategy.apply(profileRequestContext);
@@ -111,8 +110,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * 
      * @param contexts default authentication contexts to use
      */
-    public void setDefaultAuthenticationMethods(
-            @Nullable @NonnullElements final Collection<AuthnContextClassRefPrincipal> contexts) {
+    public void setDefaultAuthenticationMethods(@Nullable final Collection<AuthnContextClassRefPrincipal> contexts) {
         if (contexts != null) {
             defaultAuthenticationContextsLookupStrategy = FunctionSupport.constant(List.copyOf(contexts));
         } else {
@@ -131,7 +129,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
         final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
@@ -146,7 +144,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * 
      * @param flows   flow identifiers to use
      */
-    public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setAuthenticationFlows(@Nullable final Collection<String> flows) {
         if (flows != null) {
             authenticationFlowsLookupStrategy =
                     FunctionSupport.constant(Set.copyOf(StringSupport.normalizeStringCollection(flows)));
@@ -166,7 +164,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
@@ -180,7 +178,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setPostAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setPostAuthenticationFlows(@Nullable final Collection<String> flows) {
         if (flows != null) {
             postAuthenticationFlowsLookupStrategy =
                     FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(flows)));
@@ -306,4 +304,5 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     protected int getDefaultTicketLength() {
         return DEFAULT_TICKET_LENGTH;
     }
+
 }

@@ -53,6 +53,7 @@ public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidat
     /** CAS request. */
     @NonnullBeforeExec private TicketValidationRequest request;
 
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -70,6 +71,7 @@ public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidat
         return true;
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 

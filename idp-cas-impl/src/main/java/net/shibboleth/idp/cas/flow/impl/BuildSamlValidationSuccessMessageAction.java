@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.flow.impl;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -62,22 +63,19 @@ import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSamlMessageAction {
 
     /** Attribute namespace. */
-    private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
+    @Nonnull private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BuildSamlValidationSuccessMessageAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BuildSamlValidationSuccessMessageAction.class);
 
     /** Attribute value node builder. */
-    private final XMLObjectBuilder<XSString> attrValueBuilder;
+    @Nonnull private final XMLObjectBuilder<XSString> attrValueBuilder;
 
     /** SAML identifier generation strategy. */
-    @Nonnull
-    private final IdentifierGenerationStrategy identifierGenerationStrategy;
+    @Nonnull private final IdentifierGenerationStrategy identifierGenerationStrategy;
 
     /** IdP entity ID used to set issuer field of generated assertions. */
-    @Nonnull
-    private final String entityID;
-
+    @Nonnull private final String entityID;
 
     /**
      * Constructor.
@@ -95,6 +93,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
                 XSString.TYPE_NAME);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Nonnull protected Response buildSamlResponse(@Nonnull final ProfileRequestContext profileRequestContext)
             throws EventException {
@@ -164,7 +163,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
      * @param identifier subject identifier
      * @return new subject
      */
-    @Nonnull private Subject newSubject(final String identifier) {
+    @Nonnull private Subject newSubject(@Nullable final String identifier) {
         final SubjectConfirmation confirmation = newSAMLObject(
                 SubjectConfirmation.class, SubjectConfirmation.DEFAULT_ELEMENT_NAME);
         final ConfirmationMethod method = newSAMLObject(
@@ -187,8 +186,9 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
      * @param principal authenticated principal
      * @return new authentication statement
      */
-    private AuthenticationStatement newAuthenticationStatement(
-            final Instant authnInstant, final String authnMethod, final String principal) {
+    @Nonnull private AuthenticationStatement newAuthenticationStatement(
+            @Nullable final Instant authnInstant, @Nullable final String authnMethod,
+            @Nullable final String principal) {
         final AuthenticationStatement authnStatement = newSAMLObject(
                 AuthenticationStatement.class, AuthenticationStatement.DEFAULT_ELEMENT_NAME);
         authnStatement.setAuthenticationInstant(authnInstant);
@@ -203,7 +203,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
      * @param value attribute value
      * @return new attribute value
      */
-    private XSString newAttributeValue(final String value) {
+    @Nonnull private XSString newAttributeValue(@Nullable final String value) {
         final XSString stringValue = attrValueBuilder.buildObject(
                 AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
         stringValue.setValue(value);

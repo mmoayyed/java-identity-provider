@@ -16,5 +16,7 @@
  */
 
 /** CAS protocol proxy implementations. */
-
+@NonnullElements
 package net.shibboleth.idp.cas.proxy.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

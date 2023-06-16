@@ -44,6 +44,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class InitializeLoginAction extends AbstractCASProtocolAction<ServiceTicketRequest, ServiceTicketResponse> {
 
+    /** {@inheritDoc} */
     @Override
     @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
@@ -86,4 +87,5 @@ public class InitializeLoginAction extends AbstractCASProtocolAction<ServiceTick
 
         return ActionSupport.buildProceedEvent(this);
     }
+
 }

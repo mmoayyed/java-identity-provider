@@ -62,4 +62,5 @@ public class ProxyTicketRequest {
     @Nonnull public String getTargetService() {
         return proxyTargetService;
     }
+
 }

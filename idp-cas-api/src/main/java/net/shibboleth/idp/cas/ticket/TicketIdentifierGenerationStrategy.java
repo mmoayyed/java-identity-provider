@@ -47,20 +47,16 @@ import org.cryptacular.generator.RandomIdGenerator;
 public class TicketIdentifierGenerationStrategy implements IdentifierGenerationStrategy {
 
     /** Generator for random part of the ticket. */
-    private final IdGenerator idGenerator;
+    @Nonnull private final IdGenerator idGenerator;
 
     /** Ticket prefix. */
-    @Nonnull
-    @NotEmpty
-    private String ticketPrefix;
+    @Nonnull @NotEmpty private String ticketPrefix;
 
     /** Ticket suffix. */
-    @Nullable
-    private String ticketSuffix;
+    @Nullable private String ticketSuffix;
 
     /** Number of characters in random part of generated ticket. */
-    @Positive
-    private int ticketLength;
+    @Positive private int ticketLength;
 
 
     /**
@@ -91,9 +87,9 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    @Nonnull
-    public String generateIdentifier() {
+    @Nonnull public String generateIdentifier() {
         final StringBuilder builder = new StringBuilder(ticketLength * 2);
         builder.append(ticketPrefix).append('-');
         builder.append(System.currentTimeMillis()).append('-');
@@ -106,9 +102,9 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
-    @Nonnull
-    public String generateIdentifier(final boolean xmlSafe) {
+    @Nonnull public String generateIdentifier(final boolean xmlSafe) {
         return generateIdentifier();
     }
 
@@ -118,11 +114,12 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
      * @param s URL
      * @return whether the URL is safe
      */
-    private static boolean isUrlSafe(final String s) {
+    private static boolean isUrlSafe(@Nonnull final String s) {
         try {
             return URLEncoder.encode(s, StandardCharsets.US_ASCII.name()).equals(s);
         } catch (final Exception e) {
             return false;
         }
     }
+
 }

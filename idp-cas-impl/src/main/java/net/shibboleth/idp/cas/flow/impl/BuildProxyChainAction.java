@@ -71,6 +71,7 @@ public class BuildProxyChainAction
         casTicketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
     
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -88,6 +89,7 @@ public class BuildProxyChainAction
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 

@@ -16,5 +16,7 @@
  */
 
 /** CAS protocol flow implementations. */
-
+@NonnullElements
 package net.shibboleth.idp.cas.flow.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

@@ -119,6 +119,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
         validateIdPSessionPredicate = Constraint.isNotNull(predicate, "Session validation condition cannot be null");
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -159,6 +160,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
         return proxyGrantingTicket;
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
@@ -172,7 +174,8 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
             try {
                 log.debug("{} Attempting to retrieve session {}", getLogPrefix(), proxyGrantingTicket.getSessionId());
                 session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(
-                        Constraint.isNotNull(proxyGrantingTicket.getSessionId(), "ProxyGrantingTicket session id was null"))));
+                        Constraint.isNotNull(proxyGrantingTicket.getSessionId(),
+                                "ProxyGrantingTicket session id was null"))));
             } catch (final ResolverException e) {
                 log.warn("{} IdPSession resolution error: {}", getLogPrefix(), e);
             }

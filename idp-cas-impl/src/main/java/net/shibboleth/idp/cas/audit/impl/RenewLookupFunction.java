@@ -34,6 +34,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("rawtypes")
 public class RenewLookupFunction implements Function<ProfileRequestContext, Boolean> {
     
     /** Lookup strategy for protocol context. */

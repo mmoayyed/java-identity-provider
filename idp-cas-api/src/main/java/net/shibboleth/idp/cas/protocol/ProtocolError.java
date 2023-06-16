@@ -138,4 +138,5 @@ public enum ProtocolError {
         attributes.put("detailCode", errorDetailCode);
         return new Event(source, name(), attributes);
     }
+
 }

@@ -116,6 +116,7 @@ public class ValidateProxyCallbackAction
         return ticket;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -146,11 +147,12 @@ public class ValidateProxyCallbackAction
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
-        @Nonnull final IdentifierGenerationStrategy pgtGenerator = securityConfig.getIdGenerator();
-        @Nonnull final IdentifierGenerationStrategy pgtIOUGenerator = validateConfig.getPGTIOUGenerator(profileRequestContext);
+        final IdentifierGenerationStrategy pgtGenerator = securityConfig.getIdGenerator();
+        final IdentifierGenerationStrategy pgtIOUGenerator = validateConfig.getPGTIOUGenerator(profileRequestContext);
         final Instant expiration = Instant.now().plus(validateConfig.getTicketValidityPeriod(profileRequestContext));
         assert expiration!=null;
         @Nonnull final String pgtId = pgtGenerator.generateIdentifier();

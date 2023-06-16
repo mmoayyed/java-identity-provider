@@ -49,8 +49,7 @@ public class SimpleTicketService extends AbstractTicketService {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    public ServiceTicket createServiceTicket(
+    @Nonnull public ServiceTicket createServiceTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
             @Nonnull final String service,
@@ -69,16 +68,14 @@ public class SimpleTicketService extends AbstractTicketService {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable
-    public ServiceTicket removeServiceTicket(@Nonnull final String id) {
+    @Nullable public ServiceTicket removeServiceTicket(@Nonnull final String id) {
         Constraint.isNotNull(id, "Id cannot be null");
         return delete(id, ServiceTicket.class);
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    public ProxyTicket createProxyTicket(
+    @Nonnull public ProxyTicket createProxyTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
             @Nonnull final ProxyGrantingTicket pgt,
@@ -96,8 +93,8 @@ public class SimpleTicketService extends AbstractTicketService {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable
-    public ProxyTicket removeProxyTicket(final @Nonnull String id) {
+    @Nullable public ProxyTicket removeProxyTicket(final @Nonnull String id) {
         return delete(id, ProxyTicket.class);
     }
+
 }

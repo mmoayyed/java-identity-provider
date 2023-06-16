@@ -28,6 +28,8 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.shared.annotation.constraint.Live;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -79,7 +81,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    public String getEntityID() {
+    @Nullable public String getEntityID() {
         return svc.getName();
     }
 
@@ -93,7 +95,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    public String getID() {
+    @Nullable public String getID() {
         return null;
     }
 
@@ -107,7 +109,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    public Extensions getExtensions() {
+    @Nullable public Extensions getExtensions() {
         return null;
     }
 
@@ -163,7 +165,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    public AffiliationDescriptor getAffiliationDescriptor() {
+    @Nullable public AffiliationDescriptor getAffiliationDescriptor() {
         return null;
     }
 
@@ -255,8 +257,7 @@ public class ServiceEntityDescriptor extends AbstractXMLObject implements Entity
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public List<XMLObject> getOrderedChildren() {
+    @Nullable @Unmodifiable @NotLive public List<XMLObject> getOrderedChildren() {
         return null;
     }
 

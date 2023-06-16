@@ -69,4 +69,5 @@ public class AbstractProtocolResponse {
     public void setErrorDetail(@Nonnull final String code) {
         errorDetail = code;
     }
+
 }

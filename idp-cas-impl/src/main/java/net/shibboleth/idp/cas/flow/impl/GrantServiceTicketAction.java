@@ -263,7 +263,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      * 
      * @return IdP session
      */
-    @Nullable private IdPSession getIdPSession(final ProfileRequestContext prc) {
+    @Nullable private IdPSession getIdPSession(@Nonnull final ProfileRequestContext prc) {
         final SessionContext sessionContext = sessionContextFunction.apply(prc);
         return sessionContext != null ? sessionContext.getIdPSession() : null;
     }
@@ -274,7 +274,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      * @param prc profile request context.
      * @return Principal name.
      */
-    @Nonnull private String getPrincipalName(final ProfileRequestContext prc) {
+    @Nonnull private String getPrincipalName(@Nonnull final ProfileRequestContext prc) {
         final String principal = principalLookupFunction.apply(prc);
         if (principal == null ) {
             throw new IllegalStateException("Cannot determine IdP subject principal name.");

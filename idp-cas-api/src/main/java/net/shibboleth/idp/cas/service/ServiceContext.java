@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
  * @author Marvin S. Addison
  */
 public final class ServiceContext extends BaseContext {
+    
     /** Service metadata held by context. */
     @Nonnull private final Service serviceMetadata;
 
@@ -50,4 +51,5 @@ public final class ServiceContext extends BaseContext {
     @Nonnull public Service getService() {
         return serviceMetadata;
     }
+
 }

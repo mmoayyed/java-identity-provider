@@ -52,6 +52,7 @@ public class CheckProxyAuthorizationAction<RequestType,ResponseType>
     /** CAS service. */
     @NonnullBeforeExec private Service service;
     
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -68,6 +69,7 @@ public class CheckProxyAuthorizationAction<RequestType,ResponseType>
         return true;
     }    
     
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 

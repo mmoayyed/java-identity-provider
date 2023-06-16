@@ -36,6 +36,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("rawtypes")
 public class TicketLookupFunction implements Function<ProfileRequestContext, String> {
     
     /** Lookup strategy for protocol context. */
@@ -68,12 +69,12 @@ public class TicketLookupFunction implements Function<ProfileRequestContext, Str
         final Object request = protocolContext.getRequest();
         final Object response = protocolContext.getResponse();
         final String ticket;
-        if (response instanceof ServiceTicketResponse) {
-            ticket = ((ServiceTicketResponse) response).getTicket();
-        } else if (response instanceof ProxyTicketResponse) {
-            ticket = ((ProxyTicketResponse) response).getPt();
-        } else if (request instanceof TicketValidationRequest) {
-            ticket = ((TicketValidationRequest) request).getTicket();
+        if (response instanceof ServiceTicketResponse resp) {
+            ticket = resp.getTicket();
+        } else if (response instanceof ProxyTicketResponse resp) {
+            ticket = resp.getPt();
+        } else if (request instanceof TicketValidationRequest req) {
+            ticket = req.getTicket();
         } else {
             ticket = null;
         }

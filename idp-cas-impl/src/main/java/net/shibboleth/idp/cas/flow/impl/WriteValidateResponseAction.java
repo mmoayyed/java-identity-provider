@@ -59,6 +59,7 @@ public class WriteValidateResponseAction extends
         success = successFlag;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -75,6 +76,7 @@ public class WriteValidateResponseAction extends
         return true;
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 

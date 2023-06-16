@@ -35,8 +35,7 @@ public class ProxyGrantingTicket extends Ticket {
     @Nonnull private String proxyCallbackUrl;
 
     /** The ID of the parent proxy-granting ticket. */
-    @Nullable
-    private String parentPgTicketId;
+    @Nullable private String parentPgTicketId;
 
     /**
      * Creates a proxy-granting ticket with the given values.
@@ -81,6 +80,7 @@ public class ProxyGrantingTicket extends Ticket {
         return getParentId() == null;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected Ticket newInstance(@Nonnull final String newId) {
         return new ProxyGrantingTicket(

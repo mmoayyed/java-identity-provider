@@ -36,6 +36,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("rawtypes")
 public class StatusCodeLookupFunction implements Function<ProfileRequestContext, String> {
 
     /** Synthetic success result code. */
@@ -68,9 +69,9 @@ public class StatusCodeLookupFunction implements Function<ProfileRequestContext,
         if (protocolContext == null || protocolContext.getRequest() ==  null) {
             return null;
         }
-        final Object response = protocolContext.getResponse();
-        if (response instanceof AbstractProtocolResponse) {
-            final String code = ((AbstractProtocolResponse) response).getErrorCode();
+        
+        if (protocolContext.getResponse() instanceof AbstractProtocolResponse resp) {
+            final String code = resp.getErrorCode();
             return code == null ? SUCCESS_CODE : code;
         }
         return null;

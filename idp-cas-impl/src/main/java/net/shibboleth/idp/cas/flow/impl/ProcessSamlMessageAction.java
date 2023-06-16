@@ -37,7 +37,6 @@ import net.shibboleth.idp.cas.protocol.SamlParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -58,6 +57,7 @@ public class ProcessSamlMessageAction extends
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessSamlMessageAction.class);
 
+    /** {@inheritDoc} */
     @Override
     @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
@@ -71,7 +71,7 @@ public class ProcessSamlMessageAction extends
         }
 
         // Extract ticket from SAML request
-        @Nonnull final MessageContext msgContext = Constraint.isNotNull(profileRequestContext.getInboundMessageContext(), "no inbound Context");
+        final MessageContext msgContext = profileRequestContext.ensureInboundMessageContext();
         String ticket = null;
         final Object message = msgContext.getMessage();
         if (message != null && message instanceof Request) {

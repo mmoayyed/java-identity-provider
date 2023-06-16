@@ -18,5 +18,7 @@
 /**
  * CAS protocol configuration implementations.
  */
-
+@NonnullElements
 package net.shibboleth.idp.cas.config;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

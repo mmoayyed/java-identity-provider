@@ -18,7 +18,6 @@
 package net.shibboleth.idp.cas.protocol;
 
 import net.shibboleth.idp.cas.attribute.Attribute;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -44,13 +43,13 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
     @Nullable private String userName;
 
     /** User attributes. */
-    @Nonnull @NonnullElements private final List<Attribute> attributes;
+    @Nonnull private final List<Attribute> attributes;
 
     /** Proxy granting ticket IOU. */
     @Nullable private String pgtIou;
 
     /** Proxies traversed. */
-    @Nonnull @NonnullElements private final List<String> proxies;
+    @Nonnull private final List<String> proxies;
 
     /** Constructor. */
     public TicketValidationResponse() {
@@ -81,10 +80,8 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
      * 
      * @return immutable collection of user attributes
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<Attribute> getAttributes() {
-        final Collection<Attribute> result = CollectionSupport.copyToList(attributes);
-        assert result!=null;
-        return result;
+    @Nonnull @NotLive @Unmodifiable public Collection<Attribute> getAttributes() {
+        return CollectionSupport.copyToList(attributes);
     }
 
     /**
@@ -119,10 +116,8 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
      * 
      * @return immutable list of proxies traversed in order of most recent to last recent
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getProxies() {
-        final List<String> result =  CollectionSupport.copyToList(proxies);
-        assert result!=null;
-        return result;
+    @Nonnull @NotLive @Unmodifiable public List<String> getProxies() {
+        return  CollectionSupport.copyToList(proxies);
     }
 
     /**
@@ -133,4 +128,5 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
     public void addProxy(@Nonnull final String proxy) {
         proxies.add(proxy);
     }
+
 }

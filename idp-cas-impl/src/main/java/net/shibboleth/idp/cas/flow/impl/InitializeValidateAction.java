@@ -46,6 +46,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class InitializeValidateAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
+    /** {@inheritDoc} */
     @Override
     @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {

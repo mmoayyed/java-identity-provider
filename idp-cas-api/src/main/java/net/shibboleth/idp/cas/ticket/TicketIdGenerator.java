@@ -31,6 +31,6 @@ public interface TicketIdGenerator {
      *
      * @return Ticket identifier.
      */
-    @Nonnull
-    String generate();
+    @Nonnull String generate();
+
 }

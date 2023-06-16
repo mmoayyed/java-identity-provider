@@ -57,4 +57,5 @@ public class ProxyConfiguration extends AbstractProtocolConfiguration {
     protected int getDefaultTicketLength() {
         return DEFAULT_TICKET_LENGTH;
     }
+
 }

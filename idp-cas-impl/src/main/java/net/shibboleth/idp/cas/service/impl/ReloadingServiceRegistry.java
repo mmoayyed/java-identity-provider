@@ -43,7 +43,7 @@ public class ReloadingServiceRegistry extends AbstractIdentifiableInitializableC
     @Nonnull private final Logger log = LoggerFactory.getLogger(ReloadingServiceRegistry.class);
 
     /** The service that manages the reloading. */
-    private final ReloadableService<ServiceRegistry> service;
+    @Nonnull private final ReloadableService<ServiceRegistry> service;
 
     /**
      * Creates a new instance.
@@ -55,7 +55,7 @@ public class ReloadingServiceRegistry extends AbstractIdentifiableInitializableC
         service = Constraint.isNotNull(delegate, "ReloadableService cannot be null");
     }
 
-    @Override
+    /** {@inheritDoc} */
     @Nullable public Service lookup(@Nonnull final String serviceURL) {
         try (final ServiceableComponent<ServiceRegistry> component = service.getServiceableComponent()) {
             return component.getComponent().lookup(serviceURL);

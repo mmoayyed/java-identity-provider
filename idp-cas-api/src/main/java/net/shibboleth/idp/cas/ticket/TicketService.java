@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
  * @author Marvin S. Addison
  */
 public interface TicketService {
+    
     /**
      * Creates and stores a ticket for the given service.
      *
@@ -39,8 +40,7 @@ public interface TicketService {
      *
      * @return Created service ticket.
      */
-    @Nonnull
-    ServiceTicket createServiceTicket(
+    @Nonnull ServiceTicket createServiceTicket(
             @Nonnull String id,
             @Nonnull Instant expiry,
             @Nonnull String service,
@@ -54,8 +54,7 @@ public interface TicketService {
      *
      * @return Removed ticket or null if not found.
      */
-    @Nullable
-    ServiceTicket removeServiceTicket(@Nonnull String id);
+    @Nullable ServiceTicket removeServiceTicket(@Nonnull String id);
 
     /**
      * Creates a top-level proxy-granting ticket from a service ticket.
@@ -67,8 +66,7 @@ public interface TicketService {
      *
      * @return Created proxy-granting ticket.
      */
-    @Nonnull
-    ProxyGrantingTicket createProxyGrantingTicket(
+    @Nonnull ProxyGrantingTicket createProxyGrantingTicket(
             @Nonnull String id,
             @Nonnull Instant expiry,
             @Nonnull ServiceTicket serviceTicket,
@@ -85,8 +83,7 @@ public interface TicketService {
      *
      * @return Created proxy-granting ticket.
      */
-    @Nonnull
-    ProxyGrantingTicket createProxyGrantingTicket(
+    @Nonnull ProxyGrantingTicket createProxyGrantingTicket(
             @Nonnull String id,
             @Nonnull Instant expiry,
             @Nonnull ProxyTicket proxyTicket,
@@ -99,8 +96,7 @@ public interface TicketService {
      *
      * @return Proxy-granting ticket or null if not found.
      */
-    @Nullable
-    ProxyGrantingTicket fetchProxyGrantingTicket(@Nonnull String id);
+    @Nullable ProxyGrantingTicket fetchProxyGrantingTicket(@Nonnull String id);
 
     /**
      * Removes the proxy-granting ticket with the given identifier.
@@ -109,8 +105,7 @@ public interface TicketService {
      *
      * @return Removed ticket or null if not found.
      */
-    @Nullable
-    ProxyGrantingTicket removeProxyGrantingTicket(@Nonnull String id);
+    @Nullable ProxyGrantingTicket removeProxyGrantingTicket(@Nonnull String id);
 
     /**
      * Creates and stores a proxy ticket for the given service.
@@ -122,8 +117,7 @@ public interface TicketService {
      *
      * @return Created proxy ticket.
      */
-    @Nonnull
-    ProxyTicket createProxyTicket(
+    @Nonnull ProxyTicket createProxyTicket(
             @Nonnull String id,
             @Nonnull Instant expiry,
             @Nonnull ProxyGrantingTicket pgt,
@@ -136,6 +130,6 @@ public interface TicketService {
      *
      * @return Removed ticket or null if not found.
      */
-    @Nullable
-    ProxyTicket removeProxyTicket(@Nonnull String id);
+    @Nullable ProxyTicket removeProxyTicket(@Nonnull String id);
+
 }

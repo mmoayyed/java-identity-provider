@@ -107,9 +107,10 @@ public class ServiceTicketResponse {
      * 
      * @return URL that may be used to redirect to a service with a granted ticket
      */
-    public String getRedirectUrl() {
+    @Nonnull public String getRedirectUrl() {
         final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(serviceURL);
         builder.queryParam(getTicketParameterName(), serviceTicket);
         return builder.build().toUriString();
     }
+
 }

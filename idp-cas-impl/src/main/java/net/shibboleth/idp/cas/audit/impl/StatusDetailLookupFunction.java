@@ -35,6 +35,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
  *
  * @author Marvin S. Addison
  */
+@SuppressWarnings("rawtypes")
 public class StatusDetailLookupFunction implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for protocol context. */

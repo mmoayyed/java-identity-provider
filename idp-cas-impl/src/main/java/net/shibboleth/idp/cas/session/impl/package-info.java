@@ -16,5 +16,7 @@
  */
 
 /** CAS protocol session implementations. */
-
+@NonnullElements
 package net.shibboleth.idp.cas.session.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

@@ -82,6 +82,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
         configLookupFunction = new ConfigLookupFunction<>(ValidateConfiguration.class);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -104,6 +105,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
         return true;
     }
     
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 

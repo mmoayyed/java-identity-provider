@@ -16,5 +16,7 @@
  */
 
 /** CAS protocol audit implementations. */
-
+@NonnullElements
 package net.shibboleth.idp.cas.audit.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

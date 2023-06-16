@@ -18,5 +18,7 @@
 /**
  * Implementation classes for CAS attribute support. 
  */
-
+@NonnullElements
 package net.shibboleth.idp.cas.attribute.transcoding.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

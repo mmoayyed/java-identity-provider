@@ -54,6 +54,7 @@ public class PublishProtocolMessageAction<RequestType,ResponseType>
         requestFlag = isRequest;
     }
 
+    /** {@inheritDoc} */
     @Override
     @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {

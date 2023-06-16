@@ -37,7 +37,6 @@ import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.proxy.ProxyValidator;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
@@ -100,7 +99,7 @@ public class HttpClientProxyValidator implements ProxyValidator {
     @Nonnull private final HttpClientSecurityParameters securityParameters;
 
     /** List of HTTP response codes permitted for successful proxy callback. */
-    @NotEmpty @NonnullElements private Set<Integer> allowedResponseCodes;
+    @NotEmpty private Set<Integer> allowedResponseCodes;
 
     /**
      * 
@@ -121,9 +120,8 @@ public class HttpClientProxyValidator implements ProxyValidator {
      *
      * @param responseCodes One or more HTTP response codes.
      */
-    public void setAllowedResponseCodes(@NotEmpty @NonnullElements final Set<Integer> responseCodes) {
+    public void setAllowedResponseCodes(@Nonnull @NotEmpty final Set<Integer> responseCodes) {
         Constraint.isNotEmpty(responseCodes, "Response codes cannot be null or empty.");
-        Constraint.noNullItems(responseCodes.toArray(), "Response codes cannot contain null elements.");
         allowedResponseCodes = CollectionSupport.copyToSet(responseCodes);
     }
 

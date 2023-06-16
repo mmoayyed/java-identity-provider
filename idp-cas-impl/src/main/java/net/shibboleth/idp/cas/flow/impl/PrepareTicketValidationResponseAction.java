@@ -55,7 +55,6 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -142,6 +141,7 @@ public class PrepareTicketValidationResponseAction extends
                 CollectionSupport.singletonMap(AttributeTranscoderRegistry.PROP_TRANSCODER, transcoder));
     }
     
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -176,7 +176,8 @@ public class PrepareTicketValidationResponseAction extends
         return true;
     }    
     
-    // Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity OFF
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
@@ -234,9 +235,12 @@ public class PrepareTicketValidationResponseAction extends
             return;
         }
         
-        encodedAttributes.forEach(a -> {assert a!=null; ticketValidationResponse.addAttribute(a);});
+        encodedAttributes.forEach(a -> {
+            assert a!=null; ticketValidationResponse.addAttribute(a);
+            }
+        );
     }
-    // Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Access the registry of transcoding rules to transform the input attribute into a target type.
@@ -250,7 +254,7 @@ public class PrepareTicketValidationResponseAction extends
      */
     protected int encodeAttribute(@Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final IdPAttribute attribute,
-            @Nonnull @NonnullElements @Live final Collection<Attribute> results) {
+            @Nonnull @Live final Collection<Attribute> results) {
         
         Collection<TranscodingRule> transcodingRules = registry.getTranscodingRules(attribute, Attribute.class);
         if (transcodingRules.isEmpty()) {

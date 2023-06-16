@@ -48,6 +48,7 @@ import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
+
 /**
  * CAS service registry implementation that queries SAML metadata for a CAS service given a CAS service URL using
  * the following strategy. A {@link MetadataResolver} is queried for an {@link EntityDescriptor} that meets the
@@ -81,23 +82,22 @@ import net.shibboleth.shared.resolver.ResolverException;
 public class MetadataServiceRegistry implements ServiceRegistry {
 
     /** URI identifying an ACS endpoint that requests CAS service tickets. */
-    public static final String LOGIN_BINDING = LoginConfiguration.PROFILE_ID;
+    @Nonnull public static final String LOGIN_BINDING = LoginConfiguration.PROFILE_ID;
 
     /** URI identifying a CAS SLO endpoint. */
-    public static final String LOGOUT_BINDING = AbstractProtocolConfiguration.PROTOCOL_URI + "/logout";
+    @Nonnull public static final String LOGOUT_BINDING = AbstractProtocolConfiguration.PROTOCOL_URI + "/logout";
 
     /** URN marking that SLO endpoint is dynamic based on service ticket URL. */
-    public static final String LOGOUT_LOCATION= "urn:mace:shibboleth:profile:CAS:logout";
+    @Nonnull public static final String LOGOUT_LOCATION= "urn:mace:shibboleth:profile:CAS:logout";
 
     /** URI identifying a CAS proxy callback endoint. */
-    public static final String PROXY_BINDING = ProxyConfiguration.PROFILE_ID;
+    @Nonnull public static final String PROXY_BINDING = ProxyConfiguration.PROFILE_ID;
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(MetadataServiceRegistry.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(MetadataServiceRegistry.class);
 
     /** SAML metadata resolver. */
-    @Nonnull
-    private final RoleDescriptorResolver metadataResolver;
+    @Nonnull private final RoleDescriptorResolver metadataResolver;
 
 
     /**
@@ -109,9 +109,8 @@ public class MetadataServiceRegistry implements ServiceRegistry {
         metadataResolver = resolver;
     }
 
-    @Nullable
-    @Override
-    public Service lookup(final @Nonnull String serviceURL) {
+    /** {@inheritDoc} */
+    @Nullable public Service lookup(final @Nonnull String serviceURL) {
         try {
             final RoleDescriptor role = metadataResolver.resolveSingle(criteria(serviceURL));
             if (role instanceof SPSSODescriptor) {
@@ -131,8 +130,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
      *
      * @return Metadata resolver criteria set.
      */
-    @Nonnull
-    protected CriteriaSet criteria(@Nonnull final String serviceURL) {
+    @Nonnull protected CriteriaSet criteria(@Nonnull final String serviceURL) {
         final AssertionConsumerService loginACS = new AssertionConsumerServiceBuilder().buildObject();
         loginACS.setBinding(LOGIN_BINDING);
         loginACS.setLocation(serviceURL);
@@ -152,8 +150,7 @@ public class MetadataServiceRegistry implements ServiceRegistry {
      *
      * @return CAS service created from inputs.
      */
-    @Nonnull
-    protected Service create(@Nonnull final String serviceURL, @Nonnull final SPSSODescriptor role) {
+    @Nonnull protected Service create(@Nonnull final String serviceURL, @Nonnull final SPSSODescriptor role) {
         
         final EntityDescriptor entity = (EntityDescriptor) role.getParent();
         assert entity!=null;
@@ -212,4 +209,5 @@ public class MetadataServiceRegistry implements ServiceRegistry {
             return LOGIN_BINDING.equals(endpoint.getBinding());
         }
     }
+
 }

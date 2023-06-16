@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.protocol;
 
+import javax.annotation.Nonnull;
+
 /**
  * Protocol parameter name enumeration.
  *
@@ -64,7 +66,8 @@ public enum ProtocolParam {
      *
      * @return Enumeration name with first letter lower-cased.
      */
-    public String id() {
-        return this.name().substring(0, 1).toLowerCase() + this.name().substring(1);
+    @Nonnull public String id() {
+        return name().substring(0, 1).toLowerCase() + name().substring(1);
     }
+
 }

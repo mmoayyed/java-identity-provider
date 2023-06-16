@@ -36,7 +36,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.transcoding.AbstractAttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
@@ -188,7 +187,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
     @Nonnull protected IdPAttribute buildIdPAttribute(
             @Nullable final ProfileRequestContext profileRequestContext, @Nonnull final Attribute attribute,
             @Nonnull final TranscodingRule rule,
-            @Nonnull @NonnullElements final List<IdPAttributeValue> attributeValues)
+            @Nonnull final List<IdPAttributeValue> attributeValues)
                     throws AttributeDecodingException {
         
         final String id = rule.get(AttributeTranscoderRegistry.PROP_ID, String.class);

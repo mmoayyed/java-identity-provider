@@ -28,4 +28,5 @@ public enum SamlParam {
 
     /** SAMLart parameter used to convey service ticket. */
     SAMLart
+
 }

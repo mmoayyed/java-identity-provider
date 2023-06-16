@@ -39,10 +39,10 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 public class DefaultServiceComparator implements Comparator<String> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(DefaultServiceComparator.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultServiceComparator.class);
 
     /** Ignored patterns in path part of URL. */
-    private final Pattern[] ignoredPatterns;
+    @Nonnull private final Pattern[] ignoredPatterns;
 
     /** Creates a new instance that ignores <em>;jsessionid=value</em>. */
     public DefaultServiceComparator() {
@@ -62,8 +62,17 @@ public class DefaultServiceComparator implements Comparator<String> {
         }
     }
 
-    @Override
+    /** {@inheritDoc} */
     public int compare(final String a, final String b) {
+        if (a == null || b == null) {
+            if (a == null && b == null) {
+                return 0;
+            } else if (a == null) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
         return stripPathParameters(a).compareToIgnoreCase(stripPathParameters(b));
     }
 
@@ -74,7 +83,7 @@ public class DefaultServiceComparator implements Comparator<String> {
      *
      * @return URI with named path parameters and any associated values removed.
      */
-    private String stripPathParameters(final String uriString) {
+    private String stripPathParameters(@Nonnull final String uriString) {
         try {
             final URI uri = new URI(uriString);
             String path = uri.getPath();
@@ -88,4 +97,5 @@ public class DefaultServiceComparator implements Comparator<String> {
             return uriString;
         }
     }
+
 }

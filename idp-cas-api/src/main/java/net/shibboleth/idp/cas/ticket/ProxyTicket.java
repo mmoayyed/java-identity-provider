@@ -31,8 +31,7 @@ import net.shibboleth.shared.logic.Constraint;
 public class ProxyTicket extends Ticket {
 
     /** Proxy-granting ticket ID used to create ticket. */
-    @Nonnull
-    private final String pgTicketId;
+    @Nonnull private final String pgTicketId;
 
     /**
      * Creates a new authenticated ticket with an identifier, service, and expiration date.
@@ -60,6 +59,7 @@ public class ProxyTicket extends Ticket {
         return pgTicketId;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected Ticket newInstance(@Nonnull final String newId) {
         return new ProxyTicket(newId, getService(), getExpirationInstant(), pgTicketId);

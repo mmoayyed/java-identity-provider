@@ -49,6 +49,7 @@ public class PopulateProtocolErrorAction<RequestType>
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateProtocolErrorAction.class);
     
+    /** {@inheritDoc} */
     @Override
     @Nullable protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {

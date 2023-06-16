@@ -34,13 +34,12 @@ import net.shibboleth.shared.logic.Constraint;
 public class ProxyGrantingTicketSerializer extends AbstractTicketSerializer<ProxyGrantingTicket> {
 
     /** Parent PGT ID field name. */
-    private static final String PARENT_FIELD = "parent";
+    @Nonnull private static final String PARENT_FIELD = "parent";
 
     /** PGT URL field name. */
-    private static final String PGTURL_FIELD = "pgtUrl";
+    @Nonnull private static final String PGTURL_FIELD = "pgtUrl";
 
-
-
+    /** {@inheritDoc} */
     @Override
     protected void serializeInternal(@Nonnull final JsonGenerator generator,
             @Nonnull final ProxyGrantingTicket ticket) {
@@ -50,8 +49,9 @@ public class ProxyGrantingTicketSerializer extends AbstractTicketSerializer<Prox
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    protected ProxyGrantingTicket createTicket(
+    @Nonnull protected ProxyGrantingTicket createTicket(
             @Nonnull final JsonObject o,
             @Nonnull final String id,
             @Nonnull final String service,
@@ -62,4 +62,5 @@ public class ProxyGrantingTicketSerializer extends AbstractTicketSerializer<Prox
                 Constraint.isNotNull(o.getString(PGTURL_FIELD), "pgtUrl was not present"),
                 o.getString(PARENT_FIELD, null));
     }
+
 }

@@ -31,13 +31,12 @@ import net.shibboleth.shared.primitive.StringSupport;
  * @author Marvin S. Addison
  */
 public class ServiceDefinition {
+    
     /** Service identifier. */
-    @Nonnull
-    private final String id;
+    @Nonnull private final String id;
 
     /** Logical group to which service belongs. */
-    @Nullable
-    private String group;
+    @Nullable private String group;
 
     /** Proxy authorization flag. */
     private boolean authorizedToProxy;
@@ -119,6 +118,7 @@ public class ServiceDefinition {
         this.singleLogoutParticipant = wantsSLO;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -129,13 +129,16 @@ public class ServiceDefinition {
         return o instanceof ServiceDefinition && id.equals(((ServiceDefinition) o).getId());
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return 97 + id.hashCode();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return id;
     }
+
 }

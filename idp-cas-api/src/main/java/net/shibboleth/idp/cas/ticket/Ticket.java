@@ -33,20 +33,16 @@ import net.shibboleth.shared.logic.Constraint;
 public class Ticket {
 
     /** Ticket identifier. */
-    @Nonnull
-    private final String ticketId;
+    @Nonnull private final String ticketId;
 
     /** Service/relying party that requested the ticket. */
-    @Nonnull
-    private final String ticketService;
+    @Nonnull private final String ticketService;
 
     /** Expiration instant. */
-    @Nonnull
-    private final Instant expirationInstant;
+    @Nonnull private final Instant expirationInstant;
 
     /** Supplemental ticket state data. */
-    @Nullable
-    private TicketState ticketState;
+    @Nullable private TicketState ticketState;
 
     /**
      * Creates a new ticket with the given parameters.
@@ -121,6 +117,7 @@ public class Ticket {
         ticketState = state;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object o) {
         if (o == null || !o.getClass().equals(getClass())) {
@@ -130,11 +127,13 @@ public class Ticket {
         return other.ticketId.equals(ticketId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return 23 + 31 * ticketId.hashCode();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return ticketId;

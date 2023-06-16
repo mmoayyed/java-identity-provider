@@ -63,35 +63,31 @@ import net.shibboleth.shared.security.DataSealer;
 public class EncodingTicketService extends AbstractTicketService {
 
     /** Default service ticket prefix. */
-    public static final String SERVICE_TICKET_PREFIX = "ST";
+    @Nonnull public static final String SERVICE_TICKET_PREFIX = "ST";
 
     /** Default proxy ticket prefix. */
-    public static final String PROXY_TICKET_PREFIX = "PT";
+    @Nonnull public static final String PROXY_TICKET_PREFIX = "PT";
 
     /** Default proxy granting ticket prefix. */
-    public static final String PROXY_GRANTING_TICKET_PREFIX = "PGT-E";
+    @Nonnull public static final String PROXY_GRANTING_TICKET_PREFIX = "PGT-E";
 
     /** Non-null marker value for unused ServiceTicket#id field and storage context name. */
-    private static final String NOT_USED = "na";
+    @Nonnull private static final String NOT_USED = "na";
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(EncodingTicketService.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(EncodingTicketService.class);
 
     /** Data sealer that handles encryption of serialized service ticket data. */
-    @Nonnull
-    private final DataSealer dataSealer;
+    @Nonnull private final DataSealer dataSealer;
 
     /** Service ticket prefix. */
-    @Nonnull @NotEmpty
-    private String serviceTicketPrefix = SERVICE_TICKET_PREFIX;
+    @Nonnull @NotEmpty private String serviceTicketPrefix = SERVICE_TICKET_PREFIX;
 
     /** Proxy ticket prefix. */
-    @Nonnull @NotEmpty
-    private String proxyTicketPrefix = PROXY_TICKET_PREFIX;
+    @Nonnull @NotEmpty private String proxyTicketPrefix = PROXY_TICKET_PREFIX;
 
     /** Proxy granting ticket prefix. */
-    @Nonnull @NotEmpty
-    private String proxyGrantingTicketPrefix = PROXY_GRANTING_TICKET_PREFIX;
+    @Nonnull @NotEmpty private String proxyGrantingTicketPrefix = PROXY_GRANTING_TICKET_PREFIX;
 
     /**
      * Creates a new instance.
@@ -110,7 +106,7 @@ public class EncodingTicketService extends AbstractTicketService {
      *
      * @param prefix Service ticket prefix.
      */
-    public void setServiceTicketPrefix(final String prefix) {
+    public void setServiceTicketPrefix(@Nonnull @NotEmpty final String prefix) {
         serviceTicketPrefix = Constraint.isNotEmpty(prefix, "Prefix cannot be null or empty");
     }
 
@@ -119,7 +115,7 @@ public class EncodingTicketService extends AbstractTicketService {
      *
      * @param prefix Proxy ticket prefix.
      */
-    public void setProxyTicketPrefix(final String prefix) {
+    public void setProxyTicketPrefix(@Nonnull @NotEmpty final String prefix) {
         proxyTicketPrefix = Constraint.isNotEmpty(prefix, "Prefix cannot be null or empty");
     }
 
@@ -129,13 +125,13 @@ public class EncodingTicketService extends AbstractTicketService {
      *
      * @param prefix Proxy granting ticket prefix.
      */
-    public void setProxyGrantingTicketPrefix(final String prefix) {
+    public void setProxyGrantingTicketPrefix(@Nonnull @NotEmpty final String prefix) {
         proxyGrantingTicketPrefix = Constraint.isNotEmpty(prefix, "Prefix cannot be null or empty");
     }
 
+    /** {@inheritDoc} */
     @Override
-    @Nonnull
-    public ServiceTicket createServiceTicket(
+    @Nonnull public ServiceTicket createServiceTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
             @Nonnull final String service,
@@ -151,16 +147,16 @@ public class EncodingTicketService extends AbstractTicketService {
         return encode(ServiceTicket.class, st, serviceTicketPrefix);
     }
 
+    /** {@inheritDoc} */
     @Override
-    @Nullable
-    public ServiceTicket removeServiceTicket(@Nonnull final String id) {
+    @Nullable public ServiceTicket removeServiceTicket(@Nonnull final String id) {
         Constraint.isNotNull(id, "Id cannot be null");
         return decode(ServiceTicket.class, id, serviceTicketPrefix);
     }
 
-    @Nonnull
+    /** {@inheritDoc} */
     @Override
-    public ProxyTicket createProxyTicket(
+    @Nonnull public ProxyTicket createProxyTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
             @Nonnull final ProxyGrantingTicket pgt,
@@ -175,14 +171,15 @@ public class EncodingTicketService extends AbstractTicketService {
         return encode(ProxyTicket.class, pt, proxyTicketPrefix);
     }
 
-    @Nullable
+    /** {@inheritDoc} */
     @Override
-    public ProxyTicket removeProxyTicket(final @Nonnull String id) {
+    @Nullable public ProxyTicket removeProxyTicket(final @Nonnull String id) {
         return decode(ProxyTicket.class, id, proxyTicketPrefix);
     }
 
+    /** {@inheritDoc} */
     @Override
-    public @Nonnull ProxyGrantingTicket createProxyGrantingTicket(
+    @Nonnull public ProxyGrantingTicket createProxyGrantingTicket(
             @Nonnull final String id,
             @Nonnull final Instant expiry,
             @Nonnull final ServiceTicket serviceTicket,
@@ -198,9 +195,9 @@ public class EncodingTicketService extends AbstractTicketService {
         return encode(ProxyGrantingTicket.class, pgt, proxyGrantingTicketPrefix);
     }
 
-    @Nullable
+    /** {@inheritDoc} */
     @Override
-    public ProxyGrantingTicket fetchProxyGrantingTicket(@Nonnull final String id) {
+    @Nullable public ProxyGrantingTicket fetchProxyGrantingTicket(@Nonnull final String id) {
         Constraint.isNotNull(id, "Id cannot be null");
         if (id.startsWith(proxyGrantingTicketPrefix + "-")) {
             return decode(ProxyGrantingTicket.class, id, proxyGrantingTicketPrefix);
@@ -208,9 +205,9 @@ public class EncodingTicketService extends AbstractTicketService {
         return super.fetchProxyGrantingTicket(id);
     }
 
+    /** {@inheritDoc} */
     @Override
-    @Nullable
-    public ProxyGrantingTicket removeProxyGrantingTicket(@Nonnull final String id) {
+    @Nullable public ProxyGrantingTicket removeProxyGrantingTicket(@Nonnull final String id) {
         Constraint.isNotNull(id, "Id cannot be null");
         if (id.startsWith(proxyGrantingTicketPrefix + "-")) {
             return decode(ProxyGrantingTicket.class, id, proxyGrantingTicketPrefix);
@@ -228,7 +225,8 @@ public class EncodingTicketService extends AbstractTicketService {
      * 
      * @return ticket encoded ticket
      */
-    @Nonnull  <T extends Ticket> T encode(@Nonnull final Class<T> ticketClass, @Nonnull final T ticket, @Nonnull final String prefix) {
+    @Nonnull <T extends Ticket> T encode(@Nonnull final Class<T> ticketClass, @Nonnull final T ticket,
+            @Nonnull final String prefix) {
         final String opaque;
         try {
             opaque = dataSealer.wrap(serializer(ticketClass).serialize(ticket), ticket.getExpirationInstant());
@@ -250,7 +248,8 @@ public class EncodingTicketService extends AbstractTicketService {
      * 
      * @return decoded ticket
      */
-    private <T extends Ticket> T decode(@Nonnull final Class<T> ticketClass, @Nonnull final String id, @Nonnull final String prefix) {
+    @Nullable private <T extends Ticket> T decode(@Nonnull final Class<T> ticketClass, @Nonnull final String id,
+            @Nonnull final String prefix) {
         try {
             final String subString = id.substring(prefix.length() + 1);
             assert subString != null;
@@ -262,4 +261,5 @@ public class EncodingTicketService extends AbstractTicketService {
         }
         return null;
     }
+
 }

@@ -52,4 +52,5 @@ public class ProxyTicketResponse extends AbstractProtocolResponse {
     @Nullable public String getPt() {
         return proxyTicket;
     }
+
 }

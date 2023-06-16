@@ -35,7 +35,6 @@ import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
@@ -61,7 +60,7 @@ public class BuildRelyingPartyContextAction<RequestType,ResponseType>
     @Nonnull private final Logger log = LoggerFactory.getLogger(BuildRelyingPartyContextAction.class);
 
     /** List of registries to query for verified CAS services (relying parties). */
-    @Nonnull @NonnullElements @NotEmpty private final List<ServiceRegistry> serviceRegistries;
+    @Nonnull @NotEmpty private final List<ServiceRegistry> serviceRegistries;
     
     /** Request. */
     @NonnullBeforeExec private Object request;
@@ -72,9 +71,11 @@ public class BuildRelyingPartyContextAction<RequestType,ResponseType>
      * @param registries One or more service registries to query for CAS services.
      */
     public BuildRelyingPartyContextAction(@Nonnull @NotEmpty final ServiceRegistry ... registries) {
-        serviceRegistries = CollectionSupport.listOf(Constraint.isNotEmpty(registries, "Service registries cannot be null"));
+        serviceRegistries = CollectionSupport.listOf(
+                Constraint.isNotEmpty(registries, "Service registries cannot be null"));
     }
     
+    /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
@@ -92,6 +93,7 @@ public class BuildRelyingPartyContextAction<RequestType,ResponseType>
     }
     
 
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 

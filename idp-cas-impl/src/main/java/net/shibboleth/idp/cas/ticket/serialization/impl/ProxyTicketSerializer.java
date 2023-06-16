@@ -34,20 +34,23 @@ import net.shibboleth.shared.logic.Constraint;
 public class ProxyTicketSerializer extends AbstractTicketSerializer<ProxyTicket> {
 
     /** PGT ID field name. */
-    private static final String PGTID_FIELD = "pgt";
+    @Nonnull private static final String PGTID_FIELD = "pgt";
 
-
+    /** {@inheritDoc} */
     @Override
     protected void serializeInternal(@Nonnull final JsonGenerator generator, @Nonnull final ProxyTicket ticket) {
         generator.write(PGTID_FIELD, ticket.getPgtId());
     }
 
+    /** {@inheritDoc} */
     @Override
-    protected ProxyTicket createTicket(
+    @Nonnull protected ProxyTicket createTicket(
             @Nonnull final JsonObject o,
             @Nonnull final String id,
             @Nonnull final String service,
             @Nonnull final Instant expiry) {
-        return new ProxyTicket(id, service, expiry, Constraint.isNotNull(o.getString(PGTID_FIELD), "pgtId was not present"));
+        return new ProxyTicket(id, service, expiry,
+                Constraint.isNotNull(o.getString(PGTID_FIELD), "pgtId was not present"));
     }
+
 }

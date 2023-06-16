@@ -96,12 +96,14 @@ public abstract class AbstractOutgoingSamlMessageAction extends
      * 
      * @return SAML object
      */
-    @Nonnull protected static <T extends SAMLObject> T newSAMLObject(final Class<T> type, @Nonnull final QName elementName) {
+    @Nonnull protected static <T extends SAMLObject> T newSAMLObject(final Class<T> type,
+            @Nonnull final QName elementName) {
         final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory()
                 .<T> ensureBuilder(elementName);
         return builder.buildObject();
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
@@ -136,7 +138,7 @@ public abstract class AbstractOutgoingSamlMessageAction extends
      * 
      * @throws EventException to signal an event
      */
-    @Nonnull protected abstract Response buildSamlResponse(
-            @Nonnull final ProfileRequestContext profileRequestContext) throws EventException;
+    @Nonnull protected abstract Response buildSamlResponse(@Nonnull final ProfileRequestContext profileRequestContext)
+            throws EventException;
 
 }

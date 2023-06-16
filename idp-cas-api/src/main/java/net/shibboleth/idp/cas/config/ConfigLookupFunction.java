@@ -19,11 +19,13 @@ package net.shibboleth.idp.cas.config;
 
 import java.util.function.Function;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Lookup function for extracting CAS profile configuration from the profile request context.
@@ -36,15 +38,15 @@ public class ConfigLookupFunction<T extends AbstractProtocolConfiguration>
     implements Function<ProfileRequestContext, T> {
 
     /** Type of profile configuration class. */
-    private final Class<T> configClass;
+    @Nonnull private final Class<T> configClass;
 
     /**
      * Creates a new instance.
      *
      * @param clazz Profile configuration class.
      */
-    public ConfigLookupFunction(final Class<T> clazz) {
-        configClass = clazz;
+    public ConfigLookupFunction(@Nonnull final Class<T> clazz) {
+        configClass = Constraint.isNotNull(clazz, "Configuration class cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -55,6 +57,8 @@ public class ConfigLookupFunction<T extends AbstractProtocolConfiguration>
                 return configClass.cast(rpContext.getProfileConfig());
             }
         }
+        
         return null;
     }
+
 }

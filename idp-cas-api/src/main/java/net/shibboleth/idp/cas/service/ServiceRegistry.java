@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
  * @author Marvin S. Addison
  */
 public interface ServiceRegistry {
+
     /**
      * Looks up a service entry from a service URL.
      *
@@ -33,6 +34,6 @@ public interface ServiceRegistry {
      *
      * @return Service found in registry or null if no match found.
      */
-    @Nullable
-    Service lookup(@Nonnull String serviceURL);
+    @Nullable Service lookup(@Nonnull String serviceURL);
+
 }

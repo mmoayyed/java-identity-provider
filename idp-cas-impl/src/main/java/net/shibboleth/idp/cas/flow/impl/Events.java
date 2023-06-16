@@ -48,7 +48,8 @@ public enum Events {
      *
      * @return Spring webflow event.
      */
-    @Nonnull public Event event(final Object source) {
+    @Nonnull public Event event(@Nonnull final Object source) {
         return new Event(source, name());
     }
+
 }
