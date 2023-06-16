@@ -93,7 +93,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * 
      * @return module ID(s) to report on
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getInfoModuleIds() {
+    @Nonnull @NotLive @Unmodifiable public Collection<String> getInfoModuleIds() {
         return CollectionSupport.copyToList(StringSupport.normalizeStringCollection(infoModuleIds));
     }
 
@@ -102,7 +102,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * 
      * @return module ID(s) to test
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getTestModuleIds() {
+    @Nonnull @NotLive @Unmodifiable public Collection<String> getTestModuleIds() {
         return CollectionSupport.copyToList(StringSupport.normalizeStringCollection(testModuleIds));
     }
 
@@ -111,7 +111,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * 
      * @return module ID(s) to enable
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getEnableModuleIds() {
+    @Nonnull @NotLive @Unmodifiable public Collection<String> getEnableModuleIds() {
         return CollectionSupport.copyToList(StringSupport.normalizeStringCollection(enableModuleIds));
     }
     
@@ -120,7 +120,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
      * 
      * @return module ID(s) to disable
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getDisableModuleIds() {
+    @Nonnull @NotLive @Unmodifiable public Collection<String> getDisableModuleIds() {
         return CollectionSupport.copyToList(StringSupport.normalizeStringCollection(disableModuleIds));
     }
 
@@ -150,7 +150,7 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
 
     /** {@inheritDoc} */
     @Override
-    public void printHelp(@Nonnull PrintStream out) {
+    public void printHelp(@Nonnull final PrintStream out) {
         out.println("ModuleManager");
         out.println("Provides a command line interface for IdP Module management operations.");
         out.println();

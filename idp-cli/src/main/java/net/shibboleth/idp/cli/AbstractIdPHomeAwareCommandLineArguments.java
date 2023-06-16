@@ -98,4 +98,5 @@ public abstract class AbstractIdPHomeAwareCommandLineArguments
                 "Use the named bean for HTTP security"));
         out.println();
     }
+
 }

@@ -16,9 +16,9 @@
  */
 
 /**
- * Command line drivers and utilities.
+ * Implementation classes for command line drivers and utilities.
  */
 @NonnullElements
-package net.shibboleth.idp.cli;
+package net.shibboleth.idp.cli.impl;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;

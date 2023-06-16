@@ -93,7 +93,7 @@ public class ResolverTestArguments extends AbstractCommandLineArguments {
 
     /** {@inheritDoc} */
     @Override
-    protected @Nonnull StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
+    @Nonnull protected StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
         
         if (getPath() == null) {
             builder.append("/profile/admin/resolvertest");

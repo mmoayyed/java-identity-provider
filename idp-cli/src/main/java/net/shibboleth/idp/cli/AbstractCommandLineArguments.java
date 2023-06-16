@@ -31,7 +31,6 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -205,7 +204,7 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     }
 
     /** {@inheritDoc} */
-    @Nullable @NonnullElements @NotLive @Unmodifiable public Map<String,String> getHeaders() {
+    @Nullable @NotLive @Unmodifiable public Map<String,String> getHeaders() {
         final List<String> hdrs = headers;
         if (hdrs != null) {
             final Map<String,String> map = new HashMap<>();

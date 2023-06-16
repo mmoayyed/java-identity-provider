@@ -80,7 +80,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
      * @param webapp folder to start at.
      * @return the list of names as a strung
      */
-    @Nonnull private List<String> listJars(final Path webapp) {
+    @Nonnull private List<String> listJars(@Nonnull final Path webapp) {
         final Path libDir = webapp.resolve("WEB-INF").resolve("lib");
         
         if (!Files.exists(libDir) || !Files.isDirectory(libDir)) {
@@ -100,7 +100,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     /** Check for the same file in two places.
      * @param args the arguments to check
      */
-    private void listAndExactCheck(final JarCheckArguments args) {
+    private void listAndExactCheck(@Nonnull final JarCheckArguments args) {
         final Map<String, String> allNames = new HashMap<>(distJars.size() + pluginJars.size() + webAppJars.size());
         final String type = "jar called";
 
@@ -127,7 +127,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
      * @param source where the jar came from
      * @param type what we are checking
      */
-    private void addAndCheck(final Map<String, String> allNames, 
+    private void addAndCheck(@Nonnull final Map<String, String> allNames, 
             final List<String> jars, 
             final String source, 
             final String type) {
@@ -143,12 +143,12 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     }
 
     /** {@inheritDoc} */
-    protected @Nonnull Class<JarCheckArguments> getArgumentClass() {
+    @Nonnull protected Class<JarCheckArguments> getArgumentClass() {
         return JarCheckArguments.class;
     }
 
     /** {@inheritDoc} */
-    protected @Nonnull String getVersion() {
+    @Nonnull protected String getVersion() {
         final String result = Version.getVersion();
         assert result!=null;
         return result;
@@ -166,7 +166,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     /** Do a general test.
      * @param args the arguments to check
      */
-    private void fileNamesOnly(final JarCheckArguments args) {
+    private void fileNamesOnly(@Nonnull final JarCheckArguments args) {
         final Map<String, String> allNames = new HashMap<>(distJars.size() + pluginJars.size() + webAppJars.size());
         final String type = "jar fragment called";
 
@@ -196,7 +196,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
     /** Do a detailed check.
      * @param args the arguments to check
      */
-    private void detailed(final JarCheckArguments args) {
+    private void detailed(@Nonnull final JarCheckArguments args) {
         final Map<String, String> allNames = new HashMap<>();
         final Path idpHome = Path.of(args.getIdPHome());
         
@@ -210,7 +210,8 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
      * @param base The directory where the names live 
      * @param jars The Jar Names
      */
-    private void processClassNames(final Map<String, String> namesSoFar, final Path base, final List<String> jars) {
+    private void processClassNames(@Nonnull final Map<String, String> namesSoFar, @Nonnull final Path base,
+            @Nonnull final List<String> jars) {
         final Path libdir = base.resolve("WEB-INF").resolve("lib");
         for (final String jar: jars) {
             processClassNames(namesSoFar, libdir.resolve(jar));
@@ -221,7 +222,7 @@ public final class JarCheckCLI extends AbstractIdPHomeAwareCommandLine<JarCheckA
      * @param namesSoFar the class names we have found
      * @param jar The far file
      */
-    private void processClassNames(final Map<String, String> namesSoFar, final Path jar) {
+    private void processClassNames(@Nonnull final Map<String, String> namesSoFar, @Nonnull final Path jar) {
         final String source = jar.toString();
         try (final InputStream inStream = new BufferedInputStream(new FileInputStream(jar.toFile()));
              final ArchiveInputStream classes = new ZipArchiveInputStream(inStream)) {

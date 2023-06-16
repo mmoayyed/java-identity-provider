@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -75,7 +74,7 @@ public interface CommandLineArguments {
      * 
      * @since 4.2.0
      */
-    @Nullable @NonnullElements @NotLive @Unmodifiable default Map<String,String> getHeaders() {
+    @Nullable @NotLive @Unmodifiable default Map<String,String> getHeaders() {
         return null;
     }
     
