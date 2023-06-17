@@ -9,12 +9,6 @@
     default-init-method="initialize"
     default-destroy-method="destroy">
 
-	<bean
-		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-		p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
-    <context:property-placeholder />
-
 	<bean id="IdPConfiguration"
 		class="net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParameters"
 		p:encryptionCertResource="%{idp.encryption.cert}"
