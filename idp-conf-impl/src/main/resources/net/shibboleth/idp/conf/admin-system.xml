@@ -285,6 +285,8 @@
     
     <bean id="shibboleth.metrics.CoreGaugeSet" class="org.opensaml.core.metrics.impl.CoreGaugeSet" lazy-init="true" />
     
+    <bean id="shibboleth.metrics.ModuleGaugeSet" class="net.shibboleth.idp.module.impl.ModuleGuageSet" lazy-init="true" />
+
     <bean id="shibboleth.metrics.IdPGaugeSet" class="net.shibboleth.idp.metrics.impl.IdPGaugeSet" lazy-init="true"
         p:exposedProperties="#{getObject('shibboleth.metrics.ExposedProperties')}" />
     

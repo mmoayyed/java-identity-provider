@@ -31,6 +31,7 @@
                 <ref bean="shibboleth.metrics.AttributeFilterGaugeSet" />
                 <ref bean="shibboleth.metrics.CASServiceRegistryGaugeSet" />
                 <ref bean="shibboleth.metrics.ManagedBeanGaugeSet" />
+                <ref bean="shibboleth.metrics.ModuleGaugeSet" />
 
                 <!--
                 <bean class="com.codahale.metrics.jvm.CachedThreadStatesGaugeSet"
