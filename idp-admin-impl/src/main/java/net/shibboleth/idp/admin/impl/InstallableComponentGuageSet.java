@@ -59,18 +59,15 @@ import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
- * Guage set to report the Plugins' & IdP installation and update statuses.
- */
-/**
- *
+ * Guage set to report the Plugins' & IdP's installation and update statuses.
  */
 public class InstallableComponentGuageSet extends AbstractIdentifiableInitializableComponent implements MetricSet  {
 
+    /** Default prefix for metrics. */    
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.installedcomponent";
+    
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InstallableComponentGuageSet.class);
-
-    /** Default prefix for metrics. */
-    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.installedcomponent";
 
     /** The map of gauges. */
     @Nonnull @NonnullElements private final Map<String,Metric> gauges = new HashMap<>();
@@ -87,6 +84,7 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
     /** IdP Version to check. */
     @NonnullAfterInit private InstallableComponentVersion idpVersion;
     
+    /** Constructor. */
     public InstallableComponentGuageSet() {
         gauges.put(MetricRegistry.name(DEFAULT_METRIC_NAME, "plugins", "list"),
                 new Gauge<Map<String, InstallableComponentVersion>>() {
@@ -130,8 +128,10 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
         httpClient = Constraint.isNotNull(client, "HttpClient cannot be null");
     }
     
-    /** Null safe IdP Version
-     * @return Returns the idPVersion.
+    /** 
+     * Null safe IdP Version.
+     * 
+     * @return the IdP version
      */
     @Nonnull InstallableComponentVersion getIdPVersion() {
         checkComponentActive();
@@ -139,8 +139,10 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
         return idpVersion;
     }
 
-    /** Return the list of installed components and their versions
-     * @return a Map where the key is the PluginId and the value is the version.
+    /**
+     * Return the list of installed components and their versions.
+     * 
+     * @return map where the key is the PluginId and the value is the version
      */
     @Nonnull @NotLive private Map<String, InstallableComponentVersion> getPluginList() {
         final Map<String, InstallableComponentVersion> result = new HashMap<>();
@@ -171,19 +173,25 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
                 log.error("Could not located Plugin version information");
                 continue;
             }
-            final InstallableComponentVersion newPluginVersion = InstallableComponentSupport.getBestVersion(getIdPVersion(), pluginVersion, info);
-            result.put(plugin.getPluginId(), new InstallableComponentDetails(verInfo.getSupportLevel(), newPluginVersion));
+            final InstallableComponentVersion newPluginVersion =
+                    InstallableComponentSupport.getBestVersion(getIdPVersion(), pluginVersion, info);
+            result.put(plugin.getPluginId(),
+                    new InstallableComponentDetails(verInfo.getSupportLevel(), newPluginVersion));
         }    
         return CollectionSupport.copyToMap(result);
     }
 
-    /** Look in the cache for the URL and return the properties if its there. 
-     * Otherwise reach out to the URP and load the properties
-     * @param plugin the {@link IdPPlugin} to consider.
-     * @param pluginInfoCache the cache of already looked up info.  Also serves as a negative cache.
-     * @return
+    /**
+     * Look in the cache for the URL and return the properties if its there, 
+     * otherwise reach out to the URL and load the properties.
+     * 
+     * @param plugin the {@link IdPPlugin} to consider
+     * @param pluginInfoCache the cache of already looked up info.  Also serves as a negative cache
+     * 
+     * @return IdP update properties
      */
-    @Nullable private Properties lookupIdPProperties(@NotNull final IdPPlugin plugin, @NullableElements final Map<URL, Properties> pluginInfoCache) {
+    @Nullable private Properties lookupIdPProperties(@NotNull final IdPPlugin plugin,
+            @NullableElements final Map<URL, Properties> pluginInfoCache) {
         final List<URL> urls;
         try {
             urls = plugin.getUpdateURLs();
@@ -205,13 +213,16 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
         return result;
     }
 
-    /** Return information about the Installation update state of the IdP.
+    /**
+     * Return information about the Installation update state of the IdP.
+     * 
      * @return a {@link InstallableComponentDetails}
      */
     @Nullable private InstallableComponentDetails getIdPDetails() {
         try {
             assert httpClient!=null;
-            final Properties properties = InstallableComponentSupport.loadInfo(idpUpdateUrls, httpClient, securityParams);
+            final Properties properties =
+                    InstallableComponentSupport.loadInfo(idpUpdateUrls, httpClient, securityParams);
             if (properties == null) {
                 log.error("Could not locate IdP update information");
                 return null;
@@ -222,7 +233,8 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
                 log.error("Could not located IdP version information");
                 return null;
             }
-            final InstallableComponentVersion newIdPVersion = InstallableComponentSupport.getBestVersion(getIdPVersion(), getIdPVersion(), info);
+            final InstallableComponentVersion newIdPVersion =
+                    InstallableComponentSupport.getBestVersion(getIdPVersion(), getIdPVersion(), info);
             return new InstallableComponentDetails(verInfo.getSupportLevel(), newIdPVersion);
         } catch (final Throwable t) {
             log.error("Check for IdP update status failed unexpectedly", t);
@@ -253,5 +265,7 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
         return gauges;
     }
 
-    record InstallableComponentDetails(@Nonnull @NotEmpty SupportLevel supportedState, @Nullable InstallableComponentVersion updateVersion) { };
+    record InstallableComponentDetails(@Nonnull @NotEmpty SupportLevel supportedState,
+            @Nullable InstallableComponentVersion updateVersion) { };
+    
 }
