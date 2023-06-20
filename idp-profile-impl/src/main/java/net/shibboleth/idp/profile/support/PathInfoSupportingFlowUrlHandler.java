@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -42,7 +41,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class PathInfoSupportingFlowUrlHandler extends DefaultFlowUrlHandler {
 
     /** Flows to support. */
-    @Nonnull @NonnullElements private Collection<String> supportedFlowIds;
+    @Nonnull private Collection<String> supportedFlowIds;
     
     /** Constructor. */
     public PathInfoSupportingFlowUrlHandler() {
@@ -57,7 +56,7 @@ public class PathInfoSupportingFlowUrlHandler extends DefaultFlowUrlHandler {
      * 
      * @param flowIds the flow definition registry
      */
-    public void setSupportedFlows(@Nonnull @NonnullElements final Collection<String> flowIds) {
+    public void setSupportedFlows(@Nonnull final Collection<String> flowIds) {
         supportedFlowIds = StringSupport.normalizeStringCollection(flowIds);
     }
     

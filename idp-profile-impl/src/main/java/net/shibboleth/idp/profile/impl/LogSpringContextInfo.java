@@ -29,6 +29,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -55,16 +56,16 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class LogSpringContextInfo extends AbstractProfileAction implements ApplicationContextAware {
     
     /** Name of Spring web flow attribute holding the description of the tree to log. */
-    public static final String ATTRIB_DESC = "springInfoDescription";
+    @Nonnull @NotEmpty public static final String ATTRIB_DESC = "springInfoDescription";
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger("SPRING_CONTEXT_INFO");
+    @Nonnull private Logger log = LoggerFactory.getLogger("SPRING_CONTEXT_INFO");
     
     /** The owning Spring ApplicationContext in which this action is defined. */
-    private ApplicationContext applicationContext;
+    @Nullable private ApplicationContext applicationContext;
     
     /** Contextual description to output at the start of the action. */
-    private String description;
+    @Nullable private String description;
     
     /**
      * Set the contextual description to output at the start of the action.
@@ -76,12 +77,13 @@ public class LogSpringContextInfo extends AbstractProfileAction implements Appli
     }
     
     /** {@inheritDoc} */
-    public void setApplicationContext(final @Nonnull ApplicationContext context) throws BeansException {
+    public void setApplicationContext(@Nonnull final ApplicationContext context) throws BeansException {
         applicationContext = context;
     }
 
     /** {@inheritDoc} */
-    protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!log.isDebugEnabled()) {
             // short-circuit if not logging at debug
             return;

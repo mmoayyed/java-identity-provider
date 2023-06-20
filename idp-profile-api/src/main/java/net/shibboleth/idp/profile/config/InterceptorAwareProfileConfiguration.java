@@ -26,7 +26,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.shared.annotation.ConfigurationSetting;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 
@@ -50,7 +49,7 @@ public interface InterceptorAwareProfileConfiguration extends ProfileConfigurati
      * @return  a set of interceptor flow IDs to enable
      */
     @ConfigurationSetting(name="inboundInterceptorFlows")
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getInboundInterceptorFlows(
+    @Nonnull @NotLive @Unmodifiable List<String> getInboundInterceptorFlows(
             @Nullable final ProfileRequestContext profileRequestContext);
 
     /**
@@ -66,7 +65,7 @@ public interface InterceptorAwareProfileConfiguration extends ProfileConfigurati
      * @return  a set of interceptor flow IDs to enable
      */
     @ConfigurationSetting(name="outboundInterceptorFlows")
-    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getOutboundInterceptorFlows(
+    @Nonnull @NotLive @Unmodifiable List<String> getOutboundInterceptorFlows(
             @Nullable final ProfileRequestContext profileRequestContext);
     
 }

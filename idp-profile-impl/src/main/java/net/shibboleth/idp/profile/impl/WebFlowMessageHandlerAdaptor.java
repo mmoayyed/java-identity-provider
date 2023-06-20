@@ -83,7 +83,7 @@ public class WebFlowMessageHandlerAdaptor extends AbstractProfileAction {
     @NonnullBeforeExec private MessageHandler handler;
     
     /** The direction of execution for this action instance. */
-    private final Direction direction;
+    @Nonnull private final Direction direction;
     
     /** An event to signal in the event of a handler exception. */
     @Nullable private String errorEvent;

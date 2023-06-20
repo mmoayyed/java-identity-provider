@@ -18,4 +18,7 @@
 /** 
  * Functions dealing with traversing and extracting data from profile request contexts.
  */
+@NonnullElements
 package net.shibboleth.idp.profile.context.navigate;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

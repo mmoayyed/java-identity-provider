@@ -33,7 +33,6 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -57,7 +56,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateProfileInterceptorContext.class);
 
     /** The flows to make available for possible use. */
-    @Nonnull @NonnullElements private Collection<ProfileInterceptorFlowDescriptor> availableFlows;
+    @Nonnull private Collection<ProfileInterceptorFlowDescriptor> availableFlows;
 
     /** Lookup function for the flow IDs to activate from within the available set. */
     @NonnullAfterInit private Function<ProfileRequestContext,Collection<String>> activeFlowsLookupStrategy;
@@ -75,7 +74,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
      * 
      * @param flows the flows available for possible use
      */
-    public void setAvailableFlows(@Nonnull @NonnullElements final Collection<ProfileInterceptorFlowDescriptor> flows) {
+    public void setAvailableFlows(@Nonnull final Collection<ProfileInterceptorFlowDescriptor> flows) {
         checkSetterPreconditions();
         availableFlows = CollectionSupport.copyToList(Constraint.isNotNull(flows, "Flow collection cannot be null"));
     }

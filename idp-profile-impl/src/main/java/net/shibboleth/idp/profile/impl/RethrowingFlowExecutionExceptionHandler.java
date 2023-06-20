@@ -29,13 +29,11 @@ import org.springframework.webflow.execution.FlowExecutionException;
 public class RethrowingFlowExecutionExceptionHandler implements FlowExecutionExceptionHandler {
 
     /** {@inheritDoc} */
-    @Override
     public boolean canHandle(final FlowExecutionException exception) {
         return exception.getCause() instanceof RuntimeException;
     }
 
     /** {@inheritDoc} */
-    @Override
     public void handle(final FlowExecutionException exception, final RequestControlContext context) {
         throw new RuntimeException(exception.getCause());
     }

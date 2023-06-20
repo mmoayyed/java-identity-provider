@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.profile.config.AbstractConditionalProfileConfiguration;
 import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -51,7 +50,6 @@ public abstract class AbstractInterceptorAwareProfileConfiguration extends Abstr
     /** Lookup function to supply #outboundFlows property. */
     @Nonnull private Function<ProfileRequestContext,List<String>> outboundFlowsLookupStrategy;
 
-
     /**
      * Constructor.
      * 
@@ -64,7 +62,7 @@ public abstract class AbstractInterceptorAwareProfileConfiguration extends Abstr
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
+    @Nonnull @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows(
         @Nullable final ProfileRequestContext profileRequestContext) {
         final List<String> flows = inboundFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
@@ -78,7 +76,7 @@ public abstract class AbstractInterceptorAwareProfileConfiguration extends Abstr
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setInboundInterceptorFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setInboundInterceptorFlows(@Nullable final Collection<String> flows) {
         if (flows != null) {
             inboundFlowsLookupStrategy =
                     FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(flows)));
@@ -100,7 +98,7 @@ public abstract class AbstractInterceptorAwareProfileConfiguration extends Abstr
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows(
+    @Nonnull @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final List<String> flows = outboundFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
@@ -114,7 +112,7 @@ public abstract class AbstractInterceptorAwareProfileConfiguration extends Abstr
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setOutboundInterceptorFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setOutboundInterceptorFlows(@Nullable final Collection<String> flows) {
         if (flows != null) {
             outboundFlowsLookupStrategy =
                     FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(flows)));

@@ -40,7 +40,6 @@ import org.slf4j.Logger;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.profile.context.AuditContext;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -73,10 +72,10 @@ public class PopulateAuditContext extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext,AuditContext> auditContextCreationStrategy;
     
     /** Map of fields to extract and the corresponding extraction functions. */
-    @Nonnull @NonnullElements private Map<String,Function<ProfileRequestContext,Object>> fieldExtractors;
+    @Nonnull private Map<String,Function<ProfileRequestContext,Object>> fieldExtractors;
     
     /** Fields being audited, to optimize extraction.. */
-    @Nonnull @NonnullElements private Set<String> fieldsToExtract;
+    @Nonnull private Set<String> fieldsToExtract;
     
     /** Map allowing substitutions of values during field extraction. */
     @Nonnull private Map<String,String> fieldReplacements;
@@ -120,8 +119,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * 
      * @param map   map from field name to extraction function
      */
-    public void setFieldExtractors(
-            @Nonnull @NonnullElements final Map<String,Function<ProfileRequestContext,Object>> map) {
+    public void setFieldExtractors(@Nonnull final Map<String,Function<ProfileRequestContext,Object>> map) {
         checkSetterPreconditions();
         Constraint.isNotNull(map, "Field extractor map cannot be null");
         
@@ -302,14 +300,14 @@ public class PopulateAuditContext extends AbstractProfileAction {
     public static class FormattingMapParser {
         
         /** Set of parsed fields. */
-        @Nonnull @NonnullElements private final Set<String> fields;
+        @Nonnull private final Set<String> fields;
         
         /**
          * Constructor.
          *
          * @param map map of formatters to parse
          */
-        public FormattingMapParser(@Nonnull @NonnullElements final Map<String,String> map) {
+        public FormattingMapParser(@Nonnull final Map<String,String> map) {
             final Set<String> fieldsToExtract = new HashSet<>(10);
             
             for (final String s : map.values()) {
@@ -345,7 +343,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
          * 
          * @return the parsed fields
          */
-        @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getFieldsToExtract() {
+        @Nonnull @NotLive @Unmodifiable public Set<String> getFieldsToExtract() {
             return fields;
         }
     }

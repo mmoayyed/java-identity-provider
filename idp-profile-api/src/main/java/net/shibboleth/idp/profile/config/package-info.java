@@ -18,5 +18,7 @@
 /** 
  * Classes pertaining to IdP-specific request-time profile configuration options.
  */
-
+@NonnullElements
 package net.shibboleth.idp.profile.config;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

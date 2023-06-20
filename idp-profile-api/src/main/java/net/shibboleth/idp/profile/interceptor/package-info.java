@@ -16,5 +16,7 @@
  */
 
 /** Classes supporting profile interceptor machinery. */
-
+@NonnullElements
 package net.shibboleth.idp.profile.interceptor;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

@@ -28,6 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -54,13 +55,13 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class LogContextTree extends AbstractProfileAction {
     
     /** Name of Spring web flow attribute holding the description of the tree to log. */
-    public static final String ATTRIB_DESC = "contextTreeDescription";
+    @Nonnull @NotEmpty public static final String ATTRIB_DESC = "contextTreeDescription";
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger("CONTEXT_TREE");
+    @Nonnull private Logger log = LoggerFactory.getLogger("CONTEXT_TREE");
     
     /** Contextual description to output at the start of the action. */
-    private String description;
+    @Nullable private String description;
     
     /**
      * Set the contextual description to output at the start of the action.
@@ -72,7 +73,8 @@ public class LogContextTree extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
+    @Override
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!log.isDebugEnabled()) {
             // short-circuit if not logging at debug
             return;
@@ -105,7 +107,7 @@ public class LogContextTree extends AbstractProfileAction {
      * @param current the current context to log
      * @param indent the amount of leading indent
      */
-    private void logContext(final BaseContext current, final int indent) {
+    private void logContext(@Nullable final BaseContext current, final int indent) {
         if (current == null) {
             return;
         }
@@ -156,7 +158,7 @@ public class LogContextTree extends AbstractProfileAction {
      * 
      * @return the leading indent string to print
      */
-    private String getIndent(final int indent) {
+    @Nonnull private String getIndent(final int indent) {
         final StringBuffer buffer = new StringBuffer();
         for (int i=0; i<indent; i++) {
             buffer.append("----");

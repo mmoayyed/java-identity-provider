@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -42,10 +41,10 @@ public final class ProfileInterceptorContext extends BaseContext {
     @Nullable private ProfileInterceptorFlowDescriptor attemptedFlow;
 
     /** Flows that need to be executed. */
-    @Nonnull @NonnullElements private final Map<String, ProfileInterceptorFlowDescriptor> availableFlows;
+    @Nonnull private final Map<String, ProfileInterceptorFlowDescriptor> availableFlows;
 
     /** Results of the flow to be written to storage. */
-    @Nonnull @NonnullElements private final List<ProfileInterceptorResult> results;
+    @Nonnull private final List<ProfileInterceptorResult> results;
 
     /** Constructor. */
     public ProfileInterceptorContext() {
@@ -76,7 +75,7 @@ public final class ProfileInterceptorContext extends BaseContext {
      * 
      * @return the available flows
      */
-    @Nonnull @NonnullElements @Live public Map<String, ProfileInterceptorFlowDescriptor> getAvailableFlows() {
+    @Nonnull @Live public Map<String, ProfileInterceptorFlowDescriptor> getAvailableFlows() {
         return availableFlows;
     }
 
@@ -85,7 +84,7 @@ public final class ProfileInterceptorContext extends BaseContext {
      * 
      * @return the results of the flow to be written to storage
      */
-    @Nonnull @NonnullElements @Live public List<ProfileInterceptorResult> getResults() {
+    @Nonnull @Live public List<ProfileInterceptorResult> getResults() {
         return results;
     }
 }

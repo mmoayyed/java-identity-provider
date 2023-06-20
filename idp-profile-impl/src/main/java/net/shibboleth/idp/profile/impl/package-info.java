@@ -16,5 +16,7 @@
  */
 
 /** Implementations of various profile actions. */
-
+@NonnullElements
 package net.shibboleth.idp.profile.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

@@ -16,5 +16,7 @@
  */
 
 /** Implementation of a profile interceptor flow which executes other flows. */
-
+@NonnullElements
 package net.shibboleth.idp.profile.interceptor.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

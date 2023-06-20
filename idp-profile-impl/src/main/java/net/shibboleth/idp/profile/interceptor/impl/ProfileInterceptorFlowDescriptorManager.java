@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.spring.config.IdentifiedComponentManager;
 
 /**
@@ -42,7 +41,7 @@ public class ProfileInterceptorFlowDescriptorManager
      */
     @Autowired
     public ProfileInterceptorFlowDescriptorManager(
-            @Nullable @NonnullElements final Collection<ProfileInterceptorFlowDescriptor> freeObjects) {
+            @Nullable final Collection<ProfileInterceptorFlowDescriptor> freeObjects) {
         super(freeObjects);
     }
 

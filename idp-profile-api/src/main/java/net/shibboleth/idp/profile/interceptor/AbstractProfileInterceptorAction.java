@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.interceptor;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -81,7 +80,8 @@ public abstract class AbstractProfileInterceptorAction extends
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final ProfileInterceptorContext pic = profileInterceptorContext = interceptorContextlookupStrategy.apply(profileRequestContext);
+        final ProfileInterceptorContext pic = profileInterceptorContext =
+                interceptorContextlookupStrategy.apply(profileRequestContext);
         if (pic  == null) {
             log.error("{} Unable to create or locate profile interceptor context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -107,7 +107,8 @@ public abstract class AbstractProfileInterceptorAction extends
     }
 
     /** {@inheritDoc} */
-    @Override protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Override
+    protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         doExecute(profileRequestContext, getProfileInterceptorContext());
     }
 

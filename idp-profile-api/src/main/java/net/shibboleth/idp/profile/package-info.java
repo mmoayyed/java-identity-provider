@@ -16,5 +16,7 @@
  */
 
 /** Common APIs for handling profile requests. */
-
+@NonnullElements
 package net.shibboleth.idp.profile;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

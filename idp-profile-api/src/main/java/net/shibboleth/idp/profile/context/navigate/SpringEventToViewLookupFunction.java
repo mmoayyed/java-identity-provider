@@ -24,7 +24,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
@@ -39,7 +38,7 @@ public class SpringEventToViewLookupFunction implements Function<Event,String> {
     @Nullable private String defaultView;
     
     /** Map of event ID to view name. */
-    @Nonnull @NonnullElements private Map<String,String> eventMap;
+    @Nonnull private Map<String,String> eventMap;
     
     /** Constructor. */
     public SpringEventToViewLookupFunction() {
@@ -60,7 +59,7 @@ public class SpringEventToViewLookupFunction implements Function<Event,String> {
      * 
      * @param map map to use
      */
-    public void setEventMap(@Nullable @NonnullElements final Map<String,String> map) {
+    public void setEventMap(@Nullable final Map<String,String> map) {
         if (map == null) {
             eventMap = CollectionSupport.emptyMap();
         } else {

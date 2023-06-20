@@ -42,7 +42,6 @@ import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
@@ -179,7 +178,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * 
      * @param attributeIds  attribute ID collection
      */
-    public void setAttributesToResolve(@Nonnull @NonnullElements final Collection<String> attributeIds) {
+    public void setAttributesToResolve(@Nonnull final Collection<String> attributeIds) {
         checkSetterPreconditions();
         Constraint.isNotNull(attributeIds, "Attribute ID collection cannot be null");
         attributesLookupStrategy = FunctionSupport.constant(StringSupport.normalizeStringCollection(attributeIds));

@@ -18,5 +18,7 @@
 /**
  * This is a legacy package and will be removed in V6.
  */
-
+@NonnullElements
 package net.shibboleth.idp.profile.logic;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

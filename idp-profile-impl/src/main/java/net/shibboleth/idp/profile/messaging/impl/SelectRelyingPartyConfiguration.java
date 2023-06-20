@@ -141,7 +141,8 @@ public final class SelectRelyingPartyConfiguration extends AbstractMessageHandle
         final CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(rpId),
                 new VerifiedProfileCriterion(true));
 
-        try (final ServiceableComponent<RelyingPartyConfigurationResolver> resolver = rpConfigResolver.getServiceableComponent()) {
+        try (final ServiceableComponent<RelyingPartyConfigurationResolver> resolver =
+                rpConfigResolver.getServiceableComponent()) {
             final RelyingPartyConfiguration config = resolver.getComponent().resolveSingle(criteria);
             if (config == null) {
                 log.debug("{} No relying party configuration applies to this request", getLogPrefix());

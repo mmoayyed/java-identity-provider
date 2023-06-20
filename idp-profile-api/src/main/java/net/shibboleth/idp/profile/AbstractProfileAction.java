@@ -65,8 +65,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
  * instead.</p>
  */
 @ThreadSafe
-public abstract class AbstractProfileAction
-        extends AbstractConditionalProfileAction
+public abstract class AbstractProfileAction extends AbstractConditionalProfileAction
         implements Action, MessageSource, MessageSourceAware {
 
     /** Class logger. */
@@ -185,11 +184,12 @@ public abstract class AbstractProfileAction
         if (eventCtx != null) {
             final Object event = eventCtx.getEvent();
             
-            if (event instanceof Event) {
-                return (Event) event;
-            } else if (event instanceof String) {
-                return ActionSupport.buildEvent(action, (String) event);
+            if (event instanceof Event e) {
+                return e;
+            } else if (event instanceof String e) {
+                return ActionSupport.buildEvent(action, e);
             } else if (event instanceof AttributeMap) {
+                @SuppressWarnings("unchecked")
                 final AttributeMap<Object> map = (AttributeMap<Object>) event;
                 return ActionSupport.buildEvent(action, map.getString("eventId", EventIds.PROCEED_EVENT_ID), map);
             }
@@ -368,4 +368,5 @@ public abstract class AbstractProfileAction
         }
         return springRequestCtx.getRequestContext();
     }
+
 }

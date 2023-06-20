@@ -42,7 +42,6 @@ import org.springframework.webflow.execution.RequestContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.profile.context.AuditContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -71,7 +70,7 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Map of log category to formatting tokens and literals to output. */
     @Nonnull @NotEmpty private Map<String,List<String>> formattingMap;
 
-    /** Explicit categories to log from {@link #formattingMap} */
+    /** Explicit categories to log from {@link #formattingMap}. */
     @Nonnull @NotEmpty private Collection<String> categoriesToLog;
     
     /** Formatter for date/time fields. */
@@ -115,7 +114,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * 
      * @return map of formatting tokens
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<String,List<String>> getFormattingMap() {
+    @Nonnull @NotLive @Unmodifiable public Map<String,List<String>> getFormattingMap() {
         return CollectionSupport.copyToMap(formattingMap);
     }
     
@@ -129,7 +128,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * 
      * @param map map of categories to formatting strings
      */
-    public void setFormattingMap(@Nullable @NonnullElements final Map<String,String> map) {
+    public void setFormattingMap(@Nullable final Map<String,String> map) {
         checkSetterPreconditions();
         
         if (map == null) {
@@ -188,7 +187,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * 
      * @since 4.3.0
      */
-    public void setCategoriesToLog(@Nullable @NonnullElements final Collection<String> categories) {
+    public void setCategoriesToLog(@Nullable final Collection<String> categories) {
         checkSetterPreconditions();
         
         if (categories != null) {

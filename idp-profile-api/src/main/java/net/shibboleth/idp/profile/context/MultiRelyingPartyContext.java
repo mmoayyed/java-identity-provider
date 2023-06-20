@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -52,10 +51,10 @@ import com.google.common.collect.ListMultimap;
 public final class MultiRelyingPartyContext extends BaseContext {
 
     /** Map of RP contexts indexed by name. */
-    @Nonnull @NonnullElements private Map<String,RelyingPartyContext> relyingPartyIdMap;
+    @Nonnull private Map<String,RelyingPartyContext> relyingPartyIdMap;
     
     /** Multimap of RP contexts indexed by role. */
-    @Nonnull @NonnullElements private ListMultimap<String,RelyingPartyContext> relyingPartyLabelMap;
+    @Nonnull private ListMultimap<String,RelyingPartyContext> relyingPartyLabelMap;
     
     /** An iterator to track progress through the set of relying parties. */
     @Nullable private Iterator<RelyingPartyContext> relyingPartyIterator;
@@ -71,7 +70,7 @@ public final class MultiRelyingPartyContext extends BaseContext {
      * 
      * @return  immutable collection of RP contexts
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<RelyingPartyContext> getRelyingPartyContexts() {
+    @Nonnull @NotLive @Unmodifiable public Collection<RelyingPartyContext> getRelyingPartyContexts() {
         return CollectionSupport.copyToList(relyingPartyIdMap.values());
     }
     
@@ -82,7 +81,7 @@ public final class MultiRelyingPartyContext extends BaseContext {
      * 
      * @return  corresponding RP contexts
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<RelyingPartyContext> getRelyingPartyContexts(
+    @Nonnull @NotLive @Unmodifiable public Collection<RelyingPartyContext> getRelyingPartyContexts(
             @Nonnull @NotEmpty final String label) {
         return CollectionSupport.copyToList(relyingPartyLabelMap.get(
                 Constraint.isNotNull(StringSupport.trimOrNull(label), "Label cannot be null or empty")));

@@ -25,7 +25,6 @@ import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.profile.config.InterceptorAwareProfileConfiguration;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -42,9 +41,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 public class OutboundFlowsLookupFunction extends AbstractRelyingPartyLookupFunction<Collection<String>> {
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> apply(
-            @Nullable final ProfileRequestContext input) {
+    @Nullable @NotLive @Unmodifiable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {
             final ProfileConfiguration pc = rpc.getProfileConfig();

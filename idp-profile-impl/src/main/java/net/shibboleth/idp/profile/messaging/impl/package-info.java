@@ -16,5 +16,7 @@
  */
 
 /** Implementations of various message handlers. */
-
+@NonnullElements
 package net.shibboleth.idp.profile.messaging.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

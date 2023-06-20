@@ -40,11 +40,11 @@ import jakarta.servlet.ServletRequest;
 public class ProfileRequestContextFlowExecutionListener implements FlowExecutionListener {
 
     /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(ProfileRequestContextFlowExecutionListener.class);
-
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ProfileRequestContextFlowExecutionListener.class);
 
     @Override
-    public void stateEntered(final RequestContext context, final StateDefinition previousState, final StateDefinition newState) {
+    public void stateEntered(final RequestContext context, final StateDefinition previousState,
+            final StateDefinition newState) {
         if (previousState != null && previousState.getId().startsWith("Initialize")) {
             assert context != null;
             final ProfileRequestContext prc = getProfileRequestContext(context);

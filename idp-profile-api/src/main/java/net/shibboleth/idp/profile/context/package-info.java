@@ -18,4 +18,7 @@
 /**
  * Context classes for IdP-specific information needed by profile actions.
  */
+@NonnullElements
 package net.shibboleth.idp.profile.context;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
