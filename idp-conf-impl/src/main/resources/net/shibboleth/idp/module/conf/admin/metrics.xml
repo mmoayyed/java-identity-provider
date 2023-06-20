@@ -32,6 +32,8 @@
                 <ref bean="shibboleth.metrics.CASServiceRegistryGaugeSet" />
                 <ref bean="shibboleth.metrics.ManagedBeanGaugeSet" />
                 <ref bean="shibboleth.metrics.ModuleGaugeSet" />
+                
+                <!-- Note that this accesses remote "state" regarding IdP and plugin updates. -->
                 <ref bean="shibboleth.metrics.InstallableComponents" />
 
                 <!--
@@ -67,6 +69,7 @@
         <entry key="filter" value-ref="shibboleth.metrics.AttributeFilterGaugeSet" />
         <entry key="cas" value-ref="shibboleth.metrics.CASServiceRegistryGaugeSet" />
         <entry key="bean" value-ref="shibboleth.metrics.ManagedBeanGaugeSet" />
+        <entry key="updates" value-ref="shibboleth.metrics.InstallableComponents" />
     </util:map>
 
     <!-- Add any desired properties into set to expose them as IdP metrics. -->

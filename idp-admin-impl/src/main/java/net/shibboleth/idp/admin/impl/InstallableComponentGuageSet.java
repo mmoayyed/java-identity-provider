@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Metric;
+import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricSet;
 
@@ -48,10 +49,10 @@ import net.shibboleth.profile.installablecomponent.InstallableComponentSupport;
 import net.shibboleth.profile.installablecomponent.InstallableComponentSupport.SupportLevel;
 import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -61,16 +62,17 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * Guage set to report the Plugins' & IdP's installation and update statuses.
  */
-public class InstallableComponentGuageSet extends AbstractIdentifiableInitializableComponent implements MetricSet  {
+public class InstallableComponentGuageSet extends AbstractIdentifiableInitializableComponent
+        implements MetricSet, MetricFilter {
 
     /** Default prefix for metrics. */    
-    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.installedcomponent";
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.installation";
     
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InstallableComponentGuageSet.class);
 
     /** The map of gauges. */
-    @Nonnull @NonnullElements private final Map<String,Metric> gauges = new HashMap<>();
+    @Nonnull private final Map<String,Metric> gauges = new HashMap<>();
 
     /** Where to look for update information. */
     @Nonnull private List<URL> idpUpdateUrls = CollectionSupport.emptyList(); 
@@ -144,7 +146,7 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
      * 
      * @return map where the key is the PluginId and the value is the version
      */
-    @Nonnull @NotLive private Map<String, InstallableComponentVersion> getPluginList() {
+    @Nonnull @NotLive @Unmodifiable private Map<String, InstallableComponentVersion> getPluginList() {
         final Map<String, InstallableComponentVersion> result = new HashMap<>();
         final Iterator<IdPPlugin> plugins = ServiceLoader.load(IdPPlugin.class).iterator();
         while (plugins.hasNext()) {
@@ -154,7 +156,7 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
         return CollectionSupport.copyToMap(result);
     }
 
-    private Map<String, InstallableComponentDetails> getPluginDetails() {
+    @Nonnull @NotLive @Unmodifiable private Map<String, InstallableComponentDetails> getPluginDetails() {
         @NullableElements final Map<URL, Properties> pluginInfoCache = new HashMap<>();
         final Map<String, InstallableComponentDetails> result = new HashMap<>();
         final Iterator<IdPPlugin> plugins = ServiceLoader.load(IdPPlugin.class).iterator();
@@ -163,14 +165,14 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
             assert plugin!=null;
             final Properties properties = lookupIdPProperties(plugin, pluginInfoCache);
             if (properties==null) {
-                log.error("Could not located Plugin version information");
+                log.warn("Could not locate plugin version information");
                 continue;
             }
             final InstallableComponentInfo info = new PluginInfo(plugin.getPluginId(), properties);
             final InstallableComponentVersion pluginVersion = new InstallableComponentVersion(plugin);
             final VersionInfo verInfo = info.getAvailableVersions().get(pluginVersion);
             if (verInfo == null) {
-                log.error("Could not located Plugin version information");
+                log.warn("Could not locate plugin version information");
                 continue;
             }
             final InstallableComponentVersion newPluginVersion =
@@ -182,11 +184,11 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
     }
 
     /**
-     * Look in the cache for the URL and return the properties if its there, 
+     * Look in the cache for the URL and return the properties if it's there, 
      * otherwise reach out to the URL and load the properties.
      * 
      * @param plugin the {@link IdPPlugin} to consider
-     * @param pluginInfoCache the cache of already looked up info.  Also serves as a negative cache
+     * @param pluginInfoCache the cache of already looked up info, also serves as a negative cache
      * 
      * @return IdP update properties
      */
@@ -196,10 +198,10 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
         try {
             urls = plugin.getUpdateURLs();
         } catch (final IOException e) {
-            log.error("Could not locate plugin {} update urls", plugin.getPluginId(), e);
+            log.error("Could not locate plugin {} update URLs", plugin.getPluginId(), e);
             return null;
         }
-        for (final URL url:urls) {
+        for (final URL url : urls) {
             if (pluginInfoCache.containsKey(url)) {
                 return pluginInfoCache.get(url);
             }
@@ -224,13 +226,13 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
             final Properties properties =
                     InstallableComponentSupport.loadInfo(idpUpdateUrls, httpClient, securityParams);
             if (properties == null) {
-                log.error("Could not locate IdP update information");
+                log.warn("Could not locate IdP update information");
                 return null;
             }
             final InstallableComponentInfo info = new IdPInfo(properties);
             final VersionInfo verInfo = info.getAvailableVersions().get(getIdPVersion());
             if (verInfo == null) {
-                log.error("Could not located IdP version information");
+                log.warn("Could not locate IdP version information");
                 return null;
             }
             final InstallableComponentVersion newIdPVersion =
@@ -247,12 +249,12 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (httpClient == null) {
-            throw new ComponentInitializationException("Http Client was null");
+            throw new ComponentInitializationException("HttpClient was null");
         }
         final String idpVersionStr = Version.getVersion();
         if (idpVersionStr == null) {
-            // So things work inside eclipse.
-            log.error("Could not find Current IdP Version, assuming V5.0.0");
+            // So things work inside Eclipse.
+            log.warn("Could not find current IdP Version (likely operating inside IDE), assuming V5.0.0");
             idpVersion = new InstallableComponentVersion(5,0,0);
         } else {
             idpVersion = new InstallableComponentVersion(idpVersionStr); 
@@ -265,7 +267,12 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
         return gauges;
     }
 
-    record InstallableComponentDetails(@Nonnull @NotEmpty SupportLevel supportedState,
-            @Nullable InstallableComponentVersion updateVersion) { };
+    /** {@inheritDoc} */
+    public boolean matches(final String name, final Metric metric) {
+        return gauges.containsKey(name);
+    }
     
+    record InstallableComponentDetails(@Nonnull @NotEmpty SupportLevel supportedState,
+            @Nullable InstallableComponentVersion updateVersion) { }
+
 }

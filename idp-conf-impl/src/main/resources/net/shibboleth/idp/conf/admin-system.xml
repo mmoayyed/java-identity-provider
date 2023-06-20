@@ -351,6 +351,7 @@
         <value>http://plugins.shibboleth.net/idp-versions.properties</value>
     </util:list>
 
+    <!-- Used to log state of updateability in IdP log, no role after startup. -->
     <bean id="shibboleth.UpdateStatus"
        class="net.shibboleth.idp.admin.impl.ReportUpdateStatus"
        lazy-init="false"

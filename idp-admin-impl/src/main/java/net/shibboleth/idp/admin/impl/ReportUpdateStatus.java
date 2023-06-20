@@ -102,12 +102,10 @@ public class ReportUpdateStatus extends AbstractIdentifiableInitializableCompone
             return;
         }
         if (httpClient == null) {
-            log.error("Http Client was not set");
-            throw new ComponentInitializationException("Http Client was not set");
+            throw new ComponentInitializationException("HttpClient was not set");
         }
         if (updateUrls.isEmpty()) {
-            log.error("No Update Urls set");
-            throw new ComponentInitializationException("No Update Urls set");
+            throw new ComponentInitializationException("No update URLs set");
         }
         
         final ExecutorService svc =  Executors.newSingleThreadExecutor();
@@ -123,14 +121,14 @@ public class ReportUpdateStatus extends AbstractIdentifiableInitializableCompone
         try {
             final String versionStr = Version.getVersion();
             if (versionStr == null) {
-                log.error("Could not find Current IdP Version");
+                log.warn("Could not find current IdP Version (likely operating inside IDE)");
                 return;
             }
             @Nonnull final InstallableComponentVersion version = new InstallableComponentVersion(versionStr); 
             assert httpClient!=null;
             final Properties properties = InstallableComponentSupport.loadInfo(updateUrls, httpClient, securityParams);
             if (properties == null) {
-                log.error("Could not locate IdP update information");
+                log.warn("Could not locate IdP update information");
                 return;
             }
             final InstallableComponentInfo info = new IdPInfo(properties);
@@ -138,7 +136,7 @@ public class ReportUpdateStatus extends AbstractIdentifiableInitializableCompone
             final InstallableComponentVersion newIdPVersion =
                     InstallableComponentSupport.getBestVersion(version, version, info);
             if (newIdPVersion == null) {
-                log.info("No Upgrade available from {}", version);
+                log.info("No upgrade available from {}", version);
             } else {
                 log.warn("Version {} can be upgraded to {}", version, newIdPVersion);
             }
@@ -152,7 +150,7 @@ public class ReportUpdateStatus extends AbstractIdentifiableInitializableCompone
                        log.debug("Version {} is current");
                        break;
                    case Secadv:
-                       log.error("Version {} has secuorty alerts again it.", version);
+                       log.error("Version {} has known security vulnerabilities", version);
                        break;
                    default:
                        log.warn("Support level for {} is {}", version, sl);
