@@ -32,7 +32,6 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.spring.util.SpringSupport;
@@ -79,7 +78,7 @@ public class InitializeAdministrativeProfileContextTree extends AbstractProfileA
      * @param langs a semi-colon separated string.
      */
     @SuppressWarnings("unused")
-    public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
+    public void setFallbackLanguages(@Nonnull final List<String> langs) {
         checkSetterPreconditions();
         
         if (langs != null) {

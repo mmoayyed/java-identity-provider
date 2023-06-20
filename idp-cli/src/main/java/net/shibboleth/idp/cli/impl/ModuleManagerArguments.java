@@ -31,7 +31,6 @@ import com.beust.jcommander.Parameter;
 
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLineArguments;
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -52,19 +51,19 @@ public class ModuleManagerArguments extends AbstractIdPHomeAwareCommandLineArgum
 
     /** Detailed info about installed module(s). */
     @Parameter(names= {"-i", "--info"})
-    @Nullable @NonnullElements private List<String> infoModuleIds = new ArrayList<>();
+    @Nullable private List<String> infoModuleIds = new ArrayList<>();
 
     /** Test status of installed module(s). */
     @Parameter(names= {"-t", "--test"})
-    @Nullable @NonnullElements private List<String> testModuleIds = new ArrayList<>();
+    @Nullable private List<String> testModuleIds = new ArrayList<>();
 
     /** ID of module(s) to enable. */
     @Parameter(names= {"-e", "--enable"})
-    @Nullable @NonnullElements private List<String> enableModuleIds = new ArrayList<>();
+    @Nullable private List<String> enableModuleIds = new ArrayList<>();
 
     /** ID of module(s) to enable. */
     @Parameter(names= {"-d", "--disable"})
-    @Nullable @NonnullElements private List<String> disableModuleIds = new ArrayList<>();
+    @Nullable private List<String> disableModuleIds = new ArrayList<>();
 
     /** Clean when disabling. */
     @Parameter(names= {"-f", "--clean"})

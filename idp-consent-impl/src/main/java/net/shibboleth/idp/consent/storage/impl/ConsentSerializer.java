@@ -49,7 +49,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 
 import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
@@ -80,7 +79,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
     @Nonnull private final JsonReaderFactory readerFactory;
 
     /** Shrink consent IDs into symbolic numbers. */
-    @Nonnull @NonnullElements private BiMap<String, Integer> symbolics;
+    @Nonnull private BiMap<String, Integer> symbolics;
 
     /** Constructor. */
     @SuppressWarnings("null")
@@ -96,7 +95,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
      * 
      * @param mappings string to symbolic mappings
      */
-    public void setSymbolics(@Nonnull @NonnullElements final Map<String, Integer> mappings) {
+    public void setSymbolics(@Nonnull final Map<String, Integer> mappings) {
         checkSetterPreconditions();
         symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Symbolic mappings cannot be null"));
     }

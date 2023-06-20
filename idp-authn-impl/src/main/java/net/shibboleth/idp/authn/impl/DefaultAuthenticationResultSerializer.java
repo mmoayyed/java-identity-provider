@@ -58,7 +58,6 @@ import net.shibboleth.idp.authn.principal.PrincipalSerializer;
 import net.shibboleth.idp.authn.principal.PrincipalService;
 import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.authn.principal.impl.AuthenticationResultPrincipalSerializer;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.Base64Support;
 import net.shibboleth.shared.codec.EncodingException;
@@ -109,7 +108,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     @Nonnull private final PrincipalServiceManager principalServiceManager;
 
     /** Principal serializers. */
-    @Nonnull @NonnullElements private Collection<PrincipalSerializer<String>> principalSerializers;
+    @Nonnull private Collection<PrincipalSerializer<String>> principalSerializers;
 
     /**
      * Specialized serializer for {@link net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal}

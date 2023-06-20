@@ -23,7 +23,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricSet;
 
 import net.shibboleth.idp.Version;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 import java.time.Duration;
@@ -96,7 +95,7 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
      * 
      * @param properties properties to expose
      */
-    public void setExposedProperties(@Nullable @NonnullElements final Set<String> properties) {
+    public void setExposedProperties(@Nullable final Set<String> properties) {
         if (properties != null) {
             final ApplicationContext context = getApplicationContext();
             assert context != null;
