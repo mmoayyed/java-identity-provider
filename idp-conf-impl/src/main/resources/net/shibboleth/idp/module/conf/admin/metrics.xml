@@ -59,6 +59,7 @@
     <util:map id="shibboleth.metrics.MetricGroups">
         <entry key="core" value-ref="shibboleth.metrics.CoreGaugeSet" />
         <entry key="idp" value-ref="shibboleth.metrics.IdPGaugeSet" />
+        <entry key="updates" value-ref="shibboleth.metrics.InstallableComponents" />
         <entry key="logging" value-ref="shibboleth.metrics.LoggingGaugeSet" />
         <entry key="access" value-ref="shibboleth.metrics.AccessControlGaugeSet" />
         <entry key="metadata" value-ref="shibboleth.metrics.MetadataGaugeSet" />
@@ -69,7 +70,6 @@
         <entry key="filter" value-ref="shibboleth.metrics.AttributeFilterGaugeSet" />
         <entry key="cas" value-ref="shibboleth.metrics.CASServiceRegistryGaugeSet" />
         <entry key="bean" value-ref="shibboleth.metrics.ManagedBeanGaugeSet" />
-        <entry key="updates" value-ref="shibboleth.metrics.InstallableComponents" />
     </util:map>
 
     <!-- Add any desired properties into set to expose them as IdP metrics. -->

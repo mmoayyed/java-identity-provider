@@ -289,6 +289,12 @@
 
     <bean id="shibboleth.metrics.IdPGaugeSet" class="net.shibboleth.idp.metrics.impl.IdPGaugeSet" lazy-init="true"
         p:exposedProperties="#{getObject('shibboleth.metrics.ExposedProperties')}" />
+
+    <bean id="shibboleth.metrics.InstallableComponents"
+        class="net.shibboleth.idp.admin.impl.InstallableComponentGuageSet" lazy-init="true"
+       p:idpUpdateUrls-ref="%{idp.updateCheck.urls:shibboleth.IdPUpdateCheckUrls}"
+       p:httpClient-ref="%{idp.updateCheck.httpClient:shibboleth.InternalHttpClient}"
+       p:securityParams="#{ environment.containsProperty('idp.updateCheck.httpSecurityParameters') ? getObject('idp.updateCheck.httpSecurityParameters') :null}"/>
     
     <bean id="shibboleth.metrics.LoggingGaugeSet"
         class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
@@ -339,12 +345,6 @@
         class="net.shibboleth.shared.service.ReloadableServiceGaugeSet" lazy-init="true"
         c:metricName="net.shibboleth.idp.managedbean"
         p:service-ref="shibboleth.ManagedBeanService" />
-
-    <bean id="shibboleth.metrics.InstallableComponents"
-        class="net.shibboleth.idp.admin.impl.InstallableComponentGuageSet" lazy-init="true"
-       p:idpUpdateUrls-ref="%{idp.updateCheck.urls:shibboleth.IdPUpdateCheckUrls}"
-       p:httpClient-ref="%{idp.updateCheck.httpClient:shibboleth.InternalHttpClient}"
-       p:securityParams="#{ environment.containsProperty('idp.updateCheck.httpSecurityParameters') ? getObject('idp.updateCheck.httpSecurityParameters') :null}"/>
 
     <util:list id="shibboleth.IdPUpdateCheckUrls">
         <value>https://shibboleth.net/downloads/identity-provider/plugins/idp-versions.properties</value>
