@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.installer.plugin.impl;
+package net.shibboleth.idp.plugin.impl;
 
 import java.util.Properties;
 
@@ -28,7 +28,7 @@ import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
- * Information about a Plugin
+ * Information about a Plugin.
  */
 public class PluginInfo extends InstallableComponentInfo {
 

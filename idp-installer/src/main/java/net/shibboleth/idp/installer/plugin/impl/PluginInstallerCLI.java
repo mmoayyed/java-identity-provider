@@ -48,6 +48,7 @@ import net.shibboleth.idp.Version;
 import net.shibboleth.idp.cli.AbstractIdPHomeAwareCommandLine;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.idp.plugin.impl.PluginInfo;
 import net.shibboleth.profile.installablecomponent.InstallableComponentInfo;
 import net.shibboleth.profile.installablecomponent.InstallableComponentSupport;
 import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;

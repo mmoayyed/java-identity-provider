@@ -340,6 +340,12 @@
         c:metricName="net.shibboleth.idp.managedbean"
         p:service-ref="shibboleth.ManagedBeanService" />
 
+    <bean id="shibboleth.metrics.InstallableComponents"
+        class="net.shibboleth.idp.admin.impl.InstallableComponentGuageSet" lazy-init="true"
+       p:idpUpdateUrls-ref="%{idp.updateCheck.urls:shibboleth.IdPUpdateCheckUrls}"
+       p:httpClient-ref="%{idp.updateCheck.httpClient:shibboleth.InternalHttpClient}"
+       p:securityParams="#{ environment.containsProperty('idp.updateCheck.httpSecurityParameters') ? getObject('idp.updateCheck.httpSecurityParameters') :null}"/>
+
     <util:list id="shibboleth.IdPUpdateCheckUrls">
         <value>https://shibboleth.net/downloads/identity-provider/plugins/idp-versions.properties</value>
         <value>http://plugins.shibboleth.net/idp-versions.properties</value>

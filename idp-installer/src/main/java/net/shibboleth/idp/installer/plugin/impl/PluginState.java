@@ -33,6 +33,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.idp.plugin.IdPPlugin;
+import net.shibboleth.idp.plugin.impl.PluginInfo;
 import net.shibboleth.profile.installablecomponent.InstallableComponentInfo;
 import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
