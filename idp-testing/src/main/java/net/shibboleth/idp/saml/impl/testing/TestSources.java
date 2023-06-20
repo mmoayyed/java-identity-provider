@@ -43,7 +43,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML2NameIDAttributeDefinition;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -134,7 +133,7 @@ public final class TestSources {
      * @return The connector
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    @Nonnull public static DataConnector populatedStaticConnector(@Nonnull @NonnullElements final List<IdPAttribute> attributes)
+    @Nonnull public static DataConnector populatedStaticConnector(@Nonnull final List<IdPAttribute> attributes)
             throws ComponentInitializationException {
 
         final StaticDataConnector connector = new StaticDataConnector();
@@ -301,7 +300,7 @@ public final class TestSources {
 
         /** {@inheritDoc} */
         @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-                final @Nonnull AttributeResolutionContext resolutionContext,
+                @Nonnull final AttributeResolutionContext resolutionContext,
                 @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
             assert value != null;
             return value;
@@ -321,7 +320,7 @@ public final class TestSources {
     private static class StaticDataConnector extends AbstractDataConnector {
 
         /** Static collection of values returned by this connector. */
-        private Map<String, IdPAttribute> attributes;
+        @Nullable private Map<String, IdPAttribute> attributes;
 
         /**
          * Get the static values returned by this connector.
@@ -373,4 +372,5 @@ public final class TestSources {
         }
 
     }
+
 }

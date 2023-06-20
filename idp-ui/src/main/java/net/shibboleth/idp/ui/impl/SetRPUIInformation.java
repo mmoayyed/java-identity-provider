@@ -44,7 +44,6 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.NonnullSupplier;
@@ -142,7 +141,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @param langs a semi-colon separated string.
      */
-    public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
+    public void setFallbackLanguages(@Nonnull final List<String> langs) {
         checkSetterPreconditions();
         fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
     }

@@ -45,7 +45,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAttributeStatementToAssertion;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ServiceException;
@@ -210,7 +209,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
      */
     private void encodeAttribute(@Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final IdPAttribute attribute, @Nonnull @NonnullElements final Collection<Attribute> results)
+            @Nonnull final IdPAttribute attribute, @Nonnull final Collection<Attribute> results)
                     throws AttributeEncodingException {
 
         log.debug("{} Attempting to encode attribute {} as a SAML 1 Attribute", getLogPrefix(), attribute.getId());
