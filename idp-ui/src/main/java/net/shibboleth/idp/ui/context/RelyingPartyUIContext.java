@@ -238,29 +238,6 @@ public final class RelyingPartyUIContext extends BaseContext {
 
     /**
      * Set the browser languages.
-     *
-     * @param languages the languages to set
-     * 
-     * @return this context
-     * 
-     * @deprecated use {@link #setBrowserLanguageRanges(List)}
-     */
-    @Deprecated(since="4.0.0", forRemoval=true)
-    @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull final List<String> languages) {
-        Constraint.isNotNull(languages, "Language List cannot be null");
-        DeprecationSupport.warnOnce(ObjectType.METHOD, "RelyingPartyUIContext.setBrowserLanguages", null,
-                "setBrowserLanguageRanges");
-        browserLanguages = languages.
-                stream().
-                filter(e -> e != null).
-                map(s -> new LanguageRange(s)).
-                collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).
-                get();
-        return this;
-    }
-
-    /**
-     * Set the browser languages.
      * 
      * @param ranges the languages to set
      * 
