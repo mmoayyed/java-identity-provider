@@ -46,7 +46,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 /**
  * A class to reach out and find out whether we are up to date.
  */
-public class ReportUpdateStatus  extends AbstractIdentifiableInitializableComponent implements Runnable {
+public class ReportUpdateStatus extends AbstractIdentifiableInitializableComponent implements Runnable {
 
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ReportUpdateStatus.class);
@@ -68,7 +68,7 @@ public class ReportUpdateStatus  extends AbstractIdentifiableInitializableCompon
      */
     public void setUpdateUrls(@Nullable final List<URL> urls) {
         if (urls == null || urls.isEmpty()) {
-            log.error("Emopty URL update listr specified");
+            log.error("Empty URL update list specified");
         } else {
             updateUrls = urls;
         }
@@ -130,7 +130,7 @@ public class ReportUpdateStatus  extends AbstractIdentifiableInitializableCompon
             assert httpClient!=null;
             final Properties properties = InstallableComponentSupport.loadInfo(updateUrls, httpClient, securityParams);
             if (properties == null) {
-                log.error("Could not located Idp update information");
+                log.error("Could not locate IdP update information");
                 return;
             }
             final InstallableComponentInfo info = new IdPInfo(properties);
