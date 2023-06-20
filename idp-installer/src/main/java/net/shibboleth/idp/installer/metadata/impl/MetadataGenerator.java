@@ -104,38 +104,38 @@ public class MetadataGenerator extends AbstractInitializableComponent {
     /**
      * Those endpoints which require a backchannel.
      */
-    static final Set<Endpoints> BACKCHANNEL_ENDPOINTS = Set.copyOf(EnumSet.of(
+    @Nonnull private static final Set<Endpoints> BACKCHANNEL_ENDPOINTS = CollectionSupport.setOf(
             Endpoints.SAML1Artifact, Endpoints.SAML2Artifact, Endpoints.SOAPSLO, Endpoints.SAML1Query,
-            Endpoints.SAML2Query));
+            Endpoints.SAML2Query);
 
     /**
      * the Artifact endpoints.
      */
-    static final Set<Endpoints> ARTIFACT_ENDPOINTS = Set.copyOf(EnumSet.of(Endpoints.SAML1Artifact,
-            Endpoints.SAML2Artifact));
+    @Nonnull private static final Set<Endpoints> ARTIFACT_ENDPOINTS = CollectionSupport.setOf(Endpoints.SAML1Artifact,
+            Endpoints.SAML2Artifact);
 
     /**
      * the SSO endpoints.
      */
-    static final Set<Endpoints> SSO_ENDPOINTS = Set.copyOf(EnumSet.of(Endpoints.ShibbolethSSO,
-            Endpoints.POSTSSO, Endpoints.POSTSimpleSignSSO, Endpoints.RedirectSSO));
+    @Nonnull private static final Set<Endpoints> SSO_ENDPOINTS = CollectionSupport.setOf(Endpoints.ShibbolethSSO,
+            Endpoints.POSTSSO, Endpoints.POSTSimpleSignSSO, Endpoints.RedirectSSO);
 
     /**
      * the SLO endpoints.
      */
-    static final Set<Endpoints> SLO_ENDPOINTS = Set.copyOf(EnumSet.of(Endpoints.RedirectSLO,
-            Endpoints.POSTSLO, Endpoints.POSTSimpleSignSLO, Endpoints.SOAPSLO));
+    @Nonnull private static final Set<Endpoints> SLO_ENDPOINTS = CollectionSupport.setOf(Endpoints.RedirectSLO,
+            Endpoints.POSTSLO, Endpoints.POSTSimpleSignSLO, Endpoints.SOAPSLO);
 
     /**
      * AttributeAuthority endpoints.
      */
-    static final Set<Endpoints> AA_ENDPOINTS = Set.copyOf(EnumSet.of(Endpoints.SAML1Query,
-            Endpoints.SAML2Query));
+    @Nonnull private static final Set<Endpoints> AA_ENDPOINTS = CollectionSupport.setOf(Endpoints.SAML1Query,
+            Endpoints.SAML2Query);
 
     /**
      * Which endpoints to generate.
      */
-    private EnumSet<Endpoints> endpoints;
+    @NonnullAfterInit private EnumSet<Endpoints> endpoints;
 
     /**
      * Whether to comment out the SAML2 AA endpoint.
@@ -161,7 +161,7 @@ public class MetadataGenerator extends AbstractInitializableComponent {
     /**
      * Where to write to - as {@link File}.
      */
-    private File output;
+    @Nullable private File output;
 
     /** The parameters. */
     private MetadataGeneratorParameters params;
@@ -505,7 +505,8 @@ public class MetadataGenerator extends AbstractInitializableComponent {
      * @throws IOException if badness happens
      */
     protected void writeScope() throws IOException {
-        if (null == params.getScope() || params.getScope().isEmpty()) {
+        final String scope = params.getScope();
+        if (null == scope || scope.isEmpty()) {
             return;
         }
 

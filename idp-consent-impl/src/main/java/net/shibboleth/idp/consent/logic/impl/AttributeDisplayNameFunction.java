@@ -27,6 +27,8 @@ import javax.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.service.ReloadableService;
 
 /**
@@ -49,9 +51,11 @@ public class AttributeDisplayNameFunction extends AbstractAttributeDisplayFuncti
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected Map<Locale, String> getDisplayInfo(
+    @Override
+    @Nonnull @Unmodifiable @NotLive protected Map<Locale, String> getDisplayInfo(
             @Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final IdPAttribute attribute) {
         return  registry.getDisplayNames(attribute);
     }
+
 }

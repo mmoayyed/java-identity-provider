@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Ordering;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -47,7 +46,7 @@ public class PreferExplicitOrderComparator implements Comparator<String> {
     @Nonnull final private Ordering<String> explicitOrdering;
 
     /** Strings in order. */
-    @Nonnull @NonnullElements @Unmodifiable final private List<String> explicitOrder;
+    @Nonnull @Unmodifiable final private List<String> explicitOrder;
 
     /**
      * Constructor.

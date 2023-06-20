@@ -33,6 +33,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.slf4j.Logger;
 
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -41,24 +43,26 @@ import net.shibboleth.shared.primitive.LoggerFactory;
  * A @{link {@link FileVisitor} copies directory trees keeping a note of all copied target files.
  */
 public final class LoggingVisitor extends SimpleFileVisitor<Path> {
-    /** How what files have we copied? */
-    private final List<Path> copiedFiles = new ArrayList<>();
-
+    
     /** logger. */
-    private final Logger log = LoggerFactory.getLogger(LoggingVisitor.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(LoggingVisitor.class);
+
+    /** How what files have we copied? */
+    @Nonnull private final List<Path> copiedFiles = new ArrayList<>();
 
     /** Path we are traversing. */
-    private final Path from;
+    @Nonnull private final Path from;
     
     /** Path where we copy to. */
-    private final Path to;
+    @Nonnull private final Path to;
+    
     /**
      * Constructor.
      *
      * @param fromDir Path we are traversing
      * @param toDir Path where we check for Duplicates
      */
-    public LoggingVisitor(final Path fromDir, final Path toDir) {
+    public LoggingVisitor(@Nonnull final Path fromDir, @Nonnull final Path toDir) {
         from = fromDir;
         to = toDir;
     }
@@ -86,10 +90,13 @@ public final class LoggingVisitor extends SimpleFileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
     
-    /** did we find a name clash?
-     * @return whether we found a name clash.
+    /**
+     * Did we find a name clash?
+     * 
+     * @return whether we found a name clash
      */
-    public List<Path> getCopiedList() {
+    @Nonnull public List<Path> getCopiedList() {
         return copiedFiles;
     }
+
 }

@@ -52,7 +52,6 @@ import net.shibboleth.idp.plugin.impl.PluginInfo;
 import net.shibboleth.profile.installablecomponent.InstallableComponentInfo;
 import net.shibboleth.profile.installablecomponent.InstallableComponentSupport;
 import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -105,7 +104,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements protected List<Resource> getAdditionalSpringResources() {
+    @Nonnull protected List<Resource> getAdditionalSpringResources() {
         return CollectionSupport.singletonList(
                new ClassPathResource("net/shibboleth/idp/conf/http-client.xml"));
     }

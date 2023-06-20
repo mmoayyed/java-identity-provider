@@ -18,5 +18,7 @@
 /**
  * Predicates and functions related to attribute consent.
  */
-
+@NonnullElements
 package net.shibboleth.idp.consent.logic.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

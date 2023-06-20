@@ -83,6 +83,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
     @Nonnull @NonnullElements private BiMap<String, Integer> symbolics;
 
     /** Constructor. */
+    @SuppressWarnings("null")
     public ConsentSerializer() {
         final JsonProvider provider = JsonProvider.provider();
         generatorFactory = provider.createGeneratorFactory(null);
@@ -108,9 +109,6 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
      * @return the resulting string, or null if invalid
      */
     @Nullable protected String desymbolize(@Nonnull final JsonValue field) {
-        if (field == null) {
-            return null;
-        }
         switch (field.getValueType()) {
             case STRING:
                 return ((JsonString) field).getString();

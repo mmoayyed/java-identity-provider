@@ -96,13 +96,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     @Nonnull private static final Logger LOG = LoggerFactory.getLogger(PluginInstaller.class);
 
     /** Property Name for version. */
-    private static final String PLUGIN_VERSION_PROPERTY ="idp.plugin.version";
+    @Nonnull @NotEmpty private static final String PLUGIN_VERSION_PROPERTY ="idp.plugin.version";
 
     /** Property Prefix for install files . */
-    private static final String PLUGIN_FILE_PROPERTY_PREFIX = "idp.plugin.file.";
+    @Nonnull @NotEmpty private static final String PLUGIN_FILE_PROPERTY_PREFIX = "idp.plugin.file.";
 
     /** Property Name for whether paths are relative. */
-    private  static final String PLUGIN_RELATIVE_PATHS_PROPERTY = "idp.plugin.relativePaths";
+    @Nonnull @NotEmpty private  static final String PLUGIN_RELATIVE_PATHS_PROPERTY = "idp.plugin.relativePaths";
 
     /** Where we are installing to. */
     @NonnullAfterInit private Path idpHome;
@@ -159,13 +159,13 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     @Nonnull private final  Map<ModuleResource,ResourceResult> moduleChanges = new HashMap<>();
 
     /** The "plugins" classpath loader. AutoClosed. */
-    private URLClassLoader installedPluginsLoader;
+    @Nullable private URLClassLoader installedPluginsLoader;
 
     /** The "plugin under construction" classpath loader. AutoClosed. */
-    private URLClassLoader installingPluginLoader;
+    @Nullable private URLClassLoader installingPluginLoader;
 
     /** The securityParams for the module context. */
-    private HttpClientSecurityParameters securityParams;
+    @Nullable private HttpClientSecurityParameters securityParams;
 
     /** Do we rebuild? */
     private boolean rebuildWar = true;
@@ -512,7 +512,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param rollBack Roll Back Context
      * @throws BuildException if badness is detected.
      */
-    private void installNew(final RollbackPluginInstall rollBack) throws BuildException {
+    private void installNew(@Nonnull final RollbackPluginInstall rollBack) throws BuildException {
         final Path from = distribution.resolve("webapp");
         assert from != null;
         if (InstallerSupport.detectDuplicates(from, getPluginsWebapp())) {
@@ -538,7 +538,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** Uninstall the old version of the plugin.
      * @param rollback Rollback Context
      * @throws BuildException on IO or module errors */
-    private void uninstallOld(final RollbackPluginInstall rollback) throws BuildException {
+    private void uninstallOld(@Nonnull final RollbackPluginInstall rollback) throws BuildException {
 
         final String oldVersion =getVersionFromContents(); 
         if (oldVersion == null) {
@@ -563,7 +563,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param copiedFiles The copied files
      * @throws BuildException If we hit an IO exception
      */
-    private void saveCopiedFiles(final List<Path> copiedFiles) throws BuildException {
+    private void saveCopiedFiles(@Nonnull final List<Path> copiedFiles) throws BuildException {
         try {
             Files.createDirectories(pluginsContents);
             final Properties props = new Properties(1+copiedFiles.size());
@@ -588,7 +588,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @param props The property files
      * @return the idpHome it was installed to or null if no files installed
      */
-    @Nullable private Path inferInstalledIdpHome(final Properties props) {
+    @Nullable private Path inferInstalledIdpHome(@Nonnull final Properties props) {
         if (props.get(PLUGIN_FILE_PROPERTY_PREFIX+"1") == null) {
             // No files
             return null;
@@ -691,7 +691,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
 
     /** Capture module changes.
      * @param changes what has changed */
-    private void captureChanges(final  Map<ModuleResource,ResourceResult> changes) {
+    private void captureChanges(@Nonnull final Map<ModuleResource,ResourceResult> changes) {
         for (final Entry<ModuleResource, ResourceResult> entry: changes.entrySet()) {
             moduleChanges.put(entry.getKey(), entry.getValue());
         }
@@ -748,7 +748,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @throws BuildException if badness is detected.
      */
     // CheckStyle:  CyclomaticComplexity OFF
-    private void unpack(final Path base, final String fileName) throws BuildException {
+    private void unpack(@Nonnull final Path base, @Nonnull final String fileName) throws BuildException {
         Constraint.isNull(unpackDirectory, "cannot unpack multiple times");
         try {
             unpackDirectory = Files.createTempDirectory("plugin-installer-unpack");
@@ -806,7 +806,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return true if it ends with .zip
      * @throws BuildException if the name is too short
      */
-    private boolean isZip(final String fileName) throws BuildException {
+    private boolean isZip(@Nonnull final String fileName) throws BuildException {
         if (fileName.length() <= 7) {
             LOG.error("Improbably small file name: {}", fileName);
             throw new BuildException("Improbably small file name");
@@ -826,7 +826,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return the the appropriate  {@link ArchiveInputStream} 
      * @throws IOException  if we trip over an unpack
      */
-    @Nonnull private ArchiveInputStream getStreamFor(final Path fullName, final boolean isZip) throws IOException {
+    @Nonnull private ArchiveInputStream getStreamFor(@Nonnull final Path fullName, final boolean isZip) throws IOException {
         final InputStream inStream = new BufferedInputStream(new FileInputStream(fullName.toFile()));
         if (isZip) {
             return new ZipArchiveInputStream(inStream);
@@ -1038,7 +1038,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     /** close, ignoring errors.
      * @param what what to close
      */
-    private void closeSilently(final AutoCloseable what) {
+    private void closeSilently(@Nullable final AutoCloseable what) {
         if (what == null) {
             return;
         }
@@ -1073,5 +1073,5 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         } 
         return new InstallableComponentVersion(version);
     }
-}
 
+}

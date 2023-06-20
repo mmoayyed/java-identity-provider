@@ -29,6 +29,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resource.Resource;
@@ -41,32 +43,32 @@ public class MetadataGeneratorParameters extends AbstractInitializableComponent 
     /**
      * The file with the certificate the IDP uses to encrypt.
      */
-    private File encryptionCert;
+    @Nullable private File encryptionCert;
 
     /**
      * The strings with the encryption cert in them (to allow for multiline output).
      */
-    private List<String> encryptionCerts;
+    @Nullable private List<String> encryptionCerts;
 
     /**
      * The file with the certificate that TLS uses to 'sign'.
      */
-    private File backChannelCert;
+    @Nullable private File backChannelCert;
 
     /**
      * The strings with the back channel cert in them (to allow for multiline output).
      */
-    private List<String> backChannelCerts;
+    @Nullable private List<String> backChannelCerts;
 
     /**
      * The file with the certificate the IDP uses to sign.
      */
-    private File signingCert;
+    @Nullable private File signingCert;
 
     /**
      * The strings with the signing certs in them (to allow for multiline output).
      */
-    private List<String> signingCerts;
+    @Nullable private List<String> signingCerts;
 
     /** The entityID. */
     @NonnullAfterInit private String entityID;
@@ -75,7 +77,7 @@ public class MetadataGeneratorParameters extends AbstractInitializableComponent 
     @NonnullAfterInit private String dnsName;
 
     /** The scope. */
-    private String scope;
+    @Nullable private String scope;
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
@@ -108,7 +110,7 @@ public class MetadataGeneratorParameters extends AbstractInitializableComponent 
      *
      * @param resource what to set.
      */
-    public void setEncryptionCertResource(final Resource resource) {
+    public void setEncryptionCertResource(@Nonnull final Resource resource) {
 
         try {
             encryptionCert = resource.getFile();
@@ -131,7 +133,7 @@ public class MetadataGeneratorParameters extends AbstractInitializableComponent 
      *
      * @param resource what to set.
      */
-    public void setSigningCertResource(final Resource resource) {
+    public void setSigningCertResource(@Nonnull final Resource resource) {
         try {
             signingCert = resource.getFile();
         } catch (final IOException e) {
@@ -153,7 +155,7 @@ public class MetadataGeneratorParameters extends AbstractInitializableComponent 
      *
      * @param file what to set.
      */
-    public void setBackchannelCert(final File file) {
+    public void setBackchannelCert(@Nullable final File file) {
         backChannelCert = file;
     }
     
@@ -162,7 +164,7 @@ public class MetadataGeneratorParameters extends AbstractInitializableComponent 
      *
      * @param resource what to set.
      */
-    public void setBackchannelCertResource(final Resource resource) {
+    public void setBackchannelCertResource(@Nonnull final Resource resource) {
         try {
             backChannelCert = resource.getFile();
         } catch (final IOException e) {
@@ -176,9 +178,10 @@ public class MetadataGeneratorParameters extends AbstractInitializableComponent 
      *
      * @param file the file
      * @return the contents
-     * @throws IOException if badness occurrs.
+     * 
+     * @throws IOException if badness occurrs
      */
-    private List<String> getCertificateContents(final File file) throws IOException {
+    @Nullable @Unmodifiable @NotLive private List<String> getCertificateContents(final File file) throws IOException {
         if (null == file || !file.exists()) {
             return null;
         }
@@ -248,7 +251,7 @@ public class MetadataGeneratorParameters extends AbstractInitializableComponent 
      *
      * @return the scope.
      */
-    public String getScope() {
+    @Nullable public String getScope() {
         return scope;
     }
 
@@ -257,7 +260,7 @@ public class MetadataGeneratorParameters extends AbstractInitializableComponent 
      *
      * @param value what to set.
      */
-    public void setScope(final String value) {
+    public void setScope(@Nullable final String value) {
         scope = value;
     }
 }

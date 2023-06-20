@@ -18,5 +18,7 @@
 /**
  * Actions and flow descriptors related to attribute release consent.
  */
-
+@NonnullElements
 package net.shibboleth.idp.consent.flow.ar.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

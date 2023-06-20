@@ -29,7 +29,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.primitive.StringSupport;
@@ -40,10 +39,10 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class AttributePredicate extends AbstractInitializableComponent implements Predicate<IdPAttribute> {
 
     /** Set of attribute IDs for which to prompt for consent. */
-    @Nonnull @NonnullElements private Set<String> promptedAttributeIds;
+    @Nonnull private Set<String> promptedAttributeIds;
 
     /** Set of attribute IDs to ignore for consent. */
-    @Nonnull @NonnullElements private Set<String> ignoredAttributeIds;
+    @Nonnull private Set<String> ignoredAttributeIds;
 
     /** Regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
@@ -59,7 +58,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * 
      * @param prompted prompted attribute IDs
      */
-    public void setPromptedAttributeIds(@Nullable @NonnullElements final Collection<String> prompted) {
+    public void setPromptedAttributeIds(@Nullable final Collection<String> prompted) {
         checkSetterPreconditions();
         promptedAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(prompted));
     }
@@ -69,7 +68,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
      * 
      * @param ignored ignored attribute IDs
      */
-    public void setIgnoredAttributeIds(@Nullable @NonnullElements final Collection<String> ignored) {
+    public void setIgnoredAttributeIds(@Nullable final Collection<String> ignored) {
         checkSetterPreconditions();
         ignoredAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(ignored));
     }
@@ -131,4 +130,5 @@ public class AttributePredicate extends AbstractInitializableComponent implement
 
         return true;
     }
+
 }

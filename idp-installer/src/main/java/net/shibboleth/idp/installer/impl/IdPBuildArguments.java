@@ -36,7 +36,7 @@ public class IdPBuildArguments extends AbstractIdPHomeAwareCommandLineArguments 
     @Nullable private Logger log;
 
     /** {@inheritDoc} */
-    public @Nonnull Logger getLog() {
+    @Nonnull public Logger getLog() {
         if (log == null) {
             log = LoggerFactory.getLogger(IdPBuildArguments.class);
         }

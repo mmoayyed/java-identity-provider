@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.installer.plugin.impl.LoggingVisitor;
 import net.shibboleth.shared.annotation.constraint.Live;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -62,13 +63,13 @@ import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 public final class InstallerSupport {
 
     /** The name of the file and the property with the current V4 installation value.*/
-    public static final String VERSION_NAME = "idp.installed.version";
+    @Nonnull @NotEmpty public static final String VERSION_NAME = "idp.installed.version";
 
     /** The name of the file and the property with the previous installation value.*/
-    public static final String PREVIOUS_VERSION_NAME = "idp.previous.installed.version";
+    @Nonnull @NotEmpty public static final String PREVIOUS_VERSION_NAME = "idp.previous.installed.version";
 
     /** A psuedo ant-project as parent. */
-    private static final Project ANT_PROJECT = new Project();
+    @Nonnull private static final Project ANT_PROJECT = new Project();
 
     /** Log. */
     @Nonnull private static Logger log = LoggerFactory.getLogger(InstallerSupport.class);

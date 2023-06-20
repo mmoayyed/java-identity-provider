@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -38,7 +37,7 @@ import com.google.common.base.MoreObjects;
 public final class AttributeReleaseContext extends BaseContext {
 
     /** Attributes to be consented to. */
-    @Nonnull @NonnullElements @Live private Map<String, IdPAttribute> consentableAttributes;
+    @Nonnull @Live private Map<String, IdPAttribute> consentableAttributes;
 
     /** Constructor. */
     public AttributeReleaseContext() {
@@ -50,7 +49,7 @@ public final class AttributeReleaseContext extends BaseContext {
      * 
      * @return the attributes to be consented to
      */
-    @Nonnull @NonnullElements @Live public Map<String, IdPAttribute> getConsentableAttributes() {
+    @Nonnull @Live public Map<String, IdPAttribute> getConsentableAttributes() {
         return consentableAttributes;
     }
 
@@ -60,4 +59,5 @@ public final class AttributeReleaseContext extends BaseContext {
                 .add("consentableAttributes", consentableAttributes)
                 .toString();
     }
+
 }

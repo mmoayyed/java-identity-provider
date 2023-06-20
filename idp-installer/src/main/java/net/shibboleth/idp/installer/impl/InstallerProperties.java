@@ -41,6 +41,7 @@ import org.apache.tools.ant.input.InputRequest;
 import org.slf4j.Logger;
 
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -57,62 +58,62 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class InstallerProperties  {
 
     /** The name of a property file to fill in some or all of the above. This file is deleted after processing. */
-    public static final String PROPERTY_SOURCE_FILE = "idp.property.file";
+    @Nonnull @NotEmpty public static final String PROPERTY_SOURCE_FILE = "idp.property.file";
 
     /** The name of a property file to merge with idp.properties. */
-    public static final String IDP_PROPERTIES_MERGE = "idp.merge.properties";
+    @Nonnull @NotEmpty public static final String IDP_PROPERTIES_MERGE = "idp.merge.properties";
 
     /** The name of a property file to merge with ldap.properties. */
-    public static final String LDAP_PROPERTIES_MERGE = "ldap.merge.properties";
+    @Nonnull @NotEmpty public static final String LDAP_PROPERTIES_MERGE = "ldap.merge.properties";
 
     /** The LDAP Password (usually associated with a username in ldap.properties). */
-    public static final String LDAP_PASSWORD = "idp.LDAP.credential";
+    @Nonnull @NotEmpty public static final String LDAP_PASSWORD = "idp.LDAP.credential";
 
     /** Where to install to.  Default is basedir */
-    public static final String TARGET_DIR = "idp.target.dir";
+    @Nonnull @NotEmpty public static final String TARGET_DIR = "idp.target.dir";
 
     /** The entity ID. */
-    public static final String ENTITY_ID = "idp.entityID";
+    @Nonnull @NotEmpty public static final String ENTITY_ID = "idp.entityID";
 
     /** Do we  cause a failure rather than a prompt. */
-    public static final String NO_PROMPT = "idp.noprompt";
+    @Nonnull @NotEmpty public static final String NO_PROMPT = "idp.noprompt";
 
     /** What is the installer host name?  */
-    public static final String HOST_NAME = "idp.host.name";
+    @Nonnull @NotEmpty public static final String HOST_NAME = "idp.host.name";
 
     /** The scope to assert.  */
-    public static final String SCOPE = "idp.scope";
+    @Nonnull @NotEmpty public static final String SCOPE = "idp.scope";
 
     /** The keystore password to use.  */
-    public static final String KEY_STORE_PASSWORD = "idp.keystore.password";
+    @Nonnull @NotEmpty public static final String KEY_STORE_PASSWORD = "idp.keystore.password";
 
     /** The sealer password to use.  */
-    public static final String SEALER_PASSWORD = "idp.sealer.password";
+    @Nonnull @NotEmpty public static final String SEALER_PASSWORD = "idp.sealer.password";
 
     /** The sealer alias to use.  */
-    public static final String SEALER_ALIAS = "idp.sealer.alias";
+    @Nonnull @NotEmpty public static final String SEALER_ALIAS = "idp.sealer.alias";
 
     /** The keysize for the sealer.  */
-    public static final String SEALER_KEYSIZE = "idp.sealer.keysize";
+    @Nonnull @NotEmpty public static final String SEALER_KEYSIZE = "idp.sealer.keysize";
 
     /** The the key size to generate.  */
-    public static final String KEY_SIZE = "idp.keysize";
+    @Nonnull @NotEmpty public static final String KEY_SIZE = "idp.keysize";
 
     /** Mode to set on credential *key files. */
-    public static final String MODE_CREDENTIAL_KEYS = "idp.conf.credentials.filemode";
+    @Nonnull @NotEmpty public static final String MODE_CREDENTIAL_KEYS = "idp.conf.credentials.filemode";
 
     /** Group to set on files in the credential and conf directories. */
-    public static final String GROUP_CONF_CREDENTIALS = "idp.conf.credentials.group";
+    @Nonnull @NotEmpty public static final String GROUP_CONF_CREDENTIALS = "idp.conf.credentials.group";
 
     /** Do we do any chgrp/chmod work? */
-    public static final String PERFORM_SET_MODE = "idp.conf.setmode";
+    @Nonnull @NotEmpty public static final String PERFORM_SET_MODE = "idp.conf.setmode";
 
     /** Whether to tidy up after ourselves. */
-    public static final String NO_TIDY = "idp.no.tidy";
+    @Nonnull @NotEmpty public static final String NO_TIDY = "idp.no.tidy";
 
     /** Which modules to enable on initial install.
      * @since 4.1.0 */
-    public static final String INITIAL_INSTALL_MODULES = "idp.initial.modules";
+    @Nonnull @NotEmpty public static final String INITIAL_INSTALL_MODULES = "idp.initial.modules";
 
     /** Whether to tidy up after ourselves. */
     public static final int DEFAULT_KEY_SIZE = 3072;
@@ -124,7 +125,7 @@ public class InstallerProperties  {
     @NonnullAfterInit private Properties installerProperties;
 
     /** The target Directory. */
-    private Path targetDir;
+    @Nullable private Path targetDir;
 
     /** The sourceDirectory. */
     @Nonnull private final Path srcDir;
@@ -133,22 +134,22 @@ public class InstallerProperties  {
     private boolean noPrompt;
 
     /** The entity ID. */
-    private String entityID;
+    @Nullable private String entityID;
 
     /** Hostname. */
-    private String hostname;
+    @Nullable private String hostname;
 
     /** scope. */
-    private String scope;
+    @Nullable private String scope;
 
     /** Keystore Password. */
-    private String keyStorePassword;
+    @Nullable private String keyStorePassword;
 
     /** Sealer Password. */
-    private String sealerPassword;
+    @Nullable private String sealerPassword;
 
     /** Sealer Alias. */
-    private String sealerAlias;
+    @Nullable private String sealerAlias;
 
     /** Key Size. (for signing, encryption and backchannel). */
     private int keySize;
@@ -160,10 +161,10 @@ public class InstallerProperties  {
     private boolean setGroupAndMode = true;
 
     /** credentials key file mode. */
-    private String credentialsKeyFileMode;
+    @Nullable private String credentialsKeyFileMode;
 
     /** Input handler from the prompting. */
-    private final InputHandler inputHandler;
+    @Nonnull private final InputHandler inputHandler;
 
     /** Those modules which are "core". */
     @Nonnull public static final Set<String> CORE_MODULES = CollectionSupport.setOf("idp.Core");
@@ -174,16 +175,20 @@ public class InstallerProperties  {
 
     /**
      * Constructor.
-     * @param sourceDir Where the *source* installation is.
+     * 
+     * @param sourceDir Where the *source* installation is
      */
     public InstallerProperties(@Nonnull final Path sourceDir) {
         srcDir = sourceDir;
         inputHandler = getInputHandler();
     }
 
-    /** Get an {@link InputHandler} for the prompting.
-     * @return an input handler */
-    protected InputHandler getInputHandler() {
+    /**
+     * Get an {@link InputHandler} for the prompting.
+     * 
+     * @return an input handler
+     */
+    @Nonnull protected InputHandler getInputHandler() {
         return new DefaultInputHandler() {
             // we want the prompts to be more obviously prompts
             protected String getPrompt(final InputRequest request) {
@@ -192,8 +197,12 @@ public class InstallerProperties  {
         };
     }
 
-    /** {@inheritDoc} */
-    // CheckStyle: CyclomaticComplexity OFF
+    /**
+     * Initialization routine.
+     * 
+     * @throws ComponentInitializationException if initialization fails
+     */
+// CheckStyle: CyclomaticComplexity OFF
     protected void doInitialize() throws ComponentInitializationException {
         installerProperties = new Properties(System.getProperties());
 
@@ -235,16 +244,21 @@ public class InstallerProperties  {
             keySize = Integer.parseInt(value);
         }
     }
-    // CheckStyle: CyclomaticComplexity ON
+// CheckStyle: CyclomaticComplexity ON
 
-    /** Lookup a property.  If it isn't defined then ask the user (if we are allowed).
-     * This is used by most (but all) getters that redirect through a property
-     * @param propertyName the property to lookup.
+    /**
+     * Lookup a property; if it isn't defined then ask the user (if we are allowed).
+     * 
+     * <p>This is used by most (but all) getters that redirect through a property.</p>
+     * 
+     * @param propertyName the property to lookup
      * @param prompt what to say to the user
      * @param defaultSupplier how to get the default value.  Using a Supplier allows this
-     * to be a reasonably heavyweight operation.
-     * @throws BuildException of anything goes wrong
+     *      to be a reasonably heavyweight operation
+     *      
      * @return the value
+     * 
+     * @throws BuildException of anything goes wrong
      */
     @Nonnull protected String getValue(final String propertyName,
             final String prompt, final NonnullSupplier<String> defaultSupplier) throws BuildException {
@@ -268,13 +282,18 @@ public class InstallerProperties  {
         return value;
     }
 
-    /** Lookup a property.  If it isn't defined then ask the user (if we are allowed) via
+    /**
+     * Lookup a property; if it isn't defined then ask the user (if we are allowed) via
      * a no-echo interface.
-     * Note that this does not work within a debugger.
-     * @param propertyName the property to lookup.
+     * 
+     * <p>Note that this does not work within a debugger.</p>
+     * 
+     * @param propertyName the property to lookup
      * @param prompt what to say to the user
+     * 
+     * @return the value (this is not echoed to the terminal)
+     * 
      * @throws BuildException of anything goes wrong
-     * @return the value.  this is not repeated to the screen
      */
     @Nonnull protected String getPassword(final String propertyName, final String prompt) throws BuildException {
         final String value = installerProperties.getProperty(propertyName);
@@ -295,10 +314,14 @@ public class InstallerProperties  {
         return result;
     }
 
-    /** Get where we are installing/updating/building the war.
-     * This is slightly complicated because the default depends on what we are doing.
+    /**
+     * Get where we are installing/updating/building the war.
+     * 
+     * <p>This is slightly complicated because the default depends on what we are doing.</p>
+     * 
      * @return the target directory
-     * @throws BuildException if something goes awry.
+     * 
+     * @throws BuildException if something goes awry
      */
     @Nonnull public Path getTargetDir() throws BuildException {
         if (targetDir != null) {
@@ -309,15 +332,19 @@ public class InstallerProperties  {
         return td;
     }
 
-    /** Where is the install coming from?
+    /**
+     * Where is the install coming from?
+     * 
      * @return the source directory
      */
     @Nonnull public Path getSourceDir() {
         return srcDir;
     }
 
-    /** Get the EntityId for this install.
-     * @return the  name.
+    /**
+     * Get the EntityId for this install.
+     * 
+     * @return the name
      */
     @Nonnull public String getEntityID() {
         String result = entityID;
@@ -327,26 +354,33 @@ public class InstallerProperties  {
         return result;
     }
 
-    /** Does the user want us to *not* tidy up.
-     * @return do we not tidy up?*/
+    /**
+     * Does the user want us to *not* tidy up?
+     * 
+     * @return do we not tidy up?
+     */
     public boolean isNoTidy() {
         return !tidy;
     }
 
-    /** Is this address named? Helper method for {@link #bestHostName()}
-     * @return true unless the name is the canonical name...
+    /**
+     * Is this address named?
+     * 
+     * <p>Helper method for {@link #bestHostName()}.</p>
+     * 
      * @param addr what to look at
+     * @return true unless the name is the canonical name
      */
     private boolean hasHostName(final InetAddress addr) {
         return !addr.getHostAddress().equals(addr.getCanonicalHostName());
     }
 
     /**
-     * Find the most apposite network connector. Taken from Ant.
+     * Find the most apposite network connector, taken from Ant.
      * 
      * @return the best name we can work out
      */
-    // CheckStyle: CyclomaticComplexity OFF
+// CheckStyle: CyclomaticComplexity OFF
     @Nonnull private String bestHostName() {
         InetAddress bestSoFar = null;
         try {
@@ -395,10 +429,13 @@ public class InstallerProperties  {
         assert result!=null;
         return result;
     }
-    // CheckStyle: CyclomaticComplexity ON
+// CheckStyle: CyclomaticComplexity ON
 
-    /** Get the host name for this install.
-     * Defaults to information pulled from the network.
+    /**
+     * Get the host name for this install.
+     * 
+     * <p>Defaults to information pulled from the network.</p>
+     * 
      * @return the host name.
      */
     @Nonnull public String getHostName() {
@@ -409,7 +446,9 @@ public class InstallerProperties  {
         return result;
     }
 
-    /** Mode to set on all files in credentials.
+    /**
+    * Mode to set on all files in credentials.
+    * 
     * @return the mode
     */
     @Nonnull public String getCredentialsKeyFileMode() {
@@ -422,21 +461,27 @@ public class InstallerProperties  {
         return result;
     }
 
-    /** Group to set on all files in credentials and conf.
+    /**
+    * Group to set on all files in credentials and conf.
+    * 
     * @return the mode or null if none to be set
     */
     @Nullable public String getCredentialsGroup() {
         return installerProperties.getProperty(GROUP_CONF_CREDENTIALS);
     }
 
-    /** Do we set the mode?
+    /**
+    * Do we set the mode?
+    * 
     * @return do we the mode
     */
     public boolean isSetGroupAndMode() {
         return setGroupAndMode;
     }
 
-    /** Evaluate the default scope value.
+    /**
+     * Evaluate the default scope value.
+     * 
      * @return everything after the first '.' in {@link #getHostName()}
      */
     @Nonnull protected String defaultScope() {
@@ -450,8 +495,10 @@ public class InstallerProperties  {
         return "localdomain";
     }
 
-    /** Get the scope for this installation.
-     * @return The scope.
+    /**
+     * Get the scope for this installation.
+     * 
+     * @return the scope
      */
     @Nonnull public String getScope() {
         String result = scope;
@@ -461,7 +508,8 @@ public class InstallerProperties  {
         return result;
     }
 
-    /** Get the LDAP password iff one was provided.  DO NOT PROMPT
+    /**
+    * Get the LDAP password iff one was provided. DO NOT PROMPT
     *
     * @return the password if provided by a properties
     * @throws BuildException  if badness happens
@@ -470,25 +518,32 @@ public class InstallerProperties  {
         return installerProperties.getProperty(LDAP_PASSWORD);
     }
 
-    /** Get the SubjectAltName for the certificates.
-     * @return the  SubjectAltName
+    /**
+     * Get the SubjectAltName for the certificates.
+     * 
+     * @return the SubjectAltName
      */
     @Nonnull public String getSubjectAltName() {
         return "https://" + getHostName() + "/idp/shibboleth";
     }
 
-    /** Get the password for the keystore for this installation.
+    /**
+     * Get the password for the keystore for this installation.
+     * 
      * @return the password.
      */
     @Nonnull public String getKeyStorePassword() {
-        @SuppressWarnings("null") @Nonnull String result = keyStorePassword;
+        String result = keyStorePassword;
         if (keyStorePassword == null) {
             result = keyStorePassword = getPassword(KEY_STORE_PASSWORD, "Backchannel PKCS12 Password:");
         }
+        assert result != null;
         return result;
     }
 
-    /** Get the password for the sealer for this installation.
+    /**
+     * Get the password for the sealer for this installation.
+     * 
      * @return the password.
      */
     @Nonnull public String getSealerPassword() {
@@ -499,10 +554,12 @@ public class InstallerProperties  {
         return result;
     }
 
-    /** Get the modules to enable after first install.
+    /**
+     * Get the modules to enable after first install.
+     * 
      * @return the modules
      */
-    @Nonnull  @NotLive @Unmodifiable public Set<String> getModulesToEnable() {
+    @Nonnull @NotLive @Unmodifiable public Set<String> getModulesToEnable() {
         String prop = StringSupport.trimOrNull(installerProperties.getProperty(INITIAL_INSTALL_MODULES));
         if (prop == null) {
             return InstallerProperties.DEFAULT_MODULES;
@@ -526,12 +583,16 @@ public class InstallerProperties  {
     /** Get the modules to enable before ant install.
      * @return the modules
      */
-    @Nonnull  @NotLive @Unmodifiable public Set<String> getCoreModules() {
+    @Nonnull @NotLive @Unmodifiable public Set<String> getCoreModules() {
         return InstallerProperties.CORE_MODULES;
     }
 
-    /** Return the sealer key size, if this has been specified.
+    /** 
+     * Return the sealer key size, if this has been specified.
+     * 
      * @return the key size or null if non specified
+     * 
+     * @throws BuildException if the size was not an integer 
      */
     @Nullable Integer getSealerKeySize() throws BuildException {
         final String val = installerProperties.getProperty(SEALER_KEYSIZE);
@@ -549,7 +610,9 @@ public class InstallerProperties  {
         return result;
     }
 
-    /** Get the alias for the sealer key.
+    /** 
+     * Get the alias for the sealer key.
+     * 
      * @return the alias
      */
     @Nonnull public String getSealerAlias() {
@@ -563,19 +626,25 @@ public class InstallerProperties  {
         return result;
     }
 
-    /** Get the key size for signing, encryption and backchannel.
-     * @return the keysize
-     *  default is {@value #DEFAULT_KEY_SIZE}. */
+    /** 
+     * Get the key size for signing, encryption and backchannel
+     * 
+     * @return the keysize, default is {@value #DEFAULT_KEY_SIZE}.
+     */
     public int getKeySize() {
         return keySize;
     }
 
-    /** Get the file specified as the property as a File, or null if it doesn't exist.
-     * @param propName the name to lookup;
+    /**
+     * Get the file specified as the property as a File, or null if it doesn't exist.
+     * 
+     * @param propName the name to lookup
+     * 
      * @return null if the property is not provided a {@link Path} otherwise
+     * 
      * @throws BuildException if the property is supplied but the file doesn't exist.
      */
-    protected Path getMergeFile(final String propName) throws BuildException {
+    @Nullable protected Path getMergeFile(final String propName) throws BuildException {
         final String propValue = installerProperties.getProperty(propName);
         if (propValue == null) {
             return null;
@@ -599,21 +668,25 @@ public class InstallerProperties  {
         return path;
     }
 
-    /** Get the a file to merge with idp.properties or null.
+    /**
+    * Get the a file to merge with idp.properties or null.
     *
-    * @return the file or null if it none required.
+    * @return the file or null if it none required
+    * 
     * @throws BuildException if badness happens
     */
-    public Path getIdPMergeProperties() throws BuildException {
+    @Nullable public Path getIdPMergeProperties() throws BuildException {
         return getMergeFile(IDP_PROPERTIES_MERGE);
     }
 
-    /** Get the a file to merge with ldap.properties or null.
+    /**
+    * Get the a file to merge with ldap.properties or null.
     *
-    * @return the path or null if it none required.
+    * @return the path or null if it none required
+    * 
     * @throws BuildException  if badness happens
     */
-    public Path getLDAPMergeProperties() throws BuildException {
+    @Nullable public Path getLDAPMergeProperties() throws BuildException {
         return getMergeFile(LDAP_PROPERTIES_MERGE);
     }
 

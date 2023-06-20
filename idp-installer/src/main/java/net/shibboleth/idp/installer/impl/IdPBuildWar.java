@@ -39,15 +39,13 @@ public class IdPBuildWar extends AbstractCommandLine<IdPBuildArguments> {
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected Class<IdPBuildArguments> getArgumentClass() {
+    @Nonnull protected Class<IdPBuildArguments> getArgumentClass() {
         return IdPBuildArguments.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected String getVersion() {
+    @Nonnull protected String getVersion() {
         final String result = Version.getVersion();
         assert result != null;
         return result;
@@ -55,8 +53,7 @@ public class IdPBuildWar extends AbstractCommandLine<IdPBuildArguments> {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected Logger getLogger() {
+    @Nonnull protected Logger getLogger() {
         Logger localLog = log;
         if (localLog == null) {
             localLog = log = LoggerFactory.getLogger(IdPBuildWar.class);
@@ -110,4 +107,5 @@ public class IdPBuildWar extends AbstractCommandLine<IdPBuildArguments> {
    public static void main(@Nonnull final String[] args) {
        System.exit(runMain(args));
    }
+   
 }

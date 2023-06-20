@@ -18,5 +18,7 @@
 /**
  * Actions related to consent storage.
  */
-
+@NonnullElements
 package net.shibboleth.idp.consent.flow.storage.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

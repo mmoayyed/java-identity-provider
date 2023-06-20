@@ -95,7 +95,7 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
     @Nonnull private OperationType operation = OperationType.UNKNOWN;
 
     /** {@inheritDoc} */
-    public @Nonnull Logger getLog() {
+    @Nonnull public Logger getLog() {
         if (log == null) {
             log = LoggerFactory.getLogger(UpdateIdPArguments.class);
         }

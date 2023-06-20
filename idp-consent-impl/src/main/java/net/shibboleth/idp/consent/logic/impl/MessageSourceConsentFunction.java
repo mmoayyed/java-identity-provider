@@ -35,6 +35,8 @@ import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.codec.StringDigester;
 import net.shibboleth.shared.codec.StringDigester.OutputFormat;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -168,7 +170,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
     }
 
     /** {@inheritDoc} */
-    @Nullable public Map<String,Consent> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable @Unmodifiable @NotLive public Map<String,Consent> apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
         }

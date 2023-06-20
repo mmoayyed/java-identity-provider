@@ -18,5 +18,7 @@
 /**
  * Storage and serialization classes related to attribute consent.
  */
-
+@NonnullElements
 package net.shibboleth.idp.consent.storage.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

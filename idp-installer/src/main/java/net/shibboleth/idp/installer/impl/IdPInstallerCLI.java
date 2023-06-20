@@ -48,15 +48,13 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected Class<IdPInstallerArguments> getArgumentClass() {
+    @Nonnull protected Class<IdPInstallerArguments> getArgumentClass() {
         return IdPInstallerArguments.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected String getVersion() {
+    @Nonnull protected String getVersion() {
         final String result = Version.getVersion();
         assert result != null;
         return result;
@@ -64,8 +62,7 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected Logger getLogger() {
+    @Nonnull protected Logger getLogger() {
         Logger localLog = log;
         if (localLog == null) {
             localLog = log = LoggerFactory.getLogger(IdPInstallerCLI.class);

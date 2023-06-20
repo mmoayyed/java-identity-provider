@@ -71,15 +71,13 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected Class<UpdateIdPArguments> getArgumentClass() {
+    @Nonnull protected Class<UpdateIdPArguments> getArgumentClass() {
         return UpdateIdPArguments.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected String getVersion() {
+    @Nonnull protected String getVersion() {
         final String result = Version.getVersion();
         assert result != null;
         return result;
@@ -87,8 +85,7 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected Logger getLogger() {
+    @Nonnull protected Logger getLogger() {
         Logger localLog = log;
         if (localLog == null) {
             localLog = log = LoggerFactory.getLogger(UpdateIdPCLI.class);

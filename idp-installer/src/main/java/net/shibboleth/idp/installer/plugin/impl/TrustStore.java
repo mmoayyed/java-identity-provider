@@ -241,7 +241,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
      * @return the Signature.
      * @throws IOException if there is a problem reading the file of it it doesn't represent a signature
      */
-    public static Signature signatureOf(@Nonnull final InputStream stream) throws IOException {
+    @Nonnull public static Signature signatureOf(@Nonnull final InputStream stream) throws IOException {
         return new Signature(stream);
     }
 
@@ -249,7 +249,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
      * @param signature what to ask about
      * @return whether it is there
      */
-    public boolean contains(final Signature signature) {
+    public boolean contains(@Nonnull final Signature signature) {
 
         final PGPSignature sig = signature.getSignature();
 
@@ -264,7 +264,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
      * @return whether it passed or not
      * @throws IOException if we get an error reading the stream
      */
-    public boolean checkSignature(final InputStream input, final Signature signature) throws IOException {
+    public boolean checkSignature(@Nonnull final InputStream input, @Nonnull final Signature signature) throws IOException {
         try {
             final PGPSignature pgpSignature = signature.getSignature();
             final PGPPublicKey pubKey = keyRings.getPublicKey(pgpSignature.getKeyID());
@@ -359,7 +359,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
          * 
          * @throws IOException if an error occurs
          */
-        protected Signature(final @Nonnull InputStream input) throws IOException {
+        protected Signature(@Nonnull final InputStream input) throws IOException {
             try (final InputStream sigStream =  PGPUtil.getDecoderStream(input)) {
                 final JcaPGPObjectFactory factory = new JcaPGPObjectFactory(sigStream);
                 final Object first = factory.nextObject();
@@ -383,13 +383,14 @@ import net.shibboleth.shared.primitive.LoggerFactory;
          * 
          * @return the signature
          */
-        protected PGPSignature getSignature() {
+        @Nonnull protected PGPSignature getSignature() {
             return signature;
         }
 
         /** {@inheritDoc} */
-        public String toString() {
+        @Nonnull public String toString() {
             return keyId;
         }         
     }
+
 }

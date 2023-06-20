@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * Package to contain classes to do with the one off metadata generation.
  */
-
+@NonnullElements
 package net.shibboleth.idp.installer.metadata.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

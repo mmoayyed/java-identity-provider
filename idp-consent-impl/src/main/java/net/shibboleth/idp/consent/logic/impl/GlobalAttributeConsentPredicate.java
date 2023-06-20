@@ -26,11 +26,9 @@ import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
-import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
  * Predicate to determine whether global consent has been given by user.

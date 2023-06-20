@@ -23,7 +23,6 @@ import java.io.ObjectOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -41,7 +40,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.codec.Base64Support;
 import net.shibboleth.shared.codec.EncodingException;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -60,24 +58,18 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeValuesHashFunction.class);
 
-    // CheckStyle: CyclomaticComplexity OFF
+// CheckStyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Nullable public String apply(@Nullable @NonnullElements final Collection<IdPAttributeValue> input) {
+    @Nullable public String apply(@Nullable final Collection<IdPAttributeValue> input) {
 
-        if (input == null) {
-            return null;
-        }
-
-        final Collection<IdPAttributeValue> filteredInput = List.copyOf(input);
-
-        if (filteredInput.isEmpty()) {
+        if (input == null || input.isEmpty()) {
             return null;
         }
         
         try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
 
-            for (final IdPAttributeValue value : filteredInput) {
+            for (final IdPAttributeValue value : input) {
                 if (log.isTraceEnabled()) {
                     log.trace("Considering value of '{}' with native value {}",
                             value.getClass(), value.getNativeValue());
@@ -113,8 +105,6 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
                 } else if (value.getNativeValue() != null) {
                     log.debug("Unknown atribute value '{}' hashed as {}", value.getClass(), value.getNativeValue());
                     objectOutputStream.writeObject(value.getNativeValue());
-                } else {
-                    log.warn("Unknown attribute value '{}' with no value was not hashed", value.getClass());
                 }
             }
 
@@ -130,6 +120,6 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
             return null;
         }
     }
-    // CheckStyle: CyclomaticComplexity ON
+// CheckStyle: CyclomaticComplexity ON
     
 }

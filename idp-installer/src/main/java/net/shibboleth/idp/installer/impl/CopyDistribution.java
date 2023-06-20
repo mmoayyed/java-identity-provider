@@ -37,7 +37,7 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 public final class CopyDistribution {
 
     /** Log. */
-    private final Logger log = LoggerFactory.getLogger(CopyDistribution.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CopyDistribution.class);
 
     /** Properties for the job. */
     @Nonnull private final InstallerProperties installerProps;
@@ -100,8 +100,8 @@ public final class CopyDistribution {
      * @param overwrite whether we want to overwrite
      * @throws BuildException if badness occurs
      */
-    private void distCopy(final Path srcDist, final Path dist, final String to, final boolean overwrite)
-            throws BuildException {
+    private void distCopy(@Nonnull final Path srcDist, @Nonnull final Path dist, @Nonnull final String to,
+            final boolean overwrite) throws BuildException {
         final Path toPath =  dist.resolve(to);
         final Path fromPath = srcDist.resolve(to);
         log.debug("Copying distribution from {} to {}", fromPath, toPath);
@@ -118,7 +118,8 @@ public final class CopyDistribution {
      * @param to the subfolder name
      * @throws BuildException if badness occurs
      */
-    private void distCopy(final Path srcDist, final Path dist, final String to) throws BuildException {
+    private void distCopy(@Nonnull final Path srcDist, @Nonnull final Path dist, @Nonnull final String to)
+            throws BuildException {
         distCopy(srcDist, dist, to, false);
     }
 
@@ -150,4 +151,5 @@ public final class CopyDistribution {
         copy.setOverwrite(false);
         copy.execute();
     }
+    
 }

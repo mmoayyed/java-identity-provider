@@ -40,8 +40,9 @@ import net.shibboleth.idp.consent.storage.impl.CollectionSerializer;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -77,7 +78,6 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
 
     /** Constructor. */
     public AbstractConsentIndexedStorageAction() {
-        super();
         storageKeysSerializer = new CollectionSerializer();
     }
 
@@ -164,7 +164,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      * @return the storage keys from the storage index record
      * @throws IOException if errors occur in the read process
      */
-    @Nonnull @NonnullElements protected List<String> getStorageKeysFromIndex() throws IOException {
+    @Nonnull @Unmodifiable @NotLive protected List<String> getStorageKeysFromIndex() throws IOException {
 
         final StorageService service = getStorageService();
         final String context = getStorageContext();
@@ -375,4 +375,5 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
 
         addKeyToStorageIndex(result.getStorageKey());
     }
+
 }

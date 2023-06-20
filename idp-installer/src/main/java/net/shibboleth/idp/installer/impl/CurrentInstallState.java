@@ -76,7 +76,7 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
     private boolean ldapPropertiesPresent;
 
     /** Old Version. */
-    private String oldVersion;
+    @Nullable private String oldVersion;
     
     /** The files to delete after an upgrade. */
     @NonnullAfterInit private List<Path> pathsToDelete;
@@ -92,7 +92,9 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
         enabledModules = CollectionSupport.emptySet();
     }
 
-    /** Work out what the "current" install state is (before we do any more work).
+    /**
+     * Work out what the "current" install state is (before we do any more work).
+     * 
      * @throws ComponentInitializationException if we find a strange state
      */
     private void findPreviousVersion() throws ComponentInitializationException {
@@ -186,33 +188,57 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get installed IdP version.
+     * 
+     * @return installed version
+     */
     @Nullable public String getInstalledVersion() {
         return oldVersion;
     }
     
-    /** {@inheritDoc} */
+    /** 
+     * Get whether the idp.properties file is present.
+     * 
+     * @return whether the idp.properties file is present
+     */
     public boolean isIdPPropertiesPresent() {
         return idpPropertiesPresent;
     }
 
-    /** {@inheritDoc} */
+    /** 
+     * Get whether the ldap.properties file is present.
+     * 
+     * @return whether the ldap.properties file is present
+     */
     public boolean isLDAPPropertiesPresent() {
         return ldapPropertiesPresent;
     }
 
-    /** {@inheritDoc} */
+    /** 
+     * Get list of paths to delete.
+     * 
+     *  @return list of paths to delete
+     */
     public @Nonnull List<Path> getPathsToBeDeleted() {
         assert pathsToDelete != null;
         return pathsToDelete;
     }
 
-    /** {@inheritDoc} */
+    /** 
+     * Get the module IDs that are enabled.
+     * 
+     * @return enabled module IDs
+     */
     @Nonnull public Collection<String> getEnabledModules() {
         return enabledModules;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get class loader for installed plugin detection.
+     * 
+     * @return class loader
+     */
     @Nullable public synchronized ClassLoader getInstalledPluginsLoader() {
 
         if (installedPluginsLoader != null) {
@@ -257,4 +283,5 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
         installedPluginsLoader = new URLClassLoader(urls);
         return installedPluginsLoader;
     }
+    
 }

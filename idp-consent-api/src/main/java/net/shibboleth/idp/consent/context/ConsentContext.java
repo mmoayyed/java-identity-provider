@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -38,10 +37,10 @@ import com.google.common.base.MoreObjects;
 public final class ConsentContext extends BaseContext {
 
     /** Map of previous consent read from storage and keyed by consent id. */
-    @Nonnull @NonnullElements @Live private Map<String, Consent> previousConsents;
+    @Nonnull @Live private Map<String, Consent> previousConsents;
 
     /** Map of current consent extracted from user input and keyed by consent id. */
-    @Nonnull @NonnullElements @Live private Map<String, Consent> currentConsents;
+    @Nonnull @Live private Map<String, Consent> currentConsents;
 
     /** Constructor. */
     public ConsentContext() {
@@ -54,7 +53,7 @@ public final class ConsentContext extends BaseContext {
      * 
      * @return map of current consent extracted from user input and keyed by consent id
      */
-    @Nonnull @NonnullElements @Live public Map<String, Consent> getCurrentConsents() {
+    @Nonnull @Live public Map<String, Consent> getCurrentConsents() {
         return currentConsents;
     }
 
@@ -63,7 +62,7 @@ public final class ConsentContext extends BaseContext {
      * 
      * @return map of previous consent read from storage and keyed by consent id
      */
-    @Nonnull @NonnullElements @Live public Map<String, Consent> getPreviousConsents() {
+    @Nonnull @Live public Map<String, Consent> getPreviousConsents() {
         return previousConsents;
     }
 

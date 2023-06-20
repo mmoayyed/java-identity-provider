@@ -60,6 +60,7 @@ public class CollectionSerializer extends AbstractInitializableComponent impleme
     @Nonnull private final JsonReaderFactory readerFactory;
 
     /** Constructor. */
+    @SuppressWarnings("null")
     public CollectionSerializer() {
         final JsonProvider provider = JsonProvider.provider();
         generatorFactory = provider.createGeneratorFactory(null);

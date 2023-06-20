@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * Classes for handling plugins.
  */
-
+@NonnullElements
 package net.shibboleth.idp.installer.plugin.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

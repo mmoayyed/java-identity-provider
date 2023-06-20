@@ -76,7 +76,7 @@ import net.shibboleth.shared.spring.util.ApplicationContextBuilder;
 public class V5Install {
 
     /** Log. */
-    private final Logger log = LoggerFactory.getLogger(V5Install.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(V5Install.class);
 
     /** Installer Properties. */
     @Nonnull private final InstallerProperties installerProps;

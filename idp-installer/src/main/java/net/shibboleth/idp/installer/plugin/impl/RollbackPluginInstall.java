@@ -196,7 +196,7 @@ public class RollbackPluginInstall implements AutoCloseable {
     /** Capture module changes.
      * @param changes what has changed
      */
-    private void captureChanges(final  Map<ModuleResource,ResourceResult> changes) {
+    private void captureChanges(@Nonnull final Map<ModuleResource,ResourceResult> changes) {
         for (final Entry<ModuleResource, ResourceResult> entry: changes.entrySet()) {
             moduleChanges.put(entry.getKey(), entry.getValue());
         }

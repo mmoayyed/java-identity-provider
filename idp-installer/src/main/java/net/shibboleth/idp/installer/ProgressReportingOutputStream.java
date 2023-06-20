@@ -21,6 +21,8 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.annotation.Nonnull;
+
 /**
  * A version of {@link BufferedOutputStream} which provides some idea of progress.
  */
@@ -38,7 +40,7 @@ public class ProgressReportingOutputStream extends BufferedOutputStream {
     /** Constructor.
      * @param outStream what to bracket.
      */
-    public ProgressReportingOutputStream(final OutputStream outStream) {
+    public ProgressReportingOutputStream(@Nonnull final OutputStream outStream) {
         super(outStream);
     }
 
@@ -46,7 +48,7 @@ public class ProgressReportingOutputStream extends BufferedOutputStream {
      * @param outStream what to bracket.
      * @param size buffer size
      */
-    public ProgressReportingOutputStream(final OutputStream outStream, final int size) {
+    public ProgressReportingOutputStream(@Nonnull final OutputStream outStream, final int size) {
         super(outStream, size);
     }
 
@@ -71,4 +73,5 @@ public class ProgressReportingOutputStream extends BufferedOutputStream {
             System.out.println();
         }
     }
+
 }

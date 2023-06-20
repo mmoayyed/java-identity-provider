@@ -18,5 +18,7 @@
 /**
  * Classes implementing consent-specific audit log behavior.
  */
-
+@NonnullElements
 package net.shibboleth.idp.consent.audit.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

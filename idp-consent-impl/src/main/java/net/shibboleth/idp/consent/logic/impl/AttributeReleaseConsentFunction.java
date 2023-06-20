@@ -97,7 +97,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
     }
 
     /** {@inheritDoc} */
-    /// CheckStyle: CyclomaticComplexity OFF
+// CheckStyle: CyclomaticComplexity OFF
     @Override @Nullable public Map<String, Consent> apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
@@ -159,6 +159,6 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
 
         return currentConsents;
     }
-    // CheckStyle: CyclomaticComplexity ON
+// CheckStyle: CyclomaticComplexity ON
 
 }

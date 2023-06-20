@@ -18,5 +18,7 @@
 /**
  * Context classes related to consent flows.
  */
-
+@NonnullElements
 package net.shibboleth.idp.consent.context;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

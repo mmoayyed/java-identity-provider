@@ -18,5 +18,7 @@
 /**
  * Classed related to consent.
  */
-
+@NonnullElements
 package net.shibboleth.idp.consent;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
