@@ -35,7 +35,6 @@ import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareAuthnCont
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction;
 import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -377,7 +376,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getProxyAudiences(
+    @Nonnull @NotLive @Unmodifiable public Set<String> getProxyAudiences(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> audiences = proxyAudiencesLookupStrategy.apply(profileRequestContext);
         if (audiences != null) {
@@ -391,12 +390,12 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
      * 
      * @param audiences proxy audiences to be added to responses
      */
-    public void setProxyAudiences(@Nullable @NonnullElements final Collection<String> audiences) {
+    public void setProxyAudiences(@Nullable final Collection<String> audiences) {
         if (audiences == null || audiences.isEmpty()) {
             proxyAudiencesLookupStrategy = FunctionSupport.constant(null);
         } else {
             proxyAudiencesLookupStrategy = FunctionSupport.constant(
-                    List.copyOf(StringSupport.normalizeStringCollection(audiences)));
+                    CollectionSupport.copyToList(StringSupport.normalizeStringCollection(audiences)));
         }
     }
 
@@ -784,7 +783,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
+    @Nonnull @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<AuthnContextClassRefPrincipal> methods =
                 defaultAuthenticationContextsLookupStrategy.apply(profileRequestContext);
@@ -800,7 +799,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
      * @param contexts default authentication contexts to use
      */
     public void setDefaultAuthenticationMethods(
-            @Nullable @NonnullElements final Collection<AuthnContextClassRefPrincipal> contexts) {
+            @Nullable final Collection<AuthnContextClassRefPrincipal> contexts) {
         if (contexts != null) {
             defaultAuthenticationContextsLookupStrategy = FunctionSupport.constant(List.copyOf(contexts));
         } else {
@@ -821,7 +820,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
@@ -835,7 +834,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
      * 
      * @param flows   flow identifiers to use
      */
-    public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setAuthenticationFlows(@Nullable final Collection<String> flows) {
         if (flows != null) {
             authenticationFlowsLookupStrategy =
                     FunctionSupport.constant(
@@ -858,7 +857,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
@@ -872,7 +871,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setPostAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setPostAuthenticationFlows(@Nullable final Collection<String> flows) {
         if (flows != null) {
             postAuthenticationFlowsLookupStrategy =
                     FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(flows)));
@@ -894,7 +893,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
+    @Nonnull @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
         final Collection<String> formats = nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext);
@@ -909,7 +908,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
      * 
      * @param formats   name identifier formats to use
      */
-    public void setNameIDFormatPrecedence(@Nullable @NonnullElements final Collection<String> formats) {
+    public void setNameIDFormatPrecedence(@Nullable final Collection<String> formats) {
         if (formats != null) {
             nameIDFormatPrecedenceLookupStrategy =
                     FunctionSupport.constant(
@@ -986,7 +985,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<RequestedAttribute> getRequestedAttributes(
+    @Nonnull @NotLive @Unmodifiable public Collection<RequestedAttribute> getRequestedAttributes(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<RequestedAttribute> attrs = requestedAttributesLookupStrategy.apply(profileRequestContext);
         if (attrs != null) {
@@ -1002,7 +1001,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
      * 
      * @since 5.0.0
      */
-    public void setRequestedAttributes(@Nullable @NonnullElements final Collection<RequestedAttribute> attrs) {
+    public void setRequestedAttributes(@Nullable final Collection<RequestedAttribute> attrs) {
         if (attrs != null) {
             requestedAttributesLookupStrategy = FunctionSupport.constant(CollectionSupport.copyToList(attrs));
         } else {

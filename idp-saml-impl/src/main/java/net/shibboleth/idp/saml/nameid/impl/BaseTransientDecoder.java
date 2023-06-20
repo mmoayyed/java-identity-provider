@@ -103,7 +103,8 @@ public abstract class BaseTransientDecoder extends AbstractIdentifiableInitializ
     }
 
     /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (null == idStore) {

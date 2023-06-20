@@ -16,5 +16,7 @@
  */
 
 /** Common APIs for SAML profile actions. */
-
+@NonnullElements
 package net.shibboleth.idp.saml.profile;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

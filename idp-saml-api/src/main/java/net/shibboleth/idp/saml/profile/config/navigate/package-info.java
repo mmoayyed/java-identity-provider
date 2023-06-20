@@ -18,5 +18,7 @@
 /**
  * Functions to navigate into profile configuration information.
  */
-
+@NonnullElements
 package net.shibboleth.idp.saml.profile.config.navigate;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

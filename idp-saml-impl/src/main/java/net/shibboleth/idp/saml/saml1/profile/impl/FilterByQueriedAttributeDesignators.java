@@ -49,7 +49,6 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -222,8 +221,7 @@ public class FilterByQueriedAttributeDesignators extends AbstractProfileAction {
      */
     private void decodeAttributeDesignator(@Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final AttributeDesignator input,
-            @Nonnull @NonnullElements @Live final Collection<String> results)
-                    throws AttributeDecodingException {
+            @Nonnull @Live final Collection<String> results) throws AttributeDecodingException {
         
         final Collection<TranscodingRule> transcodingRules = registry.getTranscodingRules(input);
         if (transcodingRules.isEmpty()) {

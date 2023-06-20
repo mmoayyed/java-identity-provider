@@ -18,4 +18,7 @@
 /**
  * Classes related to use of SAML with the session layer.
  */
+@NonnullElements
 package net.shibboleth.idp.saml.session;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

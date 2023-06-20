@@ -38,8 +38,7 @@ public class ProxyCountAuditExtractor extends AbstractProxyRestrictionAuditExtra
      *
      * @param strategy lookup strategy for message
      */
-    public ProxyCountAuditExtractor(
-            @Nonnull final Function<ProfileRequestContext,SAMLObject> strategy) {
+    public ProxyCountAuditExtractor(@Nonnull final Function<ProfileRequestContext,SAMLObject> strategy) {
         super(strategy);
     }
 

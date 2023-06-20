@@ -46,13 +46,11 @@ public class ProxySAML2NameIDGenerator implements SAML2NameIDGenerator {
      *
      * @param service the service providing the generator to proxy
      */
-    public ProxySAML2NameIDGenerator(
-            @Nonnull final ReloadableService<NameIdentifierGenerationService> service) {
+    public ProxySAML2NameIDGenerator(@Nonnull final ReloadableService<NameIdentifierGenerationService> service) {
         generatorService = Constraint.isNotNull(service, "NameIdentifierGenerationService cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public NameID generate(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull @NotEmpty final String format) throws SAMLException {
         

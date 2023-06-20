@@ -18,5 +18,7 @@
 /**
  * Implementations of logic/conditional SAML profile configuration components.
  */
-
+@NonnullElements
 package net.shibboleth.idp.saml.profile.config.logic;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

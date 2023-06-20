@@ -28,6 +28,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -48,13 +50,13 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable @Unmodifiable @NotLive public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         SAMLObject message = responseLookupStrategy.apply(input);
         if (message != null) {
             
             // Step down into ArtifactResponses.
-            if (message instanceof ArtifactResponse) {
-                message = ((ArtifactResponse) message).getMessage();
+            if (message instanceof ArtifactResponse m) {
+                message = m.getMessage();
             }
             
             if (message instanceof org.opensaml.saml.saml2.core.Response resp) {

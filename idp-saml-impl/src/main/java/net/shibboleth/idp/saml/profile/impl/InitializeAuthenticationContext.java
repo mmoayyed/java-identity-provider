@@ -90,7 +90,8 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         forceAuthnPredicate = new ForceAuthnProfileConfigPredicate();
         ignoreScopingPredicate = new IgnoreScopingProfileConfigPredicate();
         proxyCountLookupStrategy = new ProxyCountLookupFunction();
-        final Function<ProfileRequestContext,AuthnRequest> rls = new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
+        final Function<ProfileRequestContext,AuthnRequest> rls =
+                new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
         assert rls != null;
         requestLookupStrategy = rls;
     }

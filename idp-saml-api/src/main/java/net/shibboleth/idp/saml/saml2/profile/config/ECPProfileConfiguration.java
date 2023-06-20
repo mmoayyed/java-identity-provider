@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.shared.annotation.ConfigurationSetting;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 
@@ -43,7 +42,7 @@ public interface ECPProfileConfiguration extends BrowserSSOProfileConfiguration,
      * @since 3.3.0
      */
     @ConfigurationSetting(name="localEvents")
-    @Nonnull @NonnullElements @NotLive @Unmodifiable
-    Set<String> getLocalEvents(@Nullable final ProfileRequestContext profileRequestContext);
+    @Nonnull @NotLive @Unmodifiable Set<String> getLocalEvents(
+            @Nullable final ProfileRequestContext profileRequestContext);
     
 }

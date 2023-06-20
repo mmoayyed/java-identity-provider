@@ -43,7 +43,6 @@ import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -106,8 +105,9 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
     public BaseAddAttributeStatementToAssertion() {
         statementInOwnAssertion = false;
         ignoringUnencodableAttributes = true;
-        final Function<ProfileRequestContext,AttributeContext> acls = new ChildContextLookup<>(AttributeContext.class).compose(
-                new ChildContextLookup<>(RelyingPartyContext.class));
+        final Function<ProfileRequestContext,AttributeContext> acls =
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
         assert acls !=null;
         attributeContextLookupStrategy = acls; 
         idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
@@ -290,7 +290,6 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
         return true;
     }
 
-
     /**
      * Access the registry of transcoding rules to transform the input attribute into a target type.
      * 
@@ -306,7 +305,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
      */
     protected int encodeAttribute(@Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final IdPAttribute attribute,
-            @Nonnull final Class<T> to, @Nonnull @NonnullElements @Live final Collection<T> results)
+            @Nonnull final Class<T> to, @Nonnull @Live final Collection<T> results)
                     throws AttributeEncodingException {
         
         final Collection<TranscodingRule> transcodingRules = registry.getTranscodingRules(attribute, to);

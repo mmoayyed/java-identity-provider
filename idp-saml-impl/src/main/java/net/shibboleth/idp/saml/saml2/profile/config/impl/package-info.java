@@ -18,4 +18,7 @@
 /**
  * Implementatio of SAML 2.0 profile configurations.
  */
+@NonnullElements
 package net.shibboleth.idp.saml.saml2.profile.config.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

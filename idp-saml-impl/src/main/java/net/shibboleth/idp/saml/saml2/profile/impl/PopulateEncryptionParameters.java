@@ -57,7 +57,6 @@ import net.shibboleth.saml.saml2.profile.config.SAML2AssertionProducingProfileCo
 import net.shibboleth.saml.saml2.profile.config.SAML2ProfileConfiguration;
 import net.shibboleth.saml.saml2.profile.config.SingleLogoutProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -111,7 +110,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     @NonnullAfterInit private EncryptionParametersResolver encParamsresolver;
     
     /** Active configurations to feed into resolver. */
-    @Nullable @NonnullElements private List<EncryptionConfiguration> encryptionConfigurations;
+    @Nullable private List<EncryptionConfiguration> encryptionConfigurations;
     
     /** Is encryption optional in the case no parameters can be resolved? */
     private boolean encryptionOptional;

@@ -43,7 +43,6 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -70,7 +69,7 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
     private char delimiter;
 
     /** Attribute(s) to use as an identifier source. */
-    @Nonnull @NonnullElements private List<String> attributeSourceIds;
+    @Nonnull private List<String> attributeSourceIds;
 
     /** Constructor. */
     public AttributeSourcedSAML1NameIdentifierGenerator() {
@@ -113,7 +112,7 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
      * 
      * @param ids attribute IDs to pull from
      */
-    public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
+    public void setAttributeSourceIds(@Nonnull final List<String> ids) {
         checkSetterPreconditions();
         attributeSourceIds =
                 CollectionSupport.copyToList(Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));
@@ -129,7 +128,8 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
     }
 
     /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (attributeSourceIds.isEmpty()) {
@@ -138,7 +138,8 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable protected NameIdentifier doGenerate(@Nonnull final ProfileRequestContext profileRequestContext)
+    @Override
+    @Nullable protected NameIdentifier doGenerate(@Nonnull final ProfileRequestContext profileRequestContext)
             throws SAMLException {
 
         // Check for a natively generated NameIdentifier attribute value.
@@ -182,7 +183,8 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
+    @Override
+    @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws SAMLException {
 
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);

@@ -30,6 +30,8 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -50,7 +52,7 @@ public class SubStatusCodeAuditExtractor implements Function<ProfileRequestConte
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable @Unmodifiable @NotLive public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         final SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
             if (response instanceof Response r) {

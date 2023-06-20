@@ -174,5 +174,4 @@ public class NameIDPrincipalSerializer extends AbstractPrincipalSerializer<Strin
     }
 // Checkstyle: CyclomaticComplexity ON
     
-   
 }

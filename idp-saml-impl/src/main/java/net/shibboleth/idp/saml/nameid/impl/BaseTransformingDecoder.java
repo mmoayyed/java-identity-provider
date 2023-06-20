@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.collection.Pair;
@@ -44,7 +43,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseTransformingDecoder.class);
     
     /** Match patterns and replacement strings to apply. */
-    @Nonnull @NonnullElements private List<Pair<Pattern,String>> transforms;
+    @Nonnull private List<Pair<Pattern,String>> transforms;
     
     /** Convert to uppercase prior to transforms? */
     private boolean uppercase;
@@ -86,7 +85,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
      * 
      * @param newTransforms collection of replacement transforms
      */
-    public void setTransforms(@Nonnull @NonnullElements final Collection<Pair<String,String>> newTransforms) {
+    public void setTransforms(@Nonnull final Collection<Pair<String,String>> newTransforms) {
         checkSetterPreconditions();
         Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
         
@@ -130,4 +129,5 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
         
         return s;
     }
+    
 }

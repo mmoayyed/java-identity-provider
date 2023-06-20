@@ -62,7 +62,6 @@ import net.shibboleth.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
 import net.shibboleth.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -127,7 +126,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     @Nullable private Function<ProfileRequestContext,BestMatchLocationCriterion> bestMatchCriterionLookupStrategy;
     
     /** List of possible bindings, in preference order. */
-    @NonnullBeforeExec @NonnullElements private List<BindingDescriptor> bindingDescriptors;
+    @NonnullBeforeExec private List<BindingDescriptor> bindingDescriptors;
     
     /** Whether an artifact-based binding implies the use of a secure channel. */
     private boolean artifactImpliesSecureChannel;

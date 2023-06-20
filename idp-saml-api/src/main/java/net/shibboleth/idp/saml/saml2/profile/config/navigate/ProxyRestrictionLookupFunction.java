@@ -134,7 +134,7 @@ public class ProxyRestrictionLookupFunction extends AbstractRelyingPartyLookupFu
             }
         }
         
-        return new Pair<>(proxyCount, Set.copyOf(audiences));
+        return new Pair<>(proxyCount, CollectionSupport.copyToSet(audiences));
     }
 // Checkstyle: CyclomaticComplexity|MethodLength ON
     

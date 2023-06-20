@@ -51,7 +51,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
@@ -82,7 +81,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
     @Nonnull private Function<ProfileRequestContext,SAMLAuthnContext> samlContextLookupStrategy;
     
     /** Map of binding short names to deduce inbound binding constant. */
-    @Nonnull @NonnullElements private Map<String,BindingDescriptor> bindingMap;
+    @Nonnull private Map<String,BindingDescriptor> bindingMap;
     
     /** Constructor. */
     public SAMLAuthnController() {
@@ -131,7 +130,7 @@ public class SAMLAuthnController extends AbstractInitializableComponent {
      * 
      * @param bindings the bindings to set
      */
-    public void setInboundBindings(@Nullable @NonnullElements final Collection<BindingDescriptor> bindings) {
+    public void setInboundBindings(@Nullable final Collection<BindingDescriptor> bindings) {
         checkSetterPreconditions();
         if (bindings != null) {
             bindingMap = new HashMap<>(bindings.size());

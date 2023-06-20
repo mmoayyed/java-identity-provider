@@ -27,9 +27,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.saml.profile.config.SAMLAssertionProducingProfileConfiguration;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.FunctionSupport;
@@ -152,7 +152,7 @@ public abstract class AbstractSAML1AssertionProducingProfileConfiguration
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive public Set<String> getAssertionAudiences(
+    @Nonnull @Unmodifiable @NotLive public Set<String> getAssertionAudiences(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
         final Set<String> audiences = additionalAudiencesLookupStrategy.apply(profileRequestContext);
@@ -170,7 +170,7 @@ public abstract class AbstractSAML1AssertionProducingProfileConfiguration
      * @deprecated
      */
     @Deprecated(since="5.0.0", forRemoval=true)
-    public void setAdditionalAudiencesForAssertion(@Nullable @NonnullElements final Collection<String> audiences) {
+    public void setAdditionalAudiencesForAssertion(@Nullable final Collection<String> audiences) {
         DeprecationSupport.warn(ObjectType.METHOD, "setAdditionalAudiencesForAssertion", "relying-party.xml",
                 "setAdditionalAudiences");
         setAssertionAudiences(audiences);
@@ -197,7 +197,7 @@ public abstract class AbstractSAML1AssertionProducingProfileConfiguration
      * 
      * @param audiences the additional audiences
      */
-    public void setAssertionAudiences(@Nullable @NonnullElements final Collection<String> audiences) {
+    public void setAssertionAudiences(@Nullable final Collection<String> audiences) {
 
         if (audiences == null || audiences.isEmpty()) {
             additionalAudiencesLookupStrategy = FunctionSupport.constant(null);

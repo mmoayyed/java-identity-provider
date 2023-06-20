@@ -16,5 +16,7 @@
  */
 
 /** Functionality and base classes common to both SAML 1 and 2 profile configuration. */
-
+@NonnullElements
 package net.shibboleth.idp.saml.profile.config;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

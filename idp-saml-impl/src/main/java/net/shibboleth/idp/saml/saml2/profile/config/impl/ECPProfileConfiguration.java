@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -72,7 +71,7 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration
      * 
      * @since 3.3.0
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getLocalEvents(
+    @Nonnull @NotLive @Unmodifiable public Set<String> getLocalEvents(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
         final Set<String> events = localEventsLookupStrategy.apply(profileRequestContext);
@@ -89,7 +88,7 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration
      * 
      * @since 3.3.0
      */
-    public void setLocalEvents(@Nullable @NonnullElements final Collection<String> events) {
+    public void setLocalEvents(@Nullable final Collection<String> events) {
 
         if (events != null && !events.isEmpty()) {
             localEventsLookupStrategy = FunctionSupport.constant(

@@ -290,7 +290,6 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
     private class AssertionStrategy implements Function<ProfileRequestContext,Assertion> {
 
         /** {@inheritDoc} */
-        @Override
         @Nullable public Assertion apply(@Nullable final ProfileRequestContext input) {
             final MessageContext omc = input != null ? input.getOutboundMessageContext() : null;  
 

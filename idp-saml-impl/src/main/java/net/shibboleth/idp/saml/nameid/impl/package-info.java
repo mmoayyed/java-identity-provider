@@ -19,5 +19,7 @@
  * Implementation of SAML {@link org.opensaml.saml.saml2.core.NameID} and
  * {@link org.opensaml.saml.saml1.core.NameIdentifier} generation and consumption.
  */
-
+@NonnullElements
 package net.shibboleth.idp.saml.nameid.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

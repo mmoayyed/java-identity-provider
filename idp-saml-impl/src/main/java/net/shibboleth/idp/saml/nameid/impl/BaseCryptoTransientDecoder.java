@@ -113,7 +113,8 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
     }
 
     /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
         if (null == dataSealer) {

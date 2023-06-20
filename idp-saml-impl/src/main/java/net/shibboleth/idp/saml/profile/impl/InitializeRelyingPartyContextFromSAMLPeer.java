@@ -126,7 +126,8 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
             return;
         }
 
-        log.debug("{} Attaching RelyingPartyContext based on SAML peer {}", getLogPrefix(), peerEntityCtx.getEntityId());
+        log.debug("{} Attaching RelyingPartyContext based on SAML peer {}", getLogPrefix(),
+                peerEntityCtx.getEntityId());
         rpContext.setRelyingPartyIdContextTree(peerEntityCtx);
         rpContext.setRelyingPartyIdLookupStrategy(RPID_LOOKUP);
         rpContext.setVerificationLookupStrategy(VERIFY_LOOKUP);

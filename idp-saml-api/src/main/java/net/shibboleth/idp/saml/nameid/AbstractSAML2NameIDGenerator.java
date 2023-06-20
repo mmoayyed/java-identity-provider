@@ -111,4 +111,5 @@ public class AbstractSAML2NameIDGenerator extends org.opensaml.saml.saml2.profil
         
         return super.getEffectiveSPNameQualifier(profileRequestContext);
     }
+    
 }

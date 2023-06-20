@@ -18,5 +18,7 @@
 /**
  * Functions for navigating SAML profile context objects.
  */
-
+@NonnullElements
 package net.shibboleth.idp.saml.profile.context.navigate;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

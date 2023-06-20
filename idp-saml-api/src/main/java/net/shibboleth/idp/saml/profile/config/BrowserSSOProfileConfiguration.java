@@ -27,7 +27,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.saml.profile.config.SAMLAssertionProducingProfileConfiguration;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 
@@ -57,7 +56,7 @@ public interface BrowserSSOProfileConfiguration extends AuthenticationProfileCon
      * 
      * @return the formats to use
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
+    @Nonnull @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
             @Nullable final ProfileRequestContext profileRequestContext);
 
 }

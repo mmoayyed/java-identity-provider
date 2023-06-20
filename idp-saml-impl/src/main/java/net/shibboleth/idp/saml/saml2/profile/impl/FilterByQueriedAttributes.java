@@ -50,7 +50,6 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.Live;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -86,12 +85,14 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
 
     /** Constructor. */
     public FilterByQueriedAttributes() {
-        final Function<ProfileRequestContext,AttributeContext> acls = new ChildContextLookup<>(AttributeContext.class).compose(
-                new ChildContextLookup<>(RelyingPartyContext.class));
+        final Function<ProfileRequestContext,AttributeContext> acls =
+                new ChildContextLookup<>(AttributeContext.class).compose(
+                        new ChildContextLookup<>(RelyingPartyContext.class));
         assert acls != null;
         attributeContextLookupStrategy = acls;
         
-        final Function<ProfileRequestContext,AttributeQuery> qls =  new MessageLookup<>(AttributeQuery.class).compose(new InboundMessageContextLookup());
+        final Function<ProfileRequestContext,AttributeQuery> qls = 
+                new MessageLookup<>(AttributeQuery.class).compose(new InboundMessageContextLookup());
         assert qls != null;
         queryLookupStrategy = qls;
     }
@@ -232,8 +233,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
      */
     protected void decodeAttribute(@Nonnull final AttributeTranscoderRegistry registry,
             @Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final Attribute input,
-            @Nonnull @NonnullElements @Live final Multimap<String,IdPAttribute> results)
-                    throws AttributeDecodingException {
+            @Nonnull @Live final Multimap<String,IdPAttribute> results) throws AttributeDecodingException {
         
         final Collection<TranscodingRule> transcodingRules = registry.getTranscodingRules(input);
         if (transcodingRules.isEmpty()) {
@@ -259,7 +259,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
      * @return  the number of values left in the input attribute
      */
     private int filterRequestedValues(@Nonnull final IdPAttribute attribute,
-            @Nonnull @NonnullElements final Collection<IdPAttribute> requestedAttributes) {
+            @Nonnull final Collection<IdPAttribute> requestedAttributes) {
         
         boolean requestedValues = false;
 

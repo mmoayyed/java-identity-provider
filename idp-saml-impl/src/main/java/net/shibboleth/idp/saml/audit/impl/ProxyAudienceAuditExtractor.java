@@ -30,6 +30,9 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.ProxyRestriction;
 
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+
 /**
  * {@link Function} that returns {@link ProxyRestriction#getAudiences()}.
  * 
@@ -42,14 +45,13 @@ public class ProxyAudienceAuditExtractor extends AbstractProxyRestrictionAuditEx
      *
      * @param strategy lookup strategy for message
      */
-    public ProxyAudienceAuditExtractor(
-            @Nonnull final Function<ProfileRequestContext,SAMLObject> strategy) {
+    public ProxyAudienceAuditExtractor(@Nonnull final Function<ProfileRequestContext,SAMLObject> strategy) {
         super(strategy);
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Collection<String> doApply(@Nullable final ProxyRestriction condition) {
+    @Nullable @Unmodifiable @NotLive protected Collection<String> doApply(@Nullable final ProxyRestriction condition) {
         if (condition != null) {
             final List<Audience> audiences = condition.getAudiences();
             assert audiences != null;

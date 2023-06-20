@@ -28,8 +28,9 @@ import net.shibboleth.idp.saml.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -106,7 +107,7 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements public List<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nonnull @Unmodifiable @NotLive public List<String> apply(@Nullable final ProfileRequestContext input) {
         final List<String> fromConfig = new ArrayList<>();
         final List<String> fromMetadata = super.apply(input);
 

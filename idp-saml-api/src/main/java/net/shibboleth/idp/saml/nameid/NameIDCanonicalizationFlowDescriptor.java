@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -38,7 +37,7 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizationFlowDescriptor {
 
     /** Store Set of acceptable formats. */
-    @Nonnull @NonnullElements private Set<String> formats;
+    @Nonnull private Set<String> formats;
 
     /** Constructor. */
     public NameIDCanonicalizationFlowDescriptor() {
@@ -50,7 +49,7 @@ public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizatio
      * 
      * @return Returns the formats. Never empty after initialization.
      */
-    @Nonnull @NonnullElements @Unmodifiable @NotLive public Collection<String> getFormats() {
+    @Nonnull @Unmodifiable @NotLive public Collection<String> getFormats() {
         return formats;
     }
 
@@ -59,8 +58,8 @@ public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizatio
      * 
      * @param theFormats The formats to set.
      */
-    public void setFormats(@Nonnull @NonnullElements final Collection<String> theFormats) {
-        formats = Set.copyOf(StringSupport.normalizeStringCollection(
+    public void setFormats(@Nonnull final Collection<String> theFormats) {
+        formats = CollectionSupport.copyToSet(StringSupport.normalizeStringCollection(
                 Constraint.isNotNull(theFormats, "Format collection cannot be null")));
     }
     

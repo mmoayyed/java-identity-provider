@@ -34,7 +34,6 @@ import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.saml.profile.config.SAMLAssertionProducingProfileConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -174,7 +173,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
+    @Nonnull @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<AuthenticationMethodPrincipal> methods =
                 defaultAuthenticationMethodsLookupStrategy.apply(profileRequestContext);
@@ -189,8 +188,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProduc
      * 
      * @param methods   default authentication methods to use
      */
-    public void setDefaultAuthenticationMethods(
-            @Nullable @NonnullElements final Collection<AuthenticationMethodPrincipal> methods) {
+    public void setDefaultAuthenticationMethods(@Nullable final Collection<AuthenticationMethodPrincipal> methods) {
 
         if (methods != null) {
             defaultAuthenticationMethodsLookupStrategy = FunctionSupport.constant(List.copyOf(methods));
@@ -212,7 +210,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable public Set<String> getAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
         final Set<String> flows = authenticationFlowsLookupStrategy.apply(profileRequestContext);
@@ -227,7 +225,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProduc
      * 
      * @param flows   flow identifiers to use
      */
-    public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setAuthenticationFlows(@Nullable final Collection<String> flows) {
         if (flows != null) {
             authenticationFlowsLookupStrategy =
                     FunctionSupport.constant(Set.copyOf(StringSupport.normalizeStringCollection(flows)));
@@ -249,7 +247,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
+    @Nonnull @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> flows = postAuthenticationFlowsLookupStrategy.apply(profileRequestContext);
         if (flows != null) {
@@ -263,7 +261,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProduc
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setPostAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+    public void setPostAuthenticationFlows(@Nullable final Collection<String> flows) {
         if (flows != null) {
             postAuthenticationFlowsLookupStrategy =
                     FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(flows)));
@@ -285,7 +283,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProduc
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
+    @Nonnull @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> formats = nameIDFormatPrecedenceLookupStrategy.apply(profileRequestContext);
         if (formats != null) {
@@ -299,7 +297,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML1AssertionProduc
      * 
      * @param formats   name identifier formats to use
      */
-    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final Collection<String> formats) {
+    public void setNameIDFormatPrecedence(@Nonnull final Collection<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
         
         nameIDFormatPrecedenceLookupStrategy =

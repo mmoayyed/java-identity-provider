@@ -34,7 +34,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 
 /**
@@ -55,7 +56,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunction
         implements Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>> {
     
     /** Mappings to transform proxied Principals. */
-    @Nonnull @NonnullElements private Map<Principal,Collection<Principal>> principalMappings;
+    @Nonnull private Map<Principal,Collection<Principal>> principalMappings;
     
     /** Constructor. */
     public ProxyAwareDefaultAuthenticationMethodsLookupFunction() {
@@ -69,7 +70,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunction
      * 
      * @param mappings {@link Principal} mappings
      */
-    public void setMappings(@Nullable @NonnullElements final Map<Principal,Collection<Principal>> mappings) {
+    public void setMappings(@Nullable final Map<Principal,Collection<Principal>> mappings) {
         if (mappings == null || mappings.isEmpty()) {
             principalMappings = CollectionSupport.emptyMap();
             return;
@@ -80,7 +81,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunction
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements public Collection<AuthnContextClassRefPrincipal> apply(
+    @Nonnull @Unmodifiable @NotLive public Collection<AuthnContextClassRefPrincipal> apply(
             @Nullable final ProfileRequestContext input) {
         if (input != null) {
             final BaseContext parent = input.getParent();
@@ -99,7 +100,7 @@ public class ProxyAwareDefaultAuthenticationMethodsLookupFunction
                             .flatMap(Collection::stream)
                             .filter(AuthnContextClassRefPrincipal.class::isInstance)
                             .map(AuthnContextClassRefPrincipal.class::cast)
-                            .collect(Collectors.toUnmodifiableList());
+                            .collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).get();
                 }
             }
         }

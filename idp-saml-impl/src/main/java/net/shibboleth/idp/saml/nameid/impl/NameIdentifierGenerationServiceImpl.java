@@ -57,7 +57,7 @@ public class NameIdentifierGenerationServiceImpl extends AbstractIdentifiableIni
     }
     
     /** {@inheritDoc} */
-   @Override
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
@@ -67,16 +67,14 @@ public class NameIdentifierGenerationServiceImpl extends AbstractIdentifiableIni
     }
 
     /** {@inheritDoc} */
-    @Override
-    public @Nonnull SAML1NameIdentifierGenerator getSAML1NameIdentifierGenerator() {
+   @Nonnull public SAML1NameIdentifierGenerator getSAML1NameIdentifierGenerator() {
         checkComponentActive();
         assert saml1Generator!=null;
         return saml1Generator;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public @Nonnull SAML2NameIDGenerator getSAML2NameIDGenerator() {
+    @Nonnull public SAML2NameIDGenerator getSAML2NameIDGenerator() {
         checkComponentActive();
         assert saml2Generator!=null;
         return saml2Generator;

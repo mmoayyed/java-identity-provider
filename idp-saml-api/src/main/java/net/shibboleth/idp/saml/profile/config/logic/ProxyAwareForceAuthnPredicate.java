@@ -42,7 +42,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
  */
 public class ProxyAwareForceAuthnPredicate implements Predicate<ProfileRequestContext> {
     
-    
     /** {@inheritDoc} */
     public boolean test(@Nullable final ProfileRequestContext input) {
      

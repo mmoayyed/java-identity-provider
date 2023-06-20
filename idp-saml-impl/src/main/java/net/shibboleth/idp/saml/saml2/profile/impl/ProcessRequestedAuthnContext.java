@@ -49,7 +49,6 @@ import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfigurati
 import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -80,7 +79,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     @Nonnull private Function<ProfileRequestContext,AuthnRequest> authnRequestLookupStrategy;
 
     /** Context URIs to ignore in a request. */
-    @Nonnull @NonnullElements private Set<String> ignoredContexts;
+    @Nonnull private Set<String> ignoredContexts;
     
     /** The request message to read from. */
     @NonnullBeforeExec private AuthnRequest authnRequest;
@@ -126,7 +125,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
      * 
      * @param contexts  contexts to ignore
      */
-    public void setIgnoredContexts(@Nonnull @NonnullElements final Collection<String> contexts) {
+    public void setIgnoredContexts(@Nonnull final Collection<String> contexts) {
         checkSetterPreconditions();
         final Collection<String> trimmed = StringSupport.normalizeStringCollection(contexts);
         

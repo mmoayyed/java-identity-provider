@@ -18,5 +18,7 @@
 /**
  * Implementation classes supporting SAML-related Principal objects.
  */
-
+@NonnullElements
 package net.shibboleth.idp.saml.authn.principal.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.config.impl;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -30,7 +29,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.collection.CollectionSupport;
@@ -137,7 +135,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
     }
     
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive public Collection<String> getQualifiedNameIDFormats(
+    @Nonnull @NotLive public Collection<String> getQualifiedNameIDFormats(
             @Nullable final ProfileRequestContext profileRequestContext) {
         final Collection<String> formats = qualifiedNameIDFormatsLookupStrategy.apply(profileRequestContext);
         if (formats != null) {
@@ -159,12 +157,12 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ArtifactAware
      * 
      * @since 3.4.0
      */
-    public void setQualifiedNameIDFormats(@Nullable @NonnullElements final Collection<String> formats) {
+    public void setQualifiedNameIDFormats(@Nullable final Collection<String> formats) {
         if (formats == null || formats.isEmpty()) {
             qualifiedNameIDFormatsLookupStrategy = FunctionSupport.constant(null);
         } else {
-            qualifiedNameIDFormatsLookupStrategy =
-                    FunctionSupport.constant(List.copyOf(StringSupport.normalizeStringCollection(formats)));
+            qualifiedNameIDFormatsLookupStrategy = FunctionSupport.constant(
+                    CollectionSupport.copyToList(StringSupport.normalizeStringCollection(formats)));
         }
     }
 

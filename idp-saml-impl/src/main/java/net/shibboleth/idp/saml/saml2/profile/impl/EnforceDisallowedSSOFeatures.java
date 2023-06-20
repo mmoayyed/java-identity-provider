@@ -65,7 +65,8 @@ public class EnforceDisallowedSSOFeatures extends AbstractProfileAction {
     /** Constructor. */
     public EnforceDisallowedSSOFeatures() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-        final Function<ProfileRequestContext,AuthnRequest> arls = new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
+        final Function<ProfileRequestContext,AuthnRequest> arls =
+                new MessageLookup<>(AuthnRequest.class).compose(new InboundMessageContextLookup());
         assert arls!=null;
         authnRequestLookupStrategy = arls;
     }

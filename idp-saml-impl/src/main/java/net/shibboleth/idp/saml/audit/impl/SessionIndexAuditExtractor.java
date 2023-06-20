@@ -33,6 +33,8 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SessionIndex;
 
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -53,7 +55,7 @@ public class SessionIndexAuditExtractor implements Function<ProfileRequestContex
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable @Unmodifiable @NotLive public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         
         SAMLObject message = messageLookupStrategy.apply(input);
         if (message != null) {

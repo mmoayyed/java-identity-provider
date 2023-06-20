@@ -88,7 +88,8 @@ public class WriteFTICKSLog extends AbstractProfileAction {
         assert unls != null;
         usernameLookupStrategy = unls;
         
-        Function<ProfileRequestContext, SAMLObject> para = new MessageLookup<>(SAMLObject.class).compose(new OutboundMessageContextLookup());
+        Function<ProfileRequestContext, SAMLObject> para =
+                new MessageLookup<>(SAMLObject.class).compose(new OutboundMessageContextLookup());
         assert para != null;
         authenticationMethodLookupStrategy = new AuthnContextAuditExtractor(para);
         para = new MessageLookup<>(SAMLObject.class).compose(new OutboundMessageContextLookup());

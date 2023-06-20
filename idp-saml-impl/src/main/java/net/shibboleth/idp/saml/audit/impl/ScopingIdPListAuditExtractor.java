@@ -30,6 +30,9 @@ import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.Scoping;
 
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+
 /**
  * {@link Function} that returns {@link Scoping#getIDPList()} from an {@link AuthnRequest}.
  * 
@@ -48,7 +51,7 @@ public class ScopingIdPListAuditExtractor extends AbstractScopingAuditExtractor<
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Collection<String> doApply(@Nullable final Scoping scoping) {
+    @Nullable @Unmodifiable @NotLive protected Collection<String> doApply(@Nullable final Scoping scoping) {
         if (scoping != null) {
             final IDPList idpList = scoping.getIDPList();
             if (idpList != null) {

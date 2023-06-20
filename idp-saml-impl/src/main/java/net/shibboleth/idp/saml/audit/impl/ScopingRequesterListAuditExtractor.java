@@ -29,6 +29,9 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Scoping;
 
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+
 /**
  * {@link Function} that returns {@link Scoping#getRequesterIDs()} from an {@link AuthnRequest}.
  * 
@@ -47,7 +50,7 @@ public class ScopingRequesterListAuditExtractor extends AbstractScopingAuditExtr
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected Collection<String> doApply(@Nullable final Scoping scoping) {
+    @Nullable @Unmodifiable @NotLive protected Collection<String> doApply(@Nullable final Scoping scoping) {
         if (scoping != null) {
             return scoping.getRequesterIDs().stream()
                     .map(RequesterID::getURI)

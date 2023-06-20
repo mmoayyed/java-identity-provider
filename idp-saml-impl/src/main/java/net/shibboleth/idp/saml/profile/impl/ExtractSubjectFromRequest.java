@@ -200,7 +200,6 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
     public static class SubjectNameLookupFunction implements Function<ProfileRequestContext,SAMLObject> {
         
         /** {@inheritDoc} */
-        @Override
         @Nullable public SAMLObject apply(@Nullable final ProfileRequestContext profileRequestContext) {
             
             if (profileRequestContext != null) {

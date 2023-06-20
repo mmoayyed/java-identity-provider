@@ -18,5 +18,7 @@
 /**
  * Classes implementing SAML-specific audit log behavior.
  */
-
+@NonnullElements
 package net.shibboleth.idp.saml.audit.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

@@ -46,19 +46,19 @@ public class TransientIdParameters {
     @Nonnull @NotEmpty public static final String CONTEXT = "TransientId";
     
     /** Field name of creation instant. */
-    private static final String ATTRIBUTE_RECIPIENT_FIELD = "sp";
+    @Nonnull @NotEmpty private static final String ATTRIBUTE_RECIPIENT_FIELD = "sp";
 
     /** Field name of principal name. */
-    private static final String PRINCIPAL_FIELD = "princ";
+    @Nonnull @NotEmpty private static final String PRINCIPAL_FIELD = "princ";
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(TransientIdParameters.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdParameters.class);
 
     /** The Attribute Recipient. */
-    private final String attributeRecipient;
+    @Nullable private final String attributeRecipient;
 
     /** The principal. */
-    private final String principal;
+    @Nullable private final String principal;
 
     /**
      * Constructor for the attribute definition.
@@ -131,4 +131,5 @@ public class TransientIdParameters {
             throw new IOException("Exception while serializing TransientID", e);
         }
     }
+
 }

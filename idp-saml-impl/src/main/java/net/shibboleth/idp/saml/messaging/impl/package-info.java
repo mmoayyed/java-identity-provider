@@ -16,5 +16,7 @@
  */
 
 /** Message handlers common to SAML 1 and SAML 2 processing. */
-
+@NonnullElements
 package net.shibboleth.idp.saml.messaging.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

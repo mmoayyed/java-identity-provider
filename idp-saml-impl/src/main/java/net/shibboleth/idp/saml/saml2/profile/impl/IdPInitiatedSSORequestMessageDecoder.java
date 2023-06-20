@@ -54,13 +54,13 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPInitiatedSSORequestMessageDecoder.class);
 
     /** Builder of SAML 2 {@link AuthnRequest} objects. */
-    private final SAMLObjectBuilder<AuthnRequest> requestBuilder;
+    @Nonnull private final SAMLObjectBuilder<AuthnRequest> requestBuilder;
 
     /** Builder of SAML 2 {@link Issuer} objects. */
-    private final SAMLObjectBuilder<Issuer> issuerBuilder;
+    @Nonnull private final SAMLObjectBuilder<Issuer> issuerBuilder;
     
     /** Builder of SAML 2 {@link NameIDPolicy} objects. */
-    private final SAMLObjectBuilder<NameIDPolicy> nipBuilder;
+    @Nonnull private final SAMLObjectBuilder<NameIDPolicy> nipBuilder;
     
     /** The IdP-initiated request structure parsed from the inbound request. */
     @Nullable private IdPInitiatedSSORequest ssoRequest;

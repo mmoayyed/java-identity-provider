@@ -16,5 +16,7 @@
  */
 
 /** Profile processing actions related to SAML 2 messages. */
-
+@NonnullElements
 package net.shibboleth.idp.saml.saml2.profile.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

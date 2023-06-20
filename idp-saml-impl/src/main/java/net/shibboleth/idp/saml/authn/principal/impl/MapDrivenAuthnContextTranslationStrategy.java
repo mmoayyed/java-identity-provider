@@ -35,7 +35,8 @@ import org.slf4j.Logger;
 
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
@@ -51,7 +52,7 @@ public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnC
     @Nonnull private final Logger log = LoggerFactory.getLogger(MapDrivenAuthnContextTranslationStrategy.class);
     
     /** Mappings to transform proxied Principals. */
-    @Nonnull @NonnullElements private Map<Principal,Collection<Principal>> principalMappings;
+    @Nonnull private Map<Principal,Collection<Principal>> principalMappings;
     
     /** Constructor. */
     public MapDrivenAuthnContextTranslationStrategy() {
@@ -65,7 +66,7 @@ public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnC
      * 
      * @param mappings {@link Principal} mappings
      */
-    public void setMappings(@Nullable @NonnullElements final Map<Principal,Collection<Principal>> mappings) {
+    public void setMappings(@Nullable final Map<Principal,Collection<Principal>> mappings) {
         if (mappings == null || mappings.isEmpty()) {
             principalMappings = CollectionSupport.emptyMap();
             return;
@@ -76,7 +77,7 @@ public class MapDrivenAuthnContextTranslationStrategy implements Function<AuthnC
     }
     
     /** {@inheritDoc} */
-    @Nullable public Collection<Principal> apply(@Nullable final AuthnContext input) {
+    @Nullable @Unmodifiable @NotLive public Collection<Principal> apply(@Nullable final AuthnContext input) {
         
         if (input != null) {
             final Principal principal;

@@ -30,7 +30,6 @@ import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.profile.config.AttributeResolvingProfileConfiguration;
 import net.shibboleth.shared.annotation.ConfigurationSetting;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 
@@ -84,7 +83,7 @@ public interface BrowserSSOProfileConfiguration
      * @return audiences for a proxied assertion
      */
     @ConfigurationSetting(name="proxyAudiences")
-    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getProxyAudiences(
+    @Nonnull @NotLive @Unmodifiable Set<String> getProxyAudiences(
             @Nullable final ProfileRequestContext profileRequestContext);
     
     /**

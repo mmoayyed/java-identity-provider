@@ -38,7 +38,6 @@ import net.shibboleth.profile.config.navigate.IdentifierGenerationStrategyLookup
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 
@@ -470,7 +469,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
      * @return populated {@link Scoping}
      */
     @Nullable private Scoping buildScoping(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nullable final Integer count, @Nonnull @NonnullElements final Set<String> idplist) {
+            @Nullable final Integer count, @Nonnull final Set<String> idplist) {
 
         boolean include = false;
         
@@ -539,8 +538,7 @@ public class AddAuthnRequest extends AbstractAuthenticationAction {
      * 
      * @return extension or null
      */
-    @Nullable private Extensions buildExtensions(
-            @Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nullable private Extensions buildExtensions(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         assert profileConfiguration!=null;
         final Collection<RequestedAttribute> attrs = profileConfiguration.getRequestedAttributes(profileRequestContext);

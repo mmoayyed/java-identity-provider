@@ -46,7 +46,6 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -71,7 +70,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
 
     /** Attribute(s) to use as an identifier source. */
-    @Nonnull @NonnullElements private List<String> attributeSourceIds;
+    @Nonnull private List<String> attributeSourceIds;
 
     /** Store for IDs. */
     @NonnullAfterInit private PairwiseIdStore pidStore;
@@ -125,7 +124,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
      * 
      * @param ids attribute IDs to pull from
      */
-    public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
+    public void setAttributeSourceIds(@Nonnull final List<String> ids) {
         checkSetterPreconditions();
         attributeSourceIds = CollectionSupport.copyToList(
                 Constraint.isNotNull(ids, "Attribute ID collection cannot be null"));

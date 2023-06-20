@@ -34,7 +34,8 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -79,7 +80,7 @@ public class AddAttributeConsumingServiceHandler extends SAMLAddAttributeConsumi
 
     /** {@inheritDoc} */
     @Override
-    @Nullable @NonnullElements protected Collection<RequestedAttribute> getRequestedAttributes(
+    @Nullable @Unmodifiable @NotLive protected Collection<RequestedAttribute> getRequestedAttributes(
             @Nonnull final MessageContext messageContext, @Nonnull final AuthnRequest authn) {
 
         final ProfileRequestContext prc = profileRequestContextLookupStrategy.apply(messageContext);

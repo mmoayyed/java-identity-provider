@@ -18,4 +18,7 @@
 /**
  * Predicates related to SAML 2.0 profile configurations.
  */
+@NonnullElements
 package net.shibboleth.idp.saml.saml2.profile.config.logic;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

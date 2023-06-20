@@ -52,7 +52,6 @@ public class ProxySAML1NameIdentifierGenerator implements SAML1NameIdentifierGen
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public NameIdentifier generate(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull @NotEmpty final String format) throws SAMLException {
         

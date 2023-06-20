@@ -18,4 +18,7 @@
 /**
  * SAML-specific classes for integration with idp-authn-api packages.
  */
+@NonnullElements
 package net.shibboleth.idp.saml.authn.principal;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

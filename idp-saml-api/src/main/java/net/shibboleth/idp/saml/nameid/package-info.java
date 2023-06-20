@@ -18,4 +18,7 @@
 /** 
  * Code for manipulating NameIDs and NameIdentifiers.
  */
+@NonnullElements
 package net.shibboleth.idp.saml.nameid;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
