@@ -16,5 +16,7 @@
  */
 
 /** APIs related to the construction and management of sessions. */
-
+@NonnullElements
 package net.shibboleth.idp.session;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

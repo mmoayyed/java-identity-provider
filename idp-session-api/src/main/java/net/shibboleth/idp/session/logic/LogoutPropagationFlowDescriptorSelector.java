@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.session.LogoutPropagationFlowDescriptor;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -36,7 +35,7 @@ import net.shibboleth.shared.logic.Constraint;
 public class LogoutPropagationFlowDescriptorSelector implements Function<SPSession,LogoutPropagationFlowDescriptor> {
 
     /** List of available flows. */
-    @Nonnull @NonnullElements private final List<LogoutPropagationFlowDescriptor> availableFlows;
+    @Nonnull private final List<LogoutPropagationFlowDescriptor> availableFlows;
 
     /**
      * Constructor.
@@ -44,7 +43,7 @@ public class LogoutPropagationFlowDescriptorSelector implements Function<SPSessi
      * @param flows the logout propagation flows to select from
      */
     public LogoutPropagationFlowDescriptorSelector(
-            @Nonnull @NonnullElements @ParameterName(name="flows") final List<LogoutPropagationFlowDescriptor> flows) {
+            @Nonnull @ParameterName(name="flows") final List<LogoutPropagationFlowDescriptor> flows) {
         availableFlows = CollectionSupport.copyToList(Constraint.isNotNull(flows, "Flows cannot be null"));
     }
 

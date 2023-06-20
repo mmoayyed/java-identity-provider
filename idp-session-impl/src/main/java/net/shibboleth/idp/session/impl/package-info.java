@@ -18,4 +18,7 @@
 /**
  * Implementations of session-related classes and interfaces.
  */
+@NonnullElements
 package net.shibboleth.idp.session.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

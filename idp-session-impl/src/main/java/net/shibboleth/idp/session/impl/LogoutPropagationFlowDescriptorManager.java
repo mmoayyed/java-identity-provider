@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.idp.session.LogoutPropagationFlowDescriptor;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.spring.config.IdentifiedComponentManager;
 
 /**
@@ -42,7 +41,7 @@ public class LogoutPropagationFlowDescriptorManager
      */
     @Autowired
     public LogoutPropagationFlowDescriptorManager(
-            @Nullable @NonnullElements final List<LogoutPropagationFlowDescriptor> freeObjects) {
+            @Nullable final List<LogoutPropagationFlowDescriptor> freeObjects) {
         super(freeObjects);
     }
 

@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.shibboleth.shared.annotation.ParameterName;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -45,8 +44,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
     @Nonnull private final Logger log = LoggerFactory.getLogger(SPSessionSerializerRegistry.class);
     
     /** Storage for the registry mappings. */
-    @Nonnull @NonnullElements
-    private Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> registry;
+    @Nonnull private Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> registry;
 
     /** Constructor. */
     public SPSessionSerializerRegistry() {
@@ -61,7 +59,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
      * @since 4.1.0
      */
     @Autowired
-    public SPSessionSerializerRegistry(@Nullable @NonnullElements final Collection<Entry<?>> serializers) {
+    public SPSessionSerializerRegistry(@Nullable final Collection<Entry<?>> serializers) {
         registry = new HashMap<>();
         if (serializers != null) {
             serializers.forEach(e -> registry.put(e.getType(), e.getSerializer()));
@@ -73,8 +71,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
      * 
      * @param map  map to populate registry with
      */
-    public void setMappings(@Nonnull @NonnullElements final
-            Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> map) {
+    public void setMappings(@Nonnull final Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> map) {
         checkSetterPreconditions();
         Constraint.isNotNull(map, "Map cannot be null");
         
@@ -97,6 +94,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
         checkComponentActive();
         Constraint.isNotNull(type, "SPSession type cannot be null");
         
+        @SuppressWarnings("unchecked")
         final StorageSerializer<T> serializer = (StorageSerializer<T>) registry.get(type);
         if (serializer != null) {
             log.debug("Registry located StorageSerializer of type '{}' for SPSession type '{}'",

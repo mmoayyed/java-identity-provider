@@ -29,6 +29,8 @@ import org.opensaml.saml.saml2.core.StatusCode;
 
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -62,7 +64,7 @@ public class LogoutStatusStrategyFunction implements Function<ProfileRequestCont
     }
 
     /** {@inheritDoc} */
-    @Nullable public List<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable @Unmodifiable @NotLive public List<String> apply(@Nullable final ProfileRequestContext input) {
         
         final LogoutContext logoutCtx = logoutContextLookupStrategy.apply(input);
         if (logoutCtx != null) {

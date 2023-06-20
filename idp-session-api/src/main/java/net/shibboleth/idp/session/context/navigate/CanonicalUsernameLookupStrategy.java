@@ -19,6 +19,8 @@ package net.shibboleth.idp.session.context.navigate;
 
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
@@ -32,7 +34,7 @@ import net.shibboleth.idp.session.context.SessionContext;
 public class CanonicalUsernameLookupStrategy implements Function<ProfileRequestContext, String> {
 
     /** {@inheritDoc} */
-    public String apply(final ProfileRequestContext input) {
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         
         if (input != null) {
             final SubjectCanonicalizationContext c14nContext =

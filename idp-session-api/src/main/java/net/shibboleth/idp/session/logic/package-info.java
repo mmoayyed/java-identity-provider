@@ -16,5 +16,7 @@
  */
 
 /** Functions and Predicates related to the use of sessions. */
-
+@NonnullElements
 package net.shibboleth.idp.session.logic;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -39,28 +38,28 @@ import net.shibboleth.shared.component.IdentifiedComponent;
 public interface IdPSession extends IdentifiedComponent {
 
     /** Name of {@link org.slf4j.MDC} attribute that holds the current session ID: <code>idp.session.id</code>. */
-    public static final String MDC_ATTRIBUTE = "idp.session.id";
+    @Nonnull @NotEmpty static final String MDC_ATTRIBUTE = "idp.session.id";
 
     /**
      * Get the canonical principal name for the session.
      * 
      * @return the principal name
      */
-    @Nonnull @NotEmpty public String getPrincipalName();
+    @Nonnull @NotEmpty String getPrincipalName();
 
     /**
      * Get the time when this session was created.
      * 
      * @return time this session was created
      */
-    @Nonnull public Instant getCreationInstant();
+    @Nonnull Instant getCreationInstant();
     
     /**
      * Get the last activity instant for the session.
      * 
      * @return last activity instant for the session
      */
-    @Nonnull public Instant getLastActivityInstant();
+    @Nonnull Instant getLastActivityInstant();
     
     /**
      * Test the session's validity based on the supplied client address, possibly binding it
@@ -71,7 +70,7 @@ public interface IdPSession extends IdentifiedComponent {
      * @return true iff the session is valid for the specified client address
      * @throws SessionException if an error occurs binding the address to the session
      */
-    public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException;
+    boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException;
     
     /**
      * Test the session's validity based on inactivity, while updating the last activity time.
@@ -79,14 +78,14 @@ public interface IdPSession extends IdentifiedComponent {
      * @return true iff the session is still valid
      * @throws SessionException if an error occurs updating the activity time
      */
-    public boolean checkTimeout() throws SessionException;
+    boolean checkTimeout() throws SessionException;
     
     /**
      * Get the unmodifiable set of {@link AuthenticationResult}s associated with this session.
      * 
      * @return unmodifiable set of results
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults();
+    @Nonnull @NotLive @Unmodifiable Set<AuthenticationResult> getAuthenticationResults();
 
     /**
      * Get an associated {@link AuthenticationResult} given its flow ID.
@@ -95,7 +94,7 @@ public interface IdPSession extends IdentifiedComponent {
      * 
      * @return the authentication result, or null
      */
-    @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId);
+    @Nullable AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId);
 
     /**
      * Add a new {@link AuthenticationResult} to this IdP session, replacing any
@@ -106,7 +105,7 @@ public interface IdPSession extends IdentifiedComponent {
      * @return a previously existing result replaced by the new one, if any
      * @throws SessionException if an error occurs updating the session
      */
-    @Nullable public AuthenticationResult addAuthenticationResult(@Nonnull final AuthenticationResult result)
+    @Nullable AuthenticationResult addAuthenticationResult(@Nonnull final AuthenticationResult result)
             throws SessionException;
 
     /**
@@ -117,7 +116,7 @@ public interface IdPSession extends IdentifiedComponent {
      * 
      * @throws SessionException if an error occurs updating the session
      */
-    public void updateAuthenticationResultActivity(@Nonnull final AuthenticationResult result)
+    void updateAuthenticationResultActivity(@Nonnull final AuthenticationResult result)
             throws SessionException;
     
     /**
@@ -128,14 +127,14 @@ public interface IdPSession extends IdentifiedComponent {
      * @return true iff the given result had been associated with this IdP session and now is not
      * @throws SessionException if an error occurs accessing the session
      */
-    public boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException;
+    boolean removeAuthenticationResult(@Nonnull final AuthenticationResult result) throws SessionException;
     
     /**
      * Gets the unmodifiable collection of service sessions associated with this session.
      * 
      * @return unmodifiable collection of service sessions associated with this session
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<SPSession> getSPSessions();
+    @Nonnull @NotLive @Unmodifiable Set<SPSession> getSPSessions();
 
     /**
      * Get the SPSession for a given service.
@@ -144,7 +143,7 @@ public interface IdPSession extends IdentifiedComponent {
      * 
      * @return the session service or null if no session exists for that service, may be null
      */
-    @Nullable public SPSession getSPSession(@Nonnull @NotEmpty final String serviceId);
+    @Nullable SPSession getSPSession(@Nonnull @NotEmpty final String serviceId);
     
     /**
      * Add a new SP session to this IdP session, replacing any existing session for the same
@@ -155,7 +154,7 @@ public interface IdPSession extends IdentifiedComponent {
      * @return a previously existing SPSession replaced by the new one, if any
      * @throws SessionException if an error occurs accessing the session
      */
-    @Nullable public SPSession addSPSession(@Nonnull final SPSession spSession)
+    @Nullable SPSession addSPSession(@Nonnull final SPSession spSession)
             throws SessionException;
     
     /**
@@ -166,6 +165,6 @@ public interface IdPSession extends IdentifiedComponent {
      * @return true iff the given SP session had been associated with this IdP session and now is not
      * @throws SessionException if an error occurs accessing the SP session
      */
-    public boolean removeSPSession(@Nonnull final SPSession spSession) throws SessionException;
+    boolean removeSPSession(@Nonnull final SPSession spSession) throws SessionException;
     
 }

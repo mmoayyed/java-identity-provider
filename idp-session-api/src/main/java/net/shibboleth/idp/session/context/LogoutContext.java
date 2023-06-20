@@ -27,7 +27,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -43,13 +42,13 @@ import com.google.common.collect.Multimap;
 public final class LogoutContext extends BaseContext {
 
     /** Primary sessions to destroy. */
-    @Nonnull @NonnullElements private final Collection<IdPSession> idpSessions;
+    @Nonnull private final Collection<IdPSession> idpSessions;
 
     /** SP sessions needing logout. */
-    @Nonnull @NonnullElements private final Multimap<String,SPSession> sessionMap;
+    @Nonnull private final Multimap<String,SPSession> sessionMap;
 
     /** An index of the session objects by an externally assigned key. */
-    @Nonnull @NonnullElements private final Map<String,SPSession> keyedSessionMap;
+    @Nonnull private final Map<String,SPSession> keyedSessionMap;
         
     /** Constructor. */
     public LogoutContext() {
@@ -65,7 +64,7 @@ public final class LogoutContext extends BaseContext {
      * 
      * @since 4.0.0
      */
-    @Nonnull @NonnullElements @Live public Collection<IdPSession> getIdPSessions() {
+    @Nonnull @Live public Collection<IdPSession> getIdPSessions() {
         return idpSessions;
     }
 
@@ -74,7 +73,7 @@ public final class LogoutContext extends BaseContext {
      * 
      * @return service ID/session mappings
      */
-    @Nonnull @NonnullElements @Live public Multimap<String,SPSession> getSessionMap() {
+    @Nonnull @Live public Multimap<String,SPSession> getSessionMap() {
         return sessionMap;
     }
 
@@ -85,7 +84,7 @@ public final class LogoutContext extends BaseContext {
      * 
      * @return keyed session mappings
      */
-    @Nonnull @NonnullElements @Live public Map<String,SPSession> getKeyedSessionMap() {
+    @Nonnull @Live public Map<String,SPSession> getKeyedSessionMap() {
         return keyedSessionMap;
     }
 
@@ -96,7 +95,7 @@ public final class LogoutContext extends BaseContext {
      * 
      * @return the sessions for the service
      */
-    @Nonnull @NonnullElements @Live public Collection<SPSession> getSessions(@Nonnull @NotEmpty final String id) {
+    @Nonnull @Live public Collection<SPSession> getSessions(@Nonnull @NotEmpty final String id) {
         return sessionMap.get(id);
     }
     

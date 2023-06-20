@@ -158,10 +158,8 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             throw new IOException("Exception while serializing IdPSession", e);
         }
     }
-// Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
-    // Checkstyle: CyclomaticComplexity OFF
     @Override @Nonnull public StorageBackedIdPSession deserialize(final long version,
             @Nonnull @NotEmpty final String context, @Nonnull @NotEmpty final String key,
             @Nonnull @NotEmpty final String value, @Nullable final Long expiration) throws IOException {
@@ -240,6 +238,6 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             throw new IOException("Found invalid data structure while parsing IdPSession", e);
         }
     }
-    // Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity ON
 
 }

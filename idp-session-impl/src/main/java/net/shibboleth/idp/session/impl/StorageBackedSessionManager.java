@@ -49,8 +49,9 @@ import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -160,7 +161,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     @Nonnull private final StorageBackedIdPSessionSerializer serializer;
 
     /** Flows that could potentially be used to authenticate the user. */
-    @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> flowDescriptorMap;
+    @Nonnull private final Map<String,AuthenticationFlowDescriptor> flowDescriptorMap;
 
     /** Mappings between a SPSession type and a serializer implementation. */
     @Nullable private SPSessionSerializerRegistry spSessionSerializerRegistry;
@@ -449,8 +450,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      * @param flows the flows available for possible use
      */
-    public void setAuthenticationFlowDescriptors(
-            @Nonnull @NonnullElements final Iterable<AuthenticationFlowDescriptor> flows) {
+    public void setAuthenticationFlowDescriptors(@Nonnull final Iterable<AuthenticationFlowDescriptor> flows) {
         checkSetterPreconditions();
         flowDescriptorMap.clear();
         for (final AuthenticationFlowDescriptor desc : Constraint.isNotNull(flows, "Flow collection cannot be null")) {
@@ -500,7 +500,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName)
+    @Override
+    @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName)
             throws SessionException {
         checkComponentActive();
 
@@ -543,7 +544,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /** {@inheritDoc} */
-    @Override public void destroySession(@Nonnull @NotEmpty final String sessionId, final boolean unbind)
+    @Override
+    public void destroySession(@Nonnull @NotEmpty final String sessionId, final boolean unbind)
             throws SessionException {
         checkComponentActive();
 
@@ -565,7 +567,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
-    @Override @Nonnull @NonnullElements public Iterable<IdPSession> resolve(@Nullable final CriteriaSet criteria)
+    @Override
+    @Nonnull @Unmodifiable @NotLive public Iterable<IdPSession> resolve(@Nullable final CriteriaSet criteria)
             throws ResolverException {
         checkComponentActive();
 
@@ -618,7 +621,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     // Checkstyle: CyclomaticComplexity On
     
     /** {@inheritDoc} */
-    @Override @Nullable public IdPSession resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
+    @Override
+    @Nullable public IdPSession resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
         final Iterator<IdPSession> i = resolve(criteria).iterator();
         if (i != null && i.hasNext()) {
             return i.next();
@@ -831,8 +835,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @return collection of zero or more sessions
      * @throws ResolverException if an error occurs during lookup
      */
-    @Nonnull @NonnullElements private Iterable<IdPSession>
-            lookupBySPSession(@Nonnull final SPSessionCriterion criterion) throws ResolverException {
+    @Nonnull private Iterable<IdPSession> lookupBySPSession(@Nonnull final SPSessionCriterion criterion)
+            throws ResolverException {
 
         final int contextSize = storageService.getCapabilities().getContextSize();
         final int keySize = storageService.getCapabilities().getKeySize();

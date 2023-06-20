@@ -18,5 +18,7 @@
 /**
  * Functions for traversing session-related contexts.
  */
-
+@NonnullElements
 package net.shibboleth.idp.session.context.navigate;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

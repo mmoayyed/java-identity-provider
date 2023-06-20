@@ -32,7 +32,6 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -165,7 +164,6 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
         final AddressFamily family = getAddressFamily(address);
         final String bound = getAddress(family);
@@ -254,12 +252,12 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
+    @Nonnull @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
         return authenticationResults.values()
                     .stream()
                     .filter(Optional::isPresent)
                     .map(Optional::orElseThrow)
-                    .collect(Collectors.toUnmodifiableSet());
+                    .collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableSet())).get();
     }
 
     /** {@inheritDoc} */
@@ -326,31 +324,27 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<SPSession> getSPSessions() {
+    @Nonnull @NotLive @Unmodifiable public Set<SPSession> getSPSessions() {
         return spSessions.values()
                     .stream()
                     .filter(Optional::isPresent)
                     .map(Optional::orElseThrow)
-                    .collect(Collectors.toUnmodifiableSet());
+                    .collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableSet())).get();
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public SPSession getSPSession(@Nonnull @NotEmpty final String serviceId) {
         final Optional<SPSession> mapped = spSessions.get(StringSupport.trimOrNull(serviceId));
         return (mapped != null) ? mapped.orElse(null) : null;
     }
 
     /** {@inheritDoc} */
-    @Override
     @Nullable public SPSession addSPSession(@Nonnull final SPSession spSession)
             throws SessionException {
         return doAddSPSession(spSession);
     }
 
     /** {@inheritDoc} */
-    @Override
     public boolean removeSPSession(@Nonnull final SPSession spSession) throws SessionException {
         return doRemoveSPSession(spSession);
     }
@@ -434,7 +428,7 @@ public abstract class AbstractIdPSession implements IdPSession {
      * 
      * @return direct access to the result map
      */
-    @Nonnull @NonnullElements @Live protected Map<String, Optional<AuthenticationResult>> getAuthenticationResultMap() {
+    @Nonnull @Live protected Map<String, Optional<AuthenticationResult>> getAuthenticationResultMap() {
         return authenticationResults;
     }
 
@@ -443,7 +437,7 @@ public abstract class AbstractIdPSession implements IdPSession {
      * 
      * @return direct access to the service session map
      */
-    @Nonnull @NonnullElements @Live protected Map<String, Optional<SPSession>> getSPSessionMap() {
+    @Nonnull @Live protected Map<String, Optional<SPSession>> getSPSessionMap() {
         return spSessions;
     }
     

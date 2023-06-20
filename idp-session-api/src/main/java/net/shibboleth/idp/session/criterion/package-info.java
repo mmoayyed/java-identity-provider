@@ -18,4 +18,7 @@
 /**
  * Criterion classes for session lookup.
  */
+@NonnullElements
 package net.shibboleth.idp.session.criterion;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

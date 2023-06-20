@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 
 import com.google.common.net.InetAddresses;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.net.IPRange;
@@ -34,7 +33,7 @@ import net.shibboleth.shared.net.IPRange;
 public class IPRangeBiPredicate implements BiPredicate<String,String> {
     
     /** IP ranges to match against. */
-    @Nonnull @NonnullElements private Collection<IPRange> addressRanges;
+    @Nonnull private Collection<IPRange> addressRanges;
 
     /** Constructor. */
     IPRangeBiPredicate() {
@@ -46,7 +45,7 @@ public class IPRangeBiPredicate implements BiPredicate<String,String> {
      * 
      * @param ranges    address ranges to check against
      */
-    public void setRanges(@Nonnull @NonnullElements final Collection<IPRange> ranges) {
+    public void setRanges(@Nonnull final Collection<IPRange> ranges) {
         Constraint.isNotNull(ranges, "Address range collection cannot be null");
         
         addressRanges = CollectionSupport.copyToList(ranges);

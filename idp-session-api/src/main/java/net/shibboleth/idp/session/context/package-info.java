@@ -18,4 +18,7 @@
 /**
  * Context classes for managing session-related state.
  */
+@NonnullElements
 package net.shibboleth.idp.session.context;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

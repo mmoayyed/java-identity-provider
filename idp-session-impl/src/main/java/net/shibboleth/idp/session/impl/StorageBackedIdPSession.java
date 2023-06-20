@@ -34,7 +34,6 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.shared.annotation.constraint.Live;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -161,7 +160,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
+    @Nonnull @NotLive @Unmodifiable public Set<AuthenticationResult> getAuthenticationResults() {
         
         // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
         final Iterator<Map.Entry<String,Optional<AuthenticationResult>>> entries =
@@ -330,7 +329,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<SPSession> getSPSessions() {
+    @Nonnull @NotLive @Unmodifiable public Set<SPSession> getSPSessions() {
         
         if (sessionManager.isTrackSPSessions() && sessionManager.storageServiceMeetsThreshold()) {
             // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
@@ -521,13 +520,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @Live protected Map<String, Optional<AuthenticationResult>> getAuthenticationResultMap() {
+    @Nonnull @Live protected Map<String, Optional<AuthenticationResult>> getAuthenticationResultMap() {
         return super.getAuthenticationResultMap();
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @Live protected Map<String, Optional<SPSession>> getSPSessionMap() {
+    @Nonnull @Live protected Map<String, Optional<SPSession>> getSPSessionMap() {
         return super.getSPSessionMap();
     }
     

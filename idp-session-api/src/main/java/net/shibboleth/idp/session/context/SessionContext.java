@@ -28,7 +28,7 @@ import org.opensaml.messaging.context.BaseContext;
 public final class SessionContext extends BaseContext {
 
     /** IdP session wrapped by this adapter. */
-    private IdPSession session;
+    @Nullable private IdPSession session;
 
     /** Constructor. */
     public SessionContext() {
