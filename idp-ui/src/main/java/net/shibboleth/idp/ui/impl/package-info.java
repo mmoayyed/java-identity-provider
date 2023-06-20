@@ -18,5 +18,7 @@
 /**
  * Implementation classes for information needed by the UI. 
  */
-
+@NonnullElements
 package net.shibboleth.idp.ui.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

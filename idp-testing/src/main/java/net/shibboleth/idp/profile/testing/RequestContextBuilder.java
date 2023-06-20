@@ -35,6 +35,7 @@ import net.shibboleth.profile.config.ProfileConfiguration;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.relyingparty.BasicRelyingPartyConfiguration;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 import org.opensaml.messaging.context.MessageContext;
@@ -54,43 +55,43 @@ import org.springframework.webflow.test.MockRequestContext;
 public class RequestContextBuilder {
 
     /** Value used to represent a string value that has not be set. */
-    private final String NO_VAL = "novalue";
+    @Nonnull @NotEmpty private static final String NO_VAL = "novalue";
 
     /** The {@link ServletContext} used when building the request context. */
-    private ServletContext servletContext;
+    @Nullable private ServletContext servletContext;
 
     /** The {@link HttpServletRequest} used when building the request context. */
-    private HttpServletRequest httpRequest;
+    @Nullable private HttpServletRequest httpRequest;
 
     /** The {@link HttpServletResponse} used when building the request context. */
-    private HttpServletResponse httpResponse;
+    @Nullable private HttpServletResponse httpResponse;
 
     /** The ID of the inbound message. */
-    private String inboundMessageId = NO_VAL;
+    @Nullable private String inboundMessageId = NO_VAL;
 
     /** The issue instant of the inbound message. */
-    private Instant inboundMessageIssueInstant;
+    @Nullable private Instant inboundMessageIssueInstant;
 
     /** The issuer of the inbound message. */
-    private String inboundMessageIssuer = NO_VAL;
+    @Nullable private String inboundMessageIssuer = NO_VAL;
 
     /** The inbound message. */
-    private Object inboundMessage;
+    @Nullable private Object inboundMessage;
 
     /** The ID of the outbound message. */
-    private String outboundMessageId = NO_VAL;
+    @Nullable private String outboundMessageId = NO_VAL;
 
     /** The issue instant of the outbound message. */
-    private Instant outboundMessageIssueInstant;
+    @Nullable private Instant outboundMessageIssueInstant;
 
     /** The issuer of the outbound message. */
-    private String outboundMessageIssuer = NO_VAL;
+    @Nullable private String outboundMessageIssuer = NO_VAL;
 
     /** The outbound message. */
-    private Object outboundMessage;
+    @Nullable private Object outboundMessage;
 
     /** The profile configurations associated with the relying party. */
-    private Collection<ProfileConfiguration> relyingPartyProfileConfigurations;
+    @Nullable private Collection<ProfileConfiguration> relyingPartyProfileConfigurations;
 
     /** Constructor. */
     public RequestContextBuilder() {
@@ -102,7 +103,7 @@ public class RequestContextBuilder {
      * 
      * @param prototype prototype whose properties are copied onto this builder
      */
-    public RequestContextBuilder(RequestContextBuilder prototype) {
+    public RequestContextBuilder(@Nonnull final RequestContextBuilder prototype) {
         servletContext = prototype.servletContext;
         httpRequest = prototype.httpRequest;
         httpResponse = prototype.httpResponse;
@@ -441,7 +442,7 @@ public class RequestContextBuilder {
         if (relyingPartyProfileConfigurations == null) {
             relyingPartyProfileConfigurations = new ArrayList<>();
         }
-        
+        assert relyingPartyProfileConfigurations != null;
         final List<ProfileConfiguration> profileConfigs =
                 relyingPartyProfileConfigurations.
                 stream().

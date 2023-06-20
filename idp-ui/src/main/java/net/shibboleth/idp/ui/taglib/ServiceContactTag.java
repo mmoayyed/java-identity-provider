@@ -20,6 +20,7 @@ package net.shibboleth.idp.ui.taglib;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
@@ -42,13 +43,13 @@ public class ServiceContactTag extends ServiceTagSupport {
     private static final long serialVersionUID = 5437171915434315671L;
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(ServiceContactTag.class);
+    @Nonnull private static Logger log = LoggerFactory.getLogger(ServiceContactTag.class);
 
     /** storage for the contactType bean. */
-    private ContactPersonTypeEnumeration contactType = ContactPersonTypeEnumeration.SUPPORT;
+    @Nonnull private ContactPersonTypeEnumeration contactType = ContactPersonTypeEnumeration.SUPPORT;
 
     /** bean storage for the name attribute. */
-    private String contactName;
+    @Nullable private String contactName;
 
     /**
      * Setter for the contactType bean.

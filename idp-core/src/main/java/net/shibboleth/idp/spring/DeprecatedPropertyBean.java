@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -37,7 +36,6 @@ import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
-
 
 /**
  * A bean that emits deprecation warnings if a configurable set of properties are set.
@@ -54,7 +52,7 @@ public class DeprecatedPropertyBean extends AbstractInitializableComponent imple
     @Nonnull private Map<String,String> deprecatedProperties;
 
     /** Dead properties. */
-    @Nonnull @NonnullElements private Collection<String> deadProperties;
+    @Nonnull private Collection<String> deadProperties;
 
     /** Constructor. */
     public DeprecatedPropertyBean() {
@@ -83,7 +81,7 @@ public class DeprecatedPropertyBean extends AbstractInitializableComponent imple
      * 
      * @param properties defunct property names
      */
-    public void setDeadProperties(@Nonnull @NonnullElements final Collection<String> properties) {
+    public void setDeadProperties(@Nonnull final Collection<String> properties) {
         checkSetterPreconditions();
         Constraint.isNotNull(properties, "Property collection cannot be null");
         

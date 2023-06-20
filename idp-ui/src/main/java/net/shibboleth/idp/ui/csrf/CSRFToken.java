@@ -40,4 +40,5 @@ public interface CSRFToken extends Serializable{
      * @return the anti-CSRF token.
      */
     @Nonnull String getToken();
+
 }

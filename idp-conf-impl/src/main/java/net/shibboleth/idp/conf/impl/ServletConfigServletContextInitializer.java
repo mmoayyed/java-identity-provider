@@ -83,14 +83,14 @@ public class ServletConfigServletContextInitializer implements ServletContainerI
 
         if ("true".equalsIgnoreCase(remoteUserFlag)) {
             log.info("Registering RemoteUser authentication servlet");
-            ServletRegistration.Dynamic registration = ctx.addServlet("RemoteUserAuthHandler",
+            final ServletRegistration.Dynamic registration = ctx.addServlet("RemoteUserAuthHandler",
                     new DelegatingServletProxy("shibboleth.RemoteUserAuthServlet"));
             registration.addMapping("/Authn/RemoteUser");
         }
         
         if ("true".equalsIgnoreCase(x509Flag)) {
             log.info("Registering X.509 authentication servlet");
-            ServletRegistration.Dynamic registration = ctx.addServlet("X509AuthHandler",
+            final ServletRegistration.Dynamic registration = ctx.addServlet("X509AuthHandler",
                     new DelegatingServletProxy("shibboleth.X509AuthServlet"));
             registration.addMapping("/Authn/X509");
         }

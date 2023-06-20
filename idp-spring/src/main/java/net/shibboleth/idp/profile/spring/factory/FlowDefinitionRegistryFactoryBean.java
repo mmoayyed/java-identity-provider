@@ -49,7 +49,6 @@ import org.springframework.webflow.engine.model.registry.FlowModelHolder;
 import org.springframework.webflow.engine.model.registry.FlowModelRegistry;
 import org.springframework.webflow.engine.model.registry.FlowModelRegistryImpl;
 
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -68,10 +67,10 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
     @Nonnull private final Logger log = LoggerFactory.getLogger(FlowDefinitionRegistryFactoryBean.class);
 
     /** Explicit flow mappings from flow ID to resource path. */
-    @Nonnull @NonnullElements private Map<String,String> flowLocations;
+    @Nonnull private Map<String,String> flowLocations;
 
     /** Pattern-based flow mappings from pattern to base location to apply. */
-    @Nonnull @NonnullElements private Map<String,String> flowLocationPatterns;
+    @Nonnull private Map<String,String> flowLocationPatterns;
 
     /** Required collaborator. */
     @Nullable private FlowBuilderServices flowBuilderServices;
@@ -108,7 +107,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
      * 
      * @param locationMap mappings from flow ID to resource
      */
-    public void setFlowLocations(@Nonnull @NonnullElements final Map<String,String> locationMap) {
+    public void setFlowLocations(@Nonnull final Map<String,String> locationMap) {
         Constraint.isNotNull(locationMap, "Flow mappings cannot be null");
         
         flowLocations = new LinkedHashMap<>(locationMap.size());

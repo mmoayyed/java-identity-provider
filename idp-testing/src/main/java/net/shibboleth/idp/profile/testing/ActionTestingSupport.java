@@ -17,8 +17,13 @@
 
 package net.shibboleth.idp.profile.testing;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
+
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
 /**
  * Helper methods for creating/testing objects within profile action tests. When methods herein refer to mock objects
@@ -27,16 +32,16 @@ import org.testng.Assert;
 public class ActionTestingSupport {
 
     /** ID of the inbound message. */
-    public final static String INBOUND_MSG_ID = "inbound";
+    @Nonnull @NotEmpty public final static String INBOUND_MSG_ID = "inbound";
 
     /** Issuer of the inbound message. */
-    public final static String INBOUND_MSG_ISSUER = "http://sp.example.org";
+    @Nonnull @NotEmpty public final static String INBOUND_MSG_ISSUER = "http://sp.example.org";
 
     /** ID of the outbound message. */
-    public final static String OUTBOUND_MSG_ID = "outbound";
+    @Nonnull @NotEmpty public final static String OUTBOUND_MSG_ID = "outbound";
 
     /** Issuer of the outbound message. */
-    public final static String OUTBOUND_MSG_ISSUER = "http://idp.example.org";
+    @Nonnull @NotEmpty public final static String OUTBOUND_MSG_ISSUER = "http://idp.example.org";
 
     /**
      * Checks that the event is not null, that the event source is not null, and that the event ID is the given id.
@@ -44,8 +49,8 @@ public class ActionTestingSupport {
      * @param event the event to check
      * @param id ...
      */
-    public static void assertEvent(final Event event, final String id) {
-        Assert.assertNotNull(event);
+    public static void assertEvent(@Nullable final Event event, @Nullable final String id) {
+        assert event != null;
         Assert.assertNotNull(event.getSource());
         Assert.assertEquals(event.getId(), id);
     }
@@ -55,7 +60,7 @@ public class ActionTestingSupport {
      * 
      * @param event the event to check
      */
-    public static void assertProceedEvent(final Event event) {
+    public static void assertProceedEvent(@Nullable final Event event) {
         Assert.assertNull(event);
     }
     

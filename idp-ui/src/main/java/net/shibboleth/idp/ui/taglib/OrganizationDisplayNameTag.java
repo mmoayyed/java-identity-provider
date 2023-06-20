@@ -19,6 +19,7 @@ package net.shibboleth.idp.ui.taglib;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class OrganizationDisplayNameTag extends ServiceTagSupport {
     private static final long serialVersionUID = -196716418770324981L;
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(OrganizationDisplayNameTag.class);
+    @Nonnull private static Logger log = LoggerFactory.getLogger(OrganizationDisplayNameTag.class);
 
     /**
      * look for the &lt;OrganizationDisplayName&gt;.

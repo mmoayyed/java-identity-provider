@@ -54,7 +54,6 @@ public final class TestSources {
     /** The name we use in this test for the static connector. */
     @Nonnull public static final String STATIC_CONNECTOR_NAME = "staticCon";
 
-
     /** The name of the attribute we use as source. */
     @Nonnull public static final String DEPENDS_ON_ATTRIBUTE_NAME_ATTR = "at1";
 
@@ -135,7 +134,7 @@ public final class TestSources {
      * @return The connector
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    public static DataConnector populatedStaticConnector(@Nonnull @NonnullElements final List<IdPAttribute> attributes)
+    @Nonnull public static DataConnector populatedStaticConnector(@Nonnull @NonnullElements final List<IdPAttribute> attributes)
             throws ComponentInitializationException {
 
         final StaticDataConnector connector = new StaticDataConnector();
@@ -153,7 +152,7 @@ public final class TestSources {
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
     @SuppressWarnings("null")
-    public static DataConnector populatedStaticConnector() throws ComponentInitializationException {
+    @Nonnull public static DataConnector populatedStaticConnector() throws ComponentInitializationException {
         List<IdPAttribute> attributeSet = new ArrayList<>(2);
 
         IdPAttribute attr = new IdPAttribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
@@ -175,11 +174,11 @@ public final class TestSources {
      * @return the attribute definition
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    public static AttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
+    @Nonnull public static AttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
         return populatedStaticAttribute(DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 2);
     }
     
-    public static AttributeDefinition populatedStaticAttribute(@Nonnull String attributeName,
+    @Nonnull public static AttributeDefinition populatedStaticAttribute(@Nonnull String attributeName,
             int attributeValuesCount) throws ComponentInitializationException {
         
         final List<IdPAttributeValue> valuesList = new ArrayList<>();
@@ -206,7 +205,7 @@ public final class TestSources {
      * @return the attribute definition
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    public static AttributeDefinition populatedStaticAttribute(@Nonnull final IdPAttribute attribute)
+    @Nonnull public static AttributeDefinition populatedStaticAttribute(@Nonnull final IdPAttribute attribute)
             throws ComponentInitializationException {
         
         final StaticAttributeDefinition definition = new StaticAttributeDefinition();
@@ -221,7 +220,7 @@ public final class TestSources {
      * @return the definition
      * @throws ComponentInitializationException for completeness
      */
-    public static AttributeDefinition nonStringAttributeDefiniton(@Nonnull String name) throws ComponentInitializationException {
+    @Nonnull public static AttributeDefinition nonStringAttributeDefiniton(@Nonnull String name) throws ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(name);
 
@@ -255,7 +254,7 @@ public final class TestSources {
      * @param attributeId attributeId
      * @return  the dependency
      */
-    public static ResolverAttributeDefinitionDependency makeAttributeDefinitionDependency(@Nonnull String attributeId) {
+    @Nonnull public static ResolverAttributeDefinitionDependency makeAttributeDefinitionDependency(@Nonnull String attributeId) {
         ResolverAttributeDefinitionDependency retVal = new ResolverAttributeDefinitionDependency(attributeId);
         return retVal;
     }
@@ -265,7 +264,7 @@ public final class TestSources {
      * @param attributeId attributeId
      * @return the dependency
      */
-    public static ResolverDataConnectorDependency makeDataConnectorDependency(@Nonnull String connectorId, @Nullable String attributeId) {
+    @Nonnull public static ResolverDataConnectorDependency makeDataConnectorDependency(@Nonnull String connectorId, @Nullable String attributeId) {
         ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
         if (null == attributeId) {
             retVal.setAllAttributes(true);

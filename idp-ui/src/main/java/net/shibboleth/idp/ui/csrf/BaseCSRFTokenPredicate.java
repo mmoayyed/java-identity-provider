@@ -24,7 +24,6 @@ import org.springframework.webflow.definition.StateDefinition;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 
-
 /**
  * A base helper class for predicates that determine if CSRF protection is required per state. 
  */
@@ -35,7 +34,6 @@ public abstract class BaseCSRFTokenPredicate {
      *  from CSRF protection.
      */
     @Nonnull @NotEmpty public static final String CSRF_EXCLUDED_ATTRIBUTE_NAME = "csrf_excluded";
-    
     
     /**
      * Safe get the <code>boolean</code> value of the attribute from the attributes annotating 

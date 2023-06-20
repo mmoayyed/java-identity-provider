@@ -16,5 +16,7 @@
  */
 
 /** Root package for IdP, contains a couple base/utility classes. */
-
+@NonnullElements
 package net.shibboleth.idp;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

@@ -45,6 +45,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.ConstraintViolationException;
@@ -238,12 +240,12 @@ public class IdPPropertiesApplicationContextInitializer
      * @param properties the content of idp.properties so far
      * @return a collection of paths
      */
-    public static Collection<String> getAdditionalSources(@Nonnull final String searchLocation,
-                            @Nonnull final Properties properties) {
+    @Nonnull @Unmodifiable @NotLive public static Collection<String> getAdditionalSources(
+            @Nonnull final String searchLocation, @Nonnull final Properties properties) {
         return getAdditionalSources(searchLocation, properties, false);
     }
 
-        // Checkstyle: AnonInnerLength OFF
+// Checkstyle: AnonInnerLength OFF
     /**
      * Find out all the additional property files we need to load.
      *
@@ -252,8 +254,9 @@ public class IdPPropertiesApplicationContextInitializer
      * @param idpHomeIsClasspath does idp.home point to a classpath 
      * @return a collection of paths
      */
-    public static Collection<String> getAdditionalSources(@Nonnull final String searchLocation,
-                            @Nonnull final Properties properties, final boolean idpHomeIsClasspath) {
+    @Nonnull @Unmodifiable @NotLive public static Collection<String> getAdditionalSources(
+            @Nonnull final String searchLocation, @Nonnull final Properties properties,
+            final boolean idpHomeIsClasspath) {
         
         final Collection<String> sources = new ArrayList<>();
        

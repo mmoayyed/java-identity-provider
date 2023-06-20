@@ -38,11 +38,11 @@ import net.shibboleth.shared.spring.context.DelimiterAwareApplicationContext;
  */
 public class SpringConfigServletContextInitializer implements ServletContainerInitializer {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(SpringConfigServletContextInitializer.class);
-
     /** System property name for the activation of this class. */
     @Nonnull @NotEmpty public static final String INIT_PARAMETER_ACTIVATION = "net.shibboleth.idp.registerSpringConfig";
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SpringConfigServletContextInitializer.class);
 
     /** {@inheritDoc} */
     @Override

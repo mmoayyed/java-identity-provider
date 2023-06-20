@@ -19,6 +19,8 @@ package net.shibboleth.idp.ui.taglib;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
@@ -38,8 +40,7 @@ public class ServiceDescriptionTag extends ServiceTagSupport {
     private static final long serialVersionUID = 3794685928805227487L;
     
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(ServiceDescriptionTag.class);
-
+    @Nonnull private static Logger log = LoggerFactory.getLogger(ServiceDescriptionTag.class);
 
     /** {@inheritDoc} */
     @Override public int doEndTag() throws JspException {
@@ -68,4 +69,5 @@ public class ServiceDescriptionTag extends ServiceTagSupport {
         }
         return super.doEndTag();
     }
+
 }

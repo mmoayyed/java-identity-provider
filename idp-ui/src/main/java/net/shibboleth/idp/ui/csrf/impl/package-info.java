@@ -16,7 +16,9 @@
  */
 
 /**
- * 
  * Implementation classes for cross-site request forgery mitigation. 
  */
+@NonnullElements
 package net.shibboleth.idp.ui.csrf.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

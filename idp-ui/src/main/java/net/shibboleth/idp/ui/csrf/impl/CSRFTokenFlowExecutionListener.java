@@ -39,7 +39,6 @@ import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 
-
 /**
  * A flow execution lifecycle listener that, if enabled:
  * <ul>

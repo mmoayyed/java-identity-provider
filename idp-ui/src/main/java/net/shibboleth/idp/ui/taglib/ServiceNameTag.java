@@ -19,9 +19,13 @@ package net.shibboleth.idp.ui.taglib;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.HTMLEncoder;
 
 import org.slf4j.Logger;
@@ -43,20 +47,20 @@ public class ServiceNameTag extends ServiceTagSupport {
     private static final long serialVersionUID = 2131709003267781456L;
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(ServiceNameTag.class);
+    @Nonnull private static Logger log = LoggerFactory.getLogger(ServiceNameTag.class);
     
     /** what to emit if the jsp has nothing. */
-    private static final String DEFAULT_VALUE = "Unspecified Service Provider";
+    @Nonnull @NotEmpty private static final String DEFAULT_VALUE = "Unspecified Service Provider";
 
     /** Bean storage for default value. */
-    private String defaultValue;
+    @Nullable private String defaultValue;
 
     /**
      * Set the default value.
      * 
      * @param value what to set
      */
-    public void setDefaultValue(final String value) {
+    public void setDefaultValue(@Nullable final String value) {
         defaultValue = value;
     }
     
@@ -90,4 +94,5 @@ public class ServiceNameTag extends ServiceTagSupport {
         }
         return super.doStartTag();
     }
+
 }

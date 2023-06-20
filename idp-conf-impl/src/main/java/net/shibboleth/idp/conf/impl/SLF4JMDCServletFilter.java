@@ -73,8 +73,8 @@ public class SLF4JMDCServletFilter extends AbstractConditionalFilter implements 
 
     /** {@inheritDoc} */
     @Override
-    protected void runFilter(final @Nonnull ServletRequest request, final @Nonnull ServletResponse response, final @Nonnull FilterChain chain)
-            throws IOException, ServletException {
+    protected void runFilter(final @Nonnull ServletRequest request, final @Nonnull ServletResponse response,
+            final @Nonnull FilterChain chain) throws IOException, ServletException {
         try {
             MDC.put(Version.MDC_ATTRIBUTE, Version.getVersion());
             MDC.put(CLIENT_ADDRESS_MDC_ATTRIBUTE, HttpServletSupport.getRemoteAddr(request));

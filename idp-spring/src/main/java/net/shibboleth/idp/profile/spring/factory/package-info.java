@@ -18,5 +18,7 @@
 /**
  * IdP factory bean implementations.
  */
-
+@NonnullElements
 package net.shibboleth.idp.profile.spring.factory;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

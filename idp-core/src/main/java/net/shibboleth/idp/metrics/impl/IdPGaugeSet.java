@@ -47,7 +47,7 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
     @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp";
 
     /** The map of gauges. */
-    @Nonnull @NonnullElements private final Map<String,Metric> gauges;
+    @Nonnull private final Map<String,Metric> gauges;
     
     /** Constructor. */
     public IdPGaugeSet() {

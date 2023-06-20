@@ -19,6 +19,7 @@ package net.shibboleth.idp.ui.taglib;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class ServiceInformationURLTag extends ServiceTagSupport {
     private static final long serialVersionUID = 4154999542916069376L;
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(ServiceInformationURLTag.class);
+    @Nonnull private static Logger log = LoggerFactory.getLogger(ServiceInformationURLTag.class);
 
     /** Bean storage for the link text attribute. */
     @Nullable private static String linkText;

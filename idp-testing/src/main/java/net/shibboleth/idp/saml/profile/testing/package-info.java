@@ -16,9 +16,9 @@
  */
 
 /**
- * Configuration implementation classes used internally.
+ * Testing utility classes for SAML profile code.
  */
 @NonnullElements
-package net.shibboleth.idp.conf.impl;
+package net.shibboleth.idp.saml.profile.testing;
 
 import net.shibboleth.shared.annotation.constraint.NonnullElements;

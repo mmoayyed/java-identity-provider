@@ -30,7 +30,6 @@ import net.shibboleth.shared.logic.Constraint;
  */
 @Immutable
 public class SimpleCSRFToken implements CSRFToken{
-    
 
     /** Serial UID. */
     private static final long serialVersionUID = 3742188179558262003L;

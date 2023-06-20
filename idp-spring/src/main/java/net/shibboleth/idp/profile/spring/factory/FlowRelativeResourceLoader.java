@@ -27,6 +27,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.spring.resource.ConditionalResourceResolver;
 
 /**
@@ -40,15 +41,15 @@ import net.shibboleth.shared.spring.resource.ConditionalResourceResolver;
 class FlowRelativeResourceLoader extends DefaultResourceLoader {
 
     /** Flow resource for relative lookup. */
-    private Resource flowResource;
+    @Nonnull private Resource flowResource;
 
     /**
      * Constructor.
      *
      * @param resource flow resource for relative lookup
      */
-    public FlowRelativeResourceLoader(final Resource resource) {
-        flowResource = resource;
+    public FlowRelativeResourceLoader(@Nonnull final Resource resource) {
+        flowResource = Constraint.isNotNull(resource, "Flow resource cannot be null");
         getProtocolResolvers().add(new ConditionalResourceResolver());
     }
 

@@ -18,5 +18,7 @@
 /**
  * Context classes for information needed by the UI.
  */
-
+@NonnullElements
 package net.shibboleth.idp.ui.context;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

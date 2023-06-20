@@ -18,4 +18,7 @@
 /**
  * APIs relating to cross-site request forgery mitigations. 
  */
+@NonnullElements
 package net.shibboleth.idp.ui.csrf;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

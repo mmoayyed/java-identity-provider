@@ -83,11 +83,8 @@ public class SetRPUIInformation extends AbstractProfileAction {
     /** The {@link SPSSODescriptor}. Not finding this is not fatal */
     @Nullable private SPSSODescriptor spSSODescriptor;
 
-    /** The RPUI context - we always create this in {@link #doPreExecute(ProfileRequestContext)}. */
-    private RelyingPartyUIContext rpUIContext;
-
     /** The ACS context. */
-    private AttributeConsumingService acsDesriptor;
+    @Nullable private AttributeConsumingService acsDesriptor;
 
     /** Constructor. */
     public SetRPUIInformation() {
@@ -200,8 +197,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-
-        rpUIContext = rpUIContextCreateStrategy.apply(profileRequestContext);
+        final RelyingPartyUIContext rpUIContext = rpUIContextCreateStrategy.apply(profileRequestContext);
         if (rpUIContext == null) {
             log.error("{} Unable to create RelyingPartyUIContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);

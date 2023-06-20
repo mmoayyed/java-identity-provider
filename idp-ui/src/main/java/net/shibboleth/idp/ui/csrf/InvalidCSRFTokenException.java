@@ -41,5 +41,4 @@ public class InvalidCSRFTokenException extends FlowExecutionException{
         
     }
     
-
 }

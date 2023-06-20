@@ -16,5 +16,7 @@
  */
 
 /** Classes for extending, or supporting, Spring based configuration and object management. */
-
+@NonnullElements
 package net.shibboleth.idp.spring;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

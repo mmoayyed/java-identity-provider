@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import jakarta.servlet.jsp.JspException;
 import jakarta.servlet.jsp.JspWriter;
 import jakarta.servlet.jsp.tagext.BodyContent;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.HTMLEncoder;
 
 import org.slf4j.Logger;
@@ -38,13 +40,13 @@ public class ServiceLogoTag extends ServiceTagSupport {
     private static final long serialVersionUID = 5309357312113020929L;
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(ServiceLogoTag.class);
+    @Nonnull private static Logger log = LoggerFactory.getLogger(ServiceLogoTag.class);
 
     /** what to emit if the jsp has nothing. */
-    private static final String DEFAULT_VALUE = "";
+    @Nonnull @NotEmpty private static final String DEFAULT_VALUE = "";
 
     /** what to emit as alt txt if all else fails. */
-    private static final String DEFAULT_ALT_TXT = "SP Logo";
+    @Nonnull @NotEmpty private static final String DEFAULT_ALT_TXT = "SP Logo";
 
     /** Bean storage. Size constraint X */
     private int minWidth;
@@ -59,7 +61,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
     private int maxHeight = Integer.MAX_VALUE;
 
     /** Bean storage. alt text */
-    private String altTxt;
+    @Nullable private String altTxt;
 
     /**
      * Set the maximum width of the logo.

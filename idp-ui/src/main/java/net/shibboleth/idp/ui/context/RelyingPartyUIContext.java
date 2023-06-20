@@ -49,7 +49,6 @@ import net.shibboleth.idp.attribute.AttributesMapContainer;
 import net.shibboleth.idp.saml.metadata.ACSUIInfo;
 import net.shibboleth.idp.saml.metadata.IdPUIInfo;
 import net.shibboleth.idp.saml.metadata.OrganizationUIInfo;
-import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
@@ -83,7 +82,7 @@ public final class RelyingPartyUIContext extends BaseContext {
     @Nullable private IdPUIInfo rpUIInfo;
 
     /** The (statically defined) languages that this user wants to know about. */
-    @Nonnull @NonnullElements private List<LanguageRange> browserLanguages;
+    @Nonnull private List<LanguageRange> browserLanguages;
     
     /** The languages that this the Operator want to fall back to. */
     @Nonnull private List<LanguageRange> fallbackLanguages;
@@ -150,7 +149,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * 
      * @since 4.0.0
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<String> getEntityAttributeStringValues(
+    @Nonnull @NotLive @Unmodifiable public Collection<String> getEntityAttributeStringValues(
             @Nonnull @NotEmpty final String id) {
         
         XMLObject object = getRPEntityDescriptor(); 
@@ -247,7 +246,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * @deprecated use {@link #setBrowserLanguageRanges(List)}
      */
     @Deprecated(since="4.0.0", forRemoval=true)
-    @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
+    @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull final List<String> languages) {
         Constraint.isNotNull(languages, "Language List cannot be null");
         DeprecationSupport.warnOnce(ObjectType.METHOD, "RelyingPartyUIContext.setBrowserLanguages", null,
                 "setBrowserLanguageRanges");
@@ -267,8 +266,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * 
      * @return this context
      */
-    @Nonnull public RelyingPartyUIContext setBrowserLanguageRanges(
-            @Nonnull @NonnullElements final List<LanguageRange> ranges) {
+    @Nonnull public RelyingPartyUIContext setBrowserLanguageRanges(@Nonnull final List<LanguageRange> ranges) {
         browserLanguages = Constraint.isNotNull(ranges, "Language Range cannot be null");
         return this;
     }
@@ -280,7 +278,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * 
      * @return the languages.
      */
-    @Nonnull @NonnullElements protected List<LanguageRange> getBrowserLanguages() {
+    @Nonnull protected List<LanguageRange> getBrowserLanguages() {
         final NonnullSupplier<HttpServletRequest> supplier = requestSupplier;
         if (supplier == null || supplier.get() == null) {
             return browserLanguages;
@@ -316,7 +314,7 @@ public final class RelyingPartyUIContext extends BaseContext {
      * 
      * @return the languages.
      */
-    @Nonnull @NonnullElements protected List<LanguageRange> getFallbackLanguages() {
+    @Nonnull protected List<LanguageRange> getFallbackLanguages() {
         return fallbackLanguages;
     }
 

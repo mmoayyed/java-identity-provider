@@ -18,5 +18,7 @@
 /**
  * Contains the code for the jsp taglibs.
  */
-
+@NonnullElements
 package net.shibboleth.idp.ui.taglib;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

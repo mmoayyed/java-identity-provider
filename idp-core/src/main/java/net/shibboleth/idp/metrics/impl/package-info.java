@@ -18,5 +18,7 @@
 /**
  * Implementation classes supporting code instrumentation.
  */
-
+@NonnullElements
 package net.shibboleth.idp.metrics.impl;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;

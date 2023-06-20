@@ -18,5 +18,7 @@
 /**
  * Testing utility classes.
  */
-
+@NonnullElements
 package net.shibboleth.idp.profile.testing;
+
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
