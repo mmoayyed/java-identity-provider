@@ -27,6 +27,7 @@ import org.springframework.core.io.Resource;
 
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.DeprecationSupport;
 import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.shared.scripting.EvaluableScript;
@@ -72,13 +73,14 @@ public class ScriptedPredicate extends net.shibboleth.profile.context.logic.Scri
      * @return the predicate
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
+     * @throws ComponentInitializationException if the scripting initialization fails
      */
     public static ScriptedPredicate resourceScript(@Nonnull @NotEmpty final String engineName,
-            @Nonnull final Resource resource) throws ScriptException, IOException {
+            @Nonnull final Resource resource) throws ScriptException, IOException, ComponentInitializationException {
         final EvaluableScript script = new EvaluableScript();
         script.setEngineName(engineName);
         script.setScript(ResourceHelper.of(resource));
-        script.initializeWithScriptException();
+        script.initialize();
         return new ScriptedPredicate(script, resource.getDescription());
     }
 
@@ -89,9 +91,10 @@ public class ScriptedPredicate extends net.shibboleth.profile.context.logic.Scri
      * @return the predicate
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
+     * @throws ComponentInitializationException if the scripting initialization fails
      */
     public static ScriptedPredicate resourceScript(@Nonnull final Resource resource)
-            throws ScriptException, IOException {
+            throws ScriptException, IOException, ComponentInitializationException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
@@ -102,13 +105,14 @@ public class ScriptedPredicate extends net.shibboleth.profile.context.logic.Scri
      * @param engineName the language
      * @return the predicate
      * @throws ScriptException if the compile fails
+     * @throws ComponentInitializationException if the scripting initialization fails
      */
     public static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String engineName,
-            @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+            @Nonnull @NotEmpty final String scriptSource) throws ScriptException, ComponentInitializationException {
         final EvaluableScript script = new EvaluableScript();
         script.setEngineName(engineName);
         script.setScript(scriptSource);
-        script.initializeWithScriptException();
+        script.initialize();
         return new ScriptedPredicate(script, "Inline");
     }
 
@@ -119,7 +123,7 @@ public class ScriptedPredicate extends net.shibboleth.profile.context.logic.Scri
      * @return the predicate
      * @throws ScriptException if the compile fails
      */
-    public static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+    public static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException, ComponentInitializationException {
         return inlineScript(DEFAULT_ENGINE, scriptSource);
     }
 

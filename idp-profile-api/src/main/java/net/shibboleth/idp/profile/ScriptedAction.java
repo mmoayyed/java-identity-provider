@@ -125,15 +125,15 @@ public class ScriptedAction extends AbstractProfileAction {
      * @return the predicate
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
+     * @throws ComponentInitializationException if the scripting initialization fails
      */
-    @SuppressWarnings("removal")
     public static ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull final Resource resource)
-            throws ScriptException, IOException {
+            throws ScriptException, IOException, ComponentInitializationException {
         final EvaluableScript script = new EvaluableScript();
         script.setEngineName(engineName);
         script.setScript(resource);
-        script.initializeWithScriptException();
+        script.initialize();
         return new ScriptedAction(script);
     }
 
@@ -144,9 +144,10 @@ public class ScriptedAction extends AbstractProfileAction {
      * @return the predicate
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
+     * @throws ComponentInitializationException if the scripting initialization fails
      */
     public static ScriptedAction resourceScript(@Nonnull final Resource resource)
-            throws ScriptException, IOException {
+            throws ScriptException, IOException, ComponentInitializationException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
@@ -157,14 +158,14 @@ public class ScriptedAction extends AbstractProfileAction {
      * @param engineName the language
      * @return the predicate
      * @throws ScriptException if the compile fails
+     * @throws ComponentInitializationException if the scripting initialization fails
      */
-    @SuppressWarnings("removal")
     public static ScriptedAction inlineScript(@Nonnull @NotEmpty final String engineName,
-            @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+            @Nonnull @NotEmpty final String scriptSource) throws ScriptException, ComponentInitializationException {
         final EvaluableScript script = new EvaluableScript();
                 script.setEngineName(engineName);
                 script.setScript(scriptSource);
-                script.initializeWithScriptException();
+                script.initialize();
         return new ScriptedAction(script);
     }
 
@@ -174,8 +175,9 @@ public class ScriptedAction extends AbstractProfileAction {
      * @param scriptSource the script, as a string
      * @return the predicate
      * @throws ScriptException if the compile fails
+     * @throws ComponentInitializationException if the scripting initialization fails
      */
-    public static ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+    public static ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException, ComponentInitializationException {
         return inlineScript(DEFAULT_ENGINE, scriptSource);
     }
 
