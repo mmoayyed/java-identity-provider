@@ -156,6 +156,11 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
         return CollectionSupport.copyToMap(result);
     }
 
+    /**
+     * Get list of installed plugins and their details.
+     * 
+     * @return installed plugins and details
+     */
     @Nonnull @NotLive @Unmodifiable private Map<String, InstallableComponentDetails> getPluginDetails() {
         @NullableElements final Map<URL, Properties> pluginInfoCache = new HashMap<>();
         final Map<String, InstallableComponentDetails> result = new HashMap<>();
