@@ -200,14 +200,18 @@ public class LDAPCredentialValidator extends AbstractUsernamePasswordCredentialV
             final AccountState state = response.getAccountState();
             eventToSignal = AuthnEventIds.ACCOUNT_ERROR;
             authException = new LdapException(
+                response.getResultCode(),
                 String.format("%s:%s:%s", state.getError(), response.getResultCode(), response.getDiagnosticMessage()));
         } else if (response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
             eventToSignal = AuthnEventIds.INVALID_CREDENTIALS;
             authException = new LdapException(
+                response.getResultCode(),
                 String.format("%s:%s", response.getResultCode(), response.getDiagnosticMessage()));
         } else {
             eventToSignal = AuthnEventIds.AUTHN_EXCEPTION;
-            authException = new LdapException(response);
+            authException = new LdapException(
+                response.getResultCode(),
+                String.format("%s:%s", response.getResultCode(), response.getDiagnosticMessage()));
         }
 
         log.info("{} Login by '{}' failed", getLogPrefix(), username, authException);

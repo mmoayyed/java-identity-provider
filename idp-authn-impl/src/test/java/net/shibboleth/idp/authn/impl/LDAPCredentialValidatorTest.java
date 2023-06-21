@@ -31,6 +31,7 @@ import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.SimpleBindAuthenticationHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAccountState;
@@ -130,7 +131,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         action.setValidators(CollectionSupport.singletonList(validator));
 
         final Map<String, Collection<String>> mappings = new HashMap<>();
-        mappings.put("UnknownUsername", CollectionSupport.singleton("DN_RESOLUTION_FAILURE"));
+        mappings.put("UnknownUsername", CollectionSupport.listOf("DN_RESOLUTION_FAILURE", "INVALID_DN_SYNTAX"));
         mappings.put("InvalidPassword", CollectionSupport.singleton("INVALID_CREDENTIALS"));
         mappings.put("ExpiringPassword", CollectionSupport.singleton("ACCOUNT_WARNING"));
         mappings.put("ExpiredPassword", CollectionSupport.listOf("PASSWORD_EXPIRED", "CHANGE_AFTER_RESET"));
@@ -204,7 +205,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
-    @Test public void testBadConfig() throws ComponentInitializationException {
+    @Test public void testBadConfigInvalidDnResolver() throws ComponentInitializationException {
         getMockHttpServletRequest(action).addParameter("username", "foo");
         getMockHttpServletRequest(action).addParameter("password", "changeit");
 
@@ -235,7 +236,7 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
     }
 
-    @Test public void testBadConfig2() throws ComponentInitializationException {
+    @Test public void testBadConfigUnknownHost() throws ComponentInitializationException {
         getMockHttpServletRequest(action).addParameter("username", "PETER_THE_PRINCIPAL");
         getMockHttpServletRequest(action).addParameter("password", "bar");
 
@@ -286,6 +287,39 @@ public class LDAPCredentialValidatorTest extends BaseAuthenticationContextTest {
         assert lar != null;
         Assert.assertEquals(lar.getAuthenticationResultCode(),
                 AuthenticationResultCode.DN_RESOLUTION_FAILURE);
+
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        assert aec != null;
+        ActionTestingSupport.assertEvent(event, "UnknownUsername");
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
+        Assert.assertTrue(aec.isClassifiedError("UnknownUsername"));
+    }
+
+    @Test public void testBadUsernameAuthnException() throws ComponentInitializationException {
+        getMockHttpServletRequest(action).addParameter("username", "foo");
+        getMockHttpServletRequest(action).addParameter("password", "bar");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        assert ac != null;
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        final Authenticator directBindAuthenticator = new Authenticator(
+          new FormatDnResolver("cn=%s,ou,dc=shibboleth,dc=net"), authHandler);
+        validator.setAuthenticator(directBindAuthenticator);
+        validator.initialize();
+
+        action.initialize();
+
+        doExtract();
+
+        final Event event = action.execute(src);
+        Assert.assertNull(ac.getAuthenticationResult());
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
+        assert lrc != null;
+        final AuthenticationResponse lar = lrc.getAuthenticationResponse();
+        assert lar != null;
+        Assert.assertEquals(lar.getAuthenticationResultCode(),
+          AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
 
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         assert aec != null;
