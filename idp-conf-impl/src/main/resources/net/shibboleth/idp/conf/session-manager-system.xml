@@ -24,7 +24,7 @@
                 <constructor-arg name="source">
                     <null/>
                 </constructor-arg>
-                <constructor-arg name="identifierEncoding">
+                <constructor-arg name="identifierEncoder">
                     <null/>
                 </constructor-arg>
             </bean>
