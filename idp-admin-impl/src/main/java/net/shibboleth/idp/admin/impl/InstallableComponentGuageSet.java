@@ -60,7 +60,7 @@ import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
- * Guage set to report the Plugins' & IdP's installation and update statuses.
+ * Guage set to report the Plugins' and IdP's installation and update statuses.
  */
 public class InstallableComponentGuageSet extends AbstractIdentifiableInitializableComponent
         implements MetricSet, MetricFilter {
@@ -272,6 +272,12 @@ public class InstallableComponentGuageSet extends AbstractIdentifiableInitializa
         return gauges.containsKey(name);
     }
     
+    /**
+     * Tracks information about an installed component.
+     * 
+     * @param supportedState support level of component 
+     * @param updateVersion update version available
+     */
     record InstallableComponentDetails(@Nonnull @NotEmpty SupportLevel supportedState,
             @Nullable InstallableComponentVersion updateVersion) { }
 
