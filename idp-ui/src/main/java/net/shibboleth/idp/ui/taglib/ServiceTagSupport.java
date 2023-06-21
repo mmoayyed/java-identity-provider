@@ -28,6 +28,9 @@ import jakarta.servlet.jsp.tagext.BodyTagSupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
+
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -65,6 +68,14 @@ public class ServiceTagSupport extends BodyTagSupport {
 
     /** Cached RelyingPartyUIContext. */
     @Nullable private RelyingPartyUIContext relyingPartyUIContext;
+    
+    /** Constructor. */
+    public ServiceTagSupport() {
+        super();
+        final String classname = getClass().getName();
+        assert classname!=null;
+        DeprecationSupport.atRiskOnce(ObjectType.CLASS, classname, "a jsp file");
+    }
 
     /**
      * Sets the {@link RelyingPartyUIContext}.
