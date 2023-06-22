@@ -81,7 +81,7 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
     
     /** Operation enum. */
     public enum OperationType {
-        /** Dowload a version. */
+        /** Download a version. */
         DOWLOAD,
         /** List all versions. */
         LIST,
@@ -156,7 +156,7 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
 
 
     /** return the update URL or null.
-     * @return null or the calue supplied
+     * @return null or the value supplied
      */
     @Nonnull public List<String> getUpdateURLs() {
         final String u = updateURL;
