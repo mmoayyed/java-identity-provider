@@ -249,7 +249,7 @@
         <entry key="resource.loader.string.class" value="org.apache.velocity.runtime.resource.loader.StringResourceLoader" />
         <entry key="resource.loader.file.class" value="org.apache.velocity.runtime.resource.loader.FileResourceLoader" />
         <entry key="resource.loader.file.path" value="#{'%{idp.views:%{idp.home}/views}'.trim()}" />
-        <entry key="resource.loader.file.cache" value="false" />
+        <entry key="resource.loader.file.cache" value="%{idp.velocity.file.cache:false}" />
         <entry key="runtime.strict_mode.enable" value="%{idp.velocity.runtime.strictmode:false}" />
     </util:map>
 
