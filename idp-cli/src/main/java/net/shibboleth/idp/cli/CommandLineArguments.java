@@ -63,9 +63,7 @@ public interface CommandLineArguments {
      * 
      * @since 4.2.0
      */
-    @Nullable @NotEmpty default String getBasicAuthHeader() {
-        return null;
-    }
+    @Nullable @NotEmpty String getBasicAuthHeader();
 
     /**
      * Values of "header" parameter.
@@ -74,9 +72,7 @@ public interface CommandLineArguments {
      * 
      * @since 4.2.0
      */
-    @Nullable @NotLive @Unmodifiable default Map<String,String> getHeaders() {
-        return null;
-    }
+    @Nullable @NotLive @Unmodifiable Map<String,String> getHeaders();
     
     /**
      * Value of method parameter.
@@ -85,8 +81,6 @@ public interface CommandLineArguments {
      * 
      * @since 4.2.0
      */
-    @Nullable @NotEmpty default String getMethod() {
-        return null;
-    }
+    @Nullable @NotEmpty String getMethod();
 
 }
