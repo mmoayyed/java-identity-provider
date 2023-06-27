@@ -754,6 +754,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             unpackDirectory = Files.createTempDirectory("plugin-installer-unpack");
             
             final Path fullName = base.resolve(fileName);
+            assert fullName!=null;
             try (final ArchiveInputStream inStream = getStreamFor(fullName, isZip(fileName))) {
                 
                 ArchiveEntry entry = null;
@@ -956,6 +957,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
                     Files.createDirectories(workspacePath);
                 }
                 final Path pathToDir = Files.createTempDirectory(workspacePath, "classpath");
+                assert libs!=null && pathToDir!=null;
                 final LoggingVisitor visitor = new LoggingVisitor(libs, pathToDir);
                 try (final DirectoryStream<Path> webInfLibs = Files.newDirectoryStream(libs)) {
                     for (final Path jar : webInfLibs) {

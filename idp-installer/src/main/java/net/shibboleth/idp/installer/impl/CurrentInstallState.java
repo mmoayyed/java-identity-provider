@@ -129,8 +129,9 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
 
     /**
      * Populate {{@link #enabledModules} from the current classpath and the new IdP home.
+     * @throws IOException if we cannot convert a path to a URL
      */
-    private void findEnabledModules() {
+    private void findEnabledModules() throws IOException {
         if (getInstalledVersion() == null) {
             return;
         }
@@ -139,18 +140,13 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
         final ModuleContext moduleContext = new ModuleContext(td);
         enabledModules = new HashSet<>();
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class).iterator();
-
         while (modules.hasNext()) {
-            try {
-                final IdPModule module = modules.next();
-                if (module.isEnabled(moduleContext)) {
-                    log.debug("Detected enabled Module {}", module.getId());
-                    enabledModules.add(module.getId());
-                } else {
-                    log.debug("Detected disabled Module {}", module.getId());
-                }
-            } catch (final ServiceConfigurationError e) {
-                log.error("Error loading modules", e);
+            final IdPModule module = modules.next();
+            if (module.isEnabled(moduleContext)) {
+                log.debug("Detected enabled Module {}", module.getId());
+                enabledModules.add(module.getId());
+            } else {
+                log.debug("Detected disabled Module {}", module.getId());
             }
         }
     }
@@ -167,7 +163,11 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
             throw new ComponentInitializationException("'systems folder exists");
         }
         findPreviousVersion();
-        findEnabledModules();
+        try {
+            findEnabledModules();
+        } catch (IOException | ServiceConfigurationError e) {
+            log.error("Error loading modules", e);
+        }
 
         if (null == getInstalledVersion()) {
             // New install.  We need all files

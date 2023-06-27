@@ -167,11 +167,10 @@ public class InstallerProperties  {
     @Nonnull private final InputHandler inputHandler;
 
     /** Those modules which are "core". */
-    @Nonnull public static final Set<String> CORE_MODULES = CollectionSupport.setOf("idp.Core");
+    @Nonnull public static final Set<String> CORE_MODULES = CollectionSupport.setOf("idp.Core", "idp.EditWebApp", "idp.CommandLine");
 
     /** Those modules enabled by default. */
-    @Nonnull public static final Set<String> DEFAULT_MODULES = CollectionSupport.setOf("idp.EditWebApp",
-            "idp.CommandLine" ,"idp.authn.Password", "idp.admin.Hello");
+    @Nonnull public static final Set<String> DEFAULT_MODULES = CollectionSupport.setOf("idp.authn.Password", "idp.admin.Hello");
 
     /**
      * Constructor.

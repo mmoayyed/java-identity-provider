@@ -368,10 +368,6 @@ public class V5Install {
      * @throws BuildException if badness occurs
      */
     protected void enableCoreModules() throws BuildException {
-        if (currentState.getInstalledVersion() != null) {
-            // Not an initial install
-            return;
-        }
         final String targetDir = installerProps.getTargetDir().toString();
         assert targetDir!=null;
         final ModuleContext moduleContext = new ModuleContext(targetDir);
@@ -383,7 +379,7 @@ public class V5Install {
             try {
                 final IdPModule module = modules.next();
                 final String id = module.getId();
-                if (currentState.getInstalledVersion() == null && installerProps.getCoreModules().contains(id)) {
+                if (installerProps.getCoreModules().contains(id) && !currentState.getEnabledModules().contains(id)) {
                     try {
                         module.enable(moduleContext);
                     } catch (final ModuleException e) {
