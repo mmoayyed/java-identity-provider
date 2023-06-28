@@ -33,7 +33,7 @@ public class DumpConfigArguments extends AbstractCommandLineArguments {
     @Nullable private String requester;
 
     /** Index into metadata.  */
-    @Parameter(names = {"-p", "--profile"}, description = "Profile identifier")
+    @Parameter(names = {"-P", "--profile"}, description = "Profile identifier")
     @Nullable private String profile;
 
     /** Exact protocol for metadata lookup.  */
