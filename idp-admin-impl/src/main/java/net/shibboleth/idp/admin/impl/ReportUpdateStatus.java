@@ -147,7 +147,7 @@ public class ReportUpdateStatus extends AbstractIdentifiableInitializableCompone
                final SupportLevel sl = verInfo.getSupportLevel();
                switch (sl) {
                    case Current:
-                       log.debug("Version {} is current");
+                       log.info("Version {} is current");
                        break;
                    case Secadv:
                        log.error("Version {} has known security vulnerabilities", version);

@@ -52,6 +52,8 @@ import net.shibboleth.idp.installer.plugin.impl.TrustStore.Signature;
 import net.shibboleth.profile.installablecomponent.InstallableComponentInfo;
 import net.shibboleth.profile.installablecomponent.InstallableComponentSupport;
 import net.shibboleth.profile.installablecomponent.InstallableComponentVersion;
+import net.shibboleth.profile.installablecomponent.InstallableComponentInfo.VersionInfo;
+import net.shibboleth.profile.installablecomponent.InstallableComponentSupport.SupportLevel;
 import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -154,6 +156,24 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
     private int checkUpdate(@Nonnull UpdateIdPArguments args, @Nonnull final InstallableComponentInfo info, boolean doDownload) {
         
         final InstallableComponentVersion from = args.getUpdateFromVersion();
+        final VersionInfo currInfo = info.getAvailableVersions().get(from);
+        if (currInfo == null) {
+            getLogger().warn("Could not locate version info for version {}", from);
+        } else {
+           final SupportLevel sl = currInfo.getSupportLevel();
+           switch (sl) {
+               case Current:
+                   getLogger().info("Version {} is current");
+                   break;
+               case Secadv:
+                   getLogger().error("Version {} has known security vulnerabilities", from);
+                   break;
+               default:
+                   getLogger().warn("Support level for {} is {}", from, sl);
+                   break;
+           }
+        }
+
         InstallableComponentVersion newIdPVersion = args.getUpdateToVersion();
         boolean versionSpecified = newIdPVersion != null;
         if (!versionSpecified) {
