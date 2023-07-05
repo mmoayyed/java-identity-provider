@@ -33,7 +33,7 @@ public class DumpConfigArguments extends AbstractCommandLineArguments {
     @Nullable private String requester;
 
     /** Index into metadata.  */
-    @Parameter(names = {"-P", "--profile"}, description = "Profile identifier")
+    @Parameter(names = {"-P", "--profile"}, required = true, description = "Profile identifier")
     @Nullable private String profile;
 
     /** Exact protocol for metadata lookup.  */
@@ -100,7 +100,9 @@ public class DumpConfigArguments extends AbstractCommandLineArguments {
         }
         
         try {
-            builder.append("requester=").append(URLEncoder.encode(requester, "UTF-8"));
+            builder.append("requester=").append(URLEncoder.encode(requester, "UTF-8"))
+                .append("&profile=").append(URLEncoder.encode(profile, "UTF-8"));
+            
             if (saml1) {
                 builder.append("&saml1");
             } else if (saml2) {
@@ -112,6 +114,7 @@ public class DumpConfigArguments extends AbstractCommandLineArguments {
             } else if (protocol != null) {
                 builder.append("&protocol=").append(URLEncoder.encode(protocol, "UTF-8"));
             }
+            
         } catch (final UnsupportedEncodingException e) {
             // UTF-8 is a required encoding. 
         }
