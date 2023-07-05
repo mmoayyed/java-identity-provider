@@ -81,10 +81,10 @@ if exist "%1" (
 )
 
 rem is this a real package?
-dir /s idp.properties 1> nl:a 2> nl:b
+dir /s install.bat  1> nl:a 2> nl:b
 if ERRORLEVEL 1 (
   cd ..
-  echo Could not find idp.properties in IdP package
+  echo Could not find install.bat in IdP package
   goto done;
 )
 cd ..
@@ -126,14 +126,8 @@ rename %jettyBaseEx% JettyBase
 cd ..\idp-extract
 for /D %%X in (*) do set idpex=%%X
 
-rem we need to create the dist tree ourselves
-rem (used to be done by maven, now left to us)
-md %idpex%\dist
-move %idpex%\conf %idpex%\dist
-move %idpex%\flows %idpex%\dist
-move %idpex%\messages %idpex%\dist
-move %idpex%\views %idpex%\dist
-move %idpex%\webapp %idpex%\dist
+rem for now copy in the ant file for jetty
+copy ..\scripts\any-jetty.xml %idpEx%\bin\
 
 rem The file name gets too big....
 rename %idpex% IdPEx
@@ -168,7 +162,7 @@ echo "keeper" > %idpex%\jetty-base\tmp\.keep
 
 cd ..
 
-"%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr INSTALLDIR -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
+"%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr IDPDISTDIR -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
 if ERRORLEVEL 1 goto done
 
 REM Build

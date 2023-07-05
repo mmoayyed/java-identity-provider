@@ -55,7 +55,7 @@ SsoStorePassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
 set AntFile=FileSystemObj.OpenTextFile(InstallDir & "\idp.install.properties" , 2, True)
 if (Err.Number = 0 ) then
     AntFile.WriteLine "#"
-    AntFile.WriteLine "# File with properties for ANT"
+    AntFile.WriteLine "# File with properties the installer"
     AntFile.WriteLine "#"
     AntFile.WriteLine "idp.noprompt=yes"
     AntFile.WriteLine "idp.host.name=" & IdpHostName
@@ -63,7 +63,7 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "idp.keystore.password=" & KeyStorePassword
     AntFile.WriteLine "idp.sealer.password=" & SealerPassword
     AntFile.WriteLine "idp.target.dir=" & InstallDirJava 
-    AntFile.WriteLine "idp.merge.properties=idp.install.replace.properties"
+    AntFile.WriteLine "idp.merge.properties=" & InstallDirJava & "/idp.install.replace.properties"
     if (IdPScope <> "") then
        AntFile.WriteLine "idp.scope=" & IdPScope
     end if
