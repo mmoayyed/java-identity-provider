@@ -123,7 +123,7 @@ public class V5Install {
         checkPreConditions();
         enableCoreModules();
         keyManager.execute();
-        populatePropertyFiles(keyManager.isCreatedSealer());
+        populatePropertyFiles();
         checkWebXml(installerProps.getTargetDir().resolve("edit-webapp").resolve("WEB-INF").resolve("web.xml"));
         enableModules();
         deleteSpuriousFiles();
@@ -195,7 +195,7 @@ public class V5Install {
      * @param sealerCreated have we just created a sealer
      * @return what we need to replace
      */
-    private Properties getIdPReplacements(final boolean sealerCreated) {
+    private Properties getIdPReplacements() {
         final Properties result = new Properties();
         result.setProperty("idp.entityID", installerProps.getEntityID());
         result.setProperty("idp.scope", installerProps.getScope());
@@ -203,11 +203,10 @@ public class V5Install {
     }
 
     /** Modify the idp.properties and ldap.properties, then create secrets.properties.
-     * @param sealerCreated have we just created a sealer
      * @throws BuildException if badness occurs
      */
     // CheckStyle: CyclomaticComplexity|MethodLength OFF
-    protected void populatePropertyFiles(final boolean sealerCreated) throws BuildException {
+    protected void populatePropertyFiles() throws BuildException {
 
         @Nonnull final Set<String> doNotReplaceList = CollectionSupport.setOf(
                 "idp.sealer.storePassword",
@@ -237,7 +236,7 @@ public class V5Install {
                         replacements.load(stream);
                     }
                 } else {
-                    replacements = getIdPReplacements(sealerCreated);
+                    replacements = getIdPReplacements();
                     log.debug("Updating {} from {}", target, replacements.keySet());
                 }
                 try (final FileInputStream stream = new FileInputStream(target.toFile())) {
@@ -296,31 +295,38 @@ public class V5Install {
                 out.write("# Access to internal AES encryption key");
                 out.newLine();
                 final String password;
-                if (sealerCreated) {
+                if (keyManager.isCreatedSealer()) {
                     password = installerProps.getSealerPassword();
                 } else {
                     password = "password";
                 }
-                out.write("idp.sealer.storePassword = " + password);
+                out.write("idp.sealer.storePassword =" + password);
                 out.newLine();
-                out.write("idp.sealer.keyPassword = " + password);
+                out.write("idp.sealer.keyPassword =" + password);
                 out.newLine();
                 out.newLine();
+                if (keyManager.isCreatedBackchannel()) {
+                    out.write("# Password for idp-backchannel.p12 ");
+                    out.newLine();
+                    out.write("idp.backchannel.keyStorePassword =" + installerProps.getKeyStorePassword());
+                    out.newLine();
+                    out.newLine();
+                }
                 String ldapPassword = installerProps.getLDAPPassword();
                 if (null == ldapPassword) {
                     ldapPassword = "myServicePassword";
                 }
                 out.write("# Default access to LDAP authn and attribute stores. ");
                 out.newLine();
-                out.write("idp.authn.LDAP.bindDNCredential              = " + ldapPassword);
+                out.write("idp.authn.LDAP.bindDNCredential              =" + ldapPassword);
                 out.newLine();
                 out.write("idp.attribute.resolver.LDAP.bindDNCredential " +
-                          "= %{idp.authn.LDAP.bindDNCredential:undefined}");
+                          "=%{idp.authn.LDAP.bindDNCredential:undefined}");
                 out.newLine();
                 out.newLine();
                 out.write("# Salt used to generate persistent/pairwise IDs, must be kept secret");
                 out.newLine();
-                out.write("#idp.persistentId.salt = changethistosomethingrandom");
+                out.write("#idp.persistentId.salt =changethistosomethingrandom");
                 out.newLine();
             } catch (final IOException e) {
                 throw new BuildException("Failed to generate secrets.properties", e);
@@ -695,7 +701,6 @@ public class V5Install {
         /** Did we create idp-backchannel.*?
          * @return whether we did
          */
-        @SuppressWarnings("unused")
         public boolean isCreatedBackchannel() {
             return createdBackchannel;
         }
