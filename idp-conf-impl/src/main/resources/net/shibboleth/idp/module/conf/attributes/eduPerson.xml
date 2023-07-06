@@ -278,7 +278,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">eduPersonAnalyticsTag</prop>
-                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder CASStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.17</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.17</prop>
                     <prop key="saml1.encodeType">false</prop>
@@ -292,7 +292,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">eduPersonDisplayPronouns</prop>
-                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder CASStringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.18</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.18</prop>
                     <prop key="saml1.encodeType">false</prop>
