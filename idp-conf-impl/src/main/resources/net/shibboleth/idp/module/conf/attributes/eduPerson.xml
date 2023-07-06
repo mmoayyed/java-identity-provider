@@ -274,6 +274,34 @@
             </property>
         </bean>
 
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonAnalyticsTag</prop>
+                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.17</prop>
+                    <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.17</prop>
+                    <prop key="saml1.encodeType">false</prop>
+                    <prop key="displayName.en">Aggregated analytics tag</prop>
+                    <prop key="description.en">Opaque string that aggregates the use of a service by a set of subjects for the purpose of reporting or analytics</prop>
+                </props>
+            </property>
+        </bean>
+
+        <bean parent="shibboleth.TranscodingProperties">
+            <property name="properties">
+                <props merge="true">
+                    <prop key="id">eduPersonDisplayPronouns</prop>
+                    <prop key="transcoder">SAML2ScopedStringTranscoder SAML1ScopedStringTranscoder CASScopedStringTranscoder</prop>
+                    <prop key="saml2.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.18</prop>
+                    <prop key="saml1.name">urn:oid:1.3.6.1.4.1.5923.1.1.1.18</prop>
+                    <prop key="saml1.encodeType">false</prop>
+                    <prop key="displayName.en">Display Pronouns</prop>
+                    <prop key="description.en">Personal pronouns by which the person prefers to be identified</prop>
+                </props>
+            </property>
+        </bean>
+
     </list>
     </constructor-arg>
     </bean>
