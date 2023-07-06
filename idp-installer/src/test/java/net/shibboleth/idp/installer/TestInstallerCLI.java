@@ -30,11 +30,7 @@ public class TestInstallerCLI {
 
     @Test(enabled = false)
     public void install() {
-
-        System.setProperty(InstallerProperties.KEY_STORE_PASSWORD, "p1");
-        System.setProperty(InstallerProperties.SEALER_PASSWORD, "p1");
         System.setProperty(InstallerProperties.HOST_NAME, "machine.org.uk");
-        System.setProperty(InstallerProperties.TARGET_DIR,  "h:\\downloads\\idp");
         IdPInstallerCLI.runMain(new String[] {
                 "-t", "h:\\downloads\\idp",
                 "-s",
@@ -46,8 +42,6 @@ public class TestInstallerCLI {
     public void silentInstall() {
 
         IdPInstallerCLI.runMain(new String[] {
-                "-kp", "p1",
-                "--sealerPassword", "p1",
                 "-e", "https://test.example.org/id",
                 "--hostName", "machine.org",
                 "--scope", "machine.org",

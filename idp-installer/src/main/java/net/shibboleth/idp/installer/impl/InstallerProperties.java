@@ -25,6 +25,10 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -44,6 +48,8 @@ import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.codec.Base64Support;
+import net.shibboleth.shared.codec.EncodingException;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -299,18 +305,16 @@ public class InstallerProperties  {
         if (value != null) {
             return value;
         }
-        if (noPrompt) {
-            throw new BuildException("No value for " + propertyName + " specified");
+        try {
+            final byte key[] = new byte[32];
+            SecureRandom.getInstance("SHA1PRNG").nextBytes(key);
+            final String s = Base64Support.encode(key, false).substring(0, 32);
+            assert s != null;
+            return s;
+        } catch (NoSuchAlgorithmException|EncodingException e) {
+            log.error("Password Generation failed", e);
+            throw new BuildException("Password Generation failed", e);
         }
-
-        final InputRequest request = new InputRequest(prompt);
-
-        new PasswordHandler().handleInput(request);
-        @Nullable final String result = request.getInput();
-        if (result == null) {
-            throw new BuildException("Null result from Ant PasswordHandler");
-        }
-        return result;
     }
 
     /**
