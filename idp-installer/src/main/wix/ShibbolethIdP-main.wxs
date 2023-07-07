@@ -162,9 +162,9 @@
         <CustomAction Id="RunIdpInstall" Directory="ProgramFilesFolder" ExeCommand="[QtIdpInstall]" Execute="deferred" Impersonate="no" />
         <CustomAction Id="QtIdpInstall" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 
-        <CustomAction Id="SetJettyAnt" Property="QtJettyAnt" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[INSTALLDIR]\bin\lib\*;[INSTALLDIR]\dist\webapp\WEB-INF\lib\*&quot; org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\bin\ant-jetty.xml&quot; -Djetty.property.file=jetty.install.properties install" />
-        <CustomAction Id="RunJettyAnt" Directory="INSTALLDIR" ExeCommand="[QtJettyAnt]" Execute="deferred" Impersonate="no" />
-        <CustomAction Id="QtJettyAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+        <CustomAction Id="SetFinalizeJetty" Property="QtFinalizeJetty" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[IDPDISTDIR]\bin\lib\*;[IDPDISTDIR]\dist\webapp\WEB-INF\lib\*&quot; -Didp.home=[INSTALLDIR] net.shibboleth.idp.installer.impl.FinalizeJettyBase" />
+        <CustomAction Id="RunFinalizeJetty" Directory="INSTALLDIR" ExeCommand="[QtFinalizeJetty]" Execute="deferred" Impersonate="no" />
+        <CustomAction Id="QtFinalizeJetty" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 
         <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#2048" />
 
@@ -257,9 +257,9 @@
             <Custom Action="SetIdpInstall3" After="SetIdpInstall2">NOT Installed</Custom>
             <Custom Action="RunIdpInstall" After="SetIdpInstall3">(NOT Installed) AND DEBUG_INSTALL</Custom>
             <Custom Action="QtIdpInstall" After="SetIdpInstall3">(NOT Installed) AND (NOT DEBUG_INSTALL)</Custom>
-            <Custom Action="SetJettyAnt" After="RunIdpInstall">(NOT Installed) AND INSTALL_JETTY</Custom>
-            <Custom Action="RunJettyAnt" After="SetJettyAnt">(NOT Installed) AND INSTALL_JETTY AND DEBUG_INSTALL</Custom>
-            <Custom Action="QtJettyAnt" After="SetJettyAnt">(NOT Installed) AND INSTALL_JETTY AND (NOT DEBUG_INSTALL)</Custom>
+            <Custom Action="SetFinalizeJetty" After="RunIdpInstall">(NOT Installed) AND INSTALL_JETTY</Custom>
+            <Custom Action="RunFinalizeJetty" After="SetFinalizeJetty">(NOT Installed) AND INSTALL_JETTY AND DEBUG_INSTALL</Custom>
+            <Custom Action="QtFinalizeJetty" After="SetFinalizeJetty">(NOT Installed) AND INSTALL_JETTY AND (NOT DEBUG_INSTALL)</Custom>
 
         </InstallExecuteSequence>
 

@@ -48,10 +48,6 @@ LogFile.WriteLine "Domain " & Domain
 LogFile.WriteLine "Scope " & IdPScope
 LogFile.WriteLine "IntallJetty" & InstallJetty
 
-KeyStorePassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
-SealerPassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
-SsoStorePassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
-
 set AntFile=FileSystemObj.OpenTextFile(InstallDir & "\idp.install.properties" , 2, True)
 if (Err.Number = 0 ) then
     AntFile.WriteLine "#"
@@ -60,8 +56,6 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "idp.noprompt=yes"
     AntFile.WriteLine "idp.host.name=" & IdpHostName
     AntFile.WriteLine "idp.uri.subject.alt.name=https://" & Domain & "/idp"
-    AntFile.WriteLine "idp.keystore.password=" & KeyStorePassword
-    AntFile.WriteLine "idp.sealer.password=" & SealerPassword
     AntFile.WriteLine "idp.target.dir=" & InstallDirJava 
     AntFile.WriteLine "idp.merge.properties=" & InstallDirJava & "/idp.install.replace.properties"
     if (IdPScope <> "") then
@@ -96,59 +90,6 @@ else
     LogFile.Writeline "PropsFile failed " & Err & "  -  " & PropsFile
 end if
 
-if (InstallJetty <> "") then
-    set JettyAntFile=FileSystemObj.OpenTextFile(InstallDir & "\jetty.install.properties" , 2, True)
-    if (Err.Number = 0 ) then
-	JettyAntFile.WriteLine "#"
-	JettyAntFile.WriteLine "# File with properties for ANT"
-	JettyAntFile.WriteLine "#"
-	JettyAntFile.WriteLine "jetty.merge.properties="& InstallDirJava & "/jetty.install.replace.properties"
-	JettyAntFile.WriteLine "idp.host.name=" & IdpHostName
-	JettyAntFile.WriteLine "idp.keystore.password=" & SsoStorePassword
-	JettyAntFile.WriteLine "idp.uri.subject.alt.name=https://" & Domain & "/idp"
-	JettyAntFile.WriteLine "idp.target.dir=" & InstallDirJava 
-        if (DebugInstall <> "") then
-	    JettyAntFile.WriteLine "jetty.no.tidy=true"
-	else 
-	    JettyAntFile.WriteLine "#jetty.no.tidy=true"
-	end if
-	JettyAntFile.Close
-    else
-	LogFile.Writeline "jettyAnt failed " & Err
-    end if
-
-    set JettyFile=FileSystemObj.OpenTextFile(InstallDir & "\jetty.install.replace.properties" , 2, True)
-    if (Err.Number = 0 ) then
-	JettyFile.WriteLine "#"
-	JettyFile.WriteLine "# File to be merged into jetty's idp.ini file"
-	JettyFile.WriteLine "#"
-
-'
-' Redundant - no longer in idp.ini.windows
-'
-'	JettyFile.WriteLine "jetty.ssl.host=0.0.0.0"
-'	JettyFile.WriteLine "jetty.ssl.port=443"
-'	JettyFile.WriteLine "idp.war.path="../war/idp.war"
-'	JettyFile.WriteLine "jetty.http.host=localhost"
-'	JettyFile.WriteLine "jetty.http.port=80"
-
-'
-' Only these 6 properties are used and only the password need be changed.
-'
-'	JettyFile.WriteLine "jetty.backchannel.keyStorePath=../credentials/idp-backchannel.p12"
-'	JettyFile.WriteLine "jetty.sslContext.keyStorePath=../credentials/idp-userfacing.p12"
-	JettyFile.WriteLine "idp.backchannel.keyStorePassword=" & KeyStorePassword
-	JettyFile.WriteLine "jetty.sslContext.keyStorePassword=" & SsoStorePassword
-'	JettyFile.WriteLine "idp.backchannel.keyStoreType=PKCS12"
-'	JettyFile.WriteLine "jetty.sslContext.keyStoreType=PKCS12"
-
-	JettyFile.Close
-    else
-	LogFile.Writeline "jetty failed " & Err
-    end if
-else
-   LogFile.WriteLine "NoJetty " & InstallJetty
-end if
 
 if ConfigureAd = "true" then
 
