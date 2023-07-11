@@ -40,6 +40,7 @@
                 <MergeRef Id="jetty" />
                 <ComponentRef Id="JettyPermissions" />
                 <ComponentRef Id="Shibd_idpw" />
+		<ComponentGroupRef Id="JettyBaseGroup" />
             </Feature>
             <ComponentGroupRef Id="DeleteFiles" />
             <ComponentGroupRef Id="IdPGroup" />
@@ -162,7 +163,7 @@
         <CustomAction Id="RunIdpInstall" Directory="ProgramFilesFolder" ExeCommand="[QtIdpInstall]" Execute="deferred" Impersonate="no" />
         <CustomAction Id="QtIdpInstall" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 
-        <CustomAction Id="SetFinalizeJetty" Property="QtFinalizeJetty" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[IDPDISTDIR]\bin\lib\*;[IDPDISTDIR]\dist\webapp\WEB-INF\lib\*&quot; -Didp.home=[INSTALLDIR] net.shibboleth.idp.installer.impl.FinalizeJettyBase" />
+        <CustomAction Id="SetFinalizeJetty" Property="QtFinalizeJetty" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[IDPDISTDIR]\bin\lib\*;[IDPDISTDIR]\webapp\WEB-INF\lib\*&quot; -Didp.home=&quot;[JAVA_IDP_HOME]&quot; net.shibboleth.idp.installer.impl.FinalizeJettyBase" />
         <CustomAction Id="RunFinalizeJetty" Directory="INSTALLDIR" ExeCommand="[QtFinalizeJetty]" Execute="deferred" Impersonate="no" />
         <CustomAction Id="QtFinalizeJetty" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 

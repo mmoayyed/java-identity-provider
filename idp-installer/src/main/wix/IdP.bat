@@ -121,7 +121,7 @@ if ERRORLEVEL 1 (
   goto done;
 )
 for /D %%X in (*) do set jettyBaseEx=%%X
-rename %jettyBaseEx% JettyBase
+rename %jettyBaseEx% jetty-base
 
 cd ..\idp-extract
 for /D %%X in (*) do set idpex=%%X
@@ -138,29 +138,22 @@ if exist %idpex%\embedded (
    rd /q /s %idpex%\embedded
 )
 
-copy the appropriate jetty base
-
-move ..\idp-jetty-base-extract\JettyBase %idpex%\jetty-base
-if ERRORLEVEL 1 (
-  cd ..
-  echo jetty-base directory not found?
-  goto done;
-)
-
-rem We want to call jetty-base/start.d jetty-base/start.d.dist
-
-rename  %idpex%\jetty-base\start.d start.d.dist
+cd ..\idp-jetty-base-extract\jetty-base
+rename start.d start.d.dist
 if ERRORLEVEL 1 (
   cd ..
   echo jetty-base/start.d directory not found?
   goto done;
 )
-
 rem IDP-1149 make doubley sure that we have a jetty-base\tmp dir
-mkdir %idpex%\jetty-base\tmp\
-echo "keeper" > %idpex%\jetty-base\tmp\.keep
+mkdir tmp
+echo "keeper" > tmp\.keep
 
-cd ..
+cd ..\..
+"%WIX%/BIN/HEAT" dir idp-jetty-base-extract\jetty-base -platform -gg -dr INSTALLDIR -var var.jettyBaseRoot -cg JettyBaseGroup -out jetty_base_contents.wxs -src
+if ERRORLEVEL 1 goto done
+"%WIX%/BIN/CANDLE" -nologo -arch x86 -djettyBaseRoot=idp-jetty-base-extract\jetty-base jetty_base_contents.wxs
+if ERRORLEVEL 1 goto done
 
 "%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr IDPDISTDIR -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
 if ERRORLEVEL 1 goto done
@@ -175,7 +168,7 @@ if ERRORLEVEL 1 goto done
 "%WIX%/BIN/CANDLE" -nologo -arch x64 -dProjectDir=. ShibbolethIdP-main.wxs ShibbolethIdP-registry.wxs ShibbolethIdP-delete.wxs -ext WixUtilExtension
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -nologo -out idp-x64.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-adconfig-dlg.wixobj ShibbolethIdP-update-dlg.wixobj ShibbolethIdP-warndir-dlg.wixobj ShibbolethIdP-delete.wixobj -ext WixUtilExtension -sice:ICE61
+"%WIX%/BIN/LIGHT" -nologo -out idp-x64.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj jetty_base_contents.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-adconfig-dlg.wixobj ShibbolethIdP-update-dlg.wixobj ShibbolethIdP-warndir-dlg.wixobj ShibbolethIdP-delete.wixobj -ext WixUtilExtension -sice:ICE61
 if ERRORLEVEL 1 goto done
 
 
