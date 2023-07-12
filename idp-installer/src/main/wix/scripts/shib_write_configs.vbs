@@ -1,8 +1,5 @@
-'
-' Code taken from the Shib SP install
-'
-Dim FileSystemObj, AntFile, PropsFile, JettyFile, JettyAntFile, LogFile
-Dim CustomData, msiProperties, InstallDir, IdPScope, DebugInstall, Domain
+Dim FileSystemObj, InstallerPropertyFile, ReplacePropsFile, JettyFile, LogFile
+Dim CustomData, InstallDir, IdPScope, DebugInstall, Domain
 Dim ConfigureAd, AdDomain, AdUser, AdPass, AdUseGC, LDAPFile, LDAPPort
 Dim LDAPSearchPath
 
@@ -11,10 +8,7 @@ Set FileSystemObj = CreateObject("Scripting.FileSystemObject")
 ' Eek 
 on error resume next
 
-'Get the Parameters values via CustomActionData
-CustomData = Session.Property("CustomActionData")
-msiProperties = split(CustomData,";@;")
-InstallDir = msiProperties(0)
+InstallDir = Session.Property("INSTALLDIR")
 
 'Remove all trailing backslashes to normalize
 do while (mid(InstallDir,Len(InstallDir),1) = "\")
@@ -25,21 +19,21 @@ set LogFile=FileSystemObj.OpenTextFile(InstallDir & "\idp_installation.Log" , 2,
 InstallDirJava = Replace(InstallDir, "\", "/")
 InstallDirWindows = Replace(InstallDirJava, "/", "\\")
 
-IdPHostName = LCase(msiProperties(1))
-InstallJetty = LCase(msiProperties(2))
-IdPScope = LCase(msiProperties(3))
+IdPHostName = LCase(Session.Property("DNSNAME"))
+InstallJetty = LCase(Session.Property("INSTALL_JETTY"))
+IdPScope = LCase(Session.Property("IDP_SCOPE"))
 if IdPScope = "" then
    Domain = IdPHostName
 else
    Domain = IdPScope
 end if
-DebugInstall = LCase(msiProperties(4))
-ConfigureAd = LCase(msiProperties(5))
+DebugInstall = LCase(Session.Property("DEBUG_INSTALL"))
+ConfigureAd = LCase(Session.Property("CONFIGURE_AD"))
 if ConfigureAd = "true" then
-   AdDomain = LCase(msiProperties(6))
-   AdUser = LCase(msiProperties(7))
-   AdPass = msiProperties(8)
-   AdUseGC = LCase(msiProperties(9))
+   AdDomain = LCase(Session.Property("AD_DOMAIN"))
+   AdUser = LCase(Session.Property("AD_USER"))
+   AdPass = Session.Property("AD_PASS")
+   AdUseGC = LCase(Session.Property("AD_USE_GC"))
 end if
 
 LogFile.WriteLine "Installing to " & InstallDirJava
@@ -48,46 +42,46 @@ LogFile.WriteLine "Domain " & Domain
 LogFile.WriteLine "Scope " & IdPScope
 LogFile.WriteLine "IntallJetty" & InstallJetty
 
-set AntFile=FileSystemObj.OpenTextFile(InstallDir & "\idp.install.properties" , 2, True)
+set InstallerPropertyFile=FileSystemObj.OpenTextFile(InstallDir & "\idp.install.properties" , 2, True)
 if (Err.Number = 0 ) then
-    AntFile.WriteLine "#"
-    AntFile.WriteLine "# File with properties the installer"
-    AntFile.WriteLine "#"
-    AntFile.WriteLine "idp.noprompt=yes"
-    AntFile.WriteLine "idp.host.name=" & IdpHostName
-    AntFile.WriteLine "idp.uri.subject.alt.name=https://" & Domain & "/idp"
-    AntFile.WriteLine "idp.target.dir=" & InstallDirJava 
-    AntFile.WriteLine "idp.merge.properties=" & InstallDirJava & "/idp.install.replace.properties"
+    InstallerPropertyFile.WriteLine "#"
+    InstallerPropertyFile.WriteLine "# File with properties the installer"
+    InstallerPropertyFile.WriteLine "#"
+    InstallerPropertyFile.WriteLine "idp.noprompt=yes"
+    InstallerPropertyFile.WriteLine "idp.host.name=" & IdpHostName
+    InstallerPropertyFile.WriteLine "idp.uri.subject.alt.name=https://" & Domain & "/idp"
+    InstallerPropertyFile.WriteLine "idp.target.dir=" & InstallDirJava 
+    InstallerPropertyFile.WriteLine "idp.merge.properties=" & InstallDirJava & "/idp.install.replace.properties"
     if (IdPScope <> "") then
-       AntFile.WriteLine "idp.scope=" & IdPScope
+       InstallerPropertyFile.WriteLine "idp.scope=" & IdPScope
     end if
     if ConfigureAd = "true" then
-       AntFile.Writeline "idp.LDAP.credential=" & AdPass
-       AntFile.WriteLine "ldap.merge.properties=ldap.mergeProperties"
+       InstallerPropertyFile.Writeline "idp.LDAP.credential=" & AdPass
+       InstallerPropertyFile.WriteLine "ldap.merge.properties=ldap.mergeProperties"
     end if
-    AntFile.WriteLine "#"
-    AntFile.WriteLine "# Debug"
-    AntFile.WriteLine "#"
+    InstallerPropertyFile.WriteLine "#"
+    InstallerPropertyFile.WriteLine "# Debug"
+    InstallerPropertyFile.WriteLine "#"
     if (DebugInstall <> "") then
-        AntFile.WriteLine "idp.no.tidy=true"
+        InstallerPropertyFile.WriteLine "idp.no.tidy=true"
     else
-        AntFile.WriteLine "#idp.no.tidy=true"
+        InstallerPropertyFile.WriteLine "#idp.no.tidy=true"
     end if
-    AntFile.Close
+    InstallerPropertyFile.Close
 end if
 
-set PropsFile=FileSystemObj.OpenTextFile(InstallDir & "\idp.install.replace.properties" , 2, True)
+set ReplacePropsFile=FileSystemObj.OpenTextFile(InstallDir & "\idp.install.replace.properties" , 2, True)
 if (Err.Number = 0 ) then
-    PropsFile.WriteLine "#"
-    PropsFile.WriteLine "# File to be merged into idp.properties"
-    PropsFile.WriteLine "#"
-    PropsFile.WriteLine "idp.entityID=https://" & Domain & "/idp"
+    ReplacePropsFile.WriteLine "#"
+    ReplacePropsFile.WriteLine "# File to be merged into idp.properties"
+    ReplacePropsFile.WriteLine "#"
+    ReplacePropsFile.WriteLine "idp.entityID=https://" & Domain & "/idp"
     if (IdPScope <> "") then
-        PropsFile.WriteLine "idp.scope=" & IdPScope
+        ReplacePropsFile.WriteLine "idp.scope=" & IdPScope
     end if
-    PropsFile.Close
+    ReplacePropsFile.Close
 else
-    LogFile.Writeline "PropsFile failed " & Err & "  -  " & PropsFile
+    LogFile.Writeline "ReplacePropsFile failed " & Err & "  -  " & ReplacePropsFile
 end if
 
 
