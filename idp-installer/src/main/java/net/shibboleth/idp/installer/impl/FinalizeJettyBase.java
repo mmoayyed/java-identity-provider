@@ -148,7 +148,7 @@ public class FinalizeJettyBase {
     }
 
     /** Rewrite any property names needed.
-     * @throws IOException
+     * @throws IOException on a failed update
      */
     private void updateIdPini() throws IOException {
         final PropertiesWithComments props = new PropertiesWithComments();
