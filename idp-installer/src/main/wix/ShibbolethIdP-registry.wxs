@@ -57,7 +57,6 @@
                 </RegistryKey>
                 <RegistryKey ForceDeleteOnUninstall="yes" ForceCreateOnInstall="yes" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Start" Root="HKLM" >
                     <RegistryValue Name="Params" Type="multiString" Action="append">
-                        <MultiStringValue>jetty.http.compliance=RFC7230_NO_AMBIGUOUS_URIS</MultiStringValue>
                         <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
                         <MultiStringValue>jetty.logging.dir=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
                     </RegistryValue>
