@@ -246,6 +246,8 @@
                         <descriptor>src/main/assembly/idp-assembly-zip.xml</descriptor>
                     </descriptors>
                     <finalName>${idp.finalName}</finalName>
+                    <overrideUid>1000</overrideUid>
+                    <overrideGid>1000</overrideGid>
                     <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
             </plugin>
