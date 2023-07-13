@@ -500,7 +500,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         return RC_OK;
     }
 
-    /* Download all plugin info from the provide or "known" location.
+    /** Download all plugin info from the provide or "known" location.
      * @return the properties.
      */
     private Properties loadAllPluginInfo() {

@@ -44,7 +44,7 @@ public class FinalizeJettyBase {
 
 
     /** Constructor.
-     * @throws IOException */
+     * @throws IOException if we are incorrectly configured */
     private FinalizeJettyBase() throws IOException {
         final String home = System.getProperty("idp.home");
         if (home == null) {
@@ -197,5 +197,4 @@ public class FinalizeJettyBase {
     public static void main(String[] args) throws IOException {
         new FinalizeJettyBase().execute();
     }
-
 }

@@ -192,7 +192,6 @@ public class V5Install {
     }
 
     /** Create the properties we need to replace when we merge idp.properties.
-     * @param sealerCreated have we just created a sealer
      * @return what we need to replace
      */
     private Properties getIdPReplacements() {
