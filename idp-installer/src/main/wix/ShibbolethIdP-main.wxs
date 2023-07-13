@@ -17,7 +17,6 @@
 
 <?define UpgradeUUID="8d3bfb53-47ff-4cbc-9363-cbf9e46bedc4"?>
 
-
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Product Id="*" Name="Shibboleth IdP V5" Language="1033" Version="5.0.0.0" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
         <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="x64" Description="Shibboleth IdP V5" Manufacturer="The Shibboleth Consortium" />
@@ -30,8 +29,8 @@
         <!-- Information for the properties page of the msi -->
 
         <Property Id="ARPCONTACT" Value="contact@shibboleth.net" />
-        <Property Id="ARPHELPLINK" Value="https://wiki.shibboleth.net/confluence/display/IDP4/Installation#Installation-WindowsInstallation" />
-        <Property Id="ARPURLUPDATEINFO" Value="https://wiki.shibboleth.net/confluence/display/IDP4/WindowsInstallation#WindowsInstallation-Upgrade" />
+        <Property Id="ARPHELPLINK" Value="https://shibboleth.atlassian.net/wiki/spaces/IDP5/pages/3199500769/WindowsInstallation" />
+        <Property Id="ARPURLUPDATEINFO" Value="  https://wiki.shibboleth.net/confluence/display/IDP5/Installation#Installation-WindowsInstallation" />
         <Property Id="ARPURLINFOABOUT" Value="http://shibboleth.net/" />
         <Property Id="ARPNOMODIFY" Value="TRUE" />
 
