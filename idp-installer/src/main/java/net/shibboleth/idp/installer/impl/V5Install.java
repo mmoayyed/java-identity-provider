@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -41,6 +42,10 @@ import javax.annotation.Nullable;
 
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.tools.ant.BuildException;
+import org.apache.velocity.app.VelocityEngine;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
+import org.opensaml.saml.metadata.generator.impl.VelocityMetadataGenerator;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContextInitializer;
@@ -52,8 +57,6 @@ import org.springframework.core.io.Resource;
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.installer.InstallerSupport;
 import net.shibboleth.idp.installer.PropertiesWithComments;
-import net.shibboleth.idp.installer.metadata.impl.MetadataGenerator;
-import net.shibboleth.idp.installer.metadata.impl.MetadataGeneratorParameters;
 import net.shibboleth.idp.installer.plugin.impl.PluginState;
 import net.shibboleth.idp.module.IdPModule;
 import net.shibboleth.idp.plugin.IdPPlugin;
@@ -87,9 +90,6 @@ public class V5Install {
     /** Key Manager. */
     @Nonnull private final KeyManagement keyManager;
 
-    /** What will generate metadata? */
-    @Nonnull private final MetadataGenerator metadataGenerator = new MetadataGenerator();
-
     /** The HttpClient to use.*/
     @Nonnull private final HttpClient httpClient;
 
@@ -101,7 +101,7 @@ public class V5Install {
      * @param installState The current install.
      * @param client {@link HttpClient} to use on any Plugin operations
      * @param securityParams {@link HttpClientSecurityParameters} to use on any Plugin operations
-     * 
+     *
      */
     public V5Install(@Nonnull final InstallerProperties props, @Nonnull final CurrentInstallState installState,
             @Nonnull final HttpClient client, @Nullable final HttpClientSecurityParameters securityParams) {
@@ -130,8 +130,8 @@ public class V5Install {
         generateMetadata();
         reprotect();
     }
-    
-    /** Check for any preconditions to the install. 
+
+    /** Check for any preconditions to the install.
      * @throws BuildException if one is broken.
      */
     protected void checkPreConditions() throws BuildException {
@@ -156,7 +156,7 @@ public class V5Install {
         }
     }
 
-    /** Report the to be installed and (if there is one) current versions. 
+    /** Report the to be installed and (if there is one) current versions.
      * Write to be installed version to the dist folder.
      * @throws BuildException if the write fails
      */
@@ -285,7 +285,7 @@ public class V5Install {
             final Path secrets = installerProps.getTargetDir().resolve("credentials").resolve("secrets.properties");
             try (final FileWriter fileWriter = new FileWriter(secrets.toFile());
                  final BufferedWriter out = new BufferedWriter(fileWriter)) {
-                
+
                 out.write("# This is a reserved spot for most properties containing passwords or other secrets.");
                 out.newLine();
                 out.write("# Created by install at " + Instant.now());
@@ -398,7 +398,7 @@ public class V5Install {
         }
     }
 
-    
+
     /** ReEnable modules which were already enabled.
      * @throws BuildException if badness occurs
      */
@@ -466,26 +466,42 @@ public class V5Install {
             log.debug("Metadata file {} exists", metadataFile.toString());
             return;
         }
+        try {
+            InitializationService.initialize();
+        } catch (InitializationException e) {
+            log.error("Could not intiailize opensaml", e);
+            throw new BuildException(e);
+        }
+
         final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
         final GenericApplicationContext context = new ApplicationContextBuilder()
-                .setName(MetadataGenerator.class.getName())
+                .setName(V5Install.class.getName())
                 .setServiceConfigurations(CollectionSupport.singletonList(resource))
                 .setContextInitializer(new Initializer())
                 .build();
 
-        final MetadataGeneratorParameters parameters = context.getBean("IdPConfiguration",
-                MetadataGeneratorParameters.class);
-
         log.info("Creating Metadata to {}", metadataFile);
+        final InstalledMetadataParameters parameters = context.getBean("IdPConfiguration", InstalledMetadataParameters.class);
+        parameters.setDnsName(installerProps.getHostName());
+        final VelocityEngine engine = context.getBean("VelocityEngine", VelocityEngine.class);
         log.debug("Parameters {}", parameters);
-        metadataGenerator.setOutput(metadataFile);
-        metadataGenerator.setParameters(parameters);
-        try {
-            metadataGenerator.initialize();
-        } catch (final ComponentInitializationException e) {
+        try (final Writer sink = new FileWriter(metadataFile)) {
+            sink.write("<!--\n This is example metadata only. Do *NOT* supply it as is without review,\n" +
+                    "and do *NOT* provide it in real time to your partners.\n" +
+                    "This metadata is not dynamic - it will not change as your configuration changes.\n" +
+                    "On Demand Metadata Generation available from the metadatagen plugin.\n-->\n");
+            final VelocityMetadataGenerator generator = new VelocityMetadataGenerator();
+            generator.setId("Installer Metadata Generator");
+            generator.setVelocityEngine(engine);
+            generator.initialize();
+            generator.generate(parameters, sink);
+        } catch (ComponentInitializationException e) {
+            log.error("Metadata Generator initialization failed", e);
+            throw new BuildException(e);
+        } catch (IOException e) {
+            log.error("Metadata Generator failed to write to", metadataFile, e);
             throw new BuildException(e);
         }
-        metadataGenerator.generate();
     }
 
     /** Set the protection on the files.
@@ -532,7 +548,7 @@ public class V5Install {
 
         /** Did we create idp-backchannel.*?*/
         private boolean createdBackchannel;
-        
+
         /** Did we create sealer.*?*/
         private boolean createdSealer;
 
@@ -552,7 +568,7 @@ public class V5Install {
 
         /**
          * Helper method for {@link #execute()} to generate a crt and key file.
-         * 
+         *
          * @param fileBase the partial file name
          * @return true iff the file pair was created
          * @throws BuildException if badness occurrs.
@@ -597,7 +613,7 @@ public class V5Install {
 
         /**
          * Helper method for {@link #execute()} to generate the backchannel keystore.
-         * 
+         *
          * @throws BuildException if badness occurs.
          */
         private void generateKeyStore() {
@@ -639,7 +655,7 @@ public class V5Install {
 
         /**
          * Helper method for {@link #execute()} to generate the Sealer.
-         * 
+         *
          * @throws BuildException if badness occurs.
          */
         private void generateSealer() {
