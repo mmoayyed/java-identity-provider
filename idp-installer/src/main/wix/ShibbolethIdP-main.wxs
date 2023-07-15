@@ -151,6 +151,7 @@
 
         <CustomAction Id="WriteConfigFiles" BinaryKey="WriteConfigFilesSrc" VBScriptCall="" Execute="deferred" Impersonate="no" />
         <CustomAction Id="SetJavaIdpHome" BinaryKey="SetJavaIdpHomeSrc" VBScriptCall="" Execute="immediate" />
+        <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[INSTALL_JETTY];@;[IDP_SCOPE];@;[DEBUG_INSTALL];@;[CONFIGURE_AD];@;[AD_DOMAIN];@;[AD_USER];@;[AD_PASS];@;[AD_USE_GC]" />
 
         <CustomAction Id="SetDefaultInstallDir" Property="DefaultInstallDir" Value="[WindowsVolume]opt\shibboleth-idp\" />
 
@@ -249,6 +250,7 @@
 
             <!-- Work -->
 
+            <Custom Action="SetWriteConfigFiles" After="CostFinalize">NOT Installed</Custom>
             <Custom Action="WriteConfigFiles" After="InstallFiles">NOT Installed</Custom>
             <Custom Action="SetIdpInstall1" After="WriteConfigFiles">NOT Installed</Custom>
             <Custom Action="SetIdpInstall2" After="SetIdpInstall1">NOT Installed</Custom>
