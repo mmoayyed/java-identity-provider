@@ -30,11 +30,11 @@
        |to get tickets in the required character set: [A-Za-z0-9-]+
        -->
     <bean id="codec" class="org.apache.commons.codec.binary.Base32"
-          c:lineLength="0"
-          c:lineSeparator="#{null}"
-          c:useHex="false"
-          c:padding="#{ T(java.lang.Integer).valueOf(45).byteValue() }"
-          c:decodingPolicy="#{ T(org.apache.commons.codec.CodecPolicy).STRICT }"
+          c:_0="0"
+          c:_1="#{null}"
+          c:_2="false"
+          c:_3="#{ T(java.lang.Integer).valueOf(45).byteValue() }"
+          c:_4="#{ T(org.apache.commons.codec.CodecPolicy).STRICT }"
     />
 
     <!-- TODO: Change to encodingTicketService for 5.0 -->
