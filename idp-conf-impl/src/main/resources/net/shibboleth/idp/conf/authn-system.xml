@@ -326,15 +326,6 @@
         </constructor-arg>
     </bean>
 
-    <!-- TBD: If still needed, likely moved to Duo OIDC plugin. -->
-    <bean p:id="duo" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
-            c:claz="net.shibboleth.idp.authn.duo.DuoPrincipal">
-        <constructor-arg name="serializer">
-            <bean class="net.shibboleth.idp.authn.principal.SimplePrincipalSerializer"
-                c:claz="net.shibboleth.idp.authn.duo.DuoPrincipal" c:name="DUO" />
-        </constructor-arg>
-    </bean>
-
     <bean p:id="totp" class="net.shibboleth.idp.authn.principal.GenericPrincipalService"
             c:claz="net.shibboleth.idp.authn.principal.TOTPPrincipal">
         <constructor-arg name="serializer">

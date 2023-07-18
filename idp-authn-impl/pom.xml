@@ -186,11 +186,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.duosecurity</groupId>
-            <artifactId>DuoWeb</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
