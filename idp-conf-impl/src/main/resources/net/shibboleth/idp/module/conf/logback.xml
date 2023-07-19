@@ -58,7 +58,7 @@
     <logger name="org.opensaml.saml.saml2.encryption.Decrypter" level="${idp.loglevel.encryption}" />
 
     <!-- Logs system properties during startup at DEBUG level -->
-    <logger name="net.shibboleth.idp.log.LogbackLoggingService" level="${idp.loglevel.props}" />
+    <logger name="net.shibboleth.idp.admin.impl.LogImplementationDetails" level="${idp.loglevel.props}" />
 
     <!-- Especially chatty. -->
     <logger name="org.apache.xml.security" level="${idp.loglevel.xmlsec}" />
