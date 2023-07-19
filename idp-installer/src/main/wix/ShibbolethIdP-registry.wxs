@@ -32,50 +32,6 @@
                 <File KeyPath="yes" Source="$(var.ProjectDir)\shib.ico" />
                 <RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductCode]" Name="DisplayIcon" Value="[#shib.ico],0" Type="string" />
             </Component>
-            <!-- Jetty Configuration-->
-            <Component Id="JettyConfig" Directory="INSTALLDIR" Guid="{FE729EF2-8293-493A-80C9-69CF54DC4565}" KeyPath="yes" Win64="no">
-                <RegistryKey ForceDeleteOnUninstall="yes" ForceCreateOnInstall="yes" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters" Root="HKLM">
-                    <Permission User="Administrators" GenericAll="yes" />
-                    <Permission User="SYSTEM" GenericAll="yes" />
-                    <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" GenericRead="yes" GenericExecute="yes" Read="yes" />
-                </RegistryKey>
-
-                <RegistryKey ForceDeleteOnUninstall="yes" ForceCreateOnInstall="yes" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Java" Root="HKLM">
-                    <RegistryValue Name="Options" Type="multiString">
-                        <MultiStringValue>-Didp.home=[JAVA_IDP_HOME]</MultiStringValue>
-                        <MultiStringValue>-Djdk.tls.ephemeralDHKeySize=2048</MultiStringValue>
-                        <MultiStringValue>-Dorg.eclipse.jetty.util.log.class=org.eclipse.jetty.util.log.Slf4jLog</MultiStringValue>
-                        <MultiStringValue>-Djava.io.tmpdir=[JAVA_IDP_HOME]/jetty-base/tmp</MultiStringValue>
-                        <MultiStringValue>-XX:+UseG1GC</MultiStringValue>
-                    </RegistryValue>
-                    <RegistryValue Name="JvmMx" Value="[JAVA_JVMMX]" Type="string">
-                        <!-- Its an integer, but we added the # -->
-                    </RegistryValue>
-                    <Permission User="Administrators" GenericAll="yes" />
-                    <Permission User="SYSTEM" GenericAll="yes" />
-                    <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" GenericRead="yes" GenericExecute="yes" Read="yes" />
-                </RegistryKey>
-                <RegistryKey ForceDeleteOnUninstall="yes" ForceCreateOnInstall="yes" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Start" Root="HKLM" >
-                    <RegistryValue Name="Params" Type="multiString" Action="append">
-                        <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
-                        <MultiStringValue>jetty.logging.dir=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
-                    </RegistryValue>
-                    <RegistryValue Name="WorkingPath" Type="string" Value="[INSTALLDIR]\jetty-base\"/>
-                    <Permission User="Administrators" GenericAll="yes" />
-                    <Permission User="SYSTEM" GenericAll="yes" />
-                    <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" GenericRead="yes" GenericExecute="yes" Read="yes" />
-                </RegistryKey>
-                <RegistryKey ForceDeleteOnUninstall="yes" ForceCreateOnInstall="yes" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Stop" Root="HKLM" >
-                    <RegistryValue Name="Params" Type="multiString" Action="append">
-                        <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
-                        <MultiStringValue>jetty.logging.dir=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
-                    </RegistryValue>
-                    <Permission User="Administrators" GenericAll="yes" />
-                    <Permission User="SYSTEM" GenericAll="yes" />
-                    <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" GenericRead="yes" GenericExecute="yes" Read="yes" />
-                </RegistryKey>
-                <Condition>INSTALL_JETTY</Condition>
-            </Component>
         </ComponentGroup>
 
         <Property Id="OLD_INSTALLDIR" Secure="yes">

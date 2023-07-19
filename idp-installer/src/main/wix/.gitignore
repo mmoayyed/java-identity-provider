@@ -1,4 +1,8 @@
 /*.msi
 /*.msm
 /*.suo
+*.zip
+*.zip.asc
+*.wixobj
+*.wixpdb
 /bin

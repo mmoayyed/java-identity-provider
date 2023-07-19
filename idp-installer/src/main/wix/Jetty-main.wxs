@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the University Corporation for Advanced Internet
+   Development, Inc. (UCAID) under one or more contributor license
+   agreements.  See the NOTICE file distributed with this work for
+   additional information regarding copyright ownership. The UCAID
+   licenses this file to You under the Apache License, Version 2.0
+   (the 'License'); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an 'AS IS' BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+   implied.  See the License for the specific language governing
+   permissions and limitations under the License.  -->
+
+<?define UpgradeUUID="FB2B7404-37B2-4CE5-8E2E-EEB53F9FF472"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" Name="Shibboleth IdP V5" Language="1033" Version="11.0.13.0" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
+	<Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="x64" Description="Jetty Installation for Shibboleth IdP V5"
+		 Manufacturer="The Shibboleth Consortium" />
+
+	<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" Schedule="afterInstallInitialize" />
+	<MediaTemplate EmbedCab="yes" />
+
+	<Condition Message="C run time libraray not installed">UCRTBASE_DLL</Condition>
+	<Condition Message="JDK not installed">JAVA_EXECUTABLE</Condition>
+	<Condition Message="IDP not installed">IDP_INSTALLDIR</Condition>
+
+	<!-- Information for the properties page of the msi -->
+
+	<Property Id="ARPCONTACT" Value="contact@shibboleth.net" />
+	<Property Id="ARPHELPLINK" Value="https://shibboleth.atlassian.net/wiki/spaces/IDP5/pages/3199500769/WindowsInstallation" />
+	<Property Id="ARPURLUPDATEINFO" Value="  https://wiki.shibboleth.net/confluence/display/IDP5/Installation#Installation-WindowsInstallation" />
+	<Property Id="ARPURLINFOABOUT" Value="http://shibboleth.net/" />
+	<Property Id="ARPNOMODIFY" Value="TRUE" />
+
+	<Feature Id="ProductFeature" Title="Jetty" Level="1">
+	    <ComponentGroupRef Id="ProcrunGroup" /> <!--procrun.wxs-->
+	    <ComponentGroupRef Id="JettyGroup" /> <!--heat -->
+	    <ComponentGroupRef Id="JettyBaseGroup" /> <!-- heat -->
+
+	    <ComponentGroupRef Id="DeleteFiles" /> <!--DOne-->
+<!--	    <ComponentRef Id="SaveRegistry" />
+	    <ComponentRef Id="Shibd_idpw" /> -->
+	</Feature>
+
+	<Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="SHIBBOLETHDIR" Name="Shibboleth" >
+		    <Directory Id="JETTYROOT" Name="Jetty" />
+		    <Directory Id="PROCRUNROOT" Name="ProcRun" />
+		</Directory>
+	    </Directory>
+	    <Directory Id="IDP_INSTALLDIR">
+		<Directory Id="JettyBaseFolder" Name="jetty-base">
+                    <Directory Id="StartDotD" Name="start.d" />
+                    <Directory Id="JettyLogs" Name="logs" />
+                    <Directory Id="JettyTmp" Name="tmp" />
+                </Directory>
+            </Directory>
+        </Directory>
+
+	<!-- Parameters -->
+	<Property Id="ALWAYS_START_SERVICE" Value="TRUE" Secure="yes" />
+	<Property Id="JAVA_JVMMX" Secure="yes">
+	    <RegistrySearch Id="JvmMx" Root="HKLM" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\shibd_idp\Parameters\Java" Name="JvmMx" Type="raw" Win64="no" />
+	</Property>
+
+	<!-- Environment -->
+
+	<Property Id="JAVA_EXECUTABLE" Secure="yes">
+	    <DirectorySearch Id="JavaBinSearch" Depth="0" Path="[%JAVA_HOME]\bin">
+		<FileSearch Id="JavaBinSearch" Name="java.exe" />
+	    </DirectorySearch>
+	</Property>
+
+	<Property Id="UCRTBASE_DLL" Secure="yes">
+	    <DirectorySearch Id="UcrtBaseSearch" Depth="0" Path="[System64Folder]">
+		<FileSearch Id="UcrtnSearch" Name="ucrtbase.dll" />
+	    </DirectorySearch>
+	</Property>
+
+	<Property Id="IDP_INSTALLDIR" Secure="yes">
+	    <RegistrySearch Id="OldInstallDir" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallDir" Type="directory" Win64="no" />
+	</Property>
+
+	<Property Id="OLD_JETTYD_USER" Secure="yes">
+	    <RegistrySearch Id="OldJettydUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydUser" Type="raw" Win64="no" />
+	</Property>
+	<Property Id="OLD_JETTYD_DOMAIN" Secure="yes">
+	    <RegistrySearch Id="OldJettydDomain" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydDomain" Type="raw" Win64="no" />
+	</Property>
+	<Property Id="OLD_INSTALL_JETTYD_USER" Secure="yes">
+	    <RegistrySearch Id="OldInstallJettydUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJettydUser" Type="raw" Win64="no" />
+	</Property>
+
+        <Upgrade Id="$(var.UpgradeUUID)">
+            <UpgradeVersion ExcludeLanguages="yes" IncludeMaximum="yes" Maximum="127.255.255" Minimum="0.0.1" OnlyDetect="yes" Property="ALREADYINSTALLED" />
+        </Upgrade>
+
+    </Product>
+</Wix>

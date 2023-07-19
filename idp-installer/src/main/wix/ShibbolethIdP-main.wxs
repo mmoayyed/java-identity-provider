@@ -72,7 +72,7 @@
                             </Component>
                         </Directory>
                         <Component Id="IdPPermissions" Guid="{5672474B-3CD2-44EB-9942-871844A2B089}" Win64="no">
-                            <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
+a                            <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
                             <CreateFolder Directory="CredsFolder">
                                 <Permission User="Administrators" GenericAll="yes" />
                                 <Permission User="SYSTEM" GenericAll="yes" />
@@ -147,10 +147,8 @@
         <CustomAction Id="SetDNSName" Property="DNSNAME" Value="[ComputerName]" />
 
         <Binary Id="WriteConfigFilesSrc" SourceFile="scripts\shib_write_configs.vbs" />
-        <Binary Id="SetJavaIdpHomeSrc" SourceFile="scripts\shib_set_java_idp_home.vbs" />
 
         <CustomAction Id="WriteConfigFiles" BinaryKey="WriteConfigFilesSrc" VBScriptCall="" Execute="deferred" Impersonate="no" />
-        <CustomAction Id="SetJavaIdpHome" BinaryKey="SetJavaIdpHomeSrc" VBScriptCall="" Execute="immediate" />
         <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[INSTALL_JETTY];@;[IDP_SCOPE];@;[DEBUG_INSTALL];@;[CONFIGURE_AD];@;[AD_DOMAIN];@;[AD_USER];@;[AD_PASS];@;[AD_USE_GC]" />
 
         <CustomAction Id="SetDefaultInstallDir" Property="DefaultInstallDir" Value="[WindowsVolume]opt\shibboleth-idp\" />
@@ -166,7 +164,6 @@
         <CustomAction Id="RunFinalizeJetty" Directory="INSTALLDIR" ExeCommand="[QtFinalizeJetty]" Execute="deferred" Impersonate="no" />
         <CustomAction Id="QtFinalizeJetty" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 
-        <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#2048" />
 
         <!-- Actions to add an appropriate ACE to existing file when we are running as a user -->
         <CustomAction Id="SetACEUser" Property="ACE_USER" Value="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]\[JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" />
@@ -239,14 +236,8 @@
             <Custom Action="SetACEProcrunLog" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
             <Custom Action="QtSetACEProcrunLog"  After="SetACEProcrunLog">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
 
-            <!-- Setup JAVA_IDP_HOME before we use it -->
-
-            <Custom Action="SetJavaIdpHome" Before="SetIdpInstall1" />
-
             <!-- Could we find JAVA.EXE ?-->
             <Custom Action="NoJavaBin" After="AppSearch">NOT JAVA_EXECUTABLE</Custom>
-            <!-- Preserve Jetty parms -->
-            <Custom Action="SetJavaJvmMx" After="AppSearch">(NOT Installed) AND INSTALL_JETTY AND (NOT JAVA_JVMMX)</Custom>
 
             <!-- Work -->
 
