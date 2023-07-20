@@ -459,6 +459,11 @@ public class V5Install {
      */
     protected void generateMetadata() throws BuildException {
 
+        if (currentState.getInstalledVersion() != null) {
+            log.debug("Skipping Metadata generation on update from version {}", currentState.getInstalledVersion() );
+            return;
+        }
+
         final Path parentDir = installerProps.getTargetDir().resolve("metadata");
         final File metadataFile = parentDir.resolve("idp-metadata.xml").toFile();
         assert metadataFile != null;
