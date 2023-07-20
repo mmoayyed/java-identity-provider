@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.module.core.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,10 +35,14 @@ import net.shibboleth.profile.module.ModuleException;
  * {@link IdPModule} implementation.
  * 
  * <p>This is a somewhat special module as it represents the "core" software
- * being installed or upgraded so has some different characteristics and methods.
+ * being installed or upgraded so has some different characteristics and methods.</p>
  */
 public final class Core extends CoreIdPModule {
 
+    /** Auto-created folders. */
+    @Nonnull private static final String[] AUTO_CREATED =
+        { "conf", "credentials", "metadata", "flows", "messages", "views" }; 
+    
     /**
      * Constructor.
      *  
@@ -65,12 +68,17 @@ public final class Core extends CoreIdPModule {
         try {
             if (!moduleContext.getInstallLocation().startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
                 final Path home = Path.of(moduleContext.getInstallLocation());
-                Files.createDirectories(home.resolve("conf"));
-                Files.createDirectories(home.resolve("credentials"));
-                Files.createDirectories(home.resolve("metadata"));
-                Files.createDirectories(home.resolve("flows"));
-                Files.createDirectories(home.resolve("messages"));
-                Files.createDirectories(home.resolve("views"));
+                
+                // This should follow symlinks before trying to create the folders. 
+                for (final String folder : AUTO_CREATED) {
+                    final Path resolved = home.resolve(folder);
+                    if (!Files.exists(resolved)) {
+                        Files.createDirectories(resolved);
+                    } else if (!Files.isDirectory(resolved)) {
+                        throw new IOException("Folder '" + folder + "' exists, but is not a directory.");
+                    }
+                }
+                
                 // Tidy up files we no longer need in V5
                 Path antFile = home.resolve("bin").resolve("build.xml");
                 if (Files.exists(antFile)) {
@@ -99,5 +107,4 @@ public final class Core extends CoreIdPModule {
         throw new ModuleException("This module cannot be disabled.");
     }
 
-    
 }
