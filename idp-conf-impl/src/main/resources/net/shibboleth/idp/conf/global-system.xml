@@ -124,6 +124,13 @@
             
         <entry key="net.shibboleth.idp.saml.profile.logic.MappedEntityAttributesPredicate"
             value="net.shibboleth.saml.profile.context.logic.MappedEntityAttributesPredicate" />
+            
+        <entry key="net.shibboleth.idp.profile.context.navigate.ScriptedContextLookupFunction"
+            value="net.shibboleth.profile.context.navigate.ScriptedContextLookupFunction" />
+        <entry key="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
+            value="net.shibboleth.profile.context.navigate.SpringExpressionContextLookupFunction" />
+        <entry key="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction"
+            value="net.shibboleth.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
     </util:map>
     
     <util:map id="shibboleth.ContextLookAsideMap">
