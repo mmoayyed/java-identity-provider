@@ -1,4 +1,4 @@
-REM @Echo off
+@Echo off
 REM Generate msm
 setlocal
 
@@ -185,7 +185,7 @@ del *.wixobj *.wixpdb
 :recompile
 REM compile Jetty and procrun contents as well as the main command line
 
-"%WIX%/BIN/CANDLE" -nologo -dJettySrc=jetty-extract\%Jex% -dProcrunSrc=procrun-extract -dPlatform=x86 -arch x86 jetty_contents.wxs Jetty-main.wxs procrun.wxs -ext WixFirewallExtension -ext WixUtilExtension
+"%WIX%/BIN/CANDLE" -nologo -dJettySrc=jetty-extract\%Jex% -dProcrunSrc=procrun-extract -dPlatform=x86 -arch x86 jetty_contents.wxs Jetty-main.wxs Jetty-Procrun.wxs -ext WixFirewallExtension -ext WixUtilExtension
 if ERRORLEVEL 1 goto done
 
 "%WIX%/BIN/CANDLE" -nologo -arch x86 -djettyBaseRoot=idp-jetty-base-extract\jetty-base jetty_base_contents.wxs jetty-delete.wxs -ext WixUtilExtension
@@ -194,15 +194,15 @@ if ERRORLEVEL 1 goto done
 
 REM link for x64
 
-"%WIX%/BIN/LIGHT" -nologo -out Jetty-x64.msi jetty_base_contents.wixobj jetty_contents.wixobj procrun.wixobj Jetty-main.wixobj jetty-delete.wixobj -ext WixFirewallExtension -sw1072 -ext WixUtilExtension -sice:ICE61
+"%WIX%/BIN/LIGHT" -nologo -out Jetty-x64.msi jetty_base_contents.wixobj jetty_contents.wixobj Jetty-Procrun.wixobj Jetty-main.wixobj jetty-delete.wixobj -ext WixFirewallExtension -sw1072 -ext WixUtilExtension -sice:ICE61
 if ERRORLEVEL 1 goto done
 
-goto done
 dir Jetty-*.msi
 
 REM Tidy up in the Sucessful exit case
    rd /q /s procrun-extract
    rd /q /s jetty-extract
+   rd /q /s idp-jetty-base-extract
    del *.wixobj *.wixpdb
    del jetty_contents.wxs
    del jetty_base_contents.wxs

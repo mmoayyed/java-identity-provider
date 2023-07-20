@@ -48,6 +48,11 @@
 	</Feature>
 
 	<Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="CommonAppDataFolder">
+                <Directory Id="ProgramDataShib" Name="Shibboleth">
+                    <Directory Id="IDPDISTDIR" Name="IdP"/>
+                </Directory>
+            </Directory>
             <Directory Id="ProgramFilesFolder">
                 <Directory Id="SHIBBOLETHDIR" Name="Shibboleth" >
 		    <Directory Id="JETTYROOT" Name="Jetty" />
@@ -62,6 +67,16 @@
                 </Directory>
             </Directory>
         </Directory>
+
+        <CustomAction Id="SetFinalizeJetty" Property="QtFinalizeJetty" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[IDPDISTDIR]\bin\lib\*;[IDPDISTDIR]\webapp\WEB-INF\lib\*&quot; -Didp.home=&quot;[JAVA_IDP_HOME]&quot; net.shibboleth.idp.installer.impl.FinalizeJettyBase" />
+        <CustomAction Id="RunFinalizeJetty" Directory="SHIBBOLETHDIR" ExeCommand="[QtFinalizeJetty]" Execute="deferred" Impersonate="no" />
+        <CustomAction Id="QtFinalizeJetty" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+	<InstallExecuteSequence>
+            <Custom Action="SetFinalizeJetty" After="InstallFiles">(NOT Installed)</Custom>
+            <Custom Action="RunFinalizeJetty" After="SetFinalizeJetty">(NOT Installed) AND DEBUG_INSTALL</Custom>
+            <Custom Action="QtFinalizeJetty" After="SetFinalizeJetty">(NOT Installed)  AND (NOT DEBUG_INSTALL)</Custom>
+	</InstallExecuteSequence>
 
 	<!-- Parameters -->
 	<Property Id="ALWAYS_START_SERVICE" Value="TRUE" Secure="yes" />
