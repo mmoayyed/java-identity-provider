@@ -67,7 +67,7 @@ public class SubjectScriptContextExtender extends AbstractInitializableComponent
     
     /** {@inheritDoc} */
     public void extendContext(@Nonnull final ScriptContext scriptContext) {
-        checkSetterPreconditions();
+        checkComponentActive();
         final ProfileRequestContext prc = (ProfileRequestContext) scriptContext.getAttribute("profileContext");
         
         final SubjectContext sc = subjectContextLookupStrategy.apply(prc);
