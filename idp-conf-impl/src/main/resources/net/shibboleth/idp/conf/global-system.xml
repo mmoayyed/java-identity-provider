@@ -47,6 +47,10 @@
         
         <entry key="net.shibboleth.utilities.java.support.codec.StringDigester"
             value="net.shibboleth.shared.codec.StringDigester" />
+        <entry key="net.shibboleth.utilities.java.support.codec.Base64Support"
+            value="net.shibboleth.shared.codec.Base64Support" />
+        <entry key="net.shibboleth.utilities.java.support.codec.Base32Support"
+            value="net.shibboleth.shared.codec.Base32Support" />
         
         <entry key="net.shibboleth.utilities.java.support.logic.FunctionSupport"
             value="net.shibboleth.shared.logic.FunctionSupport" />
