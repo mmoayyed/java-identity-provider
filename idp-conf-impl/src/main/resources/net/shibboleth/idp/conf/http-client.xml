@@ -24,6 +24,12 @@
     <bean id="shibboleth.HTTPResource" abstract="true"
         class="net.shibboleth.spring.http.HTTPResourceFactoryBean" />
 
+    <bean id="shibboleth.BasicAuthCredentials" abstract="true"
+        class="net.shibboleth.shared.spring.httpclient.factory.UsernamePasswoordCredentialsFactoryBean" />
+
+    <bean id="shibboleth.HttpHost" abstract="true"
+        class="net.shibboleth.shared.spring.httpclient.factory.HttpHostFactoryBean" />
+
     <!-- Socket Factory implementations -->
 
     <bean id="shibboleth.SecurityEnhancedTLSSocketFactory" name="shibboleth.TrustEngineTLSSocketFactory" 
