@@ -265,7 +265,7 @@ public class PluginInstallerArguments extends AbstractIdPHomeAwareCommandLineArg
     }
 
     /** return the update URL or null.
-     * @return null or the calue supplied
+     * @return null or the value supplied
      */
     @Nullable public String getUpdateURL() {
         return StringSupport.trimOrNull(updateURL);
