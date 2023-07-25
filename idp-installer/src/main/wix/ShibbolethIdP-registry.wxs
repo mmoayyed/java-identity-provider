@@ -28,7 +28,7 @@
                 <RegistryValue Id="targetRegJetty" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJetty" Value="[INSTALL_JETTY]" Type="string" />
             </Component>
             <!-- pretty icon for the "install programs" page -->
-            <Component Id="shib.ico" Guid="{7F4CE60B-A27B-4E07-8DD9-19F16B008C56}" Directory="TARGETDIR" Win64="yes">
+            <Component Id="shib.ico" Guid="{7F4CE60B-A27B-4E07-8DD9-19F16B008C56}" Directory="INSTALLDIR" Win64="yes">
                 <File KeyPath="yes" Source="$(var.ProjectDir)\shib.ico" />
                 <RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductCode]" Name="DisplayIcon" Value="[#shib.ico],0" Type="string" />
             </Component>

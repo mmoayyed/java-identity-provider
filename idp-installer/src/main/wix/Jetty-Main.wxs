@@ -18,7 +18,7 @@
 <?define UpgradeUUID="FB2B7404-37B2-4CE5-8E2E-EEB53F9FF472"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="Shibboleth IdP V5" Language="1033" Version="11.0.13.0" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
+    <Product Id="*" Name="Jetty Installer for the Shibboleth IdP V5" Language="1033" Version="11.0.13.0" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
 	<Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="x64" Description="Jetty Installation for Shibboleth IdP V5"
 		 Manufacturer="The Shibboleth Consortium" />
 
@@ -43,8 +43,8 @@
 	    <ComponentGroupRef Id="JettyBaseGroup" /> <!-- heat -->
 
 	    <ComponentGroupRef Id="DeleteFiles" /> <!--DOne-->
-<!--	    <ComponentRef Id="SaveRegistry" />
-	    <ComponentRef Id="Shibd_idpw" /> -->
+	    <ComponentRef Id="SaveUserInfo" />
+	    <ComponentRef Id="Icon" />
 	</Feature>
 
 	<Directory Id="TARGETDIR" Name="SourceDir">
@@ -68,6 +68,10 @@
             </Directory>
         </Directory>
 
+	<Component Id="Icon" Guid="{948A6709-00B7-49B5-947D-3346DC1C9AC3}" Directory="IDP_INSTALLDIR" Win64="yes">
+            <RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductCode]" Name="DisplayIcon" Value="[IDP_INSTALLDIR]\shib.ico,0" Type="string" />
+        </Component>
+
         <CustomAction Id="SetFinalizeJetty" Property="QtFinalizeJetty" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[IDPDISTDIR]\bin\lib\*;[IDPDISTDIR]\webapp\WEB-INF\lib\*&quot; -Didp.home=&quot;[JAVA_IDP_HOME]&quot; net.shibboleth.idp.installer.impl.FinalizeJettyBase" />
         <CustomAction Id="RunFinalizeJetty" Directory="SHIBBOLETHDIR" ExeCommand="[QtFinalizeJetty]" Execute="deferred" Impersonate="no" />
         <CustomAction Id="QtFinalizeJetty" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
@@ -75,10 +79,10 @@
 	<InstallExecuteSequence>
             <Custom Action="SetFinalizeJetty" After="InstallFiles">(NOT Installed)</Custom>
             <Custom Action="RunFinalizeJetty" After="SetFinalizeJetty">(NOT Installed) AND DEBUG_INSTALL</Custom>
-            <Custom Action="QtFinalizeJetty" After="SetFinalizeJetty">(NOT Installed)  AND (NOT DEBUG_INSTALL)</Custom>
+            <Custom Action="QtFinalizeJetty" After="RunFinalizeJetty">(NOT Installed)  AND (NOT DEBUG_INSTALL)</Custom>
 	</InstallExecuteSequence>
 
-	<!-- Parameters -->
+	<!-- Parameters: See also Jetty-User -->
 	<Property Id="ALWAYS_START_SERVICE" Value="TRUE" Secure="yes" />
 	<Property Id="JAVA_JVMMX" Secure="yes">
 	    <RegistrySearch Id="JvmMx" Root="HKLM" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\shibd_idp\Parameters\Java" Name="JvmMx" Type="raw" Win64="no" />
@@ -100,16 +104,6 @@
 
 	<Property Id="IDP_INSTALLDIR" Secure="yes">
 	    <RegistrySearch Id="OldInstallDir" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallDir" Type="directory" Win64="no" />
-	</Property>
-
-	<Property Id="OLD_JETTYD_USER" Secure="yes">
-	    <RegistrySearch Id="OldJettydUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydUser" Type="raw" Win64="no" />
-	</Property>
-	<Property Id="OLD_JETTYD_DOMAIN" Secure="yes">
-	    <RegistrySearch Id="OldJettydDomain" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydDomain" Type="raw" Win64="no" />
-	</Property>
-	<Property Id="OLD_INSTALL_JETTYD_USER" Secure="yes">
-	    <RegistrySearch Id="OldInstallJettydUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJettydUser" Type="raw" Win64="no" />
 	</Property>
 
         <Upgrade Id="$(var.UpgradeUUID)">

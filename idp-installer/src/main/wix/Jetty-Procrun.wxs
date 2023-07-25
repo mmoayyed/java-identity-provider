@@ -64,7 +64,7 @@
             </Component>
             <Component Id="procrun_Firewall" Directory="dir64" Guid="{BC605FF4-0233-4332-BC90-0C2E5FEC37D2}" KeyPath="yes">
                  <Condition>NOT NO_FIREWALL And VersionNT64 And Not Intel64</Condition>
-                 <fw:FirewallException Id="Win64Shibd_idp" Program="[#file_procrun_AMD64_service]" Name="Win64Shibd_idp" Description="The Shibboleth IdP" Protocol="tcp" Scope="any" />
+                 <fw:FirewallException Id="Win64Shibd_idp" Program="[#file_procrun_AMD64_service]" Name="Win64Shibd_idp" Description="The Shibboleth IdP Daemon" Protocol="tcp" Scope="any" />
             </Component>
 
             <!-- Configure the service -->

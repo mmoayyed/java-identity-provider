@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the University Corporation for Advanced Internet
+     Development, Inc. (UCAID) under one or more contributor license
+     agreements.  See the NOTICE file distributed with this work for
+     additional information regarding copyright ownership. The UCAID
+     licenses this file to You under the Apache License, Version 2.0
+     (the 'License'); you may not use this file except in compliance
+     with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an 'AS IS' BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+     implied.  See the License for the specific language governing
+     permissions and limitations under the License.  -->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:fw="http://schemas.microsoft.com/wix/FirewallExtension"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+    <!-- User management for a dedicate process.
+         Input Properties- Created by the GUI.
+                           NO Inheritance if not the GUI.
+
+         JETTYD_USER     - The user name.
+                           Must be supplied on GUIless installs if INSTALL_JETTYD_USER is TRUE
+                           Saved and reloaded on updates (for GUI use only)
+
+         JETTYD_DOMAIN   - Domain, defaults to [%USERDOMAIN] in the GUI
+                           Must be supplied on GUIless installs  if INSTALL_JETTYD_USER is TRUE
+			   Saved and reloaded on updates (for GUI use only)
+
+         INSTALL_JETTYD_USER - Are we configuring a specific user to run the IdP.
+                           Saved and reloaded on updates (for GUI use only)
+
+         JETTYD_PASSWORD - The password.  Never saved.  Must be provided if INSTALL_JETTYD_USER is true.
+
+         Created Properties
+         SERVICE_USER    - Username to the service.
+                           Only set up if a user (and domain) is specified
+
+         PERMISSION_USER - Administrators if no input supplied otherwise [JETTYD_USER]
+                           Used in 'Permission' statments
+
+         ACE_USER        - [JETTYD_DOMAIN]\[PERMISSION_USER] if JETTYD_DOMAIN supplied
+	                   [PERMISSION_USER] Otherwise
+			   used in icacles
+    -->
+
+    <Fragment>
+
+        <!-- Restore saved settings -->
+        <Property Id="OLD_JETTYD_USER" Secure="yes">
+            <RegistrySearch Id="OldJettydUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydUser" Type="raw" Win64="no" />
+        </Property>
+        <Property Id="OLD_JETTYD_DOMAIN" Secure="yes">
+            <RegistrySearch Id="OldJettydDomain" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydDomain" Type="raw" Win64="no" />
+        </Property>
+        <Property Id="OLD_INSTALL_JETTYD_USER" Secure="yes">
+            <RegistrySearch Id="OldInstallJettydUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJettydUser" Type="raw" Win64="no" />
+        </Property>
+        <!-- Save settings -->
+        <DirectoryRef Id="TARGETDIR">
+            <Component Id="SaveUserInfo" Guid="{B5B909A2-E246-4069-808D-7F3AC98D062B}" Win64="no">
+                <RegistryValue Id="targetRegShibUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydUser" Value="[JETTYD_USER]" Type="string" />
+                <RegistryValue Id="targetRegShibDomain" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydDomain" Value="[JETTYD_DOMAIN]" Type="string" />
+                <RegistryValue Id="targetRegInstallShibUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJettydUser" Value="[INSTALL_JETTYD_USER]" Type="string" />
+            </Component>
+        </DirectoryRef>
+
+        <!-- Set up work properties for GUI -->
+        <CustomAction Id="InheritJettydUser" Property="JETTYD_USER" Value="[OLD_JETTYD_USER]" />
+        <CustomAction Id="InheritJettydDomain" Property="JETTYD_DOMAIN" Value="[OLD_JETTYD_DOMAIN]" />
+        <CustomAction Id="SetJettydDomain" Property="JETTYD_DOMAIN" Value="[%USERDOMAIN]" />
+        <CustomAction Id="InheritInstallJettydUser" Property="INSTALL_JETTYD_USER" Value="[OLD_INSTALL_JETTYD_USER]" />
+        <CustomAction Id="SetInstallJettydUser" Property="INSTALL_JETTYD_USER" Value="TRUE" />
+
+        <InstallUISequence>
+            <Custom Action="InheritJettydUser" After="AppSearch">OLD_JETTYD_USER AND NOT JETTYD_USER</Custom>
+            <Custom Action="InheritJettydDomain" After="AppSearch">OLD_JETTYD_DOMAIN AND NOT JETTYD_DOMAIN</Custom>
+            <Custom Action="SetJettydDomain" After="AppSearch">NOT OLD_JETTYD_DOMAIN AND NOT JETTYD_DOMAIN</Custom>
+            <Custom Action="InheritInstallJettydUser" After="InheritJettydUser">OLD_INSTALL_JETTYD_USER AND NOT JETTYD_USER</Custom>
+            <Custom Action="SetInstallJettydUser" After="InheritJettydUser">JETTYD_USER</Custom>
+        </InstallUISequence>
+
+        <!-- Set up work properties for the installer -->
+        <CustomAction Id="PermissionUserSpecified" Property="PERMISSION_USER" Value="[JETTYD_USER]"/>
+        <CustomAction Id="PermissionUserDefault" Property="PERMISSION_USER" Value="Administrators"/>
+        <CustomAction Id="DomainDefault" Property="JETTYD_DOMAIN" Value=""/>
+        <CustomAction Id="ServiceUser" Property="SERVICE_USER" Value="[JETTYD_DOMAIN]\[JETTYD_USER]"/>
+        <CustomAction Id="AceUserDomain" Property="ACE_USER" Value="[JETTYD_DOMAIN]\[PERMISSION_USER]"/>
+        <CustomAction Id="AceUserNoDomain" Property="ACE_USER" Value="[PERMISSION_USER]"/>
+
+        <InstallExecuteSequence>
+            <Custom Action="PermissionUserSpecified" Before="DomainDefault">INSTALL_JETTYD_USER</Custom>
+            <Custom Action="PermissionUserDefault" Before="DomainDefault">NOT INSTALL_JETTYD_USER</Custom>
+            <Custom Action="DomainDefault" Before="AceUserDomain">NOT INSTALL_JETTYD_USER</Custom>
+            <Custom Action="ServiceUser" After="DomainDefault">INSTALL_JETTYD_USER</Custom>
+            <Custom Action="AceUserDomain" Before="AceUserNoDomain">JETTYD_DOMAIN</Custom>
+            <Custom Action="AceUserNoDomain" Before="CreateFolders">NOT JETTYD_DOMAIN</Custom>
+        </InstallExecuteSequence>
+
+        <!-- Actions to set acls
+                /t recursive
+		/inheritance:r Remove inhetited ACLS
+                /grant:r SYSTEM:F *add* Full access for SYSTEM (replacing any existing)
+                         [ACE_USER]:(GR,RD,X) *add* GENERIC_READ,READ_DATA,TRAVERSE access
+                                    (Remember, when user not supplied ACE_USER is Administrators
+        -->
+	<CustomAction Id="SetIcaclsVerb" Property="IcaclsVerb" Value="/t /inheritance:r /grant SYSTEM:F Administrators:F"/>
+        <CustomAction Id="SetACEConf" Property="QtSetACEConf"
+		      Value="&quot;c:\Windows\System32\icacls.exe&quot; &quot;[IDP_INSTALLDIR]\conf&quot; [IcaclsVerb] [ACE_USER]:(GR,RD,X)" />
+        <CustomAction Id="QtSetACEConf" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+        <CustomAction Id="SetACECreds" Property="QtSetACECreds"
+		      Value="&quot;c:\Windows\System32\icacls.exe&quot; &quot;[IDP_INSTALLDIR]\credentials&quot; [IcaclsVerb] [ACE_USER]:(GR,RD,X)" />
+        <CustomAction Id="QtSetACECreds" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+        <CustomAction Id="SetACELogs" Property="QtSetACELogs"
+		      Value="&quot;c:\Windows\System32\icacls.exe&quot; &quot;[IDP_INSTALLDIR]\logs&quot; [IcaclsVerb] [ACE_USER]:F" />
+        <CustomAction Id="QtSetACELogs" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+        <CustomAction Id="SetACEJettyStart" Property="QtSetACEJettyStart"
+		      Value="&quot;c:\Windows\System32\icacls.exe&quot; &quot;[IDP_INSTALLDIR]\jetty-base\start.d&quot; [IcaclsVerb] [ACE_USER]:(GR,RD,X)" />
+        <CustomAction Id="QtSetACEJettyStart" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+        <CustomAction Id="SetACEJettyTmp" Property="QtSetACEJettyTmp"
+		      Value="&quot;c:\Windows\System32\icacls.exe&quot; &quot;[IDP_INSTALLDIR]\jetty-base\tmp&quot; [IcaclsVerb] [ACE_USER]:F" />
+        <CustomAction Id="QtSetACEJettyTmp" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+        <CustomAction Id="SetACEJettyLogs" Property="QtSetACEJettyLogs"
+		      Value="&quot;c:\Windows\System32\icacls.exe&quot; &quot;[IDP_INSTALLDIR]\jetty-base\logs&quot; [IcaclsVerb] [ACE_USER]:F" />
+        <CustomAction Id="QtSetACEJettyLogs" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+        <CustomAction Id="SetACEProcrunLog" Property="QtSetACEProcrunLog"
+		      Value="&quot;c:\Windows\System32\icacls.exe&quot; &quot;[SHIBBOLETHDIR]ProcRun\log&quot; [IcaclsVerb] [ACE_USER]:F" />
+        <CustomAction Id="QtSetACEProcrunLog" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
+
+        <InstallExecuteSequence>
+            <!-- Write the ACEs.    IdP : conf, creds, logs -->
+            <Custom Action="SetIcaclsVerb" Before="InstallFiles"/>
+            <Custom Action="SetACEConf" After="SetIcaclsVerb"/>
+            <Custom Action="QtSetACEConf" After="QtFinalizeJetty"/>
+
+            <Custom Action="SetACECreds" After="SetIcaclsVerb"/>
+            <Custom Action="QtSetACECreds" After="QtFinalizeJetty"/>
+
+            <Custom Action="SetACELogs" After="SetIcaclsVerb"/>
+            <Custom Action="QtSetACELogs" After="QtFinalizeJetty"/>
+
+            <!-- Write the ACEs.    jetty : start.d, tmp, logs -->
+            <Custom Action="SetACEJettyStart" After="SetIcaclsVerb"/>
+            <Custom Action="QtSetACEJettyStart" After="QtFinalizeJetty"/>
+
+            <Custom Action="SetACEJettyTmp" After="SetIcaclsVerb"/>
+            <Custom Action="QtSetACEJettyTmp" After="QtFinalizeJetty"/>
+
+            <Custom Action="SetACEJettyLogs" After="SetIcaclsVerb"/>
+            <Custom Action="QtSetACEJettyLogs" After="QtFinalizeJetty"/>
+
+            <!-- Write the ACEs.    Procron: log -->
+            <Custom Action="SetACEProcrunLog" After="SetIcaclsVerb"/>
+            <Custom Action="QtSetACEProcrunLog" After="QtFinalizeJetty"/>
+        </InstallExecuteSequence>
+
+    </Fragment>
+</Wix>
