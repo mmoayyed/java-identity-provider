@@ -190,13 +190,13 @@ REM compile Jetty and procrun contents as well as the main command line
 "%WIX%/BIN/CANDLE" -nologo -dJettySrc=jetty-extract\%Jex% -dProcrunSrc=procrun-extract -dPlatform=x86 -arch x86 jetty_contents.wxs Jetty-main.wxs Jetty-Procrun.wxs -ext WixFirewallExtension -ext WixUtilExtension
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/CANDLE" -nologo -arch x86 -djettyBaseRoot=idp-jetty-base-extract\jetty-base jetty_base_contents.wxs Jetty-User.wxs jetty-delete.wxs -ext WixUtilExtension
+"%WIX%/BIN/CANDLE" -nologo -arch x86 -djettyBaseRoot=idp-jetty-base-extract\jetty-base -dProjectDir=. jetty_base_contents.wxs Jetty-User.wxs jetty-delete.wxs Jetty-Gui.wxs Jetty-InstallDlg.wxs -ext WixUtilExtension
 if ERRORLEVEL 1 goto done
 
 
 REM link for x64
 
-"%WIX%/BIN/LIGHT" -nologo -out Jetty-x64.msi jetty_base_contents.wixobj jetty_contents.wixobj Jetty-Procrun.wixobj Jetty-main.wixobj jetty-delete.wixobj Jetty-User.wixobj -ext WixFirewallExtension -sw1072 -ext WixUtilExtension -sice:ICE61
+"%WIX%/BIN/LIGHT" -nologo -out Jetty-x64.msi jetty_base_contents.wixobj jetty_contents.wixobj Jetty-Procrun.wixobj Jetty-main.wixobj jetty-delete.wixobj Jetty-User.wixobj Jetty-Gui.wixobj Jetty-InstallDlg.wixobj -ext WixFirewallExtension -sw1072 -ext WixUtilExtension -sice:ICE61 -ext WixUIExtension
 if ERRORLEVEL 1 goto done
 
 dir Jetty-*.msi

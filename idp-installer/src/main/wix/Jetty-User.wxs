@@ -157,7 +157,7 @@
             <Custom Action="SetACEJettyLogs" After="SetIcaclsVerb"/>
             <Custom Action="QtSetACEJettyLogs" After="QtFinalizeJetty"/>
 
-            <!-- Write the ACEs.    Procron: log -->
+            <!-- Write the ACEs.    Procrun: log -->
             <Custom Action="SetACEProcrunLog" After="SetIcaclsVerb"/>
             <Custom Action="QtSetACEProcrunLog" After="QtFinalizeJetty"/>
         </InstallExecuteSequence>

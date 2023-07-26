@@ -110,5 +110,7 @@
             <UpgradeVersion ExcludeLanguages="yes" IncludeMaximum="yes" Maximum="127.255.255" Minimum="0.0.1" OnlyDetect="yes" Property="ALREADYINSTALLED" />
         </Upgrade>
 
+	<UIRef Id="JettyInstallUI" />
+
     </Product>
 </Wix>

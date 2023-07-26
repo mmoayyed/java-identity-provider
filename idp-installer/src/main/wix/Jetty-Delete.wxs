@@ -19,24 +19,13 @@
     <!-- Explicit delete behind ourselves on installs -->
     <Fragment>
         <ComponentGroup Id="DeleteFiles">
-            <Component Id="RemoveOldJettyBaseEtc" Guid="{D98798EB-445C-425B-BBAA-9992F04B67EC}" Win64="no" Directory="IDP_INSTALLDIR">
+            <Component Id="RemoveOldJetty" Guid="{D98798EB-445C-425B-BBAA-9992F04B67EC}" Win64="no" Directory="IDP_INSTALLDIR">
                 <RegistryValue Id="RemoveOldJettyBaseEtc" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="RemoveOldJettyBaseEtc" Value="TRUE" Type="string" KeyPath="yes" />
                 <util:RemoveFolderEx On="install" Property="OldJettyBaseEtc" />
-            </Component>
-
-            <Component Id="RemoveOldJettyBaseLib" Guid="{7360D58D-30CD-4782-A8F5-66275C4FA15B}" Win64="no" Directory="IDP_INSTALLDIR">
-                <RegistryValue Id="RemoveOldJettyBaseLib" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="RemoveOldJettyBaseLib" Value="TRUE" Type="string" KeyPath="yes" />
                 <util:RemoveFolderEx On="install" Property="OldJettyBaseLib" />
-            </Component>
-
-            <Component Id="RemoveOldJettyBaseResources" Guid="{19AE423B-7F36-491A-9FE8-C0B1216E3EF5}" Win64="no" Directory="IDP_INSTALLDIR">
-                <RegistryValue Id="RemoveJettyBaseResources" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="RemoveOldJettyBaseResources" Value="TRUE" Type="string" KeyPath="yes" />
                 <util:RemoveFolderEx On="install" Property="OldJettyBaseResources" />
-            </Component>
-
-            <Component Id="RemoveOldJettyBaseWebapps" Guid="{CE03E32C-D5B2-46E6-B337-40CF206A997F}" Win64="no" Directory="IDP_INSTALLDIR">
-                <RegistryValue Id="RemoveOldJettyBaseWebapps" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="RemoveOldJettyBaseWebapps" Value="TRUE" Type="string" KeyPath="yes" />
                 <util:RemoveFolderEx On="install" Property="OldJettyBaseWebapps" />
+                <util:RemoveFolderEx On="both" Property="OldJettyBaseTmp" />
             </Component>
 
             <Component Id="RemoveJettyDir" Guid="{557F0D43-F730-4912-BFE6-1905E69644A8}" Win64="no" Directory="TARGETDIR">
@@ -54,6 +43,7 @@
         <CustomAction Id="SetOldJettyBaseLib" Property="OldJettyBaseLib" Value="[IDP_INSTALLDIR]\jetty-base\lib" />
         <CustomAction Id="SetOldJettyBaseResources" Property="OldJettyBaseResources" Value="[IDP_INSTALLDIR]\jetty-base\resources" />
         <CustomAction Id="SetOldJettyBaseWebapps" Property="OldJettyBaseWebapps" Value="[IDP_INSTALLDIR]\jetty-base\webapps" />
+        <CustomAction Id="SetOldJettyBaseTmp" Property="OldJettyBaseRmp" Value="[IDP_INSTALLDIR]\jetty-base\tmp" />
         <CustomAction Id="SetProcRunDir" Property="ProcRunDir" Value="[SHIBBOLETHDIR]\ProcRun" />
         <CustomAction Id="SetJettyDir" Property="JettyDir" Value="[SHIBBOLETHDIR]\Jetty" />
 
@@ -62,6 +52,7 @@
             <Custom Action="SetOldJettyBaseLib" After="AppSearch" />
             <Custom Action="SetOldJettyBaseResources" After="AppSearch" />
             <Custom Action="SetOldJettyBaseWebapps" After="AppSearch" />
+            <Custom Action="SetOldJettyBaseTmp" After="AppSearch" />
             <Custom Action="SetProcRunDir" After="AppSearch" />
             <Custom Action="SetJettyDir" After="AppSearch" />
         </InstallExecuteSequence>
