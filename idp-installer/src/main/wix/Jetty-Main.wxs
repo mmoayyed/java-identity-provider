@@ -68,7 +68,7 @@
             </Directory>
         </Directory>
 
-	<Component Id="Icon" Guid="{948A6709-00B7-49B5-947D-3346DC1C9AC3}" Directory="IDP_INSTALLDIR" Win64="yes">
+	<Component Id="Icon" Guid="{C866B1EC-63E2-4379-BAA3-4D3936AE1BEC}" Directory="IDP_INSTALLDIR" Win64="yes">
             <RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductCode]" Name="DisplayIcon" Value="[IDP_INSTALLDIR]\shib.ico,0" Type="string" />
         </Component>
 

@@ -60,7 +60,7 @@
         </Property>
         <!-- Save settings -->
         <DirectoryRef Id="TARGETDIR">
-            <Component Id="SaveUserInfo" Guid="{B5B909A2-E246-4069-808D-7F3AC98D062B}" Win64="no">
+            <Component Id="SaveUserInfo" Guid="{E1E006C0-37D4-438B-97D0-64E1A089DCE8}" Win64="no">
                 <RegistryValue Id="targetRegShibUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydUser" Value="[JETTYD_USER]" Type="string" />
                 <RegistryValue Id="targetRegShibDomain" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="JettydDomain" Value="[JETTYD_DOMAIN]" Type="string" />
                 <RegistryValue Id="targetRegInstallShibUser" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJettydUser" Value="[INSTALL_JETTYD_USER]" Type="string" />
