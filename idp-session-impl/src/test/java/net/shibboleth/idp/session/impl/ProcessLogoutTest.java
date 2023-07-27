@@ -51,7 +51,7 @@ import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletRequestSupplier;
 import net.shibboleth.shared.servlet.impl.ThreadLocalHttpServletResponseSupplier;
 
 /** {@link ProcessLogout} unit test. */
-@SuppressWarnings({"javadoc"})
+@SuppressWarnings("javadoc")
 public class ProcessLogoutTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;

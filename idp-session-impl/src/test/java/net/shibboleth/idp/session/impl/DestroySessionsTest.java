@@ -50,6 +50,7 @@ import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 import jakarta.servlet.http.Cookie;
 
 /** {@link DestroySessions} unit test. */
+@SuppressWarnings("javadoc")
 public class DestroySessionsTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;

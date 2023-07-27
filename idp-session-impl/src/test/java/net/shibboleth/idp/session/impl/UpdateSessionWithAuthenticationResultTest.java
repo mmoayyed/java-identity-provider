@@ -50,6 +50,7 @@ import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.shared.servlet.impl.HttpServletRequestResponseContext;
 
 /** {@link UpdateSessionWithAuthenticationResult} unit test. */
+@SuppressWarnings("javadoc")
 public class UpdateSessionWithAuthenticationResultTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;
