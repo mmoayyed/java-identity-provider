@@ -66,32 +66,8 @@
         </dependency>
 
         <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-networking-spring</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>${httpclient.groupId}</groupId>
-            <artifactId>${httpclient.artifactId}</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${httpclient.httpcore.groupId}</groupId>
-            <artifactId>${httpclient.httpcore.artifactId}</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-core</artifactId>
         </dependency>
 
         <!-- Provided Dependencies -->
