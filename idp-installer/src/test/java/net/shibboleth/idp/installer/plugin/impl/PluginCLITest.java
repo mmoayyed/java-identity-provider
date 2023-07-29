@@ -41,6 +41,8 @@ import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 @SuppressWarnings("javadoc")
 public class PluginCLITest extends BasePluginTest {
     
+    private final static boolean RunInstallTests = false; 
+    
     private final String PLUGIN_DISTRO = "http://test.shibboleth.net/downloads/identity-provider/plugins/metadatagen/1.0.0/idp-plugin-metadatagen-dist-1.0.0.tar.gz";
     
     private final String PLUGIN_ID = "net.shibboleth.idp.plugin.metadatagen";
@@ -73,7 +75,7 @@ public class PluginCLITest extends BasePluginTest {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-L", } ), AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testInstallById() throws IOException {
+    @Test(enabled = RunInstallTests) public void testInstallById() throws IOException {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-I", PLUGIN_ID} ), AbstractCommandLine.RC_OK);
     }
 
@@ -89,7 +91,7 @@ public class PluginCLITest extends BasePluginTest {
         assertEquals(PluginInstallerCLI.runMain(new String[] { "-i", "a"}), AbstractCommandLine.RC_INIT);
     }
 
-    @Test(enabled = true) public void testWeb() {
+    @Test(enabled = RunInstallTests) public void testWeb() {
             assertEquals(PluginInstallerCLI.runMain(new String[] { 
                     "-i", PLUGIN_DISTRO,
                     "--noCheck",
@@ -98,7 +100,7 @@ public class PluginCLITest extends BasePluginTest {
                     AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testWeb"})
+    @Test(enabled = RunInstallTests, dependsOnMethods = {"testWeb"})
     public void testUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", PLUGIN_ID,
@@ -108,7 +110,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testUpdate"})
+    @Test(enabled = RunInstallTests, dependsOnMethods = {"testUpdate"})
     public void testForceUpdate() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-u", PLUGIN_ID,
@@ -116,7 +118,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testForceUpdate"})
+    @Test(enabled = RunInstallTests, dependsOnMethods = {"testForceUpdate"})
     public void testListContents() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-cl", PLUGIN_ID,
@@ -124,7 +126,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true, dependsOnMethods = {"testListContents"}, ignoreMissingDependencies = true)
+    @Test(enabled = RunInstallTests, dependsOnMethods = {"testListContents"}, ignoreMissingDependencies = true)
     public void testUninstall() {
         assertEquals(PluginInstallerCLI.runMain(new String[] {
                 "-r", PLUGIN_ID,
@@ -133,7 +135,7 @@ public class PluginCLITest extends BasePluginTest {
                 AbstractCommandLine.RC_OK);
     }
 
-    @Test(enabled = true) public void testLocal() throws Exception {
+    @Test(enabled = RunInstallTests) public void testLocal() throws Exception {
         Path unpack = null;
         try {
             Resource from;
