@@ -31,45 +31,6 @@
                 <!-- Where we are installing -->
                 <Control Id="DescriptionLine1" Type="Text" X="25" Y="51" Height="24" Width="320" Text="The updated files for [ProductName] will be installed to [INSTALLDIR]" />
 
-                <!-- Jetty? -->
-                <Control Id="UpdateJetty" Type="CheckBox" X="25" Y="80" Height="17" Width="60" CheckBoxPropertyRef="INSTALL_JETTY" CheckBoxValue="TRUE" Text="Install Jetty"/>
-
-                <Control Id="UpdateDaemon" Type="CheckBox" X="105" Y="80" Height="20" Width="60"
-                         CheckBoxPropertyRef="INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" CheckBoxValue="TRUE" Text="Run As &amp;User">
-                    <Condition Action="hide">NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTY</Condition>
-                </Control>
-
-                <!-- SHIBD_USER -->
-                <Control Id="UpdateDescriptionLine3A" Type="Text" X="25" Y="103"  Height="20" Width="60" Text="User Domain">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-                <Control Id="UpdateShibd_Domain" Type="Edit" X="85" Y="99" Height="17" Width="80"
-                         Property="JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Text="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-
-                <Control Id="UpdateDescriptionLine3B" Type="Text" X="25" Y="123"  Height="20" Width="60" Text="Username">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-                <Control Id="UpdateShibd_User" Type="Edit" X="85" Y="121" Height="17" Width="80"
-                         Property="JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Text="[JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-                <Control Id="UpdateDescriptionLine3C" Type="Text" X="180" Y="123"  Height="20" Width="60" Text="Password">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-                <Control Id="UpdateShibd_Pass" Type="Edit" X="250" Y="121" Height="17" Width="80"
-                         Property="JETTYD_PASSWORD.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Password="yes">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-
 
                 <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="1" />
@@ -78,8 +39,6 @@
                 </Control>
 
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="&amp;Next" Default="yes">
-                    <Publish Event="AddLocal" Value="InstallJetty">INSTALL_JETTY</Publish>
-                    <Publish Event="Remove" Value="InstallJetty">Not INSTALL_JETTY</Publish>
                     <Publish Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
                 </Control>
 

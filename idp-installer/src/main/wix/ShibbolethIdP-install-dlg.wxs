@@ -27,7 +27,6 @@
 
       <!-- This Dialog sets up:
            - INSTALLDIR
-           - INSTALL_JETTY (and as a result turns the jetty feature on or off)
            - CONFIGURE_AD (and as a result selects the AD page or not)
         -->
 
@@ -48,51 +47,14 @@
                     <Publish Event="[_BrowseProperty]" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
                 </Control>
 
-                <!-- Jetty? -->
-                <Control Id="InstallJetty" Type="CheckBox" X="25" Y="92" Height="20" Width="60" Property="INSTALL_JETTY" CheckBoxValue="TRUE" Text="Install &amp;Jetty"/>
-                <Control Id="InstallJettyD" Type="CheckBox" X="105" Y="92" Height="20" Width="60"
-                         Property="INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" CheckBoxValue="TRUE" Text="Run As &amp;User">
-                    <Condition Action="hide">NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTY</Condition>
-                </Control>
                 <!-- AD? -->
-                <Control Id="ConfigureAD" Type="CheckBox" X="200" Y="92" Height="20" Width="150" Property="CONFIGURE_AD" CheckBoxValue="TRUE" Text="Configure for &amp;Active Directory" />
+                <Control Id="ConfigureAD" Type="CheckBox" X="25" Y="92" Height="20" Width="150" Property="CONFIGURE_AD" CheckBoxValue="TRUE" Text="Configure for &amp;Active Directory" />
 
-                <!-- SHIBD_USER -->
-                <Control Id="DescriptionLine3A" Type="Text" X="25" Y="115"  Height="20" Width="60" Text="User Domain">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-                <Control Id="Shibd_Domain" Type="Edit" X="85" Y="111" Height="17" Width="80"
-                         Property="JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Text="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
+                <Control Id="DescriptionLine4" Type="Text" X="25" Y="128" Height="36" Width="150" Text="Choose the hostname (including domain) for this IdP.  It will be used to generate the Certificates and Metadata" />
+                <Control Id="DnsName" Type="Edit" X="185" Y="132" Height="17" Width="150" Property="DNSNAME" Text="[DNSNAME]" />
 
-                <Control Id="DescriptionLine3B" Type="Text" X="25" Y="135"  Height="20" Width="60" Text="Username">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-                <Control Id="Shibd_User" Type="Edit" X="85" Y="133" Height="17" Width="80"
-                         Property="JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Text="[JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-                <Control Id="DescriptionLine3C" Type="Text" X="180" Y="135"  Height="20" Width="60" Text="Password">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-                <Control Id="Shibd_Pass" Type="Edit" X="250" Y="133" Height="17" Width="80"
-                         Property="JETTYD_PASSWORD.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Password="yes">
-                    <Condition Action="hide">NOT INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 OR NOT INSTALL_JETTY</Condition>
-                    <Condition Action="show">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7 AND INSTALL_JETTY</Condition>
-                </Control>
-
-                <Control Id="DescriptionLine4" Type="Text" X="25" Y="158" Height="36" Width="150" Text="Choose the hostname (including domain) for this IdP.  It will be used to generate the Certificates and Metadata" />
-                <Control Id="DnsName" Type="Edit" X="185" Y="160" Height="17" Width="150" Property="DNSNAME" Text="[DNSNAME]" />
-
-                <Control Id="DescriptionLine5" Type="Text" X="25" Y="198" Height="36" Width="150" Text="Choose the scope that this IdP will assert. If present this will be used to create the EntityID " />
-                <Control Id="IdpScope" Type="Edit" X="185" Y="200" Height="17" Width="150" Property="IDP_SCOPE" Text="[IDP_SCOPE]" />
+                <Control Id="DescriptionLine5" Type="Text" X="25" Y="168" Height="36" Width="150" Text="Choose the scope that this IdP will assert. If present this will be used to create the EntityID " />
+                <Control Id="IdpScope" Type="Edit" X="185" Y="172" Height="17" Width="150" Property="IDP_SCOPE" Text="[IDP_SCOPE]" />
 
                 <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="1" />
@@ -101,21 +63,15 @@
                 </Control>
 
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="&amp;Next" Default="yes">
-                    <Publish Event="AddLocal" Value="InstallJetty">INSTALL_JETTY</Publish>
-                    <Publish Event="Remove" Value="InstallJetty">Not INSTALL_JETTY</Publish>
                     <Publish Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]">1</Publish>
-                    <Publish Event="DoAction" Value="WixUIValidatePath">
-            NOT WIXUI_DONTVALIDATEPATH
-          </Publish>
-                    <Publish Event="SpawnDialog" Value="InvalidDirDlg">
-            NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID&lt;&gt;"1"
-          </Publish>
+                    <Publish Event="DoAction" Value="WixUIValidatePath">NOT WIXUI_DONTVALIDATEPATH</Publish>
+                    <Publish Event="SpawnDialog" Value="InvalidDirDlg">NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID&lt;&gt;"1"</Publish>
                     <Publish Event="NewDialog" Value="VerifyReadyDlg">
-                (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE" AND (INSTALL_JETTY OR (INSTALLDIR=DefaultInstallDir))
-          </Publish>
+                (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE" AND (INSTALLDIR=DefaultInstallDir)
+		    </Publish>
                     <Publish Event="NewDialog" Value="WarnDirDlgShib">
-            (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE" AND NOT (INSTALL_JETTY OR (INSTALLDIR=DefaultInstallDir))
-          </Publish>
+            (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE" AND NOT (INSTALLDIR=DefaultInstallDir)
+		    </Publish>
                     <Publish Event="NewDialog" Value="ConfigADDlg">
             (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD="TRUE"
           </Publish>

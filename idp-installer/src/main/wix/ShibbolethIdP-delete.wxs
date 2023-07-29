@@ -18,30 +18,21 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
     <!-- Explicit delete behind ourselves on installs -->
     <Fragment>
-        <ComponentGroup Id="DeleteFiles">
-            <Component Id="RemoveOldWebApp" Guid="{923639F2-93DB-4A07-A864-BB6857257900}" Win64="no" Directory="INSTALLDIR">
-                <RegistryValue Id="RemoveOldWebApp" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="RemoveOldWebApp" Value="TRUE" Type="string" KeyPath="yes" />
-                <util:RemoveFolderEx On="install" Property="OldWebAPP" />
-            </Component>
-            <Component Id="RemoveOldSystem" Guid="{F66C4612-715A-499F-ABC0-73B399AE02ED}" Win64="no" Directory="INSTALLDIR">
-                <RegistryValue Id="RemoveOldSystem" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="RemoveOldSystem" Value="TRUE" Type="string" KeyPath="yes" />
-                <util:RemoveFolderEx On="install" Property="OldSystem" />
-            </Component>
+        <Component Id="DeleteFiles" Guid="{923639F2-93DB-4A07-A864-BB6857257900}" Win64="no" Directory="INSTALLDIR">
+            <RegistryValue Id="RemoveOldWebApp" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="RemoveOldWebApp" Value="TRUE" Type="string" KeyPath="yes" />
+            <util:RemoveFolderEx On="install" Property="OldWebAPP" />
+            <util:RemoveFolderEx On="install" Property="OldSystem" />
+            <util:RemoveFolderEx On="install" Property="OldBinLib" />
+        </Component>
 
-            <Component Id="RemoveOldBinLib" Guid="{209E678E-C54F-49DC-9FCE-CD368991FD45}" Win64="no" Directory="INSTALLDIR">
-                <RegistryValue Id="RemoveBinLib" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="RemoveBinLib" Value="TRUE" Type="string" KeyPath="yes" />
-                <util:RemoveFolderEx On="install" Property="OldBinLib" />
-            </Component>
-
-        </ComponentGroup>
         <CustomAction Id="SetOldSystem" Property="OldSystem" Value="[INSTALLDIR]\System" />
         <CustomAction Id="SetOldWebApp" Property="OldWebAPP" Value="[INSTALLDIR]\WebApp" />
         <CustomAction Id="SetOldBinLib" Property="OldBinLib" Value="[INSTALLDIR]\bin\lib" />
 
 	<InstallExecuteSequence>
-            <Custom Action="SetOldSystem" After="InheritInstallJetty" />
-            <Custom Action="SetOldWebApp" After="InheritInstallJetty" />
-            <Custom Action="SetOldBinLib" After="InheritInstallJetty" />
+            <Custom Action="SetOldSystem" After="WixRemoveFoldersEx" />
+            <Custom Action="SetOldWebApp" After="WixRemoveFoldersEx" />
+            <Custom Action="SetOldBinLib" After="WixRemoveFoldersEx" />
         </InstallExecuteSequence>
 
     </Fragment>

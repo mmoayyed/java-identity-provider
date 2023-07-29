@@ -25,6 +25,7 @@
         <MediaTemplate EmbedCab="yes" />
 
         <Condition Message="C run time libraray not installed">UCRTBASE_DLL</Condition>
+	<Condition Message="JDK not installed">JAVA_EXECUTABLE</Condition>
 
         <!-- Information for the properties page of the msi -->
 
@@ -35,16 +36,9 @@
         <Property Id="ARPNOMODIFY" Value="TRUE" />
 
         <Feature Id="ProductFeature" Title="IdP" Level="1">
-            <Feature Id="InstallJetty" Title="Jetty">
-                <MergeRef Id="jetty" />
-                <ComponentRef Id="JettyPermissions" />
-                <ComponentRef Id="Shibd_idpw" />
-		<ComponentGroupRef Id="JettyBaseGroup" />
-            </Feature>
-            <ComponentGroupRef Id="DeleteFiles" />
+            <ComponentRef Id="DeleteFiles" />
             <ComponentGroupRef Id="IdPGroup" />
             <ComponentGroupRef Id="SaveRegistry" />
-            <ComponentRef Id="IdPPermissions" />
         </Feature>
 
         <Directory Id="TARGETDIR" Name="SourceDir">
@@ -53,70 +47,7 @@
                     <Directory Id="IDPDISTDIR" Name="IdP"/>
                 </Directory>
             </Directory>
-            <Directory Id="ProgramFilesFolder">
-                <Directory Id="SHIBBOLETHDIR" Name="Shibboleth">
-                    <Merge Id="jetty" Language="1033" SourceFile="$(var.ProjectDir)\jetty-x64.msm" DiskId="1" />
-                    <Directory Id="INSTALLDIR" Name="IdP">
-                        <Directory Id="CredsFolder" Name="credentials" />
-                        <Directory Id="ConfFolder" Name="conf" />
-                        <Directory Id="LogsFolder" Name="logs" />
-                        <Directory Id="JettyBaseFolder" Name="jetty-base">
-                            <Directory Id="StartDotD" Name="start.d" />
-                            <Directory Id="JettyLogs" Name="logs" />
-                            <Directory Id="JettyTmp" Name="tmp" />
-                        </Directory>
-                        <Directory Id="BinFolder" Name="bin">
-                            <Component Id="Shibd_idpw" Guid="{30E1130E-BEBF-4167-83A0-BBDE083968C4}" Win64="no">
-                                <RegistryValue Id="Shibd_idpw_r" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="Shibd_idpw" Value="TRUE" Type="string" KeyPath="yes" />
-                                <Shortcut Id="Shibd_idpw_shortcut" Name="shibd_idpw.exe" Target="[ProgramFilesFolder]\Shibboleth\Procrun\shibd_idpw.exe" />
-                            </Component>
-                        </Directory>
-                        <Component Id="IdPPermissions" Guid="{5672474B-3CD2-44EB-9942-871844A2B089}" Win64="no">
-a                            <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
-                            <CreateFolder Directory="CredsFolder">
-                                <Permission User="Administrators" GenericAll="yes" />
-                                <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
-                                            ReadPermission="yes" GenericRead="yes" GenericExecute="yes" Read="yes" />
-                            </CreateFolder>
-                            <CreateFolder Directory="ConfFolder">
-                                <Permission User="Administrators" GenericAll="yes" />
-                                <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
-                                            ReadPermission="yes" Read="yes" GenericRead="yes" GenericExecute="yes" />
-                            </CreateFolder>
-                            <CreateFolder Directory="LogsFolder">
-                                <Permission User="Administrators" GenericAll="yes" />
-                                <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
-                                            GenericAll="yes"/>
-                            </CreateFolder>
-
-                        </Component>
-                        <Component Id="JettyPermissions" Guid="{900980C5-CF3D-4816-9922-6142C12F6D13}" Win64="no">
-                            <RegistryValue Id="SetPermissionsJetty" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissionsJetty" Value="TRUE" Type="string" KeyPath="yes" />
-                            <CreateFolder Directory="StartDotD">
-                                <Permission User="Administrators" GenericAll="yes" />
-                                <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
-                                            ReadPermission="yes" GenericRead="yes" Read="yes" GenericExecute="yes" />
-                            </CreateFolder>
-                            <CreateFolder Directory="JettyLogs">
-                                <Permission User="Administrators" GenericAll="yes" />
-                                <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
-                                            GenericAll="yes"/>
-                            </CreateFolder>
-                            <CreateFolder Directory="JettyTmp">
-                                <Permission User="Administrators" GenericAll="yes" />
-                                <Permission User="SYSTEM" GenericAll="yes" />
-                                <Permission Domain="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" User="[PERMISSION_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]"
-                                            GenericAll="yes"/>
-                            </CreateFolder>
-                       </Component>
-                    </Directory>
-                </Directory>
-            </Directory>
+            <Directory Id="INSTALLDIR" Name="shibboleth-idp"/>
         </Directory>
 
         <Property Id="JAVA_EXECUTABLE" Secure="yes">
@@ -127,21 +58,15 @@ a                            <RegistryValue Id="SetPermissions" Root="HKLM" Key=
 
         <Property Id="UCRTBASE_DLL" Secure="yes">
             <DirectorySearch Id="UcrtBaseSearch" Depth="0" Path="[System64Folder]">
-                <FileSearch Id="UcrtnSearch" Name="ucrtbase.dll" />
+                <FileSearch Id="UcrtSearch" Name="ucrtbase.dll" />
             </DirectorySearch>
         </Property>
 
-        <Property Id="ALWAYS_START_SERVICE" Value="TRUE" Secure="yes" />
-        <CustomAction Id="PassdownStartService" Property="ALWAYS_START_SERVICE.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Value="[ALWAYS_START_SERVICE]" />
-
-        <CustomAction Id="NoJavaBin" Error="Could not locate Java.exe.  Please check the value for JAVA_HOME." />
-
         <!-- Inherit the setup, if they were. -->
-        <CustomAction Id="InheritInstallDir" Property="INSTALLDIR" Value="[OLD_INSTALLDIR]" />
-        <CustomAction Id="InheritInstallJetty" Property="INSTALL_JETTY" Value="[OLD_INSTALL_JETTY]" />
+        <CustomAction Id="SetDefaultInstallDir" Property="DefaultInstallDir" Value="[WindowsVolume]opt\shibboleth-idp\" />
 
-        <!-- Pass the NO_FIREWALL_EXCEPTION parameter down to the Jetty Merge Module -->
-        <CustomAction Id="PassdownNoFireWall" Property="NO_FIREWALL.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Value="[NO_FIREWALL_EXCEPTION]" />
+        <CustomAction Id="InheritInstallDir" Property="INSTALLDIR" Value="[OLD_INSTALLDIR]" />
+        <CustomAction Id="SetInstallDir" Property="INSTALLDIR" Value="[DefaultInstallDir]" />
 
         <!-- Other properties -->
         <CustomAction Id="SetDNSName" Property="DNSNAME" Value="[ComputerName]" />
@@ -149,56 +74,22 @@ a                            <RegistryValue Id="SetPermissions" Root="HKLM" Key=
         <Binary Id="WriteConfigFilesSrc" SourceFile="scripts\shib_write_configs.vbs" />
 
         <CustomAction Id="WriteConfigFiles" BinaryKey="WriteConfigFilesSrc" VBScriptCall="" Execute="deferred" Impersonate="no" />
-        <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[INSTALL_JETTY];@;[IDP_SCOPE];@;[DEBUG_INSTALL];@;[CONFIGURE_AD];@;[AD_DOMAIN];@;[AD_USER];@;[AD_PASS];@;[AD_USE_GC]" />
+        <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[IDP_SCOPE];@;[DEBUG_INSTALL];@;[CONFIGURE_AD];@;[AD_DOMAIN];@;[AD_USER];@;[AD_PASS];@;[AD_USE_GC]" />
 
-        <CustomAction Id="SetDefaultInstallDir" Property="DefaultInstallDir" Value="[WindowsVolume]opt\shibboleth-idp\" />
 
         <!-- Ant actions set the command line in two parts because of ICE03 -->
         <CustomAction Id="SetIdpInstall1" Property="QtIdpInstall1" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[IDPDISTDIR]bin\lib\*;[IDPDISTDIR]webapp\WEB-INF\lib\*&quot; net.shibboleth.idp.installer.impl.IdPInstallerCLI"/>
         <CustomAction Id="SetIdpInstall2" Property="QtIdpInstall2" Value="--propertyFile &quot;[INSTALLDIR]idp.install.properties&quot; --sourceDir [IDPDISTDIR]" />
         <CustomAction Id="SetIdpInstall3" Property="QtIdpInstall" Value="[QtIdpInstall1] [QtIdpInstall2]" />
-        <CustomAction Id="RunIdpInstall" Directory="ProgramFilesFolder" ExeCommand="[QtIdpInstall]" Execute="deferred" Impersonate="no" />
+        <CustomAction Id="RunIdpInstall" Directory="ProgramDataShib" ExeCommand="[QtIdpInstall]" Execute="deferred" Impersonate="no" />
         <CustomAction Id="QtIdpInstall" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
-
-        <CustomAction Id="SetFinalizeJetty" Property="QtFinalizeJetty" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[IDPDISTDIR]\bin\lib\*;[IDPDISTDIR]\webapp\WEB-INF\lib\*&quot; -Didp.home=&quot;[JAVA_IDP_HOME]&quot; net.shibboleth.idp.installer.impl.FinalizeJettyBase" />
-        <CustomAction Id="RunFinalizeJetty" Directory="INSTALLDIR" ExeCommand="[QtFinalizeJetty]" Execute="deferred" Impersonate="no" />
-        <CustomAction Id="QtFinalizeJetty" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
-
-
-        <!-- Actions to add an appropriate ACE to existing file when we are running as a user -->
-        <CustomAction Id="SetACEUser" Property="ACE_USER" Value="[JETTYD_DOMAIN.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]\[JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7]" />
-        <CustomAction Id="SetACEConf" Property="QtSetACEConf" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\conf&quot; /e /t /g [ACE_USER]:r" />
-        <CustomAction Id="SetACECreds" Property="QtSetACECreds" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\credentials&quot; /e /t /g [ACE_USER]:r" />
-        <CustomAction Id="SetACELogs" Property="QtSetACELogs" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\logs&quot; /e /t /g [ACE_USER]:f" />
-
-        <CustomAction Id="QtSetACEConf" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
-        <CustomAction Id="QtSetACECreds" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
-        <CustomAction Id="QtSetACELogs" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
-
-        <CustomAction Id="SetACEJettyStart" Property="QtSetACEJettyStart" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\jetty-base\start.d&quot; /e /t /g [ACE_USER]:r" />
-        <CustomAction Id="SetACEJettyLogs" Property="QtSetACEJettyLogs" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\jetty-base\logs&quot; /e /t /g [ACE_USER]:f" />
-        <CustomAction Id="SetACEJettyTmp" Property="QtSetACEJettyTmp" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[INSTALLDIR]\jetty-base\tmp&quot; /e /t /g [ACE_USER]:f" />
-
-        <CustomAction Id="QtSetACEJettyStart" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
-        <CustomAction Id="QtSetACEJettyLogs" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
-        <CustomAction Id="QtSetACEJettyTmp" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
-
-        <CustomAction Id="SetACEProcrunLog" Property="QtSetACEProcrunLog" Value="&quot;c:\Windows\System32\cacls.exe&quot; &quot;[SHIBBOLETHDIR]ProcRun\log&quot; /e /t /g [ACE_USER]:f" />
-        <CustomAction Id="QtSetACEProcrunLog" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 
         <InstallUISequence>
 
             <!-- inherit installationDir if there is something to inherit (Conditions set in ShibolethIdP-registry) -->
             <Custom Action="SetDefaultInstallDir" After="AppSearch" />
-            <Custom Action="InheritInstallDir" After="AppSearch">OLD_INSTALLDIR</Custom>
-
-
-            <!-- inherit JETTY_INSTALL if there is something to inherit AND JETTY_INSTALL was not passed in -->
-            <Custom Action="InheritInstallJetty" After="AppSearch">OLD_INSTALL_JETTY AND NOT INSTALL_JETTY</Custom>
-
-            <!-- Could we find JAVA.EXE ?-->
-            <Custom Action="NoJavaBin" After="AppSearch">NOT JAVA_EXECUTABLE and NOT Installed</Custom>
-
+            <Custom Action="InheritInstallDir" After="AppSearch">OLD_INSTALLDIR AND NOT INSTALLDIR</Custom>
+            <Custom Action="SetInstallDir" After="SetDefaultInstallDir">NOT OLD_INSTALLDIR AND NOT INSTALLDIR</Custom>
             <Custom Action="SetDNSName" After="AppSearch">NOT DNSNAME</Custom>
 
         </InstallUISequence>
@@ -206,38 +97,7 @@ a                            <RegistryValue Id="SetPermissions" Root="HKLM" Key=
         <InstallExecuteSequence>
 
             <!-- Duplicate actions from the UI case - but only for auto 3->3 upgrades -->
-            <Custom Action="InheritInstallDir" After="AppSearch">OLD_INSTALLDIR</Custom>
-
-            <Custom Action="InheritInstallJetty" After="AppSearch">OLD_JETTY_INSTALL AND NOT JETTY_INSTALL</Custom>
-
-            <!-- Pass across the instructions to Jetty-->
-            <Custom Action="PassdownNoFireWall" After="AppSearch">NO_FIREWALL_EXCEPTION</Custom>
-            <Custom Action="PassdownStartService" After="AppSearch"/>
-
-            <!-- Do the ACE setting just after the directories -->
-            <Custom Action="SetACEUser" After="CreateFolders">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-
-            <Custom Action="SetACEConf"  After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-            <Custom Action="SetACECreds" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-            <Custom Action="SetACELogs" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-
-            <Custom Action="QtSetACEConf" After="SetACEConf">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-            <Custom Action="QtSetACECreds" After="SetACECreds">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-            <Custom Action="QtSetACELogs" After="SetACELogs">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-
-            <Custom Action="SetACEJettyStart" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-            <Custom Action="SetACEJettyLogs" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-            <Custom Action="SetACEJettyTmp" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-
-            <Custom Action="QtSetACEJettyStart"  After="SetACEJettyStart">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-            <Custom Action="QtSetACEJettyLogs"  After="SetACEJettyLogs">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-            <Custom Action="QtSetACEJettyTmp"  After="SetACEJettyTmp">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-
-            <Custom Action="SetACEProcrunLog" After="SetACEUser">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-            <Custom Action="QtSetACEProcrunLog"  After="SetACEProcrunLog">INSTALL_JETTYD_USER.684B3207_0D64_43E6_9E6A_3ACB8B7672D7</Custom>
-
-            <!-- Could we find JAVA.EXE ?-->
-            <Custom Action="NoJavaBin" After="AppSearch">NOT JAVA_EXECUTABLE</Custom>
+            <Custom Action="InheritInstallDir" After="AppSearch">OLD_INSTALLDIR AND NOT INSTALLDIR</Custom>
 
             <!-- Work -->
 
@@ -248,9 +108,6 @@ a                            <RegistryValue Id="SetPermissions" Root="HKLM" Key=
             <Custom Action="SetIdpInstall3" After="SetIdpInstall2">NOT Installed</Custom>
             <Custom Action="RunIdpInstall" After="SetIdpInstall3">(NOT Installed) AND DEBUG_INSTALL</Custom>
             <Custom Action="QtIdpInstall" After="SetIdpInstall3">(NOT Installed) AND (NOT DEBUG_INSTALL)</Custom>
-            <Custom Action="SetFinalizeJetty" After="RunIdpInstall">(NOT Installed) AND INSTALL_JETTY</Custom>
-            <Custom Action="RunFinalizeJetty" After="SetFinalizeJetty">(NOT Installed) AND INSTALL_JETTY AND DEBUG_INSTALL</Custom>
-            <Custom Action="QtFinalizeJetty" After="SetFinalizeJetty">(NOT Installed) AND INSTALL_JETTY AND (NOT DEBUG_INSTALL)</Custom>
 
         </InstallExecuteSequence>
 

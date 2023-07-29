@@ -26,27 +26,25 @@ InstallDirJava = Replace(InstallDir, "\", "/")
 InstallDirWindows = Replace(InstallDirJava, "/", "\\")
 
 IdPHostName = LCase(msiProperties(1))
-InstallJetty = LCase(msiProperties(2))
-IdPScope = LCase(msiProperties(3))
+IdPScope = LCase(msiProperties(2))
 if IdPScope = "" then
    Domain = IdPHostName
 else
    Domain = IdPScope
 end if
-DebugInstall = LCase(msiProperties(4))
-ConfigureAd = LCase(msiProperties(5))
+DebugInstall = LCase(msiProperties(3))
+ConfigureAd = LCase(msiProperties(4))
 if ConfigureAd = "true" then
-   AdDomain = LCase(msiProperties(6))
-   AdUser = LCase(msiProperties(7))
-   AdPass = msiProperties(8)
-   AdUseGC = LCase(msiProperties(9))
+   AdDomain = LCase(msiProperties(5))
+   AdUser = LCase(msiProperties(6))
+   AdPass = msiProperties(7)
+   AdUseGC = LCase(msiProperties(8))
 end if
 
 LogFile.WriteLine "Installing to " & InstallDirJava
 LogFile.WriteLine "Host " & IdPHostName
 LogFile.WriteLine "Domain " & Domain
 LogFile.WriteLine "Scope " & IdPScope
-LogFile.WriteLine "IntallJetty" & InstallJetty
 
 set AntFile=FileSystemObj.OpenTextFile(InstallDir & "\idp.install.properties" , 2, True)
 if (Err.Number = 0 ) then

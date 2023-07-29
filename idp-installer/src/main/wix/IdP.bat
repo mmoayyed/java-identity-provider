@@ -4,18 +4,13 @@ setlocal
 
 REM Preconditions
 
-if "%2%" == "" (
-  Echo Idp PATH_TO_IDP_DISTRIBUTION PATH_TO_JETTY_BASE_DISTRO
+if "%1%" == "" (
+  Echo Idp PATH_TO_IDP_DISTRIBUTION
   goto done
 )
 
 if not defined WIX (
    echo WIX should be installed
-   goto done
-)
-
-if not exist jetty-x64.msm (
-   echo RUN JETTY.BAT FIRST
    goto done
 )
 
@@ -27,10 +22,6 @@ if exist idp_contents.wxs (
 
 if exist idp-extract (
    rd /q /s idp-extract
-)
-
-if exist idp-jetty-base-extract (
-   rd /q /s idp-jetty-base-extract
 )
 
 REM Set up environment
@@ -74,11 +65,7 @@ if ERRORLEVEL 1 (
 :noIdPSig
 mkdir idp-extract
 cd idp-extract
-if exist "%1" (
-  "%JARCMD%" xf %1 
-) else (
-  "%JARCMD%" xf ..\%1 
-)
+"%JARCMD%" xf %1 
 
 rem is this a real package?
 dir /s install.bat  1> nl:a 2> nl:b
@@ -87,47 +74,7 @@ if ERRORLEVEL 1 (
   echo Could not find install.bat in IdP package
   goto done;
 )
-cd ..
-
-REM Now do the same again for jetty-base
-if not exist %2% (
-   echo Error: Could not locate jetty base zip %2%
-   goto done
-)
-
-if not exist %2.asc (
-   echo Error: Could not locate signature for jetty base zip %2%.asc
-   goto noJettyBaseSig
-)
-
-gpg --verify %2.asc %2
-if ERRORLEVEL 1 (
-   echo Error: Signature check failed on %2%
-   goto done
-)
-:noJettyBaseSig
-mkdir idp-jetty-base-extract
-cd idp-jetty-base-extract
-if exist "%2" (
-  "%JARCMD%" xf %2 
-) else (
-  "%JARCMD%" xf ..\%2
-)
-rem is this a real package?
-dir /s idp.ini.windows 1> nl:a 2> nl:b
-if ERRORLEVEL 1 (
-  cd ..
-  echo Could not find idp.ini.windows in Jetty Base package
-  goto done;
-)
-for /D %%X in (*) do set jettyBaseEx=%%X
-rename %jettyBaseEx% jetty-base
-
-cd ..\idp-extract
 for /D %%X in (*) do set idpex=%%X
-
-rem for now copy in the ant file for jetty
-copy ..\scripts\any-jetty.xml %idpEx%\bin\
 
 rem The file name gets too big....
 rename %idpex% IdPEx
@@ -138,22 +85,7 @@ if exist %idpex%\embedded (
    rd /q /s %idpex%\embedded
 )
 
-cd ..\idp-jetty-base-extract\jetty-base
-rename start.d start.d.dist
-if ERRORLEVEL 1 (
-  cd ..
-  echo jetty-base/start.d directory not found?
-  goto done;
-)
-rem IDP-1149 make doubley sure that we have a jetty-base\tmp dir
-mkdir tmp
-echo "keeper" > tmp\.keep
-
-cd ..\..
-"%WIX%/BIN/HEAT" dir idp-jetty-base-extract\jetty-base -platform -gg -dr INSTALLDIR -var var.jettyBaseRoot -cg JettyBaseGroup -out jetty_base_contents.wxs -src
-if ERRORLEVEL 1 goto done
-"%WIX%/BIN/CANDLE" -nologo -arch x86 -djettyBaseRoot=idp-jetty-base-extract\jetty-base jetty_base_contents.wxs
-if ERRORLEVEL 1 goto done
+cd ..
 
 "%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr IDPDISTDIR -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
 if ERRORLEVEL 1 goto done
@@ -168,7 +100,7 @@ if ERRORLEVEL 1 goto done
 "%WIX%/BIN/CANDLE" -nologo -arch x64 -dProjectDir=. ShibbolethIdP-main.wxs ShibbolethIdP-registry.wxs ShibbolethIdP-delete.wxs -ext WixUtilExtension
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -nologo -out idp-x64.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj jetty_base_contents.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-adconfig-dlg.wixobj ShibbolethIdP-update-dlg.wixobj ShibbolethIdP-warndir-dlg.wixobj ShibbolethIdP-delete.wixobj -ext WixUtilExtension -sice:ICE61
+"%WIX%/BIN/LIGHT" -nologo -out idp-x64.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-adconfig-dlg.wixobj ShibbolethIdP-update-dlg.wixobj ShibbolethIdP-warndir-dlg.wixobj ShibbolethIdP-delete.wixobj -ext WixUtilExtension -sice:ICE61
 if ERRORLEVEL 1 goto done
 
 
