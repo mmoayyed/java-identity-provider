@@ -163,6 +163,7 @@
 
     <bean id="PopulateDecryptionParameters"
         class="org.opensaml.profile.action.impl.PopulateDecryptionParameters" scope="prototype"
+        p:recipientLookupStrategy-ref="shibboleth.IssuerLookup.Simple"
         p:configurationLookupStrategy-ref="shibboleth.DecryptionConfigurationLookup"
         p:decryptionParametersResolver-ref="shibboleth.DecryptionParametersResolver" />
         
