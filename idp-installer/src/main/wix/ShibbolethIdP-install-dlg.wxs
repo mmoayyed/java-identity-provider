@@ -61,11 +61,8 @@
                     <Publish Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]">1</Publish>
                     <Publish Event="DoAction" Value="WixUIValidatePath">NOT WIXUI_DONTVALIDATEPATH</Publish>
                     <Publish Event="SpawnDialog" Value="InvalidDirDlg">NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID&lt;&gt;"1"</Publish>
-                    <Publish Event="NewDialog" Value="VerifyReadyDlg">
-                (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE" AND (INSTALLDIR=DefaultInstallDir)
-		    </Publish>
-                    <Publish Event="NewDialog" Value="WarnDirDlgShib">
-            (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE" AND NOT (INSTALLDIR=DefaultInstallDir)
+                    <Publish Event="NewDialog" Value="WarnDlgShib">
+            (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE"
 		    </Publish>
                     <Publish Event="NewDialog" Value="ConfigADDlg">
             (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD="TRUE"

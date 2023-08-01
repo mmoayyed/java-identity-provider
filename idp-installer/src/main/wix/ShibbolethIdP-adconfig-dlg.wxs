@@ -53,9 +53,6 @@
                 <Control Id="ADDescriptionLine5" Type="Text" X="25" Y="151" Height="18" Width="150" Text="Password" />
                 <Control Id="ADPASS" Type="Edit" X="185" Y="151" Height="18" Width="150" Password="yes" Sunken="no" Property="AD_PASS" Text="[AD_PASS]" />
 
-
-
-
                 <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="1" />
                 <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="&amp;Back">
@@ -63,8 +60,7 @@
                 </Control>
 
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="&amp;Next" Default="yes">
-                    <Publish Event="NewDialog" Value="WarnDirDlgShib">NOT (INSTALL_JETTY OR (INSTALLDIR=DefaultInstallDir))</Publish>
-                    <Publish Event="NewDialog" Value="VerifyReadyDlg">INSTALL_JETTY OR (INSTALLDIR=DefaultInstallDir)</Publish>
+                    <Publish Event="NewDialog" Value="WarnDlgShib">1</Publish>
                 </Control>
 
                 <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="&amp;Cancel" Cancel="yes">

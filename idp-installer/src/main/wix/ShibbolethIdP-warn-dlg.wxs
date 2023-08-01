@@ -16,17 +16,19 @@
     <Fragment>
 
         <UI>
-            <Dialog Id="WarnDirDlgShib" Width="370" Height="270" Title="[ProductName] Update">
+            <Dialog Id="WarnDlgShib" Width="370" Height="270" Title="[ProductName] Installation">
                 <!-- Stuff at the top: picture, some text, a line -->
                 <Control Id="TopBitMap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" Text="WixUI_Bmp_Banner" />
-                <Control Id="TopInfo" Type="Text" X="15" Y="6" Width="150" Height="12" Text="{\WixUI_Font_Title}Update Shibboleth" Transparent="yes" />
-                <Control Id="TopDetailed" Type="Text" X="25" Y="24" Width="320" Height="12" Text="Update to [ProductName]" Transparent="yes" />
+                <Control Id="TopInfo" Type="Text" X="15" Y="6" Width="150" Height="12" Text="{\WixUI_Font_Title}Install Shibboleth" Transparent="yes" />
+                <Control Id="TopDetailed" Type="Text" X="25" Y="24" Width="320" Height="12" Text="Dont forget to set file permissions" Transparent="yes" />
                 <Control Id="TopLine" Type="Line" X="0" Y="44" Width="370" Height="1" />
 
                 <!-- Where we are installing -->
                 <Control Id="Warn" Type="Bitmap" X="25" Y="51" Height="32" Width="32" Text="WixUI_Ico_Exclam" />
-                <Control Id="Warn2" Type="Text" X="73" Y="51" Height="12" Width="270" Text="Installation not to standard location ([DefaultInstallDir])" />
-                <Control Id="Warn3" Type="Text" X="73" Y="67" Height="12" Width="270" Text="Set the property 'idp.home' in your container to be [INSTALLDIR]" />
+                <Control Id="Warn2" Type="Text" X="73" Y="51" Height="12" Width="270" Text="NOTE That unless you will be installing Jetty with the" />
+                <Control Id="Warn3" Type="Text" X="73" Y="64" Height="12" Width="270" Text="Shibboleth project installer you should set appropriate permissions." />
+                <Control Id="Warn4" Type="Text" X="73" Y="90" Height="12" Width="270" Text="See the Documentation for details." />
+                <Control Id="Warn5" Type="Text" X="73" Y="106" Height="12" Width="270" Text="The 'setacl' batch file provides an example." />
 
                 <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
                 <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="1" />
@@ -36,8 +38,6 @@
                 </Control>
 
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="&amp;Next" Default="yes">
-                    <Publish Event="AddLocal" Value="InstallJetty">INSTALL_JETTY</Publish>
-                    <Publish Event="Remove" Value="InstallJetty">Not INSTALL_JETTY</Publish>
                     <Publish Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
                 </Control>
 
