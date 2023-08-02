@@ -37,8 +37,7 @@
           c:_4="#{ T(org.apache.commons.codec.CodecPolicy).STRICT }"
     />
 
-    <!-- TODO: Change to encodingTicketService for 5.0 -->
-    <alias name="simpleTicketService" alias="shibboleth.DefaultCASTicketService" />
+    <alias name="encodingTicketService" alias="shibboleth.DefaultCASTicketService" />
 
     <bean id="proxyHttpClient" parent="shibboleth.InternalHttpClient"
           p:tLSSocketFactory-ref="shibboleth.SecurityEnhancedTLSSocketFactory" />
