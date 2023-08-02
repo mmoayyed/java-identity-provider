@@ -71,7 +71,7 @@
 
     <!-- Handles response header customization so must run conditionally based on path prefix. -->
     <bean class="net.shibboleth.shared.spring.servlet.impl.DynamicResponseHeaderFilter"
-        p:activationCondition-ref="UserFacingPrefixPredicate"
+        p:activationCondition-ref="#{'%{idp.responseHeaderCondition:UserFacingPrefixPredicate'.trim()}"
         p:headers="#{getObject('shibboleth.ResponseHeaderMap') ?: getObject('shibboleth.DefaultResponseHeaderMap')}"
         p:callbacks="#{getObject('shibboleth.ResponseHeaderCallbacks')}" />
     
