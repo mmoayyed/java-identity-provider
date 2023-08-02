@@ -26,6 +26,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 
+import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.LoggerFactory;
@@ -124,8 +125,9 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws IOException if the file doesn't exist.
      * @throws ComponentInitializationException if the scripting initialization fails
      */
-    public static ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName,
-            @Nonnull final Resource resource)
+    @Nonnull public static ScriptedAction resourceScript(
+            @Nonnull @NotEmpty @ParameterName(name="engineName") final String engineName,
+            @Nonnull @ParameterName(name="resource") final Resource resource)
             throws ScriptException, IOException, ComponentInitializationException {
         final EvaluableScript script = new EvaluableScript();
         script.setEngineName(engineName);
@@ -143,8 +145,9 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws IOException if the file doesn't exist.
      * @throws ComponentInitializationException if the scripting initialization fails
      */
-    public static ScriptedAction resourceScript(@Nonnull final Resource resource)
-            throws ScriptException, IOException, ComponentInitializationException {
+    @Nonnull public static ScriptedAction resourceScript(
+            @Nonnull @ParameterName(name="resource") final Resource resource)
+                    throws ScriptException, IOException, ComponentInitializationException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
@@ -157,8 +160,10 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws ScriptException if the compile fails
      * @throws ComponentInitializationException if the scripting initialization fails
      */
-    public static ScriptedAction inlineScript(@Nonnull @NotEmpty final String engineName,
-            @Nonnull @NotEmpty final String scriptSource) throws ScriptException, ComponentInitializationException {
+    @Nonnull public static ScriptedAction inlineScript(
+            @Nonnull @NotEmpty @ParameterName(name="engineName") final String engineName,
+            @Nonnull @NotEmpty @ParameterName(name="scriptSource") final String scriptSource)
+                    throws ScriptException, ComponentInitializationException {
         final EvaluableScript script = new EvaluableScript();
                 script.setEngineName(engineName);
                 script.setScript(scriptSource);
@@ -174,7 +179,9 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws ScriptException if the compile fails
      * @throws ComponentInitializationException if the scripting initialization fails
      */
-    public static ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException, ComponentInitializationException {
+    @Nonnull public static ScriptedAction inlineScript(
+            @Nonnull @NotEmpty @ParameterName(name="scriptSource") final String scriptSource)
+                    throws ScriptException, ComponentInitializationException {
         return inlineScript(DEFAULT_ENGINE, scriptSource);
     }
 
