@@ -71,12 +71,12 @@
 
     <!-- Handles response header customization so must run conditionally based on path prefix. -->
     <bean class="net.shibboleth.shared.spring.servlet.impl.DynamicResponseHeaderFilter"
-        p:activationCondition-ref="#{'%{idp.responseHeaderCondition:UserFacingPrefixPredicate}'.trim()}"
+        p:activationCondition-ref="#{'%{idp.responseHeaderCondition:shibboleth.UserFacingPrefixPredicate}'.trim()}"
         p:headers="#{getObject('shibboleth.ResponseHeaderMap') ?: getObject('shibboleth.DefaultResponseHeaderMap')}"
         p:callbacks="#{getObject('shibboleth.ResponseHeaderCallbacks')}" />
     
     <!-- Evaluates auto-wired paths against a requested URL. -->
-    <bean id="UserFacingPrefixPredicate" class="net.shibboleth.shared.spring.servlet.RequestURLPrefixPredicate" />
+    <bean id="shibboleth.UserFacingPrefixPredicate" class="net.shibboleth.shared.spring.servlet.RequestURLPrefixPredicate" />
 
     <!-- Path prefixes for user-facing non-logout activity. -->
     <bean class="net.shibboleth.shared.spring.servlet.URLPrefix" c:_0="/profile/admin/" />
