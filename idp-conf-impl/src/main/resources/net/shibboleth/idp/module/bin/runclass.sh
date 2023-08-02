@@ -54,4 +54,4 @@ if [ -n "$JAVA_HOME" ] ; then
   fi
 fi
 
-"$JAVACMD" '-classpath' "$LOCALCLASSPATH" -Dnet.shibboleth.idp.cli.baseURL=$IDP_BASE_URL "$@"
+"$JAVACMD" '-classpath' "$LOCALCLASSPATH" $JAVA_OPTS -Dnet.shibboleth.idp.cli.baseURL=$IDP_BASE_URL "$@"
