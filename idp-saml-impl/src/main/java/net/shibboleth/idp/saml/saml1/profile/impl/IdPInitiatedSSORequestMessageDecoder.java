@@ -94,12 +94,11 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected String getMessageToLog() {
-        final MessageContext request = getMessageContext();
-        if (request == null) {
-            return "SAML1 initiated request did not exist?";
+    @Nullable protected String serializeMessageForLogging(@Nullable final Object message) {
+        if (message == null) {
+            log.debug("Message was null, can not serialize");
+            return null;
         }
-        final  Object message = Constraint.isNotNull(request.getMessage(), "No message");
         return "SAML 1 IdP-initiated request was: " + message.toString();
     }
     

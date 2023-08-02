@@ -58,9 +58,12 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
      */
     @Nullable private BindingDescriptor bindingDescriptor;
     
-    /** Used to log protocol messages. */
-    @Nonnull private final Logger protocolMessageLog = LoggerFactory.getLogger("PROTOCOL_MESSAGE");
-    
+    /** Constructor. */
+    public BaseIdPInitiatedSSORequestMessageDecoder() {
+        super();
+        setProtocolMessageLoggerCategory(BASE_PROTOCOL_MESSAGE_LOGGER_CATEGORY + ".SAML");
+    }
+
     /** ID generator. */
     @Nonnull private final IdentifierGenerationStrategy idGenerator =
             IdentifierGenerationStrategy.getInstance(ProviderType.UUID);
@@ -90,7 +93,6 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
     public void decode() throws MessageDecodingException {        
         log.debug("Beginning to decode message from HttpServletRequest");
         super.decode();
-        logDecodedMessage();
         log.debug("Successfully decoded message from HttpServletRequest.");
     }
     
@@ -175,22 +177,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
             throw new MessageDecodingException("Shibboleth Authentication Request contained a non-numeric time value");
         }
     }
-    
-    /**
-     * Log the decoded message to the protocol message logger.
-     */
-    protected void logDecodedMessage() {
-        if (protocolMessageLog.isDebugEnabled() ){
-            final String message = getMessageToLog();
-            if (message == null) {
-                log.warn("Decoded message was null, nothing to log");
-                return;
-            }
-            
-            protocolMessageLog.debug("\n" + message);
-        }
-    }
-    
+
     /**
      * Construct a message ID for the request.
      * 
@@ -212,12 +199,5 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
         }
         return idGenerator.generateIdentifier();
     }
-    
-    /**
-     * Get the string representation of what will be logged as the protocol message.
-     * 
-     * @return the string representing the protocol message for logging purposes
-     */
-    @Nullable protected abstract String getMessageToLog();
-    
+ 
 }

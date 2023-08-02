@@ -149,11 +149,9 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
 
     /** {@inheritDoc} */
     @Override
-    @Nullable protected String getMessageToLog() {
-        final MessageContext ctx = getMessageContext();
-        final Object message = ctx == null ? null : ctx.getMessage();
-        if (message == null || !(message instanceof XMLObject)) {
-            log.warn("Decoded message was null or invalid, nothing to log");
+    @Nullable protected String serializeMessageForLogging(@Nullable final Object message) {
+        if (message == null || !XMLObject.class.isInstance(message)) {
+            log.debug("Message was null or unsupported, can not serialize");
             return null;
         }
         
