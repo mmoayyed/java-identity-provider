@@ -94,7 +94,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             @Nullable final StorageBackedIdPSession target) {
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
         targetObject = target;
-        final JsonProvider prov = JsonProvider.provider();;
+        final JsonProvider prov = JsonProvider.provider();
         assert prov!=null;
         jsonProvider = prov;
     }
@@ -156,8 +156,10 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
         }
     }
 
+// Checkstyle: MethodLength OFF
     /** {@inheritDoc} */
-    @Override @Nonnull public StorageBackedIdPSession deserialize(final long version,
+    @Override
+    @Nonnull public StorageBackedIdPSession deserialize(final long version,
             @Nonnull @NotEmpty final String context, @Nonnull @NotEmpty final String key,
             @Nonnull @NotEmpty final String value, @Nullable final Long expiration) throws IOException {
 
@@ -235,6 +237,6 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             throw new IOException("Found invalid data structure while parsing IdPSession", e);
         }
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
 
 }

@@ -198,7 +198,8 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
 
         if (storageRecord == null) {
             log.debug("{} Creating storage index with key '{}'", getLogPrefix(), keyToAdd);
-            return service.create(storageContext, indexKey, CollectionSupport.singletonList(keyToAdd), storageKeysSerializer, null);
+            return service.create(storageContext, indexKey, CollectionSupport.singletonList(keyToAdd),
+                    storageKeysSerializer, null);
         }
         
         final LinkedHashSet<String> keys = new LinkedHashSet<>(getStorageKeysFromIndex());
@@ -247,7 +248,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         return false;
     }
 
-//CheckStyle: ReturnCount OFF
+// CheckStyle: CyclomaticComplexity OFF
     /**
      * Storage records will be pruned based on the record maximums set on the flow descriptor,
      * and the storage service value size. Below a defined threshold, the basic maximum is applied, while at
@@ -316,7 +317,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
             removeKeyFromStorageIndex(keyToDelete);
         }
     }
-  //CheckStyle: ReturnCount ON
+// CheckStyle: CyclomaticComplexity ON
 
     /**
      * Store a profile interceptor result.

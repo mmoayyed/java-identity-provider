@@ -171,6 +171,7 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
         return operation;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     public void validate() throws IllegalArgumentException {
         super.validate();
@@ -221,6 +222,7 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
             operation = OperationType.CHECK;
         }
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     public void printHelp(final @Nonnull PrintStream out) {
@@ -233,8 +235,10 @@ public class UpdateIdPArguments extends AbstractIdPHomeAwareCommandLineArguments
         out.println();
         out.println("With no options displays the update status of the IdP");
         out.println();
-        out.println(String.format("  %-22s %s", "-d, --downloadDir <directory>", "Download the distribution for an available update"));
-        out.println(String.format("  %-22s %s", "-fd, --force-download <file>", "Specify the version to be downloaded by -d"));
+        out.println(String.format("  %-22s %s", "-d, --downloadDir <directory>",
+                "Download the distribution for an available update"));
+        out.println(String.format("  %-22s %s", "-fd, --force-download <file>",
+                "Specify the version to be downloaded by -d"));
         out.println();
         out.println(String.format("  %-22s %s", "-l, --list", "list all available versions"));
         out.println();

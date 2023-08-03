@@ -51,8 +51,6 @@ import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.DeprecationSupport;
-import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.primitive.StringSupport;

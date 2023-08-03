@@ -434,7 +434,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     /** Get the {@link HttpServletRequest} associated with this operation.
      * @return the  {@link HttpServletRequest} 
      */
-    @Nullable final private HttpServletRequest getHttpRequest() {
+    @Nullable private HttpServletRequest getHttpRequest() {
         final NonnullSupplier<HttpServletRequest> supplier = httpRequestSupplier;
         if (supplier == null) {
             return null;
@@ -681,8 +681,9 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                         // Need to update record.
                         final String updated = sessionList.getValue() + idpSession.getId() + ',';
                         if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
-                                Math.max(Constraint.isNotNull(sessionList.getExpiration(),"Session List Expiration not set"), 
-                                         spSession.getExpirationInstant().plus(sessionSlop).toEpochMilli())) == null) {
+                                Math.max(Constraint.isNotNull(sessionList.getExpiration(),
+                                        "Session List Expiration not set"),
+                                        spSession.getExpirationInstant().plus(sessionSlop).toEpochMilli())) == null) {
                             log.debug("Secondary index record disappeared, retrying as insert");
                             indexBySPSession(idpSession, spSession, attempts - 1);
                         }
@@ -708,6 +709,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         }
     }
 
+ // Checkstyle: MethodLength OFF
     /**
      * Remove or update a secondary index record from an SPSession to a parent IdPSession.
      * 
@@ -789,6 +791,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             }
         }
     }
+// Checkstyle: MethodLength ON
     
     /**
      * Performs a lookup and deserializes a record based on session ID.

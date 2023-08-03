@@ -449,7 +449,8 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         if (super.removeSPSession(spSession)) {
             try {
                 // Remove the separate record.
-                sessionManager.getStorageService().delete(getId(), getSPSessionStorageKey(Constraint.isNotNull(spSession.getId(), "SessionID was empty")));
+                sessionManager.getStorageService().delete(getId(),
+                        getSPSessionStorageKey(Constraint.isNotNull(spSession.getId(), "SessionID was empty")));
             } catch (final IOException e) {
                 log.error("Exception removing SPSession record for IdP session {} and service {}", getId(),
                         spSession.getId(), e);
@@ -634,7 +635,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             }
             
             final String sessionClassName = record.getValue().substring(0,  pos);
-            final SPSessionSerializerRegistry registry = Constraint.isNotNull(sessionManager.getSPSessionSerializerRegistry(), "Session Serializer Registry not set up");
+            final SPSessionSerializerRegistry registry =
+                    Constraint.isNotNull(sessionManager.getSPSessionSerializerRegistry(),
+                            "Session Serializer Registry not set up");
 
             // Look up the serializer instance for that class type.
             final Class<? extends SPSession> claz = Class.forName(sessionClassName).asSubclass(SPSession.class);
@@ -671,7 +674,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     private boolean saveSPSessionToStorage(@Nonnull final SPSession session) throws IOException {
         log.debug("Saving SPSession for service {} in session {}", session.getId(), getId());
 
-        final SPSessionSerializerRegistry registry = Constraint.isNotNull(sessionManager.getSPSessionSerializerRegistry(), "Session Serializer Registry not set up");
+        final SPSessionSerializerRegistry registry =
+                Constraint.isNotNull(sessionManager.getSPSessionSerializerRegistry(),
+                        "Session Serializer Registry not set up");
         // Look up the serializer instance for that class type.
         final Class<? extends SPSession> claz = session.getClass();
         assert claz != null;

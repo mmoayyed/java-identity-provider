@@ -109,7 +109,8 @@ public final class InstallerSupport {
      * @param excludes pattern to exclude
      * @return a partially populated {@link Copy} task
      */
-    @Nonnull public static Copy getCopyTask(@Nonnull final Path from, @Nonnull final Path to, @Nonnull final String excludes) {
+    @Nonnull public static Copy getCopyTask(@Nonnull final Path from, @Nonnull final Path to,
+            @Nonnull final String excludes) {
         final Copy result = new Copy();
         result.setTodir(to.toFile());
         final FileSet fromSet = new FileSet();
@@ -245,8 +246,8 @@ public final class InstallerSupport {
      * @param includes what to include
      * @throws BuildException if badness occurs
      */
-    public static void setMode(@Nonnull final Path directory, @Nonnull final String permissions, @Nonnull final String includes)
-            throws BuildException {
+    public static void setMode(@Nonnull final Path directory, @Nonnull final String permissions,
+            @Nonnull final String includes) throws BuildException {
         if (!Files.exists(directory) ) {
             log.debug("Directory {} does not exist, not performing chmod", directory);
             return;
@@ -271,8 +272,8 @@ public final class InstallerSupport {
      * @param includes what to include
      * @throws BuildException if badness occurs
      */
-    public static void setGroup(@Nonnull final Path directory, @Nonnull final String group, @Nonnull final String includes)
-            throws BuildException {
+    public static void setGroup(@Nonnull final Path directory, @Nonnull final String group,
+            @Nonnull final String includes) throws BuildException {
         if (!Files.exists(directory) ) {
             log.debug("Directory {} does not exist, not performing chgrp", directory);
             return;

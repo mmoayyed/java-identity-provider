@@ -120,8 +120,10 @@ public class IdPInstallerArguments extends AbstractCommandLineArguments {
         return propertyFile;
     }
 
-    /** Return the DNS name for the IdP
-     * @return Returns the DNS name.
+    /**
+     * Return the DNS name for the IdP.
+     * 
+     * @return the DNS name
      */
     @Nullable public String getHostName() {
         return hostName;
@@ -191,8 +193,10 @@ public class IdPInstallerArguments extends AbstractCommandLineArguments {
         out.println(String.format("  %-22s %s", "-sp, --sealerPassword", "Password for the generated Data Sealer"));
         out.println(String.format("  %-22s %s", "--noPrompt", "Unattended Install"));
 
-        out.println(String.format("  %-22s %s", "-hc, --http-client", "Bean name for an http client (for Module and Plugin Operations"));
-        out.println(String.format("  %-22s %s", "-hs, --http-securityt", "Bean name for http security parameters (for Module and Plugin Operations"));
+        out.println(String.format("  %-22s %s", "-hc, --http-client",
+                "Bean name for an http client (for Module and Plugin Operations"));
+        out.println(String.format("  %-22s %s", "-hs, --http-securityt",
+                "Bean name for http security parameters (for Module and Plugin Operations"));
         out.println();
     }
 

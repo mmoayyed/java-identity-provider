@@ -49,7 +49,8 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
         final String key = getStorageKey();
         final StorageService service = getStorageService();
         final StorageSerializer<Map<String, Consent>> storageSerializer = getStorageSerializer();
-        assert consentContext != null && service != null && key != null && storageContext!= null && storageSerializer!=null;
+        assert consentContext != null && service != null && key != null && storageContext!= null
+                && storageSerializer!=null;
 
         try {
             final StorageRecord<Map<String,Consent>> storageRecord = service.read(storageContext, key);

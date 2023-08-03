@@ -76,8 +76,11 @@ class FlowRelativeResourceLoader extends DefaultResourceLoader {
         return createFlowRelativeResource(location);
     }
 
-    /** Return resource relative to the {@linkplain #flowResource}
+    /**
+     * Return resource relative to the {@linkplain #flowResource}.
+     * 
      * @param location the resource location
+     * 
      * @return a corresponding Resource handle
      */
     @Nonnull private Resource createFlowRelativeResource(@Nonnull final String location) {

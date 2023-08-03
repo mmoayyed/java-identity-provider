@@ -77,7 +77,7 @@ public class FlowModelFlowBuilder extends org.springframework.webflow.engine.bui
                     .map(BeanImportModel::getResource)
                     .collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList()))
                     .get();
-            final String result[] = resultAsList.toArray(resources);
+            final String[] result = resultAsList.toArray(resources);
             assert result != null;
             return result;
         }

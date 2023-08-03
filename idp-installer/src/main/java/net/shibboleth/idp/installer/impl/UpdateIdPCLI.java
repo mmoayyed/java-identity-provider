@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
@@ -63,7 +62,7 @@ import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArguments> {
 
     /** The place we publish our keys. */
-    @Nonnull public static String SHIBBOLETH_SIGNING_KEYS = "http://shibboleth.net/downloads/PGP_KEYS";
+    @Nonnull public static final String SHIBBOLETH_SIGNING_KEYS = "http://shibboleth.net/downloads/PGP_KEYS";
 
     /** Logger. */
     @Nullable private Logger log;
@@ -123,14 +122,15 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
         for (final String s:urlStrings) {
             try {
                 urls.add(new URL(s));
-            } catch (MalformedURLException e) {
+            } catch (final MalformedURLException e) {
                 getLogger().error("Could not convert {} to a URL", s);
                 return RC_IO;
             }
         }
         final HttpClient client = getHttpClient();
         assert client != null;
-        final Properties properties = InstallableComponentSupport.loadInfo(urls, client, getHttpClientSecurityParameters());
+        final Properties properties =
+                InstallableComponentSupport.loadInfo(urls, client, getHttpClientSecurityParameters());
         if (properties == null) {
             return RC_IO;
         }
@@ -144,13 +144,17 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
         }
     }
     
-    /** Check for a potential upgrade, then download if that was requested
+    /**
+     * Check for a potential upgrade, then download if that was requested.
+     * 
      * @param args The command line
      * @param info information about the IdP update states, digested from "plugin.properties"
-     * @param doDownload whether to download the distribution 
+     * @param doDownload whether to download the distribution
+     *  
      * @return a "return status"
      */
-    private int checkUpdate(@Nonnull UpdateIdPArguments args, @Nonnull final InstallableComponentInfo info, boolean doDownload) {
+    private int checkUpdate(@Nonnull final UpdateIdPArguments args, @Nonnull final InstallableComponentInfo info,
+            final boolean doDownload) {
         
         final InstallableComponentVersion from = args.getUpdateFromVersion();
         final VersionInfo currInfo = info.getAvailableVersions().get(from);
@@ -172,7 +176,7 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
         }
 
         InstallableComponentVersion newIdPVersion = args.getUpdateToVersion();
-        boolean versionSpecified = newIdPVersion != null;
+        final boolean versionSpecified = newIdPVersion != null;
         if (!versionSpecified) {
             newIdPVersion = InstallableComponentSupport.getBestVersion(from, from, info);
         }
@@ -200,13 +204,14 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
      */
     private int list(@Nonnull final UpdateIdPArguments args, @Nonnull final InstallableComponentInfo info) {
         
-        final Map<InstallableComponentVersion, InstallableComponentInfo.VersionInfo> versionMap = info.getAvailableVersions();
+        final var versionMap = info.getAvailableVersions();
         final List<InstallableComponentVersion> versionList = new ArrayList<>(versionMap.keySet());
         versionList.sort(null);
         final InstallableComponentVersion us = args.getUpdateFromVersion();
         for (final InstallableComponentVersion ver:versionList) {
             final InstallableComponentInfo.VersionInfo inf = versionMap.get(ver);
-            getLogger().info("Version {}{} Supported Status: {}, Upgrade Candidate: {}", ver, ver.equals(us) ? " (current);" : ";",
+            getLogger().info("Version {}{} Supported Status: {}, Upgrade Candidate: {}", ver,
+                    ver.equals(us) ? " (current);" : ";",
                     inf.getSupportLevel(),
                     info.isSupportedWithIdPVersion(ver, us)?"yes": "no"); 
         }
@@ -214,10 +219,13 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
         return RC_OK;
     }
 
-    /** Download the provided or inferred version
+    /**
+     * Download the provided or inferred version.
+     * 
      * @param args the command line
      * @param version the idp version to download
      * @param info version about all IdP release
+     * 
      * @return a "return status"
      */
     private int download(@Nonnull final UpdateIdPArguments args,
@@ -236,7 +244,8 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
             return RC_IO;
         }
         
-        getLogger().info("Downloading version {} to {}  from {}/{}", version, args.getDownloadLocation(), baseUrl, fileName);
+        getLogger().info("Downloading version {} to {}  from {}/{}", version, args.getDownloadLocation(), baseUrl,
+                fileName);
         try {
             final HttpClient client = getHttpClient();
             assert client != null;
@@ -255,13 +264,13 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
             return RC_IO;
         }
         getLogger().debug("Checking signature");
-        int result = checkSignature(args, fileName);
+        final int result = checkSignature(args, fileName);
         if (result != RC_OK) {
             getLogger().info("Deleting downloaded files");
             try {
                 Files.delete(args.getDownloadLocation().resolve(fileName));
                 Files.delete(args.getDownloadLocation().resolve(fileName + ".asc"));
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 getLogger().error("Could not delete {}[.asc]", fileName, e);
                 args.getDownloadLocation().resolve(fileName).toFile().deleteOnExit();
                 args.getDownloadLocation().resolve(fileName + ".asc").toFile().deleteOnExit();
@@ -314,7 +323,8 @@ public class UpdateIdPCLI extends AbstractIdPHomeAwareCommandLine<UpdateIdPArgum
                 new FileInputStream(args.getDownloadLocation().resolve(fileName).toFile()))) {
                 if (!trust.checkSignature(distroStream, sig)) {
                     getLogger().info("Signature checked for {} failed", fileName);
-                    return RC_IO;                }
+                    return RC_IO;
+                }
             }
 
         } catch (final ComponentInitializationException | IOException e) {

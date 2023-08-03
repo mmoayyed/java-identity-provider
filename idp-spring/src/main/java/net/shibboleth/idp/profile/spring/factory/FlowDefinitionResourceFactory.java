@@ -156,6 +156,7 @@ public class FlowDefinitionResourceFactory {
         return flowResources;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Obtains the flow id from the flow resource. By default, the flow id becomes the portion of the path between the
      * basePath and the filename.
@@ -190,7 +191,8 @@ public class FlowDefinitionResourceFactory {
             if (fname != null) {
                 return StringUtils.stripFilenameExtension(fname);
             } else {
-                throw new IOException("Unable to obtain filename from Resource of type " + flowResource.getClass().getName());
+                throw new IOException("Unable to obtain filename from Resource of type " +
+                        flowResource.getClass().getName());
             }
         }
 
@@ -214,11 +216,13 @@ public class FlowDefinitionResourceFactory {
             if (fname != null) {
                 return StringUtils.stripFilenameExtension(fname);
             } else {
-                throw new IOException("Unable to obtain filename from Resource of type " + flowResource.getClass().getName());
+                throw new IOException("Unable to obtain filename from Resource of type " +
+                        flowResource.getClass().getName());
             }
         }
         return filePath.substring(beginIndex, endIndex);
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * If the file path contains the base path, then the part after the base path is returned,

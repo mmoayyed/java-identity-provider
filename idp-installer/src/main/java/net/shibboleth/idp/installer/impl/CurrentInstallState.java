@@ -162,7 +162,7 @@ public final class CurrentInstallState extends AbstractInitializableComponent {
         findPreviousVersion();
         try {
             findEnabledModules();
-        } catch (IOException | ServiceConfigurationError e) {
+        } catch (final IOException | ServiceConfigurationError e) {
             log.error("Error loading modules", e);
         }
 

@@ -27,7 +27,7 @@ import net.shibboleth.shared.cli.AbstractCommandLine;
 import net.shibboleth.shared.primitive.LoggerFactory;
 
 /**
- * Command line for 'build'
+ * Command line for 'build'.
  */
 public class IdPBuildWar extends AbstractCommandLine<IdPBuildArguments> {
 

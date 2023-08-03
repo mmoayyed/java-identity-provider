@@ -165,7 +165,7 @@ public class PluginState extends AbstractInitializableComponent {
                         propertyResource = new FileSystemResource(path);
                     } else if ("http".equals(url.getProtocol()) || "https".equals(url.getProtocol())) {
                             final HTTPResource httpResource;
-                            assert(httpClient != null);
+                            assert httpClient != null;
                             propertyResource = httpResource = new HTTPResource(httpClient, url);
                             final HttpClientSecurityContextHandler handler = new HttpClientSecurityContextHandler();
                             handler.setHttpClientSecurityParameters(httpClientSecurityParameters);
@@ -191,8 +191,7 @@ public class PluginState extends AbstractInitializableComponent {
                         }
                         return;
                     }
-                }
-                catch (final IOException e) {
+                } catch (final IOException e) {
                     log.error("Could not open Update Resource for {} :", plugin.getPluginId(), e);
                     continue;
                 }

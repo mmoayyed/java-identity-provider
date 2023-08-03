@@ -119,6 +119,14 @@ public class InstallerProperties  {
     /** Whether to tidy up after ourselves. */
     public static final int DEFAULT_KEY_SIZE = 3072;
 
+    /** Those modules which are "core". */
+    @Nonnull public static final Set<String> CORE_MODULES =
+            CollectionSupport.setOf("idp.Core", "idp.EditWebApp", "idp.CommandLine");
+
+    /** Those modules enabled by default. */
+    @Nonnull public static final Set<String> DEFAULT_MODULES =
+            CollectionSupport.setOf("idp.authn.Password", "idp.admin.Hello");
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InstallerProperties.class);
 
@@ -166,12 +174,6 @@ public class InstallerProperties  {
 
     /** Input handler from the prompting. */
     @Nonnull private final InputHandler inputHandler;
-
-    /** Those modules which are "core". */
-    @Nonnull public static final Set<String> CORE_MODULES = CollectionSupport.setOf("idp.Core", "idp.EditWebApp", "idp.CommandLine");
-
-    /** Those modules enabled by default. */
-    @Nonnull public static final Set<String> DEFAULT_MODULES = CollectionSupport.setOf("idp.authn.Password", "idp.admin.Hello");
 
     /**
      * Constructor.
@@ -306,7 +308,7 @@ public class InstallerProperties  {
             final String s = Base64Support.encode(key, false).substring(0, 32);
             assert s != null;
             return s;
-        } catch (NoSuchAlgorithmException|EncodingException e) {
+        } catch (final NoSuchAlgorithmException|EncodingException e) {
             log.error("Password Generation failed", e);
             throw new BuildException("Password Generation failed", e);
         }
@@ -325,7 +327,8 @@ public class InstallerProperties  {
         if (targetDir != null) {
             return targetDir;
         }
-        final Path td = targetDir = Path.of(getValue(TARGET_DIR, "Installation Directory:", () -> "/opt/shibboleth-idp"));
+        final Path td = targetDir =
+                Path.of(getValue(TARGET_DIR, "Installation Directory:", () -> "/opt/shibboleth-idp"));
         assert td != null;
         return td;
     }
@@ -347,7 +350,8 @@ public class InstallerProperties  {
     @Nonnull public String getEntityID() {
         String result = entityID;
         if (result == null) {
-            entityID = result = getValue(ENTITY_ID, "SAML EntityID:", () -> "https://" + getHostName() + "/idp/shibboleth");
+            entityID = result =
+                    getValue(ENTITY_ID, "SAML EntityID:", () -> "https://" + getHostName() + "/idp/shibboleth");
         }
         return result;
     }

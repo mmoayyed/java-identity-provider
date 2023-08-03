@@ -157,7 +157,7 @@ public class CSRFTokenFlowExecutionListener extends AbstractInitializableCompone
             final Object storedCsrfTokenObject = context.getViewScope().get(CSRF_TOKEN_VIEWSCOPE_NAME);
             final String activeFlowId = context.getActiveFlow().getId();
             assert activeFlowId != null;
-            if (storedCsrfTokenObject == null || (!(storedCsrfTokenObject instanceof CSRFToken))) {
+            if (storedCsrfTokenObject == null || !(storedCsrfTokenObject instanceof CSRFToken)) {
                 log.warn("CSRF token is required but was not found in the view-scope; for "
                         + "view-state '{}' and event '{}'.",stateId,event.getId());
                 throw new InvalidCSRFTokenException(activeFlowId, stateId,

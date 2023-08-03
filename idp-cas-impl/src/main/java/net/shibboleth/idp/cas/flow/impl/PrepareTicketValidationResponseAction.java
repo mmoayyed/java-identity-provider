@@ -257,6 +257,7 @@ public class PrepareTicketValidationResponseAction extends
         if (transcodingRules.isEmpty()) {
             log.debug("{} Attribute {} does not have any transcoding rules, applying default", getLogPrefix(),
                     attribute.getId());
+            assert defaultTranscodingRule != null;
             transcodingRules = CollectionSupport.singletonList(defaultTranscodingRule);
         }
         

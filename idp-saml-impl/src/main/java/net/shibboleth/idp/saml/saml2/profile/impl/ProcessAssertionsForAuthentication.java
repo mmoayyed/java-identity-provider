@@ -30,7 +30,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.assertion.ValidationContext;
 import org.opensaml.saml.common.assertion.ValidationProcessingData;
 import org.opensaml.saml.common.assertion.ValidationResult;
@@ -248,13 +247,12 @@ public class ProcessAssertionsForAuthentication extends AbstractAuthenticationAc
     private class DefaultResponseResolver implements Function<ProfileRequestContext, Response> {
 
         /** {@inheritDoc} */
-        public Response apply(final @Nullable ProfileRequestContext profileContext) {
-            assert profileContext!= null;
-            final MessageContext imc = Constraint.isNotNull(profileContext.getInboundMessageContext(), "No inbound Message Context");;
-
-            final SAMLObject message = (SAMLObject) imc.getMessage();
-            if (message instanceof Response) {
-                return (Response) message;
+        @Nullable public Response apply(@Nullable final ProfileRequestContext profileContext) {
+            if (profileContext != null) {
+                final MessageContext imc = profileContext.ensureInboundMessageContext();
+                if (imc.getMessage() instanceof Response r) {
+                    return r;
+                }
             }
             
             return null;

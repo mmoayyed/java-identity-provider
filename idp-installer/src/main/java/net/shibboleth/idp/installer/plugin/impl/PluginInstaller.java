@@ -302,7 +302,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             }
         }
         LOG.info("Installing Plugin {} version {}.{}.{}", pluginId,
-                getDescription().getMajorVersion(),getDescription().getMinorVersion(), getDescription().getPatchVersion());
+                getDescription().getMajorVersion(),getDescription().getMinorVersion(),
+                getDescription().getPatchVersion());
 
         final Set<String> loadedModules = getLoadedModules();
         try (final RollbackPluginInstall rollBack = new RollbackPluginInstall(getModuleContext(), moduleChanges)) {
@@ -824,7 +825,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return the the appropriate  {@link ArchiveInputStream} 
      * @throws IOException  if we trip over an unpack
      */
-    @Nonnull private ArchiveInputStream getStreamFor(@Nonnull final Path fullName, final boolean isZip) throws IOException {
+    @Nonnull private ArchiveInputStream getStreamFor(@Nonnull final Path fullName, final boolean isZip)
+            throws IOException {
         final InputStream inStream = new BufferedInputStream(new FileInputStream(fullName.toFile()));
         if (isZip) {
             return new ZipArchiveInputStream(inStream);
@@ -1017,7 +1019,8 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
     @Nonnull public List<IdPPlugin> getInstalledPlugins() throws BuildException {
        final Stream<Provider<IdPPlugin>> loaderStream =
                ServiceLoader.load(IdPPlugin.class, getInstalledPluginsLoader()).stream();
-       return loaderStream.map(ServiceLoader.Provider::get).collect(CollectionSupport.nonnullCollector(Collectors.toList())).get();
+       return loaderStream.map(ServiceLoader.Provider::get)
+               .collect(CollectionSupport.nonnullCollector(Collectors.toList())).get();
     }
 
     /** Find the {@link IdPPlugin} with the provided Id.

@@ -261,7 +261,8 @@ import net.shibboleth.shared.primitive.LoggerFactory;
      * @return whether it passed or not
      * @throws IOException if we get an error reading the stream
      */
-    public boolean checkSignature(@Nonnull final InputStream input, @Nonnull final Signature signature) throws IOException {
+    public boolean checkSignature(@Nonnull final InputStream input, @Nonnull final Signature signature)
+            throws IOException {
         try {
             final PGPSignature pgpSignature = signature.getSignature();
             final PGPPublicKey pubKey = keyRings.getPublicKey(pgpSignature.getKeyID());
@@ -365,7 +366,8 @@ import net.shibboleth.shared.primitive.LoggerFactory;
                     if (list.isEmpty()) {
                         throw new IOException("Provided signature file was empty");
                     }
-                    signature = Constraint.isNotNull(list.get(0), "PGPSignatureList#get(0) retiurned null for non empty list");
+                    signature = Constraint.isNotNull(list.get(0),
+                            "PGPSignatureList#get(0) retiurned null for non empty list");
                 } else {
                     throw new IOException("Provided file was not a signature");
                 }

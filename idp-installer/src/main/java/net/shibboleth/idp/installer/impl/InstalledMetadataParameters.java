@@ -60,9 +60,10 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.resource.Resource;
 
 /**
- * Parameters to metadata generation
+ * Parameters to metadata generation.
  */
-public class InstalledMetadataParameters extends AbstractInitializableComponent implements TemplateMetadataGeneratorParameters {
+public class InstalledMetadataParameters extends AbstractInitializableComponent
+        implements TemplateMetadataGeneratorParameters {
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(InstalledMetadataParameters.class);
@@ -95,17 +96,17 @@ public class InstalledMetadataParameters extends AbstractInitializableComponent 
      * Static settings.
      */
     /** logout services. */
-    final @Nonnull List<Pair<String, String>> logoutServices = CollectionSupport.singletonList(
+    @Nonnull private final List<Pair<String, String>> logoutServices = CollectionSupport.singletonList(
             new Pair<>("SOAP/","/idp/profile/SAML2/SOAP/ArtifactResolution"));
 
     /** sso services. */
-    final @Nonnull List<Pair<String, String>> ssoServices = CollectionSupport.listOf(
+    @Nonnull private final List<Pair<String, String>> ssoServices = CollectionSupport.listOf(
             new Pair<>("SimpleSign/","/idp/profile/SAML2/POST-SimpleSign/SSO"),
             new Pair<>("Redirect/","/idp/profile/SAML2/Redirect/SSO"),
             new Pair<>("POST/","idp/profile/SAML2/POST/SSO"));
 
     /** artifact services. */
-    final @Nonnull List<Pair<String, String>> artifactServices = CollectionSupport.emptyList();
+    @Nonnull private final List<Pair<String, String>> artifactServices = CollectionSupport.emptyList();
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
@@ -242,8 +243,8 @@ public class InstalledMetadataParameters extends AbstractInitializableComponent 
             @Nonnull final Collection<Pair<String,String>> input) {
         return input
                 .stream()
-                .map(p -> converter.apply(new StringBuffer(p.getFirst()).append(dnsName).append(p.getSecond()).toString(),
-                                          protocols))
+                .map(p -> converter.apply(
+                        new StringBuffer(p.getFirst()).append(dnsName).append(p.getSecond()).toString(), protocols))
                 .collect(CollectionSupport.nonnullCollector(Collectors.toUnmodifiableList())).get();
     }
 
@@ -269,7 +270,7 @@ public class InstalledMetadataParameters extends AbstractInitializableComponent 
         for (final IndexedEndpoint e : role.getArtifactResolutionServices()) {
             e.setIndex(index++);
         }
-          protocols.forEach(role::addSupportedProtocol);
+        protocols.forEach(role::addSupportedProtocol);
         return role;
     }
 

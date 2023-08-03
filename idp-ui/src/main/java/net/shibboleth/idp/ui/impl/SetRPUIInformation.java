@@ -152,7 +152,8 @@ public class SetRPUIInformation extends AbstractProfileAction {
         if (spSSODescriptor != null) {
             final Extensions exts = spSSODescriptor.getExtensions();
             if (exts != null) {
-                final List<XMLObject> children = Constraint.isNotNull(exts.getOrderedChildren(), "Extension Object had no children");
+                final List<XMLObject> children =
+                        Constraint.isNotNull(exts.getOrderedChildren(), "Extension Object had no children");
                 for (final XMLObject object : children) {
                     if (object instanceof UIInfo) {
                         return (UIInfo) object;
@@ -209,7 +210,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
         rpUIContext.setRPUInfo(getRPUInfo());
         final HttpServletRequest request = getHttpServletRequest();
         final NonnullSupplier<HttpServletRequest> supplier = getHttpServletRequestSupplier();
-        assert request != null && supplier!= null;;
+        assert request != null && supplier!= null;
         rpUIContext.setBrowserLanguageRanges(SpringSupport.getLanguageRange(request));
         rpUIContext.setRequestSupplier(supplier);
    }

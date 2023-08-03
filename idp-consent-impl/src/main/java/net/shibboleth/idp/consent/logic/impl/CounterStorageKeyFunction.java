@@ -108,8 +108,9 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
         Constraint.isNotNull(interceptorContext,
                 "Profile interceptor context not available from profile request context");
 
-        final ProfileInterceptorFlowDescriptor flowDescriptor = Constraint.isNotNull(interceptorContext.getAttemptedFlow(),
-                "Profile interceptor flow descriptor not available from profile interceptor context");
+        final ProfileInterceptorFlowDescriptor flowDescriptor =
+                Constraint.isNotNull(interceptorContext.getAttemptedFlow(),
+                        "Profile interceptor flow descriptor not available from profile interceptor context");
 
         return Constraint.isNotNull(flowDescriptor.getStorageService(),
                 "Storage service not available from interceptor flow descriptor");

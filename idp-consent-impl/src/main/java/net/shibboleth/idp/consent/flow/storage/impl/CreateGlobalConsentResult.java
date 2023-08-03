@@ -53,8 +53,8 @@ public class CreateGlobalConsentResult extends AbstractConsentIndexedStorageActi
             final Consent globalConsent = new Consent();
             globalConsent.setId(Consent.WILDCARD);
             globalConsent.setApproved(true);
-            final String value =
-                    getStorageSerializer().serialize(CollectionSupport.singletonMap( globalConsent.ensureId(), globalConsent));
+            final String value = getStorageSerializer().serialize(
+                    CollectionSupport.singletonMap(globalConsent.ensureId(), globalConsent));
             final ConsentFlowDescriptor flowDescriptor = getConsentFlowDescriptor();
             final String storageContext = getStorageContext();
             final String storageKey = getStorageKey();

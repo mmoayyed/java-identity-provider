@@ -73,6 +73,7 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
                new ClassPathResource("net/shibboleth/idp/conf/http-client.xml"));
     }
 
+// Checkstyle: MethodLength OFF
     /** {@inheritDoc} */
     protected int doRun(@Nonnull final IdPInstallerArguments args) {
 
@@ -147,13 +148,14 @@ public class IdPInstallerCLI extends AbstractCommandLine<IdPInstallerArguments> 
         }
         return RC_OK;
     }
+// Checkstyle: MethodLength ON
     
     /** Helper for translating arguments to properties.  Look at the value and if it is non-null
      * set the associate property.
      * @param value the value to check and potentially set
      * @param propertyName the property name to set
      */
-    private void setIfNotNull(@Nullable String value, @Nonnull String propertyName) {
+    private void setIfNotNull(@Nullable final String value, @Nonnull final String propertyName) {
         if (value == null) {
             return;
         }

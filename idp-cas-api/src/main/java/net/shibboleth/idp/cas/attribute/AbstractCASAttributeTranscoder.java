@@ -91,6 +91,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
                 continue;
             }
 
+            @SuppressWarnings("unchecked")
             final EncodedType attributeValue = (EncodedType) o;
             final String casAttributeValue = encodeValue(profileRequestContext, attribute, rule, attributeValue);
             if (casAttributeValue == null) {

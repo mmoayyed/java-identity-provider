@@ -54,7 +54,11 @@ public class ProxyGrantingTicket extends Ticket {
         parentPgTicketId = StringSupport.trimOrNull(parentId);
     }
 
-    /** @return Proxy callback URL that uniquely identifies the proxying party to which the PGT was issued. */
+    /**
+     * Gets the proxy callback URL that uniquely identifies the proxying party to which the PGT was issued.
+     * 
+     * @return proxy callback URL
+     */
     @Nonnull public String getProxyCallbackUrl() {
         return proxyCallbackUrl;
     }

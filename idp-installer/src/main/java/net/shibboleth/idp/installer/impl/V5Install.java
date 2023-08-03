@@ -133,7 +133,8 @@ public class V5Install {
      */
     protected void checkPreConditions() throws BuildException {
         final String versionAsString = Version.getVersion();
-        final InstallableComponentVersion idpVersion = new InstallableComponentVersion(versionAsString!=null?versionAsString:"5.0.0");
+        final InstallableComponentVersion idpVersion =
+                new InstallableComponentVersion(versionAsString!=null?versionAsString:"5.0.0");
         for (final IdPPlugin plugin: ServiceLoader.load(IdPPlugin.class, currentState.getInstalledPluginsLoader())) {
             final String pluginId = plugin.getPluginId();
             final InstallableComponentVersion pluginVersion = new InstallableComponentVersion(plugin);
@@ -344,20 +345,21 @@ public class V5Install {
             final Pattern pat = Pattern.compile(".*net\\.shibboleth\\.ext\\.spring"+
                     "\\.context\\.DeferPlaceholderFileSystemXmlWebApplicationContext.*");
             final Pattern systemInWebXml = Pattern.compile(".*\\$\\{idp\\.home\\}/system.*");
-            boolean foundPat1 = false, foundSystemInWebXml = false;
+            boolean foundPat1 = false;
+            boolean foundSystemInWebXml = false;
             String line = in.readLine();
             while (line != null) {
                 if (!foundPat1 && pat.matcher(line).matches()) {
                     foundPat1=true;
                     log.warn("Your copy of edit-webapp/WEB-INF/web.xml contains a reference to a replaced class, {}",
                             DeferPlaceholderFileSystemXmlWebApplicationContext.class.getCanonicalName());
-                    log.warn("You MUST update this to {} and rebuild the war after installation or the IdP will refuse to start.",
+                    log.warn("You MUST update this to {} and rebuild the war after installation or the IdP will refuse to start",
                             DelimiterAwareApplicationContext.class.getCanonicalName());
                 }
                 if (!foundSystemInWebXml && systemInWebXml.matcher(line).matches()) {
                     foundSystemInWebXml=true;
                     log.warn("Your copy of edit-webapp/WEB-INF/web.xml contains a reference to ${idp.home}/system");
-                    log.warn("This no longer exists.  Make the required changed and rebuild the war after installation or the IdP will refuse to start.");
+                    log.warn("This no longer exists. Make the required changed and rebuild the war after installation or the IdP will refuse to start");
                 }
                 line = in.readLine();
             }
@@ -366,7 +368,9 @@ public class V5Install {
         }
     }
 
-    /** Enable Core modules if this is a new install
+    /**
+     * Enable Core modules if this is a new install.
+     * 
      * @throws BuildException if badness occurs
      */
     protected void enableCoreModules() throws BuildException {
@@ -470,7 +474,7 @@ public class V5Install {
         }
         try {
             InitializationService.initialize();
-        } catch (InitializationException e) {
+        } catch (final InitializationException e) {
             log.error("Could not intiailize opensaml", e);
             throw new BuildException(e);
         }
@@ -483,7 +487,8 @@ public class V5Install {
                 .build();
 
         log.info("Creating Metadata to {}", metadataFile);
-        final InstalledMetadataParameters parameters = context.getBean("IdPConfiguration", InstalledMetadataParameters.class);
+        final InstalledMetadataParameters parameters =
+                context.getBean("IdPConfiguration", InstalledMetadataParameters.class);
         parameters.setDnsName(installerProps.getHostName());
         final VelocityEngine engine = context.getBean("VelocityEngine", VelocityEngine.class);
         log.debug("Parameters {}", parameters);
@@ -497,10 +502,10 @@ public class V5Install {
             generator.setVelocityEngine(engine);
             generator.initialize();
             generator.generate(parameters, sink);
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             log.error("Metadata Generator initialization failed", e);
             throw new BuildException(e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Metadata Generator failed to write to", metadataFile, e);
             throw new BuildException(e);
         }

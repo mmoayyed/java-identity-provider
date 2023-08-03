@@ -40,10 +40,10 @@ import net.shibboleth.shared.primitive.StringSupport;
 public class PreferExplicitOrderComparator implements Comparator<String> {
 
     /** Explicit ordering. */
-    @Nonnull final private Ordering<String> explicitOrdering;
+    @Nonnull private final Ordering<String> explicitOrdering;
 
     /** Strings in order. */
-    @Nonnull @Unmodifiable final private List<String> explicitOrder;
+    @Nonnull @Unmodifiable private final  List<String> explicitOrder;
 
     /**
      * Constructor.
