@@ -166,7 +166,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         return true;
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -245,7 +245,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
             }
         }
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
 
 // Checkstyle: CyclomaticComplexity OFF
     /**

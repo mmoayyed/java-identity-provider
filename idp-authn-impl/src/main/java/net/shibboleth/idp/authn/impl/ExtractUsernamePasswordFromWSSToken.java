@@ -61,6 +61,10 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+        
         final MessageContext inCtx = profileRequestContext.getInboundMessageContext();
         if (inCtx == null || !(inCtx.getMessage() instanceof Envelope)) {
             log.debug("{} Inbound message context missing or doesn't contain a SOAP Envelope", getLogPrefix());
@@ -69,13 +73,14 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
         }
         
         inboundMessage = (Envelope) inCtx.getMessage();
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+        return true;
     }
 
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
+        assert inboundMessage != null;
         final Pair<String, String> usernamePassword = extractUsernamePassword(inboundMessage);
         if (usernamePassword == null) {
             log.debug("{} inbound message does not contain a username and password", getLogPrefix());

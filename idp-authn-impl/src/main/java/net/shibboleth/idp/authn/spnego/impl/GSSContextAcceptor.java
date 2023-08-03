@@ -49,9 +49,6 @@ public class GSSContextAcceptor {
 
     /** The Kerberos settings. */
     @Nonnull private KerberosSettings kerberosSettings;
-
-    /** The realm in use. Debug use only. */
-    @Nullable private KerberosRealmSettings realmSettings;
     
     /** The Kerberos login module and server login state. */
     @Nullable private GSSAcceptorLoginModule krbLoginModule;
@@ -177,7 +174,6 @@ public class GSSContextAcceptor {
                 createGSSContext(realm);
                 assert context != null;
                 final byte[] tokenOut = context.acceptSecContext(inToken, offset, len);
-                realmSettings = realm;
                 assert context != null;
                 if (context.isEstablished()) {
                     log.trace("Security context fully established");

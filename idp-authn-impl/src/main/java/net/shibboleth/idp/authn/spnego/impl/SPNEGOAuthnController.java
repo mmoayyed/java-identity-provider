@@ -229,8 +229,9 @@ public class SPNEGOAuthnController {
      * @throws ExternalAuthenticationException ...
      */
     @RequestMapping(value = "/{conversationKey}/error", method = RequestMethod.GET)
-    public void handleError(@PathVariable @Nonnull final String conversationKey, @Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse) throws ExternalAuthenticationException, IOException {
+    public void handleError(@PathVariable @Nonnull final String conversationKey,
+            @Nonnull final HttpServletRequest httpRequest, @Nonnull final HttpServletResponse httpResponse)
+                    throws ExternalAuthenticationException, IOException {
 
         log.warn("SPNEGO authentication problem signaled by client");
         finishWithError(conversationKey, httpRequest, httpResponse, SPNEGO_NOT_AVAILABLE);

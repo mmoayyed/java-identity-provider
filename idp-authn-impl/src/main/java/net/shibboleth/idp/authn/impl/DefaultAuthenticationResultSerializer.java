@@ -238,7 +238,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
                         gen.write(Base64Support.encode(x.getEncoded(), false));
                     } catch (final CertificateEncodingException|EncodingException e) {
                         log.warn("Unable to serialize X.509 certificate with subject: {}",
-                                x.getSubjectDN().toString());
+                                x.getSubjectX500Principal().getName().toString());
                     }
                 }
                 gen.writeEnd();

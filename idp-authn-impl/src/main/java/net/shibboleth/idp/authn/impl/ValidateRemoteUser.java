@@ -182,8 +182,6 @@ public class ValidateRemoteUser extends AbstractAuditingValidationAction {
     /** {@inheritDoc} */
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
-        final UsernameContext usernameContext = this.usernameContext;
-        assert usernameContext != null;
         final String userName = usernameContext.getUsername();
         assert userName != null;
 

@@ -98,8 +98,7 @@ public class MultiFactorAuthenticationTransition {
                 if (entry.getValue() instanceof String) {
                     final String flowId = StringSupport.trimOrNull((String) entry.getValue());
                     if (flowId != null) {
-                        nextFlowStrategyMap.put(trimmed,
-                                FunctionSupport.<ProfileRequestContext,String>constant(flowId));
+                        nextFlowStrategyMap.put(trimmed, FunctionSupport.constant(flowId));
                     }
                 } else if (entry.getValue() instanceof Function) {
                     nextFlowStrategyMap.put(trimmed, (Function<ProfileRequestContext, String>) entry.getValue());

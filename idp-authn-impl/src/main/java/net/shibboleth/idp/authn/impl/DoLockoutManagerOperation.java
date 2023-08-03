@@ -267,6 +267,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
      */
     @Nonnull private AccountLockoutManager getLockoutManager() {
         assert isPreExecuteCalled();
+        assert lockoutManager != null;
         return lockoutManager;
     }
 

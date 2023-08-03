@@ -111,6 +111,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
      */
     @Nonnull private RevocationCache getRevocationCache() {
         assert isPreExecuteCalled();
+        assert revocationCache != null;
         return revocationCache;
     }
 
@@ -119,6 +120,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
      */
     @Nonnull private String getCacheId() {
         assert isPreExecuteCalled();
+        assert cacheId != null;
         return cacheId;
     }
 
@@ -127,6 +129,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
      */
     @Nonnull private String getKey() {
         assert isPreExecuteCalled();
+        assert key != null;
         return key;
     }
 
@@ -135,6 +138,7 @@ public class DoRevocationCacheOperation extends AbstractProfileAction {
      */
     @Nonnull private String getContext() {
         assert isPreExecuteCalled();
+        assert context != null;
         return context;
     }
 
