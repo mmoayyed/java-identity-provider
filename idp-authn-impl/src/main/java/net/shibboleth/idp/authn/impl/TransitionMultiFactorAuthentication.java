@@ -221,6 +221,14 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
                 flowId = transition.getNextFlowStrategy("*").apply(profileRequestContext);
             }
         }
+
+        // IDP-1612 improvement: Check for explicit transition of "proceed".
+        if (EventIds.PROCEED_EVENT_ID.equals(flowId)) {
+            // Install the proceed event to override any previous event, and null the flow to run to signal completion.
+            mfaContext.setEvent(flowId);
+            flowId = null;
+        }
+        
         if (flowId != null) {
             log.debug("{} MFA flow transition after '{}' event to '{}' flow", getLogPrefix(), previousEvent, flowId);
             mfaContext.setNextFlowId(flowId);
