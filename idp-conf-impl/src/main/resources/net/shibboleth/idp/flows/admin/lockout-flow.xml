@@ -6,6 +6,7 @@
     <on-start>
         <!-- Extract PATH_INFO containing lockout manager and key. -->
         <evaluate expression="flowRequestContext.getActiveFlow().getId()" result="flowScope.flowId" />
+        <evaluate expression="externalContext.getNativeRequest().getParameter('inexact')" result="flowScope.inexact" />
         <evaluate expression="externalContext.getNativeRequest().getPathInfo().length() gt flowId.length() + 2 ? externalContext.getNativeRequest().getPathInfo().substring(flowId.length() + 2) : ''" result="flowScope.pathInfo" />
         <evaluate expression="pathInfo.split('/')" result="flowScope.pathInfoArray" />
         <evaluate expression="pathInfoArray.length gt 0 ? T(net.shibboleth.shared.net.URISupport).doURLDecode(pathInfoArray[0]) : null" result="flowScope.lockoutManagerId" />

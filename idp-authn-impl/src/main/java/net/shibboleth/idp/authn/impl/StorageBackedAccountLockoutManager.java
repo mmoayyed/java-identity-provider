@@ -17,18 +17,21 @@ package net.shibboleth.idp.authn.impl;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.EnumeratableStorageService;
 import org.opensaml.storage.StorageCapabilities;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 
-import net.shibboleth.idp.authn.AccountLockoutManager;
+import net.shibboleth.idp.authn.EnumeratableAccountLockoutManager;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.LockoutManagerContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
@@ -46,11 +49,11 @@ import net.shibboleth.shared.servlet.HttpServletSupport;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * Implementation of {@link AccountLockoutManager} interface that relies on a {@link StorageService}
+ * Implementation of {@link EnumeratableAccountLockoutManager} interface that relies on a {@link StorageService}
  * to track lockout state.
  */
 public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInitializableComponent
-        implements AccountLockoutManager {
+        implements EnumeratableAccountLockoutManager {
     
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(StorageBackedAccountLockoutManager.class);
@@ -218,11 +221,138 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
 
     /** {@inheritDoc} */
     public boolean check(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final String key = getLockoutKeyStrategy().apply(profileRequestContext);
+        
+        final String key;
+        final boolean managerOp;
+        final LockoutManagerContext managerCtx = profileRequestContext.getSubcontext(LockoutManagerContext.class);
+        if (managerCtx != null) {
+            key = managerCtx.getKey();
+            managerOp = true;
+        } else {
+            key = getLockoutKeyStrategy().apply(profileRequestContext);
+            managerOp = false;
+        }
+        
         if (key == null) {
             log.warn("No lockout key returned for request");
             return false;
         }
+
+        final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext).toMillis();
+        final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext).toMillis();
+        final int maxAttempts = maxAttemptsLookupStrategy.apply(profileRequestContext);
+
+        return doCheck(profileRequestContext, key, maxAttempts, lockoutDuration, counterInterval,
+                extendLockoutDuration && !managerOp);
+    }
+
+    /** {@inheritDoc} */
+    public boolean increment(@Nonnull final ProfileRequestContext profileRequestContext) {
+
+        final String key;
+        final LockoutManagerContext managerCtx = profileRequestContext.getSubcontext(LockoutManagerContext.class);
+        if (managerCtx != null) {
+            key = managerCtx.getKey();
+        } else {
+            key = getLockoutKeyStrategy().apply(profileRequestContext);
+        }
+        
+        if (key == null) {
+            log.warn("No lockout key returned for request");
+            return false;
+        }
+        
+        final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext).toMillis();
+        final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext).toMillis();
+        
+        return doIncrement(profileRequestContext, key, 10, lockoutDuration, counterInterval);
+    }
+
+    /** {@inheritDoc} */
+    public boolean clear(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        final String key;
+        final LockoutManagerContext managerCtx = profileRequestContext.getSubcontext(LockoutManagerContext.class);
+        if (managerCtx != null) {
+            key = managerCtx.getKey();
+        } else {
+            key = getLockoutKeyStrategy().apply(profileRequestContext);
+        }
+
+        try {
+            if (key != null) {
+                log.debug("Clearing lockout state for '{}'", key);
+                storageService.delete(ensureId(), key);
+                return true;
+            }
+            log.warn("No lockout key returned for request");
+        } catch (final IOException e) {
+            log.error("Error deleting lockout entry", e);
+        }
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Nullable public Iterable<String> enumerate(@Nonnull final ProfileRequestContext profileRequestContext) {
+
+        final String partialKey;
+        final LockoutManagerContext managerCtx = profileRequestContext.getSubcontext(LockoutManagerContext.class);
+        if (managerCtx != null) {
+            partialKey = managerCtx.getKey();
+        } else {
+            partialKey = null;
+        }
+        
+        if (partialKey == null) {
+            log.warn("No lockout key provided for request");
+            return null;
+        }
+
+        if (storageService instanceof EnumeratableStorageService ess) {
+            final Iterable<String> keys;
+            try {
+                keys = ess.getContextKeys(ensureId());
+            } catch (final IOException e) {
+                log.error("Error enumerating lockout storage context", e);
+                return null;
+            }
+        
+            final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext).toMillis();
+            final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext).toMillis();
+            final int maxAttempts = maxAttemptsLookupStrategy.apply(profileRequestContext);
+            
+            final Collection<String> results = new ArrayList<>();
+            
+            for (final String key : keys) {
+                if (key.startsWith(partialKey)) {
+                    if (doCheck(profileRequestContext, key, maxAttempts, lockoutDuration, counterInterval, false)) {
+                        results.add(key);
+                    }
+                }
+            }
+            
+            return results;
+        } else {
+            throw new UnsupportedOperationException("Underlying storage service does not support enumeration of keys");
+        }
+        
+    }
+    
+    /**
+     * Helper method to perform a check operation against a specific key.
+     * 
+     * @param profileRequestContext current profile request context
+     * @param key input key to check
+     * @param maxAttempts maximum allowable attempts before lockout
+     * @param lockoutDuration duration of lockout
+     * @param counterInterval interval before disregarding attempts
+     * @param increment whether to increment the counter if already locked out
+     * 
+     * @return true iff the designated key is locked out
+     */
+// Checkstyle: ParameterNum OFF
+    protected boolean doCheck(@Nonnull final ProfileRequestContext profileRequestContext, @Nonnull final String key,
+            final int maxAttempts, final long lockoutDuration, final long counterInterval, final boolean increment) {
         // Read back account state. No state obviously means no lockout, but in the case of errors
         // that does fail open. Of course, in-memory won't fail...
         StorageRecord<?> sr = null;
@@ -240,18 +370,16 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         try {
             // Read counter and check if we've exceeded the limit.
             final int counter = Integer.parseInt(sr.getValue());
-            if (counter >= maxAttemptsLookupStrategy.apply(profileRequestContext)) {
+            if (counter >= maxAttempts) {
                 // Recover time of last attempt from the record expiration and find the time elapsed since.
                 // If that's under the lockout duration, we're locked out.
-                final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext).toMillis();
-                final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext).toMillis();
                 final Long exp = Constraint.isNotNull(sr.getExpiration(), "Stored expiration canot be null");
                 final long lastAttempt = exp - Math.max(lockoutDuration, counterInterval);
                 final long timeDifference = System.currentTimeMillis() - lastAttempt;
                 if (timeDifference <= lockoutDuration) {
                     log.info("Lockout threshold reached for '{}', invalid count is {}", key, counter);
-                    if (extendLockoutDuration) {
-                        doIncrement(profileRequestContext, key, 10);
+                    if (increment) {
+                        doIncrement(profileRequestContext, key, 10, lockoutDuration, counterInterval);
                     }
                     return true;
                 }
@@ -265,34 +393,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
 
         return false;
     }
-
-    /** {@inheritDoc} */
-    public boolean increment(@Nonnull final ProfileRequestContext profileRequestContext) {
-        // Work is done by helper method to track storage retries.
-        final String key = getLockoutKeyStrategy().apply(profileRequestContext);
-        if (key == null) {
-            log.warn("No lockout key returned for request");
-            return false;
-        }
-        
-        return doIncrement(profileRequestContext, key, 10);
-    }
-
-    /** {@inheritDoc} */
-    public boolean clear(@Nonnull final ProfileRequestContext profileRequestContext) {
-        try {
-            final String key = getLockoutKeyStrategy().apply(profileRequestContext);
-            if (key != null) {
-                log.debug("Clearing lockout state for '{}'", key);
-                storageService.delete(ensureId(), key);
-                return true;
-            }
-            log.warn("No lockout key returned for request");
-        } catch (final IOException e) {
-            log.error("Error deleting lockout entry", e);
-        }
-        return false;
-    }
+// Checkstyle: ParameterNum ON
     
 // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /**
@@ -301,11 +402,14 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * @param profileRequestContext current profile request context
      * @param key account lockout key
      * @param retries number of additional retries to allow
+     * @param lockoutDuration duration of lockout
+     * @param counterInterval interval before disregarding attempts
      * 
      * @return true iff successful
      */
     protected boolean doIncrement(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull @NotEmpty final String key, final int retries) {
+            @Nonnull @NotEmpty final String key, final int retries, final long lockoutDuration,
+            final long counterInterval) {
 
         if (retries <= 0) {
             log.error("Account lockout increment attempts for '{}' exceeded retry limit", key);
@@ -333,8 +437,6 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         }
         
         final long now = System.currentTimeMillis();
-        final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext).toMillis();
-        final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext).toMillis();
         
         // Compute last access time by backing off from record expiration.
         long lastAccess = now;
@@ -374,7 +476,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             }
         }
         
-        return doIncrement(profileRequestContext, key, retries-1);
+        return doIncrement(profileRequestContext, key, retries-1, lockoutDuration, counterInterval);
     }
 // Checkstyle: CyclomaticComplexity|MethodLength ON
     
@@ -417,12 +519,6 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
                 return null;
             }
             
-            final LockoutManagerContext lockoutManagerContext =
-                    profileRequestContext.getSubcontext(LockoutManagerContext.class);
-            if (lockoutManagerContext != null) {
-                return lockoutManagerContext.getKey();
-            }
-
             if (getHttpServletRequest() == null) {
                 return null;
             }

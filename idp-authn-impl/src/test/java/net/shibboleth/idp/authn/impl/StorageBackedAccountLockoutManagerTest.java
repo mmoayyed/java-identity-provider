@@ -32,6 +32,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link StorageBackedAccountLockoutManager} unit test. */
+@SuppressWarnings("javadoc")
 public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationContextTest {
 
     private StorageBackedAccountLockoutManager manager;    

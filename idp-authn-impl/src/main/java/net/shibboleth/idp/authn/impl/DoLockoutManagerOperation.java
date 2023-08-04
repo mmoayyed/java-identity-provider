@@ -15,6 +15,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,7 +24,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
-import org.springframework.beans.BeansException;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -36,6 +36,7 @@ import com.google.common.base.Strings;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.AccountLockoutManager;
+import net.shibboleth.idp.authn.EnumeratableAccountLockoutManager;
 import net.shibboleth.idp.authn.context.LockoutManagerContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
@@ -75,6 +76,9 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
     /** Flow variable indicating ID of account key. */
     @Nonnull @NotEmpty public static final String KEY = "key";
 
+    /** Flow variable indicating whether key should be inexactly matched. */
+    @Nonnull @NotEmpty public static final String INEXACT = "inexact";
+
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(DoLockoutManagerOperation.class);
     
@@ -86,6 +90,9 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
 
     /** Account key to operate on. */
     @NonnullBeforeExec @NotEmpty private String key;
+    
+    /** Enumerating on inexact matches? */
+    private boolean inexact;
     
     /** {@link AccountLockoutManager} to operate on. */
     @NonnullBeforeExec private AccountLockoutManager lockoutManager;
@@ -110,6 +117,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
         }
     }
 
+// Checkstyle: CyclomaticComplexity|ReturnCount OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
@@ -153,6 +161,16 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
                         "Missing Account Key", "No account key specified.");
                 return false;
             }
+            
+            final String flag = (String) requestContext.getFlowScope().get(INEXACT);
+            if (flag != null) {
+                inexact = Boolean.valueOf(flag);
+                if (inexact && !(lockoutManager instanceof EnumeratableAccountLockoutManager)) {
+                    sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                            "Invalid Lockout Manager", "Lockout manager specified does not support inexact lookup.");
+                    return false;
+                }
+            }
 
         } catch (final IOException e) {
             log.error("{} I/O error issuing API response", getLogPrefix(), e);
@@ -162,8 +180,9 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
 
         return true;
     }
+// Checkstyle: ReturnCount ON
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: MethodLength OFF
     /** {@inheritDoc} */
     @Override protected void doExecute(final @Nonnull ProfileRequestContext profileRequestContext) {
 
@@ -178,18 +197,48 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
             
             if ("GET".equals(request.getMethod())) {
                 try {
-                    final boolean lockout = getLockoutManager().check(profileRequestContext);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    final JsonFactory jsonFactory = new JsonFactory();
-                    try (final JsonGenerator g = jsonFactory.createGenerator(
-                            response.getOutputStream()).useDefaultPrettyPrinter()) {
-                        g.setCodec(objectMapper);
-                        g.writeStartObject();
-                        g.writeObjectFieldStart("data");
-                        g.writeStringField("type", "lockout-statuses");
-                        g.writeStringField("id", managerId + '/' + key);
-                        g.writeObjectFieldStart("attributes");
-                        g.writeBooleanField("lockout", lockout);
+                    if (inexact) {
+                        final Iterable<String> lockedKeys =
+                                ((EnumeratableAccountLockoutManager) getLockoutManager()).enumerate(
+                                        profileRequestContext);
+                        if (lockedKeys != null) {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            final JsonFactory jsonFactory = new JsonFactory();
+                            try (final JsonGenerator g = jsonFactory.createGenerator(
+                                    response.getOutputStream()).useDefaultPrettyPrinter()) {
+                                g.setCodec(objectMapper);
+                                g.writeStartObject();
+                                g.writeObjectFieldStart("data");
+                                g.writeStringField("id", managerId + '/' + key);
+                                g.writeStringField("type", "lockout-keys");
+                                g.writeArrayFieldStart("data");
+                                for (final String k : lockedKeys) {
+                                    g.writeString(k);
+                                }
+                                g.writeEndArray();
+                                g.writeEndObject();
+                                g.writeEndObject();
+                            }
+                        } else {
+                            sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
+                                    "Lockout manager error.");
+                        }
+                    } else {
+                        final boolean lockout = getLockoutManager().check(profileRequestContext);
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        final JsonFactory jsonFactory = new JsonFactory();
+                        try (final JsonGenerator g = jsonFactory.createGenerator(
+                                response.getOutputStream()).useDefaultPrettyPrinter()) {
+                            g.setCodec(objectMapper);
+                            g.writeStartObject();
+                            g.writeObjectFieldStart("data");
+                            g.writeStringField("type", "lockout-statuses");
+                            g.writeStringField("id", managerId + '/' + key);
+                            g.writeObjectFieldStart("attributes");
+                            g.writeBooleanField("lockout", lockout);
+                            g.writeEndObject();
+                            g.writeEndObject();
+                        }
                     }
                 } catch (final IOException e) {
                     sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Server Error",
@@ -231,7 +280,7 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
 
     /**
      * Helper method to get the manager bean to operate on.
@@ -242,24 +291,14 @@ public class DoLockoutManagerOperation extends AbstractProfileAction {
      */
     @Nullable private AccountLockoutManager setupLockoutManager(@Nonnull final RequestContext requestContext) {
         
-        final String mgrId = this.managerId = (String) requestContext.getFlowScope().get(MANAGER_ID);
-        if (mgrId == null) {
+        managerId = (String) requestContext.getFlowScope().get(MANAGER_ID);
+        if (managerId == null) {
             log.warn("{} No {} flow variable found in request", getLogPrefix(), MANAGER_ID);
             return null;
         }
-        
-        try {
-            assert mgrId != null;
-            final Object bean = requestContext.getActiveFlow().getApplicationContext().getBean(mgrId);
-            if (bean != null && bean instanceof AccountLockoutManager) {
-                return (AccountLockoutManager) bean;
-            }
-        } catch (final BeansException e) {
-            
-        }
-        
-        log.warn("{} No bean of the correct type found named {}", getLogPrefix(), mgrId);
-        return null;
+
+        assert managerId != null;
+        return getBean(requestContext, managerId, AccountLockoutManager.class);
     }
 
     /** Null safe getter.
