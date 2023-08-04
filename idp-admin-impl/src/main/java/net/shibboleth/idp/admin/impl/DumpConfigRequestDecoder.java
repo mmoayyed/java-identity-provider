@@ -55,6 +55,12 @@ public class DumpConfigRequestDecoder extends AbstractHttpServletRequestMessageD
     /** Name of the query parameter carrying the requester: {@value} . */
     @Nonnull @NotEmpty public static final String REQUESTER_ID_PARAM = "requester";
 
+    /** Constructor. */
+    public DumpConfigRequestDecoder() {
+        super();
+        setProtocolMessageLoggerSubCategory("ADMIN");
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doDecode() throws MessageDecodingException {

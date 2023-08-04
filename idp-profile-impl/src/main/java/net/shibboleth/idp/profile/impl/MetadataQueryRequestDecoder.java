@@ -54,6 +54,12 @@ public class MetadataQueryRequestDecoder extends AbstractHttpServletRequestMessa
     /** Name of the query parameter carrying the detectDuplicateEntityIDs: {@value} . */
     @Nonnull @NotEmpty public static final String DETECT_DUPLICATES_PARAM= "detectDuplicateEntityIDs";
     
+    /** Constructor. */
+    public MetadataQueryRequestDecoder() {
+        super();
+        setProtocolMessageLoggerSubCategory("ADMIN");
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doDecode() throws MessageDecodingException {

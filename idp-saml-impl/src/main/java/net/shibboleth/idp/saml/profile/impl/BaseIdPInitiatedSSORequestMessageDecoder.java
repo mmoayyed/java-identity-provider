@@ -61,7 +61,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder extends AbstractH
     /** Constructor. */
     public BaseIdPInitiatedSSORequestMessageDecoder() {
         super();
-        setProtocolMessageLoggerCategory(BASE_PROTOCOL_MESSAGE_LOGGER_CATEGORY + ".SAML");
+        setProtocolMessageLoggerSubCategory("SAML");
     }
 
     /** ID generator. */

@@ -52,6 +52,12 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
     /** Name of the query parameter for the SAML 2 protocol: {@value} . */
     @Nonnull @NotEmpty public static final String SAML2_PARAM = "saml2";
 
+    /** Constructor. */
+    public ResolverTestRequestDecoder() {
+        super();
+        setProtocolMessageLoggerSubCategory("ADMIN");
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doDecode() throws MessageDecodingException {
