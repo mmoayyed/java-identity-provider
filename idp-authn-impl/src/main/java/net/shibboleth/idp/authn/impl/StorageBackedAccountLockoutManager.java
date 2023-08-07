@@ -311,7 +311,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         if (storageService instanceof EnumeratableStorageService ess) {
             final Iterable<String> keys;
             try {
-                keys = ess.getContextKeys(ensureId());
+                keys = ess.getContextKeys(ensureId(), partialKey);
             } catch (final IOException e) {
                 log.error("Error enumerating lockout storage context", e);
                 return null;
