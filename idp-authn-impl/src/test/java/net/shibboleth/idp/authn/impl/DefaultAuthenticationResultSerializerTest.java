@@ -68,6 +68,7 @@ import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
 import net.shibboleth.shared.spring.resource.ResourceHelper;
 
 /** {@link DefaultAuthenticationResultSerializer} unit test. */
+@SuppressWarnings("javadoc")
 public class DefaultAuthenticationResultSerializerTest {
 
     private static final String DATAPATH = "/net/shibboleth/idp/authn/impl/";
@@ -80,7 +81,7 @@ public class DefaultAuthenticationResultSerializerTest {
     
     private static final long ACTIVITY = 1378827556778L;
 
-    private static final String entityCertBase64 = 
+    @Nonnull private static final String entityCertBase64 = 
             "MIIDjDCCAnSgAwIBAgIBKjANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +
             "cm5ldDIxFzAVBgNVBAMTDmNhLmV4YW1wbGUub3JnMB4XDTA3MDQwOTA2MTIwOVoX" +
             "DTE3MDQwNjA2MTIwOVowMTESMBAGA1UEChMJSW50ZXJuZXQyMRswGQYDVQQDExJm" +

@@ -33,6 +33,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ExtractRemoteUser} unit test. */
+@SuppressWarnings("javadoc")
 public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
     
     private ExtractRemoteUser action; 

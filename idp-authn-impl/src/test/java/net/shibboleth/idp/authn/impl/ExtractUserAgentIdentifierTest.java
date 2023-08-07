@@ -30,6 +30,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ExtractUserAgentIdentifier} unit test. */
+@SuppressWarnings("javadoc")
 public class ExtractUserAgentIdentifierTest extends BaseAuthenticationContextTest {
     
     private ExtractUserAgentIdentifier action; 

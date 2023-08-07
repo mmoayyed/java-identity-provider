@@ -18,6 +18,8 @@ package net.shibboleth.idp.authn.impl;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.security.x509.X509Support;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
@@ -34,9 +36,10 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ExtractX509CertificateFromRequest} unit test. */
+@SuppressWarnings("javadoc")
 public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationContextTest {
     
-    private String entityCertBase64 = 
+    @Nonnull private final String entityCertBase64 = 
         "MIIDjDCCAnSgAwIBAgIBKjANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +
         "cm5ldDIxFzAVBgNVBAMTDmNhLmV4YW1wbGUub3JnMB4XDTA3MDQwOTA2MTIwOVoX" +
         "DTE3MDQwNjA2MTIwOVowMTESMBAGA1UEChMJSW50ZXJuZXQyMRswGQYDVQQDExJm" +
@@ -57,7 +60,7 @@ public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationCon
         "uLdeRCZmi93vq1D4JVGsXC4UaHjg114+a+9q0XZdz6a1UW4pt1ryXIPotCS62M71" +
         "pkJf5neHUinKAqgoRfPXowudZg1Zl8DjzoOBn+MNHRrR5KYbVGvdHcxoJLCwVB/v";
         
-    private String otherCert1Base64 = 
+    @Nonnull private final String otherCert1Base64 = 
         "MIIECTCCAvGgAwIBAgIBMzANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +
         "cm5ldDIxFzAVBgNVBAMTDmNhLmV4YW1wbGUub3JnMB4XDTA3MDUyNTIwMTYxMVoX" +
         "DTE3MDUyMjIwMTYxMVowGjEYMBYGA1UEAxMPaWRwLmV4YW1wbGUub3JnMIIBtjCC" +

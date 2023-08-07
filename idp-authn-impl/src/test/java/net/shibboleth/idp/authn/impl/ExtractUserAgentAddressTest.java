@@ -32,6 +32,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ExtractUserAgentAddress} unit test. */
+@SuppressWarnings("javadoc")
 public class ExtractUserAgentAddressTest extends BaseAuthenticationContextTest {
     
     private ExtractUserAgentAddress action;

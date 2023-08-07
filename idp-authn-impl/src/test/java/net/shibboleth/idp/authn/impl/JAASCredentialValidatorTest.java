@@ -102,6 +102,7 @@ public class JAASCredentialValidatorTest extends BaseAuthenticationContextTest {
         validator.setId("jaastest");
         
         action = new ValidateCredentials();
+        assert validator != null;
         action.setValidators(CollectionSupport.singletonList(validator));
         
         final Map<String,Collection<String>> mappings = new HashMap<>();

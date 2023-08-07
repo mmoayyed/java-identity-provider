@@ -104,6 +104,7 @@ public class X509CertificateCredentialValidatorTest extends BaseAuthenticationCo
         validator.setId("x509");
         
         action = new ValidateCredentials();
+        assert validator != null;
         action.setValidators(CollectionSupport.singletonList(validator));
         final MockHttpServletRequest request = new MockHttpServletRequest();
         action.setHttpServletRequestSupplier(new ConstantSupplier<>(request));

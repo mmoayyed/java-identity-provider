@@ -20,6 +20,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link SPNEGOContextTest} unit test. */
+@SuppressWarnings("javadoc")
 public class SPNEGOContextTest {
 
     @Test

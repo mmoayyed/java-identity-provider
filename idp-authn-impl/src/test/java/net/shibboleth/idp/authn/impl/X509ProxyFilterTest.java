@@ -18,6 +18,8 @@ package net.shibboleth.idp.authn.impl;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -31,9 +33,10 @@ import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link X509ProxyFilter} unit test. */
+@SuppressWarnings("javadoc")
 public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
     
-    private String entityCertBase64 = 
+    @Nonnull private final String entityCertBase64 = 
             "-----BEGIN CERTIFICATE-----\n" +
             "MIIDjDCCAnSgAwIBAgIBKjANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +
             "cm5ldDIxFzAVBgNVBAMTDmNhLmV4YW1wbGUub3JnMB4XDTA3MDQwOTA2MTIwOVoX" +
@@ -56,7 +59,7 @@ public class X509ProxyFilterTest extends BaseAuthenticationContextTest {
             "pkJf5neHUinKAqgoRfPXowudZg1Zl8DjzoOBn+MNHRrR5KYbVGvdHcxoJLCwVB/v" +
             "\n-----END CERTIFICATE-----\n";
     
-    private String otherCert1Base64 = 
+    @Nonnull private final String otherCert1Base64 = 
             "-----BEGIN CERTIFICATE-----\n" +
             "MIIECTCCAvGgAwIBAgIBMzANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +
             "cm5ldDIxFzAVBgNVBAMTDmNhLmV4YW1wbGUub3JnMB4XDTA3MDUyNTIwMTYxMVoX" +

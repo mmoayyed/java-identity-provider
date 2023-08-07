@@ -29,6 +29,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ExtractDiscoveryResponse} unit test. */
+@SuppressWarnings("javadoc")
 public class ExtractDiscoveryResponseTest extends BaseAuthenticationContextTest {
     
     private ExtractDiscoveryResponse action; 

@@ -26,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import net.shibboleth.shared.net.CookieManager;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
+@SuppressWarnings("javadoc")
 public class SPNEGOAutoLoginManagerTest {
 
     /**

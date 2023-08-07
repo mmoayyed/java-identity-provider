@@ -32,6 +32,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link SimpleSubjectCanonicalization} unit test. */
+@SuppressWarnings("javadoc")
 public class SimpleSubjectCanonicalizationTest extends BaseAuthenticationContextTest {
     
     private SimpleSubjectCanonicalization action; 

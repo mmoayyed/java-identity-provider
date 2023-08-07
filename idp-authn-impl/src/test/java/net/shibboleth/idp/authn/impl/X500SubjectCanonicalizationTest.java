@@ -32,6 +32,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link X500SubjectCanonicalization} unit test. */
+@SuppressWarnings("javadoc")
 public class X500SubjectCanonicalizationTest extends BaseAuthenticationContextTest {
     
     private X500SubjectCanonicalization action; 

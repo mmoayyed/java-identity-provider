@@ -31,6 +31,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link PopulateSubjectCanonicalizationContext} unit test and base class for further action tests. */
+@SuppressWarnings("javadoc")
 public class PopulateSubjectCanonicalizationContextTest {
 
     protected List<SubjectCanonicalizationFlowDescriptor> c14nFlows;

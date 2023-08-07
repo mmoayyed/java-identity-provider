@@ -15,7 +15,6 @@
 package net.shibboleth.idp.authn.context.impl;
 
 import java.time.Instant;
-import java.util.Arrays;
 
 import javax.security.auth.Subject;
 
@@ -72,7 +71,7 @@ public class AuthenticationContextTest {
         final AuthenticationContext ctx = new AuthenticationContext();
         Assert.assertTrue(ctx.getActiveResults().isEmpty());
         
-        ctx.setActiveResults(Arrays.asList(result));
+        ctx.setActiveResults(CollectionSupport.singletonList((result)));
 
         Assert.assertEquals(ctx.getActiveResults().size(), 1);
         Assert.assertEquals(ctx.getActiveResults().get("test"), result);

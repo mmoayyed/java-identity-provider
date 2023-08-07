@@ -19,16 +19,19 @@ import static org.testng.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.shibboleth.shared.component.ComponentInitializationException;
 
+@SuppressWarnings("javadoc")
 public class KerberosSettingsTest {
 
-    protected static String SERVICE_PRINCIPAL = "HTTP/aai-logon.domain_a.com@DOMAIN_A.COM";
+    @Nonnull protected static final String SERVICE_PRINCIPAL = "HTTP/aai-logon.domain_a.com@DOMAIN_A.COM";
 
-    protected static String KEYTAB = "/opt/kerberos/http_domainA.keytab";
+    @Nonnull protected static final String KEYTAB = "/opt/kerberos/http_domainA.keytab";
 
     protected List<KerberosRealmSettings> realms;
 

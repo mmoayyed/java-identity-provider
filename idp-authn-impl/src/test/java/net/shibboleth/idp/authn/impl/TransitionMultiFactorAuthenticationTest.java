@@ -25,6 +25,7 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** {@link TransitionMultiFactorAuthentication} unit test. */
+@SuppressWarnings("javadoc")
 public class TransitionMultiFactorAuthenticationTest extends BaseMultiFactorAuthenticationContextTest {
     
     private TransitionMultiFactorAuthentication action; 

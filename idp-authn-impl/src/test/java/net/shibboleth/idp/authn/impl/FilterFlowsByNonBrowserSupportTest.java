@@ -25,6 +25,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link FilterFlowsByNonBrowserSupport} unit test. */
+@SuppressWarnings("javadoc")
 public class FilterFlowsByNonBrowserSupportTest extends BaseAuthenticationContextTest {
     
     private FilterFlowsByNonBrowserSupport action; 

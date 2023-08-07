@@ -59,6 +59,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("javadoc")
 public class SPNEGOAuthnControllerTest {
 
     private static final String TEST_CONVERSATION_KEY = "e1s1";

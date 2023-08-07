@@ -26,6 +26,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link InitializeProxyProfileRequestContext}. */
+@SuppressWarnings("javadoc")
 public class InitializeProxyProfileRequestContextTest {
 
     private ProfileRequestContext prc;

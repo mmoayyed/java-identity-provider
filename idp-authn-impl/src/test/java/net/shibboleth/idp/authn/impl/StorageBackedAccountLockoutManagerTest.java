@@ -14,20 +14,23 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import static org.testng.Assert.*;
 
 import java.time.Duration;
+import java.util.List;
 
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.LockoutManagerContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.impl.StorageBackedAccountLockoutManager.UsernameIPLockoutKeyStrategy;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
@@ -67,52 +70,73 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         assert authCtx != null;
 
         authCtx.clearSubcontexts();
-        Assert.assertFalse(manager.check(prc));
-        Assert.assertFalse(manager.increment(prc));
-        Assert.assertFalse(manager.clear(prc));
+        assertFalse(manager.check(prc));
+        assertFalse(manager.increment(prc));
+        assertFalse(manager.clear(prc));
     }
     
     @Test public void one() {
-        Assert.assertFalse(manager.check(prc));
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertFalse(manager.check(prc));
-        Assert.assertTrue(manager.clear(prc));
+        assertFalse(manager.check(prc));
+        assertTrue(manager.increment(prc));
+        assertFalse(manager.check(prc));
+        assertTrue(manager.clear(prc));
     }
     
     @Test public void two() {
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertFalse(manager.check(prc));
-        Assert.assertTrue(manager.clear(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertFalse(manager.check(prc));
+        assertTrue(manager.clear(prc));
     }
     
     @Test public void threeSlow() throws InterruptedException {
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
         Thread.sleep(4000);
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertFalse(manager.check(prc));
-        Assert.assertTrue(manager.clear(prc));
+        assertTrue(manager.increment(prc));
+        assertFalse(manager.check(prc));
+        assertTrue(manager.clear(prc));
     }
 
     @Test public void threeFast() throws InterruptedException {
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertTrue(manager.check(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.check(prc));
         Thread.sleep(2000);
-        Assert.assertTrue(manager.check(prc));
+        assertTrue(manager.check(prc));
     }
 
     @Test public void waitForUnlock() throws InterruptedException {
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertTrue(manager.increment(prc));
-        Assert.assertTrue(manager.check(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.check(prc));
         Thread.sleep(4000);
-        Assert.assertTrue(manager.check(prc));
+        assertTrue(manager.check(prc));
         Thread.sleep(1150);
-        Assert.assertFalse(manager.check(prc));
+        assertFalse(manager.check(prc));
     }
 
+    @Test public void testEnum() {
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.check(prc));
+
+        ((MockHttpServletRequest) src.getExternalContext().getNativeRequest()).setRemoteAddr("192.168.1.2");
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.increment(prc));
+        assertTrue(manager.check(prc));
+        
+        prc.ensureSubcontext(LockoutManagerContext.class).setKey("jdoe!");
+        
+        final List<String> candidates = CollectionSupport.listOf("jdoe!192.168.1.1", "jdoe!192.168.1.2");
+        final Iterable<String> keys = manager.enumerate(prc);
+        for (final String key : keys) {
+            assertTrue(candidates.contains(key));
+        }
+    }
+    
 }

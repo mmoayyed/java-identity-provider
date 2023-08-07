@@ -32,6 +32,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link ExtractUsernamePasswordFromBasicAuth} unit test. */
+@SuppressWarnings("javadoc")
 public class ExtractUsernamePasswordFromBasicAuthTest extends BaseAuthenticationContextTest {
     
     private ExtractUsernamePasswordFromBasicAuth action; 

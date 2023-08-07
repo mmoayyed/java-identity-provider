@@ -35,6 +35,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link DiscoveryProfileRequestFunction} unit test. */
+@SuppressWarnings("javadoc")
 public class DiscoveryProfileRequestFunctionTest extends BaseAuthenticationContextTest {
     
     private DiscoveryProfileRequestFunction function; 

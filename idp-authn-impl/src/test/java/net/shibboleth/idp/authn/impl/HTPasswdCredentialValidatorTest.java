@@ -63,6 +63,7 @@ public class HTPasswdCredentialValidatorTest extends BaseAuthenticationContextTe
         validator.setId("htpasswdtest");
         
         action = new ValidateCredentials();
+        assert validator != null;
         action.setValidators(CollectionSupport.singletonList(validator));
         
         final Map<String,Collection<String>> mappings = new HashMap<>();

@@ -25,6 +25,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.shared.logic.PredicateSupport;
 
 /** {@link SelectSubjectCanonicalizationFlow} unit test. */
+@SuppressWarnings("javadoc")
 public class SelectSubjectCanonicalizationFlowTest extends PopulateSubjectCanonicalizationContextTest {
     
     private SelectSubjectCanonicalizationFlow action;

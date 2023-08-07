@@ -17,6 +17,8 @@ package net.shibboleth.idp.authn.impl;
 import java.io.File;
 import java.net.URISyntaxException;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.shared.resource.Resource;
 import net.shibboleth.shared.spring.resource.ResourceHelper;
 
@@ -30,6 +32,7 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link X509ResourceCredentialConfig}.
  */
+@SuppressWarnings("javadoc")
 public class X509ResourceCredentialConfigTest {
 
     private static final String DATAPATH = "/net/shibboleth/idp/authn/impl/";
@@ -50,7 +53,8 @@ public class X509ResourceCredentialConfigTest {
         };
     }
 
-    @Test(dataProvider = "resources") public void createSSLContextInitializer(final Resource trustCertificates, final Resource authenticationCertificate, final Resource authenticationKey) throws Exception {
+    @Test(dataProvider = "resources") public void createSSLContextInitializer(@Nonnull final Resource trustCertificates,
+            @Nonnull final Resource authenticationCertificate, @Nonnull final Resource authenticationKey) throws Exception {
         final X509ResourceCredentialConfig config = new X509ResourceCredentialConfig();
         config.setTrustCertificates(trustCertificates);
         config.setAuthenticationCertificate(authenticationCertificate);

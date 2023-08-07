@@ -31,6 +31,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.testing.ConstantSupplier;
 
 /** {@link PreserveAuthenticationFlowState} unit test. */
+@SuppressWarnings("javadoc")
 public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationContextTest {
     
     private PreserveAuthenticationFlowState action; 

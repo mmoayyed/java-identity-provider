@@ -14,19 +14,22 @@
 
 package net.shibboleth.idp.authn.spnego.impl;
 
+import javax.annotation.Nonnull;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.shibboleth.shared.component.ComponentInitializationException;
 
+@SuppressWarnings("javadoc")
 public class KerberosRealmSettingsTest {
 
-    protected static String SERVICE_PRINCIPAL = "HTTP/aai-logon.domain_a.com@DOMAIN_A.COM";
+    @Nonnull protected static final String SERVICE_PRINCIPAL = "HTTP/aai-logon.domain_a.com@DOMAIN_A.COM";
 
-    protected static String KEYTAB = "/opt/kerberos/http_domainA.keytab";
+    @Nonnull protected static final String KEYTAB = "/opt/kerberos/http_domainA.keytab";
 
-    protected static String PASSWORD = "secret";
+    @Nonnull protected static final String PASSWORD = "secret";
     
     private Object nullObj;
 

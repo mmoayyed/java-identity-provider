@@ -17,6 +17,8 @@ package net.shibboleth.idp.authn.impl;
 import java.io.File;
 import java.net.URISyntaxException;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.shared.resource.Resource;
 import net.shibboleth.shared.spring.resource.ResourceHelper;
 
@@ -30,9 +32,10 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link KeystoreResourceCredentialConfig}.
  */
+@SuppressWarnings("javadoc")
 public class KeystoreResourceCredentialConfigTest {
 
-    private static final String DATAPATH = "/net/shibboleth/idp/authn/impl/";
+    @Nonnull private static final String DATAPATH = "/net/shibboleth/idp/authn/impl/";
 
     @DataProvider(name = "resources")
     public Object[][] getResources() throws Exception {
@@ -48,7 +51,8 @@ public class KeystoreResourceCredentialConfigTest {
         };
     }
 
-    @Test(dataProvider = "resources") public void createSSLContextInitializer(final Resource truststore, final Resource keystore) throws Exception {
+    @Test(dataProvider = "resources") public void createSSLContextInitializer(@Nonnull final Resource truststore,
+            @Nonnull final Resource keystore) throws Exception {
         final KeystoreResourceCredentialConfig config = new KeystoreResourceCredentialConfig();
         config.setTruststore(truststore);
         config.setKeystore(keystore);
@@ -59,8 +63,9 @@ public class KeystoreResourceCredentialConfigTest {
         Assert.assertNotNull(init.getKeyManagers()[0]);
     }
 
-    private static Resource getFileSystemResource(final String path) throws URISyntaxException {
+    @Nonnull private static Resource getFileSystemResource(@Nonnull final String path) throws URISyntaxException {
         return ResourceHelper.of(new FileSystemResource(new File(X509ResourceCredentialConfigTest.class.getResource(
                 path).toURI())));
     }
+
 }

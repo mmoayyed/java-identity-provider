@@ -24,6 +24,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** {@link ExactPrincipalEvalPredicateFactory} unit test. */
+@SuppressWarnings("javadoc")
 public class ExactPrincipalEvalPredicateFactoryTest {
     
     private ExactPrincipalEvalPredicateFactory factory;

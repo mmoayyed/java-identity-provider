@@ -16,13 +16,13 @@ package net.shibboleth.idp.authn.revocation.impl;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.impl.testing.BaseAuthenticationContextTest;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.FunctionSupport;
 
@@ -34,6 +34,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link RevocationCacheCondition} unit test. */
+@SuppressWarnings("javadoc")
 public class RevocationCacheConditionTest extends BaseAuthenticationContextTest {
     
     private MemoryStorageService storageService;
@@ -74,7 +75,7 @@ public class RevocationCacheConditionTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
 
         Assert.assertTrue(active.test(prc));
     }
@@ -83,7 +84,7 @@ public class RevocationCacheConditionTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
 
         revocationCache.revoke(RevocationCacheCondition.REVOCATION_CONTEXT,
                 RevocationCacheCondition.PRINCIPAL_REVOCATION_PREFIX + "jdoe",
@@ -97,7 +98,7 @@ public class RevocationCacheConditionTest extends BaseAuthenticationContextTest 
         final AuthenticationResult active = authenticationFlows.get(1).newAuthenticationResult(new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         assert authCtx != null;
-        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setActiveResults(CollectionSupport.singletonList(active));
 
         revocationCache.revoke(RevocationCacheCondition.REVOCATION_CONTEXT,
                 RevocationCacheCondition.PRINCIPAL_REVOCATION_PREFIX + "jdoe",

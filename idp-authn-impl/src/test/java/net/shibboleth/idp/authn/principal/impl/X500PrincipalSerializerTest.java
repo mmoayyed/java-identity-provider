@@ -23,6 +23,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link X500PrincipalSerializer}. */
+@SuppressWarnings("javadoc")
 public class X500PrincipalSerializerTest {
 
     X500PrincipalSerializer serializer;

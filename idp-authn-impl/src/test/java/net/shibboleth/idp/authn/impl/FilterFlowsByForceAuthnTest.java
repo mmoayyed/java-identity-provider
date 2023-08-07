@@ -28,6 +28,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link FilterFlowsByForcedAuthn} unit test. */
+@SuppressWarnings("javadoc")
 public class FilterFlowsByForceAuthnTest extends BaseAuthenticationContextTest {
     
     private FilterFlowsByForcedAuthn action; 

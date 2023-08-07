@@ -37,6 +37,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Functions;
 
 /** {@link ValidateFunctionResult} unit test. */
+@SuppressWarnings("javadoc")
 public class ValidateFunctionResultTest extends BaseAuthenticationContextTest {
     
     private ValidateFunctionResult action;
