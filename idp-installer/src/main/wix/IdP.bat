@@ -109,7 +109,6 @@ dir idp*.msi
 REM Tidy up in the Sucessful exit case
    del *.wixobj *.wixpdb
    rd /s /q idp-extract
-   rd /s /q idp-jetty-base-extract
    del idp_contents.wxs
 :done
 

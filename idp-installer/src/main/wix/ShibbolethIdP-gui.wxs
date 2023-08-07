@@ -115,11 +115,7 @@
             Installed AND NOT PATCH
         </Publish>
 
-        <ProgressText Action="QtIdpAnt">Performing IdP Installation tasks; this may take some time.</ProgressText>
-        <ProgressText Action="QtJettyAnt">Configuring Jetty</ProgressText>
-        <ProgressText Action="QtSetACEJettyLogs">Setting ACE onto the Jetty Logs</ProgressText>
-        <ProgressText Action="QtSetACEJettyTmp">Setting ACE onto the Jetty TMP dir</ProgressText>
-        <ProgressText Action="QtSetACEProcrunLog">Setting ACE onto the ProcRun Logs</ProgressText>
+        <ProgressText Action="QtIdpInstall">Performing IdP Installation tasks; this may take some time.</ProgressText>
 
     </UI>
   </Fragment>

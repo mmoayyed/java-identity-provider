@@ -30,7 +30,8 @@ REM First up, take ownership
 REM   /t means recursive
 
 echo Setting owner to %OWNER_ID%
-icacls %~dp0\.. /t /setowner %OWNER_ID%
+icacls "%~dp0\.." /t /setowner %OWNER_ID%
+
 if ERRORLEVEL 1 (
    echo Error: Could not set ownership
    goto done
@@ -39,22 +40,35 @@ if ERRORLEVEL 1 (
 if "%1%"=="" (
    REM Set the ACLS Default ACLS
    REM   /t recursive
-   REM   /inheritance:r Remove inhetited ACLS
-   REM   /grant:r SYSTEM:F Administrators:F Full access for SYSTEM&Administrators (replacing any existing)
+   REM   /inheritance:r Remove inherited ACLS
+   REM   /grant:r ID:(CI)(OI)(F) Full access for ID (replacing any existing)
+   REM   /grant:r ID:(CI)(OI)(F) Full access for ID (replacing any existing, but causing kids to be inherited) DIRECTORIES ONLY
 
-   echo Setting ACL for SYSTEM and Administrators
-   icacls %~dp0\.. /t /inheritance:r /grant:r SYSTEM:F Administrators:F
+   echo Setting FULL ACL on DIRS SYSTEM and Administrators
+   icacls "%~dp0\.." /t /inheritance:r /grant:r "SYSTEM:(OI)(CI)(F)" "Administrators:(OI)(CI)(F)"
+
+   echo Setting FULL ACL on FILES SYSTEM and Administrators
+   icacls "%~dp0\.." /t /inheritance:r /grant:r SYSTEM:F Administrators:F
+
 ) else (
    REM As above, but add read for the supplied user
    REM GR=GENERIC_READ RD=READ_DATA/ENUMERATE_DIR X=EXECUTE/TRAVERSE_DIR
-   echo Setting ACL for SYSTEM, Administrators and %OWNER_ID%
-   icacls %~dp0\.. /t /inheritance:r /grant:r SYSTEM:F Administrators:F "%1%:(GR,RD,X)"
+
+   echo Setting FULL ACL with inheritance on DIRS SYSTEM and Administrators, Readonly ACL %1%
+   icacls "%~dp0\.." /t /inheritance:r /grant:r "SYSTEM:(OI)(CI)(F)" "Administrators:(OI)(CI)(F)" "%1%:(OI)(CI)(GR,RD,X)"
+   echo Setting FULL ACL with inheritance on FILES SYSTEM and Administrators, Readonly ACL %1%
+   icacls "%~dp0\.." /t /inheritance:r /grant:r SYSTEM:F Administrators:F "%1%:(GR,RD,X)"
+
    if ERRORLEVEL 1 (
       echo Error: Could not set ACL
       goto done
    )
-   REM And the logs (which may not be present yet)
-   icacls %~dp0\..\logs /t /grant:r SYSTEM:F Administrators:F %1%:F
+
+   REM And the logs
+   echo Setting FULL ACL on logs DIRS SYSTEM,  Administrators and %1%
+   icacls "%~dp0\..\logs" /t /inheritance:r /grant:r "SYSTEM:(OI)(CI)(F)" "Administrators:(OI)(CI)(F)" "%1%:(OI)(CI)(F)"
+   echo Setting FULL ACL on logs FILES SYSTEM,  Administrators and %1%
+   icacls "%~dp0\..\logs" /t /inheritance:r /grant:r SYSTEM:F Administrators:F "%1%:F"
 )
 if ERRORLEVEL 1 (
    echo Error: Could not set ACL
