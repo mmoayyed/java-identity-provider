@@ -38,7 +38,7 @@ public final class Core extends CoreIdPModule {
 
     /** Auto-created folders. */
     @Nonnull private static final String[] AUTO_CREATED =
-        { "conf", "credentials", "metadata", "flows", "messages", "views" }; 
+    { "conf", "credentials", "metadata", "flows", "messages", "views", "logs" }; 
     
     /**
      * Constructor.
