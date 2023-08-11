@@ -18,13 +18,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.reporters.Files;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -161,7 +161,7 @@ public class StorageBackedIdPSessionSerializerTest {
     private String fileToString(String pathname) throws URISyntaxException, IOException {
         try (FileInputStream stream = new FileInputStream(
                 new File(StorageBackedIdPSessionSerializerTest.class.getResource(pathname).toURI()))) {
-            return Files.streamToString(stream);
+            return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         }
     }
 }
