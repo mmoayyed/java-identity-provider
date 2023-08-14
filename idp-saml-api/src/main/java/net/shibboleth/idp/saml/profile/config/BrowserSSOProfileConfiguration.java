@@ -53,7 +53,7 @@ public interface BrowserSSOProfileConfiguration extends AuthenticationProfileCon
      * 
      * @return the formats to use
      */
-    @Nonnull @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence(
+    @Nonnull @NotLive @Unmodifiable List<String> getNameIDFormatPrecedence(
             @Nullable final ProfileRequestContext profileRequestContext);
 
 }
