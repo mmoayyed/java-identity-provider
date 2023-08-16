@@ -51,7 +51,7 @@ public class DiscoveryProfileRequestFunctionTest extends BaseAuthenticationConte
     }
     
     @Test public void test() throws MalformedURLException {
-        final URL url = new URL(function.apply(new Pair<>(src, prc)));
+        final URL url = new URL(function.apply(src, prc));
         
         Assert.assertEquals(url.getProtocol(), "https");
         Assert.assertEquals(url.getHost(), "ds.example.org");

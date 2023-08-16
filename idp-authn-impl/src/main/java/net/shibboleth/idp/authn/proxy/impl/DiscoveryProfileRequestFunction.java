@@ -14,6 +14,7 @@
 
 package net.shibboleth.idp.authn.proxy.impl;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -32,7 +33,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.collection.Pair;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
@@ -47,7 +47,7 @@ import net.shibboleth.shared.logic.Constraint;
  */
 @ThreadSafe
 public class DiscoveryProfileRequestFunction extends AbstractInitializableComponent
-        implements Function<Pair<RequestContext,ProfileRequestContext>,String> {
+        implements BiFunction<RequestContext,ProfileRequestContext,String> {
 
     /** URL query parameter escaper. */
     @Nonnull private Escaper escaper;
@@ -57,6 +57,9 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
     
     /** Lookup strategy for determining the "base" discovery URL. */
     @NonnullAfterInit private Function<ProfileRequestContext,String> discoveryURLLookupStrategy;
+    
+    /** Overrides this function via an injected bean. */
+    @Nullable private BiFunction<RequestContext,ProfileRequestContext,String> delegatedRequestFunction;
     
     /** Constructor. */
     public DiscoveryProfileRequestFunction() {
@@ -88,6 +91,21 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
         discoveryURLLookupStrategy = Constraint.isNotNull(strategy, "Discovery URL lookup strategy cannot be null");
     }
     
+    /**
+     * Set a function to call in place of this built-in class to generate the request.
+     * 
+     * <p>This is a mechanism to account for how this function gets used in the discovery flow.</p>
+     * 
+     * @param delegate the function to delegate to
+     * 
+     * @since 5.0.0
+     */
+    public void setDelegatedRequestFunction(
+            @Nullable final BiFunction<RequestContext,ProfileRequestContext,String> delegate) {
+        checkSetterPreconditions();
+        delegatedRequestFunction = delegate;
+    }
+    
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -98,38 +116,40 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
     }
     
     /** {@inheritDoc} */
-    @Nullable public String apply(@Nullable final Pair<RequestContext,ProfileRequestContext> input) {
+    @Nullable public String apply(@Nullable final RequestContext springRequestContext,
+            @Nullable final ProfileRequestContext profileRequestContext) {
         
-        assert input != null;
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(input.getSecond());
+        if (delegatedRequestFunction != null) {
+            return delegatedRequestFunction.apply(springRequestContext, profileRequestContext);
+        }
+        
+        if (springRequestContext == null) {
+            throw new IllegalArgumentException("Spring RequestContext cannot be null");
+        }
+        
+        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         Constraint.isNotNull(rpCtx, "RelyingPartyContext cannot be null");
         Constraint.isNotNull(rpCtx.getConfiguration(), "RelyingPartyConfiguration cannot be null");
         
-        final String baseURL = discoveryURLLookupStrategy.apply(input.getSecond());
+        final String baseURL = discoveryURLLookupStrategy.apply(profileRequestContext);
         Constraint.isNotEmpty(baseURL, "Discovery URL cannot be null or empty");
 
         final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
         assert rpConfig!=null;
-        Constraint.isTrue(rpConfig instanceof net.shibboleth.profile.relyingparty.RelyingPartyConfiguration,
-                "RelyingPartyConfiguration was not of expected subclass");
-        final String entityID = ((net.shibboleth.profile.relyingparty.RelyingPartyConfiguration) rpConfig).getIssuer(
-                input.getSecond());
+        final String entityID =rpConfig.getIssuer(profileRequestContext);
 
         final StringBuilder builder = new StringBuilder(baseURL);
         
         builder.append(baseURL.contains("?") ? '&' : '?').append("entityID=").append(escaper.escape(entityID));
         
-        final RequestContext requestCtx = input.getFirst();
-        final ProfileRequestContext prc = input.getSecond();
-        assert requestCtx != null && prc != null;
         final AuthenticationContext authenticationContext =
-                prc.getSubcontext(AuthenticationContext.class);
+                profileRequestContext != null ? profileRequestContext.getSubcontext(AuthenticationContext.class) : null;
         if (authenticationContext != null && authenticationContext.isPassive()) {
             builder.append("&isPassive=true");
         }
         
         final HttpServletRequest httpServletRequest =
-                (HttpServletRequest) requestCtx.getExternalContext().getNativeRequest();
+                (HttpServletRequest) springRequestContext.getExternalContext().getNativeRequest();
         
         final StringBuilder selfBuilder = new StringBuilder(httpServletRequest.getScheme());
         selfBuilder.append("://").append(httpServletRequest.getServerName());
@@ -139,7 +159,7 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
             selfBuilder.append(':').append(port);
         }
         
-        selfBuilder.append(requestCtx.getFlowExecutionUrl()).append("&_eventId_proceed=1");
+        selfBuilder.append(springRequestContext.getFlowExecutionUrl()).append("&_eventId_proceed=1");
         
         builder.append("&return=").append(escaper.escape(selfBuilder.toString()));
         

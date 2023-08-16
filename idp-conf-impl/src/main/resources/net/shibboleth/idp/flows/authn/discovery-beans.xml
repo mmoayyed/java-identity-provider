@@ -21,7 +21,8 @@
 
     <bean id="DiscoveryProfileRequestFunction" lazy-init="true"
         class="net.shibboleth.idp.authn.proxy.impl.DiscoveryProfileRequestFunction"
-        p:discoveryURLLookupStrategy="#{getObject('shibboleth.authn.discoveryURLStrategy') ?: getObject('DefaultDiscoveryURLStrategy')}" />
+        p:discoveryURLLookupStrategy="#{getObject('shibboleth.authn.discoveryURLStrategy') ?: getObject('DefaultDiscoveryURLStrategy')}"
+        p:delegatedRequestFunction="#{getObject('shibboleth.authn.discoveryRequestFunction')}" />
 
     <!-- Action beans. -->
 
