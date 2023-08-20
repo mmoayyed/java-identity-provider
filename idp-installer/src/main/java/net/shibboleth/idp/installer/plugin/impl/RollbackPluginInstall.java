@@ -73,7 +73,7 @@ public class RollbackPluginInstall implements AutoCloseable {
      * @param context The Module Context
      * @param changes Where to capture module changes
      */
-    public RollbackPluginInstall(final @Nonnull ModuleContext context,
+    public RollbackPluginInstall(final @Nonnull @Live ModuleContext context,
             final @Nonnull Map<ModuleResource, ResourceResult> changes) {
         moduleContext = Constraint.isNotNull(context, "Module context should be non null");
         moduleChanges = Constraint.isNotNull(changes, "Module changes should be non null");
