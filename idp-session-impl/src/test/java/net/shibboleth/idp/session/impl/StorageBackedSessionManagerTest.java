@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.json.JsonObject;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.JsonObject;
+import jakarta.json.stream.JsonGenerator;
 import jakarta.servlet.http.Cookie;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;

@@ -20,7 +20,7 @@ import java.time.Instant;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 import net.shibboleth.idp.session.AbstractSPSessionSerializer;
 import net.shibboleth.idp.session.BasicSPSession;

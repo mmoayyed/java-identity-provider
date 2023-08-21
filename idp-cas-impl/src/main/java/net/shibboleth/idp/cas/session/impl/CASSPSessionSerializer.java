@@ -19,8 +19,8 @@ import java.time.Duration;
 import java.time.Instant;
 
 import javax.annotation.Nonnull;
-import javax.json.JsonObject;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.JsonObject;
+import jakarta.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.session.AbstractSPSessionSerializer;
 import net.shibboleth.idp.session.SPSession;

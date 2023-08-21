@@ -21,9 +21,9 @@ import java.time.Instant;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
+import jakarta.json.stream.JsonGenerator;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLRuntimeException;
