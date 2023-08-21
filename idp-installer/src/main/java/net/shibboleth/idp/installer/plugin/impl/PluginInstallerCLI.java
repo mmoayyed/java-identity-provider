@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -333,14 +334,21 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
      */
     private void doList(final boolean fullList, @Nullable final String pluginId) {
         boolean list = false;
-        assert installer != null;
-        final List<IdPPlugin> plugins = installer.getInstalledPlugins();
+        final PluginInstaller inst = installer;
+        assert inst != null;
+        final List<IdPPlugin> plugins = inst.getInstalledPlugins();
+        final Set<String> modules = inst.getLoadedModules();
         for (final IdPPlugin plugin: plugins) {
             if (pluginId == null || pluginId.equals(plugin.getPluginId())) {
                 list = true;
                 outOrLog(String.format("Plugin: %-22s\tCurrent Version: %d.%d.%d",
                        plugin.getPluginId(),
                        plugin.getMajorVersion(),plugin.getMinorVersion(), plugin.getPatchVersion()));
+                for (final String module:plugin.getRequiredModules()) {
+                        if (!modules.contains(module)) {
+                                getLogger().error("Plugin {} requires non-enabled module {}", plugin.getPluginId(), module);
+                        }
+                }
                 if (fullList) {
                     printDetails(plugin);
                 }

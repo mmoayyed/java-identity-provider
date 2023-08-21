@@ -452,7 +452,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
      * @return a set of the names of the currently enabled Modules.
      * @throws BuildException on loading a module
      */
-    @Nonnull private Set<String> getLoadedModules() throws BuildException {
+    @Nonnull public Set<String> getLoadedModules() throws BuildException {
         final @Nonnull Set<String> enablededModules = new HashSet<>();
         final Iterator<IdPModule> modules = ServiceLoader.load(IdPModule.class, getInstalledPluginsLoader()).iterator();
         while (modules.hasNext()) {
