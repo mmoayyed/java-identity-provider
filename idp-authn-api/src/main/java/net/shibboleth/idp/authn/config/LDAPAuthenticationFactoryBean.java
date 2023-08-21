@@ -326,6 +326,12 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
     /** Wait time for operation responses. */
     private Duration responseTimeout;
 
+    /** Whether to automatically reconnect to the server when a connection is lost. */
+    private boolean autoReconnect;
+
+    /** Wait time for reconnects. */
+    private Duration reconnectTimeout;
+
     /** Trust configuration when using certificate based trust. */
     private CredentialConfig trustCertificatesCredentialConfig;
 
@@ -505,6 +511,20 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
      */
     public void setResponseTimeout(@Nullable final Duration timeout) {
         responseTimeout = timeout;
+    }
+
+    /** Set {@link #autoReconnect}.
+     * @param b what to set
+     */
+    public void setAutoReconnect(final boolean b) {
+        autoReconnect = b;
+    }
+
+    /** Set {@link #reconnectTimeout}.
+     * @param timeout what to set
+     */
+    public void setReconnectTimeout(@Nullable final Duration timeout) {
+        reconnectTimeout = timeout;
     }
 
     /** Set {@link #trustCertificatesCredentialConfig}.
@@ -800,6 +820,8 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         config.setStartTLSTimeout(startTLSTimeout);
         config.setConnectTimeout(connectTimeout);
         config.setResponseTimeout(responseTimeout);
+        config.setAutoReconnect(autoReconnect);
+        config.setReconnectTimeout(reconnectTimeout);
         switch (connectionStrategyType) {
         case ROUND_ROBIN:
             config.setConnectionStrategy(new RoundRobinConnectionStrategy());

@@ -86,6 +86,8 @@ public class LDAPAuthenticationFactoryBeanTest {
         factoryBean.setStartTLSTimeout(Duration.ofSeconds(3));
         factoryBean.setConnectTimeout(Duration.ofSeconds(3));
         factoryBean.setResponseTimeout(Duration.ofSeconds(3));
+        factoryBean.setAutoReconnect(true);
+        factoryBean.setReconnectTimeout(Duration.ofSeconds(10));
         factoryBean.setDisablePooling(false);
         factoryBean.setBlockWaitTime(Duration.ofSeconds(3));
         factoryBean.setPrunePeriod(Duration.ofMinutes(5));
