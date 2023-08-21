@@ -361,4 +361,11 @@
        p:httpClient-ref="%{idp.updateCheck.httpClient:shibboleth.InternalHttpClient}"
        p:securityParams="#{ environment.containsProperty('idp.updateCheck.httpSecurityParameters') ? getObject('idp.updateCheck.httpSecurityParameters') :null}"/>
 
+    <!-- Used to check module enabled state -->
+    <bean id="shibboleth.CheckPluginModules"
+       class="net.shibboleth.idp.admin.impl.ReportModuleStatus"
+       lazy-init="false"
+       depends-on="shibboleth.LoggingService"
+       p:idpHome="%{idp.home}" />
+
 </beans>
