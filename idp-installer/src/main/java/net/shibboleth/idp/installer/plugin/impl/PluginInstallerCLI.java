@@ -146,6 +146,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 return RC_INIT;
             }
         }
+        boolean doList = false;
 
         try (final PluginInstaller inst = new PluginInstaller(
                 Constraint.isNotNull(getHttpClient(), "HJttpClient cannot be non null (by construction"))) {
@@ -166,6 +167,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                         inst.setPluginId(pluginId);
                     }
                     inst.installPlugin(args.getInputDirectory(), args.getInputFileName(), !args.isNoCheck());
+                    doList = true;
                     break;
 
                 case INSTALLREMOTE:
@@ -177,17 +179,19 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                         return autoPluginFromId(pluginId, !args.isNoCheck());
                     }
                     inst.installPlugin(args.getInputURL(), args.getInputFileName(), !args.isNoCheck());
+                    doList = true;
                     break;
 
                 case UPDATE:
                     assert pluginId != null;
-                    doUpdate(pluginId, args.getUpdateVersion(), !args.isNoCheck());
+                    doList = doUpdate(pluginId, args.getUpdateVersion(), !args.isNoCheck());
                     break;
 
                 case UNINSTALL:
                     assert pluginId != null;
                     inst.setPluginId(pluginId);
                     inst.uninstall();
+                    doList = true;
                     break;
 
                 case OUTPUTLICENSE:
@@ -212,6 +216,17 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         } catch (final ComponentInitializationException | BuildException e) {
             getLogger().error("Plugin Install failed:", e);
             return RC_IO;
+        }
+        if (doList) {
+        	// we made a change to do a list operation
+            try (final PluginInstaller inst = new PluginInstaller(
+                Constraint.isNotNull(getHttpClient(), "HJttpClient cannot be non null (by construction"))) {
+	            constructPluginInstaller(inst, args);
+	            doList(false, null);
+            } catch (ComponentInitializationException e) {
+            	getLogger().error("Post Install list failed:", e);
+            	return RC_IO;
+            }
         }
         return ret;
     }
@@ -541,9 +556,10 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     /** Update the plugin.
      * @param pluginId the pluginId or null.
      * @param pluginVersion (optionally) the version to update to.
-     * @param checkVersion are we checking the version. 
+     * @param checkVersion are we checking the version.
+     * @return if the installation did any work. 
      */
-    private void doUpdate(@Nonnull final String pluginId, 
+    private boolean doUpdate(@Nonnull final String pluginId, 
             @Nullable final InstallableComponentVersion pluginVersion,
             final boolean checkVersion) {
         
@@ -552,7 +568,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         final IdPPlugin plugin = inst.getInstalledPlugin(pluginId);
         if (plugin == null) {
             getLogger().error("Plugin {} was not installed", pluginId);
-            return;
+            return false;
         }
         getLogger().debug("Interrogating {} ", plugin.getPluginId());
         final PluginState state =  new PluginState(plugin, ensureUpdateURLs());
@@ -565,14 +581,14 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             state.initialize();
         } catch (final ComponentInitializationException e) {
             getLogger().error("Could not interrogate plugin {}", plugin.getPluginId(), e);
-            return;
+            return false;
         }
         final InstallableComponentVersion installVersion;
         if (pluginVersion == null) {
             installVersion = getBestVersion(new InstallableComponentVersion(plugin), state.getPluginInfo());
             if (installVersion == null) {
                 getLogger().info("No suitable update version available");
-                return;
+                return false;
             }
         } else {
             installVersion = pluginVersion;
@@ -580,7 +596,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             if (!versions.containsKey(installVersion)) {
                 getLogger().error("Specified version {} could not be found. Available versions: {}",
                         installVersion, versions.keySet());
-                return;
+                return false;
             }
         }
         // just use the tgz version - its an update so it should be jar files only
@@ -589,6 +605,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
         inst.installPlugin(updateURL,
                 state.getPluginInfo().getUpdateBaseName(installVersion) + ".tar.gz",
                 checkVersion);
+        return true;
     }
 
     /** Shim for CLI entry point: Allows the code to be run from a test.
