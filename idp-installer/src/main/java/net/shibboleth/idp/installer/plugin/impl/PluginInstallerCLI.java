@@ -107,8 +107,8 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                new ClassPathResource("net/shibboleth/idp/conf/http-client.xml"));
     }
     
-    /** Null-safe getter for {@linkplain #updateURLs}.
-     * @return
+    /** Null-safe getter for {@link #updateURLs}.
+     * @return {@link #updateURLs}, which is guaranteed to be non null.
      */
     @Nonnull private List<URL> ensureUpdateURLs() {
         List<URL> result = updateURLs;
