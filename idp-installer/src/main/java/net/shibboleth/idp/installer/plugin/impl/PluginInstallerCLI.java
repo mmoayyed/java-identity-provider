@@ -63,6 +63,9 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
 
     /** Class logger. */
     private Logger log;
+    
+    /** Return code indicating an module mismatch, {@value} . */
+    public static final int RC_MODULE = 3;
 
     /** A Plugin Installer to use. */
     @Nullable private PluginInstaller installer;
@@ -346,7 +349,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     /** List all installed plugins (or just one if provided).
      * @param fullList whether to do full deatils
      * @param pluginId the pluginId or null.
-     * @return {@link AbstractCommandLine#RC_IO} if we hit a module issue, otherwise {@link AbstractCommandLine#RC_OK}  
+     * @return {@link #RC_MODULE} if we hit a module issue, otherwise {@link AbstractCommandLine#RC_OK}  
      */
     private int doList(final boolean fullList, @Nullable final String pluginId) {
         boolean list = false;
@@ -364,7 +367,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 for (final String module:plugin.getRequiredModules()) {
 					if (!modules.contains(module)) {
 						getLogger().error("Plugin {} requires non-enabled module {}", plugin.getPluginId(), module);
-						result = RC_IO;
+						result = RC_MODULE;
 					}
                 }
                 if (fullList) {
