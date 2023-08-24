@@ -12,6 +12,9 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <!-- Pull in class rewrite rules. -->
+    <bean parent="shibboleth.RelocatedBeanFactoryPostProcessor" />
+
     <bean class="net.shibboleth.shared.security.impl.BasicAccessControlService"
         p:id="shibboleth.AccessControlService"
         p:policyMap-ref="shibboleth.AccessControlPolicies" />

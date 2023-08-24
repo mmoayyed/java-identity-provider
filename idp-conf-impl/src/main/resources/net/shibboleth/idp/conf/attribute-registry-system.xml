@@ -12,6 +12,9 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <!-- Pull in class rewrite rules. -->
+    <bean parent="shibboleth.RelocatedBeanFactoryPostProcessor" />
+
     <bean id="SAML2StringTranscoder"
         class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTranscoder" />
     <bean id="SAML2ScopedStringTranscoder"

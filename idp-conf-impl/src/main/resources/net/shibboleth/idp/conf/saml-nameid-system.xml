@@ -12,6 +12,9 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <!-- Pull in class rewrite rules. -->
+    <bean parent="shibboleth.RelocatedBeanFactoryPostProcessor" />
+
     <!-- Bean templates for defining generators that produce custom formats based on attributes. -->
 
     <bean id="shibboleth.SAML2AttributeSourcedGenerator" abstract="true"
