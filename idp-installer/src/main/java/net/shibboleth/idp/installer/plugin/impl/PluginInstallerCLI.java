@@ -126,7 +126,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             args.setHttpClientName("shibboleth.InternalHttpClient");
         }
 
-        final int ret = super.doRun(args);
+        int ret = super.doRun(args);
         if (ret != RC_OK) {
             return ret;
         }
@@ -159,7 +159,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                     if (args.isListAvailable()) {
                         return doListAvailable();
                     }
-                    doList(args.isFullList(), args.getPluginId());
+                    ret = doList(args.isFullList(), args.getPluginId());
                     break;
 
                 case INSTALLDIR:
@@ -222,7 +222,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
             try (final PluginInstaller inst = new PluginInstaller(
                 Constraint.isNotNull(getHttpClient(), "HJttpClient cannot be non null (by construction"))) {
 	            constructPluginInstaller(inst, args);
-	            doList(false, null);
+	            ret = doList(false, null);
             } catch (ComponentInitializationException e) {
             	getLogger().error("Post Install list failed:", e);
             	return RC_IO;
@@ -346,11 +346,13 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
     /** List all installed plugins (or just one if provided).
      * @param fullList whether to do full deatils
      * @param pluginId the pluginId or null.
+     * @return {@link AbstractCommandLine#RC_IO} if we hit a module issue, otherwise {@link AbstractCommandLine#RC_OK}  
      */
-    private void doList(final boolean fullList, @Nullable final String pluginId) {
+    private int doList(final boolean fullList, @Nullable final String pluginId) {
         boolean list = false;
         final PluginInstaller inst = installer;
         assert inst != null;
+        int result = RC_OK;
         final List<IdPPlugin> plugins = inst.getInstalledPlugins();
         final Set<String> modules = inst.getLoadedModules();
         for (final IdPPlugin plugin: plugins) {
@@ -360,9 +362,10 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                        plugin.getPluginId(),
                        plugin.getMajorVersion(),plugin.getMinorVersion(), plugin.getPatchVersion()));
                 for (final String module:plugin.getRequiredModules()) {
-                        if (!modules.contains(module)) {
-                                getLogger().error("Plugin {} requires non-enabled module {}", plugin.getPluginId(), module);
-                        }
+					if (!modules.contains(module)) {
+						getLogger().error("Plugin {} requires non-enabled module {}", plugin.getPluginId(), module);
+						result = RC_IO;
+					}
                 }
                 if (fullList) {
                     printDetails(plugin);
@@ -376,6 +379,7 @@ public final class PluginInstallerCLI extends AbstractIdPHomeAwareCommandLine<Pl
                 outOrLog("Plugin " + pluginId + " not installed");
             }
         }
+        return result;
     }
     
     /** List the contents for the detailed plugin.
