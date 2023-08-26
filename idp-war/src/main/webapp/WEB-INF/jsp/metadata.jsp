@@ -12,6 +12,13 @@ if (path != null) {
 if (path.isEmpty()) {
     response.sendError(404);
 } else {
+    final String acceptHeader = request.getHeader("Accept");
+    if (acceptHeader != null && !acceptHeader.contains("application/samlmetadata+xml")) {
+        response.setContentType("application/xml");
+    } else {
+        response.setContentType("application/samlmetadata+xml");
+    }
+
     java.io.InputStreamReader in = null;
     try {
         in = new java.io.InputStreamReader(new java.io.FileInputStream(path),"UTF8");
@@ -29,13 +36,6 @@ if (path.isEmpty()) {
             } catch (java.io.IOException e) {
             }
         }
-    }
-
-    final String acceptHeader = request.getHeader("Accept");
-    if (acceptHeader != null && !acceptHeader.contains("application/samlmetadata+xml")) {
-        response.setContentType("application/xml");
-    } else {
-        response.setContentType("application/samlmetadata+xml");
     }
 }
 %>
