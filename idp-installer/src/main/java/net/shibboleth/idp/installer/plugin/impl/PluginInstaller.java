@@ -926,7 +926,12 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
         moduleContext.setHttpClientSecurityParameters(securityParams);
         moduleContext.setHttpClient(httpClient);
         distPath = idpHome.resolve("dist");
-        final Path wsp = workspacePath = distPath.resolve("plugin-workspace");
+        final Path wsp;
+		try {
+			wsp = workspacePath = Files.createTempDirectory("plugin-installer-workspace");
+		} catch (final IOException e) {
+			throw new ComponentInitializationException(e);
+		}
         final Path pwp = pluginsWebapp = distPath.resolve("plugin-webapp");
         final Path pcp = pluginsContents = distPath.resolve("plugin-contents");
         assert wsp!=null && pwp!=null && pcp!=null && distPath!=null;
