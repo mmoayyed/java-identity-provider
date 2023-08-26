@@ -22,8 +22,9 @@ $response.setStatus(500)
 #if ($peerCtx)
 #set ($mdCtx = $peerCtx.getSubcontext("org.opensaml.saml.common.messaging.context.SAMLMetadataContext"))
 #if ($mdCtx && $mdCtx.getEntityDescriptor())
-$response.setContentType("text/xml")$SerializeSupport.prettyPrintXML($XMLObjectSupport.marshall($mdCtx.getEntityDescriptor()))
-$response.setStatus(200)
+#set ($void = $response.setStatus(200))
+#set ($void = $response.setContentType("text/xml"))
+$SerializeSupport.prettyPrintXML($XMLObjectSupport.marshall($mdCtx.getEntityDescriptor()))
 #stop
 #end
 #end
