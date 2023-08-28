@@ -43,7 +43,6 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 
@@ -177,9 +176,9 @@ public class HttpClientProxyValidator implements ProxyValidator {
         } catch (final IOException e) {
             throw new GeneralSecurityException("IO error", e);
         } finally {
-            if (response != null && CloseableHttpResponse.class.isInstance(response)) {
+            if (response != null) {
                 try {
-                    CloseableHttpResponse.class.cast(response).close();
+                    response.close();
                 } catch (final IOException e) {
                     log.debug("Error closing HttpResponse", e);
                 }
