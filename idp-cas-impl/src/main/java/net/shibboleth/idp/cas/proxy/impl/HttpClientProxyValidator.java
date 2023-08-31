@@ -29,23 +29,11 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.FailedLoginException;
 
-import net.shibboleth.idp.cas.config.AbstractProtocolConfiguration;
-import net.shibboleth.idp.cas.protocol.ProtocolContext;
-import net.shibboleth.idp.cas.proxy.ProxyValidator;
-import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.idp.cas.service.ServiceContext;
-import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.collection.CollectionSupport;
-import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.shared.primitive.LoggerFactory;
-import net.shibboleth.shared.resolver.CriteriaSet;
-
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpResponse;
-
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -60,6 +48,17 @@ import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.TrustedNamesCriterion;
 import org.slf4j.Logger;
+
+import net.shibboleth.idp.cas.config.AbstractProtocolConfiguration;
+import net.shibboleth.idp.cas.protocol.ProtocolContext;
+import net.shibboleth.idp.cas.proxy.ProxyValidator;
+import net.shibboleth.idp.cas.service.Service;
+import net.shibboleth.idp.cas.service.ServiceContext;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.resolver.CriteriaSet;
 
 /**
  * Authenticates a CAS proxy callback endpoint using an {@link HttpClient} instance to establish
@@ -154,12 +153,10 @@ public class HttpClientProxyValidator implements ProxyValidator {
         assert clientContext != null;
         HttpClientSecuritySupport.marshalSecurityParameters(clientContext, securityParameters, true);
         setCASTLSTrustEngineCriteria(clientContext, uri, service);
-        ClassicHttpResponse response = null;
-        try {
-            log.debug("Attempting to validate CAS proxy callback URI {}", uri);
-            final HttpGet request = new HttpGet(uri);
-            assert request != null;
-            response = httpClient.executeOpen(null, request, clientContext);
+        log.debug("Attempting to validate CAS proxy callback URI {}", uri);
+        final HttpGet request = new HttpGet(uri);
+        assert request != null;
+        try (final ClassicHttpResponse response = httpClient.executeOpen(null, request, clientContext)) {
             final String scheme = request.getScheme();
             assert scheme != null;
             HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, scheme);
@@ -175,14 +172,6 @@ public class HttpClientProxyValidator implements ProxyValidator {
             throw new GeneralSecurityException("SSL connection error", e);
         } catch (final IOException e) {
             throw new GeneralSecurityException("IO error", e);
-        } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (final IOException e) {
-                    log.debug("Error closing HttpResponse", e);
-                }
-            }
         }
     }
 
