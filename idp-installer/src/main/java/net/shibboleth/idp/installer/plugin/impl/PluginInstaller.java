@@ -80,6 +80,8 @@ import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.logic.PredicateSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport;
+import net.shibboleth.shared.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.shared.primitive.LoggerFactory;
 import net.shibboleth.shared.primitive.StringSupport;
 import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
@@ -829,6 +831,7 @@ public final class PluginInstaller extends AbstractInitializableComponent implem
             throws IOException {
         final InputStream inStream = new BufferedInputStream(new FileInputStream(fullName.toFile()));
         if (isZip) {
+            DeprecationSupport.warnOnce(ObjectType.CLI_OPTION, "zip Plugin Distributions", null, "tar.gz distribution");
             return new ZipArchiveInputStream(inStream);
         }
         return new TarArchiveInputStream(new GzipCompressorInputStream(inStream));
