@@ -28,7 +28,7 @@ public class BasicX509CredentialFactoryBean extends org.opensaml.spring.credenti
     /** Constructor. */
     public BasicX509CredentialFactoryBean() {
         DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null,
-                org.opensaml.spring.credential.BasicX509CredentialFactoryBean.class.getName());
+                "Parent bean 'shibboleth.BasicX509CredentialFactoryBean'");
     }
     
 }
