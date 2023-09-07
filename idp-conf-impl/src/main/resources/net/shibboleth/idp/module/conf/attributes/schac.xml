@@ -26,7 +26,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacMotherTongue</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.1</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.1</prop>
                     <prop key="displayName.en">Mother Tongue</prop>
@@ -41,7 +41,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacGender</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.2</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.2</prop>
                     <prop key="displayName.en">Gender</prop>
@@ -56,7 +56,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacDateOfBirth</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.3</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.3</prop>
                     <prop key="displayName.en">Date or Birth</prop>
@@ -71,7 +71,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacYearOfBirth</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.0.2.3</prop>
                     <prop key="saml1.name">urn:schac:attribute-def:schacYearOfBirth</prop>
                     <prop key="displayName.en">Year of birth</prop>
@@ -86,7 +86,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacPlaceOfBirth</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.4</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.4</prop>
                     <prop key="displayName.en">Place of Birth</prop>
@@ -101,7 +101,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacCountryOfCitizenship</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.5</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.5</prop>
                     <prop key="displayName.en">Country of Citizenship</prop>
@@ -116,7 +116,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacSn1</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.6</prop>
                     <prop key="saml1.name">urn:schac:attribute-def:schacSn1</prop>
                     <prop key="displayName.en">First Surname</prop>
@@ -131,7 +131,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacSn2</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.7</prop>
                     <prop key="saml1.name">urn:schac:attribute-def:schacSn2</prop>
                     <prop key="displayName.en">Second Surname</prop>
@@ -146,7 +146,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacPersonalTitle</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.8</prop>
                     <prop key="saml1.name">urn:schac:attribute-def:schacPersonalTitle</prop>
                     <prop key="displayName.en">Personal Title</prop>
@@ -161,7 +161,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacHomeOrganization</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.9</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.9</prop>
                     <prop key="displayName.en">Home Organization</prop>
@@ -178,7 +178,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacHomeOrganizationType</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.10</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.10</prop>
                     <prop key="displayName.en">Home organization type</prop>
@@ -195,7 +195,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacCountryOfResidence</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.11</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.11</prop>
                     <prop key="displayName.en">Country of Residence</prop>
@@ -210,7 +210,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacUserPresenceID</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.12</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.12</prop>
                     <prop key="displayName.en">User Presence ID</prop>
@@ -225,7 +225,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacPersonalPosition</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.13</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.13</prop>
                     <prop key="displayName.en">Personal Position</prop>
@@ -240,7 +240,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacPersonalUniqueCode</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.14</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.14</prop>
                     <prop key="displayName.en">Personal Unique Code</prop>
@@ -255,7 +255,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacPersonalUniqueID</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.15</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.15</prop>
                     <prop key="displayName.en">Personal Unique ID</prop>
@@ -270,7 +270,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacExpiryDate</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.17</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.17</prop>
                     <prop key="displayName.en">Expiry Date</prop>
@@ -285,7 +285,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacUserPrivateAttribute</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.18</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.18</prop>
                     <prop key="displayName.en">User Private Attribute</prop>
@@ -300,7 +300,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacUserStatus</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.19</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.19</prop>
                     <prop key="displayName.en">User Status</prop>
@@ -315,7 +315,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacProjectMembership</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.20</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.20</prop>
                     <prop key="displayName.en">Project Membership</prop>
@@ -330,7 +330,7 @@
             <property name="properties">
                 <props merge="true">
                     <prop key="id">schacProjectSpecificRole</prop>
-                    <prop key="transcoder">SAML2StringTranscoder</prop>
+                    <prop key="transcoder">SAML2StringTranscoder SAML1StringTranscoder</prop>
                     <prop key="saml2.name">urn:oid:1.3.6.1.4.1.25178.1.2.21</prop>
                     <prop key="saml1.name">urn:oid:1.3.6.1.4.1.25178.1.2.21</prop>
                     <prop key="displayName.en">Project Specific Role</prop>
