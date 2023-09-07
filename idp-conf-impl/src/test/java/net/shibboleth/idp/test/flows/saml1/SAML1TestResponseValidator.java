@@ -507,7 +507,7 @@ public class SAML1TestResponseValidator {
     public void assertAttributes(@Nullable final List<Attribute> attributes) {
         assert attributes!=null;
         Assert.assertFalse(attributes.isEmpty());
-        Assert.assertEquals(attributes.size(), usedAttributeDesignators ? 2 : 4);
+        Assert.assertEquals(attributes.size(), usedAttributeDesignators ? 2 : 5);
 
         // Ignore attribute ordering
         final Map<String, Attribute> actualAttributes = new HashMap<>();
