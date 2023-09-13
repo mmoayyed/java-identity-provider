@@ -19,7 +19,7 @@
 
     <groupId>net.shibboleth.idp</groupId>
     <artifactId>idp-parent</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -60,12 +60,12 @@
 
     <properties>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
-        <opensaml.version>5.0.0-SNAPSHOT</opensaml.version>
-        <shib-profile.version>5.0.0-SNAPSHOT</shib-profile.version>
-        <shib-attribute.version>5.0.0-SNAPSHOT</shib-attribute.version>
-        <shib-metadata.version>5.0.0-SNAPSHOT</shib-metadata.version>
+        <opensaml.version>5.0.0</opensaml.version>
+        <shib-profile.version>5.0.0</shib-profile.version>
+        <shib-attribute.version>5.0.0</shib-attribute.version>
+        <shib-metadata.version>5.0.0</shib-metadata.version>
         <shib-shared.groupId>net.shibboleth</shib-shared.groupId>
-        <shib-shared.version>9.0.0-SNAPSHOT</shib-shared.version>
+        <shib-shared.version>9.0.0</shib-shared.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
         <idp-parent.site.url>${shibboleth.site.deploy.url}java-identity-provider/${project.version}/</idp-parent.site.url>
         <idp-module.site.url>${idp-parent.site.url}${project.artifactId}</idp-module.site.url>
