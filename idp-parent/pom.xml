@@ -8,7 +8,7 @@
     <parent>
         <groupId>net.shibboleth</groupId>
         <artifactId>parent</artifactId>
-        <version>17.0.1</version>
+        <version>17.0.2-SNAPSHOT</version>
     </parent>
 
     <name>Shibboleth Identity Provider</name>
@@ -178,6 +178,19 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>net.shibboleth.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <links combine.children="append">
+                        <link>${javadoc.url}/java-shib-shared/${shib-shared.version}</link>
+                        <link>${javadoc.url}/java-opensaml/${opensaml.version}</link>
+                        <link>${javadoc.url}/java-shib-metadata/${shib-metadata.version}</link>
+                        <link>${javadoc.url}/java-shib-attribute/${shib-attribute.version}</link>
+                        <link>${javadoc.url}/java-shib-profile/${shib-profile.version}</link>
+                    </links>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
