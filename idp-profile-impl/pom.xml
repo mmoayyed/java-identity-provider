@@ -34,20 +34,20 @@
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-profile.groupId}</groupId>
             <artifactId>shib-profile-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-resolver-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-filter-api</artifactId>
         </dependency>
 
@@ -102,6 +102,7 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
+
         <!-- Provided Dependencies -->
         <dependency>
             <groupId>jakarta.servlet</groupId>

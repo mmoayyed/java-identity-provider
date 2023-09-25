@@ -49,7 +49,7 @@
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-profile.groupId}</groupId>
             <artifactId>shib-profile-api</artifactId>
         </dependency>
 
@@ -163,7 +163,7 @@
 
         <!-- Needed for XMLObject providers. -->
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-metadata.groupId}</groupId>
             <artifactId>shib-metadata-impl</artifactId>
             <scope>test</scope>
         </dependency>

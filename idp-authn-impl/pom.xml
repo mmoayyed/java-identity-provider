@@ -54,20 +54,20 @@
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-profile.groupId}</groupId>
             <artifactId>shib-profile-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-filter-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-resolver-api</artifactId>
         </dependency>
 
@@ -229,20 +229,19 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-resolver-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Required despite dependency:analyze. -->
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-resolver-spring</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-testing</artifactId>
             <scope>test</scope>
         </dependency>

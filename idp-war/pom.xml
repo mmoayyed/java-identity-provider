@@ -115,67 +115,67 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-profile.groupId}</groupId>
             <artifactId>shib-profile-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-profile.groupId}</groupId>
             <artifactId>shib-profile-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-profile.groupId}</groupId>
             <artifactId>shib-saml-profile-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-saml-attribute-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-saml-attribute-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-filter-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-filter-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-filter-spring</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-resolver-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-resolver-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-resolver-spring</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-metadata.groupId}</groupId>
             <artifactId>shib-metadata-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-metadata.groupId}</groupId>
             <artifactId>shib-metadata-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-metadata.groupId}</groupId>
             <artifactId>shib-metadata-spring</artifactId>
         </dependency>
         <dependency>

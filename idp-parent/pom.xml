@@ -59,13 +59,16 @@
     </modules>
 
     <properties>
-        <opensaml.groupId>org.opensaml</opensaml.groupId>
-        <opensaml.version>5.0.0</opensaml.version>
-        <shib-profile.version>5.0.0</shib-profile.version>
-        <shib-attribute.version>5.0.0</shib-attribute.version>
-        <shib-metadata.version>5.0.0</shib-metadata.version>
         <shib-shared.groupId>net.shibboleth</shib-shared.groupId>
         <shib-shared.version>9.0.0</shib-shared.version>
+        <opensaml.groupId>org.opensaml</opensaml.groupId>
+        <opensaml.version>5.0.0</opensaml.version>
+        <shib-metadata.groupId>net.shibboleth</shib-metadata.groupId>
+        <shib-metadata.version>5.0.0</shib-metadata.version>
+        <shib-attribute.groupId>net.shibboleth</shib-attribute.groupId>
+        <shib-attribute.version>5.0.0</shib-attribute.version>
+        <shib-profile.groupId>net.shibboleth</shib-profile.groupId>
+        <shib-profile.version>5.0.0</shib-profile.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
         <idp-parent.site.url>${shibboleth.site.deploy.url}java-identity-provider/${project.version}/</idp-parent.site.url>
         <idp-module.site.url>${idp-parent.site.url}${project.artifactId}</idp-module.site.url>
@@ -114,21 +117,21 @@
         <dependencies>
             <!-- Import Dependencies:  Shib-Metadata/Attribute/Profile -->
             <dependency>
-                <groupId>net.shibboleth</groupId>
+                <groupId>${shib-profile.groupId}</groupId>
                 <artifactId>shib-profile-bom</artifactId>
                 <version>${shib-profile.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>net.shibboleth</groupId>
+                <groupId>${shib-attribute.groupId}</groupId>
                 <artifactId>shib-attribute-bom</artifactId>
                 <version>${shib-attribute.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>net.shibboleth</groupId>
+                <groupId>${shib-metadata.groupId}</groupId>
                 <artifactId>shib-metadata-bom</artifactId>
                 <version>${shib-metadata.version}</version>
                 <type>pom</type>

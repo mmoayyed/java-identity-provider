@@ -23,7 +23,7 @@
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-profile.groupId}</groupId>
             <artifactId>shib-profile-api</artifactId>
         </dependency>
 

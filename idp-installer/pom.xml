@@ -38,12 +38,6 @@
             <scope>provided</scope>
         </dependency>
 
-	    <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-cli</artifactId>
-           <scope>provided</scope>
-        </dependency>
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-admin-api</artifactId>
@@ -59,7 +53,7 @@
         </dependency>
 
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-metadata.groupId}</groupId>
             <artifactId>shib-metadata-api</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -92,22 +86,24 @@
 
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-cli</artifactId>
+           <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-networking</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-networking-spring</artifactId>
             <scope>provided</scope>
         </dependency>
-        
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-security</artifactId>
             <scope>provided</scope>
         </dependency>
-        
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-spring</artifactId>

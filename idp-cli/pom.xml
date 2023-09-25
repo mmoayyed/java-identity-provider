@@ -40,15 +40,16 @@
         </dependency>
 
         <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-security-api</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-profile-api</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-security-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

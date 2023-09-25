@@ -39,12 +39,12 @@
         </dependency>
     
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-profile.groupId}</groupId>
             <artifactId>shib-profile-api</artifactId>
         </dependency>
     
         <dependency>
-            <groupId>net.shibboleth</groupId>
+            <groupId>${shib-attribute.groupId}</groupId>
             <artifactId>shib-attribute-api</artifactId>
         </dependency>
     
