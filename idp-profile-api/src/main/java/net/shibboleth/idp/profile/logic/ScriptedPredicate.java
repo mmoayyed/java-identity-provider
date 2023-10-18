@@ -117,10 +117,14 @@ public class ScriptedPredicate extends net.shibboleth.profile.context.logic.Scri
      * Factory to create {@link ScriptedPredicate} from inline data.
      * 
      * @param scriptSource the script, as a string
+     * 
      * @return the predicate
+     * 
      * @throws ScriptException if the compile fails
+     * @throws ComponentInitializationException if the script object fails to initialize
      */
-    public static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException, ComponentInitializationException {
+    public static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String scriptSource)
+            throws ScriptException, ComponentInitializationException {
         return inlineScript(DEFAULT_ENGINE, scriptSource);
     }
 

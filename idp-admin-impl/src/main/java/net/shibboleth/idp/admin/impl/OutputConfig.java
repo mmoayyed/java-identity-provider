@@ -268,6 +268,13 @@ public class OutputConfig extends AbstractProfileAction {
     }
 // Checkstyle: CyclomaticComplexity ON    
 
+    /**
+     * Check an object for whether it's a boxed primitive type or one of the time wrappers.
+     * 
+     * @param o object to test
+     * 
+     * @return true iff the type of the object is one of the boxed primitive types
+     */
     private boolean isPrimitive(@Nullable final Object o) {
         return o instanceof Boolean
                 || o instanceof Integer

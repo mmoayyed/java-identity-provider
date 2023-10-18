@@ -45,7 +45,6 @@ import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.component.ComponentInitializationException;
 
 /** Basic data sources for testing the attribute generators. */
-@SuppressWarnings({"javadoc", "removal"})
 public final class TestSources {
     /** The name we use in this test for the static connector. */
     @Nonnull public static final String STATIC_CONNECTOR_NAME = "staticCon";
@@ -98,16 +97,16 @@ public final class TestSources {
             .compile(CONNECTOR_ATTRIBUTE_VALUE_REGEXP);
 
     /** A {@link StringAttributeValue} with value "Connect".  */
-    @Nonnull public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = new StringAttributeValue(
-            "Connect");
+    @Nonnull public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT =
+            new StringAttributeValue("Connect");
 
-    /** Principal name for Principal method tests */
+    /** Principal name for Principal method tests. */
     @Nonnull public static final String TEST_PRINCIPAL = "PrincipalName";
 
-    /** Relying party name for Principal method tests */
+    /** Relying party name for Principal method tests. */
     @Nonnull public static final String TEST_RELYING_PARTY = "RP1";
 
-    /** Authentication method for Principal method tests */
+    /** Authentication method for Principal method tests. */
     @Nonnull public static final String TEST_AUTHN_METHOD = "AuthNmEthod";
 
     /** {@value #IDP_ENTITY_ID}. */
@@ -149,7 +148,7 @@ public final class TestSources {
      */
     @SuppressWarnings("null")
     @Nonnull public static DataConnector populatedStaticConnector() throws ComponentInitializationException {
-        List<IdPAttribute> attributeSet = new ArrayList<>(2);
+        final List<IdPAttribute> attributeSet = new ArrayList<>(2);
 
         IdPAttribute attr = new IdPAttribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         attr.setValues(List.of(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING),
@@ -174,8 +173,18 @@ public final class TestSources {
         return populatedStaticAttribute(DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 2);
     }
     
-    @Nonnull public static AttributeDefinition populatedStaticAttribute(@Nonnull String attributeName,
-            int attributeValuesCount) throws ComponentInitializationException {
+    /**
+     * Build a Static attribute definition.
+     * 
+     * @param attributeName name of attribute
+     * @param attributeValuesCount count of values
+     * 
+     * @return the definition
+     * 
+     * @throws ComponentInitializationException if the definition fails to init
+     */
+    @Nonnull public static AttributeDefinition populatedStaticAttribute(@Nonnull final String attributeName,
+            final int attributeValuesCount) throws ComponentInitializationException {
         
         final List<IdPAttributeValue> valuesList = new ArrayList<>();
 
@@ -211,32 +220,41 @@ public final class TestSources {
         return definition;
     }
 
-    /** return a {@link SAML2NameIDAttributeDefinition} (which doesn't carry string atribure values)
+    /**
+     * Return a {@link SAML2NameIDAttributeDefinition} (which doesn't carry string atribure values).
+     * 
      * @param name the name
+     * 
      * @return the definition
+     * 
      * @throws ComponentInitializationException for completeness
      */
-    @Nonnull public static AttributeDefinition nonStringAttributeDefiniton(@Nonnull String name) throws ComponentInitializationException {
+    @Nonnull public static AttributeDefinition nonStringAttributeDefiniton(@Nonnull final String name)
+            throws ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(name);
 
         // Set the dependency on the data connector
-        ResolverAttributeDefinitionDependency depend = new ResolverAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        final ResolverAttributeDefinitionDependency depend =
+                new ResolverAttributeDefinitionDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         defn.setAttributeDependencies(CollectionSupport.singleton(depend));
         defn.initialize();
         return defn;
     }
 
-    /** create a {@link AttributeResolutionContext}.
+    /** 
+     * Create a {@link AttributeResolutionContext}.
+     * 
      * @param principal  principal
      * @param issuerID  issuerID
      * @param recipientId  recipientId
+     * 
      * @return the freshly minted context
      */
-    public static AttributeResolutionContext createResolutionContext(@Nonnull String principal, @Nonnull String issuerID,
-            @Nonnull String recipientId) {
-        ProfileRequestContext parent = new ProfileRequestContext();
-        AttributeResolutionContext retVal = parent.ensureSubcontext(AttributeResolutionContext.class);
+    @Nonnull public static AttributeResolutionContext createResolutionContext(@Nonnull final String principal,
+            @Nonnull final String issuerID, @Nonnull final String recipientId) {
+        final ProfileRequestContext parent = new ProfileRequestContext();
+        final AttributeResolutionContext retVal = parent.ensureSubcontext(AttributeResolutionContext.class);
 
         retVal.setAttributeIssuerID(issuerID);
         retVal.setAttributeRecipientID(recipientId);
@@ -246,12 +264,16 @@ public final class TestSources {
         return retVal;
     }
 
-    /** Make a {@link ResolverAttributeDefinitionDependency}.
+    /**
+     * Make a {@link ResolverAttributeDefinitionDependency}.
+     * 
      * @param attributeId attributeId
+     * 
      * @return  the dependency
      */
-    @Nonnull public static ResolverAttributeDefinitionDependency makeAttributeDefinitionDependency(@Nonnull String attributeId) {
-        ResolverAttributeDefinitionDependency retVal = new ResolverAttributeDefinitionDependency(attributeId);
+    @Nonnull public static ResolverAttributeDefinitionDependency makeAttributeDefinitionDependency(
+            @Nonnull final String attributeId) {
+        final ResolverAttributeDefinitionDependency retVal = new ResolverAttributeDefinitionDependency(attributeId);
         return retVal;
     }
     
@@ -260,8 +282,9 @@ public final class TestSources {
      * @param attributeId attributeId
      * @return the dependency
      */
-    @Nonnull public static ResolverDataConnectorDependency makeDataConnectorDependency(@Nonnull String connectorId, @Nullable String attributeId) {
-        ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
+    @Nonnull public static ResolverDataConnectorDependency makeDataConnectorDependency(
+            @Nonnull final String connectorId, @Nullable final String attributeId) {
+        final ResolverDataConnectorDependency retVal = new ResolverDataConnectorDependency(connectorId);
         if (null == attributeId) {
             retVal.setAllAttributes(true);
         } else {
@@ -333,7 +356,7 @@ public final class TestSources {
          * 
          * @param newValues static values returned by this connector
          */
-        public void setValues(@Nullable @NullableElements Collection<IdPAttribute> newValues) {
+        public void setValues(@Nullable @NullableElements final Collection<IdPAttribute> newValues) {
 
             if (null == newValues) {
                 attributes = null;

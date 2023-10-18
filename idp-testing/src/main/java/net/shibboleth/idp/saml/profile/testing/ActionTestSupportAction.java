@@ -36,7 +36,7 @@ public class ActionTestSupportAction extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected void doExecute(@Nonnull ProfileRequestContext profileRequestContext) {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
     }
     

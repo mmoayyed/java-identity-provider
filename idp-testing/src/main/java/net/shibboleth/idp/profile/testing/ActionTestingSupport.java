@@ -26,19 +26,24 @@ import net.shibboleth.shared.annotation.constraint.NotEmpty;
  * Helper methods for creating/testing objects within profile action tests. When methods herein refer to mock objects
  * they are always objects that have been created via Mockito unless otherwise noted.
  */
-public class ActionTestingSupport {
-
+public final class ActionTestingSupport {
+    
     /** ID of the inbound message. */
-    @Nonnull @NotEmpty public final static String INBOUND_MSG_ID = "inbound";
+    @Nonnull @NotEmpty public static final String INBOUND_MSG_ID = "inbound";
 
     /** Issuer of the inbound message. */
-    @Nonnull @NotEmpty public final static String INBOUND_MSG_ISSUER = "http://sp.example.org";
+    @Nonnull @NotEmpty public static final String INBOUND_MSG_ISSUER = "http://sp.example.org";
 
     /** ID of the outbound message. */
-    @Nonnull @NotEmpty public final static String OUTBOUND_MSG_ID = "outbound";
+    @Nonnull @NotEmpty public static final String OUTBOUND_MSG_ID = "outbound";
 
     /** Issuer of the outbound message. */
-    @Nonnull @NotEmpty public final static String OUTBOUND_MSG_ISSUER = "http://idp.example.org";
+    @Nonnull @NotEmpty public static final String OUTBOUND_MSG_ISSUER = "http://idp.example.org";
+
+    /** Private constructor. */
+    private ActionTestingSupport() {
+        
+    }
 
     /**
      * Checks that the event is not null, that the event source is not null, and that the event ID is the given id.

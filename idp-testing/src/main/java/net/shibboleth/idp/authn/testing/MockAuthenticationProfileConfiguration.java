@@ -102,7 +102,8 @@ public class MockAuthenticationProfileConfiguration extends AbstractInterceptorA
      * @param methods   default authentication methods to use
      */
     public void setDefaultAuthenticationMethods(@Nonnull final List<Principal> methods) {
-        defaultAuthenticationMethods = CollectionSupport.copyToList(Constraint.isNotNull(methods, "List of methods cannot be null"));
+        defaultAuthenticationMethods = CollectionSupport.copyToList(
+                Constraint.isNotNull(methods, "List of methods cannot be null"));
     }
     
     /**
@@ -162,7 +163,7 @@ public class MockAuthenticationProfileConfiguration extends AbstractInterceptorA
     }
 
     /** {@inheritDoc} */
-    public boolean isForceAuthn(@Nullable ProfileRequestContext profileRequestContext) {
+    public boolean isForceAuthn(@Nullable final ProfileRequestContext profileRequestContext) {
         return forceAuthnPredicate.test(profileRequestContext);
     }
 

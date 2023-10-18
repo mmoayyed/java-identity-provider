@@ -38,20 +38,24 @@ import net.shibboleth.shared.primitive.LoggerFactory;
 public class ReportModuleStatus extends AbstractIdentifiableInitializableComponent {
 
     /** Log. */
-    private final Logger log = LoggerFactory.getLogger(ReportModuleStatus.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ReportModuleStatus.class);
     
     /** The IdOP Home dir. */
     @Nonnull private String idpHome="";
 
-    /** Where IdP Home is.
+    /**
+     * Sets IdP home location.
+     * 
      * @param input what to set.
      */
-    public void setIdpHome(@Nonnull @NotEmpty String input) {
+    public void setIdpHome(@Nonnull @NotEmpty final String input) {
         idpHome = Constraint.isNotNull(input, "IdpHome not set");
     }
     
-    /** Return all the enabled modules.
-     * @return the module ids
+    /**
+     * Return all the enabled modules.
+     * 
+     * @return the module IDs.
      */
     @Nonnull private Set<String> getEnabledModules() {
         final HashSet<String> result = new HashSet<>();
@@ -70,10 +74,12 @@ public class ReportModuleStatus extends AbstractIdentifiableInitializableCompone
         return result;
     }
 
-    /** Check whether any plugin required a non enabled plugin. 
-     * @param enabledModules
+    /**
+     * Check whether any plugin required a non-enabled module.
+     *  
+     * @param enabledModules the enabled module IDs
      */
-    private void checkPlugins(@Nonnull Set<String> enabledModules) {
+    private void checkPlugins(@Nonnull final Set<String> enabledModules) {
         final Iterator<IdPPlugin> plugins = ServiceLoader.load(IdPPlugin.class).iterator();
         while (plugins.hasNext()) {
             final IdPPlugin plugin = plugins.next();

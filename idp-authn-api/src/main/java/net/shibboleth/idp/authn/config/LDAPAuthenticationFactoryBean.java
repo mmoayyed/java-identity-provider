@@ -910,7 +910,16 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         return factory;
     }
 
-    protected SearchConnectionValidator createSearchConnectionValidator(final String baseDn, final String filter) {
+    /**
+     * Create {@link SearchConnectionValidator}.
+     * 
+     * @param baseDn base DN
+     * @param filter search filter
+     * 
+     * @return the validator
+     */
+    @Nonnull protected SearchConnectionValidator createSearchConnectionValidator(@Nullable final String baseDn,
+            @Nullable final String filter) {
         final SearchRequest searchRequest = new SearchRequest();
         searchRequest.setReturnAttributes("1.1");
         searchRequest.setSearchScope(SearchScope.OBJECT);
@@ -930,7 +939,14 @@ public class LDAPAuthenticationFactoryBean extends AbstractFactoryBean<Authentic
         return SearchConnectionValidator.builder().request(searchRequest).period(validatePeriod).build();
     }
 
-    protected ConnectionPassivator createConnectionPassivator(final PassivatorType type) {
+    /**
+     * Creates {@link ConnectionPassivator} object.
+     * 
+     * @param type type to create
+     * 
+     * @return the created object
+     */
+    @Nullable protected ConnectionPassivator createConnectionPassivator(@Nonnull final PassivatorType type) {
         switch (type) {
         case BIND:
             return new BindConnectionPassivator(new SimpleBindRequest(bindDn, new Credential(bindDnCredential)));
