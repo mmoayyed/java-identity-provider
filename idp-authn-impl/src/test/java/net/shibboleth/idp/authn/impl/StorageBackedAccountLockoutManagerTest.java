@@ -134,6 +134,7 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         
         final List<String> candidates = CollectionSupport.listOf("jdoe!192.168.1.1", "jdoe!192.168.1.2");
         final Iterable<String> keys = manager.enumerate(prc);
+        assert keys != null;
         for (final String key : keys) {
             assertTrue(candidates.contains(key));
         }

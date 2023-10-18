@@ -110,26 +110,28 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
             
             if (ticket.getTicketState() != null) {
                 final TicketState state = ticket.getTicketState();
-                gen.writeStartObject(STATE_FIELD);
-                if (state.getSessionId() != null) {
-                    gen.write(SESSION_FIELD, state.getSessionId());
-                } else {
-                    gen.writeNull(SESSION_FIELD);
-                }
-                gen.write(PRINCIPAL_FIELD, state.getPrincipalName())
-                    .write(AUTHN_INSTANT_FIELD, state.getAuthenticationInstant().toEpochMilli())
-                    .write(AUTHN_METHOD_FIELD, state.getAuthenticationMethod());
-
-                final Set<String> consentedIds = state.getConsentedAttributeIds();
-                if (consentedIds != null) {
-                    gen.writeStartArray(CONSENTED_ATTRS_FIELD);
-                    for (final String id : consentedIds) {
-                        gen.write(id);
+                if (state != null) {
+                    gen.writeStartObject(STATE_FIELD);
+                    if (state.getSessionId() != null) {
+                        gen.write(SESSION_FIELD, state.getSessionId());
+                    } else {
+                        gen.writeNull(SESSION_FIELD);
                     }
+                    gen.write(PRINCIPAL_FIELD, state.getPrincipalName())
+                        .write(AUTHN_INSTANT_FIELD, state.getAuthenticationInstant().toEpochMilli())
+                        .write(AUTHN_METHOD_FIELD, state.getAuthenticationMethod());
+    
+                    final Set<String> consentedIds = state.getConsentedAttributeIds();
+                    if (consentedIds != null) {
+                        gen.writeStartArray(CONSENTED_ATTRS_FIELD);
+                        for (final String id : consentedIds) {
+                            gen.write(id);
+                        }
+                        gen.writeEnd();
+                    }
+                    
                     gen.writeEnd();
                 }
-                
-                gen.writeEnd();
             }
             serializeInternal(gen, ticket);
             gen.writeEnd();

@@ -59,8 +59,10 @@ public class SimpleTicketServiceTest {
     public void testCreateRemoveServiceTicket() throws Exception {
         final ServiceTicket st = createServiceTicket(TEST_SESSION_ID);
         assertNotNull(st);
-        assertNotNull(st.getTicketState().getSessionId());
-        assertNotNull(st.getTicketState().getPrincipalName());
+        final TicketState state = st.getTicketState();
+        assert state != null;
+        assertNotNull(state.getSessionId());
+        assertNotNull(state.getPrincipalName());
         final ServiceTicket st2 = ticketService.removeServiceTicket(st.getId());
         assert st2 != null;
         assertEquals(st, st2);
@@ -74,10 +76,13 @@ public class SimpleTicketServiceTest {
     public void testCreateRemoveServiceTicketNoSession() throws Exception {
         final ServiceTicket st = createServiceTicket(null);
         assertNotNull(st);
-        assertNull(st.getTicketState().getSessionId());
-        assertNotNull(st.getTicketState().getPrincipalName());
+        final TicketState state = st.getTicketState();
+        assert state != null;
+        assertNull(state.getSessionId());
+        assertNotNull(state.getPrincipalName());
         final ServiceTicket st2 = ticketService.removeServiceTicket(st.getId());
         assertEquals(st, st2);
+        assert st2 != null;
         assertEquals(st.getExpirationInstant(), st2.getExpirationInstant());
         assertEquals(st.getService(), st2.getService());
         assertEquals(st.getTicketState(), st2.getTicketState());

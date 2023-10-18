@@ -159,6 +159,7 @@ public abstract class AbstractTicketService implements TicketService {
      * @return Storage service serializer.
      */
     @Nonnull protected static <T extends Ticket> StorageSerializer<T> serializer(@Nonnull final Class<T> clazz) {
+        @SuppressWarnings("unchecked")
         final StorageSerializer<T> result = (StorageSerializer<T>) Constraint.isNotNull(SERIALIZER_MAP.get(clazz),
                 "Serializer for " + clazz + " not found");
         return result;
@@ -177,6 +178,9 @@ public abstract class AbstractTicketService implements TicketService {
             final String ticketCtx;
             if (sessionId != null) {
                 final String context = context(ticket.getClass());
+                if (context == null) {
+                    throw new IOException("Context for ticket class " + ticket.getClass() + " was null");
+                }
                 log.debug("Storing mapping of {} to {} in context {}", ticket, sessionId, context);
                 if (!storageService.create(context, ticket.getId(), sessionId, expiry)) {
                     throw new RuntimeException("Failed to store ticket " + ticket);
@@ -208,8 +212,12 @@ public abstract class AbstractTicketService implements TicketService {
         log.debug("Reading {}", id);
         final T ticket;
         try {
+            final String ticketContext = context(clazz);
+            if (ticketContext == null) {
+                throw new IOException("Context for ticket class " + clazz + " was null");
+            }
             final String context;
-            final StorageRecord<T> sessionRecord = storageService.read(context(clazz), id);
+            final StorageRecord<T> sessionRecord = storageService.read(ticketContext, id);
             if (sessionRecord != null) {
                 context = sessionRecord.getValue();
                 log.debug("{} bound to session {}", id, context);
@@ -245,6 +253,9 @@ public abstract class AbstractTicketService implements TicketService {
         }
         try {
             final String context = context(clazz);
+            if (context == null) {
+                throw new IOException("Context for ticket class " + ticket.getClass() + " was null");
+            }
             final String sessionId = ticket.getSessionId();
             final String ticketCtx;
             if (sessionId != null) {
