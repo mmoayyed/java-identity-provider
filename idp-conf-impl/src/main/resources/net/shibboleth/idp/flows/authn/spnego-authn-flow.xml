@@ -51,7 +51,7 @@
         <transition to="RunSPNEGO" />
     </action-state>
 
-    <view-state id="RunSPNEGO" view="externalRedirect:#{flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SPNEGO.externalAuthnPathStrategy').apply(opensamlProfileRequestContext)}/#{flowExecutionContext.getKey().toString()}?conversation=#{flowExecutionContext.getKey().toString()}">
+    <view-state id="RunSPNEGO" view="externalRedirect:#{(flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.authn.SPNEGO.externalAuthnPathStrategy') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SPNEGO.externalAuthnPathStrategy') : flowRequestContext.getActiveFlow().getApplicationContext().getBean('DefaultExternalAuthnPathStrategy')).apply(opensamlProfileRequestContext)}/#{flowExecutionContext.getKey().toString()}?conversation=#{flowExecutionContext.getKey().toString()}">
         <attribute name="csrf_excluded" value="true" type="boolean"/>
         <on-render>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.spnego.impl.SPNEGOContext(), true).setKerberosSettings(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SPNEGO.Krb5.Settings'))" />

@@ -15,9 +15,10 @@
     <bean id="PropertyDrivenDiscovery" parent="shibboleth.Functions.Constant"
         c:target="#{'%{idp.authn.SAML.proxyEntityID:}'.trim()}" />
 
-    <bean id="shibboleth.authn.SAML.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
+    <bean id="DefaultExternalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
         c:target="#{getObject('shibboleth.authn.SAML.externalAuthnPath') ?: 'servletRelative:%{idp.authn.SAML.externalAuthnPath:/Authn/SAML2/POST/SSO}'.trim()}" />
 
+    <!-- Legacy compatibility. -->
     <import resource="conditional:%{idp.home}/conf/authn/saml-authn-config.xml" />
     
     <!-- Parent beans for indirecting into nested PRC. -->

@@ -19,7 +19,7 @@
         c:_0="servletRelative:%{idp.authn.SPNEGO.externalAuthnPath:%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}}" />
 
     <!-- Default strategy function to obtain the external path. -->
-    <bean id="shibboleth.authn.SPNEGO.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
+    <bean id="DefaultExternalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
         c:target-ref="shibboleth.authn.SPNEGO.externalAuthnPath" />
 
     <!-- Legacy approach to this setting, needed to allow override and aliasing below. -->

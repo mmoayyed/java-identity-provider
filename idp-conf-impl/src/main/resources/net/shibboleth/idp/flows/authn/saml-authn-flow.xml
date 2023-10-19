@@ -45,7 +45,7 @@
         <transition on="proceed" to="EncodeSAMLRequest" />
     </action-state>
     
-    <view-state id="EncodeSAMLRequest" view="externalRedirect:#{T(net.shibboleth.idp.authn.ExternalAuthentication).getExternalRedirect(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SAML.externalAuthnPathStrategy').apply(opensamlProfileRequestContext) + '/start', flowExecutionContext.getKey().toString())}">
+    <view-state id="EncodeSAMLRequest" view="externalRedirect:#{T(net.shibboleth.idp.authn.ExternalAuthentication).getExternalRedirect((flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.authn.SAML.externalAuthnPathStrategy') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.SAML.externalAuthnPathStrategy') : flowRequestContext.getActiveFlow().getApplicationContext().getBean('DefaultExternalAuthnPathStrategy') ).apply(opensamlProfileRequestContext) + '/start', flowExecutionContext.getKey().toString())}">
         <attribute name="csrf_excluded" value="true" type="boolean"/>
         <on-render>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.context.ExternalAuthenticationContext(new net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl(false)), true).setFlowExecutionUrl(flowExecutionUrl + '&amp;_eventId_proceed=1')" />

@@ -13,7 +13,7 @@
        default-destroy-method="destroy">
 
     <!-- Default strategy function to obtain the external path. -->
-    <bean id="shibboleth.authn.External.externalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
+    <bean id="DefaultExternalAuthnPathStrategy" parent="shibboleth.Functions.Constant"
         c:target="#{getObject('shibboleth.authn.External.externalAuthnPath') ?: '%{idp.authn.External.externalAuthnPath:contextRelative:external.jsp}'.trim()}" />
 
     <import resource="conditional:%{idp.home}/conf/authn/external-authn-config.xml" />
