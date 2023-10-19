@@ -38,9 +38,9 @@ import net.shibboleth.shared.spring.httpclient.resource.HTTPResource;
 @SuppressWarnings("javadoc")
 public class PluginCLITest extends BasePluginTest {
     
-    private final static boolean RunInstallTests = false; 
+    private final static boolean RunInstallTests = false;
     
-    private final String PLUGIN_DISTRO = "http://test.shibboleth.net/downloads/identity-provider/plugins/metadatagen/1.0.0/idp-plugin-metadatagen-dist-1.0.0.tar.gz";
+    private final String PLUGIN_DISTRO = "http://test.shibboleth.net/downloads/identity-provider/plugins/metadatagen/2.0.0/idp-plugin-metadatagen-dist-2.0.0.tar.gz";
     
     private final String PLUGIN_ID = "net.shibboleth.idp.plugin.metadatagen";
 

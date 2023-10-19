@@ -102,5 +102,5 @@ net.shibboleth.plugin.test.downloadURL.2.0.0=https://example.org/plugins2
 net.shibboleth.plugin.test.baseName.2.0.0=base-1-2-4
 net.shibboleth.plugin.test.idpVersionMax.2.0.0=8.0.0
 net.shibboleth.plugin.test.idpVersionMin.2.0.0=4.99.1
-net.shibboleth.plugin.test.supportLevel.2.0.0 = Unsupported
+net.shibboleth.plugin.test.supportLevel.2.0.0 = Current
 

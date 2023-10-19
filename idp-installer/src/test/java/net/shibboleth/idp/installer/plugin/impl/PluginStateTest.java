@@ -54,17 +54,17 @@ public class PluginStateTest {
 
         final InstallableComponentVersion pluginVersion = new InstallableComponentVersion(simple.getMajorVersion(), simple.getMinorVersion(), simple.getPatchVersion());
         
-        assertEquals(pluginVersion, new InstallableComponentVersion("1.2.3"));
+        assertEquals(pluginVersion, new InstallableComponentVersion("2.0.0"));
         assertEquals(state.getPluginInfo().getAvailableVersions().size(), 3);
         assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new InstallableComponentVersion(1, 2, 3)));
         assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new InstallableComponentVersion(1, 2, 4)));
         assertTrue(state.getPluginInfo().getAvailableVersions().containsKey(new InstallableComponentVersion(2,0,0)));
         assertFalse(state.getPluginInfo().getAvailableVersions().containsKey(new InstallableComponentVersion(3, 2, 3)));
 
-        assertTrue(testSupportState(pluginVersion, state, "4.1.0"));
-        assertTrue(testSupportState(pluginVersion, state, "4.2.0"));
+        assertFalse(testSupportState(pluginVersion, state, "4.1.0"));
+        assertFalse(testSupportState(pluginVersion, state, "4.2.0"));
         assertTrue(testSupportState(pluginVersion, state, "4.99.9"));
-        assertFalse(testSupportState(pluginVersion, state, "5.0.0"));
+        assertTrue(testSupportState(pluginVersion, state, "5.0.0"));
 
         final InstallableComponentVersion v124 = new InstallableComponentVersion(1,2,3);        
         assertTrue(testSupportState(v124, state,"4.1.0"));
@@ -72,15 +72,6 @@ public class PluginStateTest {
         assertFalse(testSupportState(v124, state, "5.0.0"));
         assertFalse(testSupportState(v124, state, "4.0.0"));
 
-        final InstallableComponentVersion v2 = new InstallableComponentVersion(2,0,0);
-        assertTrue(testSupportState(v2, state, "4.99.1"));
-        assertTrue(testSupportState(v2, state, "4.99.999"));
-        assertFalse(testSupportState(v2, state, "4.99.0"));
-        assertFalse(testSupportState(v2, state, "4.98.999"));
-        assertTrue(testSupportState(v2, state, "5.0.0"));
-        assertTrue(testSupportState(v2, state, "6.0.0"));
-        assertTrue(testSupportState(v2, state, "7.0.0"));
-        assertFalse(testSupportState(v2, state, "8"));
     }
 
     @Test

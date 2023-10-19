@@ -54,19 +54,19 @@ public class TestPlugin extends AbstractPlugin<IdPModule> implements IdPPlugin {
     /** {@inheritDoc} */
     @Override
     public int getMajorVersion() {
-        return 1;
+        return 2;
     }
 
     /** {@inheritDoc} */
     @Override
     public int getMinorVersion() {
-        return 2;
+        return 0;
     }
     
 
     /** {@inheritDoc} */
     @Override
     public int getPatchVersion() {
-        return 3;
+        return 0;
     }
 }
