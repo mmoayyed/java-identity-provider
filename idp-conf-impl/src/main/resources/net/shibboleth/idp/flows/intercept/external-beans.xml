@@ -13,7 +13,7 @@
        default-destroy-method="destroy">
 
     <!-- Default strategy function to obtain the external path. -->
-    <bean id="shibboleth.intercept.externalPathStrategy" parent="shibboleth.Functions.Constant"
+    <bean id="DefaultExternalPathStrategy" parent="shibboleth.Functions.Constant"
         c:target="#{getObject('shibboleth.intercept.externalPath') ?: '%{idp.intercept.External.externalPath:contextRelative:intercept.jsp}'.trim()}" />
 
     <!-- Legacy compatibility. -->
