@@ -106,7 +106,7 @@ h+XNZ5oAql/cjrwDWw==
             </KeyInfo>
         </KeyDescriptor>
         
-        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://localhost:8443/sp/SAML2/Redirect/SLO"/>
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://localhost/sp/SAML2/Redirect/SLO"/>
         
         <SingleLogoutService Binding="https://www.apereo.org/cas/protocol/logout" Location="urn:mace:shibboleth:profile:CAS:logout"/>
         
