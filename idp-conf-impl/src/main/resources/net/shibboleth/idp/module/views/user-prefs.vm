@@ -12,9 +12,9 @@
 ##
 #set ($onLoad = "load('spnego')")
 #set ($onClick = "check(this)")
-$response.setHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)','sha256-$cspDigester.apply($onClick)'")
+$response.addHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)','sha256-$cspDigester.apply($onClick)'")
 ## Hash of user-prefs.js (being injected inline below).
-$response.setHeader("Content-Security-Policy", "script-src-elem 'unsafe-hashes' 'sha256-mXQMhpzvwZ/f5iKzcm/iFe50L/0b7cNjsvcFVu/PMTg='")
+$response.addHeader("Content-Security-Policy", "script-src-elem 'unsafe-hashes' 'sha256-mXQMhpzvwZ/f5iKzcm/iFe50L/0b7cNjsvcFVu/PMTg='")
 <!DOCTYPE html>
 <html>
     <head>

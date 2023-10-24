@@ -50,7 +50,7 @@
         #end
     </ol>
     <script src="$request.getContextPath()/js/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="></script>
-    <script>
+    <script #if ($nonce)nonce="$nonce"#end>
     <!--
         function check_status() {
             // Check every property of the object.

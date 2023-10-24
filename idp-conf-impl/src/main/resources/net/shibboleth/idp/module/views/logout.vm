@@ -22,7 +22,7 @@
 #end
 #set ($promptForIdP = $logoutContext and !$logoutContext.getIdPSessions().isEmpty())
 #set ($promptForSP = $logoutContext and !$logoutContext.getSessionMap().isEmpty())
-$response.setHeader("Content-Security-Policy", "script-src 'none'")
+$response.addHeader("Content-Security-Policy", "script-src 'none'; base-uri 'none'")
 <!DOCTYPE html>
 <html>
     <head>

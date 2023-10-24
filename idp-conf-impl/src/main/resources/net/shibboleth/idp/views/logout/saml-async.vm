@@ -9,7 +9,7 @@
 ## environment - Spring Environment object for property resolution
 ## custom - arbitrary object injected by deployer
 ##
-$response.setHeader("Content-Security-Policy", "script-src 'none'")
+$response.addHeader("Content-Security-Policy", "script-src 'none'; base-uri 'none'")
 <!DOCTYPE html>
 <html>
 <head>

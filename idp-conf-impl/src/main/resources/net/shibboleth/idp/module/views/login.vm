@@ -23,7 +23,7 @@
 #set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername())
 ##
 #set ($onClick = "this.childNodes[0].nodeValue='#springMessageText('idp.login.pleasewait', 'Logging in, please wait...')'")
-$response.setHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onClick)'")
+$response.addHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onClick)'")
 <!DOCTYPE html>
 <html>
     <head>

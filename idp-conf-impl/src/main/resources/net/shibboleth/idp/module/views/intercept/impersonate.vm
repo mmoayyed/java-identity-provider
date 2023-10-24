@@ -14,7 +14,7 @@
 ## custom - arbitrary object injected by deployer
 ##
 #set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.profile.context.RelyingPartyContext'))
-$response.setHeader("Content-Security-Policy", "script-src 'none'")
+$response.addHeader("Content-Security-Policy", "script-src 'none'")
 <!DOCTYPE html>
 <html>
     <head>

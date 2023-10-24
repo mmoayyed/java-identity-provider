@@ -15,7 +15,7 @@
 #set ($serviceName = $rpUIContext.serviceName)
 #set ($rpOrganizationLogo = $rpUIContext.getLogo())
 ##
-$response.setHeader("Content-Security-Policy", "script-src 'none'")
+$response.addHeader("Content-Security-Policy", "script-src 'none'")
 <!DOCTYPE html>
 <html>
     <head>

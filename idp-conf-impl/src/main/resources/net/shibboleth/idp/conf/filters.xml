@@ -23,7 +23,7 @@
             <map>
                 <entry key="Strict-Transport-Security" value="%{idp.hsts:max-age=31536000}" />
                 <entry key="X-Frame-Options" value="%{idp.frameoptions:DENY}" />
-                <entry key="Content-Security-Policy" value="%{idp.csp:frame-ancestors 'none';}"/>
+                <entry key="Content-Security-Policy" value="%{idp.csp:frame-ancestors 'none'; base-uri 'none';}"/>
             </map>
         </property>
     </bean>

@@ -17,10 +17,10 @@
 #set ($titleSuffix = $springMacroRequestContext.getMessage("idp.client-storage-read.suffix", "Loading Session Information"))
 ##
 #set ($onLoad = "doLoad()")
-$response.setHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)'")
+$response.addHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)'")
 ## Nonce for dynanmic scripts.
 #set ($nonce = $cspNonce.generateIdentifier())
-$response.setHeader("Content-Security-Policy", "script-src-elem 'nonce-$nonce'")
+$response.addHeader("Content-Security-Policy", "script-src-elem 'nonce-$nonce'")
 <!DOCTYPE html>
 <html>
     <head>
