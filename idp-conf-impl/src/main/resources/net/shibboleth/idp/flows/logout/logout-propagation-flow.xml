@@ -39,6 +39,8 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.UserAgentContext))" result="requestScope.userAgentContext" />
             <evaluate expression="externalContext.nativeResponse.setContentType('application/json')" />
             <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPDigester')" result="requestScope.cspDigester" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPNonce')" result="requestScope.cspNonce" />
             <evaluate expression="WriteAuditLog" />
         </on-entry>
     </end-state>

@@ -12,6 +12,8 @@
 ## htmlEncoder - HTMLEncoder class
 ## urlEncoder - urlEncoder class
 ## codecUtil - CodecUtil class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 ## environment - Spring Environment object for property resolution
@@ -47,7 +49,7 @@
                 title="$logoutTitle">$htmlEncoder.encodeForHTML($serviceName)</li>
         #end
     </ol>
-    <script src="$request.getContextPath()/js/jquery-3.6.0.min.js"></script>
+    <script src="$request.getContextPath()/js/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="></script>
     <script>
     <!--
         function check_status() {

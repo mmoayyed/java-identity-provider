@@ -8,6 +8,8 @@
 ## profileRequestContext - root of context tree
 ## saveContext - context with details about the storage data to save
 ## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 ## environment - Spring Environment object for property resolution
@@ -28,7 +30,7 @@
     </noscript>
 </form>
 
-<script>
+<script #if ($nonce)nonce="$nonce"#end>
 <!--
 function doSave() {
     #foreach ($op in $saveContext.getStorageOperations())

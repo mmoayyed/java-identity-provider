@@ -9,6 +9,8 @@
 ## logoutContext - context with SPSession details for logout operation
 ## multiRPContext - context with RelyingPartyContexts and possibly SP UI information from the metadata
 ## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 ## environment - Spring Environment object for property resolution
@@ -16,6 +18,7 @@
 ##
 #set ($activeIdPSessions = $logoutContext and !$logoutContext.getIdPSessions().isEmpty())
 #set ($activeSPSessions = $logoutContext and !$logoutContext.getSessionMap().isEmpty())
+$response.setHeader("Content-Security-Policy", "script-src 'none'")
 <!DOCTYPE html>
 <html>
     <head>

@@ -56,7 +56,9 @@
     
     <!-- Additional MVC controllers scanned for annotations. -->
     
-    <bean id="shibboleth.SPNEGOAuthnController" class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAuthnController" />
+    <bean id="shibboleth.SPNEGOAuthnController" class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAuthnController"
+        p:cSPDigester-ref="shibboleth.CSPDigester"
+        p:cSPNonceGenerator-ref="shibboleth.CSPNonce" />
     <bean id="shibboleth.SAMLAuthnPOSTController" class="net.shibboleth.idp.saml.saml2.profile.impl.SAMLAuthnController"
         p:inboundBindings-ref="shibboleth.OutgoingSAML2SSOBindings" />
     <bean id="shibboleth.RaiseErrorController" class="net.shibboleth.shared.spring.error.ErrorRaisingController" />

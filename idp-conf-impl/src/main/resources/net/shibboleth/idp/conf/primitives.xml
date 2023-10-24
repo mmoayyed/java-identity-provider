@@ -49,6 +49,31 @@
     <bean id="shibboleth.X509TrustManager" abstract="true"
         class="org.opensaml.security.trust.impl.TrustEngineX509TrustManager" />
 
+    <!-- Used in views to calculate CSP hashes and nonces. -->
+    
+    <bean id="shibboleth.CSPDigester" class="net.shibboleth.shared.codec.StringDigester"
+        c:algorithm="SHA256" c:format="BASE64" />
+
+    <bean id="shibboleth.CSPNonce" destroy-method=""
+            class="net.shibboleth.shared.security.IdentifierGenerationStrategy" factory-method="getInstance">
+        <constructor-arg>
+            <util:constant
+                static-field="net.shibboleth.shared.security.IdentifierGenerationStrategy.ProviderType.SECURE" />
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="net.shibboleth.shared.security.RandomIdentifierParameterSpec"
+                    c:identifierSize="16">
+                <constructor-arg name="source">
+                    <null/>
+                </constructor-arg>
+                <constructor-arg name="identifierEncoder">
+                    <null/>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+
     <!-- Beans for user-visible metadata configuration usage. -->
 
     <!-- Secondary indexing support -->

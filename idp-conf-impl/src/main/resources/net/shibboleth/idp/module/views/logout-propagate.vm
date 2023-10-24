@@ -10,6 +10,8 @@
 ## multiRPContext - context with RelyingPartyContexts and possibly SP UI information from the metadata
 ## htmlEncoder - HTMLEncoder class
 ## urlEncoder - urlEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## codecUtil - CodecUtil class
 ## request - HttpServletRequest
 ## response - HttpServletResponse
@@ -17,6 +19,7 @@
 ## custom - arbitrary object injected by deployer
 ##
 #set ($hidden = $environment.getProperty("idp.logout.propagationHidden", "false"))
+$response.setHeader("Content-Security-Policy", "script-src 'unsafe-inline' 'self'")
 <!DOCTYPE html>
 <html>
     <head>

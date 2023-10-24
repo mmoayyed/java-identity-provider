@@ -106,6 +106,10 @@
         </dependency>
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
+            <artifactId>shib-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-service</artifactId>
         </dependency>
         <dependency>
@@ -264,11 +268,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-            <artifactId>shib-security</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-testing</artifactId>

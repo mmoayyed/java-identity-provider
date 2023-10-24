@@ -16,6 +16,8 @@
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.opensaml.storage.impl.client.ClientStorageLoadContext))" result="viewScope.loadContext" />
             <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPDigester')" result="viewScope.cspDigester" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPNonce')" result="viewScope.cspNonce" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
         </on-render>

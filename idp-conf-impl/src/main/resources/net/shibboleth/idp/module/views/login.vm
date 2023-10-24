@@ -12,6 +12,8 @@
 ## ldapResponseContext - context with LDAP state (if using native LDAP)
 ## rpUIContext - the context with SP UI information from the metadata
 ## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 ## environment - Spring Environment object for property resolution
@@ -20,6 +22,8 @@
 #set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.profile.context.RelyingPartyContext'))
 #set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername())
 ##
+#set ($onClick = "this.childNodes[0].nodeValue='#springMessageText('idp.login.pleasewait', 'Logging in, please wait...')'")
+$response.setHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onClick)'")
 <!DOCTYPE html>
 <html>
     <head>
@@ -84,8 +88,7 @@
     
                     <div class="grid">
                         <div class="grid-item">
-                            <button type="submit" name="_eventId_proceed"
-                                onClick="this.childNodes[0].nodeValue='#springMessageText("idp.login.pleasewait", "Logging in, please wait...")'"
+                            <button type="submit" name="_eventId_proceed" onClick="$onClick"
                                 >#springMessageText("idp.login.login", "Login")</button>
                         </div>
                     </div>

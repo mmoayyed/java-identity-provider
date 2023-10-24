@@ -6,7 +6,15 @@
 ## response - HttpServletResponse
 ## environment - Spring Environment object for property resolution
 ## custom - arbitrary object injected by deployer
+## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ##
+#set ($onLoad = "load('spnego')")
+#set ($onClick = "check(this)")
+$response.setHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)','sha256-$cspDigester.apply($onClick)'")
+## Hash of user-prefs.js (being injected inline below).
+$response.setHeader("Content-Security-Policy", "script-src-elem 'unsafe-hashes' 'sha256-mXQMhpzvwZ/f5iKzcm/iFe50L/0b7cNjsvcFVu/PMTg='")
 <!DOCTYPE html>
 <html>
     <head>
@@ -15,14 +23,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
-        <script language="Javascript">
-        <!--
-        #parse( "user-prefs.js" )
-        // -->
-        </script>
+        <script language="Javascript">#parse("user-prefs.js")</script>
     </head>
 
-   <body onLoad="document.getElementById('content').style.display='block'; load('spnego')">
+   <body onLoad="$onLoad">
         <main class="main">
             <header>
                 <img class="main-logo" src="$request.getContextPath()#springMessageText("idp.logo", "/images/placeholder-logo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")">
@@ -41,7 +45,7 @@
         
                 <form>
                     <p>#springMessageText("idp.userprefs.options", "The following options are available:")</p>
-                    <input type="checkbox" id="spnego" name="_idp_spnego_autologin" value="1" onClick="check(this)">
+                    <input type="checkbox" id="spnego" name="_idp_spnego_autologin" value="1" onClick="$onClick">
                     <label for="spnego"> #springMessageText("idp.userprefs.spnego", "Automatically try desktop login when available.")</label>
                 </form>
             </section>

@@ -13,6 +13,7 @@
 #set ($titleSuffix = $springMacroRequestContext.getMessage("idp.unlock-keys.title", "Attended Restart Key Unlock"))
 #set ($eventId = $profileRequestContext.getSubcontext("org.opensaml.profile.context.EventContext").getEvent())
 #set ($state = $flowRequestContext.getCurrentState().getId())
+$response.setHeader("Content-Security-Policy", "script-src 'none'")
 <!DOCTYPE html>
 <html>
     <head>

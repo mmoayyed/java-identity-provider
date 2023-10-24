@@ -6,12 +6,16 @@
 ##
 ## Velocity context will contain the following properties
 ## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 ## profileRequestContext - root of context tree
 ## errorUrl - URL to call to indicate error and return back to the login flow
 ##
 #set ($eventKey = $springMacroRequestContext.getMessage("SPNEGOUnavailable", "spnego-unavailable"))
+#set ($onLoad = "window.location = '$errorUrl'")
+$response.setHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)'")
 <!DOCTYPE html>
 <html>
     <head>
@@ -21,7 +25,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
     </head>
-    <body onload="window.location = '$errorUrl'">
+    <body onLoad="$onLoad">
         <main class="main">
             <header>
                 <img class="main-logo" src="$request.getContextPath()#springMessageText("idp.logo", "/images/placeholder-logo.png")" alt="#springMessageText("idp.logo.alt-text", "logo")">

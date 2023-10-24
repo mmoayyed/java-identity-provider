@@ -43,8 +43,9 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.codec.HTMLEncoder;
+import net.shibboleth.shared.codec.StringDigester;
 import net.shibboleth.shared.primitive.LoggerFactory;
-
+import net.shibboleth.shared.security.IdentifierGenerationStrategy;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -70,6 +71,34 @@ public class SPNEGOAuthnController {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SPNEGOAuthnController.class);
+    
+    /** CSP digest computation bean. */
+    @Nullable private StringDigester cspDigester;
+    
+    /** CSP nonce generator bean. */
+    @Nullable private IdentifierGenerationStrategy cspNonceGenerator;
+    
+    /**
+     * Sets a {@link StringDigester} to use in computing CSP digests in views.
+     * 
+     * @param digester digester to set
+     * 
+     * @since 5.1.0
+     */
+    public void setCSPDigester(@Nullable final StringDigester digester) {
+        cspDigester = digester;
+    }
+    
+    /**
+     * Sets an {@link IdentifierGenerationStrategy} to use in computing CSP nonces in views.
+     * 
+     * @param strategy nonce strategy
+     * 
+     * @since 5.1.0
+     */
+    public void setCSPNonceGenerator(@Nullable final IdentifierGenerationStrategy strategy) {
+        cspNonceGenerator = strategy;
+    }
 
     /**
      * Handle initial request that starts SPNEGO.
@@ -390,6 +419,8 @@ public class SPNEGOAuthnController {
         modelAndView.addObject("request", httpRequest);
         modelAndView.addObject("response", httpResponse);
         modelAndView.addObject("encoder", HTMLEncoder.class);
+        modelAndView.addObject("cspDigester", cspDigester);
+        modelAndView.addObject("cspNonce", cspNonceGenerator);
         final StringBuffer errorUrl = httpRequest.getRequestURL();
         errorUrl.append("/error");
         final String queryString = httpRequest.getQueryString();
