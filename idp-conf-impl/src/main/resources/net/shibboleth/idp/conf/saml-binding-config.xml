@@ -134,7 +134,9 @@
     <bean id="shibboleth.Encoders.SAML1PostEncoder"
           class="org.opensaml.saml.saml1.binding.encoding.impl.HTTPPostEncoder" scope="prototype" init-method=""
           p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
-          p:velocityEngine-ref="shibboleth.VelocityEngine" />
+          p:velocityEngine-ref="shibboleth.VelocityEngine"
+          p:cSPDigester="#{%{idp.encoders.cspEnabled:true} ? getObject('shibboleth.CSPDigester') : null}"
+          p:cSPNonceGenerator="#{%{idp.encoders.cspEnabled:true} ? getObject('shibboleth.CSPNonce') : null}" />
 
     <bean id="shibboleth.Encoders.SAML1ArtifactEncoder"
           class="org.opensaml.saml.saml1.binding.encoding.impl.HTTPArtifactEncoder" scope="prototype" init-method=""
@@ -152,12 +154,16 @@
     <bean id="shibboleth.Encoders.SAML2PostEncoder"
           class="org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder" scope="prototype" init-method=""
           p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
-          p:velocityEngine-ref="shibboleth.VelocityEngine" />
+          p:velocityEngine-ref="shibboleth.VelocityEngine"
+          p:cSPDigester="#{%{idp.encoders.cspEnabled:true} ? getObject('shibboleth.CSPDigester') : null}"
+          p:cSPNonceGenerator="#{%{idp.encoders.cspEnabled:true} ? getObject('shibboleth.CSPNonce') : null}" />
 
     <bean id="shibboleth.Encoders.SAML2PostSimpleSignEncoder"
           class="org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostSimpleSignEncoder" scope="prototype" init-method=""
           p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
-          p:velocityEngine-ref="shibboleth.VelocityEngine" />
+          p:velocityEngine-ref="shibboleth.VelocityEngine"
+          p:cSPDigester="#{%{idp.encoders.cspEnabled:true} ? getObject('shibboleth.CSPDigester') : null}"
+          p:cSPNonceGenerator="#{%{idp.encoders.cspEnabled:true} ? getObject('shibboleth.CSPNonce') : null}" />
 
     <bean id="shibboleth.Encoders.SAML2ArtifactEncoder"
           class="org.opensaml.saml.saml2.binding.encoding.impl.HTTPArtifactEncoder" scope="prototype" init-method=""
