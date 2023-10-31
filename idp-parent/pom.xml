@@ -60,7 +60,7 @@
 
     <properties>
         <shib-shared.groupId>net.shibboleth</shib-shared.groupId>
-        <shib-shared.version>9.0.0</shib-shared.version>
+        <shib-shared.version>9.1.0-SNAPSHOT</shib-shared.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>5.1.0-SNAPSHOT</opensaml.version>
         <shib-metadata.groupId>net.shibboleth</shib-metadata.groupId>
