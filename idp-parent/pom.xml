@@ -19,7 +19,7 @@
 
     <groupId>net.shibboleth.idp</groupId>
     <artifactId>idp-parent</artifactId>
-    <version>5.0.1-SNAPSHOT</version>
+    <version>5.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -62,7 +62,7 @@
         <shib-shared.groupId>net.shibboleth</shib-shared.groupId>
         <shib-shared.version>9.0.0</shib-shared.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
-        <opensaml.version>5.0.0</opensaml.version>
+        <opensaml.version>5.1.0-SNAPSHOT</opensaml.version>
         <shib-metadata.groupId>net.shibboleth</shib-metadata.groupId>
         <shib-metadata.version>5.0.0</shib-metadata.version>
         <shib-attribute.groupId>net.shibboleth</shib-attribute.groupId>
