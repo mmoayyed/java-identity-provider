@@ -89,7 +89,6 @@
         <dependency>
             <groupId>${shib-shared.groupId}</groupId>
             <artifactId>shib-support</artifactId>
-            <version>${shib-shared.version}</version>
         </dependency>
 
         <!-- Provided Dependencies -->
@@ -115,54 +114,266 @@
         used by all project modules. -->
     <dependencyManagement>
         <dependencies>
-            <!-- Import Dependencies:  Shib-Metadata/Attribute/Profile -->
             <dependency>
                 <groupId>${shib-profile.groupId}</groupId>
-                <artifactId>shib-profile-bom</artifactId>
+                <artifactId>shib-profile-api</artifactId>
                 <version>${shib-profile.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>${shib-profile.groupId}</groupId>
+                <artifactId>shib-profile-impl</artifactId>
+                <version>${shib-profile.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-profile.groupId}</groupId>
+                <artifactId>shib-saml-profile-api</artifactId>
+                <version>${shib-profile.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-attribute-api</artifactId>
+                <version>${shib-attribute.version}</version>
             </dependency>
             <dependency>
                 <groupId>${shib-attribute.groupId}</groupId>
-                <artifactId>shib-attribute-bom</artifactId>
+                <artifactId>shib-attribute-impl</artifactId>
                 <version>${shib-attribute.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-saml-attribute-api</artifactId>
+                <version>${shib-attribute.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-saml-attribute-impl</artifactId>
+                <version>${shib-attribute.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-attribute-filter-api</artifactId>
+                <version>${shib-attribute.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-attribute-filter-impl</artifactId>
+                <version>${shib-attribute.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-attribute-filter-spring</artifactId>
+                <version>${shib-attribute.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-attribute-resolver-api</artifactId>
+                <version>${shib-attribute.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-attribute-resolver-impl</artifactId>
+                <version>${shib-attribute.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-attribute-resolver-spring</artifactId>
+                <version>${shib-attribute.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${shib-metadata.groupId}</groupId>
+                <artifactId>shib-metadata-api</artifactId>
+                <version>${shib-metadata.version}</version>
             </dependency>
             <dependency>
                 <groupId>${shib-metadata.groupId}</groupId>
-                <artifactId>shib-metadata-bom</artifactId>
+                <artifactId>shib-metadata-impl</artifactId>
                 <version>${shib-metadata.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
-
-            <!-- Import Dependencies:  OpenSAML -->
             <dependency>
-                <groupId>${opensaml.groupId}</groupId>
-                <artifactId>opensaml-bom</artifactId>
-                <version>${opensaml.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Import Dependencies:  Shared -->
-            <dependency>
-            <groupId>${shib-shared.groupId}</groupId>
-                <artifactId>shib-shared-bom</artifactId>
-                <version>${shib-shared.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>${shib-metadata.groupId}</groupId>
+                <artifactId>shib-metadata-spring</artifactId>
+                <version>${shib-metadata.version}</version>
             </dependency>
 
             <!-- Compile Dependencies -->
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-core-api</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-core-impl</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-messaging-api</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-messaging-impl</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-profile-api</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-profile-impl</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-saml-api</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-saml-impl</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-security-api</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-security-impl</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-soap-api</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-soap-impl</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-spring</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-storage-api</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-storage-impl</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-xmlsec-api</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-xmlsec-impl</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-cli</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-networking</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-networking-spring</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-security</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-security-spring</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-service</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-spring</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-support</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-velocity</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-velocity-spring</artifactId>
+                <version>${shib-shared.version}</version>
+            </dependency>
 
             <!-- Provided Dependencies -->
 
             <!-- Runtime Dependencies -->
 
             <!-- Test Dependencies -->
+            <dependency>
+                <groupId>${shib-profile.groupId}</groupId>
+                <artifactId>shib-profile-testing</artifactId>
+                <version>${shib-profile.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>${shib-attribute.groupId}</groupId>
+                <artifactId>shib-attribute-testing</artifactId>
+                <version>${shib-attribute.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>${shib-metadata.groupId}</groupId>
+                <artifactId>shib-metadata-testing</artifactId>
+                <version>${shib-metadata.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>${opensaml.groupId}</groupId>
+                <artifactId>opensaml-testing</artifactId>
+                <version>${opensaml.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>${shib-shared.groupId}</groupId>
+                <artifactId>shib-testing</artifactId>
+                <version>${shib-shared.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
