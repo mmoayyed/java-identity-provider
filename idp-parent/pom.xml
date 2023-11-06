@@ -8,7 +8,7 @@
     <parent>
         <groupId>net.shibboleth</groupId>
         <artifactId>parent</artifactId>
-        <version>17.0.3-SNAPSHOT</version>
+        <version>17.1.0-SNAPSHOT</version>
     </parent>
 
     <name>Shibboleth Identity Provider</name>
@@ -64,14 +64,12 @@
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>5.1.0-SNAPSHOT</opensaml.version>
         <shib-metadata.groupId>net.shibboleth</shib-metadata.groupId>
-        <shib-metadata.version>5.0.0</shib-metadata.version>
+        <shib-metadata.version>5.1.0-SNAPSHOT</shib-metadata.version>
         <shib-attribute.groupId>net.shibboleth</shib-attribute.groupId>
-        <shib-attribute.version>5.0.0</shib-attribute.version>
+        <shib-attribute.version>5.1.0-SNAPSHOT</shib-attribute.version>
         <shib-profile.groupId>net.shibboleth</shib-profile.groupId>
-        <shib-profile.version>5.0.0</shib-profile.version>
+        <shib-profile.version>5.1.0-SNAPWHOT</shib-profile.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
-        <idp-parent.site.url>${shibboleth.site.deploy.url}java-identity-provider/${project.version}/</idp-parent.site.url>
-        <idp-module.site.url>${idp-parent.site.url}${project.artifactId}</idp-module.site.url>
     </properties>
 
     <dependencies>
@@ -106,7 +104,11 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <!-- Dependencies which are not required by every project module but for which every module should use the same version
@@ -114,6 +116,7 @@
         used by all project modules. -->
     <dependencyManagement>
         <dependencies>
+            <!-- Compile Dependencies -->
             <dependency>
                 <groupId>${shib-profile.groupId}</groupId>
                 <artifactId>shib-profile-api</artifactId>
@@ -197,7 +200,6 @@
                 <version>${shib-metadata.version}</version>
             </dependency>
 
-            <!-- Compile Dependencies -->
             <dependency>
                 <groupId>${opensaml.groupId}</groupId>
                 <artifactId>opensaml-core-api</artifactId>
@@ -374,6 +376,7 @@
                 <version>${shib-shared.version}</version>
                 <scope>test</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -382,13 +385,6 @@
         <developerConnection>${shibboleth.scm.developerConnection}java-identity-provider</developerConnection>
         <url>${shibboleth.scm.url}java-identity-provider.git</url>
     </scm>
-
-    <distributionManagement>
-        <site>
-            <id>site</id>
-            <url>scp:${idp-parent.site.url}</url>
-        </site>
-    </distributionManagement>
 
     <build>
         <plugins>
@@ -403,21 +399,6 @@
                         <link>${javadoc.url}/java-shib-attribute/${shib-attribute.version}</link>
                         <link>${javadoc.url}/java-shib-profile/${shib-profile.version}</link>
                     </links>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-descriptor</id>
-                        <goals>
-                            <goal>attach-descriptor</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <siteDirectory>../idp-parent/src/site</siteDirectory>
                 </configuration>
             </plugin>
 
@@ -495,26 +476,5 @@
         </plugins>
 
     </build>
-
-    <profiles>
-        <!--
-            Pull in a Javascript engine for testing in Java
-            versions where the JDK doesn't provide one.
-        -->
-        <profile>
-            <id>get-nashorn</id>
-            <activation>
-                <jdk>[15,</jdk>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.openjdk.nashorn</groupId>
-                    <artifactId>nashorn-core</artifactId>
-                    <version>${nashorn.jdk.version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 
 </project>
