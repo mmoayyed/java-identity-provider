@@ -68,7 +68,7 @@
         <shib-attribute.groupId>net.shibboleth</shib-attribute.groupId>
         <shib-attribute.version>5.1.0-SNAPSHOT</shib-attribute.version>
         <shib-profile.groupId>net.shibboleth</shib-profile.groupId>
-        <shib-profile.version>5.1.0-SNAPWHOT</shib-profile.version>
+        <shib-profile.version>5.1.0-SNAPSHOT</shib-profile.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
     </properties>
 
