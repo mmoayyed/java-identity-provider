@@ -86,7 +86,6 @@
             <artifactId>opensaml-saml-impl</artifactId>
             <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-testing</artifactId>
@@ -99,12 +98,5 @@
         <developerConnection>${shibboleth.scm.developerConnection}java-identity-provider</developerConnection>
         <url>${shibboleth.scm.url}java-identity-provider.git</url>
     </scm>
-
-    <distributionManagement>
-        <site>
-            <id>site</id>
-            <url>scp:${idp-module.site.url}</url>
-        </site>
-    </distributionManagement>
 
 </project>

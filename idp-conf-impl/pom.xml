@@ -374,12 +374,5 @@
         <developerConnection>${shibboleth.scm.developerConnection}java-identity-provider</developerConnection>
         <url>${shibboleth.scm.url}java-identity-provider.git</url>
     </scm>
-    
-    <distributionManagement>
-        <site>
-            <id>site</id>
-            <url>scp:${idp-module.site.url}</url>
-        </site>
-    </distributionManagement>
 
 </project>
