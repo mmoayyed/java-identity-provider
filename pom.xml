@@ -23,39 +23,39 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>../idp-core</module>
-        <module>../idp-schema</module>
+        <module>idp-core</module>
+        <module>idp-schema</module>
 
-        <module>../idp-admin-api</module>
-        <module>../idp-authn-api</module>
-        <module>../idp-cas-api</module>
-        <module>../idp-profile-api</module>
-        <module>../idp-saml-api</module>
-        <module>../idp-session-api</module>
-        <module>../idp-consent-api</module>
+        <module>idp-admin-api</module>
+        <module>idp-authn-api</module>
+        <module>idp-cas-api</module>
+        <module>idp-profile-api</module>
+        <module>idp-saml-api</module>
+        <module>idp-session-api</module>
+        <module>idp-consent-api</module>
 
-        <module>../idp-admin-impl</module>
-        <module>../idp-authn-impl</module>
-        <module>../idp-cas-impl</module>
-        <module>../idp-consent-impl</module>
-        <module>../idp-profile-impl</module>
-        <module>../idp-saml-impl</module>
-        <module>../idp-session-impl</module>
+        <module>idp-admin-impl</module>
+        <module>idp-authn-impl</module>
+        <module>idp-cas-impl</module>
+        <module>idp-consent-impl</module>
+        <module>idp-profile-impl</module>
+        <module>idp-saml-impl</module>
+        <module>idp-session-impl</module>
 
-        <module>../idp-spring</module>
+        <module>idp-spring</module>
 
-        <module>../idp-war</module>
-        <module>../idp-war-distribution</module>
-        <module>../idp-cli</module>
-        <module>../idp-installer</module>
-        <module>../idp-conf-impl</module>
-        <module>../idp-distribution</module>
+        <module>idp-war</module>
+        <module>idp-war-distribution</module>
+        <module>idp-cli</module>
+        <module>idp-installer</module>
+        <module>idp-conf-impl</module>
+        <module>idp-distribution</module>
 
-        <module>../idp-ui</module>
+        <module>idp-ui</module>
 
-        <module>../idp-testing</module>
+        <module>idp-testing</module>
 
-        <module>../idp-bom</module>
+        <module>idp-bom</module>
     </modules>
 
     <properties>
@@ -69,7 +69,7 @@
         <shib-attribute.version>5.1.0-SNAPSHOT</shib-attribute.version>
         <shib-profile.groupId>net.shibboleth</shib-profile.groupId>
         <shib-profile.version>5.1.0-SNAPSHOT</shib-profile.version>
-        <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
+        <checkstyle.configLocation>${project.basedir}/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
     </properties>
 
     <dependencies>

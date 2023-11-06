@@ -8,7 +8,6 @@
         <groupId>net.shibboleth.idp</groupId>
         <artifactId>idp-parent</artifactId>
         <version>5.1.0-SNAPSHOT</version>
-        <relativePath>../idp-parent</relativePath>
     </parent>
 
     <name>Shibboleth IdP :: Session API</name>
