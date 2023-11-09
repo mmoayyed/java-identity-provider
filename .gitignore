@@ -3,6 +3,7 @@
 *.#*
 .*.swp
 .DS_store
+m2SignatureReport.txt
 # Simulated Subversion default ignores end here
 /target
 .vscode

@@ -15,6 +15,12 @@
     <artifactId>idp-bom</artifactId>
     <packaging>pom</packaging>
     
+    <properties>
+        <!-- This project does not always create a target, so the M2 check
+             needs to go elsewhere -->
+        <maven-dist-enforcer-data.m2ReportPath>${basedir}/m2SignatureReport.txt</maven-dist-enforcer-data.m2ReportPath>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
