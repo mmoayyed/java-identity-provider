@@ -389,7 +389,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>net.shibboleth.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <links combine.children="append">
