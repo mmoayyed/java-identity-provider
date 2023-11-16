@@ -13,9 +13,9 @@
        default-destroy-method="destroy">
 
     <bean id="shibboleth.Conditions.FALSE"
-        class="com.google.common.base.Predicates" factory-method="alwaysFalse" />
+        class="net.shibboleth.shared.logic.PredicateSupport" factory-method="alwaysFalse" />
     <bean id="shibboleth.Conditions.TRUE"
-        class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
+        class="net.shibboleth.shared.logic.PredicateSupport" factory-method="alwaysTrue" />
     
     <bean id="shibboleth.Conditions.AND"
         class="net.shibboleth.shared.logic.PredicateSupport" factory-method="and" abstract="true" />
@@ -23,6 +23,9 @@
         class="net.shibboleth.shared.logic.PredicateSupport" factory-method="not" abstract="true" />
     <bean id="shibboleth.Conditions.OR"
         class="net.shibboleth.shared.logic.PredicateSupport" factory-method="or" abstract="true" />
+
+    <bean id="shibboleth.Conditions.Constant" abstract="true"
+        class="net.shibboleth.shared.logic.PredicateSupport" factory-method="constant" />
 
     <bean id="shibboleth.BiConditions.AND"
         class="net.shibboleth.shared.logic.BiPredicateSupport" factory-method="and" abstract="true" />
