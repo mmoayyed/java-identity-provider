@@ -66,13 +66,13 @@ $response.addHeader("Content-Security-Policy", "script-src 'none'")
             <ul>
             #if ($informationURL)
                 <li>
-                    <a href="$informationURL">#springMessageText("idp.attribute-release.informationURLLabel", "Additional information about the service")</a>
+                    <a href="$informationURL" target="_blank">#springMessageText("idp.attribute-release.informationURLLabel", "Additional information about the service")</a>
                 </li>
             #end
             
             #if ($privacyStatementURL)
                 <li>
-                    <a href="$privacyStatementURL">#springMessageText("idp.attribute-release.privacyStatementURLLabel", "Data privacy information of the service")</a>
+                    <a href="$privacyStatementURL" target="_blank">#springMessageText("idp.attribute-release.privacyStatementURLLabel", "Data privacy information of the service")</a>
                 </li>
             #end
             </ul>
