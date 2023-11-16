@@ -25,7 +25,7 @@
     </decision-state>
 
     <decision-state id="ShouldUnsetCookie">
-        <if test="WarningCookieManager.getCookieValue(WarningCookieName, null) != null"
+        <if test="WarningCookieCondition.test(WarningEntry.getKey()) and WarningCookieManager.getCookieValue(WarningCookieName, null) != null"
             then="UnsetCookie" else="CheckIterator" />
     </decision-state>
 

@@ -14,6 +14,10 @@
 
     <!-- Empty map to override in config file. -->
     <util:map id="shibboleth.warning.ConditionMap" />
+    
+    <!-- Default condition bean controlling cookie behavior. -->
+    <bean id="shibboleth.warning.CookieCondition" parent="shibboleth.Conditions.Constant"
+        c:_0="%{idp.warning.unsetCookieWhenFalse:true}" />
 
     <import resource="conditional:%{idp.home}/conf/intercept/warning-intercept-config.xml" />
 
@@ -23,6 +27,7 @@
 
     <!-- Simplifies flow definition expressions. -->
     <alias name="shibboleth.warning.ConditionMap" alias="WarningConditionMap" />
+    <alias name="shibboleth.warning.CookieCondition" alias="WarningCookieCondition" />
     <alias name="shibboleth.PersistentCookieManager" alias="WarningCookieManager" />
-
+    
 </beans>
