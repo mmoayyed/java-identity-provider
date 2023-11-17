@@ -33,7 +33,7 @@ import net.shibboleth.shared.primitive.StringSupport;
 
 /** Configuration support for IdP SAML 2.0 ECP profile. */
 public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration 
-        implements net.shibboleth.saml.saml2.profile.config.ECPProfileConfiguration {
+        implements net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration {
 
     /** Name of profile counter. */
     @Nonnull @NotEmpty public static final String PROFILE_COUNTER = "net.shibboleth.idp.profiles.saml2.sso.ecp";
@@ -59,15 +59,7 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration
         localEventsLookupStrategy = FunctionSupport.constant(null);
     }
 
-    /**
-     * Get the set of local events to handle without a SOAP fault.
-     * 
-     * @param profileRequestContext current profile request context
-     * 
-     * @return  truly local events
-     * 
-     * @since 3.3.0
-     */
+    /** {@inheritDoc} */
     @Nonnull @NotLive @Unmodifiable public Set<String> getLocalEvents(
             @Nullable final ProfileRequestContext profileRequestContext) {
         
