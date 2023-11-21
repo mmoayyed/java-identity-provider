@@ -9,6 +9,8 @@
 ## attributeDisplayDescriptionFunction - function to display attribute description
 ## consentContext - context representing the state of a consent flow
 ## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## flowExecutionKey - SWF execution key (this is built into the flowExecutionUrl)
 ## flowExecutionUrl - form action location
 ## flowRequestContext - Spring Web Flow RequestContext

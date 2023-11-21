@@ -3,12 +3,14 @@
 ##
 ## Velocity context will contain the following properties :
 ##
-## encoder - HTMLEncoder class
 ## flowExecutionKey - SWF execution key (this is built into the flowExecutionUrl)
 ## flowExecutionUrl - form action location
 ## flowRequestContext - Spring Web Flow RequestContext
 ## request - HttpServletRequest
 ## response - HttpServletResponse
+## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## rpUIContext - context with SP UI information from the metadata
 ## termsOfUseId - terms of use ID to lookup message strings
 ## environment - Spring Environment object for property resolution
