@@ -49,6 +49,14 @@ public class ResolverTestArguments extends AbstractCommandLineArguments {
     @Parameter(names = {"--saml2"}, description = "Show results with SAML 2.0 encoding")
     private boolean saml2;
 
+    /**
+     * Show unfiltered results.
+     * 
+     * @since 5.1.0
+     */
+    @Parameter(names = {"--unfiltered"}, description = "Show unfiltered results")
+    private boolean unfiltered;
+
     /*
      * Below are legacy options from the 2.x AACLI tool that are no longer supported.
      */
@@ -70,23 +78,34 @@ public class ResolverTestArguments extends AbstractCommandLineArguments {
     @Nullable private String dummy4;
 
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     public void validate() {
         if (saml1) {
             if (saml2 || protocol != null) {
                 throw new IllegalArgumentException("The saml1, saml2, and protocol options are mutually exclusive");
+            } else if (unfiltered) {
+                throw new IllegalArgumentException(
+                        "The unfiltered option is mutually exclusive with the protocol options");
             }
         } else if (saml2) {
             if (saml1 || protocol != null) {
                 throw new IllegalArgumentException("The saml1, saml2, and protocol options are mutually exclusive");
+            } else if (unfiltered) {
+                throw new IllegalArgumentException(
+                        "The unfiltered option is mutually exclusive with the protocol options");
             }
         } else if (protocol != null) {
             if (saml1 || saml2) {
                 throw new IllegalArgumentException("The saml1, saml2, and protocol options are mutually exclusive");
+            } else if (unfiltered) {
+                throw new IllegalArgumentException(
+                        "The unfiltered option is mutually exclusive with the protocol options");
             }
         }
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     @Override
@@ -115,6 +134,8 @@ public class ResolverTestArguments extends AbstractCommandLineArguments {
                 builder.append("&saml2");
             } else if (protocol != null) {
                 builder.append("&protocol=").append(URLEncoder.encode(protocol, "UTF-8"));
+            } else if (unfiltered) {
+                builder.append("&unfiltered");
             }
         } catch (final UnsupportedEncodingException e) {
             // UTF-8 is a required encoding. 

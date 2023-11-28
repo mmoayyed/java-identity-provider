@@ -44,6 +44,9 @@ public class ResolverTestRequest {
     
     /** Protocol identifier to simulate a response for. */
     @Nullable private final String protocol;
+    
+    /** Unfiltered flag. */
+    @Nullable private final Boolean unfiltered;
 
     /**
      * Constructor.
@@ -52,15 +55,17 @@ public class ResolverTestRequest {
      * @param requester ID of requester
      * @param index <code>&lt;AttributeConsumingService&gt;</code> index
      * @param prot protocol ID
+     * @param unfilteredFlag unfiltered flag
      */
     public ResolverTestRequest(@Nonnull @NotEmpty final String princ, @Nonnull @NotEmpty final String requester,
-            @Nullable final Integer index, @Nullable final String prot) {
+            @Nullable final Integer index, @Nullable final String prot, @Nullable final Boolean unfilteredFlag) {
         
         principal = Constraint.isNotNull(StringSupport.trimOrNull(princ), "Principal name cannot be null or empty");
         requesterId = Constraint.isNotNull(StringSupport.trimOrNull(requester),
                 "Requester name cannot be null or empty");
         acsIndex = index;
         protocol = StringSupport.trimOrNull(prot);
+        unfiltered = unfilteredFlag;
     }
 
     /**
@@ -98,6 +103,17 @@ public class ResolverTestRequest {
     @Nullable public String getProtocol() {
         return protocol;
     }
+    
+    /**
+     * Get whether to dump unfiltered attributes in protocol-neutral output.
+     * 
+     * @return whether to dump unfiltered attributes
+     * 
+     * @since 5.1.0
+     */
+    @Nullable public Boolean getUnfiltered() {
+        return unfiltered;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -107,6 +123,7 @@ public class ResolverTestRequest {
             .add("requesterId", requesterId)
             .add("acsIndex", acsIndex)
             .add("protocol", protocol)
+            .add("unfiltered", unfiltered)
             .toString();
     }
     

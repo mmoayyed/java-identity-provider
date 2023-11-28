@@ -7,6 +7,7 @@
 ## response - HttpServletResponse
 ## profileRequestContext
 ## attributeContext
+## includeUnfilteredAttributes
 ## XMLObjectSupport
 ## SerializeSupport
 ## environment - Spring Environment object for property resolution
@@ -21,14 +22,18 @@
 $SerializeSupport.prettyPrintXML($XMLObjectSupport.marshall($profileRequestContext.getOutboundMessageContext().getMessage()))
     $response.setContentType("text/xml")
     #stop
-#end 
-
+#end
+#if ($includeUnfilteredAttributes)
+    #set ($attrs = $attributeContext.getUnfilteredIdPAttributes())
+#else
+    #set ($attrs = $attributeContext.getIdPAttributes())
+#end
 {
 "requester": "$profileRequestContext.getInboundMessageContext().getMessage().getRequesterId()",
 "principal": "$profileRequestContext.getInboundMessageContext().getMessage().getPrincipal()",
 "attributes": [
 
-#foreach ($attribute in $attributeContext.getIdPAttributes())
+#foreach ($attribute in $attrs)
 
   {
     "name": "$attribute.getId()",

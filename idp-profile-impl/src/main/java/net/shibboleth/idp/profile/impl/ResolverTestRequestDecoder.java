@@ -52,9 +52,15 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
     /** Name of the query parameter for the SAML 2 protocol: {@value} . */
     @Nonnull @NotEmpty public static final String SAML2_PARAM = "saml2";
 
+    /**
+     * Name of the query parameter for the unfiltered option: {@value} .
+     * 
+     * @since 5.1.0
+     */
+    @Nonnull @NotEmpty public static final String UNFILTERED_PARAM = "unfiltered";
+
     /** Constructor. */
     public ResolverTestRequestDecoder() {
-        super();
         setProtocolMessageLoggerSubCategory("ADMIN");
     }
 
@@ -67,7 +73,7 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
         }
         
         final ResolverTestRequest message = new ResolverTestRequest(getPrincipal(request), getRequesterId(request),
-                getIndex(request), getProtocol(request));
+                getIndex(request), getProtocol(request), getUnfiltered(request));
         final MessageContext messageContext = new MessageContext();
         messageContext.setMessage(message);
         setMessageContext(messageContext);
@@ -155,6 +161,19 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
         }
         
         return null;
+    }
+    
+    /**
+     * Get the unfiltered flag.
+     * 
+     * @param request current HTTP request
+     * 
+     * @return the unfiltered flag, or null
+     * 
+     * @since 5.1.0
+     */
+    @Nullable protected Boolean getUnfiltered(@Nonnull final HttpServletRequest request) {
+        return request.getParameter(UNFILTERED_PARAM) != null;
     }
 
 }
