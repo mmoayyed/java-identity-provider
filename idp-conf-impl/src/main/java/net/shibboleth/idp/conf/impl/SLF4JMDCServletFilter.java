@@ -15,8 +15,10 @@
 package net.shibboleth.idp.conf.impl;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.MDC;
 
@@ -28,6 +30,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import net.shibboleth.idp.Version;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.collection.CollectionSupport;
 import net.shibboleth.shared.servlet.AbstractConditionalFilter;
 import net.shibboleth.shared.servlet.HttpServletSupport;
 import net.shibboleth.shared.spring.servlet.ChainableFilter;
@@ -53,6 +56,9 @@ public class SLF4JMDCServletFilter extends AbstractConditionalFilter implements 
 
     /** Whether to create a session if it doesn't already exist. */
     private boolean createSession;
+    
+    /** Map of attribute/header pairs to inject. */
+    @Nullable private Map<String,String> headerMap;
 
     /** Constructor. */
     public SLF4JMDCServletFilter() {
@@ -67,6 +73,21 @@ public class SLF4JMDCServletFilter extends AbstractConditionalFilter implements 
     public void setCreateSession(final boolean flag) {
         createSession = flag;
     }
+    
+    /**
+     * Set a map of MDC attribute names to header names to add to context.
+     * 
+     * @param map
+     * 
+     * @since 5.1.0
+     */
+    public void setHeaderMap(@Nullable final Map<String,String> map) {
+        if (map != null) {
+            headerMap = CollectionSupport.copyToMap(map);
+        } else {
+            headerMap = null;
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -77,6 +98,13 @@ public class SLF4JMDCServletFilter extends AbstractConditionalFilter implements 
             MDC.put(CLIENT_ADDRESS_MDC_ATTRIBUTE, HttpServletSupport.getRemoteAddr(request));
             MDC.put(SERVER_ADDRESS_MDC_ATTRIBUTE, request.getServerName());
             MDC.put(SERVER_PORT_MDC_ATTRIBUTE, Integer.toString(request.getServerPort()));
+            
+            if (headerMap != null && request instanceof HttpServletRequest http) {
+                headerMap.entrySet().forEach(entry -> {
+                    MDC.put(entry.getKey(), http.getHeader(entry.getValue()));
+                });
+            }
+            
             if (request instanceof HttpServletRequest) {
                 final HttpSession session = ((HttpServletRequest) request).getSession(createSession);
                 if (session != null) {

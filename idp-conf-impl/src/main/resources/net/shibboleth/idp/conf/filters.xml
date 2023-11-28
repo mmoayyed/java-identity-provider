@@ -60,7 +60,8 @@
     <!-- Runs NEUTRAL, can be disabled if desired. -->
     <bean class="net.shibboleth.idp.conf.impl.SLF4JMDCServletFilter"
         p:activationCondition="%{idp.logging.MDC.enabled:true}"
-        p:createSession="%{idp.logging.MDC.createSession:true}" />
+        p:createSession="%{idp.logging.MDC.createSession:true}"
+        p:headerMap="#{getObject('shibboleth.MDCHeaders')}" />
 
     <!--
     This was, Scott thinks, needed for client storage to work, but if it runs, it has to be after the
