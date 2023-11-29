@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,8 +29,7 @@ import com.google.common.net.UrlEscapers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.AbstractInitializableComponent;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -39,11 +37,7 @@ import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A {@link Function} that produces a discovery request URL using the protocol defined in
- * https://wiki.oasis-open.org/security/IdpDiscoSvcProtonProfile
- * 
- * <p>Since there is no upstream "relying party" yet, the identity of the system is derived
- * from the currently in-effect entityID that will be used to respond to the downstream
- * relying party.</p>
+ * {@linkplain "https://wiki.oasis-open.org/security/IdpDiscoSvcProtonProfile"}.
  */
 @ThreadSafe
 public class DiscoveryProfileRequestFunction extends AbstractInitializableComponent
@@ -52,33 +46,20 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
     /** URL query parameter escaper. */
     @Nonnull private Escaper escaper;
     
-    /** Lookup strategy for locating {@link RelyingPartyContext}. */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
-    
     /** Lookup strategy for determining the "base" discovery URL. */
     @NonnullAfterInit private Function<ProfileRequestContext,String> discoveryURLLookupStrategy;
     
     /** Overrides this function via an injected bean. */
     @Nullable private BiFunction<RequestContext,ProfileRequestContext,String> delegatedRequestFunction;
+
+    /** A strategy function to call to obtain the entityID to use when invoking the DS. */
+    @NonnullAfterInit private Function<ProfileRequestContext,String> entityIDLookupStrategy;
     
     /** Constructor. */
     public DiscoveryProfileRequestFunction() {
         final Escaper esc = UrlEscapers.urlFormParameterEscaper();
         assert esc != null;
         escaper = esc;
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-    }
-    
-    /**
-     * Set the lookup strategy for the {@link RelyingPartyContext}.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        checkSetterPreconditions();
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
     
     /**
@@ -106,12 +87,31 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
         delegatedRequestFunction = delegate;
     }
     
+    /**
+     * Set a lookup strategy for the entityID to use when invoking the DS.
+     * 
+     * <p>In the absence of an alternative source, the default is to obtain the entityID from the
+     * "downstream-facing" profile/RP configurations, which may not result in the correct value.</p>
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 5.1.0
+     */
+    public void setEntityIDLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        checkSetterPreconditions();
+        entityIDLookupStrategy = strategy;
+    }
+    
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
         if (discoveryURLLookupStrategy == null) {
             throw new ComponentInitializationException("Discovery URL lookup strategy cannot be null");
+        }
+        
+        if (entityIDLookupStrategy == null) {
+            entityIDLookupStrategy = new IssuerLookupFunction();
         }
     }
     
@@ -126,17 +126,13 @@ public class DiscoveryProfileRequestFunction extends AbstractInitializableCompon
         if (springRequestContext == null) {
             throw new IllegalArgumentException("Spring RequestContext cannot be null");
         }
-        
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        Constraint.isNotNull(rpCtx, "RelyingPartyContext cannot be null");
-        Constraint.isNotNull(rpCtx.getConfiguration(), "RelyingPartyConfiguration cannot be null");
-        
+
+        // We need the entityID to use for the DS request.
+        final String entityID = entityIDLookupStrategy.apply(profileRequestContext);
+        Constraint.isNotNull(entityID, "Unable to obtain entityID to use for DS request");
+
         final String baseURL = discoveryURLLookupStrategy.apply(profileRequestContext);
         Constraint.isNotEmpty(baseURL, "Discovery URL cannot be null or empty");
-
-        final RelyingPartyConfiguration rpConfig = rpCtx.getConfiguration();
-        assert rpConfig!=null;
-        final String entityID =rpConfig.getIssuer(profileRequestContext);
 
         final StringBuilder builder = new StringBuilder(baseURL);
         

@@ -233,11 +233,13 @@
     <bean id="shibboleth.AdminFlow" abstract="true"
         class="net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor"
         p:principalServiceManager-ref="shibboleth.PrincipalServiceManager"
+        p:issuer="%{idp.admin.entityID:%{idp.entityID}}"
         p:nonBrowserSupported="false" />
 
     <bean id="shibboleth.OneTimeAdminFlow" abstract="true"
         class="net.shibboleth.idp.admin.OneTimeAdministrativeFlowDescriptor"
         p:principalServiceManager-ref="shibboleth.PrincipalServiceManager"
+        p:issuer="%{idp.admin.entityID:%{idp.entityID}}"
         p:nonBrowserSupported="false" />
 
     <!-- Function for returning custom access control policies for access to metrics. -->

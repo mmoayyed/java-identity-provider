@@ -40,6 +40,7 @@ import com.google.common.base.MoreObjects;
 
 import net.shibboleth.idp.authn.principal.PrincipalServiceManager;
 import net.shibboleth.idp.profile.config.AbstractInterceptorAwareProfileConfiguration;
+import net.shibboleth.profile.config.OverriddenIssuerProfileConfiguration;
 import net.shibboleth.shared.annotation.ParameterName;
 import net.shibboleth.shared.annotation.constraint.NonNegative;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
@@ -65,10 +66,13 @@ import net.shibboleth.shared.primitive.StringSupport;
  * @since 3.3.0
  */
 public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareProfileConfiguration
-        implements AdministrativeFlowDescriptor {
+        implements AdministrativeFlowDescriptor, OverriddenIssuerProfileConfiguration {
     
     /** Logging ID. */
     @Nullable private String loggingId;
+    
+    /** Issuer lookup strategy. */
+    @Nonnull private Function<ProfileRequestContext,String> issuerLookupStrategy;
     
     /** Whether this flow supports non-browser clients. */
     @Nonnull private Predicate<ProfileRequestContext> supportsNonBrowserPredicate;
@@ -121,6 +125,8 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
     public BasicAdministrativeFlowDescriptor(@Nonnull @NotEmpty @ParameterName(name="id") final String id) {
         super(id);
         
+        issuerLookupStrategy = FunctionSupport.constant(null);
+        
         supportsNonBrowserPredicate = PredicateSupport.alwaysTrue();
         authenticatedPredicate = PredicateSupport.alwaysFalse();
         policyNameLookupStrategy = FunctionSupport.constant(null);
@@ -161,6 +167,37 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
      */
     public void setLoggingId(@Nullable final String id) {
         loggingId = StringSupport.trimOrNull(id);
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * @since 5.1.0
+     */
+    @Nullable public String getIssuer(@Nullable final ProfileRequestContext profileRequestContext) {
+        return issuerLookupStrategy.apply(profileRequestContext);
+    }
+    
+    /**
+     * Set the issuer value to use with this profile.
+     * 
+     * @param id issuer value
+     * 
+     * @since 5.1.0
+     */
+    public void setIssuer(@Nullable final String id) {
+        issuerLookupStrategy = FunctionSupport.constant(StringSupport.trimOrNull(id));
+    }
+
+    /**
+     * Set the lookup strategy for the issuer value to use with this profile.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 5.1.0
+     */
+    public void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
     }
     
     /** {@inheritDoc} */
@@ -654,5 +691,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractInterceptorAwareP
             return width;
         }
     }
+
+    /** {@inheritDoc} */
 
 }
