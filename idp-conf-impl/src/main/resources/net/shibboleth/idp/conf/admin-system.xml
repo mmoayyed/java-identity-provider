@@ -359,7 +359,7 @@
        lazy-init="false"
        depends-on="shibboleth.LoggingService"
        p:updateUrls-ref="%{idp.updateCheck.urls:shibboleth.IdPUpdateCheckUrls}"
-       p:enabled="%{idp.updateCheck.enabled:true}"
+       p:enabled="%{idp.updateCheck.enable:true}"
        p:httpClient-ref="%{idp.updateCheck.httpClient:shibboleth.InternalHttpClient}"
        p:securityParams="#{ environment.containsProperty('idp.updateCheck.httpSecurityParameters') ? getObject('idp.updateCheck.httpSecurityParameters') :null}"/>
 
