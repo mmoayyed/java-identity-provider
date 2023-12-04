@@ -37,7 +37,7 @@ import net.shibboleth.shared.logic.Constraint;
 
 /**
  * A {@link Function} that produces a discovery request URL using the protocol defined in
- * {@linkplain "https://wiki.oasis-open.org/security/IdpDiscoSvcProtonProfile"}.
+ * https://wiki.oasis-open.org/security/IdpDiscoSvcProtonProfile .
  */
 @ThreadSafe
 public class DiscoveryProfileRequestFunction extends AbstractInitializableComponent

@@ -77,7 +77,7 @@ public class SLF4JMDCServletFilter extends AbstractConditionalFilter implements 
     /**
      * Set a map of MDC attribute names to header names to add to context.
      * 
-     * @param map
+     * @param map header map to set
      * 
      * @since 5.1.0
      */
