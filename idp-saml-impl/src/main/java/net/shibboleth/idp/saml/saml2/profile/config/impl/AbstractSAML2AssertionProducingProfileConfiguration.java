@@ -180,7 +180,7 @@ public abstract class AbstractSAML2AssertionProducingProfileConfiguration
     @Deprecated(since="5.0.0", forRemoval=true)
     public void setAdditionalAudiencesForAssertion(@Nullable final Collection<String> audiences) {
         DeprecationSupport.warn(ObjectType.METHOD, "setAdditionalAudiencesForAssertion", "relying-party.xml",
-                "setAdditionalAudiences");
+                "setAssertionAudiences");
         setAssertionAudiences(audiences);
     }
 
@@ -195,7 +195,7 @@ public abstract class AbstractSAML2AssertionProducingProfileConfiguration
     public void setAdditionalAudiencesForAssertionLookupStrategy(
             @Nonnull final Function<ProfileRequestContext,Set<String>> strategy) {
         DeprecationSupport.warn(ObjectType.METHOD, "setAdditionalAudiencesForAssertionLookupStrategy",
-                "relying-party.xml", "setAdditionalAudiences");
+                "relying-party.xml", "setAssertionAudiences");
         setAssertionAudiencesLookupStrategy(strategy);
     }
     
