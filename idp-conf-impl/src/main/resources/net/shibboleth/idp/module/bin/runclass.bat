@@ -27,7 +27,7 @@ set WEBAPPCP=%~dp0..\edit-webapp\WEB-INF\lib\*;%~dp0..\dist\plugin-webapp\WEB-IN
 :no_plugin_webapp
 
 REM add in the dependency .jar files
-set LOCALCLASSPATH=%~dp0lib\*;%WEBAPPCP%;%~dp0..\dist\webapp\WEB-INF\lib\*;%~dp0..\dist\binlib\*;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
+set LOCALCLASSPATH=%WEBAPPCP%;%~dp0..\dist\webapp\WEB-INF\lib\*;%~dp0..\dist\binlib\*;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
 
 REM Go to it !
 
