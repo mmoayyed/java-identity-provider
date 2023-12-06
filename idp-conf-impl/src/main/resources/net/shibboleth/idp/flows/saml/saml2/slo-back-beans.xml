@@ -27,7 +27,8 @@
         p:browserProfile="false"
         p:loggingId="%{idp.service.logging.saml2slo:Logout}" />
 
-    <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
+    <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype"
+            p:messageType="org.opensaml.saml.saml2.core.LogoutMessage">
         <constructor-arg>
             <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder" scope="prototype"
                 p:parserPool-ref="shibboleth.ParserPool"

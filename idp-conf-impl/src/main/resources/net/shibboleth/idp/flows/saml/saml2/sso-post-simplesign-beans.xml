@@ -21,7 +21,8 @@
         p:loggingId="%{idp.service.logging.saml2sso:SSO}"
         p:browserProfile="true" />
 
-    <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
+    <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype"
+            p:messageType="org.opensaml.saml.saml2.core.AuthnRequest">
         <constructor-arg>
             <bean class="org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostSimpleSignDecoder" scope="prototype"
                 p:parserPool-ref="shibboleth.ParserPool"
