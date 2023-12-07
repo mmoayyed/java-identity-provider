@@ -60,7 +60,7 @@
     </util:list>
 
     <util:list id="shibboleth.SAML2Status.NoAuthnContext">
-        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.REQUESTER" />
+        <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.RESPONDER" />
         <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.NO_AUTHN_CONTEXT" />
     </util:list>
 
