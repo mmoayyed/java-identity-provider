@@ -27,4 +27,18 @@ public interface CASAttributeTranscoder extends AttributeTranscoder<Attribute> {
     /** The attribute name. */
     @Nonnull @NotEmpty static final String PROP_NAME = "cas.name";
 
+    /**
+     * Flag to signal use of metadata to override name to encode.
+     * 
+     * @since 5.1.0
+     */
+    @Nonnull @NotEmpty static final String PROP_NAME_FROM_METADATA = "cas.nameFromMetadata";
+
+    /**
+     * Name of metadata tag/attribute to check for in the event that {@link #PROP_NAME_FROM_METADATA} is used.
+     * 
+     * @since 5.1.0
+     */
+    @Nonnull @NotEmpty static final String METADATA_TAG_NAME = "http://shibboleth.net/ns/attributes/naming/cas";
+
 }

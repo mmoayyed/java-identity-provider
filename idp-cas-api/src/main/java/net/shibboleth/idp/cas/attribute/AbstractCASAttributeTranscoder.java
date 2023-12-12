@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.transcoding.AbstractAttributeTranscoder;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.shared.primitive.LoggerFactory;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Base class for transcoders that support CAS attributes.
@@ -73,9 +74,7 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
 
         log.trace("Beginning to encode attribute {}", attributeId);
 
-        final String name = rule.getOrDefault(PROP_NAME, String.class, attributeId);
-        // by construction if attribute id is nonnnul then the so if name.
-        assert name != null;
+        final String name = getEncodedName(profileRequestContext, attribute, rule);
         final Attribute casAttribute = new Attribute(name);
         
         for (final IdPAttributeValue o : attribute.getValues()) {
@@ -139,6 +138,38 @@ public abstract class AbstractCASAttributeTranscoder<EncodedType extends IdPAttr
             log.trace("Decoded {} values for attribute {}", idpAttributeValues.size(), attributeName);
         }
         return buildIdPAttribute(profileRequestContext, input, rule, idpAttributeValues);
+    }
+    
+    /**
+     * Obtain the encoded name of the CAS Attribute either from metadata or statically.
+     * 
+     * <p>With CAS, there's always a name to use because it will fallback to using the attribute ID.</p>
+     * 
+     * @param profileRequestContext profile request context
+     * @param attribute attribute to encode
+     * @param rule trancoding rule
+     * 
+     * @return the encoded name
+     * 
+     * @since 5.1.0
+     */
+    @Nonnull protected String getEncodedName(@Nullable final ProfileRequestContext profileRequestContext,
+            @Nonnull final IdPAttribute attribute, @Nonnull final TranscodingRule rule) {
+        
+        // Use metadata tag to derive name of Attribute?
+        final Boolean useMetadata = rule.getOrDefault(PROP_NAME_FROM_METADATA, Boolean.class, false);
+        if (useMetadata != null && useMetadata) {
+            final String tagValue = StringSupport.trimOrNull(
+                    getNameFromMetadata(profileRequestContext, attribute.getId()));
+            if (tagValue != null) {
+                return tagValue;
+            }
+        }
+
+        final String staticName = rule.getOrDefault(PROP_NAME, String.class, attribute.getId());
+        // Has to be non-null because default value is.
+        assert staticName != null;
+        return staticName;
     }
 
     /**

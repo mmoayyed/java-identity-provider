@@ -15,30 +15,62 @@
     <!-- Pull in class rewrite rules. -->
     <bean parent="shibboleth.RelocatedBeanFactoryPostProcessor" />
 
+    <bean id="SAML2MetadataNamingStrategy" parent="shibboleth.TagLookupSet"
+        p:profileMetadataLookupStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty"
+        p:propertyName="#{T(net.shibboleth.idp.saml.attribute.transcoding.SAML2AttributeTranscoder).METADATA_TAG_NAME}"
+        p:strictNameFormat="true"
+        p:explicitPropertyName="true"
+        p:ignoreUnmappedEntityAttributes="true" />
+
     <bean id="SAML2StringTranscoder"
-        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTranscoder" />
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2StringAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="SAML2MetadataNamingStrategy" />
     <bean id="SAML2ScopedStringTranscoder"
-        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ScopedStringAttributeTranscoder" />
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ScopedStringAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="SAML2MetadataNamingStrategy" />
     <bean id="SAML2ByteTranscoder"
-        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ByteAttributeTranscoder" />
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2ByteAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="SAML2MetadataNamingStrategy" />
     <bean id="SAML2XMLObjectTranscoder"
-        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2XMLObjectAttributeTranscoder" />
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2XMLObjectAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="SAML2MetadataNamingStrategy" />
     <bean id="SAML2DateTimeTranscoder"
-        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2DateTimeAttributeTranscoder" />
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML2DateTimeAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="SAML2MetadataNamingStrategy" />
+
+    <bean id="SAML1MetadataNamingStrategy" parent="shibboleth.TagLookupSet"
+        p:profileMetadataLookupStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty"
+        p:propertyName="#{T(net.shibboleth.idp.saml.attribute.transcoding.SAML1AttributeTranscoder).METADATA_TAG_NAME}"
+        p:strictNameFormat="true"
+        p:explicitPropertyName="true"
+        p:ignoreUnmappedEntityAttributes="true" />
         
     <bean id="SAML1StringTranscoder"
-        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder" />
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1StringAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="SAML1MetadataNamingStrategy" />
     <bean id="SAML1ScopedStringTranscoder"
-        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ScopedStringAttributeTranscoder" />
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ScopedStringAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="SAML1MetadataNamingStrategy" />
     <bean id="SAML1ByteTranscoder"
-        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ByteAttributeTranscoder" />
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1ByteAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="SAML1MetadataNamingStrategy" />
     <bean id="SAML1XMLObjectTranscoder"
-        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1XMLObjectAttributeTranscoder" />
+        class="net.shibboleth.idp.saml.attribute.transcoding.impl.SAML1XMLObjectAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="SAML1MetadataNamingStrategy" />
+    
+    <bean id="CASMetadataNamingStrategy" parent="shibboleth.TagLookupSet"
+        p:profileMetadataLookupStrategy-ref="shibboleth.EntityDescriptorLookup.RelyingParty"
+        p:propertyName="#{T(net.shibboleth.idp.cas.attribute.CASAttributeTranscoder).METADATA_TAG_NAME}"
+        p:strictNameFormat="true"
+        p:explicitPropertyName="true"
+        p:ignoreUnmappedEntityAttributes="true" />
     
     <bean id="CASStringTranscoder"
-        class="net.shibboleth.idp.cas.attribute.transcoding.impl.CASStringAttributeTranscoder" />
+        class="net.shibboleth.idp.cas.attribute.transcoding.impl.CASStringAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="CASMetadataNamingStrategy" />
     <bean id="CASScopedStringTranscoder"
-        class="net.shibboleth.idp.cas.attribute.transcoding.impl.CASScopedStringAttributeTranscoder" />
+        class="net.shibboleth.idp.cas.attribute.transcoding.impl.CASScopedStringAttributeTranscoder"
+        p:nameFromMetadataLookupStrategy-ref="CASMetadataNamingStrategy" />
     
     <bean id="shibboleth.TranscodingRule"
         class="net.shibboleth.idp.attribute.transcoding.TranscodingRule" abstract="true" />
