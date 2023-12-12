@@ -213,8 +213,8 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
 
         // Uses the new registry.
         if (super.encodeAttribute(registry, profileRequestContext, attribute, Attribute.class, results) == 0) {
-            log.debug("{} Attribute {} did not have SAML 1 Attribute transcoder instructions associated, nothing to do",
-                    getLogPrefix(), attribute.getId());
+            log.debug("{} Attribute {} did not have usable SAML 1 Attribute transcoder rules", getLogPrefix(),
+                    attribute.getId());
         }
     }
     
