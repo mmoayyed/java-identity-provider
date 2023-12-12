@@ -325,7 +325,7 @@ public abstract class BaseAddAttributeStatementToAssertion<T extends SAMLObject>
                 }
             } catch (final AttributeEncodingException e) {
                 if (isIgnoringUnencodableAttributes()) {
-                    log.debug("{} Unable to encode attribute {}", getLogPrefix(), attribute.getId(), e);
+                    log.info("{} Unable to encode attribute {}", getLogPrefix(), attribute.getId(), e);
                 } else {
                     throw e;
                 }
