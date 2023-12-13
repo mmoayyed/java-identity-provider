@@ -6,7 +6,7 @@ function createCookie(name, value, seconds) {
     date.setTime(date.getTime() + (seconds * 1000));
     var expires = "; expires=" + date.toGMTString();
     
-    var path = '$environment.getProperty("idp.cookie.path", $request.getContextPath())';
+    var path = '$environment.getProperty("idp.cookie.path", "/")';
     if (path.length > 0)
         path = "; path=" + path;
     document.cookie = name + "=" + value + expires + path;
