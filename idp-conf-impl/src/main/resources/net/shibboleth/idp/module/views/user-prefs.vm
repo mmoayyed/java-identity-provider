@@ -12,7 +12,7 @@
 ##
 #set ($onLoad = "load('spnego')")
 #set ($onClick = "check(this)")
-$response.addHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)','sha256-$cspDigester.apply($onClick)'")
+$response.addHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)' 'sha256-$cspDigester.apply($onClick)'")
 #set ($nonce = $cspNonce.generateIdentifier())
 $response.addHeader("Content-Security-Policy", "script-src-elem 'nonce-$nonce'")
 <!DOCTYPE html>
