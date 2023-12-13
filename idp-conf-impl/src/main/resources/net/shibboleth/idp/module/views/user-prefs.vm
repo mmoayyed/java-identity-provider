@@ -10,7 +10,7 @@
 ## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
 ## cspNonce - Calculates secure nonces (call generateIdentifier)
 ##
-#set ($onLoad = "load('spnego')")
+#set ($onLoad = "load('spnego');load('revokeConsent')")
 #set ($onClick = "check(this)")
 $response.addHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)' 'sha256-$cspDigester.apply($onClick)'")
 #set ($nonce = $cspNonce.generateIdentifier())
@@ -47,6 +47,8 @@ $response.addHeader("Content-Security-Policy", "script-src-elem 'nonce-$nonce'")
                     <p>#springMessageText("idp.userprefs.options", "The following options are available:")</p>
                     <input type="checkbox" id="spnego" name="_idp_spnego_autologin" value="1" onClick="$onClick">
                     <label for="spnego"> #springMessageText("idp.userprefs.spnego", "Automatically try desktop login when available.")</label>
+                    <input type="checkbox" id="revokeConsent" name="_shib_idp_revokeConsent" value="1" onClick="$onClick">
+                    <label for="revokeConsent">#springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")</label>
                 </form>
             </section>
             

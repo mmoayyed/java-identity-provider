@@ -31,8 +31,8 @@ function readCookie(name) {
 function load(id) {
     var checkbox = document.getElementById(id);
     if (checkbox != null) {
-        var spnego = readCookie(checkbox.name);
-        checkbox.checked = (spnego == "1");
+        var value = readCookie(checkbox.name);
+        checkbox.checked = (value == "1");
     }
 }
 

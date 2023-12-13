@@ -29,6 +29,13 @@
 
     <decision-state id="TestForRevokeConsent">
         <if test="opensamlProfileRequestContext.ensureSubcontext(T(net.shibboleth.idp.consent.context.ConsentManagementContext)).getRevokeConsent()"
+            then="RevokeConsent" else="TestForRevokeConsentCookie" />
+    </decision-state>
+
+    <!-- If consent revocation was requested via cookie, revoke, otherwise read from storage. -->
+
+    <decision-state id="TestForRevokeConsentCookie">
+       <if test="RevokeConsentCookieManager.getCookieValue(RevokeConsentCookieName, null) != null"
             then="RevokeConsent" else="ReadConsentFromStorage" />
     </decision-state>
 
@@ -51,14 +58,26 @@
 
     <decision-state id="TestForRevokeGlobalAttributeConsent">
         <if test="attributeReleaseFlowDescriptor.isGlobalConsentAllowed()"
-            then="RevokeGlobalAttributeConsent" else="PopulateConsentContext" />
+            then="RevokeGlobalAttributeConsent" else="ShouldUnsetCookie" />
     </decision-state>
 
     <action-state id="RevokeGlobalAttributeConsent">
         <evaluate expression="RevokeGlobalAttributeConsent" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="PopulateConsentContext" />
+        <transition on="proceed" to="ShouldUnsetCookie" />
+    </action-state>
+
+   <!-- Remove revoke consent cookie if it exists. -->
+
+    <decision-state id="ShouldUnsetCookie">
+        <if test="RevokeConsentCookieManager.getCookieValue(RevokeConsentCookieName, null) != null"
+            then="UnsetCookie" else="PopulateConsentContext" />
+    </decision-state> 
+
+    <action-state id="UnsetCookie">
+        <evaluate expression="RevokeConsentCookieManager.unsetCookie(RevokeConsentCookieName)" />
+        <transition to="PopulateConsentContext" />
     </action-state>
 
     <!-- Read consent from storage. -->

@@ -97,6 +97,13 @@
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext.FormattingMapParser"
         c:_0="#{getObject('shibboleth.consent.attribute-release.AuditFormattingMap') ?: getObject('DefaultAuditFormattingMap')}" />
 
+    <!-- Name of cookie to revoke consent. -->
+    <bean id="shibboleth.consent.RevokeConsentCookieName" class="java.lang.String" c:_0="_shib_idp_revokeConsent" />
+
+    <!-- Simplifies flow definition expressions to revoke consent. -->
+    <alias name="shibboleth.consent.RevokeConsentCookieName" alias="RevokeConsentCookieName" />
+    <alias name="shibboleth.UserPrefsCookieManager" alias="RevokeConsentCookieManager" />
+
     <!-- Action beans -->
 
     <bean id="InitializeConsentContext"
