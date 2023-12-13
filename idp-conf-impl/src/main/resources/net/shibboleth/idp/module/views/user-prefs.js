@@ -1,4 +1,3 @@
-<!--
 "use strict";
 
 function createCookie(name, value, seconds) {
@@ -44,4 +43,3 @@ function check(checkbox) {
         eraseCookie(checkbox.name);
     }
 }
-// -->

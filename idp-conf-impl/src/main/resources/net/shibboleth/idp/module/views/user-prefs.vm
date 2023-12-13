@@ -13,8 +13,8 @@
 #set ($onLoad = "load('spnego')")
 #set ($onClick = "check(this)")
 $response.addHeader("Content-Security-Policy", "script-src-attr 'unsafe-hashes' 'sha256-$cspDigester.apply($onLoad)','sha256-$cspDigester.apply($onClick)'")
-## Hash of user-prefs.js (being injected inline below).
-$response.addHeader("Content-Security-Policy", "script-src-elem 'unsafe-hashes' 'sha256-mXQMhpzvwZ/f5iKzcm/iFe50L/0b7cNjsvcFVu/PMTg='")
+#set ($nonce = $cspNonce.generateIdentifier())
+$response.addHeader("Content-Security-Policy", "script-src-elem 'nonce-$nonce'")
 <!DOCTYPE html>
 <html>
     <head>
@@ -23,7 +23,7 @@ $response.addHeader("Content-Security-Policy", "script-src-elem 'unsafe-hashes' 
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()#springMessageText("idp.css", "/css/placeholder.css")">
-        <script language="Javascript">#parse("user-prefs.js")</script>
+        <script nonce="$nonce"><!-- #parse("user-prefs.js") // --></script>
     </head>
 
    <body onLoad="$onLoad">
