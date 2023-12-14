@@ -338,6 +338,22 @@
         p:cookiePath="%{idp.cookie.path:/}"
         p:maxAge="%{idp.cookie.maxAge:31536000}" />
 
+    <bean id="shibboleth.StorageAwarePersistentCookieManager" class="net.shibboleth.idp.profile.support.StorageAwareCookieManager" lazy-init="true"
+            p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
+            p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"
+            p:storageService="#{getObject('%{idp.cookie.storageService:}'.trim())}"
+            p:secure="%{idp.cookie.secure:true}"
+            p:httpOnly="%{idp.cookie.httpOnly:true}"
+            p:cookieDomain="%{idp.cookie.domain:}"
+            p:cookiePath="%{idp.cookie.path:/}"
+            p:maxAge="%{idp.cookie.maxAge:31536000}">
+        <property name="usernameLookupStrategy">
+            <bean parent="shibboleth.Functions.Compose"
+                c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+        </property>
+    </bean>
+
     <bean id="shibboleth.UserPrefsCookieManager" class="net.shibboleth.shared.net.CookieManager" lazy-init="true"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:httpServletResponseSupplier-ref="shibboleth.HttpServletResponseSupplier"

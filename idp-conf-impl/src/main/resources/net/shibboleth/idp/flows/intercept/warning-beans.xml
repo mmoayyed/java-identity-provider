@@ -28,6 +28,6 @@
     <!-- Simplifies flow definition expressions. -->
     <alias name="shibboleth.warning.ConditionMap" alias="WarningConditionMap" />
     <alias name="shibboleth.warning.CookieCondition" alias="WarningCookieCondition" />
-    <alias name="shibboleth.PersistentCookieManager" alias="WarningCookieManager" />
+    <alias name="shibboleth.StorageAwarePersistentCookieManager" alias="WarningCookieManager" />
     
 </beans>
