@@ -76,6 +76,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
     /** Whether the response endpoint should be validated if the request is signed. */
     @Nonnull private Predicate<ProfileRequestContext> skipEndpointValidationWhenSignedPredicate;
 
+    /** Whether the FriendlyName attribute should be randomized when encoding Attributes. */
+    @Nonnull private Predicate<ProfileRequestContext> randomizeFriendlyNamePredicate;
+
     /** Lookup function to supply proxyCount property. */
     @Nonnull private Function<ProfileRequestContext,Integer> proxyCountLookupStrategy;
 
@@ -163,6 +166,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
         forceAuthnPredicate = new ProxyAwareForceAuthnPredicate();
         checkAddressPredicate = PredicateSupport.alwaysTrue();
         skipEndpointValidationWhenSignedPredicate = PredicateSupport.alwaysFalse();
+        randomizeFriendlyNamePredicate = PredicateSupport.alwaysFalse();
         proxyCountLookupStrategy = FunctionSupport.constant(null);
         proxyAudiencesLookupStrategy = FunctionSupport.constant(null);
         proxiedAuthnInstantPredicate = PredicateSupport.alwaysTrue();
@@ -342,6 +346,35 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2AssertionProduc
         skipEndpointValidationWhenSignedPredicate = Constraint.isNotNull(condition, "Condition cannot be null");
     }
 
+    /** {@inheritDoc} */
+    public boolean isRandomizeFriendlyName(@Nullable final ProfileRequestContext profileRequestContext) {
+        return randomizeFriendlyNamePredicate.test(profileRequestContext);
+    }
+    
+    /**
+     * Set whether to randomize/perturb the FriendlyName attribute when encoding SAML 2.0 Attributes to
+     * enable probing of invalid behavior by relying parties.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 5.1.0
+     */
+    public void setRandomizeFriendlyName(final boolean flag) {
+        randomizeFriendlyNamePredicate = PredicateSupport.constant(flag);
+    }
+    
+    /**
+     * Set condition to determine whether to randomize/perturb the FriendlyName attribute when encoding
+     * SAML 2.0 Attributes to enable probing of invalid behavior by relying parties.
+     * 
+     * @param condition condition to set
+     * 
+     * @since 5.1.0
+     */
+    public void setRandomizeFriendlyNamePredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        randomizeFriendlyNamePredicate = Constraint.isNotNull(condition, "Condition cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Nullable public Integer getProxyCount(@Nullable final ProfileRequestContext profileRequestContext) {
         final Integer count = proxyCountLookupStrategy.apply(profileRequestContext);

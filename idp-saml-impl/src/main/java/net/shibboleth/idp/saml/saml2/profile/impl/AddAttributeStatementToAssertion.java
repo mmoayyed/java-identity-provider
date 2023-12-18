@@ -43,6 +43,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAttributeStatementToAssertion;
+import net.shibboleth.idp.saml.saml2.profile.config.logic.RandomizeFriendlyNameProfileConfigPredicate;
 import net.shibboleth.shared.annotation.constraint.NullableElements;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ServiceException;
@@ -107,7 +108,18 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
 
             assertion.getAttributeStatements().add(statement);
 
-            log.debug("{} Adding constructed AttributeStatement to Assertion {} ", getLogPrefix(), assertion.getID());
+            final boolean randomizeFriendlyName =
+                    new RandomizeFriendlyNameProfileConfigPredicate().test(profileRequestContext);
+            final String id = assertion.getID();
+            if (randomizeFriendlyName && id != null) {
+                log.debug("{} Will randomize FriendlyName attributes", getLogPrefix());
+                for (final Attribute a : statement.getAttributes()) {
+                    final String current = a.getFriendlyName();
+                    a.setFriendlyName(current != null ? current + id : id);
+                }
+            }
+            
+            log.debug("{} Adding constructed AttributeStatement to Assertion {} ", getLogPrefix(), id);
         } catch (final AttributeEncodingException e) {
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
         }

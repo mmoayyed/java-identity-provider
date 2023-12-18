@@ -459,6 +459,14 @@
                 <constructor-arg value="false" />
             </bean>
         </property>
+        <property name="randomizeFriendlyNamePredicate">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="randomizeFriendlyName" />
+                </constructor-arg>
+                <constructor-arg value="false" />
+            </bean>
+        </property>
         <property name="proxyCountLookupStrategy">
             <bean parent="shibboleth.MDDrivenIntProperty" p:propertyName="proxyCount" />
         </property>
@@ -668,6 +676,14 @@
                 <constructor-arg>
                     <bean class="org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate" />
                 </constructor-arg>
+            </bean>
+        </property>
+        <property name="randomizeFriendlyNamePredicate">
+            <bean class="net.shibboleth.shared.logic.PredicateSupport" factory-method="fromFunction">
+                <constructor-arg>
+                    <bean parent="shibboleth.MDDrivenBoolProperty" p:propertyName="randomizeFriendlyName" />
+                </constructor-arg>
+                <constructor-arg value="false" />
             </bean>
         </property>
     </bean>

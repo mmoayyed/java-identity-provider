@@ -73,6 +73,19 @@ public interface BrowserSSOProfileConfiguration
     boolean isSkipEndpointValidationWhenSigned(@Nullable final ProfileRequestContext profileRequestContext);
 
     /**
+     * Gets whether to randomize/perturb the FriendlyName attribute when encoding SAML 2.0 Attributes to
+     * enable probing of invalid behavior by relying parties.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @return true iff the FriendlyName should be randomized
+     * 
+     * @since 5.1.0
+     */
+    @ConfigurationSetting(name="randomizeFriendlyName")
+    boolean isRandomizeFriendlyName(@Nullable final ProfileRequestContext profileRequestContext);
+    
+    /**
      * Gets the unmodifiable collection of audiences for a proxied assertion.
      * 
      * @param profileRequestContext current profile request context
