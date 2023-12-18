@@ -67,6 +67,9 @@
     
     <bean id="shibboleth.ExceptionResolver" class="net.shibboleth.shared.spring.error.ExtendedMappingExceptionResolver"
         c:_0="#{getObject('shibboleth.ExceptionResolverViewExtenderFunction')}"
+        p:cSPDigester-ref="shibboleth.CSPDigester"
+        p:cSPNonceGenerator-ref="shibboleth.CSPNonce"
+        p:customObject="#{getObject('shibboleth.CustomViewContext')}"
         p:defaultErrorView="%{idp.errors.defaultView:error}"
         p:excludedExceptions="#{getObject('%{idp.errors.excludedExceptions:undefined}')}"
         p:exceptionMappings="#{getObject('%{idp.errors.exceptionMappings:undefined}')}" />

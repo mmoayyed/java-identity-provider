@@ -2,18 +2,20 @@
 ## Velocity Template for error end-state
 ##
 ## Velocity context will contain the following variables during controlled errors.
-## Some error paths involve runtime exceptions handled outside Spring Web Flow by the
-## MVC layer and will not generally populate most of these variables.
 ##
-## flowRequestContext - the Spring Web Flow RequestContext
-## profileRequestContext - root of context tree
-## encoder - HTMLEncoder class
-## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
-## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 ## environment - Spring Environment object for property resolution
+## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## custom - arbitrary object injected by deployer
+##
+## Some error paths involve runtime exceptions handled outside Spring Web Flow by the
+## MVC layer and will not generally populate these variables:
+##
+## flowRequestContext - the Spring Web Flow RequestContext
+## profileRequestContext - root of context tree
 ##
 #set ($title = $springMacroRequestContext.getMessage("idp.title", "Web Login Service"))
 #set ($defaultTitleSuffix = $springMacroRequestContext.getMessage("idp.title.suffix", "Error"))
@@ -71,6 +73,9 @@ $response.addHeader("Content-Security-Policy", "script-src 'none'")
         <footer class="footer">
             <div class="cc">
                 <p>#springMessageText("idp.footer", "Insert your footer text here.")</p>
+                <p>$cspDigester</p>
+                <p>$cspNonce</p>
+                <p>$custom</p>
             </div>
         </footer>
     </body>
