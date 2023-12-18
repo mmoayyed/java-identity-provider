@@ -96,7 +96,8 @@ public class X509ProxyFilter implements Filter {
             X509Certificate[] certs =
                     (X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate");
             if (null == certs || 0 == certs.length) {
-                certs = (X509Certificate[]) request.getAttribute("jakarta.servlet.request.X509Certificate");
+                // Check for older Java variant (probably moot at this point).
+                certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
             }
             
             if (null == certs || 0 == certs.length) {

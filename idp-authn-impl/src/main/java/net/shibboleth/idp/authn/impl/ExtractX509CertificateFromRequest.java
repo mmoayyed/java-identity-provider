@@ -66,7 +66,7 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
                 (X509Certificate[]) httpRequest.getAttribute("jakarta.servlet.request.X509Certificate");
         if (certs == null || certs.length == 0) {
             // Check for older Java variant (probably moot at this point).
-            certs = (X509Certificate[]) httpRequest.getAttribute("java.servlet.request.X509Certificate");
+            certs = (X509Certificate[]) httpRequest.getAttribute("javax.servlet.request.X509Certificate");
         }
 
         if (certs == null || certs.length == 0) {
